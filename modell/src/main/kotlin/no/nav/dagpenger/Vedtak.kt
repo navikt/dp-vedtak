@@ -1,4 +1,20 @@
 package no.nav.dagpenger
 
-class Vedtak {
+import java.util.function.BooleanSupplier
+
+
+
+
+
+class OmgjøringVedtak {
+
+}
+
+class Vedtak private constructor(){
+
+    // liste av ting som kan skje
+
+
+
+
 }
