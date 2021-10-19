@@ -14,7 +14,4 @@ class Vedtak private constructor(){
 
     // liste av ting som kan skje
 
-
-
-
 }

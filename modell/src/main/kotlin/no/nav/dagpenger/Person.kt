@@ -1,6 +1,7 @@
 package no.nav.dagpenger
 
 import no.nav.dagpenger.Sak.Companion.harTilknyttetSøknad
+import no.nav.dagpenger.Sak.Companion.hentEksisterendeSak
 import no.nav.dagpenger.hendelse.SøknadOmNyRettighetHendelse
 
 
@@ -18,12 +19,13 @@ class Person {
 
     fun søk(søknadshendelse: SøknadOmNyRettighetHendelse) {
 
-        //saker.finnEllerOpprettSak(søknadshendelse.søknadsReferanse)
+        saker.finnEllerOpprettSak(søknadshendelse.søknadsReferanse)
 
         if (saker.harTilknyttetSøknad(søknadsreferanse = søknadshendelse.søknadsReferanse)) {
             saker.add(Sak(this, søknadshendelse.søknadsReferanse))
         } else {
-            saker.find { it.harSøknad(søknadshendelse.søknadsReferanse) }
+            saker.hentEksisterendeSak(søknadshendelse).oppdater(søknadshendelse)
+
         }
     }
 
