@@ -4,7 +4,7 @@ import no.nav.dagpenger.hendelse.SøknadOmNyRettighetHendelse
 
 class Sak internal constructor(
     private val person: Person,
-    private val søknadsreferanse: String
+    private val søknad: Søknad
 ) {
     val vedtak = listOf<Vedtak>()
 
@@ -17,10 +17,9 @@ class Sak internal constructor(
 
         fun MutableList<Sak>.finnEllerOpprettSak(person: Person, søknadshendelse: SøknadOmNyRettighetHendelse) {
             if (this.harTilknyttetSøknad(søknadsreferanse = søknadshendelse.søknadsReferanse)) {
-                this.add(Sak(person, søknadshendelse.søknadsReferanse))
+                this.add(Sak(person, søknad.søknadsReferanse))
             } else {
                 this.hentEksisterendeSak(søknadshendelse).oppdater(søknadshendelse)
-
             }
         }
     }
@@ -29,12 +28,14 @@ class Sak internal constructor(
         TODO("Not yet implemented")
     }
 
-    fun harSøknad(søknadsreferanse: String) = this.søknadsreferanse == søknadsreferanse
+    private fun harSøknad(søknadsreferanse: String) = this.søknadsreferanse == søknadsreferanse
 }
 
 /*
 * Forstår søknadsinnhold
 * */
-internal class Søknad{
-
+internal class Søknad(
+    private val søknadsreferanse: String
+){
+    override fun equals(other: Any?): Boolean = if (other is Søknad) this.søknadsreferanse == other else false
 }
