@@ -1,5 +1,6 @@
 package no.nav.dagpenger
 
+import no.nav.dagpenger.Sak.Companion.finnEllerOpprettSak
 import no.nav.dagpenger.Sak.Companion.harTilknyttetSøknad
 import no.nav.dagpenger.Sak.Companion.hentEksisterendeSak
 import no.nav.dagpenger.hendelse.SøknadOmNyRettighetHendelse
@@ -9,24 +10,8 @@ import no.nav.dagpenger.hendelse.SøknadOmNyRettighetHendelse
 class Person {
     private val saker = mutableListOf<Sak>()
 
-    fun oppdaterSak() {
-
-    }
-
-    fun leggTilSak() {
-
-    }
-
     fun søk(søknadshendelse: SøknadOmNyRettighetHendelse) {
-
-        saker.finnEllerOpprettSak(søknadshendelse.søknadsReferanse)
-
-        if (saker.harTilknyttetSøknad(søknadsreferanse = søknadshendelse.søknadsReferanse)) {
-            saker.add(Sak(this, søknadshendelse.søknadsReferanse))
-        } else {
-            saker.hentEksisterendeSak(søknadshendelse).oppdater(søknadshendelse)
-
-        }
+        saker.finnEllerOpprettSak(this,søknadshendelse.søknadsReferanse)
     }
 
     fun harSak(søknadsReferanse: String): Boolean = saker.harTilknyttetSøknad(søknadsReferanse)
