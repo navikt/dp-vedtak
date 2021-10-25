@@ -1,6 +1,7 @@
 package no.nav.dagpenger
 
 import no.nav.dagpenger.hendelse.ProsessResultatHendelse
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -23,6 +24,7 @@ internal class VedtakTest {
         val hendelse = ProsessResultatHendelse(utfall = false)
 
         person.håndter(hendelse)
+        assertFalse(person.harDagpenger());
     }
 
     @Test
