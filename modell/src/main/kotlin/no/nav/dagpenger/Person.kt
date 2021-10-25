@@ -10,9 +10,10 @@ class Person private constructor(
 
     fun håndter(hendelse: ProsessResultatHendelse) {
 
-        if(vedtak.none {
+        if (vedtak.none {
             it.håndter(hendelse)
-        }) { vedtak.add(hendelse.hovedvedtak)}
+        }
+        ) { vedtak.add(hendelse.hovedvedtak) }
     }
 
     fun harDagpenger() = vedtak.any(::erAktiv)
