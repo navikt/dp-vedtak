@@ -15,18 +15,20 @@ internal open class Vedtak private constructor(
     companion object {
         fun erAktiv(vedtak: Vedtak) = vedtak.erAktiv()
 
-        fun avslag() = Vedtak(utfall = Utfall.Avslått, tilstand = Tilstand.Avsluttet)
-        fun innvilg() = Vedtak(utfall = Utfall.Innvilget, tilstand = Tilstand.Aktiv)
-
-        fun forberedVedtak(utfall: Boolean) = ForberedtVedtak(utfall)
+        private fun avslå() = Vedtak(utfall = Utfall.Avslått, tilstand = Tilstand.Avsluttet)
+        private fun innvilg() = Vedtak(utfall = Utfall.Innvilget, tilstand = Tilstand.Aktiv)
 
     }
 
-    class ForberedtVedtak(private val utfall: Boolean) {
-        fun lag(): Vedtak{
-            return when(utfall){
-                true -> Vedtak(Utfall.Innvilget, Tilstand.Aktiv)
-                false -> Vedtak(Utfall.Avslått, Tilstand.Avsluttet)
+    class VedtaksFactory() {
+        companion object {
+            internal fun invilgelse(): Vedtak {
+                //masse logikk
+                return innvilg()
+            }
+            internal fun avslag(): Vedtak {
+                //masse logikk
+                return avslå()
             }
         }
     }
@@ -80,6 +82,7 @@ internal open class Vedtak private constructor(
                 vedtak.endresAv(hendelse.vedtak)
             }
         }
+
         object Avsluttet : Tilstand
     }
 
