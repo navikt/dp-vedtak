@@ -1,5 +1,6 @@
 package no.nav.dagpenger
 
+import no.nav.dagpenger.hendelse.GjenopptakHendelse
 import no.nav.dagpenger.hendelse.ManglendeMeldekortHendelse
 import no.nav.dagpenger.hendelse.ProsessResultatHendelse
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -37,5 +38,19 @@ internal class VedtakTest {
 
         person.håndter(hendelse)
         assertFalse(person.harDagpenger())
+    }
+
+    @Test
+    fun `Skal kunne gjenoppta`() {
+        val person = Person().apply {
+            håndter(ProsessResultatHendelse(utfall = true))
+            håndter(ManglendeMeldekortHendelse())
+        }
+
+        // Ute i verden ett sted (mediator)
+        val hendelse = GjenopptakHendelse(utfall = true)
+
+        person.håndter(hendelse)
+        assertTrue(person.harDagpenger())
     }
 }

@@ -1,6 +1,7 @@
 package no.nav.dagpenger
 
 import no.nav.dagpenger.Vedtak.Companion.erAktiv
+import no.nav.dagpenger.hendelse.GjenopptakHendelse
 import no.nav.dagpenger.hendelse.ManglendeMeldekortHendelse
 import no.nav.dagpenger.hendelse.ProsessResultatHendelse
 
@@ -19,6 +20,10 @@ class Person private constructor(
     }
 
     fun håndter(hendelse: ManglendeMeldekortHendelse) {
+        vedtak.forEach { it.håndter(hendelse) }
+    }
+
+    fun håndter(hendelse: GjenopptakHendelse) {
         vedtak.forEach { it.håndter(hendelse) }
     }
 

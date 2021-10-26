@@ -1,5 +1,6 @@
 package no.nav.dagpenger
 
+import no.nav.dagpenger.hendelse.GjenopptakHendelse
 import no.nav.dagpenger.hendelse.ManglendeMeldekortHendelse
 import no.nav.dagpenger.hendelse.ProsessResultatHendelse
 
@@ -16,6 +17,18 @@ internal open class Vedtak private constructor(
 
         fun avslag() = Vedtak(utfall = Utfall.Avslått, tilstand = Tilstand.Avsluttet)
         fun innvilg() = Vedtak(utfall = Utfall.Innvilget, tilstand = Tilstand.Aktiv)
+
+        fun forberedVedtak(utfall: Boolean) = ForberedtVedtak(utfall)
+
+    }
+
+    class ForberedtVedtak(private val utfall: Boolean) {
+        fun lag(): Vedtak{
+            return when(utfall){
+                true -> Vedtak(Utfall.Innvilget, Tilstand.Aktiv)
+                false -> Vedtak(Utfall.Avslått, Tilstand.Avsluttet)
+            }
+        }
     }
 
     fun erAktiv(): Boolean {
@@ -41,9 +54,15 @@ internal open class Vedtak private constructor(
         tilstand.håndter(this, hendelse)
     }
 
+    fun håndter(hendelse: GjenopptakHendelse) {
+        endretAv?.let { return it.håndter(hendelse) }
+        tilstand.håndter(this, hendelse)
+    }
+
     private interface Tilstand {
         fun håndter(vedtak: Vedtak, hendelse: ProsessResultatHendelse) {}
         fun håndter(vedtak: Vedtak, hendelse: ManglendeMeldekortHendelse) {}
+        fun håndter(vedtak: Vedtak, hendelse: GjenopptakHendelse) {}
 
         object Aktiv : Tilstand {
             override fun håndter(vedtak: Vedtak, hendelse: ManglendeMeldekortHendelse) {
@@ -56,7 +75,11 @@ internal open class Vedtak private constructor(
             }
         }
 
-        object Inaktiv : Tilstand
+        object Inaktiv : Tilstand {
+            override fun håndter(vedtak: Vedtak, hendelse: GjenopptakHendelse) {
+                vedtak.endresAv(hendelse.vedtak)
+            }
+        }
         object Avsluttet : Tilstand
     }
 
