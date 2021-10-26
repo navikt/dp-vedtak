@@ -12,6 +12,14 @@ internal open class Vedtak private constructor(
 ) {
     private constructor(utfall: Utfall, tilstand: Tilstand) : this(utfall, tilstand, null, null)
 
+    internal fun stans(){
+        if (!erAktiv()) {
+            throw IllegalArgumentException("Kan ikke stanse er inaktivt vedtak")
+        }
+        Vedtak(utfall = this.utfall, tilstand = Tilstand.Inaktiv).also {
+            this.endretAv = it
+        }
+    }
     companion object {
         fun erAktiv(vedtak: Vedtak) = vedtak.erAktiv()
 
@@ -26,6 +34,7 @@ internal open class Vedtak private constructor(
                 //masse logikk
                 return innvilg()
             }
+
             internal fun avslag(): Vedtak {
                 //masse logikk
                 return avslå()
@@ -68,12 +77,7 @@ internal open class Vedtak private constructor(
 
         object Aktiv : Tilstand {
             override fun håndter(vedtak: Vedtak, hendelse: ManglendeMeldekortHendelse) {
-                Vedtak(
-                    utfall = vedtak.utfall,
-                    tilstand = Inaktiv
-                ).also {
-                    vedtak.endresAv(it)
-                }
+                vedtak.stans()
             }
         }
 
