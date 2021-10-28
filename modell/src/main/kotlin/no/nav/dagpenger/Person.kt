@@ -6,9 +6,10 @@ import no.nav.dagpenger.hendelse.ManglendeMeldekortHendelse
 import no.nav.dagpenger.hendelse.ProsessResultatHendelse
 
 class Person private constructor(
-    private val vedtak: MutableList<Vedtak>
+    private val vedtak: MutableList<Vedtak>,
+    private val personIdent: PersonIdent
 ) {
-    constructor() : this(mutableListOf())
+    constructor(personIdent: PersonIdent) : this(mutableListOf(), personIdent)
 
     fun håndter(hendelse: ProsessResultatHendelse) {
         if (vedtak.none {
@@ -28,4 +29,8 @@ class Person private constructor(
     }
 
     fun harDagpenger() = vedtak.any(::erAktiv)
+    fun rettighetTilhørendePerson(): Rettighet? = vedtak.map{ it.hentKandidatForGjennopptak()}.firstOrNull()
+
+
+    class PersonIdent(fnr: String){}
 }

@@ -5,26 +5,35 @@ import no.nav.dagpenger.hendelse.ManglendeMeldekortHendelse
 import no.nav.dagpenger.hendelse.ProsessResultatHendelse
 
 internal open class Vedtak private constructor(
+    private val rettighet: Rettighet,
     private val utfall: Utfall,
     private val tilstand: Tilstand,
     private var omgjortAv: Vedtak?,
     private var endretAv: Vedtak?,
 ) {
-    private constructor(utfall: Utfall, tilstand: Tilstand) : this(utfall, tilstand, null, null)
 
-    internal fun stans(){
+    private constructor(rettighet: Rettighet, utfall: Utfall, tilstand: Tilstand) : this(
+        rettighet,
+        utfall,
+        tilstand,
+        null,
+        null
+    )
+
+    internal fun stans() {
         if (!erAktiv()) {
             throw IllegalArgumentException("Kan ikke stanse er inaktivt vedtak")
         }
-        Vedtak(utfall = this.utfall, tilstand = Tilstand.Inaktiv).also {
+        Vedtak(rettighet, utfall = this.utfall, tilstand = Tilstand.Inaktiv).also {
             this.endretAv = it
         }
     }
+
     companion object {
         fun erAktiv(vedtak: Vedtak) = vedtak.erAktiv()
 
-        private fun avslå() = Vedtak(utfall = Utfall.Avslått, tilstand = Tilstand.Avsluttet)
-        private fun innvilg() = Vedtak(utfall = Utfall.Innvilget, tilstand = Tilstand.Aktiv)
+        private fun avslå() = Vedtak(rettighet = Rettighet(), utfall = Utfall.Avslått, tilstand = Tilstand.Avsluttet)
+        private fun innvilg() = Vedtak(rettighet = Rettighet(), utfall = Utfall.Innvilget, tilstand = Tilstand.Aktiv)
 
     }
 
@@ -68,6 +77,15 @@ internal open class Vedtak private constructor(
     fun håndter(hendelse: GjenopptakHendelse) {
         endretAv?.let { return it.håndter(hendelse) }
         tilstand.håndter(this, hendelse)
+    }
+
+    fun hentKandidatForGjennopptak(): Rettighet? {
+        if (endretAv != null) {
+            return endretAv?.hentKandidatForGjennopptak()
+        }
+        if (this.tilstand == Tilstand.Inaktiv)
+            return this.rettighet
+        return null
     }
 
     private interface Tilstand {
