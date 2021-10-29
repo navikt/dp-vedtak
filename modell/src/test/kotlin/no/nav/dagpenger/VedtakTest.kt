@@ -2,8 +2,11 @@ package no.nav.dagpenger
 
 import no.nav.dagpenger.hendelse.GjenopptakHendelse
 import no.nav.dagpenger.hendelse.ManglendeMeldekortHendelse
+import no.nav.dagpenger.hendelse.OmgjøringHendelse
+import no.nav.dagpenger.hendelse.OmgjøringsVedtak
 import no.nav.dagpenger.hendelse.ProsessResultatHendelse
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -16,11 +19,11 @@ internal class VedtakTest {
     @Test
     fun `Person med ident har ingen rettighet som kan gjennopptas`(){
         val person = Person(ident)
-        assertNull(person.rettighetTilhørendePerson())
+        assertNull(person.hentKandidatForGjennopptak())
         person.also {
             it.håndter(ProsessResultatHendelse(true))
         }
-        assertNull(person.rettighetTilhørendePerson())
+        assertNull(person.hentKandidatForGjennopptak())
 
     }
 
@@ -30,7 +33,7 @@ internal class VedtakTest {
             it.håndter(ProsessResultatHendelse(true))
             it.håndter(ManglendeMeldekortHendelse())
 
-            assertNotNull(it.rettighetTilhørendePerson())
+            assertNotNull(it.hentKandidatForGjennopptak())
         }
     }
 
@@ -52,6 +55,8 @@ internal class VedtakTest {
         person.håndter(hendelse)
         assertFalse(person.harDagpenger())
     }
+
+    //end TODO
 
     @Test
     fun `Har ikke sendt meldekort, stanser vedtak`() {
@@ -79,4 +84,21 @@ internal class VedtakTest {
         person.håndter(hendelse)
         assertTrue(person.harDagpenger())
     }
+
+    @Test
+    fun `Kan omgjøre vedtak`() {
+        Person(ident).also {
+            it.håndter(ProsessResultatHendelse(true))
+            it.håndter(ManglendeMeldekortHendelse())
+            it.håndter(GjenopptakHendelse(utfall = true))
+            val rettighetFørOmgjøring = it.hentGjeldendeRettighet();
+
+            val omgjortRettighet = Rettighet(dagsats=1500)
+            val vedtaksId = "sagahjs7657"
+            it.håndter(OmgjøringHendelse(OmgjøringsVedtak(vedtaksId,omgjortRettighet)))
+            assertNotEquals(it.hentGjeldendeRettighet(), rettighetFørOmgjøring)
+        }
+
+    }
+
 }

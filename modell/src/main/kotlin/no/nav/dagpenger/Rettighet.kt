@@ -1,3 +1,3 @@
 package no.nav.dagpenger
 
-class Rettighet() {}
+class Rettighet(dagsats: Int) {}

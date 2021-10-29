@@ -3,6 +3,7 @@ package no.nav.dagpenger
 import no.nav.dagpenger.Vedtak.Companion.erAktiv
 import no.nav.dagpenger.hendelse.GjenopptakHendelse
 import no.nav.dagpenger.hendelse.ManglendeMeldekortHendelse
+import no.nav.dagpenger.hendelse.OmgjøringHendelse
 import no.nav.dagpenger.hendelse.ProsessResultatHendelse
 
 class Person private constructor(
@@ -11,10 +12,15 @@ class Person private constructor(
 ) {
     constructor(personIdent: PersonIdent) : this(mutableListOf(), personIdent)
 
+    fun harDagpenger() = vedtak.any(::erAktiv)
+    fun hentKandidatForGjennopptak(): Rettighet? = vedtak.map { it.hentKandidatForGjennopptak() }.firstOrNull()
+    fun hentGjeldendeRettighet(): Rettighet? = vedtak.map { it.gjeldendeRettighet() }.firstOrNull()
+
+
     fun håndter(hendelse: ProsessResultatHendelse) {
         if (vedtak.none {
-            it.håndter(hendelse)
-        }
+                it.håndter(hendelse)
+            }
         ) {
             vedtak.add(hendelse.vedtak)
         }
@@ -28,9 +34,13 @@ class Person private constructor(
         vedtak.forEach { it.håndter(hendelse) }
     }
 
-    fun harDagpenger() = vedtak.any(::erAktiv)
-    fun rettighetTilhørendePerson(): Rettighet? = vedtak.map{ it.hentKandidatForGjennopptak()}.firstOrNull()
+    fun håndter(omgjøringHendelse: OmgjøringHendelse) {
+        vedtak.forEach { it.håndter(omgjøringHendelse) }
+    }
 
-
-    class PersonIdent(fnr: String){}
+    class PersonIdent(fnr: String) {}
 }
+
+
+
+

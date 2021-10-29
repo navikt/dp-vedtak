@@ -2,6 +2,7 @@ package no.nav.dagpenger
 
 import no.nav.dagpenger.hendelse.GjenopptakHendelse
 import no.nav.dagpenger.hendelse.ManglendeMeldekortHendelse
+import no.nav.dagpenger.hendelse.OmgjøringHendelse
 import no.nav.dagpenger.hendelse.ProsessResultatHendelse
 
 internal open class Vedtak private constructor(
@@ -86,6 +87,21 @@ internal open class Vedtak private constructor(
         if (this.tilstand == Tilstand.Inaktiv)
             return this.rettighet
         return null
+    }
+
+    fun gjeldendeRettighet(): Rettighet? {
+        if(endretAv != null){
+            return endretAv?.gjeldendeRettighet()
+        }
+        return this.rettighet
+    }
+
+    fun håndter(omgjøringHendelse: OmgjøringHendelse) {
+        if(omgjortAv != null){
+            omgjortAv.håndter()
+        }
+        // if vedtaksId == omgjøringsvedtak.vedtaksId
+
     }
 
     private interface Tilstand {
