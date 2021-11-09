@@ -1,43 +1,22 @@
 package no.nav.dagpenger
 
-import no.nav.dagpenger.Vedtak.Companion.erAktiv
-import no.nav.dagpenger.hendelse.GjenopptakHendelse
-import no.nav.dagpenger.hendelse.ManglendeMeldekortHendelse
-import no.nav.dagpenger.hendelse.OmgjøringHendelse
-import no.nav.dagpenger.hendelse.ProsessResultatHendelse
+import no.nav.dagpenger.hendelse.HarRettighetBehovHendelse
+import no.nav.dagpenger.hendelse.NyRettighetHendelse
 
 class Person private constructor(
-    private val vedtak: MutableList<Vedtak>,
+    private val avtaler: MutableList<Avtale>,
     private val personIdent: PersonIdent
 ) {
+    fun håndter(harRettighetBehovHendelse: HarRettighetBehovHendelse) {
+        TODO("Not yet implemented")
+    }
+    fun håndter(nyRettighetHendelse: NyRettighetHendelse) {
+        avtaler.add(Avtale(nyRettighetHendelse.søknad_uuid))
+    }
+
+    fun aktivAvtale(): Avtale? = avtaler.lastOrNull { it.erAktiv() }
+
     constructor(personIdent: PersonIdent) : this(mutableListOf(), personIdent)
-
-    fun harDagpenger() = vedtak.any(::erAktiv)
-    fun hentKandidatForGjennopptak(): Rettighet? = vedtak.map { it.hentKandidatForGjennopptak() }.firstOrNull()
-    fun hentGjeldendeRettighet(): Rettighet? = vedtak.map { it.gjeldendeRettighet() }.firstOrNull()
-
-
-    fun håndter(hendelse: ProsessResultatHendelse) {
-        if (vedtak.none {
-                it.håndter(hendelse)
-            }
-        ) {
-            vedtak.add(hendelse.vedtak)
-        }
-    }
-
-    fun håndter(hendelse: ManglendeMeldekortHendelse) {
-        vedtak.forEach { it.håndter(hendelse) }
-    }
-
-    fun håndter(hendelse: GjenopptakHendelse) {
-        vedtak.forEach { it.håndter(hendelse) }
-    }
-
-    fun håndter(omgjøringHendelse: OmgjøringHendelse) {
-        vedtak.forEach { it.håndter(omgjøringHendelse) }
-    }
-
     class PersonIdent(fnr: String) {}
 }
 
