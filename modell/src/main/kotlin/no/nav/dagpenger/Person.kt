@@ -17,9 +17,5 @@ class Person private constructor(
     fun aktivAvtale(): Avtale? = avtaler.lastOrNull { it.erAktiv() }
 
     constructor(personIdent: PersonIdent) : this(mutableListOf(), personIdent)
-    class PersonIdent(fnr: String) {}
+    class PersonIdent(fnr: String)
 }
-
-
-
-
