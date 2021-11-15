@@ -1,7 +1,8 @@
-package no.nav.dagpenger
+package no.nav.dagpenger.vedtak.mediator
 
-import no.nav.dagpenger.Person.PersonIdent
-import no.nav.dagpenger.hendelse.NyRettighetHendelse
+import no.nav.dagpenger.vedtak.modell.Person.PersonIdent
+import no.nav.dagpenger.vedtak.modell.hendelse.NyRettighetHendelse
+import no.nav.dagpenger.vedtak.modell.Person
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import java.util.UUID

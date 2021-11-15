@@ -1,7 +1,7 @@
-package no.nav.dagpenger
+package no.nav.dagpenger.vedtak.modell
 
-import no.nav.dagpenger.hendelse.HarRettighetBehovHendelse
-import no.nav.dagpenger.hendelse.NyRettighetHendelse
+import no.nav.dagpenger.vedtak.modell.hendelse.HarRettighetBehovHendelse
+import no.nav.dagpenger.vedtak.modell.hendelse.NyRettighetHendelse
 
 class Person private constructor(
     private val avtaler: MutableList<Avtale>,

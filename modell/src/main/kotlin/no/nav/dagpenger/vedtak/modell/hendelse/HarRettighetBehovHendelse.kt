@@ -1,4 +1,4 @@
-package no.nav.dagpenger.hendelse
+package no.nav.dagpenger.vedtak.modell.hendelse
 
 class HarRettighetBehovHendelse(val fnr: String) : Hendelse
 
