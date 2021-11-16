@@ -1,43 +1,45 @@
 package no.nav.dagpenger.vedtak.mediator
 
-import no.nav.dagpenger.vedtak.modell.Person.PersonIdent
-import no.nav.dagpenger.vedtak.modell.hendelse.NyRettighetHendelse
 import no.nav.dagpenger.vedtak.modell.Person
-import org.junit.jupiter.api.Assertions.assertNotNull
+import no.nav.dagpenger.vedtak.modell.hendelse.AvslagHendelse
+import no.nav.dagpenger.vedtak.modell.hendelse.InnvilgetProsessresultatHendelse
+import no.nav.dagpenger.vedtak.modell.hendelse.StansHendelse
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.util.UUID
 
 internal class PersonTest {
-    val person = Person(PersonIdent("12345678909"))
+    val person = Person()
 
     @Test
-    fun `Person med ident har ingen rettighet som kan gjennopptas`() {
-        // person.håndter(HarRettighetBehovHendelse("12345678909"))
+    fun `Person har ikke hatt tidligere, og får melding om ny rettighet`() {
+        person.håndter(InnvilgetProsessresultatHendelse())
+
+        assertEquals(1, person.avtaler.size)
+        assertEquals(1, person.vedtak.size)
     }
 
     @Test
-    fun `Person med indent har en rettighet og svarer med søknadsid`() {
+    fun `Person har ikke hatt tidligere, og får melding om avslag`() {
+        person.håndter(AvslagHendelse())
+
+        assertEquals(1, person.vedtak.size)
+        assertEquals(0, person.avtaler.size)
     }
 
     @Test
-    fun `Oppretter ny avtale`() {
-        person.håndter(NyRettighetHendelse(UUID.randomUUID().toString()))
-        assertNotNull(person.aktivAvtale())
+    fun `Person har rettighet fra før og skal stanse denne`() {
+        person.håndter(InnvilgetProsessresultatHendelse())
+        person.håndter(StansHendelse())
+
+        assertEquals(2, person.vedtak.size)
+        assertEquals(1, person.avtaler.size)
     }
 
     @Test
-    fun `Har fått prosessresultat fra quiz der noe ikke er oppfylt avslag`() {
-    }
+    fun `Nytt prosessresultat fra quiz om endring i fakta`(){
+        person.håndter(InnvilgetProsessresultatHendelse())
+        person.håndter(InnvilgetProsessresultatHendelse())
 
-    @Test
-    fun `Har ikke sendt meldekort, stanser vedtak`() {
-    }
 
-    @Test
-    fun `Oppretter gjennopptaksvedtak`() {
-    }
-
-    @Test
-    fun `Kan omgjøre vedtak`() {
     }
 }

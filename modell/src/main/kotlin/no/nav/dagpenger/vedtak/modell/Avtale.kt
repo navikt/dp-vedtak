@@ -1,5 +1,8 @@
 package no.nav.dagpenger.vedtak.modell
 
-class Avtale(søknadUuid: String) {
+class Avtale() {
+
+    val beregningsregler = listOf<Beregningsregel>()
+
     fun erAktiv() = true
 }
