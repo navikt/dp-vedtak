@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.mediator
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.hendelse.AvslagHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.InnvilgetProsessresultatHendelse
+import no.nav.dagpenger.vedtak.modell.hendelse.NyttBarnVurdertHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.StansHendelse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -36,10 +37,20 @@ internal class PersonTest {
     }
 
     @Test
-    fun `Nytt prosessresultat fra quiz om endring i fakta`(){
+    fun `Nytt prosessresultat (nytt barn) fra quiz om endring i fakta`() {
         person.håndter(InnvilgetProsessresultatHendelse())
         person.håndter(InnvilgetProsessresultatHendelse())
+    }
 
+    @Test
+    fun `Nytt barn fører til økt sats`() {
+        person.håndter(NyttBarnVurdertHendelse(resultat = true))
+
+        assertEquals(1000, person.avtaler.last().sats())
+    }
+
+    @Test
+    fun `Nytt barn fører ikke til økt sats`() {
 
     }
 }

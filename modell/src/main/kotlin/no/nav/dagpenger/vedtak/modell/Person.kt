@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.modell.hendelse.AvslagHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.InnvilgetProsessresultatHendelse
+import no.nav.dagpenger.vedtak.modell.hendelse.NyttBarnVurdertHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.StansHendelse
 
 class Person private constructor(
@@ -33,5 +34,9 @@ class Person private constructor(
             // her må det skje noe
             vedtak.add(Stansvedtak(stansHendelse, it))
         }
+    }
+
+    fun håndter(nyttBarnHendelse: NyttBarnVurdertHendelse) {
+        val nyttBarnHendelse =
     }
 }

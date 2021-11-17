@@ -1,8 +1,13 @@
 package no.nav.dagpenger.vedtak.modell
 
-class Avtale() {
+internal class Avtale {
 
     val beregningsregler = listOf<Beregningsregel>()
 
     fun erAktiv() = true
+
+    internal fun sats() {
+        beregningsregler.filterIsInstance<SatsBeregningsregel>().last()
+    }
+
 }
