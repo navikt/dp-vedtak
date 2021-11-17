@@ -1,5 +1,5 @@
 package no.nav.dagpenger.vedtak.modell
 
-class SatsBeregningsregel : Beregningsregel() {
+class SatsBeregningsregel(val sats: Double) : Beregningsregel() {
 
 }

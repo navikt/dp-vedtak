@@ -1,3 +1,3 @@
 package no.nav.dagpenger.vedtak.modell.hendelse
 
-class InnvilgetProsessresultatHendelse() : Hendelse
+class InnvilgetProsessresultatHendelse(val sats: Double) : Hendelse

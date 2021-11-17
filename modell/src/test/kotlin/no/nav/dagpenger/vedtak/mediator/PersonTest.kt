@@ -13,10 +13,10 @@ internal class PersonTest {
 
     @Test
     fun `Person har ikke hatt tidligere, og får melding om ny rettighet`() {
-        person.håndter(InnvilgetProsessresultatHendelse())
-
+        innvilgVedtak()
         assertEquals(1, person.avtaler.size)
         assertEquals(1, person.vedtak.size)
+        assertEquals(500.0,person.avtaler.last().sats())
     }
 
     @Test
@@ -29,28 +29,28 @@ internal class PersonTest {
 
     @Test
     fun `Person har rettighet fra før og skal stanse denne`() {
-        person.håndter(InnvilgetProsessresultatHendelse())
+        innvilgVedtak()
         person.håndter(StansHendelse())
 
         assertEquals(2, person.vedtak.size)
         assertEquals(1, person.avtaler.size)
     }
 
-    @Test
-    fun `Nytt prosessresultat (nytt barn) fra quiz om endring i fakta`() {
-        person.håndter(InnvilgetProsessresultatHendelse())
-        person.håndter(InnvilgetProsessresultatHendelse())
-    }
 
     @Test
     fun `Nytt barn fører til økt sats`() {
-        person.håndter(NyttBarnVurdertHendelse(resultat = true))
-
-        assertEquals(1000, person.avtaler.last().sats())
+        innvilgVedtak()
+        person.håndter(NyttBarnVurdertHendelse(resultat = true, sats = 1000.0))
+        assertEquals(1000.0, person.avtaler.last().sats())
     }
 
     @Test
     fun `Nytt barn fører ikke til økt sats`() {
 
+
+    }
+
+    fun innvilgVedtak(sats: Double = 500.0) {
+        person.håndter(InnvilgetProsessresultatHendelse(sats = sats))
     }
 }

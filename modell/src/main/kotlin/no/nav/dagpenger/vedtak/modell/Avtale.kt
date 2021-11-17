@@ -1,13 +1,20 @@
 package no.nav.dagpenger.vedtak.modell
 
-internal class Avtale {
+class Avtale {
 
-    val beregningsregler = listOf<Beregningsregel>()
+    private val beregningsregler = mutableListOf<Beregningsregel>()
 
     fun erAktiv() = true
 
-    internal fun sats() {
-        beregningsregler.filterIsInstance<SatsBeregningsregel>().last()
+    internal fun sats() = beregningsregler.filterIsInstance<SatsBeregningsregel>().last().sats
+
+
+    internal fun endre() {
+        TODO("Not yet implemented")
+    }
+
+    fun leggTilBeregningsregel(beregningsregel: Beregningsregel) {
+        beregningsregler.add(beregningsregel)
     }
 
 }

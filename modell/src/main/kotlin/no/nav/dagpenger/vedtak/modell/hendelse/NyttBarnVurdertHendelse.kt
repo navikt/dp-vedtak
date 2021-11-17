@@ -1,5 +1,5 @@
 package no.nav.dagpenger.vedtak.modell.hendelse
 
-class NyttBarnVurdertHendelse {
+class NyttBarnVurdertHendelse(val resultat: Boolean, val sats: Double): Hendelse {
 
 }
