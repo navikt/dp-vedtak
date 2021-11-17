@@ -20,7 +20,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
-        //logg.info { "Starter dp-mottak" }
+        // logg.info { "Starter dp-mottak" }
     }
 /*
     private fun subscribe(meldingObserver: MeldingObserver) {
@@ -31,4 +31,3 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
         mediator.nySøknad(fnr)
     } */
 }
-
