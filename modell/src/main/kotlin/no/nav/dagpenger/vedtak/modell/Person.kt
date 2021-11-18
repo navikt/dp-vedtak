@@ -3,9 +3,10 @@ package no.nav.dagpenger.vedtak.modell
 import no.nav.dagpenger.vedtak.modell.beregningsregler.SatsBeregningsregel
 import no.nav.dagpenger.vedtak.modell.beregningsregler.StønadsperiodeBeregningsregel
 import no.nav.dagpenger.vedtak.modell.hendelse.AvslagHendelse
+import no.nav.dagpenger.vedtak.modell.hendelse.BarnetilleggSkalAvslåsHendelse
+import no.nav.dagpenger.vedtak.modell.hendelse.BarnetilleggSkalInnvilgesHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.InnsendtMeldekortHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.InnvilgetProsessresultatHendelse
-import no.nav.dagpenger.vedtak.modell.hendelse.NyttBarnVurdertHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.StansHendelse
 
 class Person private constructor(
@@ -41,23 +42,21 @@ class Person private constructor(
         }
     }
 
-    fun håndter(nyttBarnVurdertHendelse: NyttBarnVurdertHendelse) {
-        if (nyttBarnVurdertHendelse.resultat) {
-            avtaler.gjeldende().also {
-                requireNotNull(nyttBarnVurdertHendelse.sats) { "Sats kan ikke være null" }
-                it.leggTilBeregningsregel(SatsBeregningsregel(sats = nyttBarnVurdertHendelse.sats))
-                vedtak.add(Endringsvedtak(nyttBarnVurdertHendelse, it))
-            }
-        } else {
-            vedtak.add(Endringsvedtak(nyttBarnVurdertHendelse, avtaler.gjeldende()))
+    fun håndter(nyttBarnVurdertHendelse: BarnetilleggSkalInnvilgesHendelse) {
+        avtaler.gjeldende().also {
+            it.leggTilBeregningsregel(SatsBeregningsregel(sats = nyttBarnVurdertHendelse.sats))
+            vedtak.add(Endringsvedtak(nyttBarnVurdertHendelse, it))
         }
     }
 
     fun håndter(innsendtMeldekortHendelse: InnsendtMeldekortHendelse) {
-        avtaler.gjeldende().also {
-            it.leggTilBeregningsregel(StønadsperiodeBeregningsregel(innsendtMeldekortHendelse.periode))
-        }
+        avtaler.gjeldende().leggTilBeregningsregel(
+            StønadsperiodeBeregningsregel(innsendtMeldekortHendelse.periode)
+        )
     }
+
+    fun håndter(barnetilleggSkalAvslåsHendelse: BarnetilleggSkalAvslåsHendelse) =
+        vedtak.add(Endringsvedtak(barnetilleggSkalAvslåsHendelse, avtaler.gjeldende()))
 }
 
 private fun MutableList<Avtale>.gjeldende() = this.last() // TODO sjekk aktiv
