@@ -3,14 +3,8 @@ package no.nav.dagpenger.vedtak.modell.tid.quantity
 // Understands a specific metric
 class Tidsenhet {
     companion object {
-
-
-        internal val enhet = Tidsenhet()
-        internal val gange = Tidsenhet(1, enhet)
-        internal val prosent = Tidsenhet(0.01, enhet)
-
-        internal val day = Tidsenhet()
-        internal val week = Tidsenhet(5, day)
+        internal val arbeidsdag = Tidsenhet()
+        internal val arbeidsuke = Tidsenhet(5, arbeidsdag)
     }
     private val baseEnhet: Tidsenhet
     private val baseEnhetRate: Double
@@ -35,12 +29,34 @@ class Tidsenhet {
         require(this.isCompatible(other)) { "Incompatible Unit types" }
         return (otherAmount - other.offset) * other.baseEnhetRate / this.baseEnhetRate + this.offset
     }
-
-    internal fun hashCode(amount: Double) = ((amount - offset) * baseEnhetRate).hashCode()
-
     internal fun isCompatible(other: Tidsenhet) = this.baseEnhet == other.baseEnhet
 
 }
 
-val Number.dager get(): RatioQuantity = SpecificQuantity(this, Tidsenhet.day)
-val Number.uker get(): RatioQuantity = SpecificQuantity(this, Tidsenhet.week)
+internal class SpesifikkTid(private val antall: Number, private val enhet: Tidsenhet){
+    internal fun zero() = SpesifikkTid(0, enhet)
+    operator fun plus(other: SpesifikkTid): SpesifikkTid? {
+        return oversettTilSpesifikkTid(oversettTilBaseEnhet(this) + oversettTilBaseEnhet(other), this.enhet)
+    }
+
+    private fun oversettTilSpesifikkTid(any: Any, enhet: Tidsenhet): SpesifikkTid {
+        TODO("Not yet implemented")
+    }
+
+    private fun oversettTilBaseEnhet(spesifikkTid: SpesifikkTid): Double {
+        TODO("Not yet implemented")
+    }
+
+
+    /* override operator fun plus(other: Tidsenhet)
+             = SpesifikkTid(this.antall + konvertertAntallEllerZero(other), this.enhet)
+
+     override operator fun minus(other: RatioQuantity) = this + -other
+
+     private fun konvertertAntallEllerZero(other:Tidsenhet){
+         if(other is SpesifikkTid) convertedAmount(other) else 0.0
+     }*/
+}
+
+val Number.arbeidsdager get() = SpesifikkTid(this, Tidsenhet.arbeidsdag)
+val Number.arbeidsuker get() = SpesifikkTid(this, Tidsenhet.arbeidsuke)

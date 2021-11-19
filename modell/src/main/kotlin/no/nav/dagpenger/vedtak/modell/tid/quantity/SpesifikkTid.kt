@@ -1,17 +1,18 @@
 package no.nav.dagpenger.vedtak.modell.tid.quantity
 
 // Understands a specific measurement
-internal class SpecificQuantity internal constructor(amount: Number, private val unit: Tidsenhet)
+/*
+internal class SpesifikkTid internal constructor(amount: Number, private val unit: Tidsenhet)
     : IntervalQuantity(amount, unit), RatioQuantity {
 
-    internal fun zero() = SpecificQuantity(0, unit)
+    internal fun zero() = SpesifikkTid(0, unit)
 
     override operator fun unaryPlus() = this
 
-    override operator fun unaryMinus() = SpecificQuantity(-amount, unit)
+    override operator fun unaryMinus() = SpesifikkTid(-amount, unit)
 
     override operator fun plus(other: RatioQuantity)
-            = SpecificQuantity(this.amount + convertedAmountOrZero(other), this.unit)
+            = SpesifikkTid(this.amount + convertedAmountOrZero(other), this.unit)
 
     override operator fun minus(other: RatioQuantity) = this + -other
 
@@ -27,7 +28,7 @@ internal class SpecificQuantity internal constructor(amount: Number, private val
     override fun compareTo(other: RatioQuantity) = this.amount.compareTo(convertedAmountOrZero(other))
 
     private fun convertedAmountOrZero(other: RatioQuantity) =
-        if(other is SpecificQuantity) convertedAmount(other) else 0.0
+        if(other is SpesifikkTid) convertedAmount(other) else 0.0
 }
 
 interface RatioQuantity : Comparable<RatioQuantity> {
@@ -54,5 +55,5 @@ internal object UniversalZero: RatioQuantity {
     }
 
     override fun compareTo(other: RatioQuantity) =
-        if (other is SpecificQuantity) other.zero().compareTo(other) else 0
-}
+        if (other is SpesifikkTid) other.zero().compareTo(other) else 0
+} */

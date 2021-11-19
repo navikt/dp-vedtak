@@ -1,9 +1,9 @@
 package no.nav.dagpenger.vedtak.modell.tid.quantity
 
 import kotlin.math.absoluteValue
-
+/*
 // Understands a specific measurement
-open class IntervalQuantity internal constructor(amount: Number, private val unit: Tidsenhet) : Orderable<IntervalQuantity> {
+open class IntervalQuantity internal constructor(amount: Number, private val unit: Tidsenhet)  {
     private val epsilon = 0.000000001
     internal val amount = amount.toDouble()
 
@@ -15,8 +15,4 @@ open class IntervalQuantity internal constructor(amount: Number, private val uni
     private fun isCompatible(other: IntervalQuantity) = this.unit.isCompatible(other.unit)
 
     internal fun convertedAmount(other: IntervalQuantity) = this.unit.convertedAmount(other.amount, other.unit)
-
-    override fun hashCode() = unit.hashCode(amount)
-
-    override fun isBetterThan(other: IntervalQuantity) = this.amount > convertedAmount(other)
-}
+}*/
