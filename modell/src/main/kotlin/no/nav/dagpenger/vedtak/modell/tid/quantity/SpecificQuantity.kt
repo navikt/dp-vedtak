@@ -1,7 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.tid.quantity
 
 // Understands a specific measurement
-internal class SpecificQuantity internal constructor(amount: Number, private val unit: Unitt)
+internal class SpecificQuantity internal constructor(amount: Number, private val unit: Tidsenhet)
     : IntervalQuantity(amount, unit), RatioQuantity {
 
     internal fun zero() = SpecificQuantity(0, unit)
