@@ -13,7 +13,7 @@ internal class PersonTest {
     val person = Person()
 
     @Test
-    fun `Person har ikke hatt tidligere, og får melding om ny rettighet`() {
+    fun `Innvilgelse av rettighet for person som ikke har hatt dagpenger før`() {
         innvilgVedtakOgAvtale()
         assertEquals(1, person.avtaler.size)
         assertEquals(1, person.vedtak.size)
@@ -21,7 +21,7 @@ internal class PersonTest {
     }
 
     @Test
-    fun `Person har ikke hatt tidligere, og får melding om avslag`() {
+    fun `Avslag på rettighet for person som ikke har hatt dagpenger før`() {
         person.håndter(AvslagHendelse())
 
         assertEquals(1, person.vedtak.size)
@@ -29,7 +29,7 @@ internal class PersonTest {
     }
 
     @Test
-    fun `Person har rettighet fra før og skal stanse denne`() {
+    fun `Stans for person som har rettighet`() {
         innvilgVedtakOgAvtale()
         person.håndter(StansHendelse())
 
@@ -38,7 +38,7 @@ internal class PersonTest {
     }
 
     @Test
-    fun `Nytt barn fører til økt sats på gjeldende avtale`() {
+    fun `Nytt barn fører til økt sats på gjeldende rettighet`() {
         innvilgVedtakOgAvtale()
         assertEquals(1, person.vedtak.size)
         assertEquals(1, person.avtaler.size)
@@ -61,7 +61,7 @@ internal class PersonTest {
     }
 
     @Test
-    fun `Innsending av meldekort fører til oppdatering av dagpenge periode på avtalen men ikke nytt vedtak`() {
+    fun `Innsending av meldekort fører til oppdatering av dagpengeperiode på avtalen men ikke nytt vedtak`() {
         innvilgVedtakOgAvtale()
         person.håndter(InnsendtMeldekortHendelse())
     }
