@@ -17,7 +17,7 @@ class Tidsenhet {
     }
 
     private constructor(relativeRatio: Number, relativeUnit: Tidsenhet) :
-                this(relativeRatio, 0.0, relativeUnit)
+        this(relativeRatio, 0.0, relativeUnit)
 
     private constructor(relativeRatio: Number, offset: Number, relativeUnit: Tidsenhet) {
         baseEnhet = relativeUnit.baseEnhet
@@ -30,10 +30,9 @@ class Tidsenhet {
         return (otherAmount - other.offset) * other.baseEnhetRate / this.baseEnhetRate + this.offset
     }
     internal fun isCompatible(other: Tidsenhet) = this.baseEnhet == other.baseEnhet
-
 }
 
-internal class SpesifikkTid(private val antall: Number, private val enhet: Tidsenhet){
+class SpesifikkTid(private val antall: Number, private val enhet: Tidsenhet) {
     internal fun zero() = SpesifikkTid(0, enhet)
     operator fun plus(other: SpesifikkTid): SpesifikkTid? {
         return oversettTilSpesifikkTid(oversettTilBaseEnhet(this) + oversettTilBaseEnhet(other), this.enhet)
@@ -46,7 +45,6 @@ internal class SpesifikkTid(private val antall: Number, private val enhet: Tidse
     private fun oversettTilBaseEnhet(spesifikkTid: SpesifikkTid): Double {
         TODO("Not yet implemented")
     }
-
 
     /* override operator fun plus(other: Tidsenhet)
              = SpesifikkTid(this.antall + konvertertAntallEllerZero(other), this.enhet)

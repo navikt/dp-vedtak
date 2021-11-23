@@ -1,6 +1,5 @@
 package no.nav.dagpenger.vedtak.modell.tid.quantity
 
-import kotlin.math.absoluteValue
 /*
 // Understands a specific measurement
 open class IntervalQuantity internal constructor(amount: Number, private val unit: Tidsenhet)  {

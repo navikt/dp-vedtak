@@ -1,8 +1,3 @@
 package no.nav.dagpenger.vedtak.modell.konto
 
-internal class StønadsperiodeKonto() : Konto() {
-
-}
-
-
-
+internal class StønadsperiodeKonto() : Konto()

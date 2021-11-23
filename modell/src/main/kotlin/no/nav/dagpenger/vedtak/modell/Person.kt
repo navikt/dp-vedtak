@@ -32,11 +32,9 @@ class Person private constructor(
                     it.leggTilBeregningsregel(SatsBeregningsregel(sats = innvilgetProsessresultatHendelse.sats))
                     vedtak.add(Hovedvedtak(innvilgetProsessresultatHendelse, it))
                 }
-
             }
         }
     }
-
 
     fun håndter(avslagHendelse: AvslagHendelse) {
         vedtak.add(Hovedvedtak(avslagHendelse))
@@ -49,20 +47,19 @@ class Person private constructor(
         }
     }
 
-       fun håndter(nyttBarnVurdertHendelse: BarnetilleggSkalInnvilgesHendelse) {
-           avtaler.gjeldende().also {
-               it?.leggTilBeregningsregel(SatsBeregningsregel(sats = nyttBarnVurdertHendelse.sats))
-               vedtak.add(InnvilgetEndringsvedtak(nyttBarnVurdertHendelse, it))
-           }
-       }
+    fun håndter(nyttBarnVurdertHendelse: BarnetilleggSkalInnvilgesHendelse) {
+        avtaler.gjeldende().also {
+            it?.leggTilBeregningsregel(SatsBeregningsregel(sats = nyttBarnVurdertHendelse.sats))
+            vedtak.add(InnvilgetEndringsvedtak(nyttBarnVurdertHendelse, it))
+        }
+    }
 
-       fun håndter(innsendtMeldekortHendelse: InnsendtMeldekortHendelse) {
-           avtaler.gjeldende()?.leggTilBeregningsregel(
-               StønadsperiodeBeregningsregel(innsendtMeldekortHendelse.periode)
-           )
-       }
+    fun håndter(innsendtMeldekortHendelse: InnsendtMeldekortHendelse) {
+        avtaler.gjeldende()?.leggTilBeregningsregel(
+            StønadsperiodeBeregningsregel(innsendtMeldekortHendelse.periode)
+        )
+    }
 
-       fun håndter(barnetilleggSkalAvslåsHendelse: BarnetilleggSkalAvslåsHendelse) =
-           vedtak.add(InnvilgetEndringsvedtak(barnetilleggSkalAvslåsHendelse, avtaler.gjeldende()))
-
+    fun håndter(barnetilleggSkalAvslåsHendelse: BarnetilleggSkalAvslåsHendelse) =
+        vedtak.add(InnvilgetEndringsvedtak(barnetilleggSkalAvslåsHendelse, avtaler.gjeldende()))
 }
