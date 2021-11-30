@@ -2,6 +2,8 @@ package no.nav.dagpenger.vedtak.modell.tid.quantity
 
 import kotlin.math.absoluteValue
 
+typealias Tid = IntervallMengde
+
 // Understands a specific metric
 class Enhet {
     companion object {
