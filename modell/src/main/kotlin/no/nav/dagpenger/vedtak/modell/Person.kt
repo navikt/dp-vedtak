@@ -2,8 +2,10 @@ package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.modell.beregningsregler.SatsBeregningsregel
 import no.nav.dagpenger.vedtak.modell.beregningsregler.StønadsperiodeBeregningsregel
+import no.nav.dagpenger.vedtak.modell.hendelse.ArenaKvoteForbruk
 import no.nav.dagpenger.vedtak.modell.hendelse.AvslagHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.BarnetilleggSkalAvslåsHendelse
+import no.nav.dagpenger.vedtak.modell.hendelse.BokføringsHendelseType
 import no.nav.dagpenger.vedtak.modell.hendelse.InnvilgetProsessresultatHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.Kvotebruk
 import no.nav.dagpenger.vedtak.modell.hendelse.StansHendelse
@@ -21,11 +23,14 @@ class Person private constructor(
     }
 
     fun håndter(innvilgetProsessresultatHendelse: InnvilgetProsessresultatHendelse) {
-
         avtaler.gjeldende().also { avtale ->
             if (avtale != null) {
                 avtale.endre()
-                avtale.leggTilBeregningsregel(SatsBeregningsregel(sats = innvilgetProsessresultatHendelse.sats, Konto()))
+                avtale.leggTilBeregningsregel(
+                    BokføringsHendelseType.Meldekort,
+                    SatsBeregningsregel(sats = innvilgetProsessresultatHendelse.sats, Konto()),
+                    LocalDate.now()
+                )
                 vedtak.add(InnvilgetEndringsvedtak(innvilgetProsessresultatHendelse, avtale))
             } else {
                 Avtale().also { avtale ->
@@ -33,11 +38,24 @@ class Person private constructor(
                     avtale.leggTilKonto(
                         "Stønadsperiodekonto",
                         Konto().also {
-                            avtale.leggTilBeregningsregel(StønadsperiodeBeregningsregel(it))
-                            Kvotebruk(innvilgetProsessresultatHendelse.periode, LocalDate.now(), LocalDate.now(), this).håndter()
+                            avtale.leggTilBeregningsregel(
+                                BokføringsHendelseType.Kvotebruk,
+                                StønadsperiodeBeregningsregel(it),
+                                LocalDate.now()
+                            )
+                            Kvotebruk(
+                                innvilgetProsessresultatHendelse.periode,
+                                LocalDate.now(),
+                                LocalDate.now(),
+                                this
+                            ).håndter()
                         }
                     )
-                    avtale.leggTilBeregningsregel(SatsBeregningsregel(sats = innvilgetProsessresultatHendelse.sats, Konto()))
+                    avtale.leggTilBeregningsregel(
+                        BokføringsHendelseType.Meldekort,
+                        SatsBeregningsregel(sats = innvilgetProsessresultatHendelse.sats, Konto()),
+                        LocalDate.now()
+                    )
                     vedtak.add(Hovedvedtak(innvilgetProsessresultatHendelse, avtale))
                 }
             }
@@ -53,6 +71,10 @@ class Person private constructor(
             // her må det skje noe
             vedtak.add(Stansvedtak(stansHendelse, it))
         }
+    }
+
+    fun håndter(hendelse: ArenaKvoteForbruk) {
+        Kvotebruk(hendelse.mengde, LocalDate.now(), LocalDate.now(), this).håndter()
     }
 
     fun håndter(barnetilleggSkalAvslåsHendelse: BarnetilleggSkalAvslåsHendelse) =

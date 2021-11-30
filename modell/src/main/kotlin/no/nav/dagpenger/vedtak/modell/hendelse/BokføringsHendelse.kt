@@ -1,22 +1,25 @@
 package no.nav.dagpenger.vedtak.modell.hendelse
 
-import no.nav.dagpenger.vedtak.modell.Mengde
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.konto.Postering
 import java.time.LocalDate
 
-abstract class BokføringsHendelse(val type: BokføringsHendelseType, val datoSett: LocalDate, val datoSkjedd: LocalDate, val person: Person) {
-
+abstract class BokføringsHendelse(
+    private val type: BokføringsHendelseType,
+    val datoSett: LocalDate,
+    private val datoSkjedd: LocalDate,
+    private val person: Person
+) {
     private val bokføringer = mutableListOf<Postering>()
 
     fun leggTilPostering(postering: Postering) {
         bokføringer.add(postering)
     }
 
-    internal fun finnBeregningsregel() = person.gjeldendeAvtale().finnBeregningsregel()
+    private fun finnBeregningsregel() = person.gjeldendeAvtale().finnBeregningsregel(type, datoSkjedd)
 
     fun håndter() {
-        finnBeregningsregel().håndter(this)
+        finnBeregningsregel()?.håndter(this)
     }
 }
 
@@ -24,10 +27,3 @@ enum class BokføringsHendelseType {
     Meldekort,
     Kvotebruk
 }
-
-class Kvotebruk(internal val mengde: Mengde, datoSett: LocalDate, datoSkjedd: LocalDate, person: Person) : BokføringsHendelse(
-    BokføringsHendelseType.Kvotebruk,
-    datoSett,
-    datoSkjedd,
-    person
-)
