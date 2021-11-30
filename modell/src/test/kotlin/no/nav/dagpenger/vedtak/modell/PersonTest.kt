@@ -19,10 +19,10 @@ internal class PersonTest {
         assertEquals(1, person.avtaler.size)
         assertEquals(1, person.vedtak.size)
 
-        assertEquals(52.arbeidsuker, person.gjeldendeAvtale().balanse("Stønadsperiodekonto"))
+        assertEquals(52.arbeidsuker, person.gjeldendeAvtale()?.balanse("Stønadsperiodekonto"))
         person.håndter(ArenaKvoteForbruk((-10).arbeidsdager))
-        assertEquals(50.arbeidsuker, person.gjeldendeAvtale().balanse("Stønadsperiodekonto"))
-        assertEquals(250.arbeidsdager, person.gjeldendeAvtale().balanse("Stønadsperiodekonto"))
+        assertEquals(50.arbeidsuker, person.gjeldendeAvtale()?.balanse("Stønadsperiodekonto"))
+        assertEquals(250.arbeidsdager, person.gjeldendeAvtale()?.balanse("Stønadsperiodekonto"))
     }
 
     @Test

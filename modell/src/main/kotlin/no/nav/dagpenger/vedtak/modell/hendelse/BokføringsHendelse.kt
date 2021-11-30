@@ -16,7 +16,7 @@ abstract class BokføringsHendelse(
         bokføringer.add(postering)
     }
 
-    private fun finnBeregningsregel() = person.gjeldendeAvtale().finnBeregningsregel(type, datoSkjedd)
+    private fun finnBeregningsregel() = person.gjeldendeAvtale()?.finnBeregningsregel(type, datoSkjedd)
 
     fun håndter() {
         finnBeregningsregel()?.håndter(this)
