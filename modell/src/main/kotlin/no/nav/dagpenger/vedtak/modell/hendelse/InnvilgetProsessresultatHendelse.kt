@@ -1,3 +1,5 @@
 package no.nav.dagpenger.vedtak.modell.hendelse
 
-class InnvilgetProsessresultatHendelse(val sats: Double, val periode: Int) : Hendelse
+import no.nav.dagpenger.vedtak.modell.tid.quantity.IntervallMengde
+
+class InnvilgetProsessresultatHendelse(val sats: Double, val periode: IntervallMengde) : Hendelse

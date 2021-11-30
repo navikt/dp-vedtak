@@ -5,6 +5,8 @@ import no.nav.dagpenger.vedtak.modell.hendelse.AvslagHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.BarnetilleggSkalAvslåsHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.InnvilgetProsessresultatHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.StansHendelse
+import no.nav.dagpenger.vedtak.modell.tid.quantity.Enhet.Companion.arbeidsdager
+import no.nav.dagpenger.vedtak.modell.tid.quantity.Enhet.Companion.arbeidsuker
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -17,9 +19,10 @@ internal class PersonTest {
         assertEquals(1, person.avtaler.size)
         assertEquals(1, person.vedtak.size)
 
-        assertEquals(52, person.gjeldendeAvtale().balanse("Stønadsperiodekonto"))
-        person.håndter(ArenaKvoteForbruk(-10))
-        assertEquals(42, person.gjeldendeAvtale().balanse("Stønadsperiodekonto"))
+        assertEquals(52.arbeidsuker, person.gjeldendeAvtale().balanse("Stønadsperiodekonto"))
+        person.håndter(ArenaKvoteForbruk((-10).arbeidsdager))
+        assertEquals(50.arbeidsuker, person.gjeldendeAvtale().balanse("Stønadsperiodekonto"))
+        assertEquals(250.arbeidsdager, person.gjeldendeAvtale().balanse("Stønadsperiodekonto"))
     }
 
     @Test
@@ -75,7 +78,7 @@ internal class PersonTest {
     }
 
     @Test
-    fun `Innsending av meldekort uten avtale fører til hvafornoe?`() {
+    fun `Innsending av meldekort uten avtale fører til hvafornoe`() {
         // TODO: Vil innsending av meldekort uten en avtale føre til en avtale?
     }
 
@@ -84,5 +87,5 @@ internal class PersonTest {
     }
 
     private fun innvilgVedtakOgAvtale(sats: Double = 500.0) =
-        person.håndter(InnvilgetProsessresultatHendelse(sats = sats, periode = 52))
+        person.håndter(InnvilgetProsessresultatHendelse(sats = sats, periode = 52.arbeidsuker))
 }
