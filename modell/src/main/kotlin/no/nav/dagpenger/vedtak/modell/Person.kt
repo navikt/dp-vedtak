@@ -4,10 +4,11 @@ import no.nav.dagpenger.vedtak.modell.beregningsregler.SatsBeregningsregel
 import no.nav.dagpenger.vedtak.modell.beregningsregler.StønadsperiodeBeregningsregel
 import no.nav.dagpenger.vedtak.modell.hendelse.AvslagHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.BarnetilleggSkalAvslåsHendelse
-import no.nav.dagpenger.vedtak.modell.hendelse.BarnetilleggSkalInnvilgesHendelse
-import no.nav.dagpenger.vedtak.modell.hendelse.InnsendtMeldekortHendelse
 import no.nav.dagpenger.vedtak.modell.hendelse.InnvilgetProsessresultatHendelse
+import no.nav.dagpenger.vedtak.modell.hendelse.Kvotebruk
 import no.nav.dagpenger.vedtak.modell.hendelse.StansHendelse
+import no.nav.dagpenger.vedtak.modell.konto.Konto
+import java.time.LocalDate
 
 class Person private constructor(
     val avtaler: MutableList<Avtale>,
@@ -24,13 +25,20 @@ class Person private constructor(
         avtaler.gjeldende().also { avtale ->
             if (avtale != null) {
                 avtale.endre()
-                avtale.leggTilBeregningsregel(SatsBeregningsregel(sats = innvilgetProsessresultatHendelse.sats))
+                avtale.leggTilBeregningsregel(SatsBeregningsregel(sats = innvilgetProsessresultatHendelse.sats, Konto()))
                 vedtak.add(InnvilgetEndringsvedtak(innvilgetProsessresultatHendelse, avtale))
             } else {
-                Avtale().also {
-                    avtaler.add(it)
-                    it.leggTilBeregningsregel(SatsBeregningsregel(sats = innvilgetProsessresultatHendelse.sats))
-                    vedtak.add(Hovedvedtak(innvilgetProsessresultatHendelse, it))
+                Avtale().also { avtale ->
+                    avtaler.add(avtale)
+                    avtale.leggTilKonto(
+                        "Stønadsperiodekonto",
+                        Konto().also {
+                            avtale.leggTilBeregningsregel(StønadsperiodeBeregningsregel(it))
+                            Kvotebruk(innvilgetProsessresultatHendelse.periode, LocalDate.now(), LocalDate.now(), this).håndter()
+                        }
+                    )
+                    avtale.leggTilBeregningsregel(SatsBeregningsregel(sats = innvilgetProsessresultatHendelse.sats, Konto()))
+                    vedtak.add(Hovedvedtak(innvilgetProsessresultatHendelse, avtale))
                 }
             }
         }
@@ -47,19 +55,8 @@ class Person private constructor(
         }
     }
 
-    fun håndter(nyttBarnVurdertHendelse: BarnetilleggSkalInnvilgesHendelse) {
-        avtaler.gjeldende().also {
-            it?.leggTilBeregningsregel(SatsBeregningsregel(sats = nyttBarnVurdertHendelse.sats))
-            vedtak.add(InnvilgetEndringsvedtak(nyttBarnVurdertHendelse, it))
-        }
-    }
-
-    fun håndter(innsendtMeldekortHendelse: InnsendtMeldekortHendelse) {
-        avtaler.gjeldende()?.leggTilBeregningsregel(
-            StønadsperiodeBeregningsregel(innsendtMeldekortHendelse.periode)
-        )
-    }
-
     fun håndter(barnetilleggSkalAvslåsHendelse: BarnetilleggSkalAvslåsHendelse) =
         vedtak.add(InnvilgetEndringsvedtak(barnetilleggSkalAvslåsHendelse, avtaler.gjeldende()))
+
+    internal fun gjeldendeAvtale() = avtaler.last()
 }

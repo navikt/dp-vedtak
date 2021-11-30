@@ -16,7 +16,8 @@ internal class PersonTest {
         innvilgVedtakOgAvtale(sats = 500.0)
         assertEquals(1, person.avtaler.size)
         assertEquals(1, person.vedtak.size)
-        assertEquals(500.0, person.avtaler.gjeldende())
+        // assertEquals(500.0, person.avtaler.gjeldende())
+        assertEquals(52, person.gjeldendeAvtale().balanse("Stønadsperiodekonto"))
     }
 
     @Test
@@ -70,5 +71,9 @@ internal class PersonTest {
         // TODO: Vil innsending av meldekort uten en avtale føre til en avtale?
     }
 
-    private fun innvilgVedtakOgAvtale(sats: Double = 500.0) = person.håndter(InnvilgetProsessresultatHendelse(sats = sats))
+    @Test
+    fun`Kvotebruk fører til redusering i periode`() {
+    }
+
+    private fun innvilgVedtakOgAvtale(sats: Double = 500.0) = person.håndter(InnvilgetProsessresultatHendelse(sats = sats, periode = 52))
 }
