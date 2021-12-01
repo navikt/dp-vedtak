@@ -1,6 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.konto
 
-import no.nav.dagpenger.vedtak.modell.tid.quantity.Enhet.Companion.arbeidsdager
+import no.nav.dagpenger.vedtak.modell.mengder.Enhet.Companion.arbeidsdager
 import java.time.LocalDate
 
 internal class Konto(private val posteringer: MutableList<Postering>) {

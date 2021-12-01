@@ -10,10 +10,10 @@ abstract class BokføringsHendelse(
     private val datoSkjedd: LocalDate,
     private val person: Person
 ) {
-    private val bokføringer = mutableListOf<Postering>()
+    private val posteringerViHarLagetIDenneHendelsen = mutableListOf<Postering>()
 
     fun leggTilPostering(postering: Postering) {
-        bokføringer.add(postering)
+        posteringerViHarLagetIDenneHendelsen.add(postering)
     }
 
     private fun finnBeregningsregel() = person.gjeldendeAvtale()?.finnBeregningsregel(type, datoSkjedd)

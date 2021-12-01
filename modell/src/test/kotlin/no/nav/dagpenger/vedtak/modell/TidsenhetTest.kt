@@ -1,7 +1,7 @@
 package no.nav.dagpenger.vedtak.modell
 
-import no.nav.dagpenger.vedtak.modell.tid.quantity.Enhet.Companion.arbeidsdager
-import no.nav.dagpenger.vedtak.modell.tid.quantity.Enhet.Companion.arbeidsuker
+import no.nav.dagpenger.vedtak.modell.mengder.Enhet.Companion.arbeidsdager
+import no.nav.dagpenger.vedtak.modell.mengder.Enhet.Companion.arbeidsuker
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

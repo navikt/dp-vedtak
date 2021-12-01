@@ -5,18 +5,20 @@ import no.nav.dagpenger.vedtak.modell.beregningsregler.SatsBeregningsregel
 import no.nav.dagpenger.vedtak.modell.beregningsregler.StønadsperiodeBeregningsregel
 import no.nav.dagpenger.vedtak.modell.hendelse.BokføringsHendelseType
 import no.nav.dagpenger.vedtak.modell.konto.Konto
+import no.nav.dagpenger.vedtak.modell.mengder.Penger
 import java.time.LocalDate
+import java.util.UUID
 
-/*private fun ordinær(sats) = Avtale().also {}
-private val perm = ordinær.also { it.leggTilBeregningsregel() }
-private val fisk = Avtale().also {}
-private val konkurs = Avtale().also {}
-private val utdanning = Avtale().also {}
-private val verneplikt = Avtale().also {}*/
-
-internal class Avtale {
-    private val beregningsregler = mutableMapOf<BokføringsHendelseType, TemporalCollection<Beregningsregel>>()
-    private val kontoer = mutableMapOf<String, Konto>()
+internal class Avtale private constructor(
+    internal val avtaleId: UUID,
+    private val beregningsregler: MutableMap<BokføringsHendelseType, TemporalCollection<Beregningsregel>>,
+    private val kontoer: MutableMap<String, Konto>
+) {
+    constructor() : this(
+        avtaleId = UUID.randomUUID(),
+        beregningsregler = mutableMapOf<BokføringsHendelseType, TemporalCollection<Beregningsregel>>(),
+        kontoer = mutableMapOf<String, Konto>()
+    )
 
     companion object {
         fun ordinær(sats: Double, fraOgMed: LocalDate = LocalDate.now()) = Avtale().also { avtale ->
@@ -55,4 +57,10 @@ internal class Avtale {
             ?: throw IllegalArgumentException("Finnes ingen beregningsregler for denne typen")
 
     fun balanse(konto: String) = kontoer[konto]?.balanse()
+
+    fun sats(): Penger {
+        val f = finnBeregningsregel(BokføringsHendelseType.Meldekort, LocalDate.now())
+        require(f is SatsBeregningsregel)
+        return Penger(f.sats)
+    }
 }

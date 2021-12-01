@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak.modell.tid.quantity
+package no.nav.dagpenger.vedtak.modell.mengder
 
 import kotlin.math.absoluteValue
 

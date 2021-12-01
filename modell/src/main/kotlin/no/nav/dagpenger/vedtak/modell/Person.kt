@@ -10,12 +10,18 @@ import no.nav.dagpenger.vedtak.modell.hendelse.Kvotebruk
 import no.nav.dagpenger.vedtak.modell.hendelse.StansHendelse
 import no.nav.dagpenger.vedtak.modell.konto.Konto
 import java.time.LocalDate
+import java.util.UUID
 
 class Person private constructor(
-    internal val avtaler: MutableList<Avtale>,
-    internal val vedtak: MutableList<Vedtak>,
+    private val avtaler: MutableList<Avtale>,
+    private val vedtak: MutableList<Vedtak>,
+    private val observers: MutableList<PersonObserver>,
 ) {
-    constructor() : this(mutableListOf(), mutableListOf())
+    constructor() : this(
+        avtaler = mutableListOf(),
+        vedtak = mutableListOf(),
+        observers = mutableListOf()
+    )
 
     companion object {
         private fun MutableList<Avtale>.gjeldende() = this.firstOrNull { avtale -> avtale.erAktiv() }
@@ -28,7 +34,7 @@ class Person private constructor(
                 SatsBeregningsregel(sats = innvilgetProsessresultatHendelse.sats, Konto()),
                 LocalDate.now()
             )
-            vedtak.add(InnvilgetEndringsvedtak(innvilgetProsessresultatHendelse, avtale))
+            leggTilVedtak(InnvilgetEndringsvedtak(innvilgetProsessresultatHendelse, avtale))
 
             return
         }
@@ -44,27 +50,47 @@ class Person private constructor(
                     this
                 ).håndter()
 
-                vedtak.add(Hovedvedtak(innvilgetProsessresultatHendelse, it))
+                leggTilVedtak(Hovedvedtak(innvilgetProsessresultatHendelse, it))
             }
     }
 
+    private fun leggTilVedtak(nyttVedtak: Vedtak) {
+        vedtak.add(nyttVedtak)
+        emitVedtak(nyttVedtak)
+    }
+
     fun håndter(avslagHendelse: AvslagHendelse) {
-        vedtak.add(Hovedvedtak(avslagHendelse))
+        leggTilVedtak(Hovedvedtak(avslagHendelse))
     }
 
     fun håndter(stansHendelse: StansHendelse) {
         avtaler.gjeldende().also {
             // her må det skje noe
-            vedtak.add(Stansvedtak(stansHendelse, it))
+            leggTilVedtak(Stansvedtak(stansHendelse, it))
         }
     }
 
     fun håndter(hendelse: ArenaKvoteForbruk) {
-        Kvotebruk(hendelse.mengde, LocalDate.now(), LocalDate.now(), this).håndter()
+        val kvotebruk = Kvotebruk(hendelse.mengde, LocalDate.now(), LocalDate.now(), this)
+        kvotebruk.håndter()
     }
 
     fun håndter(barnetilleggSkalAvslåsHendelse: BarnetilleggSkalAvslåsHendelse) =
-        vedtak.add(InnvilgetEndringsvedtak(barnetilleggSkalAvslåsHendelse, avtaler.gjeldende()))
+        leggTilVedtak(InnvilgetEndringsvedtak(barnetilleggSkalAvslåsHendelse, gjeldendeAvtale()))
 
     internal fun gjeldendeAvtale() = avtaler.gjeldende()
+
+    fun addObserver(observer: PersonObserver) {
+        observers.add(observer)
+    }
+
+    private fun emitVedtak(vedtak: Vedtak) {
+        PersonObserver.VedtakFattetEvent(
+            vedtakId = UUID.randomUUID(),
+            avtaleId = vedtak.avtale?.avtaleId,
+            sats = vedtak.avtale?.sats()
+        ).also { fattet ->
+            observers.forEach { it.vedtakFattet(fattet) }
+        }
+    }
 }
