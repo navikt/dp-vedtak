@@ -1,19 +1,19 @@
 package no.nav.dagpenger.vedtak.modell.mengder
 
-typealias Tid = IntervallMengde
+typealias Tid = RatioMengde
 
 // Understands a specific metric
 class Enhet {
     companion object {
         private val arbeidsdag = Enhet()
         private val arbeidsuke = Enhet(5, arbeidsdag)
-        val Number.arbeidsdager get() = IntervallMengde(this, arbeidsdag)
-        val Number.arbeidsuker get() = IntervallMengde(this, arbeidsuke)
+        val Number.arbeidsdager get() = RatioMengde(this, arbeidsdag)
+        val Number.arbeidsuker get() = RatioMengde(this, arbeidsuke)
         private val prosent = Enhet()
         private val prosentDag = Enhet(20, prosent)
         private val prosentUke = Enhet(200, prosent)
-        val Number.dagsprosent get() = IntervallMengde(this, prosentDag)
-        val Number.ukeprosent get() = IntervallMengde(this, prosentUke)
+        val Number.dagsprosent get() = RatioMengde(this, prosentDag)
+        val Number.ukeprosent get() = RatioMengde(this, prosentUke)
     }
 
     private val baseEnhet: Enhet

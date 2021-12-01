@@ -2,9 +2,9 @@ package no.nav.dagpenger.vedtak.modell.mengder
 
 import kotlin.math.absoluteValue
 
-// Understands a specific measurement
-open class IntervallMengde internal constructor(amount: Number, protected val unit: Enhet) {
-    protected val amount = amount.toDouble()
+// Forstår ulike mengder som kan måles som intervaller, som f.eks. temperatur
+open class IntervallMengde internal constructor(mengde: Number, protected val enhet: Enhet) {
+    protected val amount = mengde.toDouble()
 
     companion object {
         internal const val DELTA = 0.00000001
@@ -16,17 +16,9 @@ open class IntervallMengde internal constructor(amount: Number, protected val un
         this.isCompatible(other) &&
             (this.amount - convertedAmount(other)).absoluteValue < DELTA
 
-    private fun isCompatible(other: IntervallMengde) = this.unit.isCompatible(other.unit)
+    private fun isCompatible(other: IntervallMengde) = this.enhet.isCompatible(other.enhet)
 
-    override fun hashCode() = unit.hashCode(amount)
+    override fun hashCode() = enhet.hashCode(amount)
 
-    protected fun convertedAmount(other: IntervallMengde) = this.unit.convertedAmount(other.amount, other.unit)
-
-    operator fun unaryPlus() = this
-
-    operator fun unaryMinus() = IntervallMengde(-amount, unit)
-
-    operator fun plus(other: IntervallMengde) = IntervallMengde(this.amount + convertedAmount(other), unit)
-
-    operator fun minus(other: IntervallMengde) = this + -other
+    protected fun convertedAmount(other: IntervallMengde) = this.enhet.convertedAmount(other.amount, other.enhet)
 }
