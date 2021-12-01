@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.konto
 
 import no.nav.dagpenger.vedtak.modell.mengder.Enhet.Companion.arbeidsdager
+import no.nav.dagpenger.vedtak.modell.mengder.IntervallMengde
 import java.time.LocalDate
 
 internal class Konto(private val posteringer: MutableList<Postering>) {
@@ -14,7 +15,12 @@ internal class Konto(private val posteringer: MutableList<Postering>) {
     fun balanse(period: ClosedRange<LocalDate>) =
         posteringer.filter { it.dato in period }.fold(0.arbeidsdager) { acc, postering -> acc + postering.mengde }
 
-    fun balanse(dato: LocalDate) = balanse(LocalDate.MIN..dato)
+    fun balanse(fraOgMed: LocalDate, tilOgMed: LocalDate): IntervallMengde {
+        require(fraOgMed.isBefore(tilOgMed)) { "Fra og med må være tidligere enn til og med" }
+        return balanse(fraOgMed..tilOgMed)
+    }
+
+    fun balanse(tilOgMed: LocalDate) = balanse(LocalDate.MIN, tilOgMed)
 
     fun balanse() = balanse(LocalDate.now())
 }
