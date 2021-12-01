@@ -36,7 +36,7 @@ internal class KontoTest {
         )
 
         assertEquals(
-            0.arbeidsdager,
+            null,
             konto.balanse(
                 tilOgMed = LocalDate.now().minusMonths(5)
             )

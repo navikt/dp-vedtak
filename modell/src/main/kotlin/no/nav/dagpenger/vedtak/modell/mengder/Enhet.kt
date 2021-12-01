@@ -1,8 +1,9 @@
 package no.nav.dagpenger.vedtak.modell.mengder
 
+import no.nav.dagpenger.vedtak.modell.mengder.Enhet.Companion.Prosent
+
 typealias Tid = RatioMengde
 
-// Understands a specific metric
 class Enhet {
     companion object {
         private val arbeidsdag = Enhet()
