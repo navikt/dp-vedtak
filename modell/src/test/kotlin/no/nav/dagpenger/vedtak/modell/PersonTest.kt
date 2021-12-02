@@ -31,7 +31,7 @@ internal class PersonTest {
 
         assertEquals(1, observatør.avtaler.size)
         assertEquals(1, observatør.vedtakFattet.size)
-        assertEquals(500.0, sisteVedtak.sats?.antall)
+        assertEquals(500.0, sisteVedtak.sats.antall)
     }
 
     @Test
@@ -49,7 +49,7 @@ internal class PersonTest {
         person.håndter(AvslagHendelse())
 
         assertEquals(1, observatør.vedtakFattet.size)
-        assertEquals(null, sisteVedtak.sats?.antall)
+        assertEquals(null, sisteVedtak.sats.antall)
     }
 
     @Test
@@ -68,7 +68,7 @@ internal class PersonTest {
         assertEquals(1, observatør.avtaler.size)
         assertEquals(1, observatør.vedtakFattet.size)
         // person.håndter(InnvilgetProsessresultatHendelse(sats = 1000.0))
-        assertEquals(500.0, sisteVedtak.sats?.antall)
+        assertEquals(500.0, sisteVedtak.sats.antall)
         assertEquals(2, observatør.vedtakFattet.size)
     }
 
@@ -101,6 +101,6 @@ class TestObservatør : PersonObserver {
     override fun vedtakFattet(hendelse: PersonObserver.VedtakFattetEvent) {
         vedtakFattet[hendelse.vedtakId] = hendelse
 
-        if (hendelse.avtaleId !== null) avtaler.add(hendelse.avtaleId!!)
+        avtaler.add(hendelse.avtaleId)
     }
 }

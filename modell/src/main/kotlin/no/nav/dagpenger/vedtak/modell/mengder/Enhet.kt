@@ -1,7 +1,5 @@
 package no.nav.dagpenger.vedtak.modell.mengder
 
-import no.nav.dagpenger.vedtak.modell.mengder.Enhet.Companion.Prosent
-
 typealias Tid = RatioMengde
 
 class Enhet {

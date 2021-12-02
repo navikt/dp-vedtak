@@ -8,20 +8,27 @@ import no.nav.dagpenger.vedtak.modell.konto.Konto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.UUID
 
-class AvtaleTest {
-    val person = Person()
-
+internal class AvtaleTest {
     @Test
     fun `Kan legge til beregningsregler med fra og med dato`() {
         val beregningsregel = StønadsperiodeBeregningsregel(Konto())
         val avtale = Avtale().also {
-            it.leggTilBeregningsregel(BokføringsHendelseType.Kvotebruk, beregningsregel, 15.januar)
+            it.leggTilBeregningsregel(
+                type = BokføringsHendelseType.Kvotebruk,
+                beregningsregel = beregningsregel,
+                fraOgMed = 15.januar
+            )
         }
 
         assertEquals(beregningsregel, avtale.finnBeregningsregel(BokføringsHendelseType.Kvotebruk, 16.januar))
         val nyBeregningsregel = StønadsperiodeBeregningsregel(Konto())
-        avtale.leggTilBeregningsregel(BokføringsHendelseType.Kvotebruk, nyBeregningsregel, 20.januar)
+        avtale.leggTilBeregningsregel(
+            type = BokføringsHendelseType.Kvotebruk,
+            beregningsregel = nyBeregningsregel,
+            fraOgMed = 20.januar
+        )
 
         assertEquals(beregningsregel, avtale.finnBeregningsregel(BokføringsHendelseType.Kvotebruk, 16.januar))
         assertEquals(nyBeregningsregel, avtale.finnBeregningsregel(BokføringsHendelseType.Kvotebruk, 20.januar))
@@ -37,7 +44,32 @@ class AvtaleTest {
     }
 
     @Test
+    fun `Kan erstatte feil beregningsregel bakover i tid`() {
+        val beregningsregel = StønadsperiodeBeregningsregel(Konto())
+        val avtale = Avtale().also {
+            it.leggTilBeregningsregel(
+                type = BokføringsHendelseType.Kvotebruk,
+                beregningsregel = beregningsregel,
+                fraOgMed = 15.januar
+            )
+        }
+
+        assertEquals(beregningsregel, avtale.finnBeregningsregel(BokføringsHendelseType.Kvotebruk, 16.januar))
+
+        val nyBeregningsregel = StønadsperiodeBeregningsregel(Konto())
+        avtale.leggTilBeregningsregel(
+            type = BokføringsHendelseType.Kvotebruk,
+            beregningsregel = nyBeregningsregel,
+            fraOgMed = 15.januar
+        )
+
+        assertEquals(nyBeregningsregel, avtale.finnBeregningsregel(BokføringsHendelseType.Kvotebruk, 16.januar))
+    }
+
+    @Test
     fun `Det finnes ingen gjeldene avtale`() {
+        val nilUUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
+        assertEquals(nilUUID, Avtale.avslag.avtaleId)
     }
 
     @Test

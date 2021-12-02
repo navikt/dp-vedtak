@@ -66,7 +66,7 @@ class Person private constructor(
     fun håndter(stansHendelse: StansHendelse) {
         avtaler.gjeldende().also {
             // her må det skje noe
-            leggTilVedtak(Stansvedtak(stansHendelse, it))
+            leggTilVedtak(Stansvedtak(stansHendelse, it!!))
         }
     }
 
@@ -76,7 +76,7 @@ class Person private constructor(
     }
 
     fun håndter(barnetilleggSkalAvslåsHendelse: BarnetilleggSkalAvslåsHendelse) =
-        leggTilVedtak(InnvilgetEndringsvedtak(barnetilleggSkalAvslåsHendelse, gjeldendeAvtale()))
+        leggTilVedtak(InnvilgetEndringsvedtak(barnetilleggSkalAvslåsHendelse, gjeldendeAvtale()!!))
 
     internal fun gjeldendeAvtale() = avtaler.gjeldende()
 
@@ -87,8 +87,8 @@ class Person private constructor(
     private fun emitVedtak(vedtak: Vedtak) {
         PersonObserver.VedtakFattetEvent(
             vedtakId = UUID.randomUUID(),
-            avtaleId = vedtak.avtale?.avtaleId,
-            sats = vedtak.avtale?.sats()
+            avtaleId = vedtak.avtale.avtaleId,
+            sats = vedtak.avtale.sats()
         ).also { fattet ->
             observers.forEach { it.vedtakFattet(fattet) }
         }

@@ -14,6 +14,12 @@ internal class Avtale private constructor(
     private val beregningsregler: MutableMap<BokføringsHendelseType, TemporalCollection<Beregningsregel>>,
     private val kontoer: MutableMap<String, Konto>
 ) {
+    private constructor(avtaleId: UUID) : this(
+        avtaleId,
+        mutableMapOf(),
+        mutableMapOf()
+    )
+
     constructor() : this(
         avtaleId = UUID.randomUUID(),
         beregningsregler = mutableMapOf<BokføringsHendelseType, TemporalCollection<Beregningsregel>>(),
@@ -38,6 +44,8 @@ internal class Avtale private constructor(
                 fraOgMed
             )
         }
+
+        val avslag: Avtale = Avtale(avtaleId = UUID.fromString("00000000-0000-0000-0000-000000000000"))
     }
 
     internal fun erAktiv() = true
