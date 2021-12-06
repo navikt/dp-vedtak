@@ -2,7 +2,6 @@ package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.modell.beregningsregler.Beregningsregel
 import no.nav.dagpenger.vedtak.modell.beregningsregler.SatsBeregningsregel
-import no.nav.dagpenger.vedtak.modell.beregningsregler.StønadsperiodeBeregningsregel
 import no.nav.dagpenger.vedtak.modell.hendelse.BokføringsHendelseType
 import no.nav.dagpenger.vedtak.modell.konto.Konto
 import no.nav.dagpenger.vedtak.modell.mengder.Penger
@@ -30,13 +29,7 @@ internal class Avtale private constructor(
         fun ordinær(sats: Double, fraOgMed: LocalDate = LocalDate.now()) = Avtale().also { avtale ->
             avtale.leggTilKonto(
                 "Stønadsperiodekonto",
-                Konto().also {
-                    avtale.leggTilBeregningsregel(
-                        BokføringsHendelseType.Kvotebruk,
-                        StønadsperiodeBeregningsregel(it),
-                        fraOgMed
-                    )
-                }
+                Konto.forStønadsperiode(avtale, fraOgMed)
             )
             avtale.leggTilBeregningsregel(
                 BokføringsHendelseType.Meldekort,

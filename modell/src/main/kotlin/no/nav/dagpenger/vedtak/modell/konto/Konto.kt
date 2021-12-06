@@ -1,5 +1,8 @@
 package no.nav.dagpenger.vedtak.modell.konto
 
+import no.nav.dagpenger.vedtak.modell.Avtale
+import no.nav.dagpenger.vedtak.modell.beregningsregler.StønadsperiodeBeregningsregel
+import no.nav.dagpenger.vedtak.modell.hendelse.BokføringsHendelseType
 import no.nav.dagpenger.vedtak.modell.mengder.RatioMengde
 import java.time.LocalDate
 
@@ -7,6 +10,16 @@ internal class Konto private constructor(
     private val posteringer: MutableList<Postering>
 ) {
     constructor() : this(mutableListOf())
+
+    companion object {
+        fun forStønadsperiode(avtale: Avtale, fraOgMed: LocalDate) = Konto().also {
+            avtale.leggTilBeregningsregel(
+                BokføringsHendelseType.Kvotebruk,
+                StønadsperiodeBeregningsregel(it),
+                fraOgMed
+            )
+        }
+    }
 
     fun leggTilPostering(postering: Postering) {
         // sjekk at mengde er samme type (en konto kan bare spore enten tid, eller penger. Ikke begge)
