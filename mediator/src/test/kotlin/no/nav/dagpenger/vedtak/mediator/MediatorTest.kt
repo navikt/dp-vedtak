@@ -1,6 +1,7 @@
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.util.UUID
@@ -14,6 +15,7 @@ internal class MediatorTest {
         testRapid.reset()
     }
 
+    @Disabled
     @Test
     fun `Skal kunne opprette avtale når vi mottar melding om prosessresultat`() {
 

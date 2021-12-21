@@ -44,6 +44,7 @@ internal class PersonTest {
         assertEquals(250.arbeidsdager, person.gjeldendeAvtale()?.balanse("Stønadsperiodekonto"), "50 arbeidsuker skal tilsvare 250 arbeidsdager")
     }
 
+    @Disabled("WIP")
     @Test
     fun `Avslag på rettighet for person som ikke har hatt dagpenger før`() {
         person.håndter(AvslagHendelse())
