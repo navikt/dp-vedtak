@@ -22,7 +22,7 @@ internal class Konto private constructor(
     }
 
     fun leggTilPostering(postering: Postering) {
-        // sjekk at mengde er samme type (en konto kan bare spore enten tid, eller penger. Ikke begge)
+        if (posteringer.isNotEmpty() && !postering.mengde.erKompatibel(posteringer)) {throw IllegalArgumentException ("Inkompatibel enhet for postering")}
         posteringer.add(postering)
     }
 

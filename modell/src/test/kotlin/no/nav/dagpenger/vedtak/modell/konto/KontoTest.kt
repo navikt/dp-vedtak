@@ -62,7 +62,6 @@ internal class KontoTest {
     }
 
     @Test
-    @Disabled
     fun `Kan holde på ulike enheter, men kun en type`() {
         Konto().apply {
             leggTilPostering(Postering(5.arbeidsdager, LocalDate.now()))
