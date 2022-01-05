@@ -60,8 +60,10 @@ internal class Avtale private constructor(
     fun balanse(konto: String) = kontoer[konto]?.balanse()
 
     fun sats(): Penger {
-        val f = finnBeregningsregel(BokføringsHendelseType.Meldekort, LocalDate.now())
-        require(f is SatsBeregningsregel)
-        return Penger(f.sats)
+        if (this.avtaleId == avslag.avtaleId) return Penger(-1)
+
+        val beregningsregel = finnBeregningsregel(BokføringsHendelseType.Meldekort, LocalDate.now())
+        require(beregningsregel is SatsBeregningsregel)
+        return Penger(beregningsregel.sats)
     }
 }

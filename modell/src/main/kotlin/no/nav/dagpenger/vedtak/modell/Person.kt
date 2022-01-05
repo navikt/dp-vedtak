@@ -89,8 +89,8 @@ class Person private constructor(
             vedtakId = UUID.randomUUID(),
             avtaleId = vedtak.avtale.avtaleId,
             sats = vedtak.avtale.sats()
-        ).also { fattet ->
-            observers.forEach { it.vedtakFattet(fattet) }
+        ).also { vedtakFattetEvent ->
+            observers.forEach { it.vedtakFattet(vedtakFattetEvent) }
         }
     }
 }
