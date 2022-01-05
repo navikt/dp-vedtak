@@ -49,7 +49,7 @@ internal class PersonTest {
         person.håndter(AvslagHendelse())
 
         assertEquals(1, observatør.vedtakFattet.size)
-        assertEquals(-1, sisteVedtak.sats.antall)
+        assertEquals(Avtale.avslagSats.antall, sisteVedtak.sats.antall)
     }
 
     @Test

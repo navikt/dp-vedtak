@@ -12,5 +12,4 @@ open class RatioMengde internal constructor(mengde: Number, enhet: Enhet) : Inte
 
     operator fun minus(other: RatioMengde) = this + -other
     fun erKompatibel(postering: List<Postering>) = postering.first().mengde.enhet.isCompatible(this.enhet)
-
 }

@@ -22,7 +22,7 @@ internal class Konto private constructor(
     }
 
     fun leggTilPostering(postering: Postering) {
-        if (posteringer.isNotEmpty() && !postering.mengde.erKompatibel(posteringer)) {throw IllegalArgumentException ("Inkompatibel enhet for postering")}
+        if (posteringer.isNotEmpty() && !postering.mengde.erKompatibel(posteringer)) { throw IllegalArgumentException("Inkompatibel enhet for postering") }
         posteringer.add(postering)
     }
 

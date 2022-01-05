@@ -39,6 +39,7 @@ internal class Avtale private constructor(
         }
 
         val avslag: Avtale = Avtale(avtaleId = UUID.fromString("00000000-0000-0000-0000-000000000000"))
+        val avslagSats = Penger(-1)
     }
 
     internal fun erAktiv() = true
@@ -60,7 +61,7 @@ internal class Avtale private constructor(
     fun balanse(konto: String) = kontoer[konto]?.balanse()
 
     fun sats(): Penger {
-        if (this.avtaleId == avslag.avtaleId) return Penger(-1)
+        if (this.avtaleId == avslag.avtaleId) return avslagSats
 
         val beregningsregel = finnBeregningsregel(BokføringsHendelseType.Meldekort, LocalDate.now())
         require(beregningsregel is SatsBeregningsregel)

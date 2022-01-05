@@ -4,7 +4,6 @@ import no.nav.dagpenger.vedtak.modell.mengder.Enhet.Companion.arbeidsdager
 import no.nav.dagpenger.vedtak.modell.mengder.Enhet.Companion.ukeprosent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
