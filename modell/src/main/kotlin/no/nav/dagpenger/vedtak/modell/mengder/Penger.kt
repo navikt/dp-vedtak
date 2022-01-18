@@ -4,4 +4,4 @@ enum class Valuta {
     NOK
 }
 
-class Penger(val antall: Number, val valuta: Valuta = Valuta.NOK)
+class Penger(val beløp: Number, val valuta: Valuta = Valuta.NOK)

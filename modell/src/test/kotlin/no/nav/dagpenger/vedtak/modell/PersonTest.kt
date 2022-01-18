@@ -31,7 +31,7 @@ internal class PersonTest {
 
         assertEquals(1, observatør.avtaler.size)
         assertEquals(1, observatør.vedtakFattet.size)
-        assertEquals(500.0, sisteVedtak.sats.antall)
+        assertEquals(500.0, sisteVedtak.sats.beløp)
     }
 
     @Test
@@ -49,7 +49,7 @@ internal class PersonTest {
         person.håndter(AvslagHendelse())
 
         assertEquals(1, observatør.vedtakFattet.size)
-        assertEquals(Avtale.avslagSats.antall, sisteVedtak.sats.antall)
+        assertEquals(Avtale.avslagSats.beløp, sisteVedtak.sats.beløp)
     }
 
     @Test
@@ -68,7 +68,7 @@ internal class PersonTest {
         assertEquals(1, observatør.avtaler.size)
         assertEquals(1, observatør.vedtakFattet.size)
         // person.håndter(InnvilgetProsessresultatHendelse(sats = 1000.0))
-        assertEquals(500.0, sisteVedtak.sats.antall)
+        assertEquals(500.0, sisteVedtak.sats.beløp)
         assertEquals(2, observatør.vedtakFattet.size)
     }
 
