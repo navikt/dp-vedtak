@@ -216,7 +216,7 @@ object Prometheus {
     }
 }
 
-const val RapidAndRivers = "com.github.navikt:rapids-and-rivers:20210617121814-3e67e4d"
+const val RapidAndRivers = "com.github.navikt:rapids-and-rivers:2022.02.08-20.42.8e24a34a2ecd"
 
 object Slf4j {
     const val version = "1.7.25"
@@ -238,7 +238,7 @@ object Shadow {
 }
 
 object TestContainers {
-    const val version = "1.15.2"
+    const val version = "1.16.2"
     const val postgresql = "org.testcontainers:postgresql:$version"
     const val kafka = "org.testcontainers:kafka:$version"
 }
