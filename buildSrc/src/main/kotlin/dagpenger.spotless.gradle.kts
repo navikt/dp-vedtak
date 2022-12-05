@@ -6,11 +6,11 @@ plugins {
 
 spotless {
     kotlin {
-        ktlint(Ktlint.version)
+        ktlint("0.40.0")
     }
     kotlinGradle {
         target("*.gradle.kts")
-        ktlint(Ktlint.version)
+        ktlint("0.40.0")
     }
 }
 
