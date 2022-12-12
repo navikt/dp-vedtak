@@ -1,12 +1,12 @@
 package no.nav.dagpenger.vedtak.modell
 
+import no.nav.dagpenger.vedtak.kontomodell.helpers.desember
 import no.nav.dagpenger.vedtak.modell.hendelser.MeldekortDag
 import no.nav.dagpenger.vedtak.modell.hendelser.NyRettighetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 
 internal class PersonTest {
 
@@ -24,8 +24,8 @@ internal class PersonTest {
     }
 
     private fun meldekortDager() = listOf<MeldekortDag>(
-        MeldekortDag(LocalDate.now().minusDays(1)),
-        MeldekortDag(LocalDate.now()),
+        MeldekortDag(1 desember 2022),
+        MeldekortDag(2 desember 2022),
     )
 
     private fun nyRettighetHendelse() = NyRettighetHendelse()
