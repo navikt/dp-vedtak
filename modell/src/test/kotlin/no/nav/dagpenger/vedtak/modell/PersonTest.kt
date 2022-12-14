@@ -1,9 +1,9 @@
 package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.kontomodell.helpers.desember
-import no.nav.dagpenger.vedtak.modell.hendelser.MeldekortDag
 import no.nav.dagpenger.vedtak.modell.hendelser.NyRettighetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RapportertDag
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -23,9 +23,9 @@ internal class PersonTest {
         assertEquals(1000.0, person.dagerTilBetaling().sumOf { it.beløp.toDouble() })
     }
 
-    private fun meldekortDager() = listOf<MeldekortDag>(
-        MeldekortDag(1 desember 2022),
-        MeldekortDag(2 desember 2022),
+    private fun meldekortDager() = listOf<RapportertDag>(
+        RapportertDag(1 desember 2022),
+        RapportertDag(2 desember 2022),
     )
 
     private fun nyRettighetHendelse() = NyRettighetHendelse()

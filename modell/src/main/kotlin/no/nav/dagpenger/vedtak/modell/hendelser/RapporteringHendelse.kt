@@ -2,6 +2,6 @@ package no.nav.dagpenger.vedtak.modell.hendelser
 
 import java.time.LocalDate
 
-class RapporteringHendelse(val meldekortDager: List<MeldekortDag>)
+class RapporteringHendelse(val meldekortDager: List<RapportertDag>)
 
-class MeldekortDag(val dato: LocalDate)
+class RapportertDag(val dato: LocalDate)
