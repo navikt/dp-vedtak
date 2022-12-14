@@ -10,8 +10,8 @@ class VedtakHistorikk private constructor(private val vedtak: MutableList<Vedtak
         vedtak.add(Vedtak())
     }
 
-    fun beregn(aktivitetsTidslinjer: AktivitetsTidslinjer): BeregnetTidslinje {
-        val rapporteringsPeriode = aktivitetsTidslinjer.rapporteringsPerioder.first()
+    fun beregn(aktivitetsTidslinje: AktivitetsTidslinje): BeregnetTidslinje {
+        val rapporteringsPeriode = aktivitetsTidslinje.rapporteringsPerioder.first()
         return BeregnetTidslinje(rapporteringsPeriode.dager.map { BeregnetDag(it.dato, beløp = 500) })
     }
 

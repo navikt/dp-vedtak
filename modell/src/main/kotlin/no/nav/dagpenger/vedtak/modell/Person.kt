@@ -4,7 +4,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.NyRettighetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 
 class Person(id: PersonIdentifikator) {
-    private val aktivitetsTidslinjer = AktivitetsTidslinjer()
+    private val aktivitetsTidslinje = AktivitetsTidslinje()
     private val vedtakHistorikk = VedtakHistorikk()
     private val beregningHistorikk = BeregningHistorikk()
 
@@ -13,8 +13,8 @@ class Person(id: PersonIdentifikator) {
     }
 
     fun håndter(rapporteringHendelse: RapporteringHendelse) {
-        aktivitetsTidslinjer.håndter(rapporteringHendelse)
-        val beregnetTidslinje = vedtakHistorikk.beregn(aktivitetsTidslinjer)
+        aktivitetsTidslinje.håndter(rapporteringHendelse)
+        val beregnetTidslinje = vedtakHistorikk.beregn(aktivitetsTidslinje)
         beregningHistorikk.leggTilTidslinje(beregnetTidslinje)
     }
 

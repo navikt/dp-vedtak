@@ -2,7 +2,7 @@ package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 
-class AktivitetsTidslinjer {
+class AktivitetsTidslinje {
 
     val rapporteringsPerioder = mutableListOf<RapporteringsPeriode>()
 
