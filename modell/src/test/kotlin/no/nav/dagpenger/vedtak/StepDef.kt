@@ -34,8 +34,8 @@ class Steg : No {
             assertTrue(person.harVedtak())
         }
         Når("bruker rapporterer om dager") { dager: DataTable ->
-            val meldkortdag = dager.column(0).map { RapportertDag(LocalDate.parse(it, datoformatterer)) }
-            person.håndter(RapporteringHendelse(meldkortdag))
+            val rapporteringsdager = dager.column(0).map { RapportertDag(LocalDate.parse(it, datoformatterer)) }
+            person.håndter(RapporteringHendelse(rapporteringsdager))
         }
         Så("skal bruker få utbetalt for dager hen har jobbet") {
             assertFalse(person.dagerTilBetaling().isEmpty())
