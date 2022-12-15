@@ -11,7 +11,11 @@ Egenskap: ny rettighet
       |17.12.2022|
       |18.12.2022|
     Så skal bruker få utbetalt for dager hen har jobbet
-
-
-
-
+  @wip
+  Scenario: mottaker har klaget på førstegangsvedtak
+    Gitt at bruker er gitt dagpenger
+      | Fødselsnummer  | BehandlingId | Innvilget      | Fra og med dato  | Sats | Periode |
+      | 12345678901    | 1            | true           | 14.12.2022       | 488  | 52      |
+    Og klager på sats i vedtaket og får innvilget nytt vedtak
+      | Fødselsnummer  | BehandlingId | Innvilget      | Fra og med dato  | Sats | Periode |
+      | 12345678901    | 1            | true           | 14.12.2022       | 588  | 52      |
