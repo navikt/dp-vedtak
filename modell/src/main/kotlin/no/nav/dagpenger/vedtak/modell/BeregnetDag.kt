@@ -1,5 +1,10 @@
 package no.nav.dagpenger.vedtak.modell
 
+import no.nav.dagpenger.vedtak.modell.visitor.BeregnetDagVisitor
 import java.time.LocalDate
 
-class BeregnetDag(val dato: LocalDate, val beløp: Number)
+class BeregnetDag(private val dato: LocalDate, private val beløp: Number) {
+    fun accept(visitor: BeregnetDagVisitor) {
+        visitor.visitDag(dato, beløp)
+    }
+}

@@ -13,21 +13,21 @@ import java.time.LocalDateTime
 
 internal class PersonTest {
 
+    private val person = Person(PersonIdentifikator("12345678910"))
+    private val testInspektør get() = TestInspektør(person)
+
     @Test
     fun `Får NyRettighet og det rapporteres dager på meldekortet`() {
-        val person = Person(PersonIdentifikator("12345678910"))
-
-        val testInspektør = TestInspektør(person)
 
         assertEquals("12345678910", testInspektør.id.identifikator())
 
         person.håndter(nyRettighetHendelse())
 
-        TestInspektør(person).also { assertTrue(it.harVedtak()) }
+        assertTrue(testInspektør.harVedtak())
 
         person.håndter(RapporteringHendelse(meldekortDager()))
 
-        assertEquals(1000.0, person.dagerTilBetaling().sumOf { it.beløp.toDouble() })
+        assertEquals(1000.0, testInspektør.utbetalt())
     }
 
     private fun meldekortDager() = listOf<RapportertDag>(
@@ -40,6 +40,7 @@ internal class PersonTest {
     private class TestInspektør(person: Person) : PersonVisitor {
         lateinit var id: PersonIdentifikator
         var harVedtak: Boolean = false
+        var utbetalt: Double = 0.0
         init {
             person.accept(this)
         }
@@ -52,6 +53,11 @@ internal class PersonTest {
             harVedtak = true
         }
 
+        override fun visitDag(dato: LocalDate, beløp: Number) {
+            utbetalt += beløp.toDouble()
+        }
+
         fun harVedtak(): Boolean = harVedtak
+        fun utbetalt(): Number = utbetalt
     }
 }

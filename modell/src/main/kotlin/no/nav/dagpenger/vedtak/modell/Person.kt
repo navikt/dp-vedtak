@@ -19,9 +19,9 @@ class Person(private val id: PersonIdentifikator) {
         beregningHistorikk.leggTilTidslinje(beregnetTidslinje)
     }
 
-    fun dagerTilBetaling() = beregningHistorikk.beregningTidslinjer.flatMap { it.beregnedeDager }
     fun accept(visitor: PersonVisitor) {
         visitor.visitPerson(id)
         vedtakHistorikk.accept(visitor)
+        beregningHistorikk.accept(visitor)
     }
 }
