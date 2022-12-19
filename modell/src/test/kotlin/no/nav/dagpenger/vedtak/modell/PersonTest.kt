@@ -24,11 +24,15 @@ internal class PersonTest {
     fun `Får NyRettighet og det rapporteres dager på meldekortet`() {
 
         assertEquals("12345678910", testInspektør.id.identifikator())
+        val virkningsdato = 18.desember(2022)
+        val beslutningstidspunkt = 18.desember(2022).atStartOfDay()
 
-        person.håndter(ordinærRettighetHendelse())
+        person.håndter(ordinærRettighetHendelse(virkningsdato, beslutningstidspunkt))
 
         assertTrue(testInspektør.harVedtak())
         assertEquals(300.beløp, testInspektør.dagsats())
+        assertEquals(virkningsdato, testInspektør.virkningsdato())
+        assertEquals(beslutningstidspunkt, testInspektør.beslutningstidspunkt())
 
         person.håndter(RapporteringHendelse(meldekortDager()))
 
@@ -40,10 +44,10 @@ internal class PersonTest {
         RapportertDag(2 desember 2022),
     )
 
-    private fun ordinærRettighetHendelse() = Ordinær(
+    private fun ordinærRettighetHendelse(virkningsdato: LocalDate, beslutningstidspunkt: LocalDateTime) = Ordinær(
         behandlingsId = UUID.randomUUID(),
-        virkningsdato = LocalDate.now(),
-        beslutningstidspunkt = LocalDateTime.now(),
+        virkningsdato = virkningsdato,
+        beslutningstidspunkt = beslutningstidspunkt,
         dagsats = 300.beløp,
         dagpengerPeriode = 52.arbeidsuker,
         ventedager = 5.arbeidsdager
@@ -54,6 +58,8 @@ internal class PersonTest {
         private var harVedtak: Boolean = false
         private var utbetalt: Double = 0.0
         private var dagsats: Beløp = 0.0.beløp
+        lateinit var virkningsdato: LocalDate
+        lateinit var beslutningstidspunkt: LocalDateTime
         init {
             person.accept(this)
         }
@@ -65,6 +71,8 @@ internal class PersonTest {
         override fun visitVedtak(virkningsdato: LocalDate, beslutningstidspunkt: LocalDateTime, dagsats: Beløp) {
             harVedtak = true
             this.dagsats = dagsats
+            this.virkningsdato = virkningsdato
+            this.beslutningstidspunkt = beslutningstidspunkt
         }
 
         override fun visitDag(dato: LocalDate, beløp: Number) {
@@ -74,5 +82,7 @@ internal class PersonTest {
         fun harVedtak(): Boolean = harVedtak
         fun utbetalt(): Number = utbetalt
         fun dagsats(): Beløp = dagsats
+        fun virkningsdato(): LocalDate = virkningsdato
+        fun beslutningstidspunkt(): LocalDateTime = beslutningstidspunkt
     }
 }

@@ -2,8 +2,6 @@ package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.modell.hendelser.Ordinær
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 class VedtakHistorikk private constructor(private val vedtak: MutableList<Vedtak>) {
 
@@ -12,8 +10,8 @@ class VedtakHistorikk private constructor(private val vedtak: MutableList<Vedtak
     fun leggTilVedtak(ordinær: Ordinær) {
         vedtak.add(
             Vedtak(
-                virkningsdato = LocalDate.now(),
-                beslutningstidspunkt = LocalDateTime.now(),
+                virkningsdato = ordinær.virkningsdato,
+                beslutningstidspunkt = ordinær.beslutningstidspunkt,
                 dagsats = ordinær.dagsats
             )
         )

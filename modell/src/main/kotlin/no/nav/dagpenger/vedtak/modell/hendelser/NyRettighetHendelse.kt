@@ -47,5 +47,3 @@ class Permittering(
         dagpengerPeriode = dagpengerPeriode,
         ventedager = ventedager
     )
-
-

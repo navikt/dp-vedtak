@@ -31,7 +31,7 @@ class CucumberStegDefinisjoner() : No {
         Gitt("at bruker er gitt dagpenger") { vedtakshendelse: Vedtakshendelse ->
 
             person = Person(vedtakshendelse.fødselsnummer.tilPersonIdentfikator())
-            //person.håndter(NyRettighetHendelse())
+            // person.håndter(NyRettighetHendelse())
         }
         Så("har bruker vedtak i vedtakhistorikken") {
             // assertTrue(person.harVedtak())
