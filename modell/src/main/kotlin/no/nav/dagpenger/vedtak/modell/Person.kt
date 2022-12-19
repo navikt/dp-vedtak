@@ -2,8 +2,9 @@ package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.modell.hendelser.NyRettighetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
+import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 
-class Person(id: PersonIdentifikator) {
+class Person(private val id: PersonIdentifikator) {
     private val aktivitetsTidslinje = AktivitetsTidslinje()
     private val vedtakHistorikk = VedtakHistorikk()
     private val beregningHistorikk = BeregningHistorikk()
@@ -18,6 +19,9 @@ class Person(id: PersonIdentifikator) {
         beregningHistorikk.leggTilTidslinje(beregnetTidslinje)
     }
 
-    fun harVedtak() = vedtakHistorikk.harVedtak()
     fun dagerTilBetaling() = beregningHistorikk.beregningTidslinjer.flatMap { it.beregnedeDager }
+    fun accept(visitor: PersonVisitor) {
+        visitor.visitPerson(id)
+        vedtakHistorikk.accept(visitor)
+    }
 }
