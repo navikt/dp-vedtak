@@ -7,7 +7,7 @@ class AktivitetsTidslinje {
     val rapporteringsPerioder = mutableListOf<RapporteringsPeriode>()
 
     fun håndter(rapporteringHendelse: RapporteringHendelse) {
-        val dager: List<Dag> = rapporteringHendelse.meldekortDager.map { Dag.lagDag(it.dato) }
+        val dager: List<Dag> = rapporteringHendelse.meldekortDager.map { Dag(it.dato) }
         val rapporteringsperiode = RapporteringsPeriode(dager)
         rapporteringsPerioder.add(rapporteringsperiode)
     }
