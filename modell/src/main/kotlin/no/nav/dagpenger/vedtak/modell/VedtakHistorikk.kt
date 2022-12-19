@@ -1,6 +1,6 @@
 package no.nav.dagpenger.vedtak.modell
 
-import no.nav.dagpenger.vedtak.modell.hendelser.NyRettighetHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.Ordinær
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -9,8 +9,14 @@ class VedtakHistorikk private constructor(private val vedtak: MutableList<Vedtak
 
     constructor() : this(mutableListOf())
 
-    fun leggTilVedtak(nyRettighetHendelse: NyRettighetHendelse) {
-        vedtak.add(Vedtak(LocalDate.now(), LocalDateTime.now()))
+    fun leggTilVedtak(ordinær: Ordinær) {
+        vedtak.add(
+            Vedtak(
+                virkningsdato = LocalDate.now(),
+                beslutningstidspunkt = LocalDateTime.now(),
+                dagsats = ordinær.dagsats
+            )
+        )
     }
 
     fun beregn(aktivitetsTidslinje: AktivitetsTidslinje): BeregnetTidslinje {

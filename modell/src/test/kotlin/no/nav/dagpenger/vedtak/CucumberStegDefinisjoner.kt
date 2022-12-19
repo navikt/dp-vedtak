@@ -8,7 +8,6 @@ import io.cucumber.datatable.DataTable
 import io.cucumber.java8.No
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
-import no.nav.dagpenger.vedtak.modell.hendelser.NyRettighetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RapportertDag
 import java.lang.reflect.Type
@@ -32,7 +31,7 @@ class CucumberStegDefinisjoner() : No {
         Gitt("at bruker er gitt dagpenger") { vedtakshendelse: Vedtakshendelse ->
 
             person = Person(vedtakshendelse.fødselsnummer.tilPersonIdentfikator())
-            person.håndter(NyRettighetHendelse())
+            //person.håndter(NyRettighetHendelse())
         }
         Så("har bruker vedtak i vedtakhistorikken") {
             // assertTrue(person.harVedtak())

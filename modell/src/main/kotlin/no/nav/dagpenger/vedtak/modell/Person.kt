@@ -1,6 +1,6 @@
 package no.nav.dagpenger.vedtak.modell
 
-import no.nav.dagpenger.vedtak.modell.hendelser.NyRettighetHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.Ordinær
 import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 
@@ -9,8 +9,8 @@ class Person(private val id: PersonIdentifikator) {
     private val vedtakHistorikk = VedtakHistorikk()
     private val beregningHistorikk = BeregningHistorikk()
 
-    fun håndter(nyRettighetHendelse: NyRettighetHendelse) {
-        vedtakHistorikk.leggTilVedtak(nyRettighetHendelse)
+    fun håndter(ordinær: Ordinær) {
+        vedtakHistorikk.leggTilVedtak(ordinær)
     }
 
     fun håndter(rapporteringHendelse: RapporteringHendelse) {
