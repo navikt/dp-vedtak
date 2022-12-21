@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.modell
 import no.nav.dagpenger.vedtak.kontomodell.helpers.desember
 import no.nav.dagpenger.vedtak.kontomodell.mengder.Enhet.Companion.arbeidsdager
 import no.nav.dagpenger.vedtak.kontomodell.mengder.Enhet.Companion.arbeidsuker
+import no.nav.dagpenger.vedtak.kontomodell.mengder.RatioMengde
 import no.nav.dagpenger.vedtak.modell.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.hendelser.Ordinær
 import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
@@ -31,6 +32,9 @@ internal class PersonTest {
 
         assertTrue(testInspektør.harVedtak())
         assertEquals(300.beløp, testInspektør.dagsats())
+        assertEquals(37.5.beløp, testInspektør.fastsattArbeidstidPerUke())
+        assertEquals(3.arbeidsdager, testInspektør.gjenståendeVentedager())
+        assertEquals(52.arbeidsuker, testInspektør.gjenståendeDagpengeperiode())
         assertEquals(virkningsdato, testInspektør.virkningsdato())
         assertEquals(beslutningstidspunkt, testInspektør.beslutningstidspunkt())
 
@@ -49,8 +53,9 @@ internal class PersonTest {
         virkningsdato = virkningsdato,
         beslutningstidspunkt = beslutningstidspunkt,
         dagsats = 300.beløp,
-        dagpengerPeriode = 52.arbeidsuker,
-        ventedager = 5.arbeidsdager
+        fastsattArbeidstidPerUke = 37.5.beløp,
+        gjenståendeDagpengeperiode = 52.arbeidsuker,
+        gjenståendeVentedager = 3.arbeidsdager
     )
 
     private class TestInspektør(person: Person) : PersonVisitor {
@@ -58,6 +63,9 @@ internal class PersonTest {
         private var harVedtak: Boolean = false
         private var utbetalt: Double = 0.0
         private var dagsats: Beløp = 0.0.beløp
+        private var fastsattArbeidstidPerUke = 0.0.beløp
+        private var gjenståendeVentedager = 0.arbeidsdager
+        private var gjenståendeDagpengeperiode = 0.arbeidsdager
         lateinit var virkningsdato: LocalDate
         lateinit var beslutningstidspunkt: LocalDateTime
         init {
@@ -71,6 +79,7 @@ internal class PersonTest {
         override fun visitVedtak(virkningsdato: LocalDate, beslutningstidspunkt: LocalDateTime) {
             harVedtak = true
             this.dagsats = dagsats
+            this.fastsattArbeidstidPerUke = fastsattArbeidstidPerUke
             this.virkningsdato = virkningsdato
             this.beslutningstidspunkt = beslutningstidspunkt
         }
@@ -83,9 +92,24 @@ internal class PersonTest {
             this.dagsats = dagsats
         }
 
+        override fun visitFastsattArbeidstidHistorikk(dato: LocalDate, fastsattArbeidstidPerUke: Beløp) {
+            this.fastsattArbeidstidPerUke = fastsattArbeidstidPerUke
+        }
+
+        override fun visitVentedagerHistorikk(dato: LocalDate, gjenståendeVentedager: RatioMengde) {
+            this.gjenståendeVentedager = gjenståendeVentedager
+        }
+
+        override fun visitDagpengeperiodeHistorikk(dato: LocalDate, gjenståendeDagpengeperiode: RatioMengde) {
+            this.gjenståendeDagpengeperiode = gjenståendeDagpengeperiode
+        }
+
         fun harVedtak(): Boolean = harVedtak
         fun utbetalt(): Number = utbetalt
         fun dagsats(): Beløp = dagsats
+        fun fastsattArbeidstidPerUke(): Beløp = fastsattArbeidstidPerUke
+        fun gjenståendeVentedager(): RatioMengde = gjenståendeVentedager
+        fun gjenståendeDagpengeperiode(): RatioMengde = gjenståendeDagpengeperiode
         fun virkningsdato(): LocalDate = virkningsdato
         fun beslutningstidspunkt(): LocalDateTime = beslutningstidspunkt
     }

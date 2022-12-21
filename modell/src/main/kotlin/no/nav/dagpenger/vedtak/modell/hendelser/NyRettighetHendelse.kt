@@ -11,6 +11,7 @@ sealed class RettighetHendelse(
     internal val virkningsdato: LocalDate,
     internal val beslutningstidspunkt: LocalDateTime,
     internal val dagsats: Beløp,
+    internal val fastsattArbeidstidPerUke: Beløp,
     internal val dagpengerPeriode: RatioMengde,
     internal val ventedager: RatioMengde
 )
@@ -20,15 +21,17 @@ class Ordinær(
     virkningsdato: LocalDate,
     beslutningstidspunkt: LocalDateTime,
     dagsats: Beløp,
-    dagpengerPeriode: RatioMengde,
-    ventedager: RatioMengde
+    fastsattArbeidstidPerUke: Beløp,
+    gjenståendeDagpengeperiode: RatioMengde,
+    gjenståendeVentedager: RatioMengde
 ) : RettighetHendelse(
     behandlingsId = behandlingsId,
     virkningsdato = virkningsdato,
     beslutningstidspunkt = beslutningstidspunkt,
     dagsats = dagsats,
-    dagpengerPeriode = dagpengerPeriode,
-    ventedager = ventedager
+    fastsattArbeidstidPerUke = fastsattArbeidstidPerUke,
+    dagpengerPeriode = gjenståendeDagpengeperiode,
+    ventedager = gjenståendeVentedager
 )
 
 class Permittering(
@@ -36,6 +39,7 @@ class Permittering(
     virkningsdato: LocalDate,
     beslutningstidspunkt: LocalDateTime,
     dagsats: Beløp,
+    fastsattArbeidstidPerUke: Beløp,
     dagpengerPeriode: RatioMengde,
     ventedager: RatioMengde
 ) :
@@ -44,6 +48,7 @@ class Permittering(
         virkningsdato = virkningsdato,
         beslutningstidspunkt = beslutningstidspunkt,
         dagsats = dagsats,
+        fastsattArbeidstidPerUke = fastsattArbeidstidPerUke,
         dagpengerPeriode = dagpengerPeriode,
         ventedager = ventedager
     )
