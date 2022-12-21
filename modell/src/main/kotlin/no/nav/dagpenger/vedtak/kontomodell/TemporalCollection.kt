@@ -2,6 +2,8 @@ package no.nav.dagpenger.vedtak.kontomodell
 
 import java.time.LocalDate
 
+
+// Temporal object pattern from https://martinfowler.com/eaaDev/TemporalObject.html
 internal class TemporalCollection<R> {
     private val contents = mutableMapOf<LocalDate, R>()
     private val milestones get() = contents.keys.toList().reversed()
