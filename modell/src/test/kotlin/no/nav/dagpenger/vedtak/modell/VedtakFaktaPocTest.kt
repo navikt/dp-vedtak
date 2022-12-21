@@ -16,11 +16,11 @@ internal class VedtakFaktaPocTest {
 
     @Test
     fun test() {
-        /// hendelse(behandlingsid) -> håndter(hendelse) -> vedtak -> lager vedtakfakta
+        // / hendelse(behandlingsid) -> håndter(hendelse) -> vedtak -> lager vedtakfakta
 
         // ramme
         grunnlag.put(1.desember, 199323.beløp)
-        barn.put(1.desember,  VedtakFakta("123", Barnetillegg()))
+        barn.put(1.desember, VedtakFakta("123", Barnetillegg()))
         satser.put(1.desember, 533.beløp)
         rettighet.put(1.desember, "ORDINÆR")
 
@@ -37,7 +37,6 @@ internal class VedtakFaktaPocTest {
         assertEquals(199323.beløp, grunnlag.get(1.januar(2023)))
         assertEquals("ORDINÆR", rettighet.get(1.januar(2023)))
     }
-
 
     class VedtakFakta<T>(vedtakId: String, val verdi: T)
 

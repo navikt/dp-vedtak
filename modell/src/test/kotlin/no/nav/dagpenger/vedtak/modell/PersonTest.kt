@@ -68,7 +68,7 @@ internal class PersonTest {
             id = personIdentifikator
         }
 
-        override fun visitVedtak(virkningsdato: LocalDate, beslutningstidspunkt: LocalDateTime, dagsats: Beløp) {
+        override fun visitVedtak(virkningsdato: LocalDate, beslutningstidspunkt: LocalDateTime) {
             harVedtak = true
             this.dagsats = dagsats
             this.virkningsdato = virkningsdato
@@ -77,6 +77,10 @@ internal class PersonTest {
 
         override fun visitDag(dato: LocalDate, beløp: Number) {
             utbetalt += beløp.toDouble()
+        }
+
+        override fun visitDagsatsHistorikk(dato: LocalDate, dagsats: Beløp) {
+            this.dagsats = dagsats
         }
 
         fun harVedtak(): Boolean = harVedtak

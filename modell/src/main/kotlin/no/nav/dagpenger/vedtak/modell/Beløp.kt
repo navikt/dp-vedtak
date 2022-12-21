@@ -14,5 +14,4 @@ class Beløp private constructor(verdi: Number) : Comparable<Beløp> {
     infix operator fun times(beløp: Beløp): Beløp = Beløp(verdi * beløp.verdi)
     infix operator fun div(beløp: Beløp): Beløp = Beløp(verdi / beløp.verdi)
     override fun toString(): String = verdi.toString()
-
 }
