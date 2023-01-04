@@ -34,6 +34,24 @@ class Ordinær(
     ventedager = gjenståendeVentedager
 )
 
+class EndringAvRettighetHendelse(
+    behandlingsId: UUID,
+    virkningsdato: LocalDate,
+    beslutningstidspunkt: LocalDateTime,
+    dagsats: Beløp,
+    fastsattArbeidstidPerUke: Beløp,
+    gjenståendeDagpengeperiode: RatioMengde,
+    gjenståendeVentedager: RatioMengde
+) : RettighetHendelse(
+    behandlingsId = behandlingsId,
+    virkningsdato = virkningsdato,
+    beslutningstidspunkt = beslutningstidspunkt,
+    dagsats = dagsats,
+    fastsattArbeidstidPerUke = fastsattArbeidstidPerUke,
+    dagpengerPeriode = gjenståendeDagpengeperiode,
+    ventedager = gjenståendeVentedager
+)
+
 class Permittering(
     behandlingsId: UUID,
     virkningsdato: LocalDate,

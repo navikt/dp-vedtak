@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.modell
 import no.nav.dagpenger.vedtak.kontomodell.TemporalCollection
 import no.nav.dagpenger.vedtak.kontomodell.mengder.RatioMengde
 import no.nav.dagpenger.vedtak.modell.hendelser.Ordinær
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetHendelse
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import java.util.UUID
 
@@ -15,7 +16,7 @@ class VedtakHistorikk private constructor(private val vedtak: MutableList<Vedtak
 
     constructor() : this(mutableListOf())
 
-    fun leggTilVedtak(ordinær: Ordinær) {
+    fun leggTilVedtak(ordinær: RettighetHendelse) {
         vedtak.add(
             Vedtak(
                 virkningsdato = ordinær.virkningsdato,

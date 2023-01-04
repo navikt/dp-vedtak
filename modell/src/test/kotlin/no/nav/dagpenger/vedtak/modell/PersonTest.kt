@@ -41,6 +41,16 @@ internal class PersonTest {
         person.håndter(RapporteringHendelse(meldekortDager()))
 
         assertEquals(1000.0, testInspektør.utbetalt())
+
+        person.håndter(
+            endringAvRettighetHendelse(
+                nySats = 400.beløp,
+                virkningsdato = 21.desember(2022),
+                beslutningstidspunkt = 24.desember(2022).atStartOfDay()
+            )
+        )
+
+        assertEquals(400.beløp, testInspektør.dagsats())
     }
 
     private fun meldekortDager() = listOf<RapportertDag>(
@@ -58,6 +68,20 @@ internal class PersonTest {
         gjenståendeVentedager = 3.arbeidsdager
     )
 
+    private fun endringAvRettighetHendelse(
+        virkningsdato: LocalDate,
+        beslutningstidspunkt: LocalDateTime,
+        nySats: Beløp
+    ) = Ordinær(
+        behandlingsId = UUID.randomUUID(),
+        virkningsdato = virkningsdato,
+        beslutningstidspunkt = beslutningstidspunkt,
+        dagsats = nySats,
+        fastsattArbeidstidPerUke = 37.5.beløp,
+        gjenståendeDagpengeperiode = 52.arbeidsuker,
+        gjenståendeVentedager = 3.arbeidsdager
+    )
+
     private class TestInspektør(person: Person) : PersonVisitor {
         lateinit var id: PersonIdentifikator
         private var harVedtak: Boolean = false
@@ -68,6 +92,7 @@ internal class PersonTest {
         private var gjenståendeDagpengeperiode = 0.arbeidsdager
         lateinit var virkningsdato: LocalDate
         lateinit var beslutningstidspunkt: LocalDateTime
+
         init {
             person.accept(this)
         }

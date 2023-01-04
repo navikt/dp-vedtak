@@ -32,8 +32,8 @@ internal class VedtakFaktaPocTest {
         satser.put(31.desember, 567.beløp)
         barn.put(31.desember, VedtakFakta("456", Barnetillegg(barn = listOf("12345678901".tilPersonIdentfikator()))))
 
-        assertEquals(1, barn.get(1.januar(2023)).verdi.antall())
         assertEquals(567.beløp, satser.get(1.januar(2023)))
+        assertEquals(1, barn.get(1.januar(2023)).verdi.antall())
         assertEquals(199323.beløp, grunnlag.get(1.januar(2023)))
         assertEquals("ORDINÆR", rettighet.get(1.januar(2023)))
     }

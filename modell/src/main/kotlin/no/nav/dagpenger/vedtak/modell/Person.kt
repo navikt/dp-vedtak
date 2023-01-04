@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell
 
+import no.nav.dagpenger.vedtak.modell.hendelser.EndringAvRettighetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Ordinær
 import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
@@ -23,5 +24,9 @@ class Person(private val id: PersonIdentifikator) {
         visitor.visitPerson(id)
         vedtakHistorikk.accept(visitor)
         beregningHistorikk.accept(visitor)
+    }
+
+    fun håndter(endringAvRettighetHendelse: EndringAvRettighetHendelse) {
+        vedtakHistorikk.leggTilVedtak(endringAvRettighetHendelse)
     }
 }
