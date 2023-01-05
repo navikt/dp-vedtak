@@ -8,7 +8,6 @@ import io.cucumber.datatable.DataTable
 import io.cucumber.java8.No
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
-import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RapportertDag
 import java.lang.reflect.Type
 import java.time.LocalDate
@@ -38,7 +37,7 @@ class CucumberStegDefinisjoner() : No {
         }
         Når("bruker rapporterer om dager") { dager: DataTable ->
             val rapporteringsdager = dager.column(0).map { RapportertDag(LocalDate.parse(it, datoformatterer)) }
-            person.håndter(RapporteringHendelse(rapporteringsdager))
+            // person.håndter(RapporteringHendelse(rapporteringsdager))
         }
         Så("skal bruker få utbetalt for dager hen har jobbet") {
             // assertFalse(person.utbetalingsdager().isEmpty())

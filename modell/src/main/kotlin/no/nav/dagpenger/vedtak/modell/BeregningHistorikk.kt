@@ -4,7 +4,8 @@ import no.nav.dagpenger.vedtak.modell.visitor.BeregningHistorikkVisitor
 
 class BeregningHistorikk {
 
-    val beregningTidslinjer = mutableListOf<BeregnetTidslinje>()
+    private val beregningTidslinjer = mutableListOf<BeregnetTidslinje>()
+    private val gjeldende get() = beregningTidslinjer.lastOrNull()
 
     fun leggTilTidslinje(beregnetTidslinje: BeregnetTidslinje) {
         beregningTidslinjer.add(beregnetTidslinje)
@@ -12,7 +13,7 @@ class BeregningHistorikk {
 
     fun accept(visitor: BeregningHistorikkVisitor) {
         visitor.preVisitBeregnetTidslinje()
-        beregningTidslinjer.forEach { it.accept(visitor) }
+        gjeldende?.accept(visitor)
         visitor.postVisitBeregnetTidslinje()
     }
 

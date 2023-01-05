@@ -2,8 +2,8 @@ package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.kontomodell.TemporalCollection
 import no.nav.dagpenger.vedtak.kontomodell.mengder.RatioMengde
-import no.nav.dagpenger.vedtak.modell.hendelser.Ordinær
-import no.nav.dagpenger.vedtak.modell.hendelser.RettighetHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.EndringAvRettighetHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.NyRettighet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import java.util.UUID
 
@@ -16,7 +16,7 @@ class VedtakHistorikk private constructor(private val vedtak: MutableList<Vedtak
 
     constructor() : this(mutableListOf())
 
-    fun leggTilVedtak(ordinær: RettighetHendelse) {
+    fun leggTilVedtak(ordinær: NyRettighet) {
         vedtak.add(
             Vedtak(
                 virkningsdato = ordinær.virkningsdato,
@@ -24,16 +24,41 @@ class VedtakHistorikk private constructor(private val vedtak: MutableList<Vedtak
                 vedtakId = VedtakIdentifikator(UUID.randomUUID())
             ).also {
                 satser.put(ordinær.virkningsdato, VedtakFakta(it.id(), ordinær.dagsats))
-                fastsattArbeidstidPerUke.put(ordinær.virkningsdato, VedtakFakta(it.id(), ordinær.fastsattArbeidstidPerUke))
+                fastsattArbeidstidPerUke.put(
+                    ordinær.virkningsdato,
+                    VedtakFakta(it.id(), ordinær.fastsattArbeidstidPerUke)
+                )
                 gjenståendeVentedager.put(ordinær.virkningsdato, VedtakFakta(it.id(), ordinær.ventedager))
                 gjenståendeDagpengeperiode.put(ordinær.virkningsdato, VedtakFakta(it.id(), ordinær.dagpengerPeriode))
             }
         )
     }
 
+    fun leggTilVedtak(endringAvRettighetHendelse: EndringAvRettighetHendelse) {
+        vedtak.add(
+            Vedtak(
+                virkningsdato = endringAvRettighetHendelse.virkningsdato,
+                beslutningstidspunkt = endringAvRettighetHendelse.beslutningstidspunkt,
+                vedtakId = VedtakIdentifikator(UUID.randomUUID())
+            ).also {
+                satser.put(
+                    endringAvRettighetHendelse.virkningsdato,
+                    VedtakFakta(it.id(), endringAvRettighetHendelse.dagsats)
+                )
+            }
+        )
+    }
+
     fun beregn(aktivitetsTidslinje: AktivitetsTidslinje): BeregnetTidslinje {
         val rapporteringsPeriode = aktivitetsTidslinje.rapporteringsPerioder.first()
-        return BeregnetTidslinje(rapporteringsPeriode.dager.map { BeregnetDag(it.dato, beløp = 500) })
+        return BeregnetTidslinje(
+            rapporteringsPeriode.dager.map {
+                BeregnetDag(
+                    dato = it.dato,
+                    beløp = satser.get(it.dato).verdi
+                )
+            }
+        )
     }
 
     fun accept(visitor: VedtakHistorikkVisitor) {

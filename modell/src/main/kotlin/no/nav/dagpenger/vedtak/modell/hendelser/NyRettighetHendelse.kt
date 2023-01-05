@@ -16,7 +16,7 @@ sealed class RettighetHendelse(
     internal val ventedager: RatioMengde
 )
 
-class Ordinær(
+class NyRettighet(
     behandlingsId: UUID,
     virkningsdato: LocalDate,
     beslutningstidspunkt: LocalDateTime,

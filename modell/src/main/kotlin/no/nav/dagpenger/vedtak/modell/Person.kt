@@ -1,7 +1,7 @@
 package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.modell.hendelser.EndringAvRettighetHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.Ordinær
+import no.nav.dagpenger.vedtak.modell.hendelser.NyRettighet
 import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 
@@ -10,7 +10,7 @@ class Person(private val id: PersonIdentifikator) {
     private val vedtakHistorikk = VedtakHistorikk()
     private val beregningHistorikk = BeregningHistorikk()
 
-    fun håndter(ordinær: Ordinær) {
+    fun håndter(ordinær: NyRettighet) {
         vedtakHistorikk.leggTilVedtak(ordinær)
     }
 
@@ -28,5 +28,7 @@ class Person(private val id: PersonIdentifikator) {
 
     fun håndter(endringAvRettighetHendelse: EndringAvRettighetHendelse) {
         vedtakHistorikk.leggTilVedtak(endringAvRettighetHendelse)
+        val beregnetTidslinje = vedtakHistorikk.beregn(aktivitetsTidslinje)
+        beregningHistorikk.leggTilTidslinje(beregnetTidslinje)
     }
 }
