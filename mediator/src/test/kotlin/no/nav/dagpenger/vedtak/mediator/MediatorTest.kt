@@ -18,7 +18,6 @@ internal class MediatorTest {
     @Disabled
     @Test
     fun `Skal kunne opprette avtale når vi mottar melding om prosessresultat`() {
-
         testRapid.sendTestMessage(meldingOmInnvilget)
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
             assertEquals("vedtak_opprettet", it["@event_name"].asText())

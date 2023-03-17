@@ -24,7 +24,6 @@ internal class PersonTest {
 
     @Test
     fun `Får NyRettighet og det rapporteres dager på meldekortet`() {
-
         assertEquals("12345678910", testInspektør.id.identifikator())
         val virkningsdato = 1.desember(2022)
         val beslutningstidspunkt = 1.desember(2022).atStartOfDay()
@@ -47,8 +46,8 @@ internal class PersonTest {
             endringAvRettighetHendelse(
                 nySats = 400.beløp,
                 virkningsdato = 2.desember(2022),
-                beslutningstidspunkt = 2.desember(2022).atStartOfDay()
-            )
+                beslutningstidspunkt = 2.desember(2022).atStartOfDay(),
+            ),
         )
 
         assertEquals(400.beløp, testInspektør.dagsats())
@@ -67,13 +66,13 @@ internal class PersonTest {
         dagsats = 300.beløp,
         fastsattArbeidstidPerUke = 37.5.beløp,
         gjenståendeDagpengeperiode = 52.arbeidsuker,
-        gjenståendeVentedager = 3.arbeidsdager
+        gjenståendeVentedager = 3.arbeidsdager,
     )
 
     private fun endringAvRettighetHendelse(
         virkningsdato: LocalDate,
         beslutningstidspunkt: LocalDateTime,
-        nySats: Beløp
+        nySats: Beløp,
     ) = EndringAvRettighetHendelse(
         behandlingsId = UUID.randomUUID(),
         virkningsdato = virkningsdato,
@@ -81,7 +80,7 @@ internal class PersonTest {
         dagsats = nySats,
         fastsattArbeidstidPerUke = 37.5.beløp,
         gjenståendeDagpengeperiode = 52.arbeidsuker,
-        gjenståendeVentedager = 3.arbeidsdager
+        gjenståendeVentedager = 3.arbeidsdager,
     )
 
     private class TestInspektør(person: Person) : PersonVisitor {

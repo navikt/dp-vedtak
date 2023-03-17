@@ -30,22 +30,22 @@ internal class KontoTest {
         assertEquals(
             100.arbeidsdager,
             konto.balanse(
-                tilOgMed = LocalDate.now().minusDays(5)
-            )
+                tilOgMed = LocalDate.now().minusDays(5),
+            ),
         )
 
         assertEquals(
             null,
             konto.balanse(
-                tilOgMed = LocalDate.now().minusMonths(5)
-            )
+                tilOgMed = LocalDate.now().minusMonths(5),
+            ),
         )
 
         assertEquals(
             150.arbeidsdager,
             konto.balanse(
-                tilOgMed = LocalDate.now().plusMonths(5)
-            )
+                tilOgMed = LocalDate.now().plusMonths(5),
+            ),
         )
     }
 
@@ -56,7 +56,7 @@ internal class KontoTest {
             konto.balanse(
                 fraOgMed = LocalDate.now().minusMonths(5),
                 tilOgMed = LocalDate.now().minusWeeks(2),
-            )
+            ),
         )
     }
 

@@ -20,7 +20,7 @@ class Person private constructor(
     constructor() : this(
         avtaler = mutableListOf(),
         vedtak = mutableListOf(),
-        observers = mutableListOf()
+        observers = mutableListOf(),
     )
 
     companion object {
@@ -32,7 +32,7 @@ class Person private constructor(
             avtale.leggTilBeregningsregel(
                 BokføringsHendelseType.Meldekort,
                 SatsBeregningsregel(sats = innvilgetProsessresultatHendelse.sats, Konto()),
-                LocalDate.now()
+                LocalDate.now(),
             )
             leggTilVedtak(InnvilgetEndringsvedtak(innvilgetProsessresultatHendelse, avtale))
 
@@ -47,7 +47,7 @@ class Person private constructor(
                     innvilgetProsessresultatHendelse.periode,
                     LocalDate.now(),
                     LocalDate.now(),
-                    this
+                    this,
                 ).håndter()
 
                 leggTilVedtak(Hovedvedtak(innvilgetProsessresultatHendelse, it))
@@ -88,7 +88,7 @@ class Person private constructor(
         PersonObserver.VedtakFattetEvent(
             vedtakId = UUID.randomUUID(),
             avtaleId = vedtak.avtale.avtaleId,
-            sats = vedtak.avtale.sats()
+            sats = vedtak.avtale.sats(),
         ).also { vedtakFattetEvent ->
             observers.forEach { it.vedtakFattet(vedtakFattetEvent) }
         }

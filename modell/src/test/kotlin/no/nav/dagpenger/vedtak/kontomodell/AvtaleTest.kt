@@ -18,7 +18,7 @@ internal class AvtaleTest {
             it.leggTilBeregningsregel(
                 type = BokføringsHendelseType.Kvotebruk,
                 beregningsregel = beregningsregel,
-                fraOgMed = 15.januar
+                fraOgMed = 15.januar,
             )
         }
 
@@ -27,7 +27,7 @@ internal class AvtaleTest {
         avtale.leggTilBeregningsregel(
             type = BokføringsHendelseType.Kvotebruk,
             beregningsregel = nyBeregningsregel,
-            fraOgMed = 20.januar
+            fraOgMed = 20.januar,
         )
 
         assertEquals(beregningsregel, avtale.finnBeregningsregel(BokføringsHendelseType.Kvotebruk, 16.januar))
@@ -50,7 +50,7 @@ internal class AvtaleTest {
             it.leggTilBeregningsregel(
                 type = BokføringsHendelseType.Kvotebruk,
                 beregningsregel = beregningsregel,
-                fraOgMed = 15.januar
+                fraOgMed = 15.januar,
             )
         }
 
@@ -60,7 +60,7 @@ internal class AvtaleTest {
         avtale.leggTilBeregningsregel(
             type = BokføringsHendelseType.Kvotebruk,
             beregningsregel = nyBeregningsregel,
-            fraOgMed = 15.januar
+            fraOgMed = 15.januar,
         )
 
         assertEquals(nyBeregningsregel, avtale.finnBeregningsregel(BokføringsHendelseType.Kvotebruk, 16.januar))

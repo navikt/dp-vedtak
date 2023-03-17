@@ -13,7 +13,7 @@ internal object Configuration {
             "KAFKA_CONSUMER_GROUP_ID" to "dp-vedtak-v1",
             "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
             "KAFKA_RESET_POLICY" to "latest",
-        )
+        ),
     )
     private val properties = ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding defaultProperties
 

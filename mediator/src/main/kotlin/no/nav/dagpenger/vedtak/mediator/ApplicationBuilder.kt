@@ -7,7 +7,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnection.StatusListener {
 
     private val rapidsConnection = RapidApplication.Builder(
-        RapidApplication.RapidApplicationConfig.fromEnv(config)
+        RapidApplication.RapidApplicationConfig.fromEnv(config),
     ).build()
 
     private val rettighetsavklaringResultatService = RettighetsavklaringResultatService(rapidsConnection)

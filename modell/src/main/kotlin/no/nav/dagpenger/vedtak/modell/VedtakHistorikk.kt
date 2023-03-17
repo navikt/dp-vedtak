@@ -21,16 +21,16 @@ class VedtakHistorikk private constructor(private val vedtak: MutableList<Vedtak
             Vedtak(
                 virkningsdato = ordinær.virkningsdato,
                 beslutningstidspunkt = ordinær.beslutningstidspunkt,
-                vedtakId = VedtakIdentifikator(UUID.randomUUID())
+                vedtakId = VedtakIdentifikator(UUID.randomUUID()),
             ).also {
                 satser.put(ordinær.virkningsdato, VedtakFakta(it.id(), ordinær.dagsats))
                 fastsattArbeidstidPerUke.put(
                     ordinær.virkningsdato,
-                    VedtakFakta(it.id(), ordinær.fastsattArbeidstidPerUke)
+                    VedtakFakta(it.id(), ordinær.fastsattArbeidstidPerUke),
                 )
                 gjenståendeVentedager.put(ordinær.virkningsdato, VedtakFakta(it.id(), ordinær.ventedager))
                 gjenståendeDagpengeperiode.put(ordinær.virkningsdato, VedtakFakta(it.id(), ordinær.dagpengerPeriode))
-            }
+            },
         )
     }
 
@@ -39,13 +39,13 @@ class VedtakHistorikk private constructor(private val vedtak: MutableList<Vedtak
             Vedtak(
                 virkningsdato = endringAvRettighetHendelse.virkningsdato,
                 beslutningstidspunkt = endringAvRettighetHendelse.beslutningstidspunkt,
-                vedtakId = VedtakIdentifikator(UUID.randomUUID())
+                vedtakId = VedtakIdentifikator(UUID.randomUUID()),
             ).also {
                 satser.put(
                     endringAvRettighetHendelse.virkningsdato,
-                    VedtakFakta(it.id(), endringAvRettighetHendelse.dagsats)
+                    VedtakFakta(it.id(), endringAvRettighetHendelse.dagsats),
                 )
-            }
+            },
         )
     }
 
@@ -55,9 +55,9 @@ class VedtakHistorikk private constructor(private val vedtak: MutableList<Vedtak
             rapporteringsPeriode.dager.map {
                 BeregnetDag(
                     dato = it.dato,
-                    beløp = satser.get(it.dato).verdi
+                    beløp = satser.get(it.dato).verdi,
                 )
-            }
+            },
         )
     }
 

@@ -7,7 +7,7 @@ import no.nav.dagpenger.vedtak.kontomodell.mengder.RatioMengde
 import java.time.LocalDate
 
 internal class Konto private constructor(
-    private val posteringer: MutableList<Postering>
+    private val posteringer: MutableList<Postering>,
 ) {
     constructor() : this(mutableListOf())
 
@@ -16,7 +16,7 @@ internal class Konto private constructor(
             avtale.leggTilBeregningsregel(
                 BokføringsHendelseType.Kvotebruk,
                 StønadsperiodeBeregningsregel(it),
-                fraOgMed
+                fraOgMed,
             )
         }
     }

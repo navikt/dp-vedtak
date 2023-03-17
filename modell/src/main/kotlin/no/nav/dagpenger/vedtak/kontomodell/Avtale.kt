@@ -11,30 +11,30 @@ import java.util.UUID
 internal class Avtale private constructor(
     internal val avtaleId: UUID,
     private val beregningsregler: MutableMap<BokføringsHendelseType, TemporalCollection<Beregningsregel>>,
-    private val kontoer: MutableMap<String, Konto>
+    private val kontoer: MutableMap<String, Konto>,
 ) {
     private constructor(avtaleId: UUID) : this(
         avtaleId,
         mutableMapOf(),
-        mutableMapOf()
+        mutableMapOf(),
     )
 
     constructor() : this(
         avtaleId = UUID.randomUUID(),
         beregningsregler = mutableMapOf<BokføringsHendelseType, TemporalCollection<Beregningsregel>>(),
-        kontoer = mutableMapOf<String, Konto>()
+        kontoer = mutableMapOf<String, Konto>(),
     )
 
     companion object {
         fun ordinær(sats: Double, fraOgMed: LocalDate = LocalDate.now()) = Avtale().also { avtale ->
             avtale.leggTilKonto(
                 "Stønadsperiodekonto",
-                Konto.forStønadsperiode(avtale, fraOgMed)
+                Konto.forStønadsperiode(avtale, fraOgMed),
             )
             avtale.leggTilBeregningsregel(
                 BokføringsHendelseType.Meldekort,
                 SatsBeregningsregel(sats, Konto()),
-                fraOgMed
+                fraOgMed,
             )
         }
 

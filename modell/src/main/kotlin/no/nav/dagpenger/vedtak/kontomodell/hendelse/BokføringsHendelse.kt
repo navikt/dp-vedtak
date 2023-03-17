@@ -8,7 +8,7 @@ abstract class BokføringsHendelse(
     private val type: BokføringsHendelseType,
     val datoSett: LocalDate,
     private val datoSkjedd: LocalDate,
-    private val person: Person
+    private val person: Person,
 ) {
     private val posteringerViHarLagetIDenneHendelsen = mutableListOf<Postering>()
 
@@ -25,5 +25,5 @@ abstract class BokføringsHendelse(
 
 enum class BokføringsHendelseType {
     Meldekort,
-    Kvotebruk
+    Kvotebruk,
 }

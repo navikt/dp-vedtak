@@ -13,7 +13,7 @@ sealed class RettighetHendelse(
     internal val dagsats: Beløp,
     internal val fastsattArbeidstidPerUke: Beløp,
     internal val dagpengerPeriode: RatioMengde,
-    internal val ventedager: RatioMengde
+    internal val ventedager: RatioMengde,
 )
 
 class NyRettighet(
@@ -23,7 +23,7 @@ class NyRettighet(
     dagsats: Beløp,
     fastsattArbeidstidPerUke: Beløp,
     gjenståendeDagpengeperiode: RatioMengde,
-    gjenståendeVentedager: RatioMengde
+    gjenståendeVentedager: RatioMengde,
 ) : RettighetHendelse(
     behandlingsId = behandlingsId,
     virkningsdato = virkningsdato,
@@ -31,7 +31,7 @@ class NyRettighet(
     dagsats = dagsats,
     fastsattArbeidstidPerUke = fastsattArbeidstidPerUke,
     dagpengerPeriode = gjenståendeDagpengeperiode,
-    ventedager = gjenståendeVentedager
+    ventedager = gjenståendeVentedager,
 )
 
 class EndringAvRettighetHendelse(
@@ -41,7 +41,7 @@ class EndringAvRettighetHendelse(
     dagsats: Beløp,
     fastsattArbeidstidPerUke: Beløp,
     gjenståendeDagpengeperiode: RatioMengde,
-    gjenståendeVentedager: RatioMengde
+    gjenståendeVentedager: RatioMengde,
 ) : RettighetHendelse(
     behandlingsId = behandlingsId,
     virkningsdato = virkningsdato,
@@ -49,7 +49,7 @@ class EndringAvRettighetHendelse(
     dagsats = dagsats,
     fastsattArbeidstidPerUke = fastsattArbeidstidPerUke,
     dagpengerPeriode = gjenståendeDagpengeperiode,
-    ventedager = gjenståendeVentedager
+    ventedager = gjenståendeVentedager,
 )
 
 class Permittering(
@@ -59,7 +59,7 @@ class Permittering(
     dagsats: Beløp,
     fastsattArbeidstidPerUke: Beløp,
     dagpengerPeriode: RatioMengde,
-    ventedager: RatioMengde
+    ventedager: RatioMengde,
 ) :
     RettighetHendelse(
         behandlingsId = behandlingsId,
@@ -68,5 +68,5 @@ class Permittering(
         dagsats = dagsats,
         fastsattArbeidstidPerUke = fastsattArbeidstidPerUke,
         dagpengerPeriode = dagpengerPeriode,
-        ventedager = ventedager
+        ventedager = ventedager,
     )

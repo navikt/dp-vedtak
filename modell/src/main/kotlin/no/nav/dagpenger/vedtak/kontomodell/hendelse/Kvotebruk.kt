@@ -9,5 +9,5 @@ class Kvotebruk(internal val mengde: Tid, datoSett: LocalDate, datoSkjedd: Local
         BokføringsHendelseType.Kvotebruk,
         datoSett,
         datoSkjedd,
-        person
+        person,
     )

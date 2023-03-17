@@ -53,19 +53,19 @@ class CucumberStegDefinisjoner() : No {
         DefaultParameterTransformer { fromValue: String?, toValueType: Type? ->
             objectMapper.convertValue(
                 fromValue,
-                objectMapper.constructType(toValueType)
+                objectMapper.constructType(toValueType),
             )
         }
         DefaultDataTableCellTransformer { fromValue: String?, toValueType: Type? ->
             objectMapper.convertValue(
                 fromValue,
-                objectMapper.constructType(toValueType)
+                objectMapper.constructType(toValueType),
             )
         }
         DefaultDataTableEntryTransformer { fromValue: Map<String?, String?>?, toValueType: Type? ->
             objectMapper.convertValue(
                 fromValue,
-                objectMapper.constructType(toValueType)
+                objectMapper.constructType(toValueType),
             )
         }
     }

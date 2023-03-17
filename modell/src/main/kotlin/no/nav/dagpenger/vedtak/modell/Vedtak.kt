@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 class Vedtak(
     private val virkningsdato: LocalDate,
     private val beslutningstidspunkt: LocalDateTime,
-    private val vedtakId: VedtakIdentifikator
+    private val vedtakId: VedtakIdentifikator,
 ) {
     fun accept(visitor: VedtakVisitor) {
         visitor.visitVedtak(virkningsdato, beslutningstidspunkt)
