@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak
+package no.nav.dagpenger.vedtak.cucumber
 import io.cucumber.core.options.Constants
 import org.junit.platform.suite.api.ConfigurationParameter
 import org.junit.platform.suite.api.IncludeEngines
