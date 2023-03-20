@@ -6,6 +6,7 @@ import no.nav.dagpenger.vedtak.hjelpere.mars
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 
 internal class TemporalCollectionTest {
@@ -22,7 +23,7 @@ internal class TemporalCollectionTest {
 
     @Test
     fun `får riktig sats til riktig dato`() {
-        org.junit.jupiter.api.assertThrows<IllegalArgumentException> {
+        assertThrows<IllegalArgumentException> {
             satser.get(1.januar)
         }
         assertEquals(lavSats, satser.get(1.mars))
