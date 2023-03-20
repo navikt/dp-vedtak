@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.cucumber
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import io.cucumber.java8.No
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
@@ -12,7 +13,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-class NyRettighetTest : No {
+class RettighetStegTest : No {
     private val datoformatterer = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     private lateinit var person: Person
     private lateinit var ident: String
@@ -23,21 +24,39 @@ class NyRettighetTest : No {
         Gitt("en ny hendelse om behandlet søknad") { søknadHendelse: SøknadHendelseCucumber ->
             ident = søknadHendelse.fødselsnummer
             person = Person(ident.tilPersonIdentfikator())
-            person.håndter(SøknadBehandletHendelse(ident, UUID.randomUUID(), utfall = søknadHendelse.utfall))
+            person.håndter(
+                SøknadBehandletHendelse(
+                    ident,
+                    UUID.randomUUID(),
+                    utfall = søknadHendelse.utfall,
+                    virkningsdato = søknadHendelse.virkningsdato,
+                ),
+            )
         }
 
         Så("skal bruker ha {int} vedtak") { antallVedtak: Int ->
             assertEquals(antallVedtak, inspektør.antallVedtak)
         }
+
+        Så("vedtaket har virkningsdato {string}") { virkningsdato: String ->
+            assertEquals(LocalDate.parse(virkningsdato, datoformatterer), inspektør.virkningsdato)
+        }
     }
 
-    private data class SøknadHendelseCucumber(val fødselsnummer: String, val behandlingId: String, val utfall: Boolean)
+    private data class SøknadHendelseCucumber(
+        val fødselsnummer: String,
+        val behandlingId: String,
+        val utfall: Boolean,
+        @JsonFormat(pattern = "dd.MM.yyyy")
+        val virkningsdato: LocalDate,
+    )
 
     private class Inspektør(person: Person) : PersonVisitor {
         init {
             person.accept(this)
         }
 
+        lateinit var virkningsdato: LocalDate
         var antallVedtak = 0
         lateinit var forbruk: Tid
 
@@ -49,6 +68,7 @@ class NyRettighetTest : No {
             gyldigTom: LocalDate?,
         ) {
             antallVedtak++
+            this.virkningsdato = virkningsdato
         }
 
         override fun visitForbruk(forbruk: Tid) {
