@@ -63,7 +63,7 @@ class Rammevedtak(
 ) : Vedtak(vedtakId, vedtakstidspunkt, utfall = true, virkningsdato) {
 
     override fun accept(visitor: VedtakVisitor) {
-        /*visitor.preVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall)
+        visitor.preVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall)
         visitor.visitRammeVedtak(
             fastsattArbeidstidPerDag = fastsattArbeidstidPerDag,
             grunnlag = grunnlag,
@@ -72,6 +72,6 @@ class Rammevedtak(
             dagpengerettighet = dagpengerettighet,
             gyldigTom = gyldigTom,
         )
-        visitor.postVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall, gyldigTom)*/
+        visitor.postVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall, gyldigTom)
     }
 }

@@ -1,9 +1,9 @@
 # language: no
 Egenskap: Ny rettighet innvilget
 
-  @wip
+
   Scenario: Innvilget vedtak fra 14.12.2022
-    Gitt en ny søknadBehandletHendelse
+    Gitt en ny hendelse om behandlet søknad
       | fødselsnummer | behandlingId | utfall |
       | 12345678901   | 1            | true   |
     #Og alle inngangsvilkår er oppfylt med virkningsdato "14.12.2022" og fastsatt abreidstid er 8 timer

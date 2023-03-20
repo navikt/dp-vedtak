@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
+import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import java.math.BigDecimal
 
 internal class VedtakHistorikk(private val vedtak: MutableList<Vedtak> = mutableListOf()) {
@@ -15,14 +16,11 @@ internal class VedtakHistorikk(private val vedtak: MutableList<Vedtak> = mutable
         // OppdaterVedtakFakta(vedtak, this)
     }
 
-    /*fun accept(visitor: VedtakHistorikkVisitor) {
-        if (gjensteåndeStønadsperiode.harHistorikk()) {
-            visitor.visitGjenståendeStønadsperiode(gjensteåndeStønadsperiode.get(LocalDate.now()))
-        }
+    fun accept(visitor: VedtakHistorikkVisitor) {
         visitor.preVisitVedtak()
         vedtak.forEach { it.accept(visitor) }
         visitor.postVisitVedtak()
-    }*/
+    }
 
     // fun harVedtak(rapporteringsHendelse: Rapporteringshendelse) = vedtak.isNotEmpty()
 
