@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import io.cucumber.java8.No
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.SøknadAvslåttHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Tid
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -21,14 +22,25 @@ class RettighetStegTest : No {
     private val inspektør get() = Inspektør(person)
 
     init {
-        Gitt("en ny hendelse om behandlet søknad") { søknadHendelse: SøknadHendelseCucumber ->
+        Gitt("en ny hendelse om innvilget søknad") { søknadHendelse: SøknadHendelseCucumber ->
             ident = søknadHendelse.fødselsnummer
             person = Person(ident.tilPersonIdentfikator())
             person.håndter(
-                SøknadBehandletHendelse(
+                SøknadInnvilgetHendelse(
                     ident,
                     UUID.randomUUID(),
-                    utfall = søknadHendelse.utfall,
+                    virkningsdato = søknadHendelse.virkningsdato,
+                ),
+            )
+        }
+
+        Gitt("en ny hendelse om avslått søknad") { søknadHendelse: SøknadHendelseCucumber ->
+            ident = søknadHendelse.fødselsnummer
+            person = Person(ident.tilPersonIdentfikator())
+            person.håndter(
+                SøknadAvslåttHendelse(
+                    ident,
+                    UUID.randomUUID(),
                     virkningsdato = søknadHendelse.virkningsdato,
                 ),
             )

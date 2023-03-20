@@ -2,7 +2,7 @@
 Egenskap: Ny rettighet avslått
 
   Scenario:
-    Gitt en ny hendelse om behandlet søknad
+    Gitt en ny hendelse om avslått søknad
       | fødselsnummer | behandlingId | utfall | virkningsdato |
       | 12345678901   | 1            | false  | 14.12.2022    |
     Så skal bruker ha 1 vedtak
