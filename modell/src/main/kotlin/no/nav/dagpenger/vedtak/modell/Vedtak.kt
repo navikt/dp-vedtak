@@ -45,8 +45,8 @@ class Avslag(
     virkningsdato: LocalDate,
 ) : Vedtak(vedtakId, vedtakstidspunkt, utfall = false, virkningsdato) {
     override fun accept(visitor: VedtakVisitor) {
-        // visitor.preVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall)
-        // visitor.postVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall, null) // TODO: Refaktorer visitorer
+        visitor.preVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall)
+        visitor.postVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall, null) // TODO: Refaktorer visitorer
     }
 }
 

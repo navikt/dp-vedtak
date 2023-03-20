@@ -21,7 +21,7 @@ class SøknadBehandletHendelse(ident: String, private val behandlingId: UUID, pr
                 Dagpengerettighet.OrdinæreDagpenger,
                 40.timer,
             )
-            false -> TODO()
+            false -> Vedtak.avslag(LocalDate.now())
         }
     }
 }

@@ -1,13 +1,8 @@
 # language: no
 Egenskap: Ny rettighet avslått
 
-  Bakgrunn:
-    Gitt en ny søknad
-      | fødselsnummer | behandlingId |
-      | 12345678901   | 1            |
-    Og alle inngangsvilkår er ikke oppfylt med virkningsdato "14.12.2022"
-    Og beslutter kvalitetssikrer
-
-  @wip
-  Scenario: Bruker har ikke rett til dagpenger
+  Scenario:
+    Gitt en ny hendelse om behandlet søknad
+      | fødselsnummer | behandlingId | utfall |
+      | 12345678901   | 1            | false  |
     Så skal bruker ha 1 vedtak
