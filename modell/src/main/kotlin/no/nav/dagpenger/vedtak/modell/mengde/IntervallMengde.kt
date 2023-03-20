@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak.kontomodell.mengder
+package no.nav.dagpenger.vedtak.modell.mengde
 
 import kotlin.math.absoluteValue
 
@@ -21,4 +21,7 @@ open class IntervallMengde internal constructor(mengde: Number, protected val en
     override fun hashCode() = enhet.hashCode(amount)
 
     protected fun convertedAmount(other: IntervallMengde) = this.enhet.convertedAmount(other.amount, other.enhet)
+    override fun toString(): String {
+        return "Mengde(enhet=${enhet.javaClass.simpleName}, amount=$amount)"
+    }
 }

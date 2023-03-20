@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak.kontomodell
+package no.nav.dagpenger.vedtak.modell
 
 import java.time.LocalDate
 import java.time.LocalDateTime

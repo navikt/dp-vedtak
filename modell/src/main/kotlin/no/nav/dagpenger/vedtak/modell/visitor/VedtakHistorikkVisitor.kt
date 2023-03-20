@@ -1,21 +1,9 @@
 package no.nav.dagpenger.vedtak.modell.visitor
 
-import no.nav.dagpenger.vedtak.kontomodell.mengder.RatioMengde
-import no.nav.dagpenger.vedtak.modell.Beløp
-import java.time.LocalDate
+import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 
 interface VedtakHistorikkVisitor : VedtakVisitor {
-    fun preVisitVedtakHistorikk() {}
-
-    fun postVisitVedtakHistorikk() {}
-
-    fun visitDagsatsHistorikk(dato: LocalDate, dagsats: Beløp) {}
-
-    fun visitGjeldendeDagsats(dagsats: Beløp) {}
-
-    fun visitFastsattArbeidstidHistorikk(dato: LocalDate, fastsattArbeidstidPerUke: Beløp) {}
-
-    fun visitVentedagerHistorikk(dato: LocalDate, ventedager: RatioMengde) {}
-
-    fun visitDagpengeperiodeHistorikk(dato: LocalDate, dagpengeperiode: RatioMengde) {}
+    fun visitGjenståendeStønadsperiode(gjenståendePeriode: Stønadsperiode) {}
+    fun preVisitVedtak() {}
+    fun postVisitVedtak() {}
 }
