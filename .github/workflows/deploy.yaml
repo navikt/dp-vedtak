@@ -1,6 +1,10 @@
 name: Build and deploy
 
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - docs/api/async-api.yaml
+      - .github/workflows/async-api.yaml
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}/dp-vedtak:${{ github.sha }}
