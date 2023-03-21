@@ -1,14 +1,18 @@
 package no.nav.dagpenger.vedtak.cucumber
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import io.cucumber.datatable.DataTable
 import io.cucumber.java8.No
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
+import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnvilgetHendelse
+import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsdager
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.mengde.Tid
@@ -64,13 +68,27 @@ class RettighetStegTest : No {
             assertEquals(LocalDate.parse(virkningsdato, datoformatterer), inspektør.virkningsdato)
         }
 
-        // vedtaket har dagsats på 588, grunnlag 490921, stønadsperiode på 52 uker og vanlig arbeidstid per dag er 8 timer
-        Så("vedtaket har dagsats på {int}, grunnlag {int}, stønadsperiode på {int} uker og vanlig arbeidstid per dag er {double} timer") { dagsats: Int, grunnlag: Int, stønadsperiode: Int, arbeidstid: Double ->
+        Så("vedtaket har dagsats på {int}, grunnlag {int}, stønadsperiode på {int} uker og vanlig arbeidstid per dag er {double} time   r") { dagsats: Int, grunnlag: Int, stønadsperiode: Int, arbeidstid: Double ->
             assertEquals(dagsats.toBigDecimal(), inspektør.dagsats)
             assertEquals(grunnlag.toBigDecimal(), inspektør.grunnlag)
             assertEquals(stønadsperiode.arbeidsuker, inspektør.stønadsperiode)
             assertEquals(arbeidstid.timer, inspektør.vanligArbeidstidPerDag)
         }
+
+        Så("skal forbruket være {int} dager") { forbruk: Int ->
+            assertEquals(forbruk.arbeidsdager, inspektør.forbruk)
+        }
+
+        Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
+            val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
+                Rapporteringsdag(dato = LocalDate.parse(it[0], datoformatterer), fravær = it[1].toBooleanStrict(), timer = it[2].toDouble())
+            }
+            håndterRapporteringsHendelse(rapporteringsdager)
+        }
+    }
+
+    private fun håndterRapporteringsHendelse(rapporteringsdager: List<Rapporteringsdag>) {
+        person.håndter(Rapporteringshendelse(ident, UUID.randomUUID(), rapporteringsdager))
     }
 
     private data class SøknadAvslåttHendelseCucumber(

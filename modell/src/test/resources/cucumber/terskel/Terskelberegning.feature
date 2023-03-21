@@ -3,15 +3,10 @@
   Egenskap: Terskel
 
     Bakgrunn: Alt er fastsatt
-      Gitt en ny søknad
-        | fødselsnummer | behandlingId |
-        | 12345678901   | 1            |
-      Og alle inngangsvilkår er oppfylt med virkningsdato "12.12.2022" og fastsatt abreidstid er 8 timer
-      Og sats er 488, grunnlag er 100000 og stønadsperiode er 52
-      Og beslutter kvalitetssikrer
-      Så skal bruker ha 1 vedtak
+      Gitt en ny hendelse om innvilget søknad
+        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 14.12.2022    | 588     | 490921   | 52             | 8                      |
 
-    @wip
       Scenario: Rapporterer arbeidstimer eksakt lik terskel
         Når rapporteringshendelse mottas
           | dato       | fravær | timer |

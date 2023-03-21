@@ -1,6 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.entitet
 
-import no.nav.dagpenger.vedtak.modell.Dag
+import no.nav.dagpenger.vedtak.modell.rapportering.Dag
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
