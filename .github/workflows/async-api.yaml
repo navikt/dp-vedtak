@@ -19,11 +19,11 @@ jobs:
 
       - name: Generating HTML from AsyncAPI file
         run: |
-          npx @asyncapi/generator docs/api/async-api.yml @asyncapi/html-template -o docs-html
+          npx @asyncapi/generator docs/api/async-api.yml @asyncapi/html-template -o docs
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: docs-html
+          FOLDER: docs
