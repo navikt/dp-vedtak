@@ -16,8 +16,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      #In case you do not want to use defaults, you for example want to use different template
-      - name: Generating HTML from my AsyncAPI document
-        uses: docker://asyncapi/github-action-for-generator:2.1.11
-        with:
-          filepath: docs/api/async-api.yml
+
+      - name: Generating HTML from AsyncAPI file
+        run: |
+          npx @asyncapi/generator docs/api/async-api.yml @asyncapi/html-template -o docs-html
