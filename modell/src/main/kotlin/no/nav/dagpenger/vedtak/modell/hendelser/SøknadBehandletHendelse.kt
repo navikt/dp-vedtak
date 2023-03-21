@@ -2,7 +2,7 @@ package no.nav.dagpenger.vedtak.modell.hendelser
 
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Vedtak
-import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -23,6 +23,7 @@ class SøknadInnvilgetHendelse(
     private val dagsats: BigDecimal,
     private val grunnlag: BigDecimal,
     private val stønadsperiode: Stønadsperiode,
+    private val vanligArbeidstidPerDag: Timer,
 ) :
     SøknadBehandletHendelse(
         ident,
@@ -35,7 +36,7 @@ class SøknadInnvilgetHendelse(
         dagsats = dagsats,
         stønadsperiode = stønadsperiode,
         dagpengerettighet = Dagpengerettighet.OrdinæreDagpenger,
-        fastsattArbeidstidPerDag = 40.timer,
+        vanligArbeidstidPerDag = vanligArbeidstidPerDag,
     )
 }
 

@@ -23,7 +23,7 @@ sealed class Vedtak(
             dagsats: BigDecimal,
             stønadsperiode: Stønadsperiode,
             dagpengerettighet: Dagpengerettighet,
-            fastsattArbeidstidPerDag: Timer,
+            vanligArbeidstidPerDag: Timer,
             gyldigTom: LocalDate? = null,
         ) = Rammevedtak(
             virkningsdato = virkningsdato,
@@ -31,8 +31,8 @@ sealed class Vedtak(
             dagsats = dagsats,
             stønadsperiode = stønadsperiode,
             dagpengerettighet = dagpengerettighet, // TODO: Skal rettighetslista bare inneholde innvilgede rettigheter? Hva med avslag på utdanning f.eks.?
-            fastsattArbeidstidPerDag = fastsattArbeidstidPerDag,
-            gyldigTom = gyldigTom, // TODO: Noe mer fornuftig
+            vanligArbeidstidPerDag = vanligArbeidstidPerDag,
+            gyldigTom = gyldigTom,
         )
     }
 
@@ -54,7 +54,7 @@ class Rammevedtak(
     vedtakId: UUID = UUID.randomUUID(),
     vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     virkningsdato: LocalDate,
-    private val fastsattArbeidstidPerDag: Timer,
+    private val vanligArbeidstidPerDag: Timer,
     private val grunnlag: BigDecimal,
     private val dagsats: BigDecimal,
     private val stønadsperiode: Stønadsperiode,
@@ -65,7 +65,7 @@ class Rammevedtak(
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall)
         visitor.visitRammeVedtak(
-            fastsattArbeidstidPerDag = fastsattArbeidstidPerDag,
+            fastsattArbeidstidPerDag = vanligArbeidstidPerDag,
             grunnlag = grunnlag,
             dagsats = dagsats,
             stønadsperiode = stønadsperiode,

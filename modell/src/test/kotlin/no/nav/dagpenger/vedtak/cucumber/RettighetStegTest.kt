@@ -6,6 +6,7 @@ import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
@@ -38,6 +39,7 @@ class RettighetStegTest : No {
                     dagsats = søknadHendelse.dagsats.toBigDecimal(),
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
+                    vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
                 ),
             )
         }
@@ -62,12 +64,12 @@ class RettighetStegTest : No {
             assertEquals(LocalDate.parse(virkningsdato, datoformatterer), inspektør.virkningsdato)
         }
 
-        Så(
-            "vedtaket har dagsats på {int}, grunnlag {int} og stønadsperiode på {int} uker",
-        ) { dagsats: Int, grunnlag: Int, stønadsperiode: Int ->
+        // vedtaket har dagsats på 588, grunnlag 490921, stønadsperiode på 52 uker og vanlig arbeidstid per dag er 8 timer
+        Så("vedtaket har dagsats på {int}, grunnlag {int}, stønadsperiode på {int} uker og vanlig arbeidstid per dag er {double} timer") { dagsats: Int, grunnlag: Int, stønadsperiode: Int, arbeidstid: Double ->
             assertEquals(dagsats.toBigDecimal(), inspektør.dagsats)
             assertEquals(grunnlag.toBigDecimal(), inspektør.grunnlag)
             assertEquals(stønadsperiode.arbeidsuker, inspektør.stønadsperiode)
+            assertEquals(arbeidstid.timer, inspektør.vanligArbeidstidPerDag)
         }
     }
 
@@ -88,6 +90,7 @@ class RettighetStegTest : No {
         val dagsats: Int,
         val grunnlag: Int,
         val stønadsperiode: Int,
+        val vanligArbeidstidPerDag: Double,
     )
 
     private class Inspektør(person: Person) : PersonVisitor {
@@ -95,6 +98,7 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
+        lateinit var vanligArbeidstidPerDag: Timer
         lateinit var stønadsperiode: Stønadsperiode
         lateinit var grunnlag: BigDecimal
         lateinit var dagsats: BigDecimal
@@ -117,13 +121,14 @@ class RettighetStegTest : No {
             grunnlag: BigDecimal,
             dagsats: BigDecimal,
             stønadsperiode: Stønadsperiode,
-            fastsattArbeidstidPerDag: Timer,
+            vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,
             gyldigTom: LocalDate?,
         ) {
             this.grunnlag = grunnlag
             this.dagsats = dagsats
             this.stønadsperiode = stønadsperiode
+            this.vanligArbeidstidPerDag = vanligArbeidstidPerDag
         }
 
         override fun visitForbruk(forbruk: Tid) {
