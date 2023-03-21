@@ -4,5 +4,5 @@ plugins {
 }
 
 application {
-    mainClass.set("no.nav.dagpenger.AppKt")
+    mainClass.set("no.nav.dagpenger.vedtak.mediator.AppKt")
 }
