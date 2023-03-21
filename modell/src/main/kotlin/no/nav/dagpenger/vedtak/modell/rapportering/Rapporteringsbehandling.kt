@@ -5,8 +5,6 @@ import no.nav.dagpenger.vedtak.modell.Behandling
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.Vedtak
-import no.nav.dagpenger.vedtak.modell.fastsettelse.Fastsettelse
-import no.nav.dagpenger.vedtak.modell.fastsettelse.Fastsettelse.Companion.vurdert
 import no.nav.dagpenger.vedtak.modell.fastsettelse.Paragraf_4_15_Forbruk
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
@@ -77,9 +75,7 @@ internal class Rapporteringsbehandling(
         override fun entering(hendelse: Hendelse, behandling: Rapporteringsbehandling) {
             if (hendelse is Rapporteringshendelse) {
                 behandling.fastsettelser.forEach { it.håndter(hendelse, behandling.tellendeDager) }
-                if (behandling.fastsettelser.vurdert()) {
-                    behandling.endreTilstand(Behandlet, hendelse)
-                }
+                behandling.endreTilstand(Behandlet, hendelse)
             }
         }
     }
@@ -116,7 +112,7 @@ internal class Rapporteringsbehandling(
         tilstand.håndter(rapporteringsHendelse, this)
     }
 
-    private class FastsattForbruk(fastsettelser: List<Fastsettelse<*>>) : FastsettelseVisitor {
+    private class FastsattForbruk(fastsettelser: List<Paragraf_4_15_Forbruk>) : FastsettelseVisitor {
 
         var forbruk: Tid = 0.arbeidsdager
 

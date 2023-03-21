@@ -15,16 +15,6 @@ class Person(private val ident: PersonIdentifikator) : Aktivitetskontekst by ide
         vedtakHistorikk.leggTilVedtak(søknadBehandletHendelse.tilVedtak())
     }
 
-    internal fun leggTilVedtak(vedtak: Vedtak) {
-        vedtakHistorikk.leggTilVedtak(vedtak)
-    }
-
-    fun accept(visitor: PersonVisitor) {
-        visitor.visitPerson(ident)
-        rapporteringsperioder.accept(visitor)
-        vedtakHistorikk.accept(visitor)
-    }
-
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         kontekst(rapporteringshendelse)
         rapporteringsperioder.håndter(rapporteringshendelse)
@@ -33,6 +23,16 @@ class Person(private val ident: PersonIdentifikator) : Aktivitetskontekst by ide
             rapporteringsId = rapporteringshendelse.rapporteringsId,
         )
         behandling.håndter(rapporteringshendelse)
+    }
+
+    internal fun leggTilVedtak(vedtak: Vedtak) {
+        vedtakHistorikk.leggTilVedtak(vedtak)
+    }
+
+    fun accept(visitor: PersonVisitor) {
+        visitor.visitPerson(ident)
+        rapporteringsperioder.accept(visitor)
+        vedtakHistorikk.accept(visitor)
     }
 
     private fun kontekst(hendelse: Hendelse) {

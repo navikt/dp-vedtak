@@ -1,6 +1,6 @@
 package no.nav.dagpenger.vedtak.modell
 
-import no.nav.dagpenger.vedtak.modell.fastsettelse.Fastsettelse
+import no.nav.dagpenger.vedtak.modell.fastsettelse.Paragraf_4_15_Forbruk
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.vilkår.Vilkårsvurdering
@@ -16,7 +16,7 @@ abstract class Behandling<Behandlingstype : Behandling<Behandlingstype>>(
 ) : Aktivitetskontekst {
 
 //    private val observers = mutableListOf<BehandlingObserver>()
-    internal abstract val fastsettelser: List<Fastsettelse<*>>
+    internal abstract val fastsettelser: List<Paragraf_4_15_Forbruk>
 
 //    fun addObserver(observer: BehandlingObserver) {
 //        observers.add(observer)
