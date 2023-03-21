@@ -68,9 +68,9 @@ class RettighetStegTest : No {
             assertEquals(LocalDate.parse(virkningsdato, datoformatterer), inspektør.virkningsdato)
         }
 
-        Så("vedtaket har dagsats på {int}, grunnlag {int}, stønadsperiode på {int} uker og vanlig arbeidstid per dag er {double} timer") { dagsats: Int, grunnlag: Int, stønadsperiode: Int, arbeidstid: Double ->
-            assertEquals(dagsats.toBigDecimal(), inspektør.dagsats)
-            assertEquals(grunnlag.toBigDecimal(), inspektør.grunnlag)
+        Så("vedtaket har dagsats på {bigdecimal}, grunnlag {bigdecimal}, stønadsperiode på {int} uker og vanlig arbeidstid per dag er {double} timer") { dagsats: BigDecimal, grunnlag: BigDecimal, stønadsperiode: Int, arbeidstid: Double ->
+            assertEquals(dagsats, inspektør.dagsats)
+            assertEquals(grunnlag, inspektør.grunnlag)
             assertEquals(stønadsperiode.arbeidsuker, inspektør.stønadsperiode)
             assertEquals(arbeidstid.timer, inspektør.vanligArbeidstidPerDag)
         }
