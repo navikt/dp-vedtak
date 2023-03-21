@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - feature/asyncapi
-  paths:
-    - docs/api/async-api.yaml
-    - .github/workflows/async-api.yaml
+    paths:
+      - docs/api/async-api.yaml
+      - .github/workflows/async-api.yaml
 
 jobs:
   generate:
