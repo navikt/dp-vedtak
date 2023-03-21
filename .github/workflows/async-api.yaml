@@ -2,7 +2,8 @@ name: AsyncAPI documents processing
 
 on:
   push:
-    branches: [ feature/asyncapi ]
+    branches:
+      - feature/asyncapi
   paths:
     - docs/api/async-api.yaml
     - .github/workflows/async-api.yaml
