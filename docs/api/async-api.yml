@@ -1,0 +1,45 @@
+asyncapi: '2.6.0'
+info:
+  title: Vedtak
+  version: 0.0.1
+  description: Eventformat for vedtak fattet
+
+channels:
+  teamdagpenger.rapid.v1:
+    subscribe:
+      message:
+        $ref: '#/components/messages/vedtak'
+components:
+  messages:
+    vedtak:
+      payload:
+        type: object
+        properties:
+          '@event_type':
+            type: string
+            description: Event navnet 'vedtak_fattet'
+            enum: [
+              "vedtak_fattet"
+            ]
+          ident:
+            type: string
+            description: Ident til mottaker av vedtaket
+          vedtak_id:
+            type: string
+            format: uuid
+            description: Vedtakets interne id
+          vedtaktidspunkt:
+            type: string
+            format: date-time
+            description: Tidspunkt for når vedtaket er fattet
+          virkningsdato:
+            type: string
+            format: date
+            description: Vedtakets virkningstidspunkt
+          utfall:
+            type: string
+            description: Innvilget eller Avslått
+            enum: [
+              "Innvilget",
+              "Avslått"
+            ]
