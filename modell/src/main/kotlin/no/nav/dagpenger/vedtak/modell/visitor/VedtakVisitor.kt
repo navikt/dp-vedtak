@@ -17,7 +17,6 @@ interface VedtakVisitor {
         stønadsperiode: Stønadsperiode,
         fastsattArbeidstidPerDag: Timer,
         dagpengerettighet: Dagpengerettighet,
-        gyldigTom: LocalDate?,
     ) {}
 
     fun visitForbruk(forbruk: Tid) {}
@@ -27,6 +26,5 @@ interface VedtakVisitor {
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
         utfall: Boolean,
-        gyldigTom: LocalDate?,
     ) {}
 }

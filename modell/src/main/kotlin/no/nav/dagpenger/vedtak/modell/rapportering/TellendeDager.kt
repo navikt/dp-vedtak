@@ -15,14 +15,13 @@ internal class TellendeDager(person: Person, val periode: Periode) : PersonVisit
 
     private val dager = mutableListOf<Dag>()
     lateinit var virkningsdato: LocalDate
-    private var gyldigTom: LocalDate? = null
     var harDagpengevedtak = false
 
     init {
         person.accept(this)
     }
 
-    fun tellendeDager() = dager.filter { dato -> dato >= virkningsdato && (gyldigTom == null || dato <= gyldigTom!!) }
+    fun tellendeDager() = dager.filter { dato -> dato >= virkningsdato }
 
     override fun visitArbeidsdag(arbeidsdag: Arbeidsdag) {
         if (arbeidsdag in periode) {
@@ -36,7 +35,6 @@ internal class TellendeDager(person: Person, val periode: Periode) : PersonVisit
         stønadsperiode: Stønadsperiode,
         fastsattArbeidstidPerDag: Timer,
         dagpengerettighet: Dagpengerettighet,
-        gyldigTom: LocalDate?,
     ) {
         harDagpengevedtak = true
     }
@@ -46,13 +44,9 @@ internal class TellendeDager(person: Person, val periode: Periode) : PersonVisit
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
         utfall: Boolean,
-        gyldigTom: LocalDate?,
     ) {
         if (harDagpengevedtak) {
             this.virkningsdato = virkningsdato
-            if (gyldigTom != null) {
-                this.gyldigTom = gyldigTom
-            }
         }
         harDagpengevedtak = false
     }

@@ -5,7 +5,7 @@
     Bakgrunn: Alt er fastsatt
       Gitt en ny hendelse om innvilget søknad
         | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 14.12.2022    | 588     | 490921   | 52             | 8                      |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 490921   | 52             | 8                      |
 
       Scenario: Rapporterer arbeidstimer eksakt lik terskel
         Når rapporteringshendelse mottas
@@ -27,7 +27,7 @@
         Så skal forbruket være 10 dager
         Så skal bruker ha 2 vedtak
 
-    @wip
+
       Scenario: Rapporterer arbeidstimer over terskel
         Når rapporteringshendelse mottas
           | dato       | fravær | timer |
@@ -48,7 +48,7 @@
           Så skal forbruket være 0 dager
           Så skal bruker ha 2 vedtak
 
-    @wip
+
     Scenario: Rapporterer fravær og arbeidstimer eksakt lit terskel
       Når rapporteringshendelse mottas
         | dato       | fravær | timer |
@@ -69,7 +69,7 @@
       Så skal forbruket være 9 dager
       Så skal bruker ha 2 vedtak
 
-    @wip
+
       Scenario: Har ikke vedtak hele periode. Rapporterer arbeidstimer under terskel etter vedtakstidspunkt.
         Når rapporteringshendelse mottas
           | dato       | fravær | timer |
@@ -90,7 +90,7 @@
         Så skal forbruket være 5 dager
         Så skal bruker ha 2 vedtak
 
-    @wip
+
     Scenario: Rapporterer arbeid i helgedag, som gjør at man kommer over terskel
       Når rapporteringshendelse mottas
         | dato       | fravær | timer |

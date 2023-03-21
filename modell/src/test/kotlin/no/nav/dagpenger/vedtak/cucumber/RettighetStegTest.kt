@@ -129,7 +129,6 @@ class RettighetStegTest : No {
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
             utfall: Boolean,
-            gyldigTom: LocalDate?,
         ) {
             antallVedtak++
             this.virkningsdato = virkningsdato
@@ -141,7 +140,6 @@ class RettighetStegTest : No {
             stønadsperiode: Stønadsperiode,
             vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,
-            gyldigTom: LocalDate?,
         ) {
             this.grunnlag = grunnlag
             this.dagsats = dagsats
