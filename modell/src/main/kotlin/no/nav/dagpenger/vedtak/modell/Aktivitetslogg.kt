@@ -187,11 +187,7 @@ class Aktivitetslogg private constructor(
             }
 
             enum class Behovtype {
-                DagpengerettighetBehov,
-                GrunnlagsBehov,
-                SatsBehov,
-                StønadsperiodeBehov,
-                KvalitetssikringsBehov,
+                Test, // @todo: tullebehov for å teste aktivitetsloggen. Erstatt med ordentlig behov etterhvert.
             }
         }
 
