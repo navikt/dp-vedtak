@@ -24,13 +24,13 @@ import java.util.UUID
 internal class Rapporteringsbehandling(
     private val person: Person,
     private val rapporteringsId: UUID,
-    private val behandlingsId: UUID = UUID.randomUUID(),
     private val tellendeDager: MutableList<Dag> = mutableListOf(),
+    behandlingId: UUID = UUID.randomUUID(),
     tilstand: Tilstand<Rapporteringsbehandling> = ForberedendeFakta,
     aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Behandling<Rapporteringsbehandling>(
     person = person,
-    behandlingsId = behandlingsId,
+    behandlingId = behandlingId,
     hendelseId = rapporteringsId,
     tilstand = tilstand,
     vilkårsvurdering = LøpendeStønadsperiodeVilkår(person),
@@ -89,7 +89,7 @@ internal class Rapporteringsbehandling(
     private fun opprettVedtak() {
         person.leggTilVedtak(
             Vedtak.løpendeVedtak(
-                behandlingId = behandlingsId,
+                behandlingId = behandlingId,
                 utfall = vilkårsvurdering.oppfylt(),
                 virkningsdato = LocalDate.now(),
                 forbruk = FastsattForbruk(fastsettelser).forbruk,
@@ -102,7 +102,7 @@ internal class Rapporteringsbehandling(
     override fun toSpesifikkKontekst(): SpesifikkKontekst = SpesifikkKontekst(
         kontekstType = kontekstType,
         mapOf(
-            "behandlingsId" to behandlingsId.toString(),
+            "behandlingsId" to behandlingId.toString(),
             "type" to this.javaClass.simpleName,
             "hendelse_uuid" to hendelseId.toString(),
         ),

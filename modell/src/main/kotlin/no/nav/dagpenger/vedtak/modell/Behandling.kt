@@ -8,7 +8,7 @@ import java.util.UUID
 
 abstract class Behandling<Behandlingstype : Behandling<Behandlingstype>>(
     private val person: Person,
-    private val behandlingsId: UUID,
+    protected val behandlingId: UUID,
     protected val hendelseId: UUID,
     protected var tilstand: Tilstand<Behandlingstype>,
     protected val vilkårsvurdering: Vilkårsvurdering<*>,
