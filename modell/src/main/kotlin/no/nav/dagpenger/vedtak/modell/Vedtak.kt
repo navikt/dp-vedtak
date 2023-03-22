@@ -11,14 +11,17 @@ import java.util.UUID
 
 sealed class Vedtak(
     protected val vedtakId: UUID = UUID.randomUUID(),
+    protected val behandlingId: UUID,
     protected val vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     protected val utfall: Boolean,
     protected val virkningsdato: LocalDate,
 ) {
     companion object {
-        fun avslag(virkningsdato: LocalDate) = Avslag(virkningsdato = virkningsdato)
+        fun avslag(behandlingId: UUID, virkningsdato: LocalDate) =
+            Avslag(behandlingId = behandlingId, virkningsdato = virkningsdato)
 
         fun innvilgelse(
+            behandlingId: UUID,
             virkningsdato: LocalDate,
             grunnlag: BigDecimal,
             dagsats: BigDecimal,
@@ -26,16 +29,22 @@ sealed class Vedtak(
             dagpengerettighet: Dagpengerettighet,
             vanligArbeidstidPerDag: Timer,
         ) = Rammevedtak(
+            behandlingId = behandlingId,
             virkningsdato = virkningsdato,
+            vanligArbeidstidPerDag = vanligArbeidstidPerDag,
             grunnlag = grunnlag,
             dagsats = dagsats,
             stønadsperiode = stønadsperiode,
-            dagpengerettighet = dagpengerettighet, // TODO: Skal rettighetslista bare inneholde innvilgede rettigheter? Hva med avslag på utdanning f.eks.?
-            vanligArbeidstidPerDag = vanligArbeidstidPerDag,
+            dagpengerettighet = dagpengerettighet,
         )
 
-        fun løpendeVedtak(virkningsdato: LocalDate, forbruk: Tid, utfall: Boolean) =
-            LøpendeVedtak(virkningsdato = virkningsdato, forbruk = forbruk, utfall = utfall)
+        fun løpendeVedtak(behandlingId: UUID, utfall: Boolean, virkningsdato: LocalDate, forbruk: Tid) =
+            LøpendeVedtak(
+                behandlingId = behandlingId,
+                utfall = utfall,
+                virkningsdato = virkningsdato,
+                forbruk = forbruk,
+            )
     }
 
     abstract fun accept(visitor: VedtakVisitor)
@@ -43,17 +52,31 @@ sealed class Vedtak(
 
 class Avslag(
     vedtakId: UUID = UUID.randomUUID(),
+    behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     virkningsdato: LocalDate,
-) : Vedtak(vedtakId, vedtakstidspunkt, utfall = false, virkningsdato) {
+) : Vedtak(
+    vedtakId = vedtakId,
+    behandlingId = behandlingId,
+    vedtakstidspunkt = vedtakstidspunkt,
+    utfall = false,
+    virkningsdato = virkningsdato,
+) {
     override fun accept(visitor: VedtakVisitor) {
-        visitor.preVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall)
-        visitor.postVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall) // TODO: Refaktorer visitorer
+        visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
+        visitor.postVisitVedtak(
+            vedtakId,
+            behandlingId,
+            virkningsdato,
+            vedtakstidspunkt,
+            utfall,
+        )
     }
 }
 
 class Rammevedtak(
     vedtakId: UUID = UUID.randomUUID(),
+    behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     virkningsdato: LocalDate,
     private val vanligArbeidstidPerDag: Timer,
@@ -61,10 +84,16 @@ class Rammevedtak(
     private val dagsats: BigDecimal,
     private val stønadsperiode: Stønadsperiode,
     private val dagpengerettighet: Dagpengerettighet,
-) : Vedtak(vedtakId, vedtakstidspunkt, utfall = true, virkningsdato) {
+) : Vedtak(
+    vedtakId = vedtakId,
+    behandlingId = behandlingId,
+    vedtakstidspunkt = vedtakstidspunkt,
+    utfall = true,
+    virkningsdato = virkningsdato,
+) {
 
     override fun accept(visitor: VedtakVisitor) {
-        visitor.preVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall)
+        visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
         visitor.visitRammeVedtak(
             vanligArbeidstidPerDag = vanligArbeidstidPerDag,
             grunnlag = grunnlag,
@@ -72,20 +101,27 @@ class Rammevedtak(
             stønadsperiode = stønadsperiode,
             dagpengerettighet = dagpengerettighet,
         )
-        visitor.postVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall)
+        visitor.postVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
     }
 }
 
 class LøpendeVedtak(
     vedtakId: UUID = UUID.randomUUID(),
+    behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     utfall: Boolean,
     virkningsdato: LocalDate,
     private val forbruk: Tid,
-) : Vedtak(vedtakId, vedtakstidspunkt, utfall, virkningsdato) {
+) : Vedtak(
+    vedtakId = vedtakId,
+    behandlingId = behandlingId,
+    vedtakstidspunkt = vedtakstidspunkt,
+    utfall = utfall,
+    virkningsdato = virkningsdato,
+) {
     override fun accept(visitor: VedtakVisitor) {
-        visitor.preVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall)
+        visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
         visitor.visitForbruk(forbruk)
-        visitor.postVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall)
+        visitor.postVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
     }
 }

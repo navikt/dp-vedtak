@@ -41,6 +41,7 @@ internal class TellendeDager(person: Person, val periode: Periode) : PersonVisit
 
     override fun postVisitVedtak(
         vedtakId: UUID,
+        behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
         utfall: Boolean,

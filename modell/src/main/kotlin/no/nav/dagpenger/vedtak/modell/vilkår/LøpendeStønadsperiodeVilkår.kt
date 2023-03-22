@@ -62,6 +62,7 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
 
         override fun preVisitVedtak(
             vedtakId: UUID,
+            behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
             utfall: Boolean,
@@ -115,6 +116,7 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
 
         override fun postVisitVedtak(
             vedtakId: UUID,
+            behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
             utfall: Boolean,

@@ -89,9 +89,10 @@ internal class Rapporteringsbehandling(
     private fun opprettVedtak() {
         person.leggTilVedtak(
             Vedtak.løpendeVedtak(
+                behandlingId = behandlingsId,
+                utfall = vilkårsvurdering.oppfylt(),
                 virkningsdato = LocalDate.now(),
                 forbruk = FastsattForbruk(fastsettelser).forbruk,
-                vilkårsvurdering.oppfylt(),
             ),
         )
     }

@@ -41,6 +41,7 @@ internal class VedtakHistorikk(private val vedtak: MutableList<Vedtak> = mutable
         lateinit var virkningsdato: LocalDate
         override fun preVisitVedtak(
             vedtakId: UUID,
+            behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
             utfall: Boolean,

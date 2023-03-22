@@ -68,9 +68,15 @@ class RettighetStegTest : No {
             assertEquals(LocalDate.parse(virkningsdato, datoformatterer), inspektør.virkningsdato)
         }
 
-        Så("vedtaket har dagsats på {bigdecimal}, grunnlag {bigdecimal}, stønadsperiode på {int} uker og vanlig arbeidstid per dag er {double} timer") { dagsats: BigDecimal, grunnlag: BigDecimal, stønadsperiode: Int, arbeidstid: Double ->
+        Så("vedtaket har dagsats på {bigdecimal}, grunnlag {bigdecimal}, behandlingId er {string}, stønadsperiode på {int} uker og vanlig arbeidstid per dag er {double} timer") {
+                dagsats: BigDecimal,
+                grunnlag: BigDecimal,
+                behandlingId: String,
+                stønadsperiode: Int,
+                arbeidstid: Double, ->
             assertEquals(dagsats, inspektør.dagsats)
             assertEquals(grunnlag, inspektør.grunnlag)
+            assertEquals(UUID.fromString(behandlingId), inspektør.behandlingId)
             assertEquals(stønadsperiode.arbeidsuker, inspektør.stønadsperiode)
             assertEquals(arbeidstid.timer, inspektør.vanligArbeidstidPerDag)
         }
@@ -116,6 +122,7 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
+        lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
         lateinit var stønadsperiode: Stønadsperiode
         lateinit var grunnlag: BigDecimal
@@ -126,12 +133,14 @@ class RettighetStegTest : No {
 
         override fun postVisitVedtak(
             vedtakId: UUID,
+            behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
             utfall: Boolean,
         ) {
             antallVedtak++
             this.virkningsdato = virkningsdato
+            this.behandlingId = behandlingId
         }
 
         override fun visitRammeVedtak(

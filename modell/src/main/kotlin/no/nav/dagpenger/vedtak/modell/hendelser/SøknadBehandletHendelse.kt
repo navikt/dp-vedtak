@@ -31,6 +31,7 @@ class SøknadInnvilgetHendelse(
         virkningsdato,
     ) {
     override fun tilVedtak(): Vedtak = Vedtak.innvilgelse(
+        behandlingId = behandlingId,
         virkningsdato = virkningsdato,
         grunnlag = grunnlag,
         dagsats = dagsats,
@@ -46,5 +47,5 @@ class SøknadAvslåttHendelse(ident: String, behandlingId: UUID, virkningsdato: 
         behandlingId,
         virkningsdato,
     ) {
-    override fun tilVedtak(): Vedtak = Vedtak.avslag(virkningsdato)
+    override fun tilVedtak(): Vedtak = Vedtak.avslag(behandlingId, virkningsdato)
 }

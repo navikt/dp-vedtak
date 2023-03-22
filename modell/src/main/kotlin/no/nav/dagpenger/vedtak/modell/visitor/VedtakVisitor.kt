@@ -10,7 +10,13 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 interface VedtakVisitor {
-    fun preVisitVedtak(vedtakId: UUID, virkningsdato: LocalDate, vedtakstidspunkt: LocalDateTime, utfall: Boolean) {}
+    fun preVisitVedtak(
+        vedtakId: UUID,
+        behandlingId: UUID,
+        virkningsdato: LocalDate,
+        vedtakstidspunkt: LocalDateTime,
+        utfall: Boolean,
+    ) {}
     fun visitRammeVedtak(
         grunnlag: BigDecimal,
         dagsats: BigDecimal,
@@ -23,6 +29,7 @@ interface VedtakVisitor {
 
     fun postVisitVedtak(
         vedtakId: UUID,
+        behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
         utfall: Boolean,
