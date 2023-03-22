@@ -20,6 +20,7 @@ class SøknadInnvilgetHendelse(
     ident: String,
     behandlingId: UUID,
     virkningsdato: LocalDate,
+    private val dagpengerettighet: Dagpengerettighet,
     private val dagsats: BigDecimal,
     private val grunnlag: BigDecimal,
     private val stønadsperiode: Stønadsperiode,
@@ -36,7 +37,7 @@ class SøknadInnvilgetHendelse(
         grunnlag = grunnlag,
         dagsats = dagsats,
         stønadsperiode = stønadsperiode,
-        dagpengerettighet = Dagpengerettighet.OrdinæreDagpenger,
+        dagpengerettighet = dagpengerettighet,
         vanligArbeidstidPerDag = vanligArbeidstidPerDag,
     )
 }

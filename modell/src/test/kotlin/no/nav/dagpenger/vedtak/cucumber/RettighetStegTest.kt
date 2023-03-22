@@ -22,7 +22,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.UUID
+import java.util.*
 
 class RettighetStegTest : No {
     private val datoformatterer = DateTimeFormatter.ofPattern("dd.MM.yyyy")
@@ -40,6 +40,7 @@ class RettighetStegTest : No {
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     virkningsdato = søknadHendelse.virkningsdato,
+                    dagpengerettighet = søknadHendelse.dagpengerettighet,
                     dagsats = søknadHendelse.dagsats.toBigDecimal(),
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
@@ -62,6 +63,10 @@ class RettighetStegTest : No {
 
         Så("skal bruker ha {int} vedtak") { antallVedtak: Int ->
             assertEquals(antallVedtak, inspektør.antallVedtak)
+        }
+
+        Så("dagpengerettighet er {string}") { dagpengerettighet: String ->
+            assertEquals(Dagpengerettighet.valueOf(dagpengerettighet), inspektør.dagpengerettighet)
         }
 
         Så("vedtaket har virkningsdato {string}") { virkningsdato: String ->
@@ -111,6 +116,7 @@ class RettighetStegTest : No {
         val utfall: Boolean,
         @JsonFormat(pattern = "dd.MM.yyyy")
         val virkningsdato: LocalDate,
+        val dagpengerettighet: Dagpengerettighet,
         val dagsats: Int,
         val grunnlag: Int,
         val stønadsperiode: Int,
@@ -122,6 +128,7 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
+        lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
         lateinit var stønadsperiode: Stønadsperiode
@@ -154,6 +161,7 @@ class RettighetStegTest : No {
             this.dagsats = dagsats
             this.stønadsperiode = stønadsperiode
             this.vanligArbeidstidPerDag = vanligArbeidstidPerDag
+            this.dagpengerettighet = dagpengerettighet
         }
 
         override fun visitForbruk(forbruk: Tid) {
