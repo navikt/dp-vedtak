@@ -7,10 +7,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
-import no.nav.dagpenger.vedtak.modell.rapportering.Arbeidsdag
 import no.nav.dagpenger.vedtak.modell.rapportering.Dag
-import no.nav.dagpenger.vedtak.modell.rapportering.Dag.Companion.summer
-import no.nav.dagpenger.vedtak.modell.rapportering.Helgedag
 import no.nav.dagpenger.vedtak.modell.vilkår.LøpendeStønadsperiodeVilkår.IkkeOppfylt
 import no.nav.dagpenger.vedtak.modell.vilkår.LøpendeStønadsperiodeVilkår.Oppfylt
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
@@ -31,14 +28,14 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
             val harGjenstående =
                 HarGjenstående(vilkårsvurdering.person, rapporteringsHendelse.somPeriode()).harGjenstående()
             val dagpengerettighet = GjeldendeDagpengerettighet(vilkårsvurdering.person).dagpengerettighet()
-            val underTerskel = HarArbeidetUnderTerskel(
+            val arbeidetUnderTerskel = TaptArbeidstid(
                 vilkårsvurdering.person,
                 rapporteringsHendelse.somPeriode(),
                 tellendeDager,
-            ).underTerskel(
+            ).arbeidetUnderTerskel(
                 finnTerskel(dagpengerettighet),
             )
-            if (harGjenstående && underTerskel) {
+            if (harGjenstående && arbeidetUnderTerskel) {
                 vilkårsvurdering.endreTilstand(nyTilstand = Oppfylt)
             } else {
                 vilkårsvurdering.endreTilstand(nyTilstand = IkkeOppfylt)
@@ -103,63 +100,6 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
         ) {
             if (virkningsdato <= periode.endInclusive) {
                 harVedtak = true
-            }
-        }
-    }
-
-    private class HarArbeidetUnderTerskel(person: Person, val periode: Periode, val tellendeDager: List<Dag>) : PersonVisitor {
-
-        private val arbeidsdager = mutableListOf<Dag>()
-        lateinit var virkningsdato: LocalDate
-        var harDagpengevedtak = false
-
-        init {
-            person.accept(this)
-        }
-
-        fun underTerskel(terskel: Prosent): Boolean {
-            val arbeidstimer: Timer = tellendeDager.summer()
-            val vanligArbeidstid: Timer = vanligArbeidstidPerDag * tellendeDager.filterIsInstance<Arbeidsdag>().size.toDouble()
-            val minsteTapteArbeidstid: Timer = vanligArbeidstid * terskel.somDesimaltall()
-
-            return arbeidstimer <= vanligArbeidstid - minsteTapteArbeidstid
-        }
-
-        lateinit var vanligArbeidstidPerDag: Timer
-
-        override fun visitRammeVedtak(
-            grunnlag: BigDecimal,
-            dagsats: BigDecimal,
-            stønadsperiode: Stønadsperiode,
-            vanligArbeidstidPerDag: Timer,
-            dagpengerettighet: Dagpengerettighet,
-        ) {
-            this.vanligArbeidstidPerDag = vanligArbeidstidPerDag
-            harDagpengevedtak = true // TODO: Burde se om Dagpengerettighet = OrdinæreDagpenger?
-        }
-
-        override fun visitArbeidsdag(arbeidsdag: Arbeidsdag) {
-            if (arbeidsdag in periode) {
-                arbeidsdager.add(arbeidsdag)
-            }
-        }
-
-        override fun postVisitVedtak(
-            vedtakId: UUID,
-            behandlingId: UUID,
-            virkningsdato: LocalDate,
-            vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean,
-        ) {
-            if (harDagpengevedtak) {
-                this.virkningsdato = virkningsdato
-            }
-            harDagpengevedtak = false
-        }
-
-        override fun visitHelgedag(helgedag: Helgedag) {
-            if (helgedag in periode) {
-                arbeidsdager.add(helgedag)
             }
         }
     }
