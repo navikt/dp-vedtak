@@ -65,7 +65,7 @@ class RettighetStegTest : No {
             assertEquals(antallVedtak, inspektør.antallVedtak)
         }
 
-        Så("dagpengerettighet er {string}") { dagpengerettighet: String ->
+        Så("vedtaket har dagpengerettighet {string}") { dagpengerettighet: String ->
             assertEquals(Dagpengerettighet.valueOf(dagpengerettighet), inspektør.dagpengerettighet)
         }
 
@@ -73,17 +73,24 @@ class RettighetStegTest : No {
             assertEquals(LocalDate.parse(virkningsdato, datoformatterer), inspektør.virkningsdato)
         }
 
-        Så("vedtaket har dagsats på {bigdecimal}, grunnlag {bigdecimal}, behandlingId er {string}, stønadsperiode på {int} uker og vanlig arbeidstid per dag er {double} timer") {
-                dagsats: BigDecimal,
-                grunnlag: BigDecimal,
-                behandlingId: String,
-                stønadsperiode: Int,
-                arbeidstid: Double, ->
+        Så("vedtaket har dagsats på {bigdecimal} kroner") { dagsats: BigDecimal ->
             assertEquals(dagsats, inspektør.dagsats)
+        }
+
+        Så("vedtaket har grunnlag på {bigdecimal} kroner") { grunnlag: BigDecimal ->
             assertEquals(grunnlag, inspektør.grunnlag)
-            assertEquals(UUID.fromString(behandlingId), inspektør.behandlingId)
+        }
+
+        Så("vedtaket har stønadsperiode på {int} uker") { stønadsperiode: Int ->
             assertEquals(stønadsperiode.arbeidsuker, inspektør.stønadsperiode)
-            assertEquals(arbeidstid.timer, inspektør.vanligArbeidstidPerDag)
+        }
+
+        Så("vedtaket har vanlig arbeidstid per dag på {double} timer") { vanligArbeidstidPerDag: Double ->
+            assertEquals(vanligArbeidstidPerDag.timer, inspektør.vanligArbeidstidPerDag)
+        }
+
+        Så("vedtaket har behandlingId lik {string}") { behandlingId: String ->
+            assertEquals(UUID.fromString(behandlingId), inspektør.behandlingId)
         }
 
         Så("skal forbruket være {int} dager") { forbruk: Int ->
