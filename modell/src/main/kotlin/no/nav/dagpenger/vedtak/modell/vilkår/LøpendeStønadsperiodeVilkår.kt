@@ -33,7 +33,7 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
                 rapporteringsHendelse.somPeriode(),
                 tellendeDager,
             ).arbeidetUnderTerskel(
-                finnTerskel(dagpengerettighet),
+                terskelForTaptArbeidstid(dagpengerettighet),
             )
             if (harGjenstående && arbeidetUnderTerskel) {
                 vilkårsvurdering.endreTilstand(nyTilstand = Oppfylt)
@@ -42,7 +42,7 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
             }
         }
 
-        private fun finnTerskel(dagpengerettighet: Dagpengerettighet): Prosent {
+        private fun terskelForTaptArbeidstid(dagpengerettighet: Dagpengerettighet): Prosent {
             val vanligTerskel = Prosent(50.0)
             val fiskeTerskel = Prosent(40.0)
             return if (dagpengerettighet != Dagpengerettighet.PermitteringFraFiskeindustrien) vanligTerskel else fiskeTerskel
