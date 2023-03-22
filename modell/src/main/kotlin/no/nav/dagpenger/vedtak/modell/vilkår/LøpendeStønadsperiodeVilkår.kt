@@ -11,6 +11,8 @@ import no.nav.dagpenger.vedtak.modell.rapportering.Arbeidsdag
 import no.nav.dagpenger.vedtak.modell.rapportering.Dag
 import no.nav.dagpenger.vedtak.modell.rapportering.Dag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.rapportering.Helgedag
+import no.nav.dagpenger.vedtak.modell.vilkår.LøpendeStønadsperiodeVilkår.IkkeOppfylt
+import no.nav.dagpenger.vedtak.modell.vilkår.LøpendeStønadsperiodeVilkår.Oppfylt
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -26,15 +28,22 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
             tellendeDager: List<Dag>,
             vilkårsvurdering: LøpendeStønadsperiodeVilkår,
         ) {
-            val harGjenstående =
-                HarGjenstående(vilkårsvurdering.person, rapporteringsHendelse.somPeriode()).harGjenstående()
-            val underTerskel =
-                HarArbeidetUnderTerskel(vilkårsvurdering.person, rapporteringsHendelse.somPeriode(), tellendeDager).underTerskel()
+            val harGjenstående = HarGjenstående(vilkårsvurdering.person, rapporteringsHendelse.somPeriode()).harGjenstående()
+            val dagpengerettighet = GjeldendeDagpengerettighet(vilkårsvurdering.person).dagpengerettighet()
+            val underTerskel = HarArbeidetUnderTerskel(vilkårsvurdering.person, rapporteringsHendelse.somPeriode(), tellendeDager).underTerskel(
+                finnTerskel(dagpengerettighet),
+            )
             if (harGjenstående && underTerskel) {
                 vilkårsvurdering.endreTilstand(nyTilstand = Oppfylt)
             } else {
                 vilkårsvurdering.endreTilstand(nyTilstand = IkkeOppfylt)
             }
+        }
+
+        private fun finnTerskel(dagpengerettighet: Dagpengerettighet): Prosent {
+            val vanligTerskel = Prosent(50.0)
+            val fiskeTerskel = Prosent(60.0)
+            return if (dagpengerettighet != Dagpengerettighet.PermitteringFraFiskeindustrien) vanligTerskel else fiskeTerskel
         }
     }
 
@@ -44,6 +53,26 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
 
     override fun <T> implementasjon(block: LøpendeStønadsperiodeVilkår.() -> T): T {
         return this.block()
+    }
+
+    private class GjeldendeDagpengerettighet(person: Person) : PersonVisitor {
+        init {
+            person.accept(this)
+        }
+
+        private lateinit var dagpengerettighet: Dagpengerettighet
+
+        fun dagpengerettighet() = dagpengerettighet
+
+        override fun visitRammeVedtak(
+            grunnlag: BigDecimal,
+            dagsats: BigDecimal,
+            stønadsperiode: Stønadsperiode,
+            vanligArbeidstidPerDag: Timer,
+            dagpengerettighet: Dagpengerettighet,
+        ) {
+            this.dagpengerettighet = dagpengerettighet
+        }
     }
 
     private class HarGjenstående(person: Person, private val periode: Periode) : PersonVisitor {
@@ -73,7 +102,8 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
         }
     }
 
-    private class HarArbeidetUnderTerskel(person: Person, val periode: Periode, val tellendeDager: List<Dag>) : PersonVisitor {
+    private class HarArbeidetUnderTerskel(person: Person, val periode: Periode, val tellendeDager: List<Dag>) :
+        PersonVisitor {
 
         private val arbeidsdager = mutableListOf<Dag>()
         lateinit var virkningsdato: LocalDate
@@ -83,12 +113,12 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
             person.accept(this)
         }
 
-        fun underTerskel(): Boolean {
+        fun underTerskel(prosent: Prosent): Boolean {
             val arbeidstimer = tellendeDager.summer()
             val fastsattarbeidstidForPeriode =
                 (fastsattArbeidstidPerDag * tellendeDager.filterIsInstance<Arbeidsdag>().size)
 
-            if (arbeidstimer.div(fastsattarbeidstidForPeriode) <= Prosent(50.0)) {
+            if (arbeidstimer / fastsattarbeidstidForPeriode <= prosent) {
                 return true
             }
 
