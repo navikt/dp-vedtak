@@ -28,9 +28,14 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
             tellendeDager: List<Dag>,
             vilkårsvurdering: LøpendeStønadsperiodeVilkår,
         ) {
-            val harGjenstående = HarGjenstående(vilkårsvurdering.person, rapporteringsHendelse.somPeriode()).harGjenstående()
+            val harGjenstående =
+                HarGjenstående(vilkårsvurdering.person, rapporteringsHendelse.somPeriode()).harGjenstående()
             val dagpengerettighet = GjeldendeDagpengerettighet(vilkårsvurdering.person).dagpengerettighet()
-            val underTerskel = HarArbeidetUnderTerskel(vilkårsvurdering.person, rapporteringsHendelse.somPeriode(), tellendeDager).underTerskel(
+            val underTerskel = HarArbeidetUnderTerskel(
+                vilkårsvurdering.person,
+                rapporteringsHendelse.somPeriode(),
+                tellendeDager,
+            ).underTerskel(
                 finnTerskel(dagpengerettighet),
             )
             if (harGjenstående && underTerskel) {
@@ -42,7 +47,7 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
 
         private fun finnTerskel(dagpengerettighet: Dagpengerettighet): Prosent {
             val vanligTerskel = Prosent(50.0)
-            val fiskeTerskel = Prosent(60.0)
+            val fiskeTerskel = Prosent(40.0)
             return if (dagpengerettighet != Dagpengerettighet.PermitteringFraFiskeindustrien) vanligTerskel else fiskeTerskel
         }
     }
@@ -102,8 +107,7 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
         }
     }
 
-    private class HarArbeidetUnderTerskel(person: Person, val periode: Periode, val tellendeDager: List<Dag>) :
-        PersonVisitor {
+    private class HarArbeidetUnderTerskel(person: Person, val periode: Periode, val tellendeDager: List<Dag>) : PersonVisitor {
 
         private val arbeidsdager = mutableListOf<Dag>()
         lateinit var virkningsdato: LocalDate
@@ -113,19 +117,15 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
             person.accept(this)
         }
 
-        fun underTerskel(prosent: Prosent): Boolean {
-            val arbeidstimer = tellendeDager.summer()
-            val fastsattarbeidstidForPeriode =
-                (fastsattArbeidstidPerDag * tellendeDager.filterIsInstance<Arbeidsdag>().size)
+        fun underTerskel(terskel: Prosent): Boolean {
+            val arbeidstimer: Timer = tellendeDager.summer()
+            val vanligArbeidstid: Timer = vanligArbeidstidPerDag * tellendeDager.filterIsInstance<Arbeidsdag>().size.toDouble()
+            val minsteTapteArbeidstid: Timer = vanligArbeidstid * terskel.somDesimaltall()
 
-            if (arbeidstimer / fastsattarbeidstidForPeriode <= prosent) {
-                return true
-            }
-
-            return false
+            return arbeidstimer <= vanligArbeidstid - minsteTapteArbeidstid
         }
 
-        lateinit var fastsattArbeidstidPerDag: Timer
+        lateinit var vanligArbeidstidPerDag: Timer
 
         override fun visitRammeVedtak(
             grunnlag: BigDecimal,
@@ -134,7 +134,7 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
             vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,
         ) {
-            this.fastsattArbeidstidPerDag = vanligArbeidstidPerDag
+            this.vanligArbeidstidPerDag = vanligArbeidstidPerDag
             harDagpengevedtak = true // TODO: Burde se om Dagpengerettighet = OrdinæreDagpenger?
         }
 

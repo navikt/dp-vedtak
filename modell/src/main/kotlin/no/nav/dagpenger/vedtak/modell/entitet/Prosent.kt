@@ -7,6 +7,8 @@ internal class Prosent(prosent: Number) : Comparable<Prosent> {
         require(this.prosent >= 0) { "Arbeidsprosent må være større enn eller lik 0, er ${this.prosent}" }
     }
 
+    fun somDesimaltall(): Double = prosent / 100
+
     override fun compareTo(other: Prosent): Int = this.prosent.compareTo(other.prosent)
 
     override fun equals(other: Any?): Boolean = other is Prosent && other.prosent == this.prosent
@@ -14,5 +16,9 @@ internal class Prosent(prosent: Number) : Comparable<Prosent> {
     override fun hashCode(): Int = prosent.hashCode()
     override fun toString(): String {
         return "Prosent($prosent)"
+    }
+
+    operator fun times(vanligArbeidstidForPeriode: Timer): Timer {
+        return vanligArbeidstidForPeriode * this.prosent
     }
 }

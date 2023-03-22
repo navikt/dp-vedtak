@@ -12,7 +12,10 @@ class Timer(timer: Number) : Comparable<Timer> {
         return Prosent(this.timer / nevner.timer * 100)
     }
 
-    operator fun times(dager: Int): Timer = Timer(this.timer * dager)
+    operator fun minus(other: Timer) = Timer(this.timer - other.timer)
+
+    operator fun times(other: Double): Timer = Timer(this.timer * other)
+
     override fun compareTo(other: Timer): Int = this.timer.compareTo(other.timer)
 
     override fun equals(other: Any?) = other is Timer && other.timer == this.timer
