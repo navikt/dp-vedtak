@@ -66,7 +66,7 @@ class Rammevedtak(
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(vedtakId, virkningsdato, vedtakstidspunkt, utfall)
         visitor.visitRammeVedtak(
-            fastsattArbeidstidPerDag = vanligArbeidstidPerDag,
+            vanligArbeidstidPerDag = vanligArbeidstidPerDag,
             grunnlag = grunnlag,
             dagsats = dagsats,
             stønadsperiode = stønadsperiode,

@@ -13,13 +13,15 @@ class Rapporteringshendelse(
     rapporteringsdager: List<Rapporteringsdag>,
 ) : Hendelse(ident) {
     private val rapporteringsdager = rapporteringsdager.sorted()
-    internal fun populerRapporteringsperiode(rapporteringsperiode: Rapporteringsperiode) {
-        rapporteringsdager.forEach {
-            val dag = when (it.fravær) {
-                true -> Dag.fraværsdag(it.dato)
-                false -> Dag.arbeidsdag(it.dato, it.timer.timer)
+    internal fun populerRapporteringsperiode(): Rapporteringsperiode {
+        return Rapporteringsperiode(rapporteringsId).also { periode ->
+            rapporteringsdager.forEach {
+                val dag = when (it.fravær) {
+                    true -> Dag.fraværsdag(it.dato)
+                    false -> Dag.arbeidsdag(it.dato, it.timer.timer)
+                }
+                periode.leggTilDag(dag)
             }
-            rapporteringsperiode.leggTilDag(dag)
         }
     }
 

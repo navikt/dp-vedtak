@@ -15,7 +15,7 @@ interface VedtakVisitor {
         grunnlag: BigDecimal,
         dagsats: BigDecimal,
         stønadsperiode: Stønadsperiode,
-        fastsattArbeidstidPerDag: Timer,
+        vanligArbeidstidPerDag: Timer,
         dagpengerettighet: Dagpengerettighet,
     ) {}
 

@@ -33,7 +33,7 @@ internal class TellendeDager(person: Person, val periode: Periode) : PersonVisit
         grunnlag: BigDecimal,
         dagsats: BigDecimal,
         stønadsperiode: Stønadsperiode,
-        fastsattArbeidstidPerDag: Timer,
+        vanligArbeidstidPerDag: Timer,
         dagpengerettighet: Dagpengerettighet,
     ) {
         harDagpengevedtak = true

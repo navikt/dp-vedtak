@@ -100,10 +100,10 @@ internal class LøpendeStønadsperiodeVilkår(private val person: Person) :
             grunnlag: BigDecimal,
             dagsats: BigDecimal,
             stønadsperiode: Stønadsperiode,
-            fastsattArbeidstidPerDag: Timer,
+            vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,
         ) {
-            this.fastsattArbeidstidPerDag = fastsattArbeidstidPerDag
+            this.fastsattArbeidstidPerDag = vanligArbeidstidPerDag
             harDagpengevedtak = true // TODO: Burde se om Dagpengerettighet = OrdinæreDagpenger?
         }
 

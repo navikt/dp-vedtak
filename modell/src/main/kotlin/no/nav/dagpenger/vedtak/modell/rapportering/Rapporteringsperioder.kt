@@ -5,8 +5,7 @@ import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 
 class Rapporteringsperioder(val perioder: MutableList<Rapporteringsperiode> = mutableListOf()) {
     fun håndter(rapporteringsHendelse: Rapporteringshendelse) {
-        val rapporteringsperiode = Rapporteringsperiode(rapporteringsHendelse.rapporteringsId)
-        rapporteringsHendelse.populerRapporteringsperiode(rapporteringsperiode)
+        val rapporteringsperiode = rapporteringsHendelse.populerRapporteringsperiode()
         perioder.add(rapporteringsperiode)
     }
 

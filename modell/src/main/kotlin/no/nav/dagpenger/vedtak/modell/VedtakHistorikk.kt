@@ -52,7 +52,7 @@ internal class VedtakHistorikk(private val vedtak: MutableList<Vedtak> = mutable
             grunnlag: BigDecimal,
             dagsats: BigDecimal,
             stønadsperiode: Stønadsperiode,
-            fastsattArbeidstidPerDag: Timer,
+            vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,
         ) {
             vedtakHistorikk.dagsatshistorikk.put(virkningsdato, dagsats)
