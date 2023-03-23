@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell
 
+import no.nav.dagpenger.vedtak.modell.Vedtak.Companion.finn
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.mengde.Tid
@@ -31,7 +32,7 @@ internal class VedtakHistorikk(private val vedtak: MutableList<Vedtak> = mutable
         visitor.postVisitVedtak()
     }
 
-    // fun harVedtak(rapporteringsHendelse: Rapporteringshendelse) = vedtak.isNotEmpty()
+    fun harVedtak(dato: LocalDate = LocalDate.now()) = vedtak.finn(dato) != null
 
     private class OppdaterVedtakFakta(vedtak: Vedtak, private val vedtakHistorikk: VedtakHistorikk) : VedtakVisitor {
         init {

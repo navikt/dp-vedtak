@@ -45,6 +45,8 @@ sealed class Vedtak(
                 virkningsdato = virkningsdato,
                 forbruk = forbruk,
             )
+
+        fun Collection<Vedtak>.finn(dato: LocalDate) = this.find { it.virkningsdato <= dato }
     }
 
     abstract fun accept(visitor: VedtakVisitor)
