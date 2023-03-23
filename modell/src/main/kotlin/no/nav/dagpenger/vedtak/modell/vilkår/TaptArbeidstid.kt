@@ -20,6 +20,7 @@ internal class TaptArbeidstid(person: Person, val periode: Periode, val tellende
 
     private val arbeidsdager = mutableListOf<Dag>()
     lateinit var virkningsdato: LocalDate
+    lateinit var vanligArbeidstidPerDag: Timer
     var harDagpengevedtak = false
 
     init {
@@ -29,12 +30,10 @@ internal class TaptArbeidstid(person: Person, val periode: Periode, val tellende
     fun arbeidetUnderTerskel(terskel: Prosent): Boolean {
         val arbeidstimer: Timer = tellendeDager.summer()
         val vanligArbeidstid: Timer = vanligArbeidstidPerDag * tellendeDager.filterIsInstance<Arbeidsdag>().size.toDouble()
-        val minsteTapteArbeidstid: Timer = vanligArbeidstid * terskel.somDesimaltall()
+        val minsteTapteArbeidstid: Timer = terskel av vanligArbeidstid
 
         return arbeidstimer <= vanligArbeidstid - minsteTapteArbeidstid
     }
-
-    lateinit var vanligArbeidstidPerDag: Timer
 
     override fun visitRammeVedtak(
         grunnlag: BigDecimal,

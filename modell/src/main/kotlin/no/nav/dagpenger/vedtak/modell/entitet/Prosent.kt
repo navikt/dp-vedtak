@@ -2,23 +2,21 @@ package no.nav.dagpenger.vedtak.modell.entitet
 
 internal class Prosent(prosent: Number) : Comparable<Prosent> {
     private val prosent = prosent.toDouble()
+    private val prosentfaktor get() = prosent / 100
 
     init {
         require(this.prosent >= 0) { "Arbeidsprosent må være større enn eller lik 0, er ${this.prosent}" }
     }
 
-    fun somDesimaltall(): Double = prosent / 100
+    infix fun av(vanligArbeidstid: Timer) = vanligArbeidstid * prosentfaktor
+
+    operator fun times(timer: Timer) = timer * this.prosent
 
     override fun compareTo(other: Prosent): Int = this.prosent.compareTo(other.prosent)
 
     override fun equals(other: Any?): Boolean = other is Prosent && other.prosent == this.prosent
 
-    override fun hashCode(): Int = prosent.hashCode()
-    override fun toString(): String {
-        return "Prosent($prosent)"
-    }
+    override fun hashCode() = prosent.hashCode()
 
-    operator fun times(vanligArbeidstidForPeriode: Timer): Timer {
-        return vanligArbeidstidForPeriode * this.prosent
-    }
+    override fun toString() = "Prosent($prosent)"
 }
