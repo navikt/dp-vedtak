@@ -34,6 +34,8 @@ internal class VedtakHistorikk(private val vedtak: MutableList<Vedtak> = mutable
 
     fun harVedtak(dato: LocalDate = LocalDate.now()) = vedtak.finn(dato) != null
 
+    fun hentSituasjonFor(dato: LocalDate) = dagsatshistorikk.get(dato)
+
     private class OppdaterVedtakFakta(vedtak: Vedtak, private val vedtakHistorikk: VedtakHistorikk) : VedtakVisitor {
         init {
             vedtak.accept(this)
