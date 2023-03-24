@@ -19,7 +19,7 @@ internal class VedtakHistorikkTest {
 
         vedtakHistorikk.leggTilVedtak(rammevedtak(dagsats))
 
-        assertEquals(dagsats, vedtakHistorikk.hentSituasjonFor(dato = LocalDate.now()))
+        assertEquals(dagsats, vedtakHistorikk.dagsatshistorikk.get(LocalDate.now()))
     }
 
     @Test

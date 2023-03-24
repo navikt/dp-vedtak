@@ -50,6 +50,7 @@ sealed class Vedtak(
     }
 
     abstract fun accept(visitor: VedtakVisitor)
+    internal abstract fun populer(vedtakHistorikk: VedtakHistorikk)
 }
 
 class Avslag(
@@ -73,6 +74,9 @@ class Avslag(
             vedtakstidspunkt,
             utfall,
         )
+    }
+
+    override fun populer(vedtakHistorikk: VedtakHistorikk) {
     }
 }
 
@@ -105,6 +109,14 @@ class Rammevedtak(
         )
         visitor.postVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
     }
+
+    override fun populer(vedtakHistorikk: VedtakHistorikk) {
+        vedtakHistorikk.dagsatshistorikk.put(virkningsdato, dagsats)
+        vedtakHistorikk.stønadsperiodehistorikk.put(virkningsdato, stønadsperiode)
+        vedtakHistorikk.grunnlaghistorikk.put(virkningsdato, grunnlag)
+        vedtakHistorikk.gjenståendeStønadsperiode.put(virkningsdato, stønadsperiode)
+        vedtakHistorikk.rettighet.put(virkningsdato, dagpengerettighet)
+    }
 }
 
 class LøpendeVedtak(
@@ -125,5 +137,10 @@ class LøpendeVedtak(
         visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
         visitor.visitForbruk(forbruk)
         visitor.postVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
+    }
+
+    override fun populer(vedtakHistorikk: VedtakHistorikk) {
+        val gjenstående = vedtakHistorikk.gjenståendeStønadsperiode.get(virkningsdato)
+        vedtakHistorikk.gjenståendeStønadsperiode.put(virkningsdato, gjenstående - forbruk)
     }
 }
