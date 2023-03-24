@@ -10,8 +10,6 @@ internal class Prosent(prosent: Number) : Comparable<Prosent> {
 
     infix fun av(vanligArbeidstid: Timer) = vanligArbeidstid * prosentfaktor
 
-    operator fun times(timer: Timer) = timer * this.prosent
-
     override fun compareTo(other: Prosent): Int = this.prosent.compareTo(other.prosent)
 
     override fun equals(other: Any?): Boolean = other is Prosent && other.prosent == this.prosent

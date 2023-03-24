@@ -31,4 +31,12 @@ internal class TemporalCollectionTest {
         assertEquals(høySats, satser.get(4.juli))
         assertEquals(høySats, satser.get(15.juli))
     }
+
+    @Test
+    fun `Satt på samme dato`() {
+        satser.put(7.juli, lavSats)
+        satser.put(7.juli, BigDecimal(20))
+
+        assertEquals(BigDecimal(20), satser.get(7.juli))
+    }
 }
