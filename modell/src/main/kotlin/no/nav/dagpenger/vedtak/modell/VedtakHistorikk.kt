@@ -1,8 +1,10 @@
 package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.modell.Vedtak.Companion.finn
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
+import no.nav.dagpenger.vedtak.modell.rapportering.LøpendeBehandling
+import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -14,7 +16,8 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     internal val grunnlaghistorikk = TemporalCollection<BigDecimal>()
     internal val stønadsperiodehistorikk = TemporalCollection<Stønadsperiode>()
     internal val gjenståendeStønadsperiode = TemporalCollection<Stønadsperiode>()
-    internal val rettighet = TemporalCollection<Dagpengerettighet>()
+    internal val dagpengerRettighetHistorikk = TemporalCollection<Dagpengerettighet>()
+    internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
 
     init {
         vedtak.forEach { it.populer(this) }
@@ -33,15 +36,14 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
         visitor.postVisitVedtak()
     }
 
-    fun håndter(rapporteringshendelse: Rapporteringshendelse): Behandling<*> {
-        // finn vilkår og fastsettelser
-        // Terskel(rettighet)
-        // SatsFastsettelse(dagsatshistorikk)
-        //
-        // lag behandling
+    fun håndter(rapporteringsperiode: Rapporteringsperiode) {
+        LøpendeBehandling(
+            rapporteringsId = rapporteringsperiode.rapporteringsId,
+            satshistorikk = dagsatshistorikk,
+            rettighethistorikk = dagpengerRettighetHistorikk,
+            vanligarbeidstidhistorikk = vanligArbeidstidHistorikk,
 
-        // Rapporteringsbehandling(rapporteringsId, vilkår = listOf(Terskel(rettighet), fastsettelser = listOf(SatsFastsettelse(dagsatshistorikk)))
-        TODO()
+        ).håndter(rapporteringsperiode)
     }
 
     fun harVedtak(dato: LocalDate = LocalDate.now()) = vedtak.finn(dato) != null

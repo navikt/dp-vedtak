@@ -5,4 +5,5 @@ enum class Dagpengerettighet {
     Permittering,
     PermitteringFraFiskeindustrien,
     ForskutterteLønnsgarantimidler,
+    Ingen,
 }

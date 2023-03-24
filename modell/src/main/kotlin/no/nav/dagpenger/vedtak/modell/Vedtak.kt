@@ -115,7 +115,8 @@ class Rammevedtak(
         vedtakHistorikk.stønadsperiodehistorikk.put(virkningsdato, stønadsperiode)
         vedtakHistorikk.grunnlaghistorikk.put(virkningsdato, grunnlag)
         vedtakHistorikk.gjenståendeStønadsperiode.put(virkningsdato, stønadsperiode)
-        vedtakHistorikk.rettighet.put(virkningsdato, dagpengerettighet)
+        vedtakHistorikk.dagpengerRettighetHistorikk.put(virkningsdato, dagpengerettighet)
+        vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato, vanligArbeidstidPerDag)
     }
 }
 

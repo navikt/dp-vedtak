@@ -7,7 +7,6 @@ import no.nav.dagpenger.vedtak.modell.vilkår.Vilkårsvurdering
 import java.util.UUID
 
 abstract class Behandling<Behandlingstype : Behandling<Behandlingstype>>(
-    private val person: Person,
     protected val behandlingId: UUID,
     protected val hendelseId: UUID,
     protected var tilstand: Tilstand<Behandlingstype>,

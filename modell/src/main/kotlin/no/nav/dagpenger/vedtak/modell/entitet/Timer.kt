@@ -7,10 +7,12 @@ class Timer(timer: Number) : Comparable<Timer> {
         require(this.timer >= 0) { "Timer må være større enn eller lik 0, er ${this.timer}" }
     }
 
-    internal operator fun div(nevner: Timer): Prosent {
-        if (nevner.timer == 0.0) return Prosent(0)
-        return Prosent(this.timer / nevner.timer * 100)
-    }
+//    internal operator fun div(nevner: Timer): Prosent {
+//        if (nevner.timer == 0.0) return Prosent(0)
+//        return Prosent(this.timer / nevner.timer * 100)
+//    }
+
+    operator fun div(number: Int): Timer = Timer(this.timer / number)
 
     operator fun minus(other: Timer) = Timer(this.timer - other.timer)
 

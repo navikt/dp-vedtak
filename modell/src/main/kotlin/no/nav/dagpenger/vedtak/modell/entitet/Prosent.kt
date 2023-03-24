@@ -8,6 +8,12 @@ internal class Prosent(prosent: Number) : Comparable<Prosent> {
         require(this.prosent >= 0) { "Arbeidsprosent må være større enn eller lik 0, er ${this.prosent}" }
     }
 
+    companion object {
+        fun Collection<Prosent>.summer() = Prosent(this.sumOf { it.prosent })
+    }
+
+    infix operator fun div(nevner: Double) = Prosent(this.prosent / nevner)
+
     infix fun av(vanligArbeidstid: Timer) = vanligArbeidstid * prosentfaktor
 
     override fun compareTo(other: Prosent): Int = this.prosent.compareTo(other.prosent)

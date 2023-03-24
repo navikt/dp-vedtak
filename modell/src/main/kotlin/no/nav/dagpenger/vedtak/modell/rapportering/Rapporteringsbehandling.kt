@@ -29,7 +29,6 @@ internal class Rapporteringsbehandling(
     tilstand: Tilstand<Rapporteringsbehandling> = ForberedendeFakta,
     aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Behandling<Rapporteringsbehandling>(
-    person = person,
     behandlingId = behandlingId,
     hendelseId = rapporteringsId,
     tilstand = tilstand,

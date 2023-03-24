@@ -8,7 +8,7 @@ import no.nav.dagpenger.vedtak.modell.visitor.RapporteringsperiodeVisitor
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-sealed class Dag(protected val dato: LocalDate) : Comparable<LocalDate> {
+sealed class Dag(val dato: LocalDate) : Comparable<LocalDate> {
     abstract fun accept(visitor: RapporteringsperiodeVisitor)
     abstract fun arbeidstimer(): Timer
 

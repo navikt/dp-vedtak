@@ -17,7 +17,8 @@ class Person(private val ident: PersonIdentifikator) : Aktivitetskontekst by ide
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         kontekst(rapporteringshendelse)
-        rapporteringsperioder.håndter(rapporteringshendelse)
+        val rapporteringsperiode = rapporteringsperioder.håndter(rapporteringshendelse)
+        vedtakHistorikk.håndter(rapporteringsperiode)
         val behandling = Rapporteringsbehandling(
             person = this,
             rapporteringsId = rapporteringshendelse.rapporteringsId,
