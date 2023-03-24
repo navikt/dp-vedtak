@@ -3,12 +3,13 @@ package no.nav.dagpenger.vedtak.modell.rapportering
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summerArbeidstimer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.visitor.RapporteringsperiodeVisitor
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-sealed class Dag(val dato: LocalDate) : Comparable<LocalDate> {
+sealed class Dag(internal val dato: LocalDate) : Comparable<LocalDate> {
     abstract fun accept(visitor: RapporteringsperiodeVisitor)
     abstract fun arbeidstimer(): Timer
 
@@ -24,7 +25,7 @@ sealed class Dag(val dato: LocalDate) : Comparable<LocalDate> {
                 Arbeidsdag(dato, timer)
             }
         }
-        internal fun Collection<Dag>.summer() = map(Dag::arbeidstimer).summer()
+        internal fun Collection<Dag>.summerArbeidstimer() = map(Dag::arbeidstimer).summer()
 
         private fun LocalDate.erHelg() = dayOfWeek in setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
     }

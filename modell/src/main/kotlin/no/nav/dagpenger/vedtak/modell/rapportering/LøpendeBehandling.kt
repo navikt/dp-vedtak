@@ -11,7 +11,9 @@ import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summerArbeidstimer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.rapportering.Dag.Companion.summerArbeidstimer
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
@@ -56,7 +58,7 @@ interface Regel
 internal class TaptArbeidstid : Regel {
     fun håndter(fastsettelser: List<GjeldendeFastsettelser>): Boolean {
         val tellendedager = fastsettelser.filterNot { it.rettighet == Ingen }
-        val arbeidstimer: Timer = tellendedager.map { it.dag.arbeidstimer() }.summer()
+        val arbeidstimer: Timer = tellendedager.map { it.dag }.summerArbeidstimer()
         val arbeidsdager = tellendedager.filter { it.dag is Arbeidsdag }
         val vanligArbeidstid: Timer =
             arbeidsdager.map { it.vanligarbeidstid }.summer()

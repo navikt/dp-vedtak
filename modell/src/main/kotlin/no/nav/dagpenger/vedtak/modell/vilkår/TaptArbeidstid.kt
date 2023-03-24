@@ -8,7 +8,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.Arbeidsdag
 import no.nav.dagpenger.vedtak.modell.rapportering.Dag
-import no.nav.dagpenger.vedtak.modell.rapportering.Dag.Companion.summer
+import no.nav.dagpenger.vedtak.modell.rapportering.Dag.Companion.summerArbeidstimer
 import no.nav.dagpenger.vedtak.modell.rapportering.Helgedag
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.math.BigDecimal
@@ -28,7 +28,7 @@ internal class TaptArbeidstid(person: Person, val periode: Periode, val tellende
     }
 
     fun arbeidetUnderTerskel(terskel: Prosent): Boolean {
-        val arbeidstimer: Timer = tellendeDager.summer()
+        val arbeidstimer: Timer = tellendeDager.summerArbeidstimer()
         val vanligArbeidstid: Timer = vanligArbeidstidPerDag * tellendeDager.filterIsInstance<Arbeidsdag>().size.toDouble()
         val minsteTapteArbeidstid: Timer = terskel av vanligArbeidstid
 
