@@ -23,7 +23,7 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
         vedtak.forEach { it.populer(this) }
     }
 
-    fun leggTilVedtak(vedtak: Vedtak) {
+    internal fun leggTilVedtak(vedtak: Vedtak) {
         this.vedtak.add(vedtak.also { it.populer(this) })
     }
 
@@ -37,13 +37,14 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     }
 
     fun håndter(rapporteringsperiode: Rapporteringsperiode) {
-        LøpendeBehandling(
-            rapporteringsId = rapporteringsperiode.rapporteringsId,
-            satshistorikk = dagsatshistorikk,
-            rettighethistorikk = dagpengerRettighetHistorikk,
-            vanligarbeidstidhistorikk = vanligArbeidstidHistorikk,
-
-        ).håndter(rapporteringsperiode)
+        this.leggTilVedtak(
+            LøpendeBehandling(
+                rapporteringsId = rapporteringsperiode.rapporteringsId,
+                satshistorikk = dagsatshistorikk,
+                rettighethistorikk = dagpengerRettighetHistorikk,
+                vanligarbeidstidhistorikk = vanligArbeidstidHistorikk,
+            ).håndter(rapporteringsperiode),
+        )
     }
 
     fun harVedtak(dato: LocalDate = LocalDate.now()) = vedtak.finn(dato) != null

@@ -10,14 +10,13 @@ import no.nav.dagpenger.vedtak.modell.rapportering.Dag.Companion.summerArbeidsti
 import java.time.LocalDate
 
 internal class TaptArbeidstid : Regel {
-    fun håndter(periode: Beregningsgrunnlag): Boolean {
-        val tellendedager = periode.tellendedager()
-        val arbeidstimer: Timer = tellendedager.map { it.dag }.summerArbeidstimer()
-        val arbeidsdager = periode.arbeidsdager()
-        val vanligArbeidstid: Timer =
-            arbeidsdager.map { it.vanligarbeidstid }.summer()
 
-        val terskel = tellendedager.map { it.terskel() }.summer() / tellendedager.size.toDouble()
+    fun håndter(periode: Beregningsgrunnlag): Boolean {
+        val rettighetsdager = periode.rettighetsdager()
+        val arbeidstimer: Timer = rettighetsdager.map { it.dag }.summerArbeidstimer()
+        val arbeidsdagerMedRettighet = periode.arbeidsdagerMedRettighet()
+        val vanligArbeidstid: Timer = arbeidsdagerMedRettighet.map { it.vanligarbeidstid }.summer()
+        val terskel: Prosent = rettighetsdager.map { it.terskel() }.summer() / rettighetsdager.size.toDouble()
         val minsteTapteArbeidstid: Timer = terskel av vanligArbeidstid
 
         return arbeidstimer <= vanligArbeidstid - minsteTapteArbeidstid

@@ -23,10 +23,11 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<Faktum> = mutab
         }
     }
 
-    fun tellendedager(): List<Faktum> =
-        fakta.filterNot { it.rettighet == Dagpengerettighet.Ingen }
+    fun rettighetsdager(): List<Faktum> = fakta.filter(rettighetsdag())
+    fun arbeidsdagerMedRettighet(): List<Faktum> = fakta.filter(rettighetsdag()).filter(arbeidsdag())
 
-    fun arbeidsdager(): List<Faktum> = fakta.filter { it.dag is Arbeidsdag }
+    private fun rettighetsdag(): (Faktum) -> Boolean = { it.rettighet != Dagpengerettighet.Ingen }
+    private fun arbeidsdag() = { it: Faktum -> it.dag is Arbeidsdag }
 
     internal data class Faktum(
         val dag: Dag,
