@@ -35,5 +35,5 @@ internal class LøpendeBehandling(
         )
     }
 
-    private fun førsteRettighetsdag() = beregningsgrunnlag.rettighetsdager().first().dag.dato
+    private fun førsteRettighetsdag() = beregningsgrunnlag.rettighetsdager().first().dag.dato()
 }

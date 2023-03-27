@@ -13,11 +13,11 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
             fakta.add(
                 DagGrunnlag.opprett(
                     dag = dag,
-                    sats = kotlin.runCatching { løpendeBehandling.satshistorikk.get(dag.dato) }
+                    sats = kotlin.runCatching { løpendeBehandling.satshistorikk.get(dag.dato()) }
                         .getOrDefault(0.toBigDecimal()),
-                    dagpengerettighet = kotlin.runCatching { løpendeBehandling.rettighethistorikk.get(dag.dato) }
+                    dagpengerettighet = kotlin.runCatching { løpendeBehandling.rettighethistorikk.get(dag.dato()) }
                         .getOrDefault(Dagpengerettighet.Ingen),
-                    vanligarbeidstid = kotlin.runCatching { løpendeBehandling.vanligarbeidstidhistorikk.get(dag.dato) }
+                    vanligarbeidstid = kotlin.runCatching { løpendeBehandling.vanligarbeidstidhistorikk.get(dag.dato()) }
                         .getOrDefault(0.timer),
                 ),
             )
@@ -27,7 +27,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
     fun rettighetsdager(): List<DagGrunnlag> = fakta.filter(rettighetsdag())
     fun arbeidsdagerMedRettighet(): List<DagGrunnlag> = fakta.filter(rettighetsdag()).filter(arbeidsdag())
 
-    private fun rettighetsdag(): (DagGrunnlag) -> Boolean = { it is IngenRettighetsdag }
+    private fun rettighetsdag(): (DagGrunnlag) -> Boolean = { it is Rettighetsdag }
     private fun arbeidsdag() = { it: DagGrunnlag -> it.dag is Arbeidsdag }
 
     internal sealed class DagGrunnlag(internal val dag: Dag) {
@@ -58,15 +58,15 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         }
 
         override fun sats(): BigDecimal =
-            throw IllegalArgumentException("Dag ${dag.dato} har ingen rettighet og har ikke sats")
+            throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har ikke sats")
 
         override fun rettighet(): Dagpengerettighet = dagpengerettighet
 
         override fun `vanlig arbeidstid`(): Timer =
-            throw IllegalArgumentException("Dag ${dag.dato} har ingen rettighet og har ikke vanligarbeidstid")
+            throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har ikke vanligarbeidstid")
 
         override fun `terskel for tapt arbeidstid`(): Prosent =
-            throw IllegalArgumentException("Dag ${dag.dato} har ingen rettighet og har ikke terskel")
+            throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har ikke terskel")
     }
 
     internal class Rettighetsdag(
@@ -80,6 +80,6 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         override fun rettighet(): Dagpengerettighet = dagpengerettighet
 
         override fun `vanlig arbeidstid`(): Timer = vanligarbeidstid
-        override fun `terskel for tapt arbeidstid`(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato)
+        override fun `terskel for tapt arbeidstid`(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
     }
 }
