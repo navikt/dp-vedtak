@@ -45,6 +45,7 @@ class RettighetStegTest : No {
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
+                    antallVenteDager = søknadHendelse.ventetid,
                 ),
             )
         }
@@ -59,6 +60,7 @@ class RettighetStegTest : No {
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
+                    antallVenteDager = søknadHendelse.ventetid,
                 ),
             )
         }
@@ -142,6 +144,7 @@ class RettighetStegTest : No {
         val grunnlag: Int,
         val stønadsperiode: Int,
         val vanligArbeidstidPerDag: Double,
+        val ventetid: Double,
     )
 
     private class Inspektør(person: Person) : PersonVisitor {

@@ -25,6 +25,7 @@ class Timer(timer: Number) : Comparable<Timer> {
     override fun hashCode(): Int = timer.hashCode()
 
     override fun toString() = "Timer($timer)"
+    internal fun negate() = -timer
 
     companion object {
         val Number.timer get() = Timer(this)

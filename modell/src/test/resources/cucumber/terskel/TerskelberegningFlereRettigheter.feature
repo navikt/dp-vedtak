@@ -4,12 +4,13 @@
 
     Bakgrunn: Alt er fastsatt
       Gitt en ny hendelse om innvilget søknad
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet              |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 490921   | 52             | 8                      | PermitteringFraFiskeindustrien |
+        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet              | ventetid |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 490921   | 52             | 8                      | PermitteringFraFiskeindustrien |  3       |
+
 
       Gitt et endringsvedtak
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 15.12.2022    | 588     | 490921   | 52             | 8                      | Ordinær           |
+        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | ventetid |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 15.12.2022    | 588     | 490921   | 52             | 8                      | Ordinær           |  3       |
 
       Scenario: Rapporterer arbeidstimer eksakt lik gjennomsnittsterskel
         Når rapporteringshendelse mottas

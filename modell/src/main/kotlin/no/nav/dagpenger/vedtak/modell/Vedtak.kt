@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.mengde.Tid
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
@@ -28,6 +29,7 @@ sealed class Vedtak(
             stønadsperiode: Stønadsperiode,
             dagpengerettighet: Dagpengerettighet,
             vanligArbeidstidPerDag: Timer,
+            antallVenteDager: Double,
         ) = Rammevedtak(
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
@@ -36,6 +38,7 @@ sealed class Vedtak(
             dagsats = dagsats,
             stønadsperiode = stønadsperiode,
             dagpengerettighet = dagpengerettighet,
+            antallVenteDager = antallVenteDager,
         )
 
         fun løpendeVedtak(behandlingId: UUID, utfall: Boolean, virkningsdato: LocalDate, forbruk: Tid) =
@@ -90,6 +93,7 @@ class Rammevedtak(
     private val dagsats: BigDecimal,
     private val stønadsperiode: Stønadsperiode,
     private val dagpengerettighet: Dagpengerettighet,
+    private val antallVenteDager: Double,
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
@@ -98,6 +102,7 @@ class Rammevedtak(
     virkningsdato = virkningsdato,
 ) {
 
+    private val ventetid = vanligArbeidstidPerDag * antallVenteDager
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
         visitor.visitRammeVedtak(
@@ -117,6 +122,7 @@ class Rammevedtak(
         vedtakHistorikk.gjenståendeStønadsperiode.put(virkningsdato, stønadsperiode)
         vedtakHistorikk.dagpengerRettighetHistorikk.put(virkningsdato, dagpengerettighet)
         vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato, vanligArbeidstidPerDag)
+        vedtakHistorikk.ventetidhistorikk.put(virkningsdato, ventetid)
     }
 }
 
@@ -143,5 +149,6 @@ class LøpendeVedtak(
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
         val gjenstående = vedtakHistorikk.gjenståendeStønadsperiode.get(virkningsdato)
         vedtakHistorikk.gjenståendeStønadsperiode.put(virkningsdato, gjenstående - forbruk)
+        vedtakHistorikk.gjenståendeVentetidHistorikk.put(virkningsdato, 0.timer)
     }
 }

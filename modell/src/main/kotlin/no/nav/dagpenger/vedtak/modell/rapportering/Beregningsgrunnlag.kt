@@ -33,8 +33,10 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
     internal sealed class DagGrunnlag(internal val dag: Dag) {
         abstract fun sats(): BigDecimal
         abstract fun rettighet(): Dagpengerettighet
-        abstract fun `vanlig arbeidstid`(): Timer
-        abstract fun `terskel for tapt arbeidstid`(): Prosent
+        abstract fun vanligArbeidstid(): Timer
+        abstract fun terskel(): Prosent
+
+        abstract fun ventetidTimer(): Timer
 
         companion object {
             fun opprett(
@@ -62,11 +64,13 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
 
         override fun rettighet(): Dagpengerettighet = dagpengerettighet
 
-        override fun `vanlig arbeidstid`(): Timer =
+        override fun vanligArbeidstid(): Timer =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har ikke vanligarbeidstid")
 
-        override fun `terskel for tapt arbeidstid`(): Prosent =
+        override fun terskel(): Prosent =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har ikke terskel")
+
+        override fun ventetidTimer(): Timer = 0.timer
     }
 
     internal class Rettighetsdag(
@@ -78,8 +82,14 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         override fun sats(): BigDecimal = sats
 
         override fun rettighet(): Dagpengerettighet = dagpengerettighet
-
-        override fun `vanlig arbeidstid`(): Timer = vanligarbeidstid
-        override fun `terskel for tapt arbeidstid`(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
+        override fun vanligArbeidstid(): Timer = vanligarbeidstid
+        override fun terskel(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
+        override fun ventetidTimer(): Timer {
+            return when (dag) {
+                is Arbeidsdag -> vanligarbeidstid - dag.arbeidstimer()
+                is Fraværsdag -> 0.timer
+                is Helgedag -> Timer(dag.arbeidstimer().negate())
+            }
+        }
     }
 }

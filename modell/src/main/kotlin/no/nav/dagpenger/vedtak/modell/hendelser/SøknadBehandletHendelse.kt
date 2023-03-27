@@ -25,6 +25,7 @@ class SøknadInnvilgetHendelse(
     private val grunnlag: BigDecimal,
     private val stønadsperiode: Stønadsperiode,
     private val vanligArbeidstidPerDag: Timer,
+    private val antallVenteDager: Double,
 ) :
     SøknadBehandletHendelse(
         ident,
@@ -39,6 +40,7 @@ class SøknadInnvilgetHendelse(
         stønadsperiode = stønadsperiode,
         dagpengerettighet = dagpengerettighet,
         vanligArbeidstidPerDag = vanligArbeidstidPerDag,
+        antallVenteDager = antallVenteDager,
     )
 }
 
