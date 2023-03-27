@@ -48,6 +48,20 @@ class RettighetStegTest : No {
                 ),
             )
         }
+        Gitt("et endringsvedtak") { søknadHendelse: SøknadInnvilgetHendelseCucumber ->
+            person.håndter(
+                SøknadInnvilgetHendelse(
+                    ident = ident,
+                    behandlingId = UUID.fromString(søknadHendelse.behandlingId),
+                    virkningsdato = søknadHendelse.virkningsdato,
+                    dagpengerettighet = søknadHendelse.dagpengerettighet,
+                    dagsats = søknadHendelse.dagsats.toBigDecimal(),
+                    grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
+                    stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
+                    vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
+                ),
+            )
+        }
 
         Gitt("en ny hendelse om avslått søknad") { søknadHendelse: SøknadAvslåttHendelseCucumber ->
             ident = søknadHendelse.fødselsnummer

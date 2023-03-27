@@ -35,6 +35,6 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<Faktum> = mutab
         val rettighet: Dagpengerettighet,
         val vanligarbeidstid: Timer,
     ) {
-        fun terskel() = TaptArbeidstid.Terskel.terskelFor(rettighet, dag.dato)
+        val terskel = if (rettighet != Dagpengerettighet.Ingen) TaptArbeidstid.Terskel.terskelFor(rettighet, dag.dato) else null
     }
 }
