@@ -3,7 +3,6 @@ package no.nav.dagpenger.vedtak.modell.rapportering
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
-import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summerArbeidstimer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.visitor.RapporteringsperiodeVisitor
 import java.time.DayOfWeek

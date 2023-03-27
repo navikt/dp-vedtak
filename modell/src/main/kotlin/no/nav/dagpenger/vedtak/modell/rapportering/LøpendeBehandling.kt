@@ -11,7 +11,6 @@ import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
-import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summerArbeidstimer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.rapportering.Dag.Companion.summerArbeidstimer
 import java.math.BigDecimal
