@@ -119,13 +119,16 @@ class RettighetStegTest : No {
             assertEquals(ventetimer.timer, inspektør.gjenståendeVentetimer)
         }
 
+        Så("skal utbetalingen være {bigdecimal}") { beløp: BigDecimal ->
+            assertEquals(beløp, inspektør.beløpTilUtbetaling)
+        }
 
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
             val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
                 Rapporteringsdag(
                     dato = LocalDate.parse(it[0], datoformatterer),
                     fravær = it[1].toBooleanStrict(),
-                    timer = it[2].toDouble()
+                    timer = it[2].toDouble(),
                 )
             }
             håndterRapporteringsHendelse(rapporteringsdager)
@@ -171,6 +174,7 @@ class RettighetStegTest : No {
         lateinit var grunnlag: BigDecimal
         lateinit var dagsats: BigDecimal
         lateinit var virkningsdato: LocalDate
+        lateinit var beløpTilUtbetaling: BigDecimal
         lateinit var forbruk: Tid
         var antallVedtak = 0
         var erAvspasert: Boolean = false
@@ -206,8 +210,9 @@ class RettighetStegTest : No {
             this.dagpengerettighet = dagpengerettighet
         }
 
-        override fun visitForbruk(forbruk: Tid) {
+        override fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: BigDecimal) {
             this.forbruk = forbruk
+            this.beløpTilUtbetaling = beløpTilUtbetaling
         }
     }
 }

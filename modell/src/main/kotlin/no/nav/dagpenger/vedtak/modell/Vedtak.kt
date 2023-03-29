@@ -41,12 +41,13 @@ sealed class Vedtak(
             antallVenteDager = antallVenteDager,
         )
 
-        fun løpendeVedtak(behandlingId: UUID, utfall: Boolean, virkningsdato: LocalDate, forbruk: Tid) =
+        fun løpendeVedtak(behandlingId: UUID, utfall: Boolean, virkningsdato: LocalDate, forbruk: Tid, beløpTilUtbetaling: BigDecimal) =
             LøpendeVedtak(
                 behandlingId = behandlingId,
                 utfall = utfall,
                 virkningsdato = virkningsdato,
                 forbruk = forbruk,
+                beløpTilUtbetaling = beløpTilUtbetaling,
             )
 
         fun Collection<Vedtak>.finn(dato: LocalDate) = this.find { it.virkningsdato <= dato }
@@ -134,6 +135,7 @@ class LøpendeVedtak(
     utfall: Boolean,
     virkningsdato: LocalDate,
     private val forbruk: Tid,
+    private val beløpTilUtbetaling: BigDecimal,
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
@@ -143,7 +145,7 @@ class LøpendeVedtak(
 ) {
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
-        visitor.visitForbruk(forbruk)
+        visitor.visitLøpendeVedtak(forbruk, beløpTilUtbetaling)
         visitor.postVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
     }
 

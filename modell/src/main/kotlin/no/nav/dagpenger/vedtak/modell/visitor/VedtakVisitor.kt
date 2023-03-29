@@ -25,7 +25,7 @@ interface VedtakVisitor {
         dagpengerettighet: Dagpengerettighet,
     ) {}
 
-    fun visitForbruk(forbruk: Tid) {}
+    fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: BigDecimal) {}
 
     fun postVisitVedtak(
         vedtakId: UUID,

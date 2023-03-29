@@ -21,17 +21,21 @@ internal class LøpendeBehandling(
     fun håndter(rapporteringsperiode: Rapporteringsperiode): Vedtak {
         beregningsgrunnlag.populer(rapporteringsperiode, this)
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
-        val forbruk = if (vilkårOppfylt) {
-            Forbruk().håndtere(beregningsgrunnlag, gjenståendeVentetidhistorikk)
-        } else {
-            0.arbeidsdager
+
+        val dagerMedForbruk = when {
+            vilkårOppfylt -> Forbruk().håndter(beregningsgrunnlag, gjenståendeVentetidhistorikk)
+            else -> emptyList()
         }
+
+        val forbruk = dagerMedForbruk.size.arbeidsdager
+        val beløpTilUtbetaling = dagerMedForbruk.sumOf { it.sats() }
 
         return Vedtak.løpendeVedtak(
             behandlingId = UUID.randomUUID(),
             utfall = vilkårOppfylt,
             virkningsdato = førsteRettighetsdag(),
             forbruk = forbruk,
+            beløpTilUtbetaling = beløpTilUtbetaling,
         )
     }
 
