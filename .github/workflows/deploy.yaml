@@ -6,6 +6,7 @@ on:
       - docs/api/async-api.yaml
       - .github/workflows/async-api.yaml
 
+jobs:
   build:
     name: Build and publish Docker image
     runs-on: ubuntu-latest
