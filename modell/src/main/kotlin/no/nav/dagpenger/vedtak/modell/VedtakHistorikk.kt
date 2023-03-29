@@ -46,7 +46,7 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
                 satshistorikk = dagsatshistorikk,
                 rettighethistorikk = dagpengerRettighetHistorikk,
                 vanligarbeidstidhistorikk = vanligArbeidstidHistorikk,
-                ventetidhistorikk = gjenståendeVentetidHistorikk,
+                gjenståendeVentetidhistorikk = gjenståendeVentetidHistorikk,
             ).håndter(rapporteringsperiode),
         )
     }

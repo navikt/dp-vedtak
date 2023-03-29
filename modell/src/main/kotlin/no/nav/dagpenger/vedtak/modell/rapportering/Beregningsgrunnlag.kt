@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
+import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
@@ -30,13 +31,12 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
     private fun rettighetsdag(): (DagGrunnlag) -> Boolean = { it is Rettighetsdag }
     private fun arbeidsdag() = { it: DagGrunnlag -> it.dag is Arbeidsdag }
 
-    internal sealed class DagGrunnlag(internal val dag: Dag) {
+    internal sealed class DagGrunnlag(internal val dag: Dag, internal var ventedag: Boolean = false, var gjenståendeTaptArbeidstid: Timer = dag.arbeidstimer()) {
         abstract fun sats(): BigDecimal
         abstract fun rettighet(): Dagpengerettighet
         abstract fun vanligArbeidstid(): Timer
         abstract fun terskel(): Prosent
-
-        abstract fun ventetidTimer(): Timer
+        abstract fun ventetidTimer(ventetidhistorikk: TemporalCollection<Timer>)
 
         companion object {
             fun opprett(
@@ -70,7 +70,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         override fun terskel(): Prosent =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har ikke terskel")
 
-        override fun ventetidTimer(): Timer = 0.timer
+        override fun ventetidTimer(ventetidhistorikk: TemporalCollection<Timer>) {}
     }
 
     internal class Rettighetsdag(
@@ -84,11 +84,17 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         override fun rettighet(): Dagpengerettighet = dagpengerettighet
         override fun vanligArbeidstid(): Timer = vanligarbeidstid
         override fun terskel(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
-        override fun ventetidTimer(): Timer {
-            return when (dag) {
-                is Arbeidsdag -> vanligarbeidstid - dag.arbeidstimer()
-                is Fraværsdag -> 0.timer
-                is Helgedag -> Timer(dag.arbeidstimer().negate())
+        override fun ventetidTimer(ventetidhistorikk: TemporalCollection<Timer>) {
+            val gjenståendeVentetid = ventetidhistorikk.get(dag.dato())
+            if (gjenståendeVentetid > 0.timer) {
+                this.ventedag = true
+                this.gjenståendeTaptArbeidstid = vanligarbeidstid - dag.arbeidstimer()
+                val nyGjenstående = gjenståendeVentetid - gjenståendeTaptArbeidstid
+                if (nyGjenstående > 0.timer) {
+                    ventetidhistorikk.put(dag.dato(), nyGjenstående)
+                } else {
+                    ventetidhistorikk.put(dag.dato(), 0.timer)
+                }
             }
         }
     }

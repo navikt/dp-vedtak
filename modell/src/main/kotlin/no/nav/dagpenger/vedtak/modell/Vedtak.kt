@@ -123,6 +123,7 @@ class Rammevedtak(
         vedtakHistorikk.dagpengerRettighetHistorikk.put(virkningsdato, dagpengerettighet)
         vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato, vanligArbeidstidPerDag)
         vedtakHistorikk.ventetidhistorikk.put(virkningsdato, ventetid)
+        vedtakHistorikk.gjenståendeVentetidHistorikk.put(virkningsdato, ventetid)
     }
 }
 

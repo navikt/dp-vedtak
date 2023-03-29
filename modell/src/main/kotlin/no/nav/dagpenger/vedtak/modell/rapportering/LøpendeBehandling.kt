@@ -4,7 +4,6 @@ import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.Vedtak
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
-import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsdager
 import java.math.BigDecimal
 import java.util.UUID
@@ -14,22 +13,16 @@ internal class LøpendeBehandling(
     internal val satshistorikk: TemporalCollection<BigDecimal>,
     internal val rettighethistorikk: TemporalCollection<Dagpengerettighet>,
     internal val vanligarbeidstidhistorikk: TemporalCollection<Timer>,
-    internal val ventetidhistorikk: TemporalCollection<Timer>,
+    internal val gjenståendeVentetidhistorikk: TemporalCollection<Timer>,
 
 ) {
     private val beregningsgrunnlag = Beregningsgrunnlag()
 
     fun håndter(rapporteringsperiode: Rapporteringsperiode): Vedtak {
         beregningsgrunnlag.populer(rapporteringsperiode, this)
-
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
-
-        if (vilkårOppfylt) {
-            val ss = beregningsgrunnlag.arbeidsdagerMedRettighet().size.arbeidsdager
-            val forbrukVentetid = beregningsgrunnlag.arbeidsdagerMedRettighet().map { it.ventetidTimer() }.summer()
-        }
         val forbruk = if (vilkårOppfylt) {
-            beregningsgrunnlag.arbeidsdagerMedRettighet().size.arbeidsdager
+            Forbruk().håndtere(beregningsgrunnlag, gjenståendeVentetidhistorikk)
         } else {
             0.arbeidsdager
         }
