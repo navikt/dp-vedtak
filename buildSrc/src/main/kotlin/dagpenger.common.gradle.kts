@@ -18,6 +18,7 @@ dependencies {
     testImplementation(Junit5.api)
     testImplementation(Junit5.params)
     testRuntimeOnly(Junit5.engine)
+    testImplementation(KoTest.assertions)
 }
 
 tasks.test {
