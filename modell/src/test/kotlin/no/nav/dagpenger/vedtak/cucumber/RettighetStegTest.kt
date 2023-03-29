@@ -18,11 +18,12 @@ import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.mengde.Tid
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.UUID
 
 class RettighetStegTest : No {
     private val datoformatterer = DateTimeFormatter.ofPattern("dd.MM.yyyy")
@@ -113,9 +114,19 @@ class RettighetStegTest : No {
             assertEquals(forbruk.arbeidsdager, inspektør.forbruk)
         }
 
+        Så("skal ventedager være avspasert, altså {int} timer") { ventetimer: Int ->
+            assertTrue(inspektør.erAvspasert)
+            assertEquals(ventetimer.timer, inspektør.gjenståendeVentetimer)
+        }
+
+
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
             val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
-                Rapporteringsdag(dato = LocalDate.parse(it[0], datoformatterer), fravær = it[1].toBooleanStrict(), timer = it[2].toDouble())
+                Rapporteringsdag(
+                    dato = LocalDate.parse(it[0], datoformatterer),
+                    fravær = it[1].toBooleanStrict(),
+                    timer = it[2].toDouble()
+                )
             }
             håndterRapporteringsHendelse(rapporteringsdager)
         }
@@ -152,6 +163,7 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
+        lateinit var gjenståendeVentetimer: Timer
         lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
@@ -159,8 +171,14 @@ class RettighetStegTest : No {
         lateinit var grunnlag: BigDecimal
         lateinit var dagsats: BigDecimal
         lateinit var virkningsdato: LocalDate
-        var antallVedtak = 0
         lateinit var forbruk: Tid
+        var antallVedtak = 0
+        var erAvspasert: Boolean = false
+
+        override fun visitGjenståendeVentetid(gjenståendeVentetid: Timer) {
+            gjenståendeVentetimer = gjenståendeVentetid
+            erAvspasert = gjenståendeVentetid == 0.timer
+        }
 
         override fun postVisitVedtak(
             vedtakId: UUID,

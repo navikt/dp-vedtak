@@ -24,4 +24,5 @@ Egenskap: Ventedager
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 7 dager
+    Så skal ventedager være avspasert, altså 0 timer
     Så skal bruker ha 2 vedtak

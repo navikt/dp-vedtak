@@ -33,6 +33,7 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     fun accept(visitor: VedtakHistorikkVisitor) {
         if (gjenståendeStønadsperiode.harHistorikk()) {
             visitor.visitGjenståendeStønadsperiode(gjenståendeStønadsperiode.get(LocalDate.now()))
+            visitor.visitGjenståendeVentetid(gjenståendeVentetidHistorikk.get(LocalDate.now()))
         }
         visitor.preVisitVedtak()
         vedtak.forEach { it.accept(visitor) }
