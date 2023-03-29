@@ -33,8 +33,8 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
     internal sealed class DagGrunnlag(internal val dag: Dag) {
         abstract fun sats(): BigDecimal
         abstract fun rettighet(): Dagpengerettighet
-        abstract fun `vanlig arbeidstid`(): Timer
-        abstract fun `terskel for tapt arbeidstid`(): Prosent
+        abstract fun vanligArbeidstid(): Timer
+        abstract fun terskelPerDag(): Prosent
 
         companion object {
             fun opprett(
@@ -62,10 +62,10 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
 
         override fun rettighet(): Dagpengerettighet = dagpengerettighet
 
-        override fun `vanlig arbeidstid`(): Timer =
+        override fun vanligArbeidstid(): Timer =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har ikke vanligarbeidstid")
 
-        override fun `terskel for tapt arbeidstid`(): Prosent =
+        override fun terskelPerDag(): Prosent =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har ikke terskel")
     }
 
@@ -79,7 +79,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
 
         override fun rettighet(): Dagpengerettighet = dagpengerettighet
 
-        override fun `vanlig arbeidstid`(): Timer = vanligarbeidstid
-        override fun `terskel for tapt arbeidstid`(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
+        override fun vanligArbeidstid(): Timer = vanligarbeidstid
+        override fun terskelPerDag(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
     }
 }

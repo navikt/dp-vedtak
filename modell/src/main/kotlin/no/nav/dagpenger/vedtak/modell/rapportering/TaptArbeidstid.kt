@@ -15,8 +15,8 @@ internal class TaptArbeidstid : Regel {
         val rettighetsdager = periode.rettighetsdager()
         val arbeidstimer: Timer = rettighetsdager.map { it.dag }.summerArbeidstimer()
         val arbeidsdagerMedRettighet = periode.arbeidsdagerMedRettighet()
-        val vanligArbeidstid: Timer = arbeidsdagerMedRettighet.map { it.`vanlig arbeidstid`() }.summer()
-        val terskel: Prosent = arbeidsdagerMedRettighet.map { it.`terskel for tapt arbeidstid`() }.summer() / arbeidsdagerMedRettighet.size.toDouble()
+        val vanligArbeidstid: Timer = arbeidsdagerMedRettighet.map { it.vanligArbeidstid() }.summer()
+        val terskel: Prosent = arbeidsdagerMedRettighet.map { it.terskelPerDag() }.summer() / arbeidsdagerMedRettighet.size.toDouble()
         val minsteTapteArbeidstid: Timer = terskel av vanligArbeidstid
 
         return arbeidstimer <= vanligArbeidstid - minsteTapteArbeidstid
