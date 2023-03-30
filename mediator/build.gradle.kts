@@ -3,6 +3,9 @@ plugins {
     id("dagpenger.rapid-and-rivers")
 }
 
+dependencies {
+    implementation(project(":modell"))
+}
 application {
     mainClass.set("no.nav.dagpenger.vedtak.mediator.AppKt")
 }

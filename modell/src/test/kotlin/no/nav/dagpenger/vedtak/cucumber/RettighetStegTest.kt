@@ -46,7 +46,7 @@ class RettighetStegTest : No {
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
-                    antallVenteDager = søknadHendelse.ventetid,
+                    antallVentedager = søknadHendelse.ventetid,
                 ),
             )
         }
@@ -61,7 +61,7 @@ class RettighetStegTest : No {
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
-                    antallVenteDager = søknadHendelse.ventetid,
+                    antallVentedager = søknadHendelse.ventetid,
                 ),
             )
         }
