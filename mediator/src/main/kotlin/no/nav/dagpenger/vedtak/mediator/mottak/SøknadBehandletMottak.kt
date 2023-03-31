@@ -58,12 +58,4 @@ internal class SøknadBehandletMottak(rapidsConnection: RapidsConnection, privat
             personMediator.håndter(søknadInnvilgetHendelse)
         }
     }
-
-    override fun onError(problems: MessageProblems, context: MessageContext) {
-        throw RuntimeException(problems.toExtendedReport())
-    }
-
-    override fun onSevere(error: MessageProblems.MessageException, context: MessageContext) {
-        throw error
-    }
 }
