@@ -1,18 +1,21 @@
 package no.nav.dagpenger.vedtak.mediator.mottak
 
+import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
+import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.time.LocalDate
 import java.util.UUID
 
-class SøknadBehandletMottak(rapidsConnection: RapidsConnection) : River.PacketListener {
+internal class SøknadBehandletMottak(rapidsConnection: RapidsConnection, private val personMediator: PersonMediator) : River.PacketListener {
 
     init {
         River(rapidsConnection).apply {
@@ -27,21 +30,22 @@ class SøknadBehandletMottak(rapidsConnection: RapidsConnection) : River.PacketL
                     "stønadsperiode",
                     "vanligArbeidstidPerDag",
                     "antallVentedager",
+                    "ident",
                 )
-            }
-            validate {
-                it.requireArray("identer") {
-                    requireKey("type", "historisk", "id")
-                }
             }
         }.register(this)
     }
 
+    companion object {
+        private val logger = KotlinLogging.logger { }
+    }
+
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        withLoggingContext("kontekst" to "en eller annen kontekst") {
+        val behandlingId = UUID.fromString(packet["behandlingId"].asText())
+        withLoggingContext("behandlingId" to behandlingId.toString()) {
             val søknadInnvilgetHendelse = SøknadInnvilgetHendelse(
-                ident = packet["identer"].asText(),
-                behandlingId = UUID.fromString(packet["behandlingId"].asText()),
+                ident = packet["ident"].asText(),
+                behandlingId = behandlingId,
                 virkningsdato = LocalDate.parse(packet["virkningsdato"].asText()),
                 dagpengerettighet = Dagpengerettighet.valueOf(packet["dagpengerettighet"].asText()),
                 dagsats = packet["dagsats"].decimalValue(),
@@ -50,6 +54,16 @@ class SøknadBehandletMottak(rapidsConnection: RapidsConnection) : River.PacketL
                 vanligArbeidstidPerDag = packet["vanligArbeidstidPerDag"].asDouble().timer,
                 antallVentedager = packet["antallVentedager"].asDouble(),
             )
+            logger.info { "Fått behandlingshendelse" }
+            personMediator.håndter(søknadInnvilgetHendelse)
         }
+    }
+
+    override fun onError(problems: MessageProblems, context: MessageContext) {
+        throw RuntimeException(problems.toExtendedReport())
+    }
+
+    override fun onSevere(error: MessageProblems.MessageException, context: MessageContext) {
+        throw error
     }
 }

@@ -5,6 +5,8 @@ plugins {
 
 dependencies {
     implementation(project(":modell"))
+
+    testImplementation(Mockk.mockk)
 }
 application {
     mainClass.set("no.nav.dagpenger.vedtak.mediator.AppKt")

@@ -6,7 +6,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperioder
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 
-class Person(private val ident: PersonIdentifikator) : Aktivitetskontekst by ident {
+class Person(val ident: PersonIdentifikator) : Aktivitetskontekst by ident {
     private val vedtakHistorikk = VedtakHistorikk()
     private val rapporteringsperioder = Rapporteringsperioder()
 

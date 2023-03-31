@@ -1,7 +1,7 @@
 package no.nav.dagpenger.vedtak.mediator
 
 import mu.KotlinLogging
-import no.nav.dagpenger.vedtak.mediator.mottak.SøknadBehandletMottak
+import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -14,10 +14,9 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config),
     ).build()
-
     init {
+        PersonMediator(rapidsConnection = rapidsConnection, personRepository = InMemoryPersonRepository())
         rapidsConnection.register(this)
-        SøknadBehandletMottak(rapidsConnection)
     }
 
     fun start() = rapidsConnection.start()
