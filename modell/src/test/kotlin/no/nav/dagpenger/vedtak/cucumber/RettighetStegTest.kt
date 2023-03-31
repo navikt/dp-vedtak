@@ -3,6 +3,8 @@ package no.nav.dagpenger.vedtak.cucumber
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.cucumber.datatable.DataTable
 import io.cucumber.java8.No
+import no.nav.dagpenger.vedtak.modell.Beløp
+import no.nav.dagpenger.vedtak.modell.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
@@ -18,11 +20,12 @@ import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.mengde.Tid
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.UUID
 
 class RettighetStegTest : No {
     private val datoformatterer = DateTimeFormatter.ofPattern("dd.MM.yyyy")
@@ -45,6 +48,7 @@ class RettighetStegTest : No {
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
+                    antallVentedager = søknadHendelse.ventetid,
                 ),
             )
         }
@@ -59,6 +63,7 @@ class RettighetStegTest : No {
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
+                    antallVentedager = søknadHendelse.ventetid,
                 ),
             )
         }
@@ -111,9 +116,22 @@ class RettighetStegTest : No {
             assertEquals(forbruk.arbeidsdager, inspektør.forbruk)
         }
 
+        Så("skal ventedager være avspasert, altså {int} timer") { ventetimer: Int ->
+            assertTrue(inspektør.erAvspasert)
+            assertEquals(ventetimer.timer, inspektør.gjenståendeVentetimer)
+        }
+
+        Så("skal utbetalingen være {bigdecimal}") { beløp: BigDecimal ->
+            assertEquals(beløp.beløp, inspektør.beløpTilUtbetaling)
+        }
+
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
             val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
-                Rapporteringsdag(dato = LocalDate.parse(it[0], datoformatterer), fravær = it[1].toBooleanStrict(), timer = it[2].toDouble())
+                Rapporteringsdag(
+                    dato = LocalDate.parse(it[0], datoformatterer),
+                    fravær = it[1].toBooleanStrict(),
+                    timer = it[2].toDouble(),
+                )
             }
             håndterRapporteringsHendelse(rapporteringsdager)
         }
@@ -142,6 +160,7 @@ class RettighetStegTest : No {
         val grunnlag: Int,
         val stønadsperiode: Int,
         val vanligArbeidstidPerDag: Double,
+        val ventetid: Double,
     )
 
     private class Inspektør(person: Person) : PersonVisitor {
@@ -149,6 +168,7 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
+        lateinit var gjenståendeVentetimer: Timer
         lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
@@ -156,8 +176,15 @@ class RettighetStegTest : No {
         lateinit var grunnlag: BigDecimal
         lateinit var dagsats: BigDecimal
         lateinit var virkningsdato: LocalDate
-        var antallVedtak = 0
+        lateinit var beløpTilUtbetaling: Beløp
         lateinit var forbruk: Tid
+        var antallVedtak = 0
+        var erAvspasert: Boolean = false
+
+        override fun visitGjenståendeVentetid(gjenståendeVentetid: Timer) {
+            gjenståendeVentetimer = gjenståendeVentetid
+            erAvspasert = gjenståendeVentetid == 0.timer
+        }
 
         override fun postVisitVedtak(
             vedtakId: UUID,
@@ -185,8 +212,9 @@ class RettighetStegTest : No {
             this.dagpengerettighet = dagpengerettighet
         }
 
-        override fun visitForbruk(forbruk: Tid) {
+        override fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: Beløp) {
             this.forbruk = forbruk
+            this.beløpTilUtbetaling = beløpTilUtbetaling
         }
     }
 }

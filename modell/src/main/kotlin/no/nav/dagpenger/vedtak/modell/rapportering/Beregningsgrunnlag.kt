@@ -1,9 +1,14 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
+import no.nav.dagpenger.vedtak.modell.Beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
+import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag
+import no.nav.dagpenger.vedtak.modell.utbetaling.IkkeUtbetalingsdag
+import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import java.math.BigDecimal
 
 internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = mutableListOf()) {
@@ -30,11 +35,13 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
     private fun rettighetsdag(): (DagGrunnlag) -> Boolean = { it is Rettighetsdag }
     private fun arbeidsdag() = { it: DagGrunnlag -> it.dag is Arbeidsdag }
 
-    internal sealed class DagGrunnlag(internal val dag: Dag) {
+    internal sealed class DagGrunnlag(internal val dag: Dag, internal var ventedag: Boolean = false, var gjenståendeTaptArbeidstid: Timer = dag.arbeidstimer()) {
         abstract fun sats(): BigDecimal
         abstract fun rettighet(): Dagpengerettighet
         abstract fun vanligArbeidstid(): Timer
-        abstract fun terskelPerDag(): Prosent
+        abstract fun terskel(): Prosent
+        abstract fun ventetidTimer(ventetidhistorikk: TemporalCollection<Timer>)
+        abstract fun tilBetalingsdag(): Betalingsdag
 
         companion object {
             fun opprett(
@@ -65,8 +72,11 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         override fun vanligArbeidstid(): Timer =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har ikke vanligarbeidstid")
 
-        override fun terskelPerDag(): Prosent =
+        override fun terskel(): Prosent =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har ikke terskel")
+
+        override fun ventetidTimer(ventetidhistorikk: TemporalCollection<Timer>) {}
+        override fun tilBetalingsdag(): Betalingsdag = IkkeUtbetalingsdag(dag.dato())
     }
 
     internal class Rettighetsdag(
@@ -76,10 +86,23 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         private val vanligarbeidstid: Timer,
     ) : DagGrunnlag(dag) {
         override fun sats(): BigDecimal = sats
-
         override fun rettighet(): Dagpengerettighet = dagpengerettighet
-
         override fun vanligArbeidstid(): Timer = vanligarbeidstid
-        override fun terskelPerDag(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
+        override fun terskel(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
+        override fun ventetidTimer(ventetidhistorikk: TemporalCollection<Timer>) {
+            val gjenståendeVentetid = ventetidhistorikk.get(dag.dato())
+            if (gjenståendeVentetid > 0.timer) {
+                this.ventedag = true
+                this.gjenståendeTaptArbeidstid = vanligarbeidstid - dag.arbeidstimer()
+                val nyGjenstående = gjenståendeVentetid - gjenståendeTaptArbeidstid
+                if (nyGjenstående > 0.timer) {
+                    ventetidhistorikk.put(dag.dato(), nyGjenstående)
+                } else {
+                    ventetidhistorikk.put(dag.dato(), 0.timer)
+                }
+            }
+        }
+
+        override fun tilBetalingsdag(): Betalingsdag = Utbetalingsdag(dag.dato(), Beløp.fra(sats))
     }
 }

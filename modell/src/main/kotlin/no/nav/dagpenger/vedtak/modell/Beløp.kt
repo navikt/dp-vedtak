@@ -1,9 +1,17 @@
 package no.nav.dagpenger.vedtak.modell
 
+import java.math.BigDecimal
+
 class Beløp private constructor(verdi: Number) : Comparable<Beløp> {
 
     private val verdi: Double = verdi.toDouble()
-    companion object {
+    internal companion object {
+        fun fra(sats: BigDecimal): Beløp {
+            return Beløp(sats)
+        }
+
+        fun Iterable<Beløp>.summerBeløp() = sumOf { it.verdi }.beløp
+
         val Number.beløp get() = Beløp(this)
     }
     override fun compareTo(other: Beløp): Int = verdi.compareTo(other.verdi)

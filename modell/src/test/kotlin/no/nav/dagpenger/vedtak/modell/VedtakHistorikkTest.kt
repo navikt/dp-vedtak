@@ -42,5 +42,6 @@ internal class VedtakHistorikkTest {
         stønadsperiode = 52.arbeidsuker,
         dagpengerettighet = Dagpengerettighet.Ordinær,
         vanligArbeidstidPerDag = 8.timer,
+        antallVenteDager = 3.toDouble(),
     )
 }

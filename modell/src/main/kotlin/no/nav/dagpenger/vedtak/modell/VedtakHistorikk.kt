@@ -10,6 +10,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
+
     private val vedtak = historiskeVedtak.toMutableList()
 
     internal val dagsatshistorikk = TemporalCollection<BigDecimal>()
@@ -18,6 +19,8 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     internal val gjenståendeStønadsperiode = TemporalCollection<Stønadsperiode>()
     internal val dagpengerRettighetHistorikk = TemporalCollection<Dagpengerettighet>()
     internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
+    internal val ventetidhistorikk = TemporalCollection<Timer>()
+    internal val gjenståendeVentetidHistorikk = TemporalCollection<Timer>()
 
     init {
         vedtak.forEach { it.populer(this) }
@@ -30,6 +33,7 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     fun accept(visitor: VedtakHistorikkVisitor) {
         if (gjenståendeStønadsperiode.harHistorikk()) {
             visitor.visitGjenståendeStønadsperiode(gjenståendeStønadsperiode.get(LocalDate.now()))
+            visitor.visitGjenståendeVentetid(gjenståendeVentetidHistorikk.get(LocalDate.now()))
         }
         visitor.preVisitVedtak()
         vedtak.forEach { it.accept(visitor) }
@@ -43,6 +47,7 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
                 satshistorikk = dagsatshistorikk,
                 rettighethistorikk = dagpengerRettighetHistorikk,
                 vanligarbeidstidhistorikk = vanligArbeidstidHistorikk,
+                gjenståendeVentetidhistorikk = gjenståendeVentetidHistorikk,
             ).håndter(rapporteringsperiode),
         )
     }

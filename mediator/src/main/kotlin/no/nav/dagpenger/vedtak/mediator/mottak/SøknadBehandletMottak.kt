@@ -1,0 +1,55 @@
+package no.nav.dagpenger.vedtak.mediator.mottak
+
+import mu.withLoggingContext
+import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnvilgetHendelse
+import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
+import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
+import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.helse.rapids_rivers.River
+import java.time.LocalDate
+import java.util.UUID
+
+class SøknadBehandletMottak(rapidsConnection: RapidsConnection) : River.PacketListener {
+
+    init {
+        River(rapidsConnection).apply {
+            validate { it.demandValue("@event_name", "søknad_innvilget_hendelse") }
+            validate {
+                it.requireKey(
+                    "behandlingId",
+                    "virkningsdato",
+                    "dagpengerettighet",
+                    "dagsats",
+                    "grunnlag",
+                    "stønadsperiode",
+                    "vanligArbeidstidPerDag",
+                    "antallVentedager",
+                )
+            }
+            validate {
+                it.requireArray("identer") {
+                    requireKey("type", "historisk", "id")
+                }
+            }
+        }.register(this)
+    }
+
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+        withLoggingContext("kontekst" to "en eller annen kontekst") {
+            val søknadInnvilgetHendelse = SøknadInnvilgetHendelse(
+                ident = packet["identer"].asText(),
+                behandlingId = UUID.fromString(packet["behandlingId"].asText()),
+                virkningsdato = LocalDate.parse(packet["virkningsdato"].asText()),
+                dagpengerettighet = Dagpengerettighet.valueOf(packet["dagpengerettighet"].asText()),
+                dagsats = packet["dagsats"].decimalValue(),
+                grunnlag = packet["grunnlag"].decimalValue(),
+                stønadsperiode = packet["stønadsperiode"].asInt().arbeidsuker,
+                vanligArbeidstidPerDag = packet["vanligArbeidstidPerDag"].asDouble().timer,
+                antallVentedager = packet["antallVentedager"].asDouble(),
+            )
+        }
+    }
+}
