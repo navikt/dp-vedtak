@@ -2,15 +2,20 @@ import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.søknadInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
+import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-internal class MediatorTest {
+internal class PersonMediatorTest {
 
     private val testRapid = TestRapid()
-    private val personMediator = PersonMediator(testRapid, InMemoryPersonRepository())
+    val personMediator = PersonMediator(
+        rapidsConnection = testRapid,
+        personRepository = InMemoryPersonRepository(),
+        personObservers = listOf(VedtakFattetKafkaObserver(testRapid)),
+    )
 
     @BeforeEach
     fun setUp() {
@@ -22,7 +27,7 @@ internal class MediatorTest {
         testRapid.sendTestMessage(søknadInnvilgetJson())
         testRapid.inspektør.size shouldBe 1
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
-            assertEquals("vedtak_opprettet", it["@event_name"].asText())
+            assertEquals("vedtak_fattet", it["@event_name"].asText())
         }
     }
 }

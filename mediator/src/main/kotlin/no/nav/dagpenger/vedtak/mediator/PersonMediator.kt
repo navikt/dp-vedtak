@@ -6,12 +6,17 @@ import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.withMDC
 
-internal class PersonMediator(rapidsConnection: RapidsConnection, private val personRepository: PersonRepository) {
+internal class PersonMediator(
+    rapidsConnection: RapidsConnection,
+    private val personRepository: PersonRepository,
+    private val personObservers: List<PersonObserver> = emptyList(),
+) {
 
     init {
         SøknadBehandletMottak(rapidsConnection, this)
@@ -30,9 +35,9 @@ internal class PersonMediator(rapidsConnection: RapidsConnection, private val pe
 
     private fun behandle(hendelse: Hendelse, håndter: (Person) -> Unit) = try {
         val person = hentEllerOpprettPerson(hendelse)
-//        søknadObservers.forEach { søknadObserver ->
-//            søknad.addObserver(søknadObserver)
-//        }
+        personObservers.forEach { personObserver ->
+            person.addObserver(personObserver)
+        }
         håndter(person)
         lagre(person)
     } catch (err: Aktivitetslogg.AktivitetException) {

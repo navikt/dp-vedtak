@@ -1,5 +1,7 @@
-package no.nav.dagpenger.vedtak.modell
+package no.nav.dagpenger.vedtak.modell.vedtak
 
+import no.nav.dagpenger.vedtak.modell.Beløp
+import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode

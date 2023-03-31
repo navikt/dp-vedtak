@@ -1,6 +1,5 @@
 package no.nav.dagpenger.vedtak.mediator.persistens
 
-import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 

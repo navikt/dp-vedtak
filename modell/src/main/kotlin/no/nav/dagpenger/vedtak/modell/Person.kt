@@ -4,14 +4,22 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperioder
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 
-class Person(val ident: PersonIdentifikator) : Aktivitetskontekst by ident {
-    private val vedtakHistorikk = VedtakHistorikk()
+class Person(val ident: PersonIdentifikator) : Aktivitetskontekst by ident, VedtakObserver {
+    private val vedtakHistorikk = VedtakHistorikk().also {
+        it.addObserver(this)
+    }
+
+    private val observers = mutableListOf<PersonObserver>()
+
     private val rapporteringsperioder = Rapporteringsperioder()
 
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
-        vedtakHistorikk.leggTilVedtak(søknadBehandletHendelse.tilVedtak())
+        kontekst(søknadBehandletHendelse)
+        vedtakHistorikk.håndter(søknadBehandletHendelse)
     }
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
@@ -20,6 +28,15 @@ class Person(val ident: PersonIdentifikator) : Aktivitetskontekst by ident {
         vedtakHistorikk.håndter(rapporteringsperiode)
     }
 
+    override fun vedtakFattet(vedtakFattet: VedtakObserver.VedtakFattet) {
+        observers.forEach {
+            it.vedtaktFattet(ident.identifikator(), vedtakFattet)
+        }
+    }
+
+    fun addObserver(personObserver: PersonObserver) {
+        observers.add(personObserver)
+    }
     fun accept(visitor: PersonVisitor) {
         visitor.visitPerson(ident)
         rapporteringsperioder.accept(visitor)

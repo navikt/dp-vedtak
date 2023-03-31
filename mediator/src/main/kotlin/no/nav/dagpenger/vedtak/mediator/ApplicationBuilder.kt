@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.mediator
 
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
+import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -14,8 +15,13 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config),
     ).build()
+
     init {
-        PersonMediator(rapidsConnection = rapidsConnection, personRepository = InMemoryPersonRepository())
+        PersonMediator(
+            rapidsConnection = rapidsConnection,
+            personRepository = InMemoryPersonRepository(),
+            personObservers = listOf(VedtakFattetKafkaObserver(rapidsConnection)),
+        )
         rapidsConnection.register(this)
     }
 

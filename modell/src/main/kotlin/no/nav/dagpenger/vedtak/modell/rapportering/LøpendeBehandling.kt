@@ -2,10 +2,10 @@ package no.nav.dagpenger.vedtak.modell.rapportering
 
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
-import no.nav.dagpenger.vedtak.modell.Vedtak
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsdager
 import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag.Companion.summer
+import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.math.BigDecimal
 import java.util.UUID
 
