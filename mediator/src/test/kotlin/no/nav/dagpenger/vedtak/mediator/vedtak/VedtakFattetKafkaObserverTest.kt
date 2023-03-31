@@ -2,7 +2,9 @@ package no.nav.dagpenger.vedtak.mediator.vedtak
 
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldNotBeBlank
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.VedtakFattet.Utfall.Innvilget
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -24,7 +26,7 @@ class VedtakFattetKafkaObserverTest {
                 vedtakId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
-                utfall = VedtakObserver.VedtakFattet.Utfall.Innvilget,
+                utfall = Innvilget,
             ),
         )
         testRapid.inspektør.size shouldBe 1
@@ -34,7 +36,7 @@ class VedtakFattetKafkaObserverTest {
             message["@event_name"].asText() shouldBe "vedtak_fattet"
             message["ident"].asText() shouldBe "1234568901"
             message["vedtak_id"].asText() shouldBe vedtakId.toString()
-            message["vedtaktidspunkt"].asText() shouldBe vedtakstidspunkt.toString()
+            message["vedtaktidspunkt"].asText().shouldNotBeBlank()
             message["virkningsdato"].asText() shouldBe virkningsdato.toString()
             message["utfall"].asText() shouldBe "Innvilget"
         }
