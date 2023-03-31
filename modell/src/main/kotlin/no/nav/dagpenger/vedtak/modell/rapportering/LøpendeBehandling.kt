@@ -5,6 +5,7 @@ import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.Vedtak
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsdager
+import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag.Companion.summer
 import java.math.BigDecimal
 import java.util.UUID
 
@@ -28,14 +29,14 @@ internal class LøpendeBehandling(
         }
 
         val forbruk = dagerMedForbruk.size.arbeidsdager
-        val beløpTilUtbetaling = dagerMedForbruk.sumOf { it.sats() }
+        val utbetalingsdager = dagerMedForbruk.map { it.tilBetalingsdag() }
 
         return Vedtak.løpendeVedtak(
             behandlingId = UUID.randomUUID(),
             utfall = vilkårOppfylt,
             virkningsdato = førsteRettighetsdag(),
             forbruk = forbruk,
-            beløpTilUtbetaling = beløpTilUtbetaling,
+            beløpTilUtbetaling = utbetalingsdager.summer(),
         )
     }
 

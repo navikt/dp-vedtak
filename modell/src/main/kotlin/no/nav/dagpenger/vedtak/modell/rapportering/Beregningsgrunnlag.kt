@@ -1,10 +1,14 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
+import no.nav.dagpenger.vedtak.modell.Beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag
+import no.nav.dagpenger.vedtak.modell.utbetaling.IkkeUtbetalingsdag
+import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import java.math.BigDecimal
 
 internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = mutableListOf()) {
@@ -37,6 +41,8 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         abstract fun vanligArbeidstid(): Timer
         abstract fun terskel(): Prosent
         abstract fun ventetidTimer(ventetidhistorikk: TemporalCollection<Timer>)
+
+        abstract fun tilBetalingsdag(): Betalingsdag
 
         companion object {
             fun opprett(
@@ -71,6 +77,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har ikke terskel")
 
         override fun ventetidTimer(ventetidhistorikk: TemporalCollection<Timer>) {}
+        override fun tilBetalingsdag(): Betalingsdag = IkkeUtbetalingsdag(dag.dato())
     }
 
     internal class Rettighetsdag(
@@ -80,7 +87,6 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         private val vanligarbeidstid: Timer,
     ) : DagGrunnlag(dag) {
         override fun sats(): BigDecimal = sats
-
         override fun rettighet(): Dagpengerettighet = dagpengerettighet
         override fun vanligArbeidstid(): Timer = vanligarbeidstid
         override fun terskel(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
@@ -97,5 +103,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
                 }
             }
         }
+
+        override fun tilBetalingsdag(): Betalingsdag = Utbetalingsdag(dag.dato(), Beløp.fra(sats))
     }
 }

@@ -41,7 +41,7 @@ sealed class Vedtak(
             antallVenteDager = antallVenteDager,
         )
 
-        fun løpendeVedtak(behandlingId: UUID, utfall: Boolean, virkningsdato: LocalDate, forbruk: Tid, beløpTilUtbetaling: BigDecimal) =
+        fun løpendeVedtak(behandlingId: UUID, utfall: Boolean, virkningsdato: LocalDate, forbruk: Tid, beløpTilUtbetaling: Beløp) =
             LøpendeVedtak(
                 behandlingId = behandlingId,
                 utfall = utfall,
@@ -135,7 +135,7 @@ class LøpendeVedtak(
     utfall: Boolean,
     virkningsdato: LocalDate,
     private val forbruk: Tid,
-    private val beløpTilUtbetaling: BigDecimal,
+    private val beløpTilUtbetaling: Beløp,
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,

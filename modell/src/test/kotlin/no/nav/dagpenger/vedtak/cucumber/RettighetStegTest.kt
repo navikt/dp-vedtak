@@ -3,6 +3,8 @@ package no.nav.dagpenger.vedtak.cucumber
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.cucumber.datatable.DataTable
 import io.cucumber.java8.No
+import no.nav.dagpenger.vedtak.modell.Beløp
+import no.nav.dagpenger.vedtak.modell.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
@@ -120,7 +122,7 @@ class RettighetStegTest : No {
         }
 
         Så("skal utbetalingen være {bigdecimal}") { beløp: BigDecimal ->
-            assertEquals(beløp, inspektør.beløpTilUtbetaling)
+            assertEquals(beløp.beløp, inspektør.beløpTilUtbetaling)
         }
 
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
@@ -174,7 +176,7 @@ class RettighetStegTest : No {
         lateinit var grunnlag: BigDecimal
         lateinit var dagsats: BigDecimal
         lateinit var virkningsdato: LocalDate
-        lateinit var beløpTilUtbetaling: BigDecimal
+        lateinit var beløpTilUtbetaling: Beløp
         lateinit var forbruk: Tid
         var antallVedtak = 0
         var erAvspasert: Boolean = false
@@ -210,7 +212,7 @@ class RettighetStegTest : No {
             this.dagpengerettighet = dagpengerettighet
         }
 
-        override fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: BigDecimal) {
+        override fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: Beløp) {
             this.forbruk = forbruk
             this.beløpTilUtbetaling = beløpTilUtbetaling
         }
