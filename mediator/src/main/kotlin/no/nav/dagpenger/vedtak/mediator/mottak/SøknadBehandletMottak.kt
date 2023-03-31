@@ -9,7 +9,6 @@ import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.time.LocalDate
