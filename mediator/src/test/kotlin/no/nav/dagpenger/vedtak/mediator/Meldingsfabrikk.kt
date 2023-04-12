@@ -28,4 +28,16 @@ object Meldingsfabrikk {
            
         } 
         """.trimIndent()
+
+    fun dagpengerAvslåttJson() =
+        //language=JSON
+        """
+        {        
+          "@event_name": "søknad_behandlet_hendelse",
+          "ident" : "12345123451",
+          "behandlingId": "${UUID.randomUUID()}",
+          "virkningsdato": "${LocalDate.now()}",
+          "innvilget": false
+        } 
+        """.trimIndent()
 }

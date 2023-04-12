@@ -1,4 +1,5 @@
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
@@ -31,6 +32,12 @@ internal class PersonMediatorTest {
         }
     }
 
-
-
+    @Test
+    fun `Avslag av dagpenger hendelse fører til vedtak fattet event`() {
+        testRapid.sendTestMessage(dagpengerAvslåttJson())
+        testRapid.inspektør.size shouldBe 1
+        testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
+            assertEquals("vedtak_fattet", it["@event_name"].asText())
+        }
+    }
 }
