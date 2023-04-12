@@ -5,7 +5,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.søknadInnvilgetJson
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
@@ -25,8 +25,8 @@ class SøknadBehandletMottakTest {
     }
 
     @Test
-    fun `motta søknad innvilget hendelse`() {
-        testRapid.sendTestMessage(søknadInnvilgetJson())
+    fun `motta dagpenger innvilget hendelse`() {
+        testRapid.sendTestMessage(dagpengerInnvilgetJson())
         verify(exactly = 1) {
             personRepositoryMock.håndter(any())
         }

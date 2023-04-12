@@ -16,7 +16,7 @@ sealed class SøknadBehandletHendelse(
     abstract fun tilVedtak(): Vedtak
 }
 
-class SøknadInnvilgetHendelse(
+class DagpengerInnvilgetHendelse(
     ident: String,
     behandlingId: UUID,
     virkningsdato: LocalDate,
@@ -26,12 +26,11 @@ class SøknadInnvilgetHendelse(
     private val stønadsperiode: Stønadsperiode,
     private val vanligArbeidstidPerDag: Timer,
     private val antallVentedager: Double,
-) :
-    SøknadBehandletHendelse(
-        ident,
-        behandlingId,
-        virkningsdato,
-    ) {
+) : SøknadBehandletHendelse(
+    ident,
+    behandlingId,
+    virkningsdato,
+) {
     override fun tilVedtak(): Vedtak = Vedtak.innvilgelse(
         behandlingId = behandlingId,
         virkningsdato = virkningsdato,
@@ -44,7 +43,7 @@ class SøknadInnvilgetHendelse(
     )
 }
 
-class SøknadAvslåttHendelse(ident: String, behandlingId: UUID, virkningsdato: LocalDate) :
+class DagpengerAvslåttHendelse(ident: String, behandlingId: UUID, virkningsdato: LocalDate) :
     SøknadBehandletHendelse(
         ident,
         behandlingId,

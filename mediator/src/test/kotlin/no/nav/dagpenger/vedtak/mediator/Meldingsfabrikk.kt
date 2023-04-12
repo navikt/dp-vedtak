@@ -5,7 +5,7 @@ import java.util.UUID
 
 object Meldingsfabrikk {
 
-    fun søknadInnvilgetJson() =
+    fun dagpengerInnvilgetJson() =
         //language=JSON
         """
         {        

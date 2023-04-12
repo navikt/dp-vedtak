@@ -5,7 +5,7 @@ import mu.withLoggingContext
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnvilgetHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -43,7 +43,7 @@ internal class SøknadBehandletMottak(rapidsConnection: RapidsConnection, privat
         val behandlingId = UUID.fromString(packet["behandlingId"].asText())
 
         withLoggingContext("behandlingId" to behandlingId.toString()) {
-            val søknadInnvilgetHendelse = SøknadInnvilgetHendelse(
+            val dagpengerInnvilgetHendelse = DagpengerInnvilgetHendelse(
                 ident = packet["ident"].asText(),
                 behandlingId = behandlingId,
                 virkningsdato = LocalDate.parse(packet["virkningsdato"].asText()),
@@ -55,7 +55,7 @@ internal class SøknadBehandletMottak(rapidsConnection: RapidsConnection, privat
                 antallVentedager = packet["antallVentedager"].asDouble(),
             )
             logger.info { "Fått behandlingshendelse" }
-            personMediator.håndter(søknadInnvilgetHendelse)
+            personMediator.håndter(dagpengerInnvilgetHendelse)
         }
     }
 }

@@ -10,10 +10,10 @@ import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadAvslåttHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsdager
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
@@ -39,7 +39,7 @@ class RettighetStegTest : No {
             ident = søknadHendelse.fødselsnummer
             person = Person(ident.tilPersonIdentfikator())
             person.håndter(
-                SøknadInnvilgetHendelse(
+                DagpengerInnvilgetHendelse(
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     virkningsdato = søknadHendelse.virkningsdato,
@@ -54,7 +54,7 @@ class RettighetStegTest : No {
         }
         Gitt("et endringsvedtak") { søknadHendelse: SøknadInnvilgetHendelseCucumber ->
             person.håndter(
-                SøknadInnvilgetHendelse(
+                DagpengerInnvilgetHendelse(
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     virkningsdato = søknadHendelse.virkningsdato,
@@ -72,7 +72,7 @@ class RettighetStegTest : No {
             ident = søknadHendelse.fødselsnummer
             person = Person(ident.tilPersonIdentfikator())
             person.håndter(
-                SøknadAvslåttHendelse(
+                DagpengerAvslåttHendelse(
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     virkningsdato = søknadHendelse.virkningsdato,
