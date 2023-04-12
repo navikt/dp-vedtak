@@ -16,11 +16,16 @@ import java.util.UUID
 
 internal class SøknadBehandletMottak(rapidsConnection: RapidsConnection, private val personMediator: PersonMediator) : River.PacketListener {
 
+    companion object {
+        private val logger = KotlinLogging.logger { }
+    }
+
     init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "søknad_innvilget_hendelse") }
+            validate { it.demandValue("@event_name", "søknad_behandlet_hendelse") }
             validate {
                 it.requireKey(
+                    "ident",
                     "behandlingId",
                     "virkningsdato",
                     "dagpengerettighet",
@@ -29,18 +34,14 @@ internal class SøknadBehandletMottak(rapidsConnection: RapidsConnection, privat
                     "stønadsperiode",
                     "vanligArbeidstidPerDag",
                     "antallVentedager",
-                    "ident",
                 )
             }
         }.register(this)
     }
 
-    companion object {
-        private val logger = KotlinLogging.logger { }
-    }
-
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val behandlingId = UUID.fromString(packet["behandlingId"].asText())
+
         withLoggingContext("behandlingId" to behandlingId.toString()) {
             val søknadInnvilgetHendelse = SøknadInnvilgetHendelse(
                 ident = packet["ident"].asText(),

@@ -4,6 +4,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 object Meldingsfabrikk {
+
     fun søknadInnvilgetJson() =
         //language=JSON
         """
@@ -12,7 +13,7 @@ object Meldingsfabrikk {
           "ident" : "12345123451",
           "behandlingId": "${UUID.randomUUID()}",
           "virkningsdato": "${LocalDate.now()}",
-          "innvilget": true
+          "innvilget": true,
           "dagpengerettighet": "Ordinær",
           "dagsats": "500",
           "grunnlag": "500000",
