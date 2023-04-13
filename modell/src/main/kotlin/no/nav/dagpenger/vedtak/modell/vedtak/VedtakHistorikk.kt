@@ -18,13 +18,13 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     private val vedtak = historiskeVedtak.toMutableList()
 
-    internal val dagsatshistorikk = TemporalCollection<BigDecimal>()
-    internal val grunnlaghistorikk = TemporalCollection<BigDecimal>()
-    internal val stønadsperiodehistorikk = TemporalCollection<Stønadsperiode>()
-    internal val gjenståendeStønadsperiode = TemporalCollection<Stønadsperiode>()
-    internal val dagpengerRettighetHistorikk = TemporalCollection<Dagpengerettighet>()
+    internal val dagsatsHistorikk = TemporalCollection<BigDecimal>()
+    internal val grunnlagHistorikk = TemporalCollection<BigDecimal>()
+    internal val stønadsperiodeHistorikk = TemporalCollection<Stønadsperiode>()
+    internal val gjenståendeStønadsperiodeHistorikk = TemporalCollection<Stønadsperiode>()
+    internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
     internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
-    internal val ventetidhistorikk = TemporalCollection<Timer>()
+    internal val ventetidHistorikk = TemporalCollection<Timer>()
     internal val gjenståendeVentetidHistorikk = TemporalCollection<Timer>()
 
     init {
@@ -40,10 +40,10 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
         this.leggTilVedtak(
             LøpendeBehandling(
                 rapporteringsId = rapporteringsperiode.rapporteringsId,
-                satshistorikk = dagsatshistorikk,
-                rettighethistorikk = dagpengerRettighetHistorikk,
-                vanligarbeidstidhistorikk = vanligArbeidstidHistorikk,
-                gjenståendeVentetidhistorikk = gjenståendeVentetidHistorikk,
+                satsHistorikk = dagsatsHistorikk,
+                dagpengerettighetHistorikk = dagpengerettighetHistorikk,
+                vanligArbeidstidHistorikk = vanligArbeidstidHistorikk,
+                gjenståendeVentetidHistorikk = gjenståendeVentetidHistorikk,
             ).håndter(rapporteringsperiode),
         )
     }
@@ -53,8 +53,8 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     }
 
     fun accept(visitor: VedtakHistorikkVisitor) {
-        if (gjenståendeStønadsperiode.harHistorikk()) {
-            visitor.visitGjenståendeStønadsperiode(gjenståendeStønadsperiode.get(LocalDate.now()))
+        if (gjenståendeStønadsperiodeHistorikk.harHistorikk()) {
+            visitor.visitGjenståendeStønadsperiode(gjenståendeStønadsperiodeHistorikk.get(LocalDate.now()))
             visitor.visitGjenståendeVentetid(gjenståendeVentetidHistorikk.get(LocalDate.now()))
         }
         visitor.preVisitVedtak()

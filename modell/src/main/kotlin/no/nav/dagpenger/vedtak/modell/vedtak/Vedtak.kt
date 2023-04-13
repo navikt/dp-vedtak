@@ -119,13 +119,13 @@ class Rammevedtak(
     }
 
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
-        vedtakHistorikk.dagsatshistorikk.put(virkningsdato, dagsats)
-        vedtakHistorikk.stønadsperiodehistorikk.put(virkningsdato, stønadsperiode)
-        vedtakHistorikk.grunnlaghistorikk.put(virkningsdato, grunnlag)
-        vedtakHistorikk.gjenståendeStønadsperiode.put(virkningsdato, stønadsperiode)
-        vedtakHistorikk.dagpengerRettighetHistorikk.put(virkningsdato, dagpengerettighet)
+        vedtakHistorikk.dagsatsHistorikk.put(virkningsdato, dagsats)
+        vedtakHistorikk.stønadsperiodeHistorikk.put(virkningsdato, stønadsperiode)
+        vedtakHistorikk.grunnlagHistorikk.put(virkningsdato, grunnlag)
+        vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.put(virkningsdato, stønadsperiode)
+        vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, dagpengerettighet)
         vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato, vanligArbeidstidPerDag)
-        vedtakHistorikk.ventetidhistorikk.put(virkningsdato, ventetid)
+        vedtakHistorikk.ventetidHistorikk.put(virkningsdato, ventetid)
         vedtakHistorikk.gjenståendeVentetidHistorikk.put(virkningsdato, ventetid)
     }
 }
@@ -152,8 +152,8 @@ class LøpendeVedtak(
     }
 
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
-        val gjenstående = vedtakHistorikk.gjenståendeStønadsperiode.get(virkningsdato)
-        vedtakHistorikk.gjenståendeStønadsperiode.put(virkningsdato, gjenstående - forbruk)
+        val gjenstående = vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.get(virkningsdato)
+        vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.put(virkningsdato, gjenstående - forbruk)
         vedtakHistorikk.gjenståendeVentetidHistorikk.put(virkningsdato, 0.timer)
     }
 }

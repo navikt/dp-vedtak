@@ -11,10 +11,10 @@ import java.util.UUID
 
 internal class LøpendeBehandling(
     private val rapporteringsId: UUID,
-    internal val satshistorikk: TemporalCollection<BigDecimal>,
-    internal val rettighethistorikk: TemporalCollection<Dagpengerettighet>,
-    internal val vanligarbeidstidhistorikk: TemporalCollection<Timer>,
-    internal val gjenståendeVentetidhistorikk: TemporalCollection<Timer>,
+    internal val satsHistorikk: TemporalCollection<BigDecimal>,
+    internal val dagpengerettighetHistorikk: TemporalCollection<Dagpengerettighet>,
+    internal val vanligArbeidstidHistorikk: TemporalCollection<Timer>,
+    internal val gjenståendeVentetidHistorikk: TemporalCollection<Timer>,
 
 ) {
     private val beregningsgrunnlag = Beregningsgrunnlag()
@@ -24,7 +24,7 @@ internal class LøpendeBehandling(
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
 
         val dagerMedForbruk = when {
-            vilkårOppfylt -> Forbruk().håndter(beregningsgrunnlag, gjenståendeVentetidhistorikk)
+            vilkårOppfylt -> Forbruk().håndter(beregningsgrunnlag, gjenståendeVentetidHistorikk)
             else -> emptyList()
         }
 
