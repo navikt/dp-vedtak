@@ -35,7 +35,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
     private fun rettighetsdag(): (DagGrunnlag) -> Boolean = { it is Rettighetsdag }
     private fun arbeidsdag() = { it: DagGrunnlag -> it.dag is Arbeidsdag }
 
-    internal sealed class DagGrunnlag(internal val dag: Dag, internal var ventedag: Boolean = false, var taptArbeidstid: Timer = 0.timer) {
+    internal sealed class DagGrunnlag(internal val dag: Dag, internal var ventedag: Boolean = false) {
         abstract fun sats(): BigDecimal
         abstract fun dagpengerettighet(): Dagpengerettighet
         abstract fun vanligArbeidstid(): Timer
@@ -93,7 +93,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
             val gjenståendeVentetid = ventetidHistorikk.get(dag.dato())
             if (gjenståendeVentetid > 0.timer) {
                 this.ventedag = true
-                this.taptArbeidstid = vanligArbeidstid - dag.arbeidstimer()
+                val taptArbeidstid = vanligArbeidstid - dag.arbeidstimer()
                 val nyGjenståendeVentetid = gjenståendeVentetid - taptArbeidstid
                 if (nyGjenståendeVentetid > 0.timer) {
                     ventetidHistorikk.put(dag.dato(), nyGjenståendeVentetid)
