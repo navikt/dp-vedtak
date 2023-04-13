@@ -59,10 +59,8 @@ internal class PersonMediator(
     private fun hentEllerOpprettPerson(hendelse: Hendelse): Person {
         val person = personRepository.hent(hendelse.ident().tilPersonIdentfikator())
         return when (hendelse) {
-            is SøknadBehandletHendelse -> Person(hendelse.ident().tilPersonIdentfikator())
-            else -> {
-                throw RuntimeException("har ikke informasjon om person")
-            }
+            is SøknadBehandletHendelse -> person ?: Person(hendelse.ident().tilPersonIdentfikator())
+            else -> person ?: throw RuntimeException("har ikke informasjon om person")
         }
     }
 
