@@ -7,7 +7,6 @@ import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.LøpendeBehandling
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
-import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.finn
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import java.math.BigDecimal
@@ -65,8 +64,6 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
         vedtak.forEach { it.accept(visitor) }
         visitor.postVisitVedtak()
     }
-
-    fun harVedtak(dato: LocalDate = LocalDate.now()) = vedtak.finn(dato) != null
 
     private fun leggTilVedtak(vedtak: Vedtak) {
         this.vedtak.add(

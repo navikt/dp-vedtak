@@ -51,9 +51,7 @@ sealed class Vedtak(
                 forbruk = forbruk,
                 beløpTilUtbetaling = beløpTilUtbetaling,
             )
-
-        fun Collection<Vedtak>.finn(dato: LocalDate) = this.find { it.virkningsdato <= dato }
-        fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean =
+        internal fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean =
             this.any { it.behandlingId == behandlingId }
     }
 

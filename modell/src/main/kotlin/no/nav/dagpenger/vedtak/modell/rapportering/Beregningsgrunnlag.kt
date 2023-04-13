@@ -40,7 +40,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         abstract fun dagpengerettighet(): Dagpengerettighet
         abstract fun vanligArbeidstid(): Timer
         abstract fun terskelTaptArbeidstid(): Prosent
-        abstract fun ventetidTimer(ventetidhistorikk: TemporalCollection<Timer>)
+        abstract fun ventetidTimer(ventetidHistorikk: TemporalCollection<Timer>)
         abstract fun tilBetalingsdag(): Betalingsdag
 
         companion object {
