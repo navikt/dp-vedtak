@@ -8,6 +8,7 @@ import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.LøpendeBehandling
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.finn
+import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -32,6 +33,9 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     }
 
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
+        if (vedtak.harBehandlet(søknadBehandletHendelse.behandlingId)) {
+            return
+        }
         val vedtak = søknadBehandletHendelse.tilVedtak()
         leggTilVedtak(vedtak)
     }

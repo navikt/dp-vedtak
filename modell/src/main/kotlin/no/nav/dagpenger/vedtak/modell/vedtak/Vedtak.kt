@@ -53,6 +53,8 @@ sealed class Vedtak(
             )
 
         fun Collection<Vedtak>.finn(dato: LocalDate) = this.find { it.virkningsdato <= dato }
+        fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean =
+            this.any { it.behandlingId == behandlingId }
     }
 
     abstract fun accept(visitor: VedtakVisitor)

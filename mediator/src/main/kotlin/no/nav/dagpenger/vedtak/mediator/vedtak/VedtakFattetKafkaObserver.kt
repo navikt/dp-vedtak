@@ -9,7 +9,7 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
 
     override fun vedtaktFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
         val message = JsonMessage.newMessage(
-            "vedtak_fattet",
+            eventName = "vedtak_fattet",
             map = mapOf(
                 "ident" to ident,
                 "vedtak_id" to vedtakFattet.vedtakId.toString(),

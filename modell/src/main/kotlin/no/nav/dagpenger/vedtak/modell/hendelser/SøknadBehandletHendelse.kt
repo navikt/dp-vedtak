@@ -10,7 +10,7 @@ import java.util.UUID
 
 sealed class SøknadBehandletHendelse(
     protected val ident: String,
-    protected val behandlingId: UUID,
+    internal val behandlingId: UUID,
     protected val virkningsdato: LocalDate,
 ) : Hendelse(ident) {
     abstract fun tilVedtak(): Vedtak
