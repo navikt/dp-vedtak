@@ -33,6 +33,7 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
         if (vedtak.harBehandlet(søknadBehandletHendelse.behandlingId)) {
+            søknadBehandletHendelse.warn("Har allerede behandlet SøknadBehandletHendelse")
             return
         }
         val vedtak = søknadBehandletHendelse.tilVedtak()
