@@ -20,6 +20,7 @@ import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.mengde.Tid
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -80,6 +81,19 @@ class RettighetStegTest : No {
             )
         }
 
+        // TODO gjør om til stansHendelse
+        Gitt("en ny hendelse om stans") { søknadHendelse: SøknadAvslåttHendelseCucumber ->
+            ident = søknadHendelse.fødselsnummer
+            person = Person(ident.tilPersonIdentfikator())
+            person.håndter(
+                DagpengerAvslåttHendelse(
+                    ident = ident,
+                    behandlingId = UUID.fromString(søknadHendelse.behandlingId),
+                    virkningsdato = søknadHendelse.virkningsdato,
+                ),
+            )
+        }
+
         Så("skal bruker ha {int} vedtak") { antallVedtak: Int ->
             assertEquals(antallVedtak, inspektør.antallVedtak)
         }
@@ -118,6 +132,11 @@ class RettighetStegTest : No {
 
         Så("skal ventedager være avspasert, altså {int} timer") { ventetimer: Int ->
             assertTrue(inspektør.erAvspasert)
+            assertEquals(ventetimer.timer, inspektør.gjenståendeVentetimer)
+        }
+
+        Så("skal ikke ventedager være avspasert. Gjenstående ventetid er {int} timer") { ventetimer: Int ->
+            assertFalse(inspektør.erAvspasert)
             assertEquals(ventetimer.timer, inspektør.gjenståendeVentetimer)
         }
 
