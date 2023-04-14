@@ -1,7 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
 import no.nav.dagpenger.vedtak.modell.Beløp
-import no.nav.dagpenger.vedtak.modell.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
@@ -110,7 +109,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         override fun tilBetalingsdag(): Betalingsdag {
             return when (dag) {
                 is Arbeidsdag -> Utbetalingsdag(dag.dato(), Beløp.fra(sats))
-                is Fraværsdag -> Utbetalingsdag(dag.dato(), 0.beløp)
+                is Fraværsdag -> IkkeUtbetalingsdag(dag.dato())
                 is Helgedag -> Utbetalingsdag(dag.dato(), Beløp.fra(-sats))
             }
         }
