@@ -32,7 +32,6 @@ Egenskap: Utbetaling
     Så skal utbetalingen være 5775
     Så skal bruker ha 3 vedtak
 
-  @wip
   Scenario: Rapporterer arbeid i helg uke 2 tilsvarende to hele arbeidsdager
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |
@@ -55,7 +54,6 @@ Egenskap: Utbetaling
     Så skal utbetalingen være 4105
     Så skal bruker ha 3 vedtak
 
-  @wip
   Scenario: Rapporterer arbeid i helg uke 1 tilsvarende to hele arbeidsdager. Gir ulik sats lørdag og søndag.
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |

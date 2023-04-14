@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
 import no.nav.dagpenger.vedtak.modell.Beløp
+import no.nav.dagpenger.vedtak.modell.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
@@ -32,8 +33,11 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
     fun rettighetsdager(): List<DagGrunnlag> = fakta.filter(rettighetsdag())
     fun arbeidsdagerMedRettighet(): List<DagGrunnlag> = fakta.filter(rettighetsdag()).filter(arbeidsdag())
 
+    fun helgedagerMedRettighet(): List<DagGrunnlag> = fakta.filter(rettighetsdag()).filter(helgedag())
+
     private fun rettighetsdag(): (DagGrunnlag) -> Boolean = { it is Rettighetsdag }
     private fun arbeidsdag() = { it: DagGrunnlag -> it.dag is Arbeidsdag }
+    private fun helgedag() = { it: DagGrunnlag -> it.dag is Helgedag }
 
     internal sealed class DagGrunnlag(internal val dag: Dag, internal var ventedag: Boolean = false) {
         abstract fun sats(): BigDecimal
@@ -103,6 +107,12 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
             }
         }
 
-        override fun tilBetalingsdag(): Betalingsdag = Utbetalingsdag(dag.dato(), Beløp.fra(sats))
+        override fun tilBetalingsdag(): Betalingsdag {
+            return when (dag) {
+                is Arbeidsdag -> Utbetalingsdag(dag.dato(), Beløp.fra(sats))
+                is Fraværsdag -> Utbetalingsdag(dag.dato(), 0.beløp)
+                is Helgedag -> Utbetalingsdag(dag.dato(), Beløp.fra(-sats))
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.modell.rapportering
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsdager
 import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
@@ -23,13 +24,13 @@ internal class LøpendeBehandling(
         beregningsgrunnlag.populer(rapporteringsperiode, this)
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
 
-        val dagerMedForbruk = when {
+        val arbeidsdagerMedForbruk = when {
             vilkårOppfylt -> Forbruk().håndter(beregningsgrunnlag, gjenståendeVentetidHistorikk)
             else -> emptyList()
         }
 
-        val forbruk = dagerMedForbruk.size.arbeidsdager
-        val utbetalingsdager = dagerMedForbruk.map { it.tilBetalingsdag() }
+        val forbruk = arbeidsdagerMedForbruk.size.arbeidsdager
+        val utbetalingsdager = arbeidsdagerMedForbruk.map { it.tilBetalingsdag() } + beregningsgrunnlag.helgedagerMedRettighet().filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilBetalingsdag() }
 
         return Vedtak.løpendeVedtak(
             behandlingId = UUID.randomUUID(),

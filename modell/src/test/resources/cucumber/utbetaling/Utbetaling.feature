@@ -28,7 +28,6 @@ Egenskap: Utbetaling
     Så skal utbetalingen være 4116
     Så skal bruker ha 2 vedtak
 
-  @wip
   Scenario: Rapporterer arbeid i helg tilsvarende to hele arbeidsdager
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |
