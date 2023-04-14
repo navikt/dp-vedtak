@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell
 
+import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import java.math.BigDecimal
 
 class Beløp private constructor(verdi: Number) : Comparable<Beløp> {
@@ -20,6 +21,8 @@ class Beløp private constructor(verdi: Number) : Comparable<Beløp> {
     infix operator fun plus(beløp: Beløp): Beløp = Beløp(this.verdi + beløp.verdi)
     infix operator fun minus(beløp: Beløp): Beløp = Beløp(this.verdi - beløp.verdi)
     infix operator fun times(beløp: Beløp): Beløp = Beløp(verdi * beløp.verdi)
+    infix operator fun times(timer: Timer): Beløp = Beløp(verdi * timer.timer) // @todo: Ikke eksponer "private" timer verdier
     infix operator fun div(beløp: Beløp): Beløp = Beløp(verdi / beløp.verdi)
+    infix operator fun div(timer: Timer): Beløp = Beløp(verdi / timer.timer) // @todo: Ikke eksponer "private" timer verdier
     override fun toString(): String = verdi.toString()
 }

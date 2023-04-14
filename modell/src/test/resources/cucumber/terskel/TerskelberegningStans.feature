@@ -29,7 +29,7 @@
         | 25.12.2022 | false  | 0     |
       Så skal forbruket være 5 dager
       Så skal bruker ha 3 vedtak
-      Så skal utbetalingen være 4000
+      Så skal utbetalingen være 2000
 
     Scenario: Har ikke vedtak hele perioden fordi dagpengevedtaket er stanset fra og med uke 2. Rapporterer arbeidstimer over terskel i uke 1, under terskel i uke 2.
       Når rapporteringshendelse mottas

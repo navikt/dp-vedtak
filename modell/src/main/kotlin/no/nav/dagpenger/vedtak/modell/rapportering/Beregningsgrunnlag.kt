@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
 import no.nav.dagpenger.vedtak.modell.Beløp
+import no.nav.dagpenger.vedtak.modell.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
@@ -107,10 +108,16 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         }
 
         override fun tilBetalingsdag(): Betalingsdag {
+            val utbetalingstimer = (if (dag is Helgedag) 0.timer else vanligArbeidstid) - dag.arbeidstimer()
+            val timeSats = timeSats()
+            val beløp = timeSats * utbetalingstimer
+            return Utbetalingsdag(dag.dato(), beløp)
+        }
+
+        private fun timeSats(): Beløp {
             return when (dag) {
-                is Arbeidsdag -> Utbetalingsdag(dag.dato(), Beløp.fra(sats))
-                is Fraværsdag -> IkkeUtbetalingsdag(dag.dato())
-                is Helgedag -> Utbetalingsdag(dag.dato(), Beløp.fra(-sats))
+                is Arbeidsdag, is Helgedag -> Beløp.fra(sats) / vanligArbeidstid
+                is Fraværsdag -> 0.beløp
             }
         }
     }

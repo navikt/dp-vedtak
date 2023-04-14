@@ -72,3 +72,26 @@ Egenskap: Utbetaling
     Så skal utbetalingen være 1176
     Så skal bruker ha 2 vedtak
 
+
+  Scenario: Rapporterer ikke hele arbeidstimer
+    Når rapporteringshendelse mottas
+      | dato       | fravær | timer |
+      | 12.12.2022 | false  | 0     |
+      | 13.12.2022 | false  | 0     |
+      | 14.12.2022 | false  | 0     |
+      | 15.12.2022 | false  | 4     |
+      | 16.12.2022 | false  | 4     |
+      | 17.12.2022 | false  | 0     |
+      | 18.12.2022 | false  | 0     |
+      | 19.12.2022 | false  | 8     |
+      | 20.12.2022 | false  | 8     |
+      | 21.12.2022 | false  | 8     |
+      | 22.12.2022 | false  | 8     |
+      | 23.12.2022 | false  | 0     |
+      | 24.12.2022 | false  | 0     |
+      | 25.12.2022 | false  | 0     |
+    Så skal forbruket være 7 dager
+    Så skal ventedager være avspasert, altså 0 timer
+    Så skal utbetalingen være 1176
+    Så skal bruker ha 2 vedtak
+
