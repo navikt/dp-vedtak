@@ -3,11 +3,6 @@ package no.nav.dagpenger.vedtak.cucumber
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.cucumber.datatable.DataTable
 import io.cucumber.java8.No
-import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.UUID
 import no.nav.dagpenger.vedtak.modell.Beløp
 import no.nav.dagpenger.vedtak.modell.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
@@ -27,6 +22,11 @@ import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 class RettighetStegTest : No {
     private val datoformatterer = DateTimeFormatter.ofPattern("dd.MM.yyyy")

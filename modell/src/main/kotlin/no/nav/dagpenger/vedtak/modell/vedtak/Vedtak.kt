@@ -3,7 +3,6 @@ package no.nav.dagpenger.vedtak.modell.vedtak
 import no.nav.dagpenger.vedtak.modell.Beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
-import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.mengde.Tid
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
@@ -154,6 +153,6 @@ class LøpendeVedtak(
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
         val gjenstående = vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.get(virkningsdato)
         vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.put(virkningsdato, gjenstående - forbruk)
-        //vedtakHistorikk.gjenståendeVentetidHistorikk.put(virkningsdato, 0.timer)
+        // vedtakHistorikk.gjenståendeVentetidHistorikk.put(virkningsdato, 0.timer)
     }
 }
