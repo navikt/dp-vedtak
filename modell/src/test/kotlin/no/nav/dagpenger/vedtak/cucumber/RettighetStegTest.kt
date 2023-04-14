@@ -159,7 +159,7 @@ class RettighetStegTest : No {
     }
 
     private fun assertPersonOpprettet() {
-        assertTrue(this::person.isInitialized) { " Forventer at person er opprettet her" }
+        assertTrue(this::person.isInitialized) { "Forventer at person er opprettet her" }
     }
 
     private fun håndterRapporteringsHendelse(rapporteringsdager: List<Rapporteringsdag>) {

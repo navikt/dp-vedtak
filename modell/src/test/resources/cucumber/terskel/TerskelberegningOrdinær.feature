@@ -2,10 +2,10 @@
 
   Egenskap: Terskel
 
-    Bakgrunn: Alt er fastsatt
+    Bakgrunn: Ordinære dagpenger er innvileget fra 12. desember (uten ventetid)
       Gitt en ny hendelse om innvilget søknad
         | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | ventetid |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 490921   | 52             | 8                      | Ordinær           |  0       |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 490921   | 52             | 8                      | Ordinær           | 0        |
 
       Scenario: Rapporterer arbeidstimer eksakt lik terskel
         Når rapporteringshendelse mottas
@@ -49,7 +49,7 @@
           Så skal bruker ha 2 vedtak
 
 
-    Scenario: Rapporterer fravær og arbeidstimer eksakt lit terskel
+    Scenario: Rapporterer fravær en dag og arbeidstimer eksakt lik terskel øvrige arbeidsdager
       Når rapporteringshendelse mottas
         | dato       | fravær | timer |
         | 12.12.2022 | false  | 4     |
@@ -70,7 +70,7 @@
       Så skal bruker ha 2 vedtak
 
 
-      Scenario: Har ikke vedtak hele periode. Rapporterer arbeidstimer under terskel etter vedtakstidspunkt.
+      Scenario: Har ikke dagpengerettighet hele meldeperioden. Rapporterer arbeidstimer eksakt lik terskel etter vedtakstidspunkt.
         Når rapporteringshendelse mottas
           | dato       | fravær | timer |
           | 05.12.2022 | false  | 8     |
@@ -109,25 +109,4 @@
         | 24.12.2022 | false  | 0     |
         | 25.12.2022 | false  | 0     |
       Så skal forbruket være 0 dager
-      Så skal bruker ha 2 vedtak
-
-    @wip
-    Scenario: Har ikke vedtak hele perioden fordi dagpengevedtaket er stanset fra og med uke 2. Rapporterer arbeidstimer eksakt lik terskel i uke 1, over i uke 2.
-      Når rapporteringshendelse mottas
-        | dato       | fravær | timer |
-        | 09.01.2023 | false  | 4     |
-        | 10.01.2023 | false  | 4     |
-        | 11.01.2023 | false  | 4     |
-        | 12.01.2023 | false  | 4     |
-        | 13.01.2023 | false  | 4     |
-        | 14.01.2023 | false  | 0     |
-        | 15.01.2023 | false  | 0     |
-        | 16.01.2023 | false  | 8     |
-        | 17.01.2023 | false  | 8     |
-        | 18.01.2023 | false  | 8     |
-        | 19.01.2023 | false  | 8     |
-        | 20.01.2023 | false  | 8     |
-        | 21.01.2023 | false  | 0     |
-        | 22.01.2023 | false  | 0     |
-      Så skal forbruket være 5 dager
       Så skal bruker ha 2 vedtak

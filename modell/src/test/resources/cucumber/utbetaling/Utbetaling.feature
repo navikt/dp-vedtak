@@ -1,12 +1,12 @@
 # language: no
 Egenskap: Utbetaling
 
-  Bakgrunn: Alt er fastsatt
+  Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember med tre ventedager
     Gitt en ny hendelse om innvilget søknad
       | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | ventetid |
       | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 490921   | 52             | 8                      | Ordinær           | 3        |
 
-  Scenario: Rapporterer arbeidstimer eksakt lik terskel
+  Scenario: Rapporterer ingen arbeidstimer
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |
       | 12.12.2022 | false  | 0     |

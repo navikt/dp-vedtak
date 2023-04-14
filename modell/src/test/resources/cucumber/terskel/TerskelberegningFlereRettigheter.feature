@@ -2,7 +2,7 @@
 
   Egenskap: Terskel
 
-    Bakgrunn: Alt er fastsatt
+    Bakgrunn: Dagpenger under permittering fra fiskeindustrien innvilget fra 12. desember. Endres til ordinære dagpenger 15. desember. Gir ulike terskler i meldeperioden.
       Gitt en ny hendelse om innvilget søknad
         | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet              | ventetid |
         | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 490921   | 52             | 8                      | PermitteringFraFiskeindustrien |  0       |
@@ -32,7 +32,7 @@
         Så skal forbruket være 10 dager
         Så skal bruker ha 3 vedtak
 
-    Scenario: Rapporterer arbeidstimer 0,1 time over terskel
+    Scenario: Rapporterer arbeidstimer 0,1 time over gjennomsnittsterskel
       Når rapporteringshendelse mottas
         | dato       | fravær | timer |
         | 12.12.2022 | false  | 0     |
