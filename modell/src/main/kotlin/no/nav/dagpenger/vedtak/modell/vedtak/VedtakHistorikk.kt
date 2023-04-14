@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.modell.vedtak
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.LøpendeBehandling
@@ -49,6 +50,16 @@ internal class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
                 vanligArbeidstidHistorikk = vanligArbeidstidHistorikk,
                 gjenståendeVentetidHistorikk = gjenståendeVentetidHistorikk,
             ).håndter(rapporteringsperiode),
+        )
+    }
+
+    fun håndter(stansHendelse: StansHendelse) {
+        if (vedtak.harBehandlet(stansHendelse.behandlingId)) {
+            stansHendelse.warn("Har allerede behandlet StansHendelse")
+            return
+        }
+        this.leggTilVedtak(
+            stansHendelse.tilVedtak(),
         )
     }
 

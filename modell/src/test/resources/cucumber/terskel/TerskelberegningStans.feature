@@ -10,7 +10,6 @@
         | fødselsnummer | behandlingId                         | utfall | virkningsdato |
         | 12345678901   | 2D085CE8-F5E3-47B5-8C3B-873FE99E4EF4 | false  | 19.12.2022    |
 
-    @wip
     Scenario: Har ikke vedtak hele perioden fordi dagpengevedtaket er stanset fra og med uke 2. Rapporterer arbeidstimer eksakt lik terskel i uke 1, over terskel i uke 2.
       Når rapporteringshendelse mottas
         | dato       | fravær | timer |

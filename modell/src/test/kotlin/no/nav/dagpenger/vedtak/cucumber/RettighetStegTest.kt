@@ -14,6 +14,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsdager
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
@@ -54,6 +55,7 @@ class RettighetStegTest : No {
             )
         }
         Gitt("et endringsvedtak") { søknadHendelse: SøknadInnvilgetHendelseCucumber ->
+            assertPersonOpprettet()
             person.håndter(
                 DagpengerInnvilgetHendelse(
                     ident = ident,
@@ -83,10 +85,9 @@ class RettighetStegTest : No {
 
         // TODO gjør om til stansHendelse
         Gitt("en ny hendelse om stans") { søknadHendelse: SøknadAvslåttHendelseCucumber ->
-            ident = søknadHendelse.fødselsnummer
-            person = Person(ident.tilPersonIdentfikator())
+            assertPersonOpprettet()
             person.håndter(
-                DagpengerAvslåttHendelse(
+                StansHendelse(
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     virkningsdato = søknadHendelse.virkningsdato,
@@ -145,6 +146,7 @@ class RettighetStegTest : No {
         }
 
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
+            assertPersonOpprettet()
             val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
                 Rapporteringsdag(
                     dato = LocalDate.parse(it[0], datoformatterer),
@@ -154,6 +156,10 @@ class RettighetStegTest : No {
             }
             håndterRapporteringsHendelse(rapporteringsdager)
         }
+    }
+
+    private fun assertPersonOpprettet() {
+        assertTrue(this::person.isInitialized) { " Forventer at person er opprettet her" }
     }
 
     private fun håndterRapporteringsHendelse(rapporteringsdager: List<Rapporteringsdag>) {

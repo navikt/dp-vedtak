@@ -15,6 +15,7 @@ sealed class Vedtak(
     protected val vedtakId: UUID = UUID.randomUUID(),
     protected val behandlingId: UUID,
     protected val vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
+    // @todo: Har alle vedtak utfall?
     protected val utfall: Boolean,
     protected val virkningsdato: LocalDate,
 ) {
@@ -154,5 +155,21 @@ class LøpendeVedtak(
         val gjenstående = vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.get(virkningsdato)
         vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.put(virkningsdato, gjenstående - forbruk)
         // vedtakHistorikk.gjenståendeVentetidHistorikk.put(virkningsdato, 0.timer)
+    }
+}
+
+class StansVedtak(
+    vedtakId: UUID = UUID.randomUUID(),
+    behandlingId: UUID,
+    vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
+    virkningsdato: LocalDate,
+) : Vedtak(vedtakId, behandlingId, vedtakstidspunkt, utfall = false, virkningsdato) {
+    override fun accept(visitor: VedtakVisitor) {
+        visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
+        visitor.postVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
+    }
+
+    override fun populer(vedtakHistorikk: VedtakHistorikk) {
+        vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, Dagpengerettighet.Ingen)
     }
 }
