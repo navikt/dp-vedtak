@@ -154,6 +154,6 @@ class LøpendeVedtak(
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
         val gjenstående = vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.get(virkningsdato)
         vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.put(virkningsdato, gjenstående - forbruk)
-        vedtakHistorikk.gjenståendeVentetidHistorikk.put(virkningsdato, 0.timer)
+        //vedtakHistorikk.gjenståendeVentetidHistorikk.put(virkningsdato, 0.timer)
     }
 }

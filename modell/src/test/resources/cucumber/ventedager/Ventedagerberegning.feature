@@ -28,7 +28,6 @@ Egenskap: Ventedager
     Så skal bruker ha 2 vedtak
     #Så skal utbetalingen være 4000
 
-  @wip
   Scenario: Rapporterer arbeidstimer over terskel og skal dermed ikke avspasere noe ventetid
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |
