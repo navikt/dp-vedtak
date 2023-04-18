@@ -18,7 +18,7 @@ sealed class Vedtak(
     // @todo: Har alle vedtak utfall?
     protected val utfall: Boolean,
     protected val virkningsdato: LocalDate,
-) {
+) : Comparable<Vedtak> {
     companion object {
         fun avslag(behandlingId: UUID, virkningsdato: LocalDate) =
             Avslag(behandlingId = behandlingId, virkningsdato = virkningsdato)
@@ -57,6 +57,10 @@ sealed class Vedtak(
 
     abstract fun accept(visitor: VedtakVisitor)
     internal abstract fun populer(vedtakHistorikk: VedtakHistorikk)
+
+    override fun compareTo(other: Vedtak): Int {
+        return this.vedtakstidspunkt.compareTo(other.vedtakstidspunkt)
+    }
 }
 
 class Avslag(

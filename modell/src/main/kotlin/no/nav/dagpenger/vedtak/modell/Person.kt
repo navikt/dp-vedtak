@@ -9,15 +9,21 @@ import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 
-class Person(val ident: PersonIdentifikator) : Aktivitetskontekst by ident, VedtakObserver {
-    private val vedtakHistorikk = VedtakHistorikk().also {
-        it.addObserver(this)
+class Person private constructor(
+    private val ident: PersonIdentifikator,
+    private val vedtakHistorikk: VedtakHistorikk,
+    private val rapporteringsperioder: Rapporteringsperioder,
+) : Aktivitetskontekst by ident, VedtakObserver {
+
+    init {
+        vedtakHistorikk.addObserver(this)
     }
+
+    constructor(ident: PersonIdentifikator) : this(ident, VedtakHistorikk(), Rapporteringsperioder())
 
     private val observers = mutableListOf<PersonObserver>()
 
-    private val rapporteringsperioder = Rapporteringsperioder()
-
+    fun ident() = ident
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
         kontekst(søknadBehandletHendelse)
         vedtakHistorikk.håndter(søknadBehandletHendelse)
@@ -43,6 +49,7 @@ class Person(val ident: PersonIdentifikator) : Aktivitetskontekst by ident, Vedt
     fun addObserver(personObserver: PersonObserver) {
         observers.add(personObserver)
     }
+
     fun accept(visitor: PersonVisitor) {
         visitor.visitPerson(ident)
         rapporteringsperioder.accept(visitor)

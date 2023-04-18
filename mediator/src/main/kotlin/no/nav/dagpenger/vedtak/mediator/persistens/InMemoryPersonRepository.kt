@@ -8,6 +8,6 @@ class InMemoryPersonRepository : PersonRepository {
     override fun hent(ident: PersonIdentifikator): Person? = persondb[ident]
 
     override fun lagre(person: Person) {
-        persondb[person.ident] = person
+        persondb[person.ident()] = person
     }
 }
