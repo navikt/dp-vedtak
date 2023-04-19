@@ -24,8 +24,10 @@ internal class SøknadBehandletMottak(
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "søknad_behandlet_hendelse") }
             validate {
+                it.require("ident") { ident ->
+                    require( ident.asText().matches(Regex("\\d{11}")) )
+                }
                 it.requireKey(
-                    "ident",
                     "behandlingId",
                     "Virkningsdato",
                     "innvilget",
