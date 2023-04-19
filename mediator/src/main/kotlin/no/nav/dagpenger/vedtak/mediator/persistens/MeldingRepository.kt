@@ -6,6 +6,7 @@ interface MeldingRepository {
     fun hentMottatte(): List<Melding>
     fun hentBehandlede(): List<Melding>
     fun behandlet(melding: Melding)
+    fun hentFeilede(): List<Melding>
 }
 
 interface Melding {

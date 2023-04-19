@@ -17,7 +17,12 @@ internal class MeldingMediator(
 
     fun håndter(søknadBehandletMelding: SøknadBehandletMelding) {
         meldingRepository.lagre(søknadBehandletMelding)
-        personMediator.håndter(søknadBehandletMelding.hendelse())
-        meldingRepository.behandlet(søknadBehandletMelding)
+        try {
+            personMediator.håndter(søknadBehandletMelding.hendelse())
+            meldingRepository.behandlet(søknadBehandletMelding)
+        } catch (e: Throwable) {
+            meldingRepository.feilet(søknadBehandletMelding)
+            throw e
+        }
     }
 }
