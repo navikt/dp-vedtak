@@ -12,13 +12,13 @@ object Meldingsfabrikk {
           "@event_name": "søknad_behandlet_hendelse",
           "ident" : "12345123451",
           "behandlingId": "${UUID.randomUUID()}",
-          "virkningsdato": "${LocalDate.now()}",
+          "Virkningsdato": "${LocalDate.now()}",
           "innvilget": true,
-          "dagpengerettighet": "Ordinær",
-          "dagsats": "500",
-          "grunnlag": "500000",
-          "stønadsperiode": "52",
-          "vanligArbeidstidPerDag": "8",
+          "Rettighetstype": "Ordinær",
+          "Dagsats": "500",
+          "Grunnlag": "500000",
+          "Periode": "52",
+          "Fastsatt vanlig arbeidstid": "8",
           "antallVentedager": "3",
           "barnetillegg" : [ {
               "fødselsdato" : "2012-03-03"
@@ -36,7 +36,7 @@ object Meldingsfabrikk {
           "@event_name": "søknad_behandlet_hendelse",
           "ident" : "12345123451",
           "behandlingId": "${UUID.randomUUID()}",
-          "virkningsdato": "${LocalDate.now()}",
+          "Virkningsdato": "${LocalDate.now()}",
           "innvilget": false
         } 
         """.trimIndent()

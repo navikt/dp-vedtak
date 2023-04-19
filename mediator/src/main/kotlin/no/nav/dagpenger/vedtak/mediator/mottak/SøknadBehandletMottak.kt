@@ -27,15 +27,15 @@ internal class SøknadBehandletMottak(
                 it.requireKey(
                     "ident",
                     "behandlingId",
-                    "virkningsdato",
+                    "Virkningsdato",
                     "innvilget",
                 )
                 it.interestedIn(
-                    "dagpengerettighet",
-                    "dagsats",
-                    "grunnlag",
-                    "stønadsperiode",
-                    "vanligArbeidstidPerDag",
+                    "Rettighetstype",
+                    "Dagsats",
+                    "Grunnlag",
+                    "Periode",
+                    "Fastsatt vanlig arbeidstid",
                     "antallVentedager",
                     "barnetillegg",
                 )

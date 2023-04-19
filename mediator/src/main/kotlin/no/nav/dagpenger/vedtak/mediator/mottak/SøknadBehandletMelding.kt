@@ -27,7 +27,7 @@ internal class SøknadBehandletMelding(private val packet: JsonMessage) : Meldin
         DagpengerAvslåttHendelse(
             ident = ident,
             behandlingId = behandlingId,
-            virkningsdato = LocalDate.parse(packet["virkningsdato"].asText()),
+            virkningsdato = LocalDate.parse(packet["Virkningsdato"].asText()),
         )
 
     private fun dagpengerInnvilgetHendelse(
@@ -36,12 +36,12 @@ internal class SøknadBehandletMelding(private val packet: JsonMessage) : Meldin
     ) = DagpengerInnvilgetHendelse(
         ident = ident,
         behandlingId = behandlingId,
-        virkningsdato = LocalDate.parse(packet["virkningsdato"].asText()),
-        dagpengerettighet = Dagpengerettighet.valueOf(packet["dagpengerettighet"].asText()),
-        dagsats = packet["dagsats"].decimalValue(),
-        grunnlag = packet["grunnlag"].decimalValue(),
-        stønadsperiode = packet["stønadsperiode"].asInt().arbeidsuker,
-        vanligArbeidstidPerDag = packet["vanligArbeidstidPerDag"].asDouble().timer,
+        virkningsdato = LocalDate.parse(packet["Virkningsdato"].asText()),
+        dagpengerettighet = Dagpengerettighet.valueOf(packet["Rettighetstype"].asText()),
+        dagsats = packet["Dagsats"].decimalValue(),
+        grunnlag = packet["Grunnlag"].decimalValue(),
+        stønadsperiode = packet["Periode"].asInt().arbeidsuker,
+        vanligArbeidstidPerDag = packet["Fastsatt vanlig arbeidstid"].asDouble().timer,
         antallVentedager = packet["antallVentedager"].asDouble(),
     )
 
