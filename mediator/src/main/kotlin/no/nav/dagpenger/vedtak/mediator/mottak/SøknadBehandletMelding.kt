@@ -42,7 +42,7 @@ internal class SøknadBehandletMelding(private val packet: JsonMessage) : Meldin
         grunnlag = packet["Grunnlag"].decimalValue(),
         stønadsperiode = packet["Periode"].asInt().arbeidsuker,
         vanligArbeidstidPerDag = packet["Fastsatt vanlig arbeidstid"].asDouble().timer,
-        antallVentedager = packet["antallVentedager"].asDouble(),
+        antallVentedager = 3.0, // @todo: hva/hvem setter ventedager.
     )
 
     override fun asJson(): String {
