@@ -1,6 +1,7 @@
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
+import no.nav.dagpenger.vedtak.mediator.MessageMediator
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
@@ -12,10 +13,12 @@ import org.junit.jupiter.api.Test
 internal class PersonMediatorTest {
 
     private val testRapid = TestRapid()
-    val personMediator = PersonMediator(
+    val personMediator = MessageMediator(
         rapidsConnection = testRapid,
-        personRepository = InMemoryPersonRepository(),
-        personObservers = listOf(VedtakFattetKafkaObserver(testRapid)),
+        personMediator = PersonMediator(
+            personRepository = InMemoryPersonRepository(),
+            personObservers = listOf(VedtakFattetKafkaObserver(testRapid)),
+        ),
     )
 
     @BeforeEach

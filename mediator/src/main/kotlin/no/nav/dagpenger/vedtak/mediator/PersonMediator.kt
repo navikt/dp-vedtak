@@ -1,7 +1,6 @@
 package no.nav.dagpenger.vedtak.mediator
 
 import mu.KotlinLogging
-import no.nav.dagpenger.vedtak.mediator.mottak.SøknadBehandletMottak
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.Person
@@ -9,19 +8,12 @@ import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIde
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
-import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.withMDC
 
 internal class PersonMediator(
-    rapidsConnection: RapidsConnection,
     private val personRepository: PersonRepository,
     private val personObservers: List<PersonObserver> = emptyList(),
 ) {
-
-    init {
-        SøknadBehandletMottak(rapidsConnection, this)
-    }
-
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerLogger = KotlinLogging.logger("tjenestekall")

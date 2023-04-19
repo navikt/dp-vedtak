@@ -17,10 +17,12 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     ).build()
 
     init {
-        PersonMediator(
-            rapidsConnection = rapidsConnection,
-            personRepository = InMemoryPersonRepository(),
-            personObservers = listOf(VedtakFattetKafkaObserver(rapidsConnection)),
+        MessageMediator(
+            rapidsConnection,
+            PersonMediator(
+                personRepository = InMemoryPersonRepository(),
+                personObservers = listOf(VedtakFattetKafkaObserver(rapidsConnection)),
+            ),
         )
         rapidsConnection.register(this)
     }
