@@ -28,9 +28,9 @@ internal class MeldingMediatorTest {
     )
 
     @Test
-    fun `Ta imot melding om innvilgelse og lagre`() {
+    fun `Ta imot melding om innvilgelse, lagre og behandle`() {
         testRapid.sendTestMessage(dagpengerInnvilgetJson())
         assertTrue(meldingSlot.isCaptured)
-        assertEquals(1, meldingRepository.hent().size)
+        assertEquals(1, meldingRepository.hentBehandlede().size)
     }
 }

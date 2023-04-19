@@ -50,4 +50,5 @@ internal class SøknadBehandletMelding(private val packet: JsonMessage) : Meldin
     }
 
     override fun eier() = ident
+    override fun meldingId() = behandlingId.toString()
 }

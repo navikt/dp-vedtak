@@ -18,6 +18,6 @@ internal class MeldingMediator(
     fun håndter(søknadBehandletMelding: SøknadBehandletMelding) {
         meldingRepository.lagre(søknadBehandletMelding)
         personMediator.håndter(søknadBehandletMelding.hendelse())
-        // lagre(søknadBehandletMessage er behandlet)
+        meldingRepository.behandlet(søknadBehandletMelding)
     }
 }
