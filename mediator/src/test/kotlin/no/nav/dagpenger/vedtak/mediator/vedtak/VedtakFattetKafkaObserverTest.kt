@@ -18,6 +18,7 @@ class VedtakFattetKafkaObserverTest {
     @Test
     fun `Skal sende ut melding om at vedtak er fattet på rapiden`() {
         val vedtakId = UUID.randomUUID()
+        val behandlingId = UUID.randomUUID()
         val vedtakstidspunkt = LocalDateTime.now()
         val virkningsdato = LocalDate.now()
         vedtakFattetKafkaObserver.vedtaktFattet(
@@ -25,6 +26,7 @@ class VedtakFattetKafkaObserverTest {
             VedtakObserver.VedtakFattet(
                 vedtakId,
                 vedtakstidspunkt = vedtakstidspunkt,
+                behandlingId = behandlingId,
                 virkningsdato = virkningsdato,
                 utfall = Innvilget,
             ),
@@ -35,7 +37,8 @@ class VedtakFattetKafkaObserverTest {
         assertSoftly {
             message["@event_name"].asText() shouldBe "vedtak_fattet"
             message["ident"].asText() shouldBe "1234568901"
-            message["vedtak_id"].asText() shouldBe vedtakId.toString()
+            message["behandlingId"].asText() shouldBe behandlingId.toString()
+            message["vedtakId"].asText() shouldBe vedtakId.toString()
             message["vedtaktidspunkt"].asText().shouldNotBeBlank()
             message["virkningsdato"].asText() shouldBe virkningsdato.toString()
             message["utfall"].asText() shouldBe "Innvilget"

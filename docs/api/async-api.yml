@@ -24,7 +24,7 @@ components:
           ident:
             type: string
             description: Ident til mottaker av vedtaket
-          vedtak_id:
+          vedtakId:
             type: string
             format: uuid
             description: Vedtakets interne id
@@ -32,6 +32,10 @@ components:
             type: string
             format: date-time
             description: Tidspunkt for når vedtaket er fattet
+          behandlingId:
+            type: string
+            format: uuid
+            description: Behandling id som førte vedtaket
           virkningsdato:
             type: string
             format: date

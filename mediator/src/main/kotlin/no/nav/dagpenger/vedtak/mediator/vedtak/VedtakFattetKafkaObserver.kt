@@ -12,7 +12,8 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
             eventName = "vedtak_fattet",
             map = mapOf(
                 "ident" to ident,
-                "vedtak_id" to vedtakFattet.vedtakId.toString(),
+                "behandlingId" to vedtakFattet.behandlingId.toString(),
+                "vedtakId" to vedtakFattet.vedtakId.toString(),
                 "vedtaktidspunkt" to vedtakFattet.vedtakstidspunkt,
                 "virkningsdato" to vedtakFattet.virkningsdato,
                 "utfall" to vedtakFattet.utfall.name,

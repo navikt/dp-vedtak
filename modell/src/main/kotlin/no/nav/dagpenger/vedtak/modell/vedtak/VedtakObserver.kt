@@ -10,6 +10,7 @@ interface VedtakObserver {
 
     data class VedtakFattet(
         val vedtakId: UUID,
+        val behandlingId: UUID,
         val vedtakstidspunkt: LocalDateTime,
         val virkningsdato: LocalDate,
         val utfall: Utfall,

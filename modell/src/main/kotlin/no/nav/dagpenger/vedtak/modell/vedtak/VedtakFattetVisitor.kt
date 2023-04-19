@@ -20,6 +20,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         vedtakFattet = VedtakObserver.VedtakFattet(
             vedtakId = vedtakId,
             vedtakstidspunkt = vedtakstidspunkt,
+            behandlingId = behandlingId,
             virkningsdato = virkningsdato,
             utfall = when (utfall) {
                 true -> Innvilget
