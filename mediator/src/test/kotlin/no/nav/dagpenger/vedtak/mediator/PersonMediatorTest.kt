@@ -1,8 +1,9 @@
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.vedtak.mediator.MeldingMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
-import no.nav.dagpenger.vedtak.mediator.MessageMediator
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
+import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -13,8 +14,9 @@ import org.junit.jupiter.api.Test
 internal class PersonMediatorTest {
 
     private val testRapid = TestRapid()
-    val personMediator = MessageMediator(
+    val personMediator = MeldingMediator(
         rapidsConnection = testRapid,
+        meldingRepository = InMemoryMeldingRepository(),
         personMediator = PersonMediator(
             personRepository = InMemoryPersonRepository(),
             personObservers = listOf(VedtakFattetKafkaObserver(testRapid)),
