@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.mediator.mottak
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.vedtak.mediator.MeldingMediator
+import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -25,7 +26,7 @@ internal class SøknadBehandletMottak(
             validate { it.demandValue("@event_name", "søknad_behandlet_hendelse") }
             validate {
                 it.require("ident") { ident ->
-                    require(ident.asText().matches(Regex("\\d{11}")))
+                    PersonIdentifikator(ident.asText())
                 }
                 it.requireKey(
                     "behandlingId",
