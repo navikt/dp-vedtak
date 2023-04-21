@@ -12,6 +12,7 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import java.math.BigDecimal
 import java.time.LocalDate
+import no.nav.dagpenger.vedtak.modell.Beløp
 
 class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 

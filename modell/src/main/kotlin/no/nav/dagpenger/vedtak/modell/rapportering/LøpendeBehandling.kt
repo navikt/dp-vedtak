@@ -9,6 +9,7 @@ import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.math.BigDecimal
 import java.util.UUID
+import no.nav.dagpenger.vedtak.modell.Beløp
 
 internal class LøpendeBehandling(
     private val rapporteringsId: UUID,
@@ -40,6 +41,7 @@ internal class LøpendeBehandling(
             virkningsdato = førsteRettighetsdag(),
             forbruk = forbruk,
             beløpTilUtbetaling = utbetalingsdager.summer(),
+            trukketEgenandel =
         )
     }
 

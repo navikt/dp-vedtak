@@ -108,7 +108,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
                     sats.div(vanligArbeidstid.timer.toBigDecimal()) * taptArbeidstid.timer.toBigDecimal()
                 if (dagpengerForTaptArbeidstid != BigDecimal(0)) {
                     egenandel = gjenståendeEgenandel.min(dagpengerForTaptArbeidstid)
-                    gjenståendeEgenandelHistorikk.put(dag.dato(), gjenståendeEgenandel - egenandel)
+                    //gjenståendeEgenandelHistorikk.put(dag.dato(), gjenståendeEgenandel - egenandel)
                 }
             }
             if (egenandel != BigDecimal(0)) {
