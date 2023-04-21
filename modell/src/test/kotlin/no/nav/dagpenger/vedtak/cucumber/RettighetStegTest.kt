@@ -134,12 +134,12 @@ class RettighetStegTest : No {
 
         Så("skal egenandel være trukket, altså {bigdecimal} kroner gjenstår") { egenandel: BigDecimal ->
             assertTrue(inspektør.allEgenandelTrukket) { "Forventet at all egenandel er trukket" }
-            assertEquals(egenandel, inspektør.gjenståendeEgenandel)
+            assertEquals(Beløp.fra(egenandel), inspektør.gjenståendeEgenandel)
         }
 
         Så("skal ikke all egenandel være trukket. Gjenstående egenandel er {bigdecimal} kroner") { egenandel: BigDecimal ->
             assertFalse(inspektør.allEgenandelTrukket) { "Forventet ikke at all egenandel er trukket" }
-            assertEquals(egenandel, inspektør.gjenståendeEgenandel)
+            assertEquals(Beløp.fra(egenandel), inspektør.gjenståendeEgenandel)
         }
 
         Så("skal utbetalingen være {bigdecimal}") { beløp: BigDecimal ->
@@ -194,7 +194,7 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
-        lateinit var gjenståendeEgenandel: BigDecimal
+        lateinit var gjenståendeEgenandel: Beløp
         lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
@@ -208,9 +208,9 @@ class RettighetStegTest : No {
         var antallVedtak = 0
         var allEgenandelTrukket: Boolean = false
 
-        override fun visitGjenståendeEgenandel(gjenståendeEgenandel: BigDecimal) {
+        override fun visitGjenståendeEgenandel(gjenståendeEgenandel: Beløp) {
             this.gjenståendeEgenandel = gjenståendeEgenandel
-            this.allEgenandelTrukket = this.gjenståendeEgenandel == BigDecimal(0)
+            this.allEgenandelTrukket = this.gjenståendeEgenandel == 0.beløp
         }
 
         override fun postVisitVedtak(
@@ -241,7 +241,7 @@ class RettighetStegTest : No {
             this.egenandel = egenandel
         }
 
-        override fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: Beløp) {
+        override fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: Beløp, trukketEgenandel: Beløp) {
             this.forbruk = forbruk
             this.beløpTilUtbetaling = beløpTilUtbetaling
         }

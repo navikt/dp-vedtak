@@ -27,7 +27,7 @@ interface VedtakVisitor {
         egenandel: BigDecimal,
     ) {}
 
-    fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: Beløp, trukketEgenandel: BigDecimal) {}
+    fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: Beløp, trukketEgenandel: Beløp) {}
 
     fun postVisitVedtak(
         vedtakId: UUID,

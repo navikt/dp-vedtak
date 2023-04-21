@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
+import no.nav.dagpenger.vedtak.modell.Beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
@@ -12,7 +13,6 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import java.math.BigDecimal
 import java.time.LocalDate
-import no.nav.dagpenger.vedtak.modell.Beløp
 
 class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
@@ -26,7 +26,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
     internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
     internal val egenandelHistorikk = TemporalCollection<BigDecimal>()
-    internal val gjenståendeEgenandelHistorikk = TemporalCollection<BigDecimal>()
+    internal val gjenståendeEgenandelHistorikk = TemporalCollection<Beløp>()
 
     init {
         vedtak.forEach { it.populer(this) }

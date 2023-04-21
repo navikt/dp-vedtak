@@ -43,7 +43,14 @@ sealed class Vedtak(
             egenandel = egenandel,
         )
 
-        fun løpendeVedtak(behandlingId: UUID, utfall: Boolean, virkningsdato: LocalDate, forbruk: Tid, beløpTilUtbetaling: Beløp, trukketEgenandel: BigDecimal) =
+        fun løpendeVedtak(
+            behandlingId: UUID,
+            utfall: Boolean,
+            virkningsdato: LocalDate,
+            forbruk: Tid,
+            beløpTilUtbetaling: Beløp,
+            trukketEgenandel: Beløp,
+        ) =
             LøpendeVedtak(
                 behandlingId = behandlingId,
                 utfall = utfall,
@@ -52,6 +59,7 @@ sealed class Vedtak(
                 beløpTilUtbetaling = beløpTilUtbetaling,
                 trukketEgenandel = trukketEgenandel,
             )
+
         internal fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean =
             this.any { it.behandlingId == behandlingId }
     }
@@ -101,7 +109,7 @@ class Rammevedtak(
     private val dagsats: BigDecimal,
     private val stønadsperiode: Stønadsperiode,
     private val dagpengerettighet: Dagpengerettighet,
-    private val egenandel: BigDecimal,
+    private val egenandel: BigDecimal, // @todo: Beløp
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
@@ -131,7 +139,7 @@ class Rammevedtak(
         vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, dagpengerettighet)
         vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato, vanligArbeidstidPerDag)
         vedtakHistorikk.egenandelHistorikk.put(virkningsdato, egenandel)
-        vedtakHistorikk.gjenståendeEgenandelHistorikk.put(virkningsdato, egenandel)
+        vedtakHistorikk.gjenståendeEgenandelHistorikk.put(virkningsdato, Beløp.fra(egenandel))
     }
 }
 
@@ -143,7 +151,7 @@ class LøpendeVedtak(
     virkningsdato: LocalDate,
     private val forbruk: Tid,
     private val beløpTilUtbetaling: Beløp,
-    private val trukketEgenandel: BigDecimal,
+    private val trukketEgenandel: Beløp,
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,

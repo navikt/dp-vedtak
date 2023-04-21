@@ -48,3 +48,25 @@ Egenskap: Egenandel
     Så skal forbruket være 0 dager
     Så skal ikke all egenandel være trukket. Gjenstående egenandel er 2400 kroner
     Så skal bruker ha 2 vedtak
+
+
+  Scenario: Vedtak starter midt i meldeperioden og rapporterer slik at ikke all egenandel trekkes
+    Når rapporteringshendelse mottas
+      | dato       | fravær | timer |
+      | 05.12.2022 | false  | 0     |
+      | 06.12.2022 | false  | 0     |
+      | 07.12.2022 | false  | 0     |
+      | 08.12.2022 | false  | 0     |
+      | 09.12.2022 | false  | 0     |
+      | 10.12.2022 | false  | 0     |
+      | 11.12.2022 | false  | 0     |
+      | 12.12.2022 | false  | 8     |
+      | 13.12.2022 | false  | 8     |
+      | 14.12.2022 | false  | 4     |
+      | 15.12.2022 | false  | 0     |
+      | 16.12.2022 | false  | 0     |
+      | 17.12.2022 | false  | 0     |
+      | 18.12.2022 | false  | 0     |
+    Så skal forbruket være 5 dager
+    Så skal ikke all egenandel være trukket. Gjenstående egenandel er 400 kroner
+    Så skal bruker ha 2 vedtak
