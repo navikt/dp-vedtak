@@ -15,7 +15,7 @@ internal class LøpendeBehandling(
     internal val satsHistorikk: TemporalCollection<BigDecimal>,
     internal val dagpengerettighetHistorikk: TemporalCollection<Dagpengerettighet>,
     internal val vanligArbeidstidHistorikk: TemporalCollection<Timer>,
-    internal val gjenståendeVentetidHistorikk: TemporalCollection<Timer>,
+    internal val gjenståendeEgenandelHistorikk: TemporalCollection<BigDecimal>,
 
 ) {
     private val beregningsgrunnlag = Beregningsgrunnlag()
@@ -25,9 +25,11 @@ internal class LøpendeBehandling(
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
 
         val arbeidsdagerMedForbruk = when {
-            vilkårOppfylt -> Forbruk().håndter(beregningsgrunnlag, gjenståendeVentetidHistorikk)
+            vilkårOppfylt -> Forbruk().håndter(beregningsgrunnlag)
             else -> emptyList()
         }
+
+        Egenandel().håndter(arbeidsdagerMedForbruk, gjenståendeEgenandelHistorikk)
 
         val forbruk = arbeidsdagerMedForbruk.size.arbeidsdager
         val utbetalingsdager = arbeidsdagerMedForbruk.map { it.tilBetalingsdag() } + beregningsgrunnlag.helgedagerMedRettighet().filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilBetalingsdag() }

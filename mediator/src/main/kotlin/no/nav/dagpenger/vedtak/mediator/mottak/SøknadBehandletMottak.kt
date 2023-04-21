@@ -25,7 +25,7 @@ internal class SøknadBehandletMottak(
             validate { it.demandValue("@event_name", "søknad_behandlet_hendelse") }
             validate {
                 it.require("ident") { ident ->
-                    require( ident.asText().matches(Regex("\\d{11}")) )
+                    require(ident.asText().matches(Regex("\\d{11}")))
                 }
                 it.requireKey(
                     "behandlingId",
@@ -38,7 +38,7 @@ internal class SøknadBehandletMottak(
                     "Grunnlag",
                     "Periode",
                     "Fastsatt vanlig arbeidstid",
-                    "antallVentedager",
+                    "egenandel",
                     "barnetillegg",
                 )
             }

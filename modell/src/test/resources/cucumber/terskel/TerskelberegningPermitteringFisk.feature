@@ -2,10 +2,10 @@
 
   Egenskap: Terskel
 
-    Bakgrunn: Dagpenger under permittering fra fiskeindustrien innvilges fra 12. desember (ingen ventetid)
+    Bakgrunn: Dagpenger under permittering fra fiskeindustrien innvilges fra 12. desember (ingen egenandel)
       Gitt en ny hendelse om innvilget søknad
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet              |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 490921   | 52             | 8                      | PermitteringFraFiskeindustrien |
+        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet              | egenandel |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 490921   | 52             | 8                      | PermitteringFraFiskeindustrien | 0         |
 
       Scenario: Rapporterer arbeidstimer (48 t) eksakt lik terskel, som er 40% for fiskeindustrien
         Når rapporteringshendelse mottas

@@ -8,6 +8,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
 import no.nav.helse.rapids_rivers.JsonMessage
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
 
@@ -42,7 +43,10 @@ internal class SøknadBehandletMelding(private val packet: JsonMessage) : Meldin
         grunnlag = packet["Grunnlag"].decimalValue(),
         stønadsperiode = packet["Periode"].asInt().arbeidsuker,
         vanligArbeidstidPerDag = packet["Fastsatt vanlig arbeidstid"].asDouble().timer,
-        antallVentedager = 3.0, // @todo: hva/hvem setter ventedager.
+        egenandel = when (Dagpengerettighet.valueOf(packet["Rettighetstype"].asText())) {
+            Dagpengerettighet.Ordinær, Dagpengerettighet.Permittering -> packet["Dagsats"].decimalValue() * BigDecimal(3)
+            else -> BigDecimal(0)
+        }, // @todo: hva/hvem skal sette egenandel?
     )
 
     override fun asJson(): String {

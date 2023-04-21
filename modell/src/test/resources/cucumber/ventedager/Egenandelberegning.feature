@@ -1,12 +1,12 @@
 # language: no
-Egenskap: Ventedager
+Egenskap: Egenandel
 
   Bakgrunn: Alt er fastsatt
     Gitt en ny hendelse om innvilget søknad
-      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | ventetid |
-      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 333333   | 104            | 8                      | Ordinær           | 3        |
+      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
+      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 333333   | 104            | 8                      | Ordinær           | 2400      |
 
-  Scenario: Rapporterer arbeidstimer under terskel og skal avspasere all ventetid på de tre første dagene
+  Scenario: Rapporterer arbeidstimer under terskel og skal betale all egenandel på de tre første dagene
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |
       | 12.12.2022 | false  | 0     |
@@ -23,12 +23,12 @@ Egenskap: Ventedager
       | 23.12.2022 | false  | 4     |
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
-    Så skal forbruket være 7 dager
-    Så skal ventedager være avspasert, altså 0 timer
+    Så skal forbruket være 10 dager
+    Så skal egenandel være trukket, altså 0 kroner gjenstår
     Så skal bruker ha 2 vedtak
     #Så skal utbetalingen være 4000
 
-  Scenario: Rapporterer arbeidstimer over terskel og skal dermed ikke avspasere noe ventetid
+  Scenario: Rapporterer arbeidstimer over terskel og skal dermed ikke betale noe egenandel
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |
       | 12.12.2022 | false  | 0     |
@@ -46,5 +46,5 @@ Egenskap: Ventedager
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 0 dager
-    Så skal ikke ventedager være avspasert. Gjenstående ventetid er 24 timer
+    Så skal ikke all egenandel være trukket. Gjenstående egenandel er 2400 kroner
     Så skal bruker ha 2 vedtak

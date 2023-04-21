@@ -50,10 +50,11 @@ class RettighetStegTest : No {
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
-                    antallVentedager = søknadHendelse.ventetid,
+                    egenandel = søknadHendelse.egenandel.toBigDecimal(),
                 ),
             )
         }
+        // TODO: endre type hendelse
         Gitt("et endringsvedtak") { søknadHendelse: SøknadInnvilgetHendelseCucumber ->
             assertPersonOpprettet()
             person.håndter(
@@ -66,7 +67,7 @@ class RettighetStegTest : No {
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
-                    antallVentedager = søknadHendelse.ventetid,
+                    egenandel = søknadHendelse.egenandel.toBigDecimal(),
                 ),
             )
         }
@@ -131,14 +132,14 @@ class RettighetStegTest : No {
             assertEquals(forbruk.arbeidsdager, inspektør.forbruk)
         }
 
-        Så("skal ventedager være avspasert, altså {int} timer") { ventetimer: Int ->
-            assertTrue(inspektør.erAvspasert) { "Forventet at ventedager er avspasert" }
-            assertEquals(ventetimer.timer, inspektør.gjenståendeVentetimer)
+        Så("skal egenandel være trukket, altså {bigdecimal} kroner gjenstår") { egenandel: BigDecimal ->
+            assertTrue(inspektør.allEgenandelTrukket) { "Forventet at all egenandel er trukket" }
+            assertEquals(egenandel, inspektør.gjenståendeEgenandel)
         }
 
-        Så("skal ikke ventedager være avspasert. Gjenstående ventetid er {int} timer") { ventetimer: Int ->
-            assertFalse(inspektør.erAvspasert) { "Forventet at ventedager ikke er avspasert" }
-            assertEquals(ventetimer.timer, inspektør.gjenståendeVentetimer)
+        Så("skal ikke all egenandel være trukket. Gjenstående egenandel er {bigdecimal} kroner") { egenandel: BigDecimal ->
+            assertFalse(inspektør.allEgenandelTrukket) { "Forventet ikke at all egenandel er trukket" }
+            assertEquals(egenandel, inspektør.gjenståendeEgenandel)
         }
 
         Så("skal utbetalingen være {bigdecimal}") { beløp: BigDecimal ->
@@ -185,7 +186,7 @@ class RettighetStegTest : No {
         val grunnlag: Int,
         val stønadsperiode: Int,
         val vanligArbeidstidPerDag: Double,
-        val ventetid: Double,
+        val egenandel: Int,
     )
 
     private class Inspektør(person: Person) : PersonVisitor {
@@ -193,22 +194,23 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
-        lateinit var gjenståendeVentetimer: Timer
+        lateinit var gjenståendeEgenandel: BigDecimal
         lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
         lateinit var stønadsperiode: Stønadsperiode
         lateinit var grunnlag: BigDecimal
         lateinit var dagsats: BigDecimal
+        lateinit var egenandel: BigDecimal
         lateinit var virkningsdato: LocalDate
         lateinit var beløpTilUtbetaling: Beløp
         lateinit var forbruk: Tid
         var antallVedtak = 0
-        var erAvspasert: Boolean = false
+        var allEgenandelTrukket: Boolean = false
 
-        override fun visitGjenståendeVentetid(gjenståendeVentetid: Timer) {
-            gjenståendeVentetimer = gjenståendeVentetid
-            erAvspasert = gjenståendeVentetid == 0.timer
+        override fun visitGjenståendeEgenandel(gjenståendeEgenandel: BigDecimal) {
+            this.gjenståendeEgenandel = gjenståendeEgenandel
+            this.allEgenandelTrukket = this.gjenståendeEgenandel == BigDecimal(0)
         }
 
         override fun postVisitVedtak(
@@ -229,12 +231,14 @@ class RettighetStegTest : No {
             stønadsperiode: Stønadsperiode,
             vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,
+            egenandel: BigDecimal,
         ) {
             this.grunnlag = grunnlag
             this.dagsats = dagsats
             this.stønadsperiode = stønadsperiode
             this.vanligArbeidstidPerDag = vanligArbeidstidPerDag
             this.dagpengerettighet = dagpengerettighet
+            this.egenandel = egenandel
         }
 
         override fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: Beløp) {

@@ -1,15 +1,17 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
-import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import java.math.BigDecimal
 
 internal class Forbruk : Regel {
 
-    fun håndter(beregningsgrunnlag: Beregningsgrunnlag, ventetidhistorikk: TemporalCollection<Timer>): List<Beregningsgrunnlag.DagGrunnlag> {
-        beregningsgrunnlag.arbeidsdagerMedRettighet().map { it.ventetidTimer(ventetidhistorikk) }
+    fun håndter(beregningsgrunnlag: Beregningsgrunnlag): List<Beregningsgrunnlag.DagGrunnlag> {
+        return beregningsgrunnlag.arbeidsdagerMedRettighet()
+    }
+}
 
-        // ventetid forbruk
-        //
-        return beregningsgrunnlag.arbeidsdagerMedRettighet().filterNot { it.ventedag }
+internal class Egenandel : Regel {
+    fun håndter(beregningsgrunnlag: List<Beregningsgrunnlag.DagGrunnlag>, gjenståendeEgenandelHistorikk: TemporalCollection<BigDecimal>) {
+        beregningsgrunnlag.forEach { it.egenandel(gjenståendeEgenandelHistorikk) }
     }
 }
