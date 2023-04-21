@@ -31,7 +31,7 @@ sealed class Vedtak(
             stønadsperiode: Stønadsperiode,
             dagpengerettighet: Dagpengerettighet,
             vanligArbeidstidPerDag: Timer,
-            antallVenteDager: Double,
+            egenandel: BigDecimal,
         ) = Rammevedtak(
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
@@ -40,17 +40,26 @@ sealed class Vedtak(
             dagsats = dagsats,
             stønadsperiode = stønadsperiode,
             dagpengerettighet = dagpengerettighet,
-            antallVenteDager = antallVenteDager,
+            egenandel = egenandel,
         )
 
-        fun løpendeVedtak(behandlingId: UUID, utfall: Boolean, virkningsdato: LocalDate, forbruk: Tid, beløpTilUtbetaling: Beløp) =
+        fun løpendeVedtak(
+            behandlingId: UUID,
+            utfall: Boolean,
+            virkningsdato: LocalDate,
+            forbruk: Tid,
+            beløpTilUtbetaling: Beløp,
+            trukketEgenandel: Beløp,
+        ) =
             LøpendeVedtak(
                 behandlingId = behandlingId,
                 utfall = utfall,
                 virkningsdato = virkningsdato,
                 forbruk = forbruk,
                 beløpTilUtbetaling = beløpTilUtbetaling,
+                trukketEgenandel = trukketEgenandel,
             )
+
         internal fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean =
             this.any { it.behandlingId == behandlingId }
     }
@@ -100,7 +109,7 @@ class Rammevedtak(
     private val dagsats: BigDecimal,
     private val stønadsperiode: Stønadsperiode,
     private val dagpengerettighet: Dagpengerettighet,
-    private val antallVenteDager: Double,
+    private val egenandel: BigDecimal, // @todo: Beløp
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
@@ -109,7 +118,6 @@ class Rammevedtak(
     virkningsdato = virkningsdato,
 ) {
 
-    private val ventetid = vanligArbeidstidPerDag * antallVenteDager
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
         visitor.visitRammeVedtak(
@@ -118,19 +126,20 @@ class Rammevedtak(
             dagsats = dagsats,
             stønadsperiode = stønadsperiode,
             dagpengerettighet = dagpengerettighet,
+            egenandel = egenandel,
         )
         visitor.postVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
     }
 
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
         vedtakHistorikk.dagsatsHistorikk.put(virkningsdato, dagsats)
-        vedtakHistorikk.stønadsperiodeHistorikk.put(virkningsdato, stønadsperiode)
         vedtakHistorikk.grunnlagHistorikk.put(virkningsdato, grunnlag)
+        vedtakHistorikk.stønadsperiodeHistorikk.put(virkningsdato, stønadsperiode)
         vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.put(virkningsdato, stønadsperiode)
         vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, dagpengerettighet)
         vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato, vanligArbeidstidPerDag)
-        vedtakHistorikk.ventetidHistorikk.put(virkningsdato, ventetid)
-        vedtakHistorikk.gjenståendeVentetidHistorikk.put(virkningsdato, ventetid)
+        vedtakHistorikk.egenandelHistorikk.put(virkningsdato, egenandel)
+        vedtakHistorikk.gjenståendeEgenandelHistorikk.put(virkningsdato, Beløp.fra(egenandel))
     }
 }
 
@@ -142,6 +151,7 @@ class LøpendeVedtak(
     virkningsdato: LocalDate,
     private val forbruk: Tid,
     private val beløpTilUtbetaling: Beløp,
+    private val trukketEgenandel: Beløp,
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
@@ -151,14 +161,16 @@ class LøpendeVedtak(
 ) {
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
-        visitor.visitLøpendeVedtak(forbruk, beløpTilUtbetaling)
+        visitor.visitLøpendeVedtak(forbruk, beløpTilUtbetaling, trukketEgenandel)
         visitor.postVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
     }
 
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
-        val gjenstående = vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.get(virkningsdato)
-        vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.put(virkningsdato, gjenstående - forbruk)
-        // vedtakHistorikk.gjenståendeVentetidHistorikk.put(virkningsdato, 0.timer)
+        val gjenståendeStønadsperiode = vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.get(virkningsdato)
+        val gjenståendeEgenandel = vedtakHistorikk.gjenståendeEgenandelHistorikk.get(virkningsdato)
+        vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.put(virkningsdato, gjenståendeStønadsperiode - forbruk)
+        vedtakHistorikk.gjenståendeEgenandelHistorikk.put(virkningsdato, gjenståendeEgenandel - trukketEgenandel)
+        // vedtakHistorikk.gjenståendeEgenandelHistorikk.put(virkningsdato, BigDecimal(0)) // TODO legg til gjenståendeEgenandel?
     }
 }
 

@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
+import no.nav.dagpenger.vedtak.modell.Beløp
+import no.nav.dagpenger.vedtak.modell.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
@@ -15,7 +17,7 @@ internal class LøpendeBehandling(
     internal val satsHistorikk: TemporalCollection<BigDecimal>,
     internal val dagpengerettighetHistorikk: TemporalCollection<Dagpengerettighet>,
     internal val vanligArbeidstidHistorikk: TemporalCollection<Timer>,
-    internal val gjenståendeVentetidHistorikk: TemporalCollection<Timer>,
+    internal val gjenståendeEgenandelHistorikk: TemporalCollection<Beløp>,
 
 ) {
     private val beregningsgrunnlag = Beregningsgrunnlag()
@@ -25,19 +27,31 @@ internal class LøpendeBehandling(
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
 
         val arbeidsdagerMedForbruk = when {
-            vilkårOppfylt -> Forbruk().håndter(beregningsgrunnlag, gjenståendeVentetidHistorikk)
+            vilkårOppfylt -> Forbruk().håndter(beregningsgrunnlag)
             else -> emptyList()
         }
 
         val forbruk = arbeidsdagerMedForbruk.size.arbeidsdager
         val utbetalingsdager = arbeidsdagerMedForbruk.map { it.tilBetalingsdag() } + beregningsgrunnlag.helgedagerMedRettighet().filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilBetalingsdag() }
 
+        val gjenståendeEgenandel = gjenståendeEgenandelHistorikk.get(førsteRettighetsdag())
+        val originalSum = utbetalingsdager.summer()
+
+        val trukketEgenandel = if (gjenståendeEgenandel > 0.beløp && originalSum > 0.beløp) {
+            minOf(gjenståendeEgenandel, originalSum)
+        } else {
+            0.beløp
+        }
+
+        val nySum = originalSum - trukketEgenandel
+
         return Vedtak.løpendeVedtak(
             behandlingId = UUID.randomUUID(),
             utfall = vilkårOppfylt,
             virkningsdato = førsteRettighetsdag(),
             forbruk = forbruk,
-            beløpTilUtbetaling = utbetalingsdager.summer(),
+            beløpTilUtbetaling = nySum,
+            trukketEgenandel = trukketEgenandel,
         )
     }
 

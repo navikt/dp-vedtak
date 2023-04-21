@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
+import no.nav.dagpenger.vedtak.modell.Beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
@@ -24,8 +25,8 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     internal val gjenståendeStønadsperiodeHistorikk = TemporalCollection<Stønadsperiode>()
     internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
     internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
-    internal val ventetidHistorikk = TemporalCollection<Timer>()
-    internal val gjenståendeVentetidHistorikk = TemporalCollection<Timer>()
+    internal val egenandelHistorikk = TemporalCollection<BigDecimal>()
+    internal val gjenståendeEgenandelHistorikk = TemporalCollection<Beløp>()
 
     init {
         vedtak.forEach { it.populer(this) }
@@ -47,7 +48,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
                 satsHistorikk = dagsatsHistorikk,
                 dagpengerettighetHistorikk = dagpengerettighetHistorikk,
                 vanligArbeidstidHistorikk = vanligArbeidstidHistorikk,
-                gjenståendeVentetidHistorikk = gjenståendeVentetidHistorikk,
+                gjenståendeEgenandelHistorikk = gjenståendeEgenandelHistorikk,
             ).håndter(rapporteringsperiode),
         )
     }
@@ -69,7 +70,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     fun accept(visitor: VedtakHistorikkVisitor) {
         if (gjenståendeStønadsperiodeHistorikk.harHistorikk()) {
             visitor.visitGjenståendeStønadsperiode(gjenståendeStønadsperiodeHistorikk.get(LocalDate.now()))
-            visitor.visitGjenståendeVentetid(gjenståendeVentetidHistorikk.get(LocalDate.now()))
+            visitor.visitGjenståendeEgenandel(gjenståendeEgenandelHistorikk.get(LocalDate.now()))
         }
         visitor.preVisitVedtak()
         vedtak.forEach { it.accept(visitor) }

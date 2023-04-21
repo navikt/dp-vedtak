@@ -3,7 +3,6 @@ package no.nav.dagpenger.vedtak.modell.rapportering
 import no.nav.dagpenger.vedtak.modell.Beløp
 import no.nav.dagpenger.vedtak.modell.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
-import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
@@ -39,12 +38,12 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
     private fun arbeidsdag() = { it: DagGrunnlag -> it.dag is Arbeidsdag }
     private fun helgedag() = { it: DagGrunnlag -> it.dag is Helgedag }
 
-    internal sealed class DagGrunnlag(internal val dag: Dag, internal var ventedag: Boolean = false) {
+    internal sealed class DagGrunnlag(internal val dag: Dag) {
         abstract fun sats(): BigDecimal
         abstract fun dagpengerettighet(): Dagpengerettighet
         abstract fun vanligArbeidstid(): Timer
         abstract fun terskelTaptArbeidstid(): Prosent
-        abstract fun ventetidTimer(ventetidHistorikk: TemporalCollection<Timer>)
+
         abstract fun tilBetalingsdag(): Betalingsdag
 
         companion object {
@@ -56,7 +55,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
             ): DagGrunnlag {
                 return when (dagpengerettighet) {
                     Dagpengerettighet.Ingen -> IngenRettighetsdag(dag, dagpengerettighet)
-                    else -> Rettighetsdag(dag, dagpengerettighet, sats, vanligArbeidstid)
+                    else -> Rettighetsdag(dag, dagpengerettighet, sats, vanligArbeidstid, 0.timer)
                 }
             }
         }
@@ -79,7 +78,6 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         override fun terskelTaptArbeidstid(): Prosent =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har derfor ikke terskel for tapt arbeidstid")
 
-        override fun ventetidTimer(ventetidhistorikk: TemporalCollection<Timer>) {}
         override fun tilBetalingsdag(): Betalingsdag = IkkeUtbetalingsdag(dag.dato())
     }
 
@@ -88,32 +86,28 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         private val dagpengerettighet: Dagpengerettighet,
         private val sats: BigDecimal,
         private val vanligArbeidstid: Timer,
+        private var egenandelAsTimer: Timer,
     ) : DagGrunnlag(dag) {
         override fun sats(): BigDecimal = sats
         override fun dagpengerettighet(): Dagpengerettighet = dagpengerettighet
         override fun vanligArbeidstid(): Timer = vanligArbeidstid
         override fun terskelTaptArbeidstid(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
-        override fun ventetidTimer(ventetidHistorikk: TemporalCollection<Timer>) {
-            val gjenståendeVentetid = ventetidHistorikk.get(dag.dato())
-            if (gjenståendeVentetid > 0.timer) {
-                this.ventedag = true
-                val taptArbeidstid = vanligArbeidstid - dag.arbeidstimer()
-                val nyGjenståendeVentetid = gjenståendeVentetid - taptArbeidstid
-                if (nyGjenståendeVentetid > 0.timer) {
-                    ventetidHistorikk.put(dag.dato(), nyGjenståendeVentetid)
-                } else {
-                    ventetidHistorikk.put(dag.dato(), 0.timer)
-                }
-            }
-        }
-
         override fun tilBetalingsdag(): Betalingsdag {
-            val utbetalingstimer = (if (dag is Helgedag) 0.timer else vanligArbeidstid) - dag.arbeidstimer()
+            // val utbetalingstimer = (if (dag is Helgedag) 0.timer else vanligArbeidstid) - dag.arbeidstimer()
+            val utbetalingstimer = utbetalingstimer()
             val timeSats = timeSats()
             val beløp = timeSats * utbetalingstimer
             return Utbetalingsdag(dag.dato(), beløp)
         }
-
+        private fun utbetalingstimer(): Timer {
+            return if (dag is Helgedag) {
+                0.timer - dag.arbeidstimer()
+            } else if (egenandelAsTimer != 0.timer) {
+                vanligArbeidstid - egenandelAsTimer - dag.arbeidstimer()
+            } else {
+                vanligArbeidstid - dag.arbeidstimer()
+            }
+        }
         private fun timeSats(): Beløp {
             return when (dag) {
                 is Arbeidsdag, is Helgedag -> Beløp.fra(sats) / vanligArbeidstid

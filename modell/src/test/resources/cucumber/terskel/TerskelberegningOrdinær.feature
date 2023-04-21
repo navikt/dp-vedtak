@@ -2,10 +2,10 @@
 
   Egenskap: Terskel
 
-    Bakgrunn: Ordinære dagpenger er innvileget fra 12. desember (uten ventetid)
+    Bakgrunn: Ordinære dagpenger er innvileget fra 12. desember (uten egenandel)
       Gitt en ny hendelse om innvilget søknad
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | ventetid |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 490921   | 52             | 8                      | Ordinær           | 0        |
+        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 490921   | 52             | 8                      | Ordinær           | 0         |
 
       Scenario: Rapporterer arbeidstimer eksakt lik terskel
         Når rapporteringshendelse mottas

@@ -25,7 +25,7 @@ class DagpengerInnvilgetHendelse(
     private val grunnlag: BigDecimal,
     private val stønadsperiode: Stønadsperiode,
     private val vanligArbeidstidPerDag: Timer,
-    private val antallVentedager: Double,
+    private val egenandel: BigDecimal,
 ) : SøknadBehandletHendelse(
     ident,
     behandlingId,
@@ -39,7 +39,7 @@ class DagpengerInnvilgetHendelse(
         stønadsperiode = stønadsperiode,
         dagpengerettighet = dagpengerettighet,
         vanligArbeidstidPerDag = vanligArbeidstidPerDag,
-        antallVenteDager = antallVentedager,
+        egenandel = egenandel,
     )
 }
 

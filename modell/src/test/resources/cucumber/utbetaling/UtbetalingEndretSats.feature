@@ -1,10 +1,10 @@
 # language: no
 Egenskap: Utbetaling
 
-  Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember med tre ventedager og dagsats 800. Dagsats endres pga. barnetillegg fra søndag i uke 1.
+  Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember med egenandel på tre dagsatser og dagsats på 800 kroner. Dagsats endres pga. barnetillegg fra søndag i uke 1.
     Gitt en ny hendelse om innvilget søknad
-      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | ventetid |
-      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 490921   | 52             | 8                      | Ordinær           | 3        |
+      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
+      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 490921   | 52             | 8                      | Ordinær           | 2400      |
 
     Gitt et endringsvedtak
       | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
@@ -27,8 +27,8 @@ Egenskap: Utbetaling
       | 23.12.2022 | false  | 0     |
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
-    Så skal forbruket være 7 dager
-    Så skal ventedager være avspasert, altså 0 timer
+    Så skal forbruket være 10 dager
+    Så skal egenandel være trukket, altså 0 kroner gjenstår
     Så skal utbetalingen være 5775
     Så skal bruker ha 3 vedtak
 
@@ -49,8 +49,8 @@ Egenskap: Utbetaling
       | 23.12.2022 | false  | 0     |
       | 24.12.2022 | false  | 8     |
       | 25.12.2022 | false  | 8     |
-    Så skal forbruket være 7 dager
-    Så skal ventedager være avspasert, altså 0 timer
+    Så skal forbruket være 10 dager
+    Så skal egenandel være trukket, altså 0 kroner gjenstår
     Så skal utbetalingen være 4105
     Så skal bruker ha 3 vedtak
 
@@ -71,7 +71,7 @@ Egenskap: Utbetaling
       | 23.12.2022 | false  | 0     |
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
-    Så skal forbruket være 7 dager
-    Så skal ventedager være avspasert, altså 0 timer
+    Så skal forbruket være 10 dager
+    Så skal egenandel være trukket, altså 0 kroner gjenstår
     Så skal utbetalingen være 4140
     Så skal bruker ha 3 vedtak
