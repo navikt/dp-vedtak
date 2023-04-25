@@ -88,10 +88,12 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         private val vanligArbeidstid: Timer,
         private var egenandelAsTimer: Timer,
     ) : DagGrunnlag(dag) {
+
+        private val terskelProsent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
         override fun sats(): BigDecimal = sats
         override fun dagpengerettighet(): Dagpengerettighet = dagpengerettighet
         override fun vanligArbeidstid(): Timer = vanligArbeidstid
-        override fun terskelTaptArbeidstid(): Prosent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
+        override fun terskelTaptArbeidstid(): Prosent = terskelProsent
         override fun tilBetalingsdag(): Betalingsdag {
             // val utbetalingstimer = (if (dag is Helgedag) 0.timer else vanligArbeidstid) - dag.arbeidstimer()
             val utbetalingstimer = utbetalingstimer()

@@ -23,7 +23,7 @@ internal class TaptArbeidstid : Regel {
         return arbeidstimer <= vanligArbeidstid - minsteTapteArbeidstid
     }
 
-    object Terskel {
+    internal object Terskel {
 
         private val terskler: Map<Dagpengerettighet, TemporalCollection<Prosent>> = mapOf(
             Dagpengerettighet.Ordinær to TemporalCollection<Prosent>().also {
