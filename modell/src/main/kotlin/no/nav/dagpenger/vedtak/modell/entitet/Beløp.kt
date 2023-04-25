@@ -1,6 +1,5 @@
-package no.nav.dagpenger.vedtak.modell
+package no.nav.dagpenger.vedtak.modell.entitet
 
-import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import java.math.BigDecimal
 
 class Beløp private constructor(verdi: Number) : Comparable<Beløp> {

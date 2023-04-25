@@ -1,6 +1,6 @@
-package no.nav.dagpenger.vedtak.modell
+package no.nav.dagpenger.vedtak.modell.entitet
 
-import no.nav.dagpenger.vedtak.modell.Beløp.Companion.beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test

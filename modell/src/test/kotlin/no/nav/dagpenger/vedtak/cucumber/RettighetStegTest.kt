@@ -3,11 +3,11 @@ package no.nav.dagpenger.vedtak.cucumber
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.cucumber.datatable.DataTable
 import io.cucumber.java8.No
-import no.nav.dagpenger.vedtak.modell.Beløp
-import no.nav.dagpenger.vedtak.modell.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.vedtak.modell.entitet.Beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
