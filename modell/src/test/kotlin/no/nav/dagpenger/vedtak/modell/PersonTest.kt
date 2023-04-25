@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
+import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -16,7 +17,7 @@ internal class PersonTest {
     }
 
     @Test
-    fun `behandling med samme id skal bare behandles 1 gang`() {
+    fun `behandling med samme id skal bare behandles 1 gang og logge en warning aktivitetsloggen`() {
         val søknadBehandletHendelse = DagpengerAvslåttHendelse(
             behandlingId = UUID.randomUUID(),
             ident = ident,
@@ -31,6 +32,20 @@ internal class PersonTest {
         )
 
         assertEquals(1, testObservatør.vedtak.size)
+
+        object : PersonVisitor {
+            override fun visitWarn(
+                kontekster: List<SpesifikkKontekst>,
+                aktivitet: Aktivitetslogg.Aktivitet.Warn,
+                melding: String,
+                tidsstempel: String,
+            ) {
+                assertEquals("Har allerede behandlet SøknadBehandletHendelse", melding)
+                assertEquals(mapOf("ident" to ident), kontekster.first { it.kontekstType == Person.kontekstType }.kontekstMap)
+            }
+        }.also { visitor ->
+            person.accept(visitor)
+        }
     }
 
     private class TestObservatør : PersonObserver {

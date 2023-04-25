@@ -170,7 +170,6 @@ class LøpendeVedtak(
         val gjenståendeEgenandel = vedtakHistorikk.gjenståendeEgenandelHistorikk.get(virkningsdato)
         vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.put(virkningsdato, gjenståendeStønadsperiode - forbruk)
         vedtakHistorikk.gjenståendeEgenandelHistorikk.put(virkningsdato, gjenståendeEgenandel - trukketEgenandel)
-        // vedtakHistorikk.gjenståendeEgenandelHistorikk.put(virkningsdato, BigDecimal(0)) // TODO legg til gjenståendeEgenandel?
     }
 }
 

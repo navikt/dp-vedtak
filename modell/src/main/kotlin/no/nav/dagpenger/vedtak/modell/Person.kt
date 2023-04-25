@@ -13,6 +13,7 @@ class Person private constructor(
     private val ident: PersonIdentifikator,
     private val vedtakHistorikk: VedtakHistorikk,
     private val rapporteringsperioder: Rapporteringsperioder,
+    internal val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Aktivitetskontekst by ident, VedtakObserver {
 
     init {
@@ -52,6 +53,7 @@ class Person private constructor(
 
     fun accept(visitor: PersonVisitor) {
         visitor.visitPerson(ident)
+        aktivitetslogg.accept(visitor)
         rapporteringsperioder.accept(visitor)
         vedtakHistorikk.accept(visitor)
     }
