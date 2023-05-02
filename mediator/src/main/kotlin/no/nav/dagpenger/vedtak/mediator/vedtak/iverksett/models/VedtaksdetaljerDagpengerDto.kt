@@ -43,8 +43,8 @@ data class VedtaksdetaljerDagpengerDto(
      */
     enum class Resultat(val value: String) {
         INNVILGET("INNVILGET"),
-        OPPH_RT("OPPHØRT"),
-        AVSL_TT("AVSLÅTT"),
+        OPPHØRT("OPPHØRT"),
+        AVSLÅTT("AVSLÅTT"),
     }
 
     /**

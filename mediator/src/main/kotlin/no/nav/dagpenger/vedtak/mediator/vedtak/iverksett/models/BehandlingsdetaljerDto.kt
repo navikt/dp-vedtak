@@ -40,7 +40,7 @@ data class BehandlingsdetaljerDto(
      * Values: F_RSTEGANGSBEHANDLING,REVURDERING,KLAGE
      */
     enum class BehandlingType(val value: kotlin.String) {
-        F_RSTEGANGSBEHANDLING("FØRSTEGANGSBEHANDLING"),
+        FØRSTEGANGSBEHANDLING("FØRSTEGANGSBEHANDLING"),
         REVURDERING("REVURDERING"),
         KLAGE("KLAGE"),
     }
@@ -53,11 +53,11 @@ data class BehandlingsdetaljerDto(
         KLAGE("KLAGE"),
         NYEOPPLYSNINGER("NYE_OPPLYSNINGER"),
         SANKSJON1MND("SANKSJON_1_MND"),
-        S_KNAD("SØKNAD"),
+        SØKNAD("SØKNAD"),
         MIGRERING("MIGRERING"),
         GOMREGNING("G_OMREGNING"),
         KORRIGERINGUTENBREV("KORRIGERING_UTEN_BREV"),
-        PAPIRS_KNAD("PAPIRSØKNAD"),
+        PAPIRSØKNAD("PAPIRSØKNAD"),
         SATSENDRING("SATSENDRING"),
     }
 }
