@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.mediator.vedtak.iverksett
 
+import io.mockk.mockk
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -7,7 +8,8 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class VedtakFattetIverksettObserverTest {
-    private val vedtakFattetIverksettObserver = VedtakFattetIverksettObserver()
+    private val iverksettClientMock = mockk<IverksettClient>()
+    private val vedtakFattetIverksettObserver = VedtakFattetIverksettObserver(iverksettClientMock)
 
     @Test
     fun `skal sende melding om fattet vedtak til iverksatt API`() {
