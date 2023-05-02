@@ -56,8 +56,8 @@ internal class VedtakFattetIverksettObserver(private val iverksettClient: Iverks
             },
             opphørårsak = null,
             avslagårsak = null,
-            saksbehandlerId = "Gunnar på Mo",
-            beslutterId = "Roar på Mo",
+            saksbehandlerId = "DIGIDAG",
+            beslutterId = "DIGIDAG",
             utbetalinger = emptyList(),
             vedtaksperioder = listOf(
                 VedtaksperiodeDagpengerDto(
