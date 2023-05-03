@@ -69,7 +69,7 @@ class IverksettClientTest {
             behandlingÅrsak = BehandlingsdetaljerDto.Behandlingårsak.SØKNAD,
             vilkårsvurderinger = emptyList(),
         ),
-        søkerDto = SøkerDto(
+        søker = SøkerDto(
             personIdent = "123456789",
             barn = emptyList(),
             tilhørendeEnhet = "",

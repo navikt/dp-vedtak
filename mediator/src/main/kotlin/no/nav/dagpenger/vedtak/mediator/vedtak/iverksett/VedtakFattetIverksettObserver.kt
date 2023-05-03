@@ -37,7 +37,7 @@ internal class VedtakFattetIverksettObserver(private val iverksettClient: Iverks
             stønadstype = DAGPENGER,
         ),
         behandling = behandlingsdetaljerDto(vedtakFattet),
-        søkerDto = SøkerDto(
+        søker = SøkerDto(
             personIdent = ident,
             barn = emptyList(),
             tilhørendeEnhet = "Jaja",
