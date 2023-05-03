@@ -23,6 +23,7 @@ jobs:
 
       - uses: gradle/gradle-build-action@v2
         with:
+          gradle-version: wrapper
           arguments: --configuration-cache build installDist
 
       - name: Publish results (unit test)

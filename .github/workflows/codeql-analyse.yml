@@ -53,6 +53,7 @@ jobs:
     - name: build
       uses: gradle/gradle-build-action@v2
       with:
+        gradle-version: wrapper
         arguments: --configuration-cache --rerun-tasks build
 
     - name: Perform CodeQL Analysis
