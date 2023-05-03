@@ -65,7 +65,7 @@ internal class VedtakFattetIverksettObserver(private val iverksettClient: Iverks
                         fom = vedtakFattet.virkningsdato,
                         tom = LocalDate.MAX,
                     ),
-                    aktivitet = VedtaksperiodeDagpengerDto.Aktivitet.IKKEAKTIVITETSPLIKT,
+                    aktivitet = VedtaksperiodeDagpengerDto.Aktivitet.IKKE_AKTIVITETSPLIKT,
                     periodeType = VedtaksperiodeDagpengerDto.PeriodeType.HOVEDPERIODE,
                 ),
             ),

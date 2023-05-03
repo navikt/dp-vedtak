@@ -29,7 +29,7 @@ data class VedtaksperiodeDagpengerDto(
      */
     enum class Aktivitet(val value: kotlin.String) {
         MIGRERING("MIGRERING"),
-        IKKEAKTIVITETSPLIKT("IKKE_AKTIVITETSPLIKT"),
+        IKKE_AKTIVITETSPLIKT("IKKE_AKTIVITETSPLIKT"),
         BARNUNDERETT_R("BARN_UNDER_ETT_ÅR"),
         FORS_RGERIARBEID("FORSØRGER_I_ARBEID"),
         FORS_RGERIUTDANNING("FORSØRGER_I_UTDANNING"),
