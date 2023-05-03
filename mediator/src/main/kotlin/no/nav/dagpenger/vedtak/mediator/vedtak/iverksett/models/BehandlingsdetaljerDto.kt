@@ -17,7 +17,7 @@ package no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models
  * @param forrigeBehandlingId
  * @param eksternId
  * @param behandlingType
- * @param behandlingårsak
+ * @param behandlingÅrsak
  * @param vilkårsvurderinger
  * @param aktivitetspliktInntrefferDato
  * @param kravMottatt
@@ -29,7 +29,7 @@ data class BehandlingsdetaljerDto(
     val forrigeBehandlingId: java.util.UUID? = null,
     val eksternId: Long,
     val behandlingType: BehandlingType,
-    val behandlingårsak: Behandlingårsak,
+    val behandlingÅrsak: Behandlingårsak,
     val vilkårsvurderinger: List<VilkårsvurderingDto>,
     val aktivitetspliktInntrefferDato: java.time.LocalDate? = null,
     val kravMottatt: java.time.LocalDate? = null,

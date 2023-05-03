@@ -66,7 +66,7 @@ class IverksettClientTest {
             behandlingId = UUID.randomUUID(),
             behandlingType = BehandlingsdetaljerDto.BehandlingType.FØRSTEGANGSBEHANDLING,
             eksternId = Random.nextLong(),
-            behandlingårsak = BehandlingsdetaljerDto.Behandlingårsak.SØKNAD,
+            behandlingÅrsak = BehandlingsdetaljerDto.Behandlingårsak.SØKNAD,
             vilkårsvurderinger = emptyList(),
         ),
         søkerDto = SøkerDto(
