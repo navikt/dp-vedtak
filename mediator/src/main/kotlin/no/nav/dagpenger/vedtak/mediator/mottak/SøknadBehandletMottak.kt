@@ -47,6 +47,11 @@ internal class SøknadBehandletMottak(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
+        val ident = packet["ident"].asText()
+        if (ident == "12345123451" && System.getenv()["NAIS_CLUSTER_NAME"] == "dev-gcp") {
+            logger.info { "Skipper ugyldig ident." }
+            return
+        }
         val behandlingId = UUID.fromString(packet["behandlingId"].asText())
         withLoggingContext("behandlingId" to behandlingId.toString()) {
             val søknadBehandletMelding = SøknadBehandletMelding(packet)

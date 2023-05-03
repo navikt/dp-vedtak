@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.mediator.vedtak.iverksett
 
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
@@ -42,6 +43,7 @@ internal class IverksettClient(
         install(ContentNegotiation) {
             jackson {
                 registerModule(JavaTimeModule())
+                disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             }
         }
         install(Logging) {
