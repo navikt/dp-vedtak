@@ -7,6 +7,7 @@ import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.FagsakdetaljerDt
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.FagsakdetaljerDto.Stønadstype.DAGPENGER
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.IverksettDagpengerDto
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.SøkerDto
+import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.UtbetalingDto
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.VedtaksdetaljerDagpengerDto
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.VedtaksperiodeDagpengerDto
 import no.nav.dagpenger.vedtak.modell.PersonObserver
@@ -58,7 +59,16 @@ internal class VedtakFattetIverksettObserver(private val iverksettClient: Iverks
             avslagårsak = null,
             saksbehandlerId = "DIGIDAG",
             beslutterId = "DIGIDAG",
-            utbetalinger = emptyList(),
+            utbetalinger = listOf(
+                UtbetalingDto(
+                    beløp = 100,
+                    inntekt = 5000,
+                    samordningsfradrag = 0,
+                    inntektsreduksjon = 0,
+                    periode = Datoperiode(vedtakFattet.virkningsdato, LocalDate.MAX),
+                ),
+
+            ),
             vedtaksperioder = listOf(
                 VedtaksperiodeDagpengerDto(
                     periode = Datoperiode(
