@@ -1,1 +1,4 @@
 kafka_pool: nav-dev
+dp-iverksett:
+  url: https://dp-iverksett.intern.dev.nav.no/
+  scope: api://dev-gcp.teamdagpenger.dp-iverksett/.default

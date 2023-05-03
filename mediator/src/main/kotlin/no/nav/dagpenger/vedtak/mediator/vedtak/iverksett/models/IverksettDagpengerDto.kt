@@ -19,7 +19,7 @@ package no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models
  * @param vedtak
  * @param forrigeVedtak
  */
-data class IverksettDagpengerdDto(
+data class IverksettDagpengerDto(
 
     val fagsak: FagsakdetaljerDto,
     val behandling: BehandlingsdetaljerDto,

@@ -5,7 +5,7 @@ import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.Behandlingsdetal
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.Datoperiode
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.FagsakdetaljerDto
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.FagsakdetaljerDto.Stønadstype.DAGPENGER
-import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.IverksettDagpengerdDto
+import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.IverksettDagpengerDto
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.SøkerDto
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.VedtaksdetaljerDagpengerDto
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.VedtaksperiodeDagpengerDto
@@ -30,7 +30,7 @@ internal class VedtakFattetIverksettObserver(private val iverksettClient: Iverks
     private fun iverksettDagpengerdDto(
         vedtakFattet: VedtakObserver.VedtakFattet,
         ident: String,
-    ) = IverksettDagpengerdDto(
+    ) = IverksettDagpengerDto(
         fagsak = FagsakdetaljerDto(
             fagsakId = UUID.randomUUID(),
             eksternId = Random.nextLong(),
