@@ -89,7 +89,7 @@ internal class VedtakFattetIverksettObserver(private val iverksettClient: Iverks
             forrigeBehandlingId = null,
             eksternId = Random.nextLong(),
             behandlingType = BehandlingsdetaljerDto.BehandlingType.FØRSTEGANGSBEHANDLING,
-            behandlingÅrsak = BehandlingsdetaljerDto.Behandlingårsak.SØKNAD,
+            behandlingÅrsak = BehandlingsdetaljerDto.Behandlingårsak.MIGRERING,
             vilkårsvurderinger = emptyList(),
             aktivitetspliktInntrefferDato = null,
             kravMottatt = null,
