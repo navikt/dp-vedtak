@@ -1,3 +1,4 @@
+import com.diffplug.spotless.LineEnding
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
