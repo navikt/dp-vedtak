@@ -40,4 +40,12 @@ class SøknadBehandletMottakTest {
             meldingMediatorMock.håndter(any())
         }
     }
+
+    @Test
+    fun `avslå meldinger som ikke validerer`() {
+        testRapid.sendTestMessage(dagpengerInnvilgetJson(rettighetstype = "bla bla"))
+        verify(exactly = 0) {
+            meldingMediatorMock.håndter(any())
+        }
+    }
 }

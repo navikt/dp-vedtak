@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.mediator.mottak
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.vedtak.mediator.MeldingMediator
+import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -33,8 +34,10 @@ internal class SøknadBehandletMottak(
                     "Virkningsdato",
                     "innvilget",
                 )
+                it.interestedIn("Rettighetstype") { rettighetstype ->
+                    Dagpengerettighet.valueOf(rettighetstype.asText())
+                }
                 it.interestedIn(
-                    "Rettighetstype",
                     "Dagsats",
                     "Grunnlag",
                     "Periode",

@@ -5,7 +5,7 @@ import java.util.UUID
 
 object Meldingsfabrikk {
 
-    fun dagpengerInnvilgetJson() =
+    fun dagpengerInnvilgetJson(rettighetstype: String = "Ordinær") =
         //language=JSON
         """
         {        
@@ -14,7 +14,7 @@ object Meldingsfabrikk {
           "behandlingId": "${UUID.randomUUID()}",
           "Virkningsdato": "${LocalDate.now()}",
           "innvilget": true,
-          "Rettighetstype": "Ordinær",
+          "Rettighetstype": "$rettighetstype",
           "Dagsats": "500",
           "Grunnlag": "500000",
           "Periode": "52",
