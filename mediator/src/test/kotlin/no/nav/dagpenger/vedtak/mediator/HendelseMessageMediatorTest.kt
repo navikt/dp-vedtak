@@ -14,13 +14,13 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-internal class MeldingMediatorTest {
+internal class HendelseMessageMediatorTest {
 
     private val meldingSlot = slot<SøknadBehandletHendelse>()
     private val testRapid = TestRapid()
     private val personMediatorMock = mockk<PersonMediator>(relaxed = false)
     private val meldingRepository = InMemoryMeldingRepository()
-    private val meldingMediator = MeldingMediator(
+    private val hendelseMediator = HendelseMediator(
         rapidsConnection = testRapid,
         meldingRepository = meldingRepository,
         personMediator = personMediatorMock,

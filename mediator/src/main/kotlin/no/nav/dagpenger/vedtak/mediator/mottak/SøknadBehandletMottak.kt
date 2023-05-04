@@ -2,7 +2,7 @@ package no.nav.dagpenger.vedtak.mediator.mottak
 
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.vedtak.mediator.MeldingMediator
+import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -14,7 +14,7 @@ import java.util.UUID
 
 internal class SøknadBehandletMottak(
     rapidsConnection: RapidsConnection,
-    private val meldingMediator: MeldingMediator,
+    private val hendelseMediator: HendelseMediator,
 ) :
     River.PacketListener {
 
@@ -52,9 +52,9 @@ internal class SøknadBehandletMottak(
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val behandlingId = UUID.fromString(packet["behandlingId"].asText())
         withLoggingContext("behandlingId" to behandlingId.toString()) {
-            val søknadBehandletMelding = SøknadBehandletMelding(packet)
+            val søknadBehandletMelding = SøknadBehandletHendelseMessage(packet)
             logger.info { "Fått behandlingshendelse" }
-            meldingMediator.håndter(søknadBehandletMelding)
+            hendelseMediator.håndter(søknadBehandletMelding)
         }
     }
 

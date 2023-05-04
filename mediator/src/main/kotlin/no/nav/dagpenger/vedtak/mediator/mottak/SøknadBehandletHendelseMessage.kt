@@ -1,6 +1,6 @@
 package no.nav.dagpenger.vedtak.mediator.mottak
 
-import no.nav.dagpenger.vedtak.mediator.persistens.Melding
+import no.nav.dagpenger.vedtak.mediator.persistens.HendelseMessage
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
@@ -12,7 +12,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
 
-internal class SøknadBehandletMelding(private val packet: JsonMessage) : Melding {
+internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) : HendelseMessage {
     val behandlingId = UUID.fromString(packet["behandlingId"].asText())
     private val ident = packet["ident"].asText()
     private val dagpengerInnvilget = packet["innvilget"].asBoolean()

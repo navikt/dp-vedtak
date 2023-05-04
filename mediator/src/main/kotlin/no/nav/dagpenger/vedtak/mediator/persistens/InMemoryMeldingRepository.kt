@@ -4,35 +4,35 @@ class InMemoryMeldingRepository : MeldingRepository {
 
     private val meldingDb = mutableMapOf<String, MeldingDto>()
 
-    override fun lagre(melding: Melding) {
-        meldingDb[melding.meldingId()] = MeldingDto(melding, MeldingStatus.MOTTATT)
+    override fun lagre(hendelseMessage: HendelseMessage) {
+        meldingDb[hendelseMessage.meldingId()] = MeldingDto(hendelseMessage, MeldingStatus.MOTTATT)
     }
 
-    override fun hentMottatte(): List<Melding> = hentMeldingerMedStatus(MeldingStatus.MOTTATT)
-    override fun hentBehandlede(): List<Melding> = hentMeldingerMedStatus(MeldingStatus.BEHANDLET)
-    override fun hentFeilede(): List<Melding> = hentMeldingerMedStatus(MeldingStatus.FEILET)
+    override fun hentMottatte(): List<HendelseMessage> = hentMeldingerMedStatus(MeldingStatus.MOTTATT)
+    override fun hentBehandlede(): List<HendelseMessage> = hentMeldingerMedStatus(MeldingStatus.BEHANDLET)
+    override fun hentFeilede(): List<HendelseMessage> = hentMeldingerMedStatus(MeldingStatus.FEILET)
 
-    override fun behandlet(melding: Melding) {
-        val meldingDto = hentMelding(melding)
+    override fun behandlet(hendelseMessage: HendelseMessage) {
+        val meldingDto = hentMelding(hendelseMessage)
         meldingDto.status = MeldingStatus.BEHANDLET
-        meldingDb[melding.meldingId()] = meldingDto
+        meldingDb[hendelseMessage.meldingId()] = meldingDto
     }
 
-    fun feilet(melding: Melding) {
-        val meldingDto = hentMelding(melding)
+    fun feilet(hendelseMessage: HendelseMessage) {
+        val meldingDto = hentMelding(hendelseMessage)
         meldingDto.status = MeldingStatus.FEILET
-        meldingDb[melding.meldingId()] = meldingDto
+        meldingDb[hendelseMessage.meldingId()] = meldingDto
     }
 
     private fun hentMeldingerMedStatus(status: MeldingStatus) =
-        meldingDb.values.filter { it.status == status }.map { it.melding }
+        meldingDb.values.filter { it.status == status }.map { it.hendelseMessage }
 
-    private fun hentMelding(melding: Melding) = (
-        meldingDb[melding.meldingId()]
-            ?: throw IllegalArgumentException("Melding med id ${melding.meldingId()} finnes ikke")
+    private fun hentMelding(hendelseMessage: HendelseMessage) = (
+        meldingDb[hendelseMessage.meldingId()]
+            ?: throw IllegalArgumentException("Melding med id ${hendelseMessage.meldingId()} finnes ikke")
         )
 
-    private data class MeldingDto(val melding: Melding, var status: MeldingStatus)
+    private data class MeldingDto(val hendelseMessage: HendelseMessage, var status: MeldingStatus)
 
     private enum class MeldingStatus {
         MOTTATT, BEHANDLET, FEILET

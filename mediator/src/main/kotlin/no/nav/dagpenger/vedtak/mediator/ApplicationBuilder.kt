@@ -20,7 +20,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     ).build()
 
     init {
-        MeldingMediator(
+        HendelseMediator(
             rapidsConnection = rapidsConnection,
             meldingRepository = InMemoryMeldingRepository(),
             personMediator = PersonMediator(

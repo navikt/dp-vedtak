@@ -2,14 +2,14 @@ package no.nav.dagpenger.vedtak.mediator.persistens
 
 interface MeldingRepository {
 
-    fun lagre(melding: Melding)
-    fun hentMottatte(): List<Melding>
-    fun hentBehandlede(): List<Melding>
-    fun behandlet(melding: Melding)
-    fun hentFeilede(): List<Melding>
+    fun lagre(hendelseMessage: HendelseMessage)
+    fun hentMottatte(): List<HendelseMessage>
+    fun hentBehandlede(): List<HendelseMessage>
+    fun behandlet(hendelseMessage: HendelseMessage)
+    fun hentFeilede(): List<HendelseMessage>
 }
 
-interface Melding {
+interface HendelseMessage {
     fun asJson(): String
     fun eier(): String
     fun meldingId(): String
