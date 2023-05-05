@@ -193,6 +193,7 @@ class Aktivitetslogg private constructor(
 
             enum class Behovtype {
                 Test, // @todo: tullebehov for å teste aktivitetsloggen. Erstatt med ordentlig behov etterhvert.
+                Iverksett,
             }
         }
 
