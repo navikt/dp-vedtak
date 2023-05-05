@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.mediator.vedtak.iverksett
 
 import kotlinx.coroutines.runBlocking
+import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.BehandlingsdetaljerDto
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.Datoperiode
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.FagsakdetaljerDto
@@ -20,11 +21,17 @@ import kotlin.random.Random
 
 internal class VedtakFattetIverksettObserver(private val iverksettClient: IverksettClient) : PersonObserver {
 
+    private val logger = KotlinLogging.logger { }
+
     override fun vedtaktFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
         val iverksettDagpengerdDto = iverksettDagpengerdDto(vedtakFattet, ident)
 
-        runBlocking {
-            iverksettClient.iverksett(iverksettDagpengerdDto)
+        if (vedtakFattet.utfall == Innvilget) {
+            runBlocking {
+                iverksettClient.iverksett(iverksettDagpengerdDto)
+            }
+        } else {
+            logger.warn { "Kan ikke iverksette vedtak med id ${vedtakFattet.vedtakId} den har annet utfall enn Innvilget" }
         }
     }
 
