@@ -11,8 +11,6 @@ class Rapporteringsperioder(val perioder: MutableList<Rapporteringsperiode> = mu
     }
 
     fun accept(visitor: PersonVisitor) {
-        // visitor.preVisitRapporteringsperioder(this)
         perioder.forEach { it.accept(visitor) }
-        // visitor.postVisitRapporteringsperioder(this)
     }
 }

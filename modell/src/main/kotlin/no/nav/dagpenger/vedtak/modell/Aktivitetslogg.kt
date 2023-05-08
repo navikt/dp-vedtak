@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell
 
+import no.nav.dagpenger.vedtak.iverksetting.Iverksetting
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg.Aktivitet.Behov.Behovtype
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -79,6 +80,11 @@ class Aktivitetslogg private constructor(
     override fun kontekst(person: Person) {
         this.forelder = person.aktivitetslogg
         kontekst(person as Aktivitetskontekst)
+    }
+
+    override fun kontekst(iverksetting: Iverksetting) {
+        this.forelder = iverksetting.aktivitetslogg
+        kontekst(iverksetting as Aktivitetskontekst)
     }
 
     internal fun logg(kontekst: Aktivitetskontekst): Aktivitetslogg {
@@ -249,6 +255,7 @@ interface IAktivitetslogg {
     fun behov(): List<Aktivitetslogg.Aktivitet.Behov>
     fun barn(): Aktivitetslogg
     fun kontekst(kontekst: Aktivitetskontekst)
+    fun kontekst(iverksetting: Iverksetting)
     fun kontekst(person: Person)
     fun kontekster(): List<IAktivitetslogg>
 }

@@ -17,6 +17,10 @@ class Iverksetting(
     private val observers = mutableListOf<IverksettingObserver>()
     constructor(vedtakId: UUID) : this(id = UUID.randomUUID(), vedtakId = vedtakId, Mottatt)
 
+    fun accept(iverksettingVisitor: IverksettingVisitor) {
+        iverksettingVisitor.visitIverksetting(id, vedtakId, tilstand)
+        aktivitetslogg.accept(iverksettingVisitor)
+    }
     override fun toSpesifikkKontekst(): SpesifikkKontekst {
         return SpesifikkKontekst(
             "Iverksetting",
