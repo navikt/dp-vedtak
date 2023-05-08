@@ -47,7 +47,7 @@ class IverksettingTest {
         tilstander.asList() shouldBe testObservatør.tilstander
     }
 
-    protected fun assertBehovDetaljer(type: Behovtype, detaljer: Set<String> = emptySet()) {
+    private fun assertBehovDetaljer(type: Behovtype, detaljer: Set<String> = emptySet()) {
         val behov = inspektør.innsendingLogg.behov().find { behov ->
             behov.type == type
         } ?: throw AssertionError("Fant ikke behov ${type.name} i etterspurte behov")
