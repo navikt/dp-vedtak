@@ -39,7 +39,7 @@ class Iverksetting(
     }
 
     private fun endreTilstand(hendelse: Hendelse, nyTilstand: Tilstand) {
-        if(nyTilstand == tilstand) {
+        if (nyTilstand == tilstand) {
             return // vi er allerede i denne tilstanden
         }
         val forrigeTilstand = tilstand
@@ -56,8 +56,8 @@ class Iverksetting(
                     iversettingId = id,
                     vedtakId = vedtakId,
                     forrigeTilstand = forrigeTilstand.tilstandnavn,
-                    gjeldendeTilstand = tilstand.tilstandnavn
-                )
+                    gjeldendeTilstand = tilstand.tilstandnavn,
+                ),
             )
         }
     }
@@ -90,8 +90,6 @@ class Iverksetting(
             iverksetting.endreTilstand(vedtakFattetHendelse, AvventerIverksetting)
         }
     }
-
-
 
     object AvventerIverksetting : Tilstand(TilstandNavn.AvventerIverksetting)
 }

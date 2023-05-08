@@ -17,12 +17,10 @@ class IverksettingTest {
         iverksetting.håndter(
             VedtakFattetHendelse(ident = ident, vedtakId = vedtakId),
         )
-
     }
 
     private class TestObservatør : IverksettingObserver {
         override fun iverksettingTilstandEndret(event: IverksettingObserver.IverksettingEndretTilstandEvent) {
-
         }
     }
 }
