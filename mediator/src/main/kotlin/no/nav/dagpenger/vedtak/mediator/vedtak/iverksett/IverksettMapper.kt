@@ -21,7 +21,6 @@ internal fun VedtakObserver.VedtakFattet.tilIverksettDto(ident: String) = Iverks
         personIdent = ident,
     ),
     vedtak = vedtaksdetaljerDagpengerDto(this),
-    forrigeVedtak = null,
 )
 private fun behandlingsdetaljerDto(vedtakFattet: VedtakObserver.VedtakFattet) =
     BehandlingsdetaljerDto(
@@ -40,15 +39,9 @@ private fun vedtaksdetaljerDagpengerDto(vedtakFattet: VedtakObserver.VedtakFatte
 
         saksbehandlerId = "DIGIDAG",
         beslutterId = "DIGIDAG",
-        utbetalinger = emptyList(),
         vedtaksperioder = listOf(
             VedtaksperiodeDagpengerDto(
                 fraOgMedDato = vedtakFattet.virkningsdato,
             ),
         ),
-        tilbakekreving = null,
-        brevmottakere = emptyList(),
-        opphørÅrsak = null,
-        avslagÅrsak = null,
-
     )
