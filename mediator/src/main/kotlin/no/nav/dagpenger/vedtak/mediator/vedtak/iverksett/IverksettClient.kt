@@ -22,7 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.mediator.Configuration
-import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.IverksettDagpengerDto
+import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.IverksettDagpengerdDto
 
 internal class IverksettClient(
     private val baseUrl: String = Configuration.iverksettApiUrl,
@@ -57,7 +57,7 @@ internal class IverksettClient(
         }
     }
 
-    suspend fun iverksett(iverksettDagpengerDto: IverksettDagpengerDto) {
+    suspend fun iverksett(iverksettDagpengerDto: IverksettDagpengerdDto) {
         val url = URLBuilder(baseUrl).appendEncodedPathSegments("api", "iverksetting").build()
         withContext(Dispatchers.IO) {
             httpClient.post(url) {

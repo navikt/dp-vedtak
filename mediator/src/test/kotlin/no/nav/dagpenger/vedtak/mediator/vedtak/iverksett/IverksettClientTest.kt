@@ -6,16 +6,13 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
-import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.BehandlingsdetaljerDto
-import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.FagsakdetaljerDto
-import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.IverksettDagpengerDto
-import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.SøkerDto
-import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.VedtaksdetaljerDagpengerDto
+import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.IverksettDagpengerdDto
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
-import kotlin.random.Random
 
 class IverksettClientTest {
 
@@ -50,43 +47,18 @@ class IverksettClientTest {
         }
     }
 
+    private fun iverksettDagpengerdDtoDummy(): IverksettDagpengerdDto = VedtakObserver.VedtakFattet(
+        vedtakId = UUID.randomUUID(),
+        behandlingId = UUID.randomUUID(),
+        vedtakstidspunkt = LocalDateTime.now(),
+        virkningsdato = LocalDate.now(),
+        utfall = VedtakObserver.VedtakFattet.Utfall.Innvilget,
+
+    ).tilIverksettDto("12345678911")
+
     private fun mockEngine(statusCode: Int) = MockEngine { request ->
         request.headers[HttpHeaders.Accept] shouldBe "application/json"
         request.headers[HttpHeaders.Authorization] shouldBe "Bearer ${tokenProvider.invoke()}"
         respond(content = "", HttpStatusCode.fromValue(statusCode))
     }
-
-    private fun iverksettDagpengerdDtoDummy() = IverksettDagpengerDto(
-        fagsak = FagsakdetaljerDto(
-            fagsakId = UUID.randomUUID(),
-            eksternId = Random.nextLong(),
-            stønadstype = FagsakdetaljerDto.Stønadstype.DAGPENGER,
-        ),
-        behandling = BehandlingsdetaljerDto(
-            behandlingId = UUID.randomUUID(),
-            behandlingType = BehandlingsdetaljerDto.BehandlingType.FØRSTEGANGSBEHANDLING,
-            eksternId = Random.nextLong(),
-            behandlingÅrsak = BehandlingsdetaljerDto.Behandlingårsak.SØKNAD,
-            vilkårsvurderinger = emptyList(),
-        ),
-        søker = SøkerDto(
-            personIdent = "123456789",
-            barn = emptyList(),
-            tilhørendeEnhet = "",
-        ),
-        vedtak = VedtaksdetaljerDagpengerDto(
-            vedtakstidspunkt = LocalDateTime.now(),
-            resultat = VedtaksdetaljerDagpengerDto.Resultat.INNVILGET,
-            opphørårsak = null,
-            avslagårsak = null,
-            saksbehandlerId = "",
-            beslutterId = "",
-            utbetalinger = listOf(),
-            vedtaksperioder = listOf(),
-            tilbakekreving = null,
-            brevmottakere = listOf(),
-        ),
-        forrigeVedtak = null,
-
-    )
 }
