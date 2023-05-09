@@ -11,7 +11,7 @@ import java.util.UUID
 class IverksettingTest {
 
     private val ident = "12345678911"
-    private val testObservatør = TestObservatør()
+    private val testObservatør = IverksettingObservatør()
     private val vedtakId = UUID.randomUUID()
     private val iverksetting = Iverksetting(vedtakId).also {
         it.addObserver(testObservatør)
@@ -32,15 +32,6 @@ class IverksettingTest {
             Mottatt,
             AvventerIverksetting,
         )
-    }
-
-    private class TestObservatør : IverksettingObserver {
-        val tilstander = mutableListOf<Iverksetting.Tilstand.TilstandNavn>().also {
-            it.add(Mottatt)
-        }
-        override fun iverksettingTilstandEndret(event: IverksettingObserver.IverksettingEndretTilstandEvent) {
-            tilstander.add(event.gjeldendeTilstand)
-        }
     }
 
     private fun assertTilstander(vararg tilstander: Iverksetting.Tilstand.TilstandNavn) {
