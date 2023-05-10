@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak.iverksetting
 
+import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Iverksatt
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksettingFerdigHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.modell.Aktivitetskontekst
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
@@ -31,6 +33,11 @@ class Iverksetting(
     fun håndter(vedtakFattetHendelse: VedtakFattetHendelse) {
         kontekst(vedtakFattetHendelse)
         tilstand.håndter(vedtakFattetHendelse, this)
+    }
+
+    fun håndter(iverksettingFerdigHendelse: IverksettingFerdigHendelse) {
+        kontekst(iverksettingFerdigHendelse)
+        tilstand.håndter(iverksettingFerdigHendelse, this)
     }
 
     private fun kontekst(hendelse: Hendelse) {
@@ -71,7 +78,7 @@ class Iverksetting(
         enum class TilstandNavn {
             Mottatt,
             AvventerIverksetting,
-            Iverksatt
+            Iverksatt,
         }
 
         fun entering(hendelse: Hendelse, iverksetting: Iverksetting) {}
@@ -82,6 +89,10 @@ class Iverksetting(
 
         open fun håndter(vedtakFattetHendelse: VedtakFattetHendelse, iverksetting: Iverksetting) {
             vedtakFattetHendelse.severe("Kan ikke håndtere ${vedtakFattetHendelse.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
+        }
+
+        open fun håndter(iverksettingFerdigHendelse: IverksettingFerdigHendelse, iverksetting: Iverksetting) {
+            iverksettingFerdigHendelse.severe("Kan ikke håndtere ${iverksettingFerdigHendelse.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
         }
     }
 
@@ -96,5 +107,11 @@ class Iverksetting(
         }
     }
 
-    object AvventerIverksetting : Tilstand(TilstandNavn.AvventerIverksetting)
+    object AvventerIverksetting : Tilstand(TilstandNavn.AvventerIverksetting) {
+        override fun håndter(iverksettingFerdigHendelse: IverksettingFerdigHendelse, iverksetting: Iverksetting) {
+            iverksetting.endreTilstand(iverksettingFerdigHendelse, Iverksatt)
+        }
+    }
+
+    object Iverksatt : Tilstand(TilstandNavn.Iverksatt)
 }
