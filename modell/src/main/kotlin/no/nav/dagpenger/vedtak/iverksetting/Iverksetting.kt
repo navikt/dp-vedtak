@@ -100,7 +100,13 @@ class Iverksetting(
             vedtakFattetHendelse.behov(
                 type = Aktivitetslogg.Aktivitet.Behov.Behovtype.Iverksett,
                 melding = "Trenger å iverksette vedtak",
-
+                detaljer = mapOf(
+                    "vedtakId" to vedtakFattetHendelse.iverksettingsVedtak.vedtakId,
+                    "behandlingId" to vedtakFattetHendelse.iverksettingsVedtak.behandlingId,
+                    "vedtakstidspunkt" to vedtakFattetHendelse.iverksettingsVedtak.vedtakstidspunkt,
+                    "virkningsdato" to vedtakFattetHendelse.iverksettingsVedtak.virkningsdato,
+                    "utfall" to vedtakFattetHendelse.iverksettingsVedtak.utfall,
+                ),
             )
             iverksetting.endreTilstand(vedtakFattetHendelse, AvventerIverksetting)
         }

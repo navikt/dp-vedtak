@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.iverksetting
 
+import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.AvventerIverksetting
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Iverksatt
@@ -8,6 +9,8 @@ import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg.Aktivitet.Behov.Behovtype
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 class IverksettingTest {
@@ -15,6 +18,11 @@ class IverksettingTest {
     private val ident = "12345678911"
     private val testObservatør = IverksettingObservatør()
     private val vedtakId = UUID.randomUUID()
+    private val behandlingId = UUID.randomUUID()
+    private val vedtakstidspunkt = LocalDateTime.now()
+    private val virkningsdato = LocalDate.now()
+    private val utfall = IverksettingsVedtak.Utfall.Innvilget
+
     private val iverksetting = Iverksetting(vedtakId).also {
         it.addObserver(testObservatør)
     }
@@ -23,11 +31,29 @@ class IverksettingTest {
     @Test
     fun `Skal starte iverksetting når vedtak fattes`() {
         iverksetting.håndter(
-            VedtakFattetHendelse(ident = ident, vedtakId = vedtakId),
+            VedtakFattetHendelse(
+                ident = ident,
+                iverksettingsVedtak = IverksettingsVedtak(
+                    vedtakId = vedtakId,
+                    behandlingId = behandlingId,
+                    vedtakstidspunkt = vedtakstidspunkt,
+                    virkningsdato = virkningsdato,
+                    utfall = utfall,
+                ),
+            ),
         )
 
-        assertBehovDetaljer(
+        assertBehov(
             Behovtype.Iverksett,
+            forventetDetaljer = mapOf(
+                "vedtakId" to vedtakId.toString(),
+                "behandlingId" to behandlingId,
+                "vedtakstidspunkt" to vedtakstidspunkt,
+                "virkningsdato" to virkningsdato,
+                "utfall" to utfall,
+                "iverksettingId" to inspektør.iverksettingId.toString(),
+                "tilstand" to "Mottatt",
+            ),
         )
 
         iverksetting.håndter(
@@ -45,14 +71,11 @@ class IverksettingTest {
         tilstander.asList() shouldBe testObservatør.tilstander
     }
 
-    private fun assertBehovDetaljer(type: Behovtype, detaljer: Set<String> = emptySet()) {
-        val behov = inspektør.innsendingLogg.behov().find { behov ->
-            behov.type == type
-        } ?: throw AssertionError("Fant ikke behov ${type.name} i etterspurte behov")
+    private fun assertBehov(behovtype: Behovtype, forventetDetaljer: Map<String, Any> = emptyMap()) {
+        val behov = inspektør.innsendingLogg.behov().findLast {
+            it.type == behovtype
+        } ?: throw AssertionError("Fant ikke behov $behovtype")
 
-        val forventet = detaljer + setOf("iverksettingId", "vedtakId", "tilstand")
-        val faktisk = behov.detaljer().keys + behov.kontekster.flatMap { it.kontekstMap.keys }
-
-        forventet shouldBe faktisk
+        forventetDetaljer shouldContainAll behov.detaljer() + behov.kontekst()
     }
 }
