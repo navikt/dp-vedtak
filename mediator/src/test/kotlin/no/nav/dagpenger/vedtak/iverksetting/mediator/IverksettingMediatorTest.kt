@@ -1,11 +1,14 @@
 package no.nav.dagpenger.vedtak.iverksetting.mediator
 
+import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.iverksetting.mediator.persistens.IverksettingRepository
+import no.nav.dagpenger.vedtak.mediator.BehovMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
@@ -26,9 +29,9 @@ internal class IverksettingMediatorTest {
 
     val iverksettingMediator = HendelseMediator(
         rapidsConnection = testRapid,
-        meldingRepository = InMemoryMeldingRepository(),
+        hendelseRepository = InMemoryMeldingRepository(),
         personMediator = PersonMediator(mockk(), mockk()),
-        iverksettingMediator = IverksettingMediator(iverksettingRepository),
+        iverksettingMediator = IverksettingMediator(iverksettingRepository, BehovMediator(testRapid, KotlinLogging.logger {})),
     )
 
     @BeforeEach
@@ -38,7 +41,12 @@ internal class IverksettingMediatorTest {
 
     @Test
     fun `Vedtakfattet hendelse fører til en iverksettelse og behov om iverksetting`() {
-        testRapid.sendTestMessage(fattetVedtakJsonHendelse())
-        testRapid.inspektør.size shouldBe 1
+        testRapid.sendTestMessage(fattetVedtakJsonHendelse(vedtakId))
+        assertSoftly {
+            testRapid.inspektør.size shouldBe 1
+            val message = testRapid.inspektør.message(0)
+            message["@event_name"].asText() shouldBe "behov"
+            message["@behov"].map { it.asText() } shouldBe listOf("Iverksett")
+        }
     }
 }

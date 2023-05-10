@@ -4,7 +4,9 @@ import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.persistens.IverksettingRepository
+import no.nav.dagpenger.vedtak.mediator.BehovMediator
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
+import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.helse.rapids_rivers.withMDC
 
 // @todo
@@ -14,7 +16,10 @@ import no.nav.helse.rapids_rivers.withMDC
 // 4. Behovmediator - fra dp-soknad
 // 5. Lage behovløser for iversksetting mot iver
 
-internal class IverksettingMediator(private val iverksettingRepository: IverksettingRepository) {
+internal class IverksettingMediator(
+    private val iverksettingRepository: IverksettingRepository,
+    private val behovMediator: BehovMediator,
+) {
 
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -27,10 +32,11 @@ internal class IverksettingMediator(private val iverksettingRepository: Iverkset
         }
     }
 
-    private fun håndter(hendelse: VedtakFattetHendelse, håndter: (Iverksetting) -> Unit) = try {
-        val iverksetting = Iverksetting(hendelse.iverksettingsVedtak.vedtakId)
+    private fun håndter(hendelse: Hendelse, håndter: (Iverksetting) -> Unit) = try {
+        val iverksetting = hentEllerOpprettIverksett(hendelse)
         håndter(iverksetting)
         iverksettingRepository.lagre(iverksetting)
+        finalize(hendelse)
     } catch (err: Aktivitetslogg.AktivitetException) {
         logger.error("alvorlig feil i aktivitetslogg (se sikkerlogg for detaljer)")
         withMDC(err.kontekst()) {
@@ -40,6 +46,22 @@ internal class IverksettingMediator(private val iverksettingRepository: Iverkset
     } catch (e: Exception) {
         errorHandler(e, e.message ?: "Ukjent feil")
         throw e
+    }
+
+    private fun hentEllerOpprettIverksett(hendelse: Hendelse): Iverksetting {
+        return when (hendelse) {
+            is VedtakFattetHendelse -> iverksettingRepository.hent(hendelse.iverksettingsVedtak.vedtakId) ?: Iverksetting(hendelse.iverksettingsVedtak.vedtakId)
+            else -> {
+                TODO("Støtter bare VedtakFattetHendelse pt")
+            }
+        }
+    }
+
+    private fun finalize(hendelse: Hendelse) {
+        if (!hendelse.hasMessages()) return
+        if (hendelse.hasErrors()) return sikkerLogger.info("aktivitetslogg inneholder errors: ${hendelse.toLogString()}")
+        sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
+        behovMediator.håndter(hendelse)
     }
 
     private fun errorHandler(err: Exception, message: String, context: Map<String, String> = emptyMap()) {

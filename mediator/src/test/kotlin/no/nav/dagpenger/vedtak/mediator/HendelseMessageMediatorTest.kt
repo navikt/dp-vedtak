@@ -23,9 +23,9 @@ internal class HendelseMessageMediatorTest {
     private val meldingRepository = InMemoryMeldingRepository()
     private val hendelseMediator = HendelseMediator(
         rapidsConnection = testRapid,
-        meldingRepository = meldingRepository,
+        hendelseRepository = meldingRepository,
         personMediator = personMediatorMock,
-        iverksettingMediator = IverksettingMediator(mockk()),
+        iverksettingMediator = IverksettingMediator(mockk(), mockk()),
     )
 
     @Test
@@ -41,6 +41,6 @@ internal class HendelseMessageMediatorTest {
         every { personMediatorMock.håndter(any()) } throws RuntimeException("Feilet behandling")
         assertThrows<RuntimeException> { testRapid.sendTestMessage(dagpengerInnvilgetJson()) }
         assertEquals(0, meldingRepository.hentBehandlede().size)
-        assertEquals(1, meldingRepository.hentFeilede().size)
+        assertEquals(1, meldingRepository.hentMottatte().size)
     }
 }

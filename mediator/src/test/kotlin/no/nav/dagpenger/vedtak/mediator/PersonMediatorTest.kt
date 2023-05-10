@@ -33,12 +33,12 @@ internal class PersonMediatorTest {
     }
     val personMediator = HendelseMediator(
         rapidsConnection = testRapid,
-        meldingRepository = InMemoryMeldingRepository(),
+        hendelseRepository = InMemoryMeldingRepository(),
         personMediator = PersonMediator(
             personRepository = personRepository,
             personObservers = listOf(VedtakFattetKafkaObserver(testRapid), testObservatør),
         ),
-        iverksettingMediator = IverksettingMediator(mockk()),
+        iverksettingMediator = IverksettingMediator(mockk(), mockk()),
     )
 
     @BeforeEach

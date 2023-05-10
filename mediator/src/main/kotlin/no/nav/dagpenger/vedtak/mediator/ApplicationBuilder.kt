@@ -24,7 +24,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     init {
         HendelseMediator(
             rapidsConnection = rapidsConnection,
-            meldingRepository = InMemoryMeldingRepository(),
+            hendelseRepository = InMemoryMeldingRepository(),
             personMediator = PersonMediator(
                 personRepository = InMemoryPersonRepository(),
                 personObservers = listOf(
@@ -39,6 +39,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
             ),
             iverksettingMediator = IverksettingMediator(
                 iverksettingRepository = InMemoryIverksettingRepository(),
+                behovMediator = BehovMediator(rapidsConnection, KotlinLogging.logger("tjenestekall.BehovMediator")),
             ),
         )
         rapidsConnection.register(this)
