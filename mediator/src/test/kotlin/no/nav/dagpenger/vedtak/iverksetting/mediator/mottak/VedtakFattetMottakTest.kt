@@ -27,12 +27,12 @@ class VedtakFattetMottakTest {
     @Test
     fun `Skal lese vedtakfattet hendelser `() {
         val vedtakFattetHendelse = slot<VedtakFattetHendelse>()
-        every { iverksettingMediatorMock.behandle(capture(vedtakFattetHendelse)) } just Runs
+        every { iverksettingMediatorMock.håndter(capture(vedtakFattetHendelse)) } just Runs
         val fattetvedtakJson = fattetVedtakJsonHendelse()
         testRapid.sendTestMessage(fattetvedtakJson)
 
         verify(exactly = 1) {
-            iverksettingMediatorMock.behandle(any())
+            iverksettingMediatorMock.håndter(any())
         }
 
         assertSoftly {

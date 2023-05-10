@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
+import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
@@ -24,6 +25,7 @@ internal class HendelseMessageMediatorTest {
         rapidsConnection = testRapid,
         meldingRepository = meldingRepository,
         personMediator = personMediatorMock,
+        iverksettingMediator = IverksettingMediator(mockk()),
     )
 
     @Test

@@ -8,8 +8,8 @@ import no.nav.dagpenger.vedtak.modell.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import java.util.UUID
 
-class Iverksetting(
-    private val id: UUID,
+class Iverksetting private constructor(
+    val id: UUID,
     private val vedtakId: UUID,
     private var tilstand: Tilstand,
     internal val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),

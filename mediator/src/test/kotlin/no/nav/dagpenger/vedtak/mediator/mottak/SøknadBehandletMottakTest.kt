@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 
 class SøknadBehandletMottakTest {
     private val hendelseMediatorMock = mockk<HendelseMediator>().also {
-        every { it.håndter(any()) } just Runs
+        every { it.håndter(any<SøknadBehandletHendelseMessage>()) } just Runs
     }
     private val testRapid = TestRapid().also {
         SøknadBehandletMottak(it, hendelseMediatorMock)
@@ -29,7 +29,7 @@ class SøknadBehandletMottakTest {
     fun `motta dagpenger innvilget hendelse`() {
         testRapid.sendTestMessage(dagpengerInnvilgetJson())
         verify(exactly = 1) {
-            hendelseMediatorMock.håndter(any())
+            hendelseMediatorMock.håndter(any<SøknadBehandletHendelseMessage>())
         }
     }
 
@@ -37,7 +37,7 @@ class SøknadBehandletMottakTest {
     fun `motta dagpenger avslått hendelse`() {
         testRapid.sendTestMessage(dagpengerAvslåttJson())
         verify(exactly = 1) {
-            hendelseMediatorMock.håndter(any())
+            hendelseMediatorMock.håndter(any<SøknadBehandletHendelseMessage>())
         }
     }
 
@@ -45,7 +45,7 @@ class SøknadBehandletMottakTest {
     fun `avslå meldinger som ikke validerer`() {
         testRapid.sendTestMessage(dagpengerInnvilgetJson(rettighetstype = "bla bla"))
         verify(exactly = 0) {
-            hendelseMediatorMock.håndter(any())
+            hendelseMediatorMock.håndter(any<SøknadBehandletHendelseMessage>())
         }
     }
 }

@@ -28,7 +28,7 @@ internal class VedtakFattetMottak(
         val vedtakId = packet["vedtakId"].asText()
         withLoggingContext("vedtakId" to vedtakId) {
             val vedtakFattetHendelseMessage = VedtakFattetHendelseMessage(packet)
-            iverksettingMediator.behandle(vedtakFattetHendelseMessage.hendelse())
+            iverksettingMediator.håndter(vedtakFattetHendelseMessage.hendelse())
         }
     }
 
