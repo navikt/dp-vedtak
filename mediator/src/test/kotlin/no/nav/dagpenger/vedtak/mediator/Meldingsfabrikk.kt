@@ -5,12 +5,12 @@ import java.util.UUID
 
 object Meldingsfabrikk {
 
-    fun dagpengerInnvilgetJson(rettighetstype: String = "Ordinær") =
+    fun dagpengerInnvilgetJson(rettighetstype: String = "Ordinær", ident: String = "12345123451") =
         //language=JSON
         """
         {        
           "@event_name": "søknad_behandlet_hendelse",
-          "ident" : "12345123451",
+          "ident" : "$ident",
           "behandlingId": "${UUID.randomUUID()}",
           "Virkningsdato": "${LocalDate.now()}",
           "innvilget": true,
@@ -29,12 +29,12 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
-    fun dagpengerAvslåttJson() =
+    fun dagpengerAvslåttJson(ident: String = "12345123451") =
         //language=JSON
         """
         {        
           "@event_name": "søknad_behandlet_hendelse",
-          "ident" : "12345123451",
+          "ident" : "$ident",
           "behandlingId": "${UUID.randomUUID()}",
           "Virkningsdato": "${LocalDate.now()}",
           "innvilget": false

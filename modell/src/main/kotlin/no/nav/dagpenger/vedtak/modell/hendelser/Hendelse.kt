@@ -15,4 +15,6 @@ abstract class Hendelse(
     override fun toSpesifikkKontekst(): SpesifikkKontekst {
         return SpesifikkKontekst(this.javaClass.simpleName, mapOf("ident" to ident))
     }
+
+    fun toLogString(): String = aktivitetslogg.toString()
 }

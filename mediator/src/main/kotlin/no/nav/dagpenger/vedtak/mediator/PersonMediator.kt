@@ -8,6 +8,7 @@ import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIde
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.withMDC
 
 internal class PersonMediator(
@@ -27,11 +28,13 @@ internal class PersonMediator(
 
     private fun behandle(hendelse: Hendelse, håndter: (Person) -> Unit) = try {
         val person = hentEllerOpprettPerson(hendelse)
-        personObservers.forEach { personObserver ->
-            person.addObserver(personObserver)
-        }
+        val delegatedObserver = DelegatedObserver(personObservers)
+        person.addObserver(delegatedObserver)
         håndter(person)
         lagre(person)
+        finalize(hendelse).also {
+            delegatedObserver.finalize()
+        }
     } catch (err: Aktivitetslogg.AktivitetException) {
         logger.error("alvorlig feil i aktivitetslogg (se sikkerlogg for detaljer)")
 
@@ -55,9 +58,26 @@ internal class PersonMediator(
             else -> person ?: throw RuntimeException("har ikke informasjon om person")
         }
     }
+    private fun finalize(hendelse: Hendelse) {
+        if (!hendelse.hasMessages()) return
+        if (hendelse.hasErrors()) return sikkerLogger.info("aktivitetslogg inneholder errors: ${hendelse.toLogString()}")
+        sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
+    }
 
     private fun errorHandler(err: Exception, message: String, context: Map<String, String> = emptyMap()) {
         logger.error("alvorlig feil: ${err.message} (se sikkerlogg for melding)", err)
         withMDC(context) { sikkerLogger.error("alvorlig feil: ${err.message}\n\t$message", err) }
+    }
+}
+
+private class DelegatedObserver(private val observers: List<PersonObserver>) : PersonObserver {
+
+    private val delegated = mutableListOf<Pair<String, VedtakObserver.VedtakFattet>>()
+    override fun vedtaktFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
+        delegated.add(Pair(ident, vedtakFattet))
+    }
+
+    fun finalize() = delegated.forEach { (ident, vedtak) ->
+        observers.forEach { it.vedtaktFattet(ident, vedtak) }
     }
 }
