@@ -57,7 +57,7 @@ class IverksettingTest {
         )
 
         iverksetting.håndter(
-            IverksattHendelse(ident = ident),
+            IverksattHendelse(ident = ident, iverksettingId = inspektør.iverksettingId),
         )
 
         assertTilstander(
