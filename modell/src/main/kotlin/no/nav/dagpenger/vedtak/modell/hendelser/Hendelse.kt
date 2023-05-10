@@ -7,7 +7,7 @@ import no.nav.dagpenger.vedtak.modell.SpesifikkKontekst
 
 abstract class Hendelse(
     private val ident: String,
-    internal val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
+    private val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Aktivitetskontekst, IAktivitetslogg by aktivitetslogg {
 
     fun ident() = ident

@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.iverksetting
 
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.AvventerIverksetting
+import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Iverksatt
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Mottatt
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg.Aktivitet.Behov.Behovtype
@@ -31,6 +32,7 @@ class IverksettingTest {
         assertTilstander(
             Mottatt,
             AvventerIverksetting,
+            Iverksatt
         )
     }
 

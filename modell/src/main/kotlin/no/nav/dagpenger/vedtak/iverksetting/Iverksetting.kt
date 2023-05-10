@@ -71,6 +71,7 @@ class Iverksetting(
         enum class TilstandNavn {
             Mottatt,
             AvventerIverksetting,
+            Iverksatt
         }
 
         fun entering(hendelse: Hendelse, iverksetting: Iverksetting) {}
