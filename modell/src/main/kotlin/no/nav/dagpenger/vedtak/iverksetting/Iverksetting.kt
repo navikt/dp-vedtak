@@ -1,7 +1,6 @@
 package no.nav.dagpenger.vedtak.iverksetting
 
-import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Iverksatt
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksettingFerdigHendelse
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.modell.Aktivitetskontekst
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
@@ -35,9 +34,9 @@ class Iverksetting(
         tilstand.håndter(vedtakFattetHendelse, this)
     }
 
-    fun håndter(iverksettingFerdigHendelse: IverksettingFerdigHendelse) {
-        kontekst(iverksettingFerdigHendelse)
-        tilstand.håndter(iverksettingFerdigHendelse, this)
+    fun håndter(iverksattHendelse: IverksattHendelse) {
+        kontekst(iverksattHendelse)
+        tilstand.håndter(iverksattHendelse, this)
     }
 
     private fun kontekst(hendelse: Hendelse) {
@@ -91,8 +90,8 @@ class Iverksetting(
             vedtakFattetHendelse.severe("Kan ikke håndtere ${vedtakFattetHendelse.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
         }
 
-        open fun håndter(iverksettingFerdigHendelse: IverksettingFerdigHendelse, iverksetting: Iverksetting) {
-            iverksettingFerdigHendelse.severe("Kan ikke håndtere ${iverksettingFerdigHendelse.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
+        open fun håndter(iverksattHendelse: IverksattHendelse, iverksetting: Iverksetting) {
+            iverksattHendelse.severe("Kan ikke håndtere ${iverksattHendelse.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
         }
     }
 
@@ -108,8 +107,8 @@ class Iverksetting(
     }
 
     object AvventerIverksetting : Tilstand(TilstandNavn.AvventerIverksetting) {
-        override fun håndter(iverksettingFerdigHendelse: IverksettingFerdigHendelse, iverksetting: Iverksetting) {
-            iverksetting.endreTilstand(iverksettingFerdigHendelse, Iverksatt)
+        override fun håndter(iverksattHendelse: IverksattHendelse, iverksetting: Iverksetting) {
+            iverksetting.endreTilstand(iverksattHendelse, Iverksatt)
         }
     }
 

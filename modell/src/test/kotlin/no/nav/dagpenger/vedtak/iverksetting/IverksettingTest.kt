@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.AvventerIverksetting
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Iverksatt
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Mottatt
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksettingFerdigHendelse
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg.Aktivitet.Behov.Behovtype
 import org.junit.jupiter.api.Test
@@ -31,7 +31,7 @@ class IverksettingTest {
         )
 
         iverksetting.håndter(
-            IverksettingFerdigHendelse(ident = ident),
+            IverksattHendelse(ident = ident),
         )
 
         assertTilstander(
