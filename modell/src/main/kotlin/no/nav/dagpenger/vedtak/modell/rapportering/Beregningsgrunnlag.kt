@@ -55,7 +55,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
             ): DagGrunnlag {
                 return when (dagpengerettighet) {
                     Dagpengerettighet.Ingen -> IngenRettighetsdag(dag, dagpengerettighet)
-                    else -> Rettighetsdag(dag, dagpengerettighet, sats, vanligArbeidstid, 0.timer)
+                    else -> Rettighetsdag(dag, dagpengerettighet, sats, vanligArbeidstid)
                 }
             }
         }
@@ -86,7 +86,6 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         private val dagpengerettighet: Dagpengerettighet,
         private val sats: BigDecimal,
         private val vanligArbeidstid: Timer,
-        private var egenandelAsTimer: Timer,
     ) : DagGrunnlag(dag) {
 
         private val terskelProsent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
@@ -104,8 +103,6 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         private fun utbetalingstimer(): Timer {
             return if (dag is Helgedag) {
                 0.timer - dag.arbeidstimer()
-            } else if (egenandelAsTimer != 0.timer) {
-                vanligArbeidstid - egenandelAsTimer - dag.arbeidstimer()
             } else {
                 vanligArbeidstid - dag.arbeidstimer()
             }

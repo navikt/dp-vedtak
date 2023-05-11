@@ -32,7 +32,9 @@ internal class LøpendeBehandling(
         }
 
         val forbruk = arbeidsdagerMedForbruk.size.arbeidsdager
-        val utbetalingsdager = arbeidsdagerMedForbruk.map { it.tilBetalingsdag() } + beregningsgrunnlag.helgedagerMedRettighet().filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilBetalingsdag() }
+        val utbetalingsdager =
+            arbeidsdagerMedForbruk.map { it.tilBetalingsdag() } + beregningsgrunnlag.helgedagerMedRettighet()
+                .filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilBetalingsdag() }
 
         val gjenståendeEgenandel = gjenståendeEgenandelHistorikk.get(førsteRettighetsdag())
         val originalSum = utbetalingsdager.summer()
