@@ -3,11 +3,11 @@ package no.nav.dagpenger.vedtak.mediator
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.iverksetting.mediator.InMemoryIverksettingRepository
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.IverksettBehovløser
 import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.IverksettClient
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
-import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.VedtakFattetIverksettObserver
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -29,12 +29,6 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
                 personRepository = InMemoryPersonRepository(),
                 personObservers = listOf(
                     VedtakFattetKafkaObserver(rapidsConnection),
-                    VedtakFattetIverksettObserver(
-                        iverksettClient = IverksettClient(
-                            Configuration.iverksettApiUrl,
-                            Configuration.iverksettClientTokenSupplier,
-                        ),
-                    ),
                 ),
             ),
             iverksettingMediator = IverksettingMediator(
@@ -42,6 +36,15 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
                 behovMediator = BehovMediator(rapidsConnection, KotlinLogging.logger("tjenestekall.BehovMediator")),
             ),
         )
+
+        IverksettBehovløser(
+            rapidsConnection = rapidsConnection,
+            iverksettClient = IverksettClient(
+                Configuration.iverksettApiUrl,
+                Configuration.iverksettClientTokenSupplier,
+            ),
+        )
+
         rapidsConnection.register(this)
     }
 

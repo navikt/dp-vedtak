@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak.mediator.vedtak.iverksett
+package no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere
 
 import io.kotest.matchers.shouldBe
 import io.ktor.client.engine.mock.MockEngine
@@ -6,16 +6,22 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.IverksettClient
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.BehandlingType
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.BehandlingsdetaljerDto
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.BehandlingÅrsak
 import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.IverksettDagpengerdDto
-import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.SakDto
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.SøkerDto
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.VedtaksdetaljerDagpengerDto
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.VedtaksperiodeDagpengerDto
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.Vedtaksresultat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class IverksettClientTest {
+internal class IverksettClientTest {
 
     private val tokenProvider = { "token" }
 
@@ -48,14 +54,30 @@ class IverksettClientTest {
         }
     }
 
-    private fun iverksettDagpengerdDtoDummy(): IverksettDagpengerdDto = VedtakObserver.VedtakFattet(
-        vedtakId = UUID.randomUUID(),
-        behandlingId = UUID.randomUUID(),
-        vedtakstidspunkt = LocalDateTime.now(),
-        virkningsdato = LocalDate.now(),
-        utfall = VedtakObserver.VedtakFattet.Utfall.Innvilget,
-
-    ).tilIverksettDto("12345678911")
+    private fun iverksettDagpengerdDtoDummy(): IverksettDagpengerdDto = IverksettDagpengerdDto(
+        sak = SakDto(
+            sakId = UUID.randomUUID(),
+        ),
+        behandling = BehandlingsdetaljerDto(
+            behandlingId = UUID.randomUUID(),
+            behandlingType = BehandlingType.FØRSTEGANGSBEHANDLING,
+            behandlingÅrsak = BehandlingÅrsak.SØKNAD,
+        ),
+        søker = SøkerDto(
+            personIdent = "12345678901",
+        ),
+        vedtak = VedtaksdetaljerDagpengerDto(
+            vedtakstidspunkt = LocalDateTime.now(),
+            resultat = Vedtaksresultat.INNVILGET,
+            saksbehandlerId = "DIGIDAG",
+            beslutterId = "DIGIDAG",
+            vedtaksperioder = listOf(
+                VedtaksperiodeDagpengerDto(
+                    fraOgMedDato = LocalDate.now(),
+                ),
+            ),
+        ),
+    )
 
     private fun mockEngine(statusCode: Int) = MockEngine { request ->
         request.headers[HttpHeaders.Accept] shouldBe "application/json"
