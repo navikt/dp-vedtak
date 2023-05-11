@@ -9,6 +9,9 @@ dependencies {
     implementation(Jackson.core)
     implementation(Jackson.jsr310)
 
+    // https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-slf4j/
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.6.4")
+
     // POC - iverksett api
     implementation("io.ktor:ktor-client-core:${Ktor2.version}")
     implementation("io.ktor:ktor-client-cio:${Ktor2.version}")
