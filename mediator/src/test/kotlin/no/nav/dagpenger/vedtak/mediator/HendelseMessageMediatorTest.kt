@@ -5,6 +5,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
+import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
@@ -22,8 +23,9 @@ internal class HendelseMessageMediatorTest {
     private val meldingRepository = InMemoryMeldingRepository()
     private val hendelseMediator = HendelseMediator(
         rapidsConnection = testRapid,
-        meldingRepository = meldingRepository,
+        hendelseRepository = meldingRepository,
         personMediator = personMediatorMock,
+        iverksettingMediator = IverksettingMediator(mockk(), mockk()),
     )
 
     @Test
@@ -39,6 +41,6 @@ internal class HendelseMessageMediatorTest {
         every { personMediatorMock.håndter(any()) } throws RuntimeException("Feilet behandling")
         assertThrows<RuntimeException> { testRapid.sendTestMessage(dagpengerInnvilgetJson()) }
         assertEquals(0, meldingRepository.hentBehandlede().size)
-        assertEquals(1, meldingRepository.hentFeilede().size)
+        assertEquals(1, meldingRepository.hentMottatte().size)
     }
 }

@@ -5,6 +5,7 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
@@ -32,11 +33,12 @@ internal class PersonMediatorTest {
     }
     val personMediator = HendelseMediator(
         rapidsConnection = testRapid,
-        meldingRepository = InMemoryMeldingRepository(),
+        hendelseRepository = InMemoryMeldingRepository(),
         personMediator = PersonMediator(
             personRepository = personRepository,
             personObservers = listOf(VedtakFattetKafkaObserver(testRapid), testObservatør),
         ),
+        iverksettingMediator = IverksettingMediator(mockk(), mockk()),
     )
 
     @BeforeEach

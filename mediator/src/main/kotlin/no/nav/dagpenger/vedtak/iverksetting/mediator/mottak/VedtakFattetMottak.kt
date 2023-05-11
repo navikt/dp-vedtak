@@ -2,7 +2,7 @@ package no.nav.dagpenger.vedtak.iverksetting.mediator.mottak
 
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
+import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -11,7 +11,7 @@ import no.nav.helse.rapids_rivers.River
 
 internal class VedtakFattetMottak(
     rapidsConnection: RapidsConnection,
-    private val iverksettingMediator: IverksettingMediator,
+    private val hendelseMediator: IHendelseMediator,
 ) : River.PacketListener {
 
     init {
@@ -28,7 +28,7 @@ internal class VedtakFattetMottak(
         val vedtakId = packet["vedtakId"].asText()
         withLoggingContext("vedtakId" to vedtakId) {
             val vedtakFattetHendelseMessage = VedtakFattetHendelseMessage(packet)
-            iverksettingMediator.behandle(vedtakFattetHendelseMessage.hendelse())
+            vedtakFattetHendelseMessage.behandle(hendelseMediator, context)
         }
     }
 

@@ -1,6 +1,8 @@
 package no.nav.dagpenger.vedtak.mediator
 
 import mu.KotlinLogging
+import no.nav.dagpenger.vedtak.iverksetting.mediator.InMemoryIverksettingRepository
+import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
@@ -22,15 +24,22 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     init {
         HendelseMediator(
             rapidsConnection = rapidsConnection,
-            meldingRepository = InMemoryMeldingRepository(),
+            hendelseRepository = InMemoryMeldingRepository(),
             personMediator = PersonMediator(
                 personRepository = InMemoryPersonRepository(),
                 personObservers = listOf(
                     VedtakFattetKafkaObserver(rapidsConnection),
                     VedtakFattetIverksettObserver(
-                        iverksettClient = IverksettClient(Configuration.iverksettApiUrl, Configuration.iverksettClientTokenSupplier),
+                        iverksettClient = IverksettClient(
+                            Configuration.iverksettApiUrl,
+                            Configuration.iverksettClientTokenSupplier,
+                        ),
                     ),
                 ),
+            ),
+            iverksettingMediator = IverksettingMediator(
+                iverksettingRepository = InMemoryIverksettingRepository(),
+                behovMediator = BehovMediator(rapidsConnection, KotlinLogging.logger("tjenestekall.BehovMediator")),
             ),
         )
         rapidsConnection.register(this)

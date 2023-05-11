@@ -10,29 +10,30 @@ import io.mockk.slot
 import io.mockk.verify
 import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
-import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.iverksetting.mediator.fattetVedtakJsonHendelse
+import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class VedtakFattetMottakTest {
+internal class VedtakFattetMottakTest {
 
     private val testRapid = TestRapid()
-    private val iverksettingMediatorMock = mockk<IverksettingMediator>()
-    private val vedtakFattetMottak = VedtakFattetMottak(testRapid, iverksettingMediatorMock)
+
+    private val iHendelseMediator = mockk<IHendelseMediator>()
+    private val vedtakFattetMottak = VedtakFattetMottak(testRapid, iHendelseMediator)
 
     @Test
     fun `Skal lese vedtakfattet hendelser `() {
         val vedtakFattetHendelse = slot<VedtakFattetHendelse>()
-        every { iverksettingMediatorMock.behandle(capture(vedtakFattetHendelse)) } just Runs
+        every { iHendelseMediator.behandle(capture(vedtakFattetHendelse), any(), any()) } just Runs
         val fattetvedtakJson = fattetVedtakJsonHendelse()
         testRapid.sendTestMessage(fattetvedtakJson)
 
         verify(exactly = 1) {
-            iverksettingMediatorMock.behandle(any())
+            iHendelseMediator.behandle(any<VedtakFattetHendelse>(), any(), any())
         }
 
         assertSoftly {

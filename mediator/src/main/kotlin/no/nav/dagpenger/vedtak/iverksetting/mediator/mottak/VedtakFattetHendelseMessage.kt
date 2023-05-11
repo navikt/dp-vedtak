@@ -1,19 +1,25 @@
 package no.nav.dagpenger.vedtak.iverksetting.mediator.mottak
 
-import com.fasterxml.jackson.databind.JsonNode
 import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
+import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
+import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
-import java.util.UUID
 
-internal class VedtakFattetHendelseMessage(private val packet: JsonMessage) {
+internal class VedtakFattetHendelseMessage(private val packet: JsonMessage) : HendelseMessage(packet) {
 
-    fun hendelse(): VedtakFattetHendelse = VedtakFattetHendelse(
-        ident = packet["ident"].asText(),
+    override val ident: String
+        get() = packet["ident"].asText()
+
+    private val vedtakId = packet["vedtakId"].asUUID()
+
+    private val hendelse get() = VedtakFattetHendelse(
+        ident = ident,
         iverksettingsVedtak = IverksettingsVedtak(
-            vedtakId = packet["vedtakId"].asUUID(),
+            vedtakId = vedtakId,
             behandlingId = packet["behandlingId"].asUUID(),
             vedtakstidspunkt = packet["vedtaktidspunkt"].asLocalDateTime(),
             virkningsdato = packet["virkningsdato"].asLocalDate(),
@@ -27,7 +33,9 @@ internal class VedtakFattetHendelseMessage(private val packet: JsonMessage) {
         ),
     )
 
+    override fun behandle(mediator: IHendelseMediator, context: MessageContext) {
+        mediator.behandle(hendelse, this, context)
+    }
+
     private fun JsonMessage.utfall(): String = this["utfall"].asText()
 }
-
-private fun JsonNode.asUUID() = this.asText().let { UUID.fromString(it) }
