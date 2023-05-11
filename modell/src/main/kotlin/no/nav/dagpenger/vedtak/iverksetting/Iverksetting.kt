@@ -16,12 +16,14 @@ class Iverksetting private constructor(
 ) : Aktivitetskontekst {
 
     private val observers = mutableListOf<IverksettingObserver>()
+
     constructor(vedtakId: UUID) : this(id = UUID.randomUUID(), vedtakId = vedtakId, Mottatt)
 
     fun accept(iverksettingVisitor: IverksettingVisitor) {
         iverksettingVisitor.visitIverksetting(id, vedtakId, tilstand)
         aktivitetslogg.accept(iverksettingVisitor)
     }
+
     override fun toSpesifikkKontekst(): SpesifikkKontekst {
         return SpesifikkKontekst(
             "Iverksetting",
@@ -87,12 +89,15 @@ class Iverksetting private constructor(
             SpesifikkKontekst("IverksettingTilstand", mapOf("tilstand" to tilstandnavn.name))
 
         open fun håndter(vedtakFattetHendelse: VedtakFattetHendelse, iverksetting: Iverksetting) {
-            vedtakFattetHendelse.severe("Kan ikke håndtere ${vedtakFattetHendelse.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
+            vedtakFattetHendelse.feiltilstand()
         }
 
         open fun håndter(iverksattHendelse: IverksattHendelse, iverksetting: Iverksetting) {
-            iverksattHendelse.severe("Kan ikke håndtere ${iverksattHendelse.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
+            iverksattHendelse.feiltilstand()
         }
+
+        private fun Hendelse.feiltilstand(): Nothing =
+            this.severe("Kan ikke håndtere ${this.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
     }
 
     object Mottatt : Tilstand(TilstandNavn.Mottatt) {
