@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere
 
+import io.mockk.coVerify
+import io.mockk.mockk
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -7,15 +9,23 @@ import org.junit.jupiter.api.Test
 class IverksettBehovløserTest {
 
     private val testRapid = TestRapid()
+    private val iverksettClient = mockk<IverksettClient>()
     init {
-
-        IverksettBehovløser(testRapid)
+        IverksettBehovløser(testRapid, iverksettClient)
     }
 
     @Test
-    fun `tull`() {
-        //language=JSON
-        val iverksettJson = """{
+    fun `at vi kaller iverksett APIet og besvarer behovet 'Iverksett'`() {
+        testRapid.sendTestMessage(iverksettJson)
+        coVerify(exactly = 1) {
+            iverksettClient.iverksett(any())
+        }
+
+        assertEquals(1, testRapid.inspektør.size)
+    }
+
+    //language=JSON
+    private val iverksettJson = """{
   "@event_name": "behov",
   "@behovId": "fe6fb8ee-cbc7-46bf-a5d7-fb9b57b279c4",
   "@behov": [
@@ -45,7 +55,4 @@ class IverksettBehovløserTest {
     }
   ]
 }"""
-        testRapid.sendTestMessage(iverksettJson)
-        assertEquals(1, testRapid.inspektør.size)
-    }
 }

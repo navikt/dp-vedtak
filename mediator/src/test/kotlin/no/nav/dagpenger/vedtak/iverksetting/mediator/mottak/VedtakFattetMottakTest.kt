@@ -39,7 +39,7 @@ internal class VedtakFattetMottakTest {
         assertSoftly {
             vedtakFattetHendelse.isCaptured shouldBe true
             val captured = vedtakFattetHendelse.captured
-            captured.ident() shouldBe "string"
+            captured.ident() shouldBe "12345678910"
             captured.iverksettingsVedtak.vedtakId shouldBe UUID.fromString("df5e6587-a3e3-407c-8202-02f9740a09b0")
             captured.iverksettingsVedtak.behandlingId shouldBe UUID.fromString("0AAA66B9-35C2-4398-ACA0-D1D0A9465292")
             captured.iverksettingsVedtak.virkningsdato shouldBe LocalDate.of(2019, 8, 24)

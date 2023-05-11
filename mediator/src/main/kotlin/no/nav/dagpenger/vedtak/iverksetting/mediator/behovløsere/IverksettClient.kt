@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak.mediator.vedtak.iverksett
+package no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -21,8 +21,8 @@ import io.ktor.serialization.jackson.jackson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.IverksettDagpengerdDto
 import no.nav.dagpenger.vedtak.mediator.Configuration
-import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.IverksettDagpengerdDto
 
 internal class IverksettClient(
     private val baseUrl: String = Configuration.iverksettApiUrl,

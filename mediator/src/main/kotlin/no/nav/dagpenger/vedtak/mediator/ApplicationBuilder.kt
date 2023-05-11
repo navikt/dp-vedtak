@@ -3,10 +3,10 @@ package no.nav.dagpenger.vedtak.mediator
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.iverksetting.mediator.InMemoryIverksettingRepository
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.IverksettClient
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
-import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.IverksettClient
 import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.VedtakFattetIverksettObserver
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection

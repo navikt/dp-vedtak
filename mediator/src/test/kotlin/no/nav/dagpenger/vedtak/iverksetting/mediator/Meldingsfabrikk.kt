@@ -7,7 +7,7 @@ internal fun fattetVedtakJsonHendelse(vedtakId: UUID = UUID.fromString("df5e6587
     """
                 {
                   "@event_type": "vedtak_fattet",
-                  "ident": "string",
+                  "ident": "12345678910",
                   "behandlingId": "0AAA66B9-35C2-4398-ACA0-D1D0A9465292",
                   "vedtakId": "$vedtakId",
                   "vedtaktidspunkt": "2019-08-24T14:15:22",

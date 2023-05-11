@@ -23,7 +23,7 @@ class IverksettingTest {
     private val virkningsdato = LocalDate.now()
     private val utfall = IverksettingsVedtak.Utfall.Innvilget
 
-    private val iverksetting = Iverksetting(vedtakId).also {
+    private val iverksetting = Iverksetting(vedtakId, ident).also {
         it.addObserver(testObservatør)
     }
     private val inspektør get() = IverksettingInspektør(iverksetting)
@@ -46,6 +46,7 @@ class IverksettingTest {
         assertBehov(
             Behovtype.Iverksett,
             forventetDetaljer = mapOf(
+                "ident" to ident,
                 "vedtakId" to vedtakId.toString(),
                 "behandlingId" to behandlingId,
                 "vedtakstidspunkt" to vedtakstidspunkt,

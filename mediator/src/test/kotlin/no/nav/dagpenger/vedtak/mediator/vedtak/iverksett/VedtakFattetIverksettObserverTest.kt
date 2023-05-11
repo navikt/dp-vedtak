@@ -5,6 +5,7 @@ import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.IverksettClient
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

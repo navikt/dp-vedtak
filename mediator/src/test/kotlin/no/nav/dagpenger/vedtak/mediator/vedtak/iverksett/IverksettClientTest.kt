@@ -6,7 +6,8 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
-import no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models.IverksettDagpengerdDto
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.IverksettClient
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.IverksettDagpengerdDto
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

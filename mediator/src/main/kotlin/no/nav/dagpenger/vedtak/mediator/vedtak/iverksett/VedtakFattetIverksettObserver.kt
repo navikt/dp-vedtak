@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.mediator.vedtak.iverksett
 
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.IverksettClient
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.VedtakFattet.Utfall.Innvilget

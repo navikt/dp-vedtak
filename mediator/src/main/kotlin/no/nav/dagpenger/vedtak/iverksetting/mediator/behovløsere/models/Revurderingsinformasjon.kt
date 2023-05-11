@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak.mediator.vedtak.iverksett.models
+package no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models
 
 enum class Opplysningskilde {
     INNSENDT_SØKNAD,
