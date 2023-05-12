@@ -18,7 +18,7 @@ class Iverksetting private constructor(
     internal val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Aktivitetskontekst {
 
-    private val observers = mutableListOf<IverksettingObserver>()
+    private val observers = mutableSetOf<IverksettingObserver>()
     constructor(vedtakId: UUID, ident: String) : this(
         id = UUID.randomUUID(),
         personIdent = ident.tilPersonIdentfikator(),

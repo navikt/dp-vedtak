@@ -17,7 +17,7 @@ import java.time.LocalDate
 class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     private val vedtak = historiskeVedtak.sorted().toMutableList()
-    private val observers = mutableListOf<VedtakObserver>()
+    private val observers = mutableSetOf<VedtakObserver>()
 
     internal val dagsatsHistorikk = TemporalCollection<BigDecimal>()
     internal val grunnlagHistorikk = TemporalCollection<BigDecimal>()
