@@ -7,14 +7,16 @@ import no.nav.dagpenger.vedtak.modell.SpesifikkKontekst
 
 abstract class Hendelse(
     private val ident: String,
-    private val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
+    internal val aktivitetslogg: Aktivitetslogg,
 ) : Aktivitetskontekst, IAktivitetslogg by aktivitetslogg {
 
     fun ident() = ident
 
     override fun toSpesifikkKontekst(): SpesifikkKontekst {
-        return SpesifikkKontekst(this.javaClass.simpleName, mapOf("ident" to ident))
+        return SpesifikkKontekst(this.javaClass.simpleName, mapOf("ident" to ident) + kontekstMap())
     }
 
     fun toLogString(): String = aktivitetslogg.toString()
+
+    abstract fun kontekstMap(): Map<String, String>
 }

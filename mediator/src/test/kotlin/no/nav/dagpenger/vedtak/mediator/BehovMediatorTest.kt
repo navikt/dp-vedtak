@@ -2,23 +2,21 @@ package no.nav.dagpenger.vedtak.mediator
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.mockk.mockk
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.modell.Aktivitetskontekst
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg.Aktivitet.Behov.Behovtype.Iverksett
 import no.nav.dagpenger.vedtak.modell.SpesifikkKontekst
+import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 import java.util.UUID
 
-@Disabled
 internal class BehovMediatorTest {
     private companion object {
         private const val testIdent = "12345678912"
@@ -168,12 +166,14 @@ internal class BehovMediatorTest {
 
     private class TestHendelse(
         val logg: Aktivitetslogg,
-    ) : IverksattHendelse(testIdent, iverksettingId), Aktivitetskontekst {
+    ) : Hendelse(testIdent, logg), Aktivitetskontekst {
         init {
             logg.kontekst(this)
         }
 
         override fun toSpesifikkKontekst() = SpesifikkKontekst("TestHendelse")
+        override fun kontekstMap(): Map<String, String> = emptyMap()
+
         override fun kontekst(kontekst: Aktivitetskontekst) {
             logg.kontekst(kontekst)
         }

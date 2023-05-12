@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.hendelser
 
+import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
@@ -12,7 +13,8 @@ sealed class SøknadBehandletHendelse(
     protected val ident: String,
     internal val behandlingId: UUID,
     protected val virkningsdato: LocalDate,
-) : Hendelse(ident) {
+    aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
+) : Hendelse(ident, aktivitetslogg) {
     abstract fun tilVedtak(): Vedtak
 }
 
@@ -41,6 +43,8 @@ class DagpengerInnvilgetHendelse(
         vanligArbeidstidPerDag = vanligArbeidstidPerDag,
         egenandel = egenandel,
     )
+
+    override fun kontekstMap(): Map<String, String> = emptyMap()
 }
 
 class DagpengerAvslåttHendelse(ident: String, behandlingId: UUID, virkningsdato: LocalDate) :
@@ -50,4 +54,5 @@ class DagpengerAvslåttHendelse(ident: String, behandlingId: UUID, virkningsdato
         virkningsdato,
     ) {
     override fun tilVedtak(): Vedtak = Vedtak.avslag(behandlingId, virkningsdato)
+    override fun kontekstMap(): Map<String, String> = emptyMap()
 }
