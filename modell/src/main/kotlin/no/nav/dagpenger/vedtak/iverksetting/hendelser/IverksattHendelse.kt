@@ -5,8 +5,9 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import java.util.UUID
 
 open class IverksattHendelse(
-    private val ident: String,
-    private val iverksettingId: UUID,
+    ident: String,
+    val vedtakId: UUID,
+    val iverksettingId: UUID,
     aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Hendelse(ident, aktivitetslogg) {
 

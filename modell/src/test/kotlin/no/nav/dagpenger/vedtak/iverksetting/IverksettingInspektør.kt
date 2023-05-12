@@ -10,11 +10,13 @@ internal class IverksettingInspektør(iverksetting: Iverksetting) : Iverksetting
     }
 
     lateinit var iverksettingId: UUID
+    lateinit var vedtakId: UUID
     lateinit var tilstand: Iverksetting.Tilstand
     lateinit var innsendingLogg: Aktivitetslogg
 
     override fun visitIverksetting(id: UUID, vedtakId: UUID, tilstand: Iverksetting.Tilstand) {
         this.iverksettingId = id
+        this.vedtakId = vedtakId
         this.tilstand = tilstand
     }
 
