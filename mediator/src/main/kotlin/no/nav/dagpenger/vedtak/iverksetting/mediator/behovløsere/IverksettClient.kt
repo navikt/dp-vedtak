@@ -23,6 +23,7 @@ import kotlinx.coroutines.withContext
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.IverksettDagpengerdDto
 import no.nav.dagpenger.vedtak.mediator.Configuration
+import org.slf4j.MDC
 
 internal class IverksettClient(
     private val baseUrl: String = Configuration.iverksettApiUrl,
@@ -61,6 +62,8 @@ internal class IverksettClient(
         val url = URLBuilder(baseUrl).appendEncodedPathSegments("api", "iverksetting").build()
         withContext(Dispatchers.IO) {
             httpClient.post(url) {
+                header("nav-call-id", MDC.get(behandlingId))
+                header(HttpHeaders.XCorrelationId, MDC.get(behandlingId))
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 setBody(iverksettDagpengerDto)
             }

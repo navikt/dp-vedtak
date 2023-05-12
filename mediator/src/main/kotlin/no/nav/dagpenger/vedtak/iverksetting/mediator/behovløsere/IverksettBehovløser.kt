@@ -23,6 +23,9 @@ import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.util.UUID
 private val BehovIverksett = "Iverksett"
+
+val behandlingId = "behandlingId"
+
 internal class IverksettBehovløser(
     rapidsConnection: RapidsConnection,
     private val iverksettClient: IverksettClient,
@@ -49,6 +52,7 @@ internal class IverksettBehovløser(
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         withLoggingContext(
             mapOf(
+                behandlingId to packet["$BehovIverksett.behandlingId"].asText(),
                 "vedtakId" to packet["$BehovIverksett.vedtakId"].asText(),
                 "iverksettingId" to packet["iverksettingId"].asText(),
                 "behovId" to packet["@behovId"].asText(),
