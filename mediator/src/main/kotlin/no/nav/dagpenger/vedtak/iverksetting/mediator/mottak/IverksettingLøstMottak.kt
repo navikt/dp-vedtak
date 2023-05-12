@@ -16,14 +16,14 @@ internal class IverksettingLøstMottak(
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerLogger = KotlinLogging.logger("tjenestekall.IverksettingLøstMottak")
-        val behov = "Iverksett"
+        val iverksettBehov = "Iverksett"
     }
-    init {
 
+    init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "behov") }
+            validate { it.requireValue("@event_name", "behov") }
+            validate { it.demandAllOrAny("@behov", listOf(iverksettBehov)) }
             validate { it.requireKey("@id", "@opprettet") }
-            validate { it.demandAllOrAny("@behov", listOf(behov)) }
             validate {
                 it.requireKey(
                     "iverksettingId",
@@ -37,7 +37,7 @@ internal class IverksettingLøstMottak(
             }
             validate {
                 it.require("@løsning") { løsning ->
-                    løsning.required(behov)
+                    løsning.required(iverksettBehov)
                 }
             }
         }.register(this)
@@ -48,12 +48,10 @@ internal class IverksettingLøstMottak(
         val vedtakId = packet["vedtakId"].asText()
         val iverksettingId = packet["iverksettingId"].asText()
         withLoggingContext("vedtakId" to vedtakId, "ident" to ident, "iverksettingId" to iverksettingId) {
-            logger.info { "Fått løsning på $behov" }
-            sikkerLogger.info { "Fått løsning på $behov med packet\n ${packet.toJson()}" }
-            if (vedtakId != "ca852fd7-1364-4f18-824d-33d12e27b9d4") {
-                val iverksattHendelseMessage = IverksattHendelseMessage(packet)
-                iverksattHendelseMessage.behandle(iHendelseMediator, context)
-            }
+            logger.info { "Fått løsning på $iverksettBehov" }
+            sikkerLogger.info { "Fått løsning på $iverksettBehov med packet\n ${packet.toJson()}" }
+            val iverksattHendelseMessage = IverksattHendelseMessage(packet)
+            iverksattHendelseMessage.behandle(iHendelseMediator, context)
         }
     }
 }

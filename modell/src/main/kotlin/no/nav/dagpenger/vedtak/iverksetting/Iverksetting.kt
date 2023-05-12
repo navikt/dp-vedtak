@@ -13,7 +13,7 @@ import java.util.UUID
 class Iverksetting private constructor(
     val id: UUID,
     private val personIdent: PersonIdentifikator,
-    private val vedtakId: UUID,
+    val vedtakId: UUID,
     private var tilstand: Tilstand,
     internal val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Aktivitetskontekst {

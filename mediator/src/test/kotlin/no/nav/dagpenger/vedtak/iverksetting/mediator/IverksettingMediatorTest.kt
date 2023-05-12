@@ -2,14 +2,12 @@ package no.nav.dagpenger.vedtak.iverksetting.mediator
 
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
-import io.mockk.Runs
-import io.mockk.every
-import io.mockk.just
+import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
 import mu.KotlinLogging
-import no.nav.dagpenger.vedtak.iverksetting.mediator.persistens.IverksettingRepository
 import no.nav.dagpenger.vedtak.mediator.BehovMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.iverksettJson
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -22,10 +20,7 @@ internal class IverksettingMediatorTest {
     private val testRapid = TestRapid()
     private val vedtakId = UUID.fromString("408F11D9-4BE8-450A-8B7A-C2F3F9811859")
 
-    private val iverksettingRepository = mockk<IverksettingRepository>().also {
-        every { it.hent(vedtakId) } returns null
-        every { it.lagre(any()) } just Runs
-    }
+    private val iverksettingRepository = InMemoryIverksettingRepository()
 
     val iverksettingMediator = HendelseMediator(
         rapidsConnection = testRapid,
@@ -48,5 +43,10 @@ internal class IverksettingMediatorTest {
             message["@event_name"].asText() shouldBe "behov"
             message["@behov"].map { it.asText() } shouldBe listOf("Iverksett")
         }
+        testRapid.sendTestMessage(
+            iverksettJson(vedtakId),
+        )
+
+        iverksettingRepository.hent(vedtakId) shouldNotBe null
     }
 }

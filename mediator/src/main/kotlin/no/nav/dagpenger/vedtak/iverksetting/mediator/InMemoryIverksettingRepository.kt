@@ -10,6 +10,6 @@ class InMemoryIverksettingRepository : IverksettingRepository {
     override fun hent(vedtakId: UUID): Iverksetting? = iverksettingDb[vedtakId]
 
     override fun lagre(iverksetting: Iverksetting) {
-        iverksettingDb[iverksetting.id] = iverksetting
+        iverksettingDb[iverksetting.vedtakId] = iverksetting
     }
 }
