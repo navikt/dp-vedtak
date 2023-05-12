@@ -15,6 +15,7 @@ internal class IverksettingLøstMottak(
     init {
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "behov") }
+            validate { it.requireKey("@id", "@opprettet") }
             validate { it.demandAllOrAny("@behov", listOf("Iverksett")) }
             validate {
                 it.requireKey(

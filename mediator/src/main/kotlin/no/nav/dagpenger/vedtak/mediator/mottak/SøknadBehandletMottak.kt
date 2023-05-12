@@ -26,6 +26,7 @@ internal class SøknadBehandletMottak(
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "søknad_behandlet_hendelse") }
             validate {
+                it.requireKey("@id", "@opprettet")
                 it.require("ident") { ident ->
                     PersonIdentifikator(ident.asText())
                 }

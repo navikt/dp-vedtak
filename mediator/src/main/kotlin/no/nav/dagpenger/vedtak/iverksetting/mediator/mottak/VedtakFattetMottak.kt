@@ -16,7 +16,8 @@ internal class VedtakFattetMottak(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.requireValue("@event_type", "vedtak_fattet") }
+            validate { it.requireValue("@event_name", "vedtak_fattet") }
+            validate { it.requireKey("@id", "@opprettet") }
             validate { it.requireKey("ident", "behandlingId", "vedtakId", "vedtaktidspunkt", "virkningsdato", "utfall") }
         }.register(this)
     }
