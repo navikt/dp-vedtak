@@ -11,7 +11,7 @@ import java.util.UUID
 internal abstract class HendelseMessage(private val packet: JsonMessage) {
     internal val id: UUID = packet["@id"].asUUID()
     private val navn = packet["@event_name"].asText()
-    protected val opprettet = packet["@opprettet"].asLocalDateTime()
+    private val opprettet = packet["@opprettet"].asLocalDateTime()
     internal open val skalDuplikatsjekkes = true
     protected abstract val ident: String
 

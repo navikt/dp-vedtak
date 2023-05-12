@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.iverksetting.mediator
 
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.persistens.IverksettingRepository
 import no.nav.dagpenger.vedtak.mediator.BehovMediator
@@ -32,6 +33,12 @@ internal class IverksettingMediator(
         }
     }
 
+    fun håndter(iverksattHendelse: IverksattHendelse) {
+        håndter(iverksattHendelse) { iverksetting ->
+            iverksetting.håndter(iverksattHendelse)
+        }
+    }
+
     private fun håndter(hendelse: Hendelse, håndter: (Iverksetting) -> Unit) = try {
         val iverksetting = hentEllerOpprettIverksett(hendelse)
         håndter(iverksetting)
@@ -52,6 +59,9 @@ internal class IverksettingMediator(
         return when (hendelse) {
             is VedtakFattetHendelse -> iverksettingRepository.hent(hendelse.iverksettingsVedtak.vedtakId)
                 ?: Iverksetting(hendelse.iverksettingsVedtak.vedtakId, hendelse.ident())
+
+            is IverksattHendelse -> iverksettingRepository.hent(hendelse.vedtakId)
+                ?: throw RuntimeException("Kan ikke knytte iverksatthendelse til en Iverksetting")
 
             else -> {
                 TODO("Støtter bare VedtakFattetHendelse pt")

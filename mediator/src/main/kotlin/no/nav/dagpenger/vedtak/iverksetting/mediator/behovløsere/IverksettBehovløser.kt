@@ -67,6 +67,7 @@ internal class IverksettBehovløser(
             }
             packet["@løsning"] = mapOf(BehovIverksett to true)
             context.publish(packet.toJson())
+            println(packet.toJson())
             logger.info { "Løste behov $BehovIverksett" }
         }
     }

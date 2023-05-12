@@ -1,7 +1,10 @@
 package no.nav.dagpenger.vedtak.mediator
 
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksattHendelseMessage
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksettingLøstMottak
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.VedtakFattetHendelseMessage
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.VedtakFattetMottak
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
@@ -21,6 +24,7 @@ internal class HendelseMediator(
     init {
         SøknadBehandletMottak(rapidsConnection, this)
         VedtakFattetMottak(rapidsConnection, this)
+        IverksettingLøstMottak(rapidsConnection, this)
     }
 
     override fun behandle(
@@ -42,9 +46,20 @@ internal class HendelseMediator(
         iverksettingMediator.håndter(melding)
         hendelseRepository.markerSomBehandlet(hendelse.id)
     }
+
+    override fun behandle(
+        melding: IverksattHendelse,
+        hendelse: IverksattHendelseMessage,
+        context: MessageContext,
+    ) {
+        hendelse.lagreMelding(hendelseRepository)
+        iverksettingMediator.håndter(melding)
+        hendelseRepository.markerSomBehandlet(hendelse.id)
+    }
 }
 
 internal interface IHendelseMediator {
     fun behandle(melding: SøknadBehandletHendelse, hendelse: SøknadBehandletHendelseMessage, context: MessageContext)
     fun behandle(melding: VedtakFattetHendelse, hendelse: VedtakFattetHendelseMessage, context: MessageContext)
+    fun behandle(melding: IverksattHendelse, hendelse: IverksattHendelseMessage, context: MessageContext)
 }
