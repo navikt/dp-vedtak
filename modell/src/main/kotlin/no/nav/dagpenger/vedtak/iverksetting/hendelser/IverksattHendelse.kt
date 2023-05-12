@@ -4,7 +4,7 @@ import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import java.util.UUID
 
-open class IverksattHendelse(
+class IverksattHendelse(
     ident: String,
     val vedtakId: UUID,
     val iverksettingId: UUID,

@@ -7,9 +7,11 @@ import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksattHendelseMes
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksettingLøstMottak
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.VedtakFattetHendelseMessage
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.VedtakFattetMottak
+import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
 import no.nav.dagpenger.vedtak.mediator.mottak.SøknadBehandletHendelseMessage
 import no.nav.dagpenger.vedtak.mediator.mottak.SøknadBehandletMottak
+import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -28,38 +30,44 @@ internal class HendelseMediator(
     }
 
     override fun behandle(
-        melding: SøknadBehandletHendelse,
-        hendelse: SøknadBehandletHendelseMessage,
+        hendelse: SøknadBehandletHendelse,
+        message: SøknadBehandletHendelseMessage,
         context: MessageContext,
     ) {
-        hendelse.lagreMelding(hendelseRepository)
-        personMediator.håndter(melding)
-        hendelseRepository.markerSomBehandlet(hendelse.id)
+        behandle(hendelse, message) {
+            personMediator.håndter(it)
+        }
     }
 
     override fun behandle(
-        melding: VedtakFattetHendelse,
-        hendelse: VedtakFattetHendelseMessage,
+        hendelse: VedtakFattetHendelse,
+        message: VedtakFattetHendelseMessage,
         context: MessageContext,
     ) {
-        hendelse.lagreMelding(hendelseRepository)
-        iverksettingMediator.håndter(melding)
-        hendelseRepository.markerSomBehandlet(hendelse.id)
+        behandle(hendelse, message) {
+            iverksettingMediator.håndter(it)
+        }
     }
 
     override fun behandle(
-        melding: IverksattHendelse,
-        hendelse: IverksattHendelseMessage,
+        hendelse: IverksattHendelse,
+        message: IverksattHendelseMessage,
         context: MessageContext,
     ) {
-        hendelse.lagreMelding(hendelseRepository)
-        iverksettingMediator.håndter(melding)
-        hendelseRepository.markerSomBehandlet(hendelse.id)
+        behandle(hendelse, message) {
+            iverksettingMediator.håndter(it)
+        }
+    }
+
+    private fun <HENDELSE : Hendelse> behandle(hendelse: HENDELSE, message: HendelseMessage, håndter: (HENDELSE) -> Unit) {
+        message.lagreMelding(hendelseRepository)
+        håndter(hendelse) // @todo: feilhåndtering
+        hendelseRepository.markerSomBehandlet(message.id)
     }
 }
 
 internal interface IHendelseMediator {
-    fun behandle(melding: SøknadBehandletHendelse, hendelse: SøknadBehandletHendelseMessage, context: MessageContext)
-    fun behandle(melding: VedtakFattetHendelse, hendelse: VedtakFattetHendelseMessage, context: MessageContext)
-    fun behandle(melding: IverksattHendelse, hendelse: IverksattHendelseMessage, context: MessageContext)
+    fun behandle(hendelse: SøknadBehandletHendelse, message: SøknadBehandletHendelseMessage, context: MessageContext)
+    fun behandle(hendelse: VedtakFattetHendelse, message: VedtakFattetHendelseMessage, context: MessageContext)
+    fun behandle(hendelse: IverksattHendelse, message: IverksattHendelseMessage, context: MessageContext)
 }

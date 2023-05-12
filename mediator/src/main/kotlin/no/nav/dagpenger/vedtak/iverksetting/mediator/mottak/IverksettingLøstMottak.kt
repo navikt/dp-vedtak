@@ -9,7 +9,7 @@ import no.nav.helse.rapids_rivers.River
 
 internal class IverksettingLøstMottak(
     rapidsConnection: RapidsConnection,
-    private val iverksettingMediator: IHendelseMediator,
+    private val iHendelseMediator: IHendelseMediator,
 ) : River.PacketListener {
 
     init {
@@ -41,7 +41,7 @@ internal class IverksettingLøstMottak(
         val iverksettingId = packet["iverksettingId"].asText()
         withLoggingContext("vedtakId" to vedtakId, "ident" to ident, "iverksettingId" to iverksettingId) {
             val iverksattHendelseMessage = IverksattHendelseMessage(packet)
-            iverksattHendelseMessage.behandle(iverksettingMediator, context)
+            iverksattHendelseMessage.behandle(iHendelseMediator, context)
         }
     }
 }
