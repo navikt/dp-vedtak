@@ -4,20 +4,27 @@ import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.modell.Aktivitetskontekst
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
+import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
+import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import java.util.UUID
 
 class Iverksetting private constructor(
     val id: UUID,
+    private val identifikator: PersonIdentifikator,
     private val vedtakId: UUID,
     private var tilstand: Tilstand,
     internal val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Aktivitetskontekst {
 
     private val observers = mutableListOf<IverksettingObserver>()
-
-    constructor(vedtakId: UUID) : this(id = UUID.randomUUID(), vedtakId = vedtakId, Mottatt)
+    constructor(vedtakId: UUID, ident: String) : this(
+        id = UUID.randomUUID(),
+        identifikator = ident.tilPersonIdentfikator(),
+        vedtakId = vedtakId,
+        Mottatt,
+    )
 
     fun accept(iverksettingVisitor: IverksettingVisitor) {
         iverksettingVisitor.visitIverksetting(id, vedtakId, tilstand)
@@ -27,7 +34,11 @@ class Iverksetting private constructor(
     override fun toSpesifikkKontekst(): SpesifikkKontekst {
         return SpesifikkKontekst(
             "Iverksetting",
-            mapOf("iverksettingId" to id.toString(), "vedtakId" to vedtakId.toString()),
+            mapOf(
+                "iverksettingId" to id.toString(),
+                "vedtakId" to vedtakId.toString(),
+                "ident" to identifikator.identifikator(),
+            ),
         )
     }
 
@@ -106,6 +117,7 @@ class Iverksetting private constructor(
                 type = Aktivitetslogg.Aktivitet.Behov.Behovtype.Iverksett,
                 melding = "Trenger å iverksette vedtak",
                 detaljer = mapOf(
+                    "ident" to vedtakFattetHendelse.ident(),
                     "vedtakId" to vedtakFattetHendelse.iverksettingsVedtak.vedtakId,
                     "behandlingId" to vedtakFattetHendelse.iverksettingsVedtak.behandlingId,
                     "vedtakstidspunkt" to vedtakFattetHendelse.iverksettingsVedtak.vedtakstidspunkt,

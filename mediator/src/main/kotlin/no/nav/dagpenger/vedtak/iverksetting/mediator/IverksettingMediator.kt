@@ -50,7 +50,9 @@ internal class IverksettingMediator(
 
     private fun hentEllerOpprettIverksett(hendelse: Hendelse): Iverksetting {
         return when (hendelse) {
-            is VedtakFattetHendelse -> iverksettingRepository.hent(hendelse.iverksettingsVedtak.vedtakId) ?: Iverksetting(hendelse.iverksettingsVedtak.vedtakId)
+            is VedtakFattetHendelse -> iverksettingRepository.hent(hendelse.iverksettingsVedtak.vedtakId)
+                ?: Iverksetting(hendelse.iverksettingsVedtak.vedtakId, hendelse.ident())
+
             else -> {
                 TODO("Støtter bare VedtakFattetHendelse pt")
             }
