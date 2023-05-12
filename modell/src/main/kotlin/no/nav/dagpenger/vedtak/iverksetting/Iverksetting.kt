@@ -12,7 +12,7 @@ import java.util.UUID
 
 class Iverksetting private constructor(
     val id: UUID,
-    private val identifikator: PersonIdentifikator,
+    private val personIdent: PersonIdentifikator,
     private val vedtakId: UUID,
     private var tilstand: Tilstand,
     internal val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
@@ -21,7 +21,7 @@ class Iverksetting private constructor(
     private val observers = mutableListOf<IverksettingObserver>()
     constructor(vedtakId: UUID, ident: String) : this(
         id = UUID.randomUUID(),
-        identifikator = ident.tilPersonIdentfikator(),
+        personIdent = ident.tilPersonIdentfikator(),
         vedtakId = vedtakId,
         Mottatt,
     )
@@ -37,7 +37,7 @@ class Iverksetting private constructor(
             mapOf(
                 "iverksettingId" to id.toString(),
                 "vedtakId" to vedtakId.toString(),
-                "ident" to identifikator.identifikator(),
+                "ident" to personIdent.identifikator(),
             ),
         )
     }
@@ -117,7 +117,6 @@ class Iverksetting private constructor(
                 type = Aktivitetslogg.Aktivitet.Behov.Behovtype.Iverksett,
                 melding = "Trenger å iverksette vedtak",
                 detaljer = mapOf(
-                    "ident" to vedtakFattetHendelse.ident(),
                     "vedtakId" to vedtakFattetHendelse.iverksettingsVedtak.vedtakId,
                     "behandlingId" to vedtakFattetHendelse.iverksettingsVedtak.behandlingId,
                     "vedtakstidspunkt" to vedtakFattetHendelse.iverksettingsVedtak.vedtakstidspunkt,
