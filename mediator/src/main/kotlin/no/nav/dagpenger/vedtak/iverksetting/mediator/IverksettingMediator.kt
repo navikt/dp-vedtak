@@ -10,13 +10,6 @@ import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.helse.rapids_rivers.withMDC
 
-// @todo
-// 1. Hente eller opprette iverksetting - IverksettingRepository
-// 2. Håndtere hendelse
-// 3. Lagre iverksetting
-// 4. Behovmediator - fra dp-soknad
-// 5. Lage behovløser for iversksetting mot iver
-
 internal class IverksettingMediator(
     private val iverksettingRepository: IverksettingRepository,
     private val behovMediator: BehovMediator,
