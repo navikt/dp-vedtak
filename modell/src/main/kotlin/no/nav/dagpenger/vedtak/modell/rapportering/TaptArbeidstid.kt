@@ -26,26 +26,26 @@ internal class TaptArbeidstid : Regel {
     internal object Terskel {
 
         private val terskler: Map<Dagpengerettighet, TemporalCollection<Prosent>> = mapOf(
-            Dagpengerettighet.Ordinær to TemporalCollection<Prosent>().also {
-                it.put(
+            Dagpengerettighet.Ordinær to TemporalCollection<Prosent>().apply {
+                put(
                     LocalDate.of(2022, 4, 1),
                     Prosent(50),
                 )
             },
-            Dagpengerettighet.ForskutterteLønnsgarantimidler to TemporalCollection<Prosent>().also {
-                it.put(
+            Dagpengerettighet.ForskutterteLønnsgarantimidler to TemporalCollection<Prosent>().apply {
+                put(
                     LocalDate.of(2022, 4, 1),
                     Prosent(50),
                 )
             },
-            Dagpengerettighet.Permittering to TemporalCollection<Prosent>().also {
-                it.put(
+            Dagpengerettighet.Permittering to TemporalCollection<Prosent>().apply {
+                put(
                     LocalDate.of(2022, 4, 1),
                     Prosent(50),
                 )
             },
-            Dagpengerettighet.PermitteringFraFiskeindustrien to TemporalCollection<Prosent>().also {
-                it.put(
+            Dagpengerettighet.PermitteringFraFiskeindustrien to TemporalCollection<Prosent>().apply {
+                put(
                     LocalDate.of(2012, 7, 1),
                     Prosent(40),
                 )
