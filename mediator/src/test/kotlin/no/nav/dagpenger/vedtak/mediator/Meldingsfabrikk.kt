@@ -51,7 +51,10 @@ object Meldingsfabrikk {
           "periodeId": "${UUID.randomUUID()}",
           "virkningsdato": "${LocalDate.now()}",
           "innvilget": false,
-          "dager": []
+          "dager": [
+            {"dato":"2022-01-01", "timer":0, "fravær":false},
+            {"dato":"2022-01-02", "timer":0, "fravær":false}          
+          ]
         } 
         """.trimIndent()
 

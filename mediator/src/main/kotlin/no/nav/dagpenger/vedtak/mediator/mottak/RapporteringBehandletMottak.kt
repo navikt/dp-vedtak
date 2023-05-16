@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.mediator.mottak
 
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -8,6 +9,7 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
+import java.util.UUID
 
 internal class RapporteringBehandletMottak(
     rapidsConnection: RapidsConnection,
@@ -38,7 +40,12 @@ internal class RapporteringBehandletMottak(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        TODO("Not yet implemented")
+        val behandlingId = UUID.fromString(packet["behandlingId"].asText())
+        withLoggingContext("behandlingId" to behandlingId.toString()) {
+            val rapporteringBehandletHendelseMessage = RapporteringBehandletHendelseMessage(packet)
+            logger.info { "Fått rapportering behandlet hendelse" }
+            rapporteringBehandletHendelseMessage.behandle(hendelseMediator, context)
+        }
     }
 
     override fun onError(problems: MessageProblems, context: MessageContext) {

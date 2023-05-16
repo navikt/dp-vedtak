@@ -44,10 +44,9 @@ internal class IverksettingLøstMottak(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        val ident = packet["ident"].asText()
         val vedtakId = packet["vedtakId"].asText()
         val iverksettingId = packet["iverksettingId"].asText()
-        withLoggingContext("vedtakId" to vedtakId, "ident" to ident, "iverksettingId" to iverksettingId) {
+        withLoggingContext("vedtakId" to vedtakId, "iverksettingId" to iverksettingId) {
             logger.info { "Fått løsning på $iverksettBehov" }
             sikkerLogger.info { "Fått løsning på $iverksettBehov med packet\n ${packet.toJson()}" }
             val iverksattHendelseMessage = IverksattHendelseMessage(packet)
