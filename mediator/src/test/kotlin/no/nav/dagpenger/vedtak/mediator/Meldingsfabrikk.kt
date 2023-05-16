@@ -41,6 +41,20 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
+    fun rapporteringBehandletJson(ident: String = "12345123451") =
+        //language=JSON
+        """
+        {        
+          "@event_name": "rapportering_behandlet_hendelse",
+          "ident" : "$ident",
+          "behandlingId": "${UUID.randomUUID()}",
+          "periodeId": "${UUID.randomUUID()}",
+          "virkningsdato": "${LocalDate.now()}",
+          "innvilget": false,
+          "dager": []
+        } 
+        """.trimIndent()
+
     fun iverksettJson(vedtakId: UUID = UUID.fromString("408f11d9-4be8-450a-8b7a-c2f3f9811859")) =
         //language=JSON
         """{
