@@ -11,6 +11,7 @@ import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringBehandletJso
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
+import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.PersonObserver
@@ -18,7 +19,6 @@ import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -28,15 +28,18 @@ internal class PersonMediatorTest {
     private val ident = "11109233444"
     private val testObservatør = TestObservatør()
     private val personRepository = InMemoryPersonRepository()
-    val personMediator = HendelseMediator(
-        rapidsConnection = testRapid,
-        hendelseRepository = InMemoryMeldingRepository(),
-        personMediator = PersonMediator(
-            personRepository = personRepository,
-            personObservers = listOf(VedtakFattetKafkaObserver(testRapid), testObservatør),
-        ),
-        iverksettingMediator = IverksettingMediator(mockk(), mockk()),
-    )
+
+    init {
+        HendelseMediator(
+            rapidsConnection = testRapid,
+            hendelseRepository = InMemoryMeldingRepository(),
+            personMediator = PersonMediator(
+                personRepository = personRepository,
+                personObservers = listOf(VedtakFattetKafkaObserver(testRapid), testObservatør),
+            ),
+            iverksettingMediator = IverksettingMediator(mockk(), mockk()),
+        )
+    }
 
     @BeforeEach
     fun setUp() {
@@ -79,10 +82,27 @@ internal class PersonMediatorTest {
         }
         testObservatør.vedtak.shouldNotBeEmpty()
     }
+}
+
+internal class PersonMediatorKonsistensTest {
+    private val testRapid = TestRapid()
+    private val testObservatør = TestObservatør()
+    private val personRepository = mockk<PersonRepository>()
+
+    init {
+        HendelseMediator(
+            rapidsConnection = testRapid,
+            hendelseRepository = InMemoryMeldingRepository(),
+            personMediator = PersonMediator(
+                personRepository = personRepository,
+                personObservers = listOf(VedtakFattetKafkaObserver(testRapid), testObservatør),
+            ),
+            iverksettingMediator = IverksettingMediator(mockk(), mockk()),
+        )
+    }
 
     @Test
-    @Disabled
-    fun `venter til aggregatet er lagret før observere blir kallt`() {
+    fun `venter til aggregatet er lagret før observere blir kalt`() {
         val feilendeIdent = "23456789101"
         every { personRepository.hent(feilendeIdent.tilPersonIdentfikator()) } returns null
         every { personRepository.lagre(any()) } throws RuntimeException("blaaaa")
