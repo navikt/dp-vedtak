@@ -15,4 +15,6 @@ class PersonIdentifikator(private val ident: String) : Aktivitetskontekst {
     override fun toSpesifikkKontekst() = SpesifikkKontekst("Person", mapOf("ident" to ident))
 
     override fun equals(other: Any?): Boolean = other is PersonIdentifikator && other.ident == this.ident
+
+    override fun hashCode() = ident.hashCode()
 }

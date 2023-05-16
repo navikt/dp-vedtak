@@ -7,6 +7,7 @@ import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.withMDC
@@ -23,6 +24,12 @@ internal class PersonMediator(
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
         behandle(søknadBehandletHendelse) { person ->
             person.håndter(søknadBehandletHendelse)
+        }
+    }
+
+    fun håndter(rapporteringshendelse: Rapporteringshendelse) {
+        behandle(rapporteringshendelse) { person ->
+            person.håndter(rapporteringshendelse)
         }
     }
 
@@ -50,7 +57,6 @@ internal class PersonMediator(
     private fun lagre(person: Person) {
         personRepository.lagre(person)
     }
-
     private fun hentEllerOpprettPerson(hendelse: Hendelse): Person {
         val person = personRepository.hent(hendelse.ident().tilPersonIdentfikator())
         return when (hendelse) {
@@ -58,6 +64,7 @@ internal class PersonMediator(
             else -> person ?: throw RuntimeException("har ikke informasjon om person")
         }
     }
+
     private fun finalize(hendelse: Hendelse) {
         if (!hendelse.hasMessages()) return
         if (hendelse.hasErrors()) return sikkerLogger.info("aktivitetslogg inneholder errors: ${hendelse.toLogString()}")

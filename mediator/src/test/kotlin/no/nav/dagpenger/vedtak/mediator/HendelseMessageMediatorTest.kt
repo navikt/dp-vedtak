@@ -38,7 +38,7 @@ internal class HendelseMessageMediatorTest {
 
     @Test
     fun `Ta i mot melding som feiler under behandling`() {
-        every { personMediatorMock.håndter(any()) } throws RuntimeException("Feilet behandling")
+        every { personMediatorMock.håndter(any<SøknadBehandletHendelse>()) } throws RuntimeException("Feilet behandling")
         assertThrows<RuntimeException> { testRapid.sendTestMessage(dagpengerInnvilgetJson()) }
         assertEquals(0, meldingRepository.hentBehandlede().size)
         assertEquals(1, meldingRepository.hentMottatte().size)

@@ -68,7 +68,9 @@ internal class HendelseMediator(
         message: RapporteringBehandletHendelseMessage,
         context: MessageContext,
     ) {
-        TODO("Not yet implemented")
+        behandle(hendelse, message) {
+            personMediator.håndter(it)
+        }
     }
 
     private fun <HENDELSE : Hendelse> behandle(hendelse: HENDELSE, message: HendelseMessage, håndter: (HENDELSE) -> Unit) {

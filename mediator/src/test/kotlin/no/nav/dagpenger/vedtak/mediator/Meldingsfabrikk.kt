@@ -52,8 +52,9 @@ object Meldingsfabrikk {
           "virkningsdato": "${LocalDate.now()}",
           "innvilget": false,
           "dager": [
-            {"dato":"2022-01-01", "timer":0, "fravær":false},
-            {"dato":"2022-01-02", "timer":0, "fravær":false}          
+            {"dato":"${LocalDate.now()}", "timer":0, "fravær":false},
+            {"dato":"${LocalDate.now().plusDays(1)}", "timer":0, "fravær":false},
+            {"dato":"${LocalDate.now().plusDays(2)}", "timer":0, "fravær":false}          
           ]
         } 
         """.trimIndent()

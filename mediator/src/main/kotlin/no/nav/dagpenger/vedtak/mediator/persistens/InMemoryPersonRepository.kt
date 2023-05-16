@@ -10,4 +10,8 @@ class InMemoryPersonRepository : PersonRepository {
     override fun lagre(person: Person) {
         persondb[person.ident()] = person
     }
+
+    fun reset() {
+        persondb.clear()
+    }
 }

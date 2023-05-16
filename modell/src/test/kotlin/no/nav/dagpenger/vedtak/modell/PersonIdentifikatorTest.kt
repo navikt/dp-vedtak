@@ -20,7 +20,9 @@ internal class PersonIdentifikatorTest {
     fun ` likhet `() {
         val personIdent = "12345678901".tilPersonIdentfikator()
         assertEquals(personIdent, personIdent)
+        assertEquals(personIdent.hashCode(), personIdent.hashCode())
         assertEquals(personIdent, "12345678901".tilPersonIdentfikator())
+        assertEquals(personIdent.hashCode(), "12345678901".tilPersonIdentfikator().hashCode())
         assertNotEquals(personIdent, "22345678901".tilPersonIdentfikator())
         assertNotEquals("22345678901".tilPersonIdentfikator(), personIdent)
         assertNotEquals(personIdent, Any())
