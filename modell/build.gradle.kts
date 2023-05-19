@@ -2,7 +2,7 @@ plugins {
     id("dagpenger.common")
 }
 
-val cucumberVersjon = "7.10.0"
+val cucumberVersjon = "7.12.0"
 dependencies {
     testImplementation("io.cucumber:cucumber-java8:$cucumberVersjon")
     testImplementation("io.cucumber:cucumber-junit-platform-engine:$cucumberVersjon")
