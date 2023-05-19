@@ -7,7 +7,7 @@ dependencies {
     implementation(project(":modell"))
 
     implementation(Jackson.core)
-    implementation(Jackson.jsr310)
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${libs.versions.jackson.get()}")
 
     // https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-slf4j/
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.1")
