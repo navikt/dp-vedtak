@@ -5,6 +5,8 @@ on:
     paths-ignore:
       - docs/api/async-api.yaml
       - .github/workflows/async-api.yaml
+    branches-ignore:
+      - 'dependabot/**'
 
 jobs:
   build:

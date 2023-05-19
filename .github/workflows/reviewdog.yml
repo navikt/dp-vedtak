@@ -1,5 +1,8 @@
 name: reviewdog
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
 
 jobs:
   code-style-violations:
