@@ -10,7 +10,7 @@ dependencies {
     implementation(Jackson.jsr310)
 
     // https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-slf4j/
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.1")
 
     // POC - iverksett api
     implementation("io.ktor:ktor-client-core:${Ktor2.version}")
