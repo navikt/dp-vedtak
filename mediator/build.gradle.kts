@@ -1,6 +1,6 @@
 plugins {
-    id("dagpenger.common")
-    id("dagpenger.rapid-and-rivers")
+    id("common")
+    application
 }
 
 dependencies {
@@ -20,10 +20,16 @@ dependencies {
     implementation("io.ktor:ktor-client-logging:${Ktor2.version}")
     implementation("com.github.navikt.dp-biblioteker:oauth2-klient:${Dagpenger.Biblioteker.version}")
 
+    implementation(libs.rapids.and.rivers)
+    implementation(libs.konfig)
+    implementation(libs.kotlin.logging)
+
+    testImplementation("io.kotest:kotest-assertions-core-jvm:${libs.versions.kotest.get()}")
     testImplementation("io.ktor:ktor-client-mock:${Ktor2.version}")
 
     testImplementation(Mockk.mockk)
 }
+
 application {
     mainClass.set("no.nav.dagpenger.vedtak.mediator.AppKt")
 }
