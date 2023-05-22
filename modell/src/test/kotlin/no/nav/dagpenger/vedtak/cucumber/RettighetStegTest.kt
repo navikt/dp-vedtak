@@ -146,6 +146,10 @@ class RettighetStegTest : No {
             assertEquals(beløp.beløp, inspektør.beløpTilUtbetaling)
         }
 
+        Så("skal gjenstående stønadsdager være {int}") { dager: Int ->
+            assertEquals(dager.arbeidsdager, inspektør.gjenståendeStønadsperiode)
+        }
+
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
             assertPersonOpprettet()
             val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
@@ -194,6 +198,7 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
+        lateinit var gjenståendeStønadsperiode: Stønadsperiode
         lateinit var gjenståendeEgenandel: Beløp
         lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
@@ -207,6 +212,10 @@ class RettighetStegTest : No {
         lateinit var forbruk: Tid
         var antallVedtak = 0
         var allEgenandelTrukket: Boolean = false
+
+        override fun visitGjenståendeStønadsperiode(gjenståendePeriode: Stønadsperiode) {
+            this.gjenståendeStønadsperiode = gjenståendePeriode
+        }
 
         override fun visitGjenståendeEgenandel(gjenståendeEgenandel: Beløp) {
             this.gjenståendeEgenandel = gjenståendeEgenandel
