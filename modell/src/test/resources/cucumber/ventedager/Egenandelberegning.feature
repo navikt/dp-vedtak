@@ -24,7 +24,7 @@ Egenskap: Egenandel
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal egenandel være trukket, altså 0 kroner gjenstår
+    Så så skal gjenstående egenandel være 0 kr
     Så skal bruker ha 2 vedtak
     #Så skal utbetalingen være 4000
 

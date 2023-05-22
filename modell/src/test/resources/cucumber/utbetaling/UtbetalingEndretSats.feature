@@ -28,7 +28,7 @@ Egenskap: Utbetaling
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal egenandel være trukket, altså 0 kroner gjenstår
+    Så så skal gjenstående egenandel være 0 kr
     Så skal utbetalingen være 5775
     Så skal bruker ha 3 vedtak
 
@@ -50,7 +50,7 @@ Egenskap: Utbetaling
       | 24.12.2022 | false  | 8     |
       | 25.12.2022 | false  | 8     |
     Så skal forbruket være 10 dager
-    Så skal egenandel være trukket, altså 0 kroner gjenstår
+    Så så skal gjenstående egenandel være 0 kr
     Så skal utbetalingen være 4105
     Så skal bruker ha 3 vedtak
 
@@ -72,6 +72,6 @@ Egenskap: Utbetaling
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal egenandel være trukket, altså 0 kroner gjenstår
+    Så så skal gjenstående egenandel være 0 kr
     Så skal utbetalingen være 4140
     Så skal bruker ha 3 vedtak

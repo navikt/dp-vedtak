@@ -132,7 +132,7 @@ class RettighetStegTest : No {
             assertEquals(forbruk.arbeidsdager, inspektør.forbruk)
         }
 
-        Så("skal egenandel være trukket, altså {bigdecimal} kroner gjenstår") { egenandel: BigDecimal ->
+        Så("så skal gjenstående egenandel være {bigdecimal} kr") { egenandel: BigDecimal ->
             assertTrue(inspektør.allEgenandelTrukket) { "Forventet at all egenandel er trukket" }
             assertEquals(Beløp.fra(egenandel), inspektør.gjenståendeEgenandel)
         }
