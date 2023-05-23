@@ -1,5 +1,5 @@
 # language: no
-@wip
+
 Egenskap: Korrigert egenrapportering
 
   Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember
@@ -52,7 +52,6 @@ Egenskap: Korrigert egenrapportering
     Så skal utbetalingen være 0
     Så skal bruker ha 3 vedtak
 
-  @wip
   Scenario: Rapporterer først ingen arbeidstimer og ingen fravær. Korrigerer deretter med fravær på en arbeidsdag
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |

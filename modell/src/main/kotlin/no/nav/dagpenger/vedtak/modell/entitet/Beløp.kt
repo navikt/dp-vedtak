@@ -5,7 +5,7 @@ import java.math.BigDecimal
 class Beløp private constructor(verdi: Number) : Comparable<Beløp> {
 
     private val verdi: Double = verdi.toDouble()
-    internal companion object {
+    companion object {
         fun fra(sats: BigDecimal): Beløp {
             return Beløp(sats)
         }

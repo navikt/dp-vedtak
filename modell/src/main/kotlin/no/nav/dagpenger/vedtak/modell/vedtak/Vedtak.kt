@@ -31,7 +31,7 @@ sealed class Vedtak(
             stønadsperiode: Stønadsperiode,
             dagpengerettighet: Dagpengerettighet,
             vanligArbeidstidPerDag: Timer,
-            egenandel: BigDecimal,
+            egenandel: Beløp,
         ) = Rammevedtak(
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
@@ -109,7 +109,7 @@ class Rammevedtak(
     private val dagsats: BigDecimal,
     private val stønadsperiode: Stønadsperiode,
     private val dagpengerettighet: Dagpengerettighet,
-    private val egenandel: BigDecimal, // @todo: Beløp
+    private val egenandel: Beløp, // @todo: Beløp
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
@@ -135,11 +135,9 @@ class Rammevedtak(
         vedtakHistorikk.dagsatsHistorikk.put(virkningsdato, dagsats)
         vedtakHistorikk.grunnlagHistorikk.put(virkningsdato, grunnlag)
         vedtakHistorikk.stønadsperiodeHistorikk.put(virkningsdato, stønadsperiode)
-        vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.put(virkningsdato, stønadsperiode)
         vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, dagpengerettighet)
         vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato, vanligArbeidstidPerDag)
         vedtakHistorikk.egenandelHistorikk.put(virkningsdato, egenandel)
-        vedtakHistorikk.gjenståendeEgenandelHistorikk.put(virkningsdato, Beløp.fra(egenandel))
     }
 }
 
@@ -166,10 +164,8 @@ class LøpendeVedtak(
     }
 
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
-        val gjenståendeStønadsperiode = vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.get(virkningsdato)
-        val gjenståendeEgenandel = vedtakHistorikk.gjenståendeEgenandelHistorikk.get(virkningsdato)
-        vedtakHistorikk.gjenståendeStønadsperiodeHistorikk.put(virkningsdato, gjenståendeStønadsperiode - forbruk)
-        vedtakHistorikk.gjenståendeEgenandelHistorikk.put(virkningsdato, gjenståendeEgenandel - trukketEgenandel)
+        vedtakHistorikk.forbrukHistorikk.put(virkningsdato, forbruk)
+        vedtakHistorikk.trukketEgenandelHistorikk.put(virkningsdato, trukketEgenandel)
     }
 }
 

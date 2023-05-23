@@ -4,8 +4,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 // Temporal object pattern from https://martinfowler.com/eaaDev/TemporalObject.html
-internal class TemporalCollection<R> {
-    private val contents = mutableMapOf<LocalDateTime, R>()
+internal open class TemporalCollection<R> {
+    protected val contents = mutableMapOf<LocalDateTime, R>()
+
     private val milestones get() = contents.keys.toList().reversed()
 
     fun get(date: LocalDateTime): R = milestones
@@ -21,6 +22,10 @@ internal class TemporalCollection<R> {
 
     fun put(at: LocalDate, item: R) {
         put(at.atStartOfDay(), item)
+    }
+
+    protected fun historiskeVerdier(til: LocalDate): Collection<R> {
+        return contents.filter { it.key.isBefore(til.atStartOfDay()) || it.key == til.atStartOfDay() }.values
     }
 
     fun harHistorikk() = contents.isNotEmpty()

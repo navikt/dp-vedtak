@@ -3,13 +3,13 @@ package no.nav.dagpenger.vedtak.mediator.mottak
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
+import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
 
@@ -45,8 +45,8 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
         stønadsperiode = packet["Periode"].asInt().arbeidsuker,
         vanligArbeidstidPerDag = packet["Fastsatt vanlig arbeidstid"].asDouble().timer,
         egenandel = when (Dagpengerettighet.valueOf(packet["Rettighetstype"].asText())) {
-            Dagpengerettighet.Ordinær, Dagpengerettighet.Permittering -> packet["Dagsats"].decimalValue() * BigDecimal(3)
-            else -> BigDecimal(0)
+            Dagpengerettighet.Ordinær, Dagpengerettighet.Permittering -> 3.beløp * packet["Dagsats"].decimalValue().beløp
+            else -> 0.beløp
         }, // @todo: hva/hvem skal sette egenandel?
     )
 

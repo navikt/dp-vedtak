@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.modell.hendelser
 
 import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
+import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
@@ -27,7 +28,7 @@ class DagpengerInnvilgetHendelse(
     private val grunnlag: BigDecimal,
     private val stønadsperiode: Stønadsperiode,
     private val vanligArbeidstidPerDag: Timer,
-    private val egenandel: BigDecimal,
+    private val egenandel: Beløp,
 ) : SøknadBehandletHendelse(
     ident,
     behandlingId,

@@ -50,7 +50,7 @@ class RettighetStegTest : No {
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
-                    egenandel = søknadHendelse.egenandel.toBigDecimal(),
+                    egenandel = søknadHendelse.egenandel.beløp,
                 ),
             )
         }
@@ -67,7 +67,7 @@ class RettighetStegTest : No {
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
-                    egenandel = søknadHendelse.egenandel.toBigDecimal(),
+                    egenandel = søknadHendelse.egenandel.beløp,
                 ),
             )
         }
@@ -133,7 +133,6 @@ class RettighetStegTest : No {
         }
 
         Så("så skal gjenstående egenandel være {bigdecimal} kr") { egenandel: BigDecimal ->
-            assertTrue(inspektør.allEgenandelTrukket) { "Forventet at all egenandel er trukket" }
             assertEquals(Beløp.fra(egenandel), inspektør.gjenståendeEgenandel)
         }
 
@@ -206,7 +205,7 @@ class RettighetStegTest : No {
         lateinit var stønadsperiode: Stønadsperiode
         lateinit var grunnlag: BigDecimal
         lateinit var dagsats: BigDecimal
-        lateinit var egenandel: BigDecimal
+        lateinit var egenandel: Beløp
         lateinit var virkningsdato: LocalDate
         lateinit var beløpTilUtbetaling: Beløp
         lateinit var forbruk: Tid
@@ -240,7 +239,7 @@ class RettighetStegTest : No {
             stønadsperiode: Stønadsperiode,
             vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,
-            egenandel: BigDecimal,
+            egenandel: Beløp,
         ) {
             this.grunnlag = grunnlag
             this.dagsats = dagsats

@@ -18,15 +18,15 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     private val vedtak = historiskeVedtak.sorted().toMutableList()
     private val observers = mutableSetOf<VedtakObserver>()
-
     internal val dagsatsHistorikk = TemporalCollection<BigDecimal>()
+
+    internal val trukketEgenandelHistorikk = TrukketEgenandelHistorikk()
     internal val grunnlagHistorikk = TemporalCollection<BigDecimal>()
     internal val stønadsperiodeHistorikk = TemporalCollection<Stønadsperiode>()
-    internal val gjenståendeStønadsperiodeHistorikk = TemporalCollection<Stønadsperiode>()
+    internal val forbrukHistorikk = ForbrukHistorikk()
     internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
     internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
-    internal val egenandelHistorikk = TemporalCollection<BigDecimal>()
-    internal val gjenståendeEgenandelHistorikk = TemporalCollection<Beløp>()
+    internal val egenandelHistorikk = TemporalCollection<Beløp>()
 
     init {
         vedtak.forEach { it.populer(this) }
@@ -45,10 +45,13 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
         this.leggTilVedtak(
             LøpendeBehandling(
                 rapporteringsId = rapporteringsperiode.rapporteringsId,
+                stønadsperiodeHistorikk = stønadsperiodeHistorikk,
                 satsHistorikk = dagsatsHistorikk,
                 dagpengerettighetHistorikk = dagpengerettighetHistorikk,
                 vanligArbeidstidHistorikk = vanligArbeidstidHistorikk,
-                gjenståendeEgenandelHistorikk = gjenståendeEgenandelHistorikk,
+                egenandelHistorikk = egenandelHistorikk,
+                forbrukHistorikk = forbrukHistorikk,
+                trukketEgenandelHistorikk = trukketEgenandelHistorikk,
             ).håndter(rapporteringsperiode),
         )
     }
@@ -68,10 +71,15 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     }
 
     fun accept(visitor: VedtakHistorikkVisitor) {
-        if (gjenståendeStønadsperiodeHistorikk.harHistorikk()) {
-            visitor.visitGjenståendeStønadsperiode(gjenståendeStønadsperiodeHistorikk.get(LocalDate.now()))
-            visitor.visitGjenståendeEgenandel(gjenståendeEgenandelHistorikk.get(LocalDate.now()))
+        if (forbrukHistorikk.harHistorikk()) {
+            val gjenstående = stønadsperiodeHistorikk.get(LocalDate.now()) - forbrukHistorikk.summer(LocalDate.now())
+            visitor.visitGjenståendeStønadsperiode(gjenstående)
         }
+        if (egenandelHistorikk.harHistorikk()) {
+            val gjenstående = egenandelHistorikk.get(LocalDate.now()) - trukketEgenandelHistorikk.summer(LocalDate.now())
+            visitor.visitGjenståendeEgenandel(gjenstående)
+        }
+
         visitor.preVisitVedtak()
         vedtak.forEach { it.accept(visitor) }
         visitor.postVisitVedtak()

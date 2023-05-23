@@ -24,7 +24,7 @@ interface VedtakVisitor {
         stønadsperiode: Stønadsperiode,
         vanligArbeidstidPerDag: Timer,
         dagpengerettighet: Dagpengerettighet,
-        egenandel: BigDecimal,
+        egenandel: Beløp,
     ) {}
 
     fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: Beløp, trukketEgenandel: Beløp) {}
