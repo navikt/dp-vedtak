@@ -27,7 +27,7 @@ dependencies {
     testImplementation(libs.ktor.client.mock)
     testImplementation("io.kotest:kotest-assertions-core-jvm:${libs.versions.kotest.get()}")
 
-    testImplementation(Mockk.mockk)
+    testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
 }
 
 application {
