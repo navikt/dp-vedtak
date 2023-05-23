@@ -1,14 +1,14 @@
 plugins {
-    id("dagpenger.common")
+    id("common")
+    `java-library`
 }
 
-val cucumberVersjon = "7.12.0"
 dependencies {
-    implementation(project(":aktivitetslogg"))
-    testImplementation("io.cucumber:cucumber-java8:$cucumberVersjon")
-    testImplementation("io.cucumber:cucumber-junit-platform-engine:$cucumberVersjon")
-    testImplementation("org.junit.platform:junit-platform-suite:1.9.3")
-
-    testImplementation(Jackson.kotlin)
-    testImplementation(Jackson.jsr310)
+    implementation(project(path = ":aktivitetslogg"))
+    testImplementation("io.cucumber:cucumber-java8:${libs.versions.cucumber.get()}")
+    testImplementation("io.cucumber:cucumber-junit-platform-engine:${libs.versions.cucumber.get()}")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:${libs.versions.kotest.get()}")
+    testImplementation("org.junit.platform:junit-platform-suite:${libs.versions.junit.platform.suite.get()}")
+    testImplementation(libs.jackson.datatype.jsr310)
+    testImplementation(libs.jackson.module.kotlin)
 }

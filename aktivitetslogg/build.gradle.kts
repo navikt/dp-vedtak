@@ -1,3 +1,3 @@
 plugins {
-    id("dagpenger.common")
+    id("common")
 }

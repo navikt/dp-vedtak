@@ -1,30 +1,36 @@
 plugins {
-    id("dagpenger.common")
-    id("dagpenger.rapid-and-rivers")
+    id("common")
+    application
 }
 
 dependencies {
     implementation(project(path = ":modell"))
     implementation(project(path = ":aktivitetslogg"))
 
-    implementation(Jackson.core)
-    implementation(Jackson.jsr310)
+    implementation(libs.jackson.core)
+    implementation(libs.jackson.datatype.jsr310)
 
     // https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-slf4j/
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:${libs.versions.kotlinx.coroutines.slf4j.get()}")
 
     // POC - iverksett api
-    implementation("io.ktor:ktor-client-core:${Ktor2.version}")
-    implementation("io.ktor:ktor-client-cio:${Ktor2.version}")
-    implementation("io.ktor:ktor-client-content-negotiation:${Ktor2.version}")
-    implementation("io.ktor:ktor-serialization-jackson:${Ktor2.version}")
-    implementation("io.ktor:ktor-client-logging:${Ktor2.version}")
-    implementation("com.github.navikt.dp-biblioteker:oauth2-klient:${Dagpenger.Biblioteker.version}")
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.jackson)
+    implementation(libs.ktor.client.logging.jvm)
+    implementation("com.github.navikt.dp-biblioteker:oauth2-klient:${libs.versions.dagpenger.biblioteker.get()}")
 
-    testImplementation("io.ktor:ktor-client-mock:${Ktor2.version}")
+    implementation(libs.rapids.and.rivers)
+    implementation(libs.konfig)
+    implementation(libs.kotlin.logging)
 
-    testImplementation(Mockk.mockk)
+    testImplementation(libs.ktor.client.mock)
+    testImplementation("io.kotest:kotest-assertions-core-jvm:${libs.versions.kotest.get()}")
+
+    testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
 }
+
 application {
     mainClass.set("no.nav.dagpenger.vedtak.mediator.AppKt")
 }

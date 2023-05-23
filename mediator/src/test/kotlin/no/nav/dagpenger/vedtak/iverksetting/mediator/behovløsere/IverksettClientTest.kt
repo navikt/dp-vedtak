@@ -47,9 +47,11 @@ internal class IverksettClientTest {
             val mockEngine = mockEngine(statusCode)
             val client = IverksettClient(baseUrl = "http://localhost/", tokenProvider, mockEngine)
             assertThrows<RuntimeException> {
-                client.iverksett(
-                    iverksettDagpengerdDtoDummy(),
-                )
+                runBlocking {
+                    client.iverksett(
+                        iverksettDagpengerdDtoDummy(),
+                    )
+                }
             }
         }
     }
