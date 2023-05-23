@@ -8,7 +8,6 @@ import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.I
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Mottatt
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
-import no.nav.dagpenger.vedtak.modell.VedtakBehov
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -45,7 +44,7 @@ class IverksettingTest {
         )
 
         assertBehov(
-            VedtakBehov.Iverksett,
+            IverksettingBehov.Iverksett,
             forventetDetaljer = mapOf(
                 "ident" to ident,
                 "vedtakId" to vedtakId.toString(),

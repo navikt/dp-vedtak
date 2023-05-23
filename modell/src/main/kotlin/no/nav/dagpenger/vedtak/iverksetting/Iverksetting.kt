@@ -3,11 +3,11 @@ package no.nav.dagpenger.vedtak.iverksetting
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
+import no.nav.dagpenger.aktivitetslogg.Subaktivitetskontekst
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
-import no.nav.dagpenger.vedtak.modell.VedtakBehov
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import java.util.UUID
 
@@ -16,8 +16,8 @@ class Iverksetting private constructor(
     private val personIdent: PersonIdentifikator,
     val vedtakId: UUID,
     private var tilstand: Tilstand,
-    internal val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
-) : Aktivitetskontekst {
+    override val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
+) : Subaktivitetskontekst {
 
     private val observers = mutableSetOf<IverksettingObserver>()
     constructor(vedtakId: UUID, ident: String) : this(
@@ -115,7 +115,7 @@ class Iverksetting private constructor(
     object Mottatt : Tilstand(TilstandNavn.Mottatt) {
         override fun håndter(vedtakFattetHendelse: VedtakFattetHendelse, iverksetting: Iverksetting) {
             vedtakFattetHendelse.behov(
-                type = VedtakBehov.Iverksett,
+                type = IverksettingBehov.Iverksett,
                 melding = "Trenger å iverksette vedtak",
                 detaljer = mapOf(
                     "vedtakId" to vedtakFattetHendelse.iverksettingsVedtak.vedtakId,

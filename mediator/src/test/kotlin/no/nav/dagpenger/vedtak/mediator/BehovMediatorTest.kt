@@ -6,7 +6,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
-import no.nav.dagpenger.vedtak.modell.VedtakBehov
+import no.nav.dagpenger.vedtak.iverksetting.IverksettingBehov
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
@@ -47,7 +47,7 @@ internal class BehovMediatorTest {
         hendelse.kontekst(Testkontekst("Testkontekst"))
 
         hendelse.behov(
-            VedtakBehov.Iverksett,
+            IverksettingBehov.Iverksett,
             "Behøver iverksetting",
             mapOf(
                 "parameter1" to "verdi1",
@@ -93,7 +93,7 @@ internal class BehovMediatorTest {
         )
 
         hendelse.behov(
-            VedtakBehov.Iverksett,
+            IverksettingBehov.Iverksett,
             "Behøver iverksetting",
             mapOf(
                 "parameter3" to "verdi3",
@@ -128,14 +128,14 @@ internal class BehovMediatorTest {
         val hendelse = TestHendelse(aktivitetslogg.barn())
         hendelse.kontekst(iverksattKontekst)
         hendelse.behov(
-            VedtakBehov.Iverksett,
+            IverksettingBehov.Iverksett,
             "Behøver iverksetting",
             mapOf(
                 "ident" to testIdent,
             ),
         )
         hendelse.behov(
-            VedtakBehov.Iverksett,
+            IverksettingBehov.Iverksett,
             "Behøver iverksetting",
             mapOf(
                 "ident" to testIdent,
@@ -149,8 +149,8 @@ internal class BehovMediatorTest {
     internal fun `kan ikke produsere samme behov`() {
         val hendelse = TestHendelse(aktivitetslogg.barn())
         hendelse.kontekst(iverksattKontekst)
-        hendelse.behov(VedtakBehov.Iverksett, "Behøver iverksetting")
-        hendelse.behov(VedtakBehov.Iverksett, "Behøver iverksetting")
+        hendelse.behov(IverksettingBehov.Iverksett, "Behøver iverksetting")
+        hendelse.behov(IverksettingBehov.Iverksett, "Behøver iverksetting")
 
         assertThrows<IllegalArgumentException> { behovMediator.håndter(hendelse) }
     }

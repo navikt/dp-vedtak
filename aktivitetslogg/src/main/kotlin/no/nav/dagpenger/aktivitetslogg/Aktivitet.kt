@@ -137,7 +137,7 @@ sealed class Aktivitet(
         }
 
         override fun accept(visitor: AktivitetsloggVisitor) {
-            // visitor.visitSevere(kontekster, this, melding, tidsstempel)
+            visitor.visitSevere(kontekster, this, melding, tidsstempel)
         }
     }
 }

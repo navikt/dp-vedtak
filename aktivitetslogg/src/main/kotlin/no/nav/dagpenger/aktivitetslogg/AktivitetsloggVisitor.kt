@@ -27,5 +27,13 @@ interface AktivitetsloggVisitor {
     ) {
     }
 
+    fun visitSevere(
+        kontekster: List<SpesifikkKontekst>,
+        severe: Aktivitet.Severe,
+        melding: String,
+        tidsstempel: String,
+    ) {
+    }
+
     fun postVisitAktivitetslogg(aktivitetslogg: Aktivitetslogg) {}
 }
