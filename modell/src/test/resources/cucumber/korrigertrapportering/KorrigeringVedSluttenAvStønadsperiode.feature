@@ -1,5 +1,4 @@
 # language: no
-@wip
 Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
 
   Bakgrunn: 2 arbeidsuker igjen av ordinære dagpenger
@@ -76,6 +75,7 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
     Så skal gjenstående stønadsdager være 0
     Så skal bruker ha 4 vedtak
 
+  @wip
   Scenario: Rapporterer først fravær en dag, slik at 1 dag gjenstår av dagpengeperioden. Rapporterer påfølgende uke, slik at dagpengeperioden er oppbrukt.
   Korrigerer deretter første rapportering, slik at dagpengeperioden brukes opp tidligere.
 
