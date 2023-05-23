@@ -73,8 +73,8 @@ class Aktivitetslogg(
     override fun toMap(mapper: AktivitetsloggMappingPort): Map<String, List<Map<String, Any>>> = mapper.map(this)
 
     fun logg(vararg kontekst: Aktivitetskontekst): Aktivitetslogg {
-        return Aktivitetslogg(this).also {
-            it.aktiviteter.addAll(
+        return Aktivitetslogg(this).also { aktivitetslogg ->
+            aktivitetslogg.aktiviteter.addAll(
                 this.aktiviteter.filter { aktivitet ->
                     kontekst.any { it in aktivitet }
                 },
