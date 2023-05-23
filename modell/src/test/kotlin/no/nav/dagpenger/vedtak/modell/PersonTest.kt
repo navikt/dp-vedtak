@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak.modell
 
+import no.nav.dagpenger.aktivitetslogg.Aktivitet
+import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
@@ -34,9 +36,10 @@ internal class PersonTest {
         assertEquals(1, testObservatør.vedtak.size)
 
         object : PersonVisitor {
-            override fun visitWarn(
+            override fun visitInfo(
+                id: UUID,
                 kontekster: List<SpesifikkKontekst>,
-                aktivitet: Aktivitetslogg.Aktivitet.Warn,
+                aktivitet: Aktivitet.Info,
                 melding: String,
                 tidsstempel: String,
             ) {

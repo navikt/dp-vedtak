@@ -71,10 +71,10 @@ sealed class Aktivitet(
 
     class Behov private constructor(
         id: UUID,
-        private val type: Behovtype,
+        val type: Behovtype,
         kontekster: List<SpesifikkKontekst>,
         private val melding: String,
-        private val detaljer: Map<String, Any?> = emptyMap(),
+        private val detaljer: Map<String, Any> = emptyMap(),
         private val tidsstempel: String = LocalDateTime.now().format(tidsstempelformat),
     ) : Aktivitet(id, 50, 'N', melding, tidsstempel, kontekster) {
         companion object {
@@ -87,7 +87,7 @@ sealed class Aktivitet(
                 type: Behovtype,
                 kontekster: List<SpesifikkKontekst>,
                 melding: String,
-                detaljer: Map<String, Any?>,
+                detaljer: Map<String, Any>,
                 tidsstempel: String,
             ) =
                 Behov(id, type, kontekster, melding, detaljer, tidsstempel)
@@ -96,7 +96,7 @@ sealed class Aktivitet(
                 type: Behovtype,
                 kontekster: List<SpesifikkKontekst>,
                 melding: String,
-                detaljer: Map<String, Any?>,
+                detaljer: Map<String, Any>,
             ) = Behov(
                 UUID.randomUUID(),
                 type,
@@ -111,6 +111,33 @@ sealed class Aktivitet(
         override fun accept(visitor: AktivitetsloggVisitor) {
             visitor.visitBehov(id, kontekster, this, type, melding, detaljer, tidsstempel)
         }
-        interface Behovtype
+        interface Behovtype {
+            val name: String
+        }
+    }
+
+    class Severe(
+        id: UUID,
+        kontekster: List<SpesifikkKontekst>,
+        private val melding: String,
+        private val tidsstempel: String = LocalDateTime.now().format(tidsstempelformat),
+    ) : Aktivitet(id = id, alvorlighetsgrad = 100, 'S', melding, tidsstempel, kontekster) {
+        companion object {
+            internal fun filter(aktiviteter: List<Aktivitet>): List<Severe> {
+                return aktiviteter.filterIsInstance<Severe>()
+            }
+            internal fun opprett(
+                kontekster: List<SpesifikkKontekst>,
+                melding: String,
+            ) = Severe(
+                UUID.randomUUID(),
+                kontekster,
+                melding,
+            )
+        }
+
+        override fun accept(visitor: AktivitetsloggVisitor) {
+            // visitor.visitSevere(kontekster, this, melding, tidsstempel)
+        }
     }
 }

@@ -2,7 +2,7 @@ package no.nav.dagpenger.vedtak.mediator
 
 import mu.KLogger
 import mu.KotlinLogging
-import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
+import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -17,12 +17,12 @@ class BehovMediator(
     }
 
     internal fun håndter(hendelse: Hendelse) {
-        hendelse.kontekster().forEach { if (!it.hasErrors()) håndter(hendelse, it.behov()) }
+        hendelse.kontekster().forEach { håndter(hendelse, it.behov()) }
     }
 
     private fun håndter(
         hendelse: Hendelse,
-        behov: List<Aktivitetslogg.Aktivitet.Behov>,
+        behov: List<Aktivitet.Behov>,
     ) {
         behov
             .groupBy { it.kontekst() }

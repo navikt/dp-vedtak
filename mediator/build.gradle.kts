@@ -4,7 +4,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":modell"))
+    implementation(project(path = ":modell"))
+    implementation(project(path = ":aktivitetslogg"))
 
     implementation(Jackson.core)
     implementation(Jackson.jsr310)

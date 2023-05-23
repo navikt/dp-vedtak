@@ -1,8 +1,8 @@
 package no.nav.dagpenger.vedtak.mediator
 
 import mu.KotlinLogging
+import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
-import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.PersonObserver
@@ -66,8 +66,8 @@ internal class PersonMediator(
     }
 
     private fun finalize(hendelse: Hendelse) {
-        if (!hendelse.hasMessages()) return
-        if (hendelse.hasErrors()) return sikkerLogger.info("aktivitetslogg inneholder errors: ${hendelse.toLogString()}")
+        // if (!hendelse.hasMessages()) return
+        // if (hendelse.hasErrors()) return sikkerLogger.info("aktivitetslogg inneholder errors: ${hendelse.toLogString()}")
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
     }
 

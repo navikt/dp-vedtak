@@ -27,8 +27,14 @@ class Aktivitetslogg(
         add(Aktivitet.Info.opprett(kontekster.toSpesifikk(), formatertMelding))
     }
 
-    override fun behov(type: Behov.Behovtype, melding: String, detaljer: Map<String, Any?>) {
+    override fun behov(type: Behov.Behovtype, melding: String, detaljer: Map<String, Any>) {
         add(Behov.opprett(type, kontekster.toSpesifikk(), melding, detaljer))
+    }
+
+    override fun severe(melding: String, vararg params: Any?): Nothing {
+        add(Aktivitet.Severe.opprett(kontekster.toSpesifikk(), String.format(melding, *params)))
+
+        throw AktivitetException(this)
     }
 
     private fun add(aktivitet: Aktivitet) {

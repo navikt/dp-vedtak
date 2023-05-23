@@ -34,7 +34,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
         if (vedtak.harBehandlet(søknadBehandletHendelse.behandlingId)) {
-            søknadBehandletHendelse.warn("Har allerede behandlet SøknadBehandletHendelse")
+            søknadBehandletHendelse.info("Har allerede behandlet SøknadBehandletHendelse")
             return
         }
         val vedtak = søknadBehandletHendelse.tilVedtak()
@@ -58,7 +58,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     fun håndter(stansHendelse: StansHendelse) {
         if (vedtak.harBehandlet(stansHendelse.behandlingId)) {
-            stansHendelse.warn("Har allerede behandlet StansHendelse")
+            stansHendelse.info("Har allerede behandlet StansHendelse")
             return
         }
         this.leggTilVedtak(

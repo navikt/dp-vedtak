@@ -1,6 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.hendelser
 
-import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
+import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.rapportering.Dag

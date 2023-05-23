@@ -2,7 +2,8 @@ package no.nav.dagpenger.aktivitetslogg
 
 interface IAktivitetslogg {
     fun info(melding: String, vararg params: Any?)
-    fun behov(type: Aktivitet.Behov.Behovtype, melding: String, detaljer: Map<String, Any?> = emptyMap())
+    fun severe(melding: String, vararg params: Any?)
+    fun behov(type: Aktivitet.Behov.Behovtype, melding: String, detaljer: Map<String, Any> = emptyMap())
     fun harAktiviteter(): Boolean
     fun aktivitetsteller(): Int
     fun behov(): List<Aktivitet.Behov>

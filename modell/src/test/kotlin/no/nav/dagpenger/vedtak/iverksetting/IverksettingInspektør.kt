@@ -1,6 +1,6 @@
 package no.nav.dagpenger.vedtak.iverksetting
 
-import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
+import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import java.util.UUID
 
 internal class IverksettingInspektør(iverksetting: Iverksetting) : IverksettingVisitor {

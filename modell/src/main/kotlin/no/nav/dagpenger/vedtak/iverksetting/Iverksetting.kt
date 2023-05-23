@@ -1,12 +1,13 @@
 package no.nav.dagpenger.vedtak.iverksetting
 
+import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
+import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
+import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
-import no.nav.dagpenger.vedtak.modell.Aktivitetskontekst
-import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
-import no.nav.dagpenger.vedtak.modell.SpesifikkKontekst
+import no.nav.dagpenger.vedtak.modell.VedtakBehov
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import java.util.UUID
 
@@ -107,14 +108,14 @@ class Iverksetting private constructor(
             iverksattHendelse.feiltilstand()
         }
 
-        private fun Hendelse.feiltilstand(): Nothing =
+        private fun Hendelse.feiltilstand() =
             this.severe("Kan ikke håndtere ${this.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
     }
 
     object Mottatt : Tilstand(TilstandNavn.Mottatt) {
         override fun håndter(vedtakFattetHendelse: VedtakFattetHendelse, iverksetting: Iverksetting) {
             vedtakFattetHendelse.behov(
-                type = Aktivitetslogg.Aktivitet.Behov.Behovtype.Iverksett,
+                type = VedtakBehov.Iverksett,
                 melding = "Trenger å iverksette vedtak",
                 detaljer = mapOf(
                     "vedtakId" to vedtakFattetHendelse.iverksettingsVedtak.vedtakId,

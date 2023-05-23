@@ -1,12 +1,12 @@
 package no.nav.dagpenger.vedtak.iverksetting.mediator
 
 import mu.KotlinLogging
+import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.persistens.IverksettingRepository
 import no.nav.dagpenger.vedtak.mediator.BehovMediator
-import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.helse.rapids_rivers.withMDC
 
@@ -63,8 +63,8 @@ internal class IverksettingMediator(
     }
 
     private fun finalize(hendelse: Hendelse) {
-        if (!hendelse.hasMessages()) return
-        if (hendelse.hasErrors()) return sikkerLogger.info("aktivitetslogg inneholder errors: ${hendelse.toLogString()}")
+        // if (!hendelse.hasMessages()) return
+        // if (hendelse.hasErrors()) return sikkerLogger.info("aktivitetslogg inneholder errors: ${hendelse.toLogString()}")
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
         behovMediator.håndter(hendelse)
     }

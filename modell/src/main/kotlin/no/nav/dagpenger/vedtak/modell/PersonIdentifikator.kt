@@ -1,5 +1,8 @@
 package no.nav.dagpenger.vedtak.modell
 
+import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
+import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
+
 class PersonIdentifikator(private val ident: String) : Aktivitetskontekst {
 
     init {

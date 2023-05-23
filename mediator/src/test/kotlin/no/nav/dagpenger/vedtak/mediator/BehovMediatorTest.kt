@@ -2,10 +2,11 @@ package no.nav.dagpenger.vedtak.mediator
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.mockk.mockk
-import no.nav.dagpenger.vedtak.modell.Aktivitetskontekst
-import no.nav.dagpenger.vedtak.modell.Aktivitetslogg
-import no.nav.dagpenger.vedtak.modell.Aktivitetslogg.Aktivitet.Behov.Behovtype.Iverksett
-import no.nav.dagpenger.vedtak.modell.SpesifikkKontekst
+import no.nav.dagpenger.aktivitetslogg.Aktivitet
+import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
+import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
+import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
+import no.nav.dagpenger.vedtak.modell.VedtakBehov
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
@@ -46,7 +47,7 @@ internal class BehovMediatorTest {
         hendelse.kontekst(Testkontekst("Testkontekst"))
 
         hendelse.behov(
-            Iverksett,
+            VedtakBehov.Iverksett,
             "Behøver iverksetting",
             mapOf(
                 "parameter1" to "verdi1",
@@ -72,6 +73,10 @@ internal class BehovMediatorTest {
         }
     }
 
+    private enum class TestBehov : Aktivitet.Behov.Behovtype {
+        Test,
+    }
+
     @Test
     internal fun `Gruppere behov`() {
         val hendelse = TestHendelse(aktivitetslogg.barn())
@@ -79,7 +84,7 @@ internal class BehovMediatorTest {
         hendelse.kontekst(Testkontekst("Testkontekst"))
 
         hendelse.behov(
-            Aktivitetslogg.Aktivitet.Behov.Behovtype.Test,
+            TestBehov.Test,
             "Test",
             mapOf(
                 "parameter1" to "verdi1",
@@ -88,7 +93,7 @@ internal class BehovMediatorTest {
         )
 
         hendelse.behov(
-            Iverksett,
+            VedtakBehov.Iverksett,
             "Behøver iverksetting",
             mapOf(
                 "parameter3" to "verdi3",
@@ -123,14 +128,14 @@ internal class BehovMediatorTest {
         val hendelse = TestHendelse(aktivitetslogg.barn())
         hendelse.kontekst(iverksattKontekst)
         hendelse.behov(
-            Iverksett,
+            VedtakBehov.Iverksett,
             "Behøver iverksetting",
             mapOf(
                 "ident" to testIdent,
             ),
         )
         hendelse.behov(
-            Iverksett,
+            VedtakBehov.Iverksett,
             "Behøver iverksetting",
             mapOf(
                 "ident" to testIdent,
@@ -144,8 +149,8 @@ internal class BehovMediatorTest {
     internal fun `kan ikke produsere samme behov`() {
         val hendelse = TestHendelse(aktivitetslogg.barn())
         hendelse.kontekst(iverksattKontekst)
-        hendelse.behov(Iverksett, "Behøver iverksetting")
-        hendelse.behov(Iverksett, "Behøver iverksetting")
+        hendelse.behov(VedtakBehov.Iverksett, "Behøver iverksetting")
+        hendelse.behov(VedtakBehov.Iverksett, "Behøver iverksetting")
 
         assertThrows<IllegalArgumentException> { behovMediator.håndter(hendelse) }
     }

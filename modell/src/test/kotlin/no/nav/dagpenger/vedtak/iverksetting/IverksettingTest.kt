@@ -2,12 +2,13 @@ package no.nav.dagpenger.vedtak.iverksetting
 
 import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.AvventerIverksetting
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Iverksatt
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Mottatt
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
-import no.nav.dagpenger.vedtak.modell.Aktivitetslogg.Aktivitet.Behov.Behovtype
+import no.nav.dagpenger.vedtak.modell.VedtakBehov
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -44,7 +45,7 @@ class IverksettingTest {
         )
 
         assertBehov(
-            Behovtype.Iverksett,
+            VedtakBehov.Iverksett,
             forventetDetaljer = mapOf(
                 "ident" to ident,
                 "vedtakId" to vedtakId.toString(),
@@ -72,7 +73,7 @@ class IverksettingTest {
         tilstander.asList() shouldBe testObservatør.tilstander
     }
 
-    private fun assertBehov(behovtype: Behovtype, forventetDetaljer: Map<String, Any> = emptyMap()) {
+    private fun assertBehov(behovtype: Aktivitet.Behov.Behovtype, forventetDetaljer: Map<String, Any> = emptyMap()) {
         val behov = inspektør.innsendingLogg.behov().findLast {
             it.type == behovtype
         } ?: throw AssertionError("Fant ikke behov $behovtype")
