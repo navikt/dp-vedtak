@@ -14,10 +14,14 @@ open class RatioMengde internal constructor(private val mengde: Number, enhet: E
 
     override fun compareTo(other: RatioMengde): Int {
         require(this.enhet.isCompatible(other.enhet)) { "Kan bare sammenligne med samme enhet." }
+
+        val konvertertMengde = this.convertedAmount(other)
+
         return when {
-            this.mengde.toDouble() == other.mengde.toDouble() -> 0
-            this.mengde.toDouble() < other.mengde.toDouble() -> -1
-            else -> 1
+            this.mengde.toDouble() == konvertertMengde -> 0
+            this.mengde.toDouble() < konvertertMengde -> -1
+            this.mengde.toDouble() > konvertertMengde -> 1
+            else -> throw RuntimeException("Godt jobba å komme deg hit")
         }
     }
 }
