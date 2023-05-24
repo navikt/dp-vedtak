@@ -25,7 +25,7 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så så skal gjenstående egenandel være 0 kr
+    Så skal gjenstående egenandel være 0 kr
     Så skal utbetalingen være 5600
     Så skal bruker ha 2 vedtak
 
@@ -48,7 +48,7 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 0 dager
-    Så så skal gjenstående egenandel være 2400 kr
+    Så skal gjenstående egenandel være 2400 kr
     Så skal utbetalingen være 0
     Så skal bruker ha 3 vedtak
 
@@ -70,7 +70,7 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så så skal gjenstående egenandel være 0 kr
+    Så skal gjenstående egenandel være 0 kr
     Så skal utbetalingen være 5600
     Så skal bruker ha 2 vedtak
 
@@ -92,7 +92,7 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 9 dager
-    Så så skal gjenstående egenandel være 0 kr
+    Så skal gjenstående egenandel være 0 kr
     Så skal utbetalingen være 4800
     Så skal bruker ha 3 vedtak
 
@@ -114,7 +114,7 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så så skal gjenstående egenandel være 0 kr
+    Så skal gjenstående egenandel være 0 kr
     Så skal utbetalingen være 5600
     Så skal bruker ha 2 vedtak
 
@@ -135,7 +135,7 @@ Egenskap: Korrigert egenrapportering
       | 07.01.2023 | false  | 0     |
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så så skal gjenstående egenandel være 0 kr
+    Så skal gjenstående egenandel være 0 kr
     Så skal utbetalingen være 8000
     Så skal bruker ha 3 vedtak
 
@@ -157,8 +157,7 @@ Egenskap: Korrigert egenrapportering
       | 07.01.2023 | false  | 0     |
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 0 dager
-    Så så skal gjenstående egenandel være 0 kr
+    Så skal gjenstående egenandel være 0 kr
+
     Så skal utbetalingen være 0
     Så skal bruker ha 4 vedtak
-
-
