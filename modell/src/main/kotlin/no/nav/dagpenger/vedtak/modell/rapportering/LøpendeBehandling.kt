@@ -44,7 +44,10 @@ internal class LøpendeBehandling(
         val stønadsperiode = stønadsperiodeHistorikk.get(sisteRapporteringdato)
         val gjenståendeStønadsperiode = stønadsperiode - initieltForbruk
 
-        val forbruk = minOf(gjenståendeStønadsperiode, arbeidsdagerMedForbruk.size.arbeidsdager)
+        val forbruk = when {
+            gjenståendeStønadsperiode < arbeidsdagerMedForbruk.size.arbeidsdager -> gjenståendeStønadsperiode
+            else -> arbeidsdagerMedForbruk.size.arbeidsdager
+        }
 
         val utbetalingsdager =
             arbeidsdagerMedForbruk.map { it.tilBetalingsdag() } + beregningsgrunnlag.helgedagerMedRettighet()
