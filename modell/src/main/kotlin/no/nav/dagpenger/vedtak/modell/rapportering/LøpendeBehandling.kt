@@ -49,6 +49,8 @@ internal class LøpendeBehandling(
             else -> arbeidsdagerMedForbruk.size.arbeidsdager
         }
 
+        // TODO("Støtter ikke filtrering iht. 'forbruk' ved slutten av stønadsperioden, når arbeidsdagerMedForbruk er mindre enn gjenståendeStønadsperiode")
+        // TODO("Slette innslag i lista arbeidsdagerMedForbruk med index >= forbruk???")
         val utbetalingsdager =
             arbeidsdagerMedForbruk.map { it.tilBetalingsdag() } + beregningsgrunnlag.helgedagerMedRettighet()
                 .filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilBetalingsdag() }

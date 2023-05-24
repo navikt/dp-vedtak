@@ -10,15 +10,19 @@ import org.junit.jupiter.api.Test
 class EnhetTest {
 
     @Test
-    fun `Sammenligning mellom like enheter`() {
+    fun `Sammenlign størrelser som har like enheter`() {
         assertTrue(1.arbeidsdager < 2.arbeidsdager)
         assertTrue(2.arbeidsdager > 1.arbeidsdager)
+        assertTrue(2.arbeidsuker < 3.arbeidsuker)
+        assertTrue(5.arbeidsuker > 4.arbeidsuker)
     }
 
     @Test
-    fun `Sammenligning mellom ulike enheter`() {
+    fun `Sammenlign størrelser som har ulike enheter`() {
         assertTrue(1.arbeidsuker < 6.arbeidsdager)
         assertTrue(2.arbeidsuker > 9.arbeidsdager)
+        assertTrue(11.arbeidsdager > 2.arbeidsuker)
+        assertTrue(4.arbeidsdager < 1.arbeidsuker)
     }
 
     @Test
