@@ -43,11 +43,7 @@ internal class LøpendeBehandling(
 
         val stønadsperiode = stønadsperiodeHistorikk.get(sisteRapporteringdato)
         val gjenståendeStønadsperiode = stønadsperiode - initieltForbruk
-
-        val forbruk = when {
-            gjenståendeStønadsperiode < arbeidsdagerMedForbruk.size.arbeidsdager -> gjenståendeStønadsperiode
-            else -> arbeidsdagerMedForbruk.size.arbeidsdager
-        }
+        val forbruk = minOf(gjenståendeStønadsperiode, arbeidsdagerMedForbruk.size.arbeidsdager)
 
         // TODO("Støtter ikke filtrering iht. 'forbruk' ved slutten av stønadsperioden, når arbeidsdagerMedForbruk er mindre enn gjenståendeStønadsperiode")
         // TODO("Slette innslag i lista arbeidsdagerMedForbruk med index >= forbruk???")
