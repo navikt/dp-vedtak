@@ -11,7 +11,7 @@ internal class Forbruk : Regel {
         val arbeidsdagerMedRettighet = beregningsgrunnlag.arbeidsdagerMedRettighet()
         val antallArbeidsdagerMedRettighet = Stønadsdager(dager = arbeidsdagerMedRettighet.size)
         return if (antallArbeidsdagerMedRettighet > gjenståendeStønadsdager) {
-            arbeidsdagerMedRettighet.subList(0, gjenståendeStønadsdager.stønadsdager() - 1)
+            arbeidsdagerMedRettighet.subList(0, gjenståendeStønadsdager.stønadsdager())
         } else {
             arbeidsdagerMedRettighet
         }
