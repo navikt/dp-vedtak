@@ -34,19 +34,18 @@ internal class LøpendeBehandling(
         val forrigeRapporteringsdato = rapporteringsperiode.minOf { it.dato() }.minusDays(1)
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
 
+        val initieltForbruk = forbrukHistorikk.summer(forrigeRapporteringsdato)
+        val stønadsperiode = stønadsperiodeHistorikk.get(sisteRapporteringdato)
+
         val arbeidsdagerMedForbruk = when {
-            vilkårOppfylt -> Forbruk().håndter(beregningsgrunnlag)
+            vilkårOppfylt ->
+                {
+                    val gjenståendeStønadsperiode = stønadsperiode - initieltForbruk
+                    Forbruk().håndter(beregningsgrunnlag, gjenståendeStønadsperiode)
+                }
             else -> emptyList()
         }
 
-        val initieltForbruk = forbrukHistorikk.summer(forrigeRapporteringsdato)
-
-        val stønadsperiode = stønadsperiodeHistorikk.get(sisteRapporteringdato)
-        val gjenståendeStønadsperiode = stønadsperiode - initieltForbruk
-        val forbruk = minOf(gjenståendeStønadsperiode, arbeidsdagerMedForbruk.size.arbeidsdager)
-
-        // TODO("Støtter ikke filtrering iht. 'forbruk' ved slutten av stønadsperioden, når arbeidsdagerMedForbruk er mindre enn gjenståendeStønadsperiode")
-        // TODO("Slette innslag i lista arbeidsdagerMedForbruk med index >= forbruk???")
         val utbetalingsdager =
             arbeidsdagerMedForbruk.map { it.tilBetalingsdag() } + beregningsgrunnlag.helgedagerMedRettighet()
                 .filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilBetalingsdag() }
@@ -68,7 +67,7 @@ internal class LøpendeBehandling(
             behandlingId = UUID.randomUUID(),
             utfall = vilkårOppfylt,
             virkningsdato = sisteRapporteringdato,
-            forbruk = forbruk,
+            forbruk = arbeidsdagerMedForbruk.size.arbeidsdager,
             beløpTilUtbetaling = nySum,
             trukketEgenandel = trukketEgenandel,
         )

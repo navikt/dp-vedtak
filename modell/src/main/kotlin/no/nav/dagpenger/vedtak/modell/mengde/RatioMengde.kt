@@ -1,7 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.mengde
 
 // Forstår ulike mengder hvor det finnes et absolutt nullpunkt, som f.eks. alder, penger, tid
-open class RatioMengde internal constructor(mengde: Number, enhet: Enhet) : IntervallMengde(mengde, enhet) {
+open class RatioMengde internal constructor(private val mengde: Number, enhet: Enhet) : IntervallMengde(mengde, enhet) {
     operator fun unaryPlus() = this
 
     operator fun unaryMinus() = RatioMengde(-amount, enhet)

@@ -35,4 +35,6 @@ open class IntervallMengde internal constructor(mengde: Number, protected val en
             else -> throw IllegalArgumentException("Kan ikke sammenligne $this mot $other")
         }
     }
+
+    fun <R> reflection(block: (mengde: Double) -> R) = block(amount)
 }
