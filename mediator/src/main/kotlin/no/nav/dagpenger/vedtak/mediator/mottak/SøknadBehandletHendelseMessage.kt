@@ -4,10 +4,10 @@ import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
-import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import java.time.LocalDate
@@ -20,10 +20,11 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
 
     private val behandlingId = packet["behandlingId"].asUUID()
 
-    private val hendelse get() = when (packet["innvilget"].asBoolean()) {
-        true -> dagpengerInnvilgetHendelse(packet, behandlingId)
-        false -> dagpengerAvslåttHendelse(packet, behandlingId)
-    }
+    private val hendelse
+        get() = when (packet["innvilget"].asBoolean()) {
+            true -> dagpengerInnvilgetHendelse(packet, behandlingId)
+            false -> dagpengerAvslåttHendelse(packet, behandlingId)
+        }
 
     private fun dagpengerAvslåttHendelse(packet: JsonMessage, behandlingId: UUID) =
         DagpengerAvslåttHendelse(
@@ -42,7 +43,7 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
         dagpengerettighet = Dagpengerettighet.valueOf(packet["Rettighetstype"].asText()),
         dagsats = packet["Dagsats"].decimalValue(),
         grunnlag = packet["Grunnlag"].decimalValue(),
-        stønadsperiode = packet["Periode"].asInt().arbeidsuker,
+        stønadsdager = Dagpengeperiode(antallUker = packet["Periode"].asInt()).tilStønadsdager(),
         vanligArbeidstidPerDag = packet["Fastsatt vanlig arbeidstid"].asDouble().timer,
         egenandel = when (Dagpengerettighet.valueOf(packet["Rettighetstype"].asText())) {
             Dagpengerettighet.Ordinær, Dagpengerettighet.Permittering -> 3.beløp * packet["Dagsats"].decimalValue().beløp

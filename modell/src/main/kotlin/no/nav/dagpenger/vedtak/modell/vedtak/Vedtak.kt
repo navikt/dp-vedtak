@@ -2,9 +2,8 @@ package no.nav.dagpenger.vedtak.modell.vedtak
 
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
-import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
-import no.nav.dagpenger.vedtak.modell.mengde.Tid
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -28,7 +27,7 @@ sealed class Vedtak(
             virkningsdato: LocalDate,
             grunnlag: BigDecimal,
             dagsats: BigDecimal,
-            stønadsperiode: Stønadsperiode,
+            stønadsdager: Stønadsdager,
             dagpengerettighet: Dagpengerettighet,
             vanligArbeidstidPerDag: Timer,
             egenandel: Beløp,
@@ -38,7 +37,7 @@ sealed class Vedtak(
             vanligArbeidstidPerDag = vanligArbeidstidPerDag,
             grunnlag = grunnlag,
             dagsats = dagsats,
-            stønadsperiode = stønadsperiode,
+            stønadsdager = stønadsdager,
             dagpengerettighet = dagpengerettighet,
             egenandel = egenandel,
         )
@@ -47,7 +46,7 @@ sealed class Vedtak(
             behandlingId: UUID,
             utfall: Boolean,
             virkningsdato: LocalDate,
-            forbruk: Tid,
+            forbruk: Stønadsdager,
             beløpTilUtbetaling: Beløp,
             trukketEgenandel: Beløp,
         ) =
@@ -107,7 +106,7 @@ class Rammevedtak(
     private val vanligArbeidstidPerDag: Timer,
     private val grunnlag: BigDecimal,
     private val dagsats: BigDecimal,
-    private val stønadsperiode: Stønadsperiode,
+    private val stønadsdager: Stønadsdager,
     private val dagpengerettighet: Dagpengerettighet,
     private val egenandel: Beløp, // @todo: Beløp
 ) : Vedtak(
@@ -124,7 +123,7 @@ class Rammevedtak(
             vanligArbeidstidPerDag = vanligArbeidstidPerDag,
             grunnlag = grunnlag,
             dagsats = dagsats,
-            stønadsperiode = stønadsperiode,
+            stønadsdager = stønadsdager,
             dagpengerettighet = dagpengerettighet,
             egenandel = egenandel,
         )
@@ -134,7 +133,7 @@ class Rammevedtak(
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
         vedtakHistorikk.dagsatsHistorikk.put(virkningsdato, dagsats)
         vedtakHistorikk.grunnlagHistorikk.put(virkningsdato, grunnlag)
-        vedtakHistorikk.stønadsperiodeHistorikk.put(virkningsdato, stønadsperiode)
+        vedtakHistorikk.stønadsdagerHistorikk.put(virkningsdato, stønadsdager)
         vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, dagpengerettighet)
         vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato, vanligArbeidstidPerDag)
         vedtakHistorikk.egenandelHistorikk.put(virkningsdato, egenandel)
@@ -147,7 +146,7 @@ class LøpendeVedtak(
     vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     utfall: Boolean,
     virkningsdato: LocalDate,
-    private val forbruk: Tid,
+    private val forbruk: Stønadsdager,
     private val beløpTilUtbetaling: Beløp,
     private val trukketEgenandel: Beløp,
 ) : Vedtak(

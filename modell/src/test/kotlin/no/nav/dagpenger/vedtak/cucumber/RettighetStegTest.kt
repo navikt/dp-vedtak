@@ -8,6 +8,8 @@ import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
+import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
@@ -15,10 +17,6 @@ import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
-import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsdager
-import no.nav.dagpenger.vedtak.modell.mengde.Enhet.Companion.arbeidsuker
-import no.nav.dagpenger.vedtak.modell.mengde.Stønadsperiode
-import no.nav.dagpenger.vedtak.modell.mengde.Tid
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -48,7 +46,7 @@ class RettighetStegTest : No {
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                     dagsats = søknadHendelse.dagsats.toBigDecimal(),
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
-                    stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
+                    stønadsdager = Dagpengeperiode(søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
                     egenandel = søknadHendelse.egenandel.beløp,
                 ),
@@ -65,7 +63,7 @@ class RettighetStegTest : No {
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                     dagsats = søknadHendelse.dagsats.toBigDecimal(),
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
-                    stønadsperiode = søknadHendelse.stønadsperiode.arbeidsuker,
+                    stønadsdager = Dagpengeperiode(antallUker = søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
                     egenandel = søknadHendelse.egenandel.beløp,
                 ),
@@ -117,7 +115,7 @@ class RettighetStegTest : No {
         }
 
         Så("vedtaket har stønadsperiode på {int} uker") { stønadsperiode: Int ->
-            assertEquals(stønadsperiode.arbeidsuker, inspektør.stønadsperiode)
+            assertEquals(Dagpengeperiode(stønadsperiode).tilStønadsdager(), inspektør.stønadsdager)
         }
 
         Så("vedtaket har vanlig arbeidstid per dag på {double} timer") { vanligArbeidstidPerDag: Double ->
@@ -129,7 +127,7 @@ class RettighetStegTest : No {
         }
 
         Så("skal forbruket være {int} dager") { forbruk: Int ->
-            assertEquals(forbruk.arbeidsdager, inspektør.forbruk)
+            assertEquals(Stønadsdager(dager = forbruk), inspektør.forbruk)
         }
 
         Så("skal gjenstående egenandel være {bigdecimal} kr") { egenandel: BigDecimal ->
@@ -146,7 +144,7 @@ class RettighetStegTest : No {
         }
 
         Så("skal gjenstående stønadsdager være {int}") { dager: Int ->
-            assertEquals(dager.arbeidsdager, inspektør.gjenståendeStønadsperiode)
+            assertEquals(Stønadsdager(dager = dager), inspektør.gjenståendeStønadsdager)
         }
 
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
@@ -197,23 +195,23 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
-        lateinit var gjenståendeStønadsperiode: Stønadsperiode
+        lateinit var gjenståendeStønadsdager: Stønadsdager
         lateinit var gjenståendeEgenandel: Beløp
         lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
-        lateinit var stønadsperiode: Stønadsperiode
+        lateinit var stønadsdager: Stønadsdager
         lateinit var grunnlag: BigDecimal
         lateinit var dagsats: BigDecimal
         lateinit var egenandel: Beløp
         lateinit var virkningsdato: LocalDate
         lateinit var beløpTilUtbetaling: Beløp
-        lateinit var forbruk: Tid
+        lateinit var forbruk: Stønadsdager
         var antallVedtak = 0
         var allEgenandelTrukket: Boolean = false
 
-        override fun visitGjenståendeStønadsperiode(gjenståendePeriode: Stønadsperiode) {
-            this.gjenståendeStønadsperiode = gjenståendePeriode
+        override fun visitGjenståendeStønadsperiode(gjenståendePeriode: Stønadsdager) {
+            this.gjenståendeStønadsdager = gjenståendePeriode
         }
 
         override fun visitGjenståendeEgenandel(gjenståendeEgenandel: Beløp) {
@@ -236,20 +234,20 @@ class RettighetStegTest : No {
         override fun visitRammeVedtak(
             grunnlag: BigDecimal,
             dagsats: BigDecimal,
-            stønadsperiode: Stønadsperiode,
+            stønadsdager: Stønadsdager,
             vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,
             egenandel: Beløp,
         ) {
             this.grunnlag = grunnlag
             this.dagsats = dagsats
-            this.stønadsperiode = stønadsperiode
+            this.stønadsdager = stønadsdager
             this.vanligArbeidstidPerDag = vanligArbeidstidPerDag
             this.dagpengerettighet = dagpengerettighet
             this.egenandel = egenandel
         }
 
-        override fun visitLøpendeVedtak(forbruk: Tid, beløpTilUtbetaling: Beløp, trukketEgenandel: Beløp) {
+        override fun visitLøpendeVedtak(forbruk: Stønadsdager, beløpTilUtbetaling: Beløp, trukketEgenandel: Beløp) {
             this.forbruk = forbruk
             this.beløpTilUtbetaling = beløpTilUtbetaling
         }
