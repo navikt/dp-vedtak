@@ -86,26 +86,12 @@ class Avslag(
     virkningsdato = virkningsdato,
 ) {
     override fun accept(visitor: VedtakVisitor) {
-        visitor.preVisitVedtak(
-            vedtakId = vedtakId,
-            behandlingId = behandlingId,
-            virkningsdato = virkningsdato,
-            vedtakstidspunkt = vedtakstidspunkt,
-            utfall = utfall,
-        )
         visitor.visitAvslagVedtak(
             vedtakId = vedtakId,
             behandlingId = behandlingId,
             vedtakstidspunkt = vedtakstidspunkt,
             utfall = utfall,
             virkningsdato = virkningsdato,
-        )
-        visitor.postVisitVedtak(
-            vedtakId = vedtakId,
-            behandlingId = behandlingId,
-            virkningsdato = virkningsdato,
-            vedtakstidspunkt = vedtakstidspunkt,
-            utfall = utfall,
         )
     }
 
@@ -133,7 +119,6 @@ class Rammevedtak(
 ) {
 
     override fun accept(visitor: VedtakVisitor) {
-        visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
         visitor.visitRammeVedtak(
             vedtakId = vedtakId,
             behandlingId = behandlingId,
@@ -147,8 +132,6 @@ class Rammevedtak(
             dagpengerettighet = dagpengerettighet,
             egenandel = egenandel,
         )
-
-        visitor.postVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
     }
 
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
@@ -178,7 +161,6 @@ class UtbetalingsVedtak(
     virkningsdato = virkningsdato,
 ) {
     override fun accept(visitor: VedtakVisitor) {
-        visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
         val beløpTilUtbetaling = betalingsdager.summer() - trukketEgenandel
         visitor.visitUtbetalingsVedtak(
             vedtakId = vedtakId,
@@ -190,7 +172,6 @@ class UtbetalingsVedtak(
             beløpTilUtbetaling = beløpTilUtbetaling,
             trukketEgenandel = trukketEgenandel,
         )
-        visitor.postVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
     }
 
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
@@ -206,7 +187,6 @@ class StansVedtak(
     virkningsdato: LocalDate,
 ) : Vedtak(vedtakId, behandlingId, vedtakstidspunkt, utfall = false, virkningsdato) {
     override fun accept(visitor: VedtakVisitor) {
-        visitor.preVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
         visitor.visitStansVedtak(
             vedtakId,
             behandlingId,
@@ -214,7 +194,6 @@ class StansVedtak(
             vedtakstidspunkt,
             utfall,
         )
-        visitor.postVisitVedtak(vedtakId, behandlingId, virkningsdato, vedtakstidspunkt, utfall)
     }
 
     override fun populer(vedtakHistorikk: VedtakHistorikk) {

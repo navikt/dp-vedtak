@@ -215,18 +215,6 @@ class RettighetStegTest : No {
             this.allEgenandelTrukket = this.gjenståendeEgenandel == 0.beløp
         }
 
-        override fun postVisitVedtak(
-            vedtakId: UUID,
-            behandlingId: UUID,
-            virkningsdato: LocalDate,
-            vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean,
-        ) {
-            antallVedtak++
-            this.virkningsdato = virkningsdato
-            this.behandlingId = behandlingId
-        }
-
         override fun visitRammeVedtak(
             vedtakId: UUID,
             behandlingId: UUID,
@@ -240,12 +228,15 @@ class RettighetStegTest : No {
             dagpengerettighet: Dagpengerettighet,
             egenandel: Beløp,
         ) {
+            antallVedtak++
             this.grunnlag = grunnlag
             this.dagsats = dagsats
             this.stønadsdager = stønadsdager
             this.vanligArbeidstidPerDag = vanligArbeidstidPerDag
             this.dagpengerettighet = dagpengerettighet
             this.egenandel = egenandel
+            this.virkningsdato = virkningsdato
+            this.behandlingId = behandlingId
         }
 
         override fun visitUtbetalingsVedtak(
@@ -258,8 +249,35 @@ class RettighetStegTest : No {
             beløpTilUtbetaling: Beløp,
             trukketEgenandel: Beløp,
         ) {
+            antallVedtak++
             this.forbruk = forbruk
             this.beløpTilUtbetaling = beløpTilUtbetaling
+            this.virkningsdato = virkningsdato
+            this.behandlingId = behandlingId
+        }
+
+        override fun visitStansVedtak(
+            vedtakId: UUID,
+            behandlingId: UUID,
+            virkningsdato: LocalDate,
+            vedtakstidspunkt: LocalDateTime,
+            utfall: Boolean,
+        ) {
+            antallVedtak++
+            this.virkningsdato = virkningsdato
+            this.behandlingId = behandlingId
+        }
+
+        override fun visitAvslagVedtak(
+            vedtakId: UUID,
+            behandlingId: UUID,
+            vedtakstidspunkt: LocalDateTime,
+            utfall: Boolean,
+            virkningsdato: LocalDate,
+        ) {
+            antallVedtak++
+            this.virkningsdato = virkningsdato
+            this.behandlingId = behandlingId
         }
     }
 }
