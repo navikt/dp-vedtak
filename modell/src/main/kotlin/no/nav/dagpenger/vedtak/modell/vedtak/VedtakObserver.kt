@@ -14,6 +14,7 @@ interface VedtakObserver {
         val vedtakstidspunkt: LocalDateTime,
         val virkningsdato: LocalDate,
         val utfall: Utfall,
+        // @todo: Type rettighet? Ordinær, Permittering etc
 
     ) {
         enum class Utfall {
