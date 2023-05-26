@@ -20,6 +20,11 @@ interface VedtakVisitor {
     }
 
     fun visitRammeVedtak(
+        vedtakId: UUID,
+        behandlingId: UUID,
+        virkningsdato: LocalDate,
+        vedtakstidspunkt: LocalDateTime,
+        utfall: Boolean,
         grunnlag: BigDecimal,
         dagsats: BigDecimal,
         stønadsdager: Stønadsdager,
@@ -29,7 +34,25 @@ interface VedtakVisitor {
     ) {
     }
 
-    fun visitLøpendeVedtak(forbruk: Stønadsdager, beløpTilUtbetaling: Beløp, trukketEgenandel: Beløp) {}
+    fun visitUtbetalingsVedtak(
+        vedtakId: UUID,
+        behandlingId: UUID,
+        vedtakstidspunkt: LocalDateTime,
+        utfall: Boolean,
+        virkningsdato: LocalDate,
+        forbruk: Stønadsdager,
+        beløpTilUtbetaling: Beløp,
+        trukketEgenandel: Beløp,
+    ) {}
+
+    fun visitAvslagVedtak(
+        vedtakId: UUID,
+        behandlingId: UUID,
+        vedtakstidspunkt: LocalDateTime,
+        utfall: Boolean,
+        virkningsdato: LocalDate,
+    ) {
+    }
 
     fun postVisitVedtak(
         vedtakId: UUID,
@@ -39,4 +62,12 @@ interface VedtakVisitor {
         utfall: Boolean,
     ) {
     }
+
+    fun visitStansVedtak(
+        vedtakId: UUID,
+        behandlingId: UUID,
+        virkningsdato: LocalDate,
+        vedtakstidspunkt: LocalDateTime,
+        utfall: Boolean,
+    ) {}
 }

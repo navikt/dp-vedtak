@@ -228,6 +228,11 @@ class RettighetStegTest : No {
         }
 
         override fun visitRammeVedtak(
+            vedtakId: UUID,
+            behandlingId: UUID,
+            virkningsdato: LocalDate,
+            vedtakstidspunkt: LocalDateTime,
+            utfall: Boolean,
             grunnlag: BigDecimal,
             dagsats: BigDecimal,
             stønadsdager: Stønadsdager,
@@ -243,7 +248,16 @@ class RettighetStegTest : No {
             this.egenandel = egenandel
         }
 
-        override fun visitLøpendeVedtak(forbruk: Stønadsdager, beløpTilUtbetaling: Beløp, trukketEgenandel: Beløp) {
+        override fun visitUtbetalingsVedtak(
+            vedtakId: UUID,
+            behandlingId: UUID,
+            vedtakstidspunkt: LocalDateTime,
+            utfall: Boolean,
+            virkningsdato: LocalDate,
+            forbruk: Stønadsdager,
+            beløpTilUtbetaling: Beløp,
+            trukketEgenandel: Beløp,
+        ) {
             this.forbruk = forbruk
             this.beløpTilUtbetaling = beløpTilUtbetaling
         }

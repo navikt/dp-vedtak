@@ -60,14 +60,12 @@ internal class LøpendeBehandling(
             0.beløp
         }
 
-        val nySum = originalSum - trukketEgenandel
-
         return Vedtak.løpendeVedtak(
             behandlingId = UUID.randomUUID(),
             utfall = vilkårOppfylt,
             virkningsdato = sisteRapporteringdato,
             forbruk = Stønadsdager(arbeidsdagerMedForbruk.size),
-            beløpTilUtbetaling = nySum,
+            betalingsdager = utbetalingsdager,
             trukketEgenandel = trukketEgenandel,
         )
     }
