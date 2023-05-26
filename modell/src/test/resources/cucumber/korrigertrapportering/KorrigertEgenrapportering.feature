@@ -26,7 +26,7 @@ Egenskap: Korrigert egenrapportering
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal gjenstående egenandel være 0 kr
-    Så skal gjenstående stønadsdager være 250
+    Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
     Så skal utbetalingen være 5600
     Så skal bruker ha 2 vedtak
 
@@ -50,7 +50,7 @@ Egenskap: Korrigert egenrapportering
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 0 dager
     Så skal gjenstående egenandel være 2400 kr
-    Så skal gjenstående stønadsdager være 260
+    Så skal gjenstående stønadsdager være 260 fra "25.12.2022"
     Så skal utbetalingen være 0
     Så skal bruker ha 3 vedtak
 
@@ -73,7 +73,7 @@ Egenskap: Korrigert egenrapportering
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal gjenstående egenandel være 0 kr
-    Så skal gjenstående stønadsdager være 250
+    Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
     Så skal utbetalingen være 5600
     Så skal bruker ha 2 vedtak
 
@@ -96,6 +96,7 @@ Egenskap: Korrigert egenrapportering
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 9 dager
     Så skal gjenstående egenandel være 0 kr
+    Så skal gjenstående stønadsdager være 251 fra "25.12.2022"
     Så skal utbetalingen være 4800
     Så skal bruker ha 3 vedtak
 
@@ -118,7 +119,7 @@ Egenskap: Korrigert egenrapportering
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal gjenstående egenandel være 0 kr
-    Så skal gjenstående stønadsdager være 250
+    Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
     Så skal utbetalingen være 5600
     Så skal bruker ha 2 vedtak
 
@@ -140,7 +141,7 @@ Egenskap: Korrigert egenrapportering
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal gjenstående egenandel være 0 kr
-    Så skal gjenstående stønadsdager være 240
+    Så skal gjenstående stønadsdager være 240 fra "08.01.2023"
     Så skal utbetalingen være 8000
     Så skal bruker ha 3 vedtak
 
@@ -163,7 +164,7 @@ Egenskap: Korrigert egenrapportering
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 0 dager
     Så skal gjenstående egenandel være 0 kr
-    Så skal gjenstående stønadsdager være 250
+    Så skal gjenstående stønadsdager være 250 fra "08.01.2023"
     Så skal utbetalingen være 0
     Så skal bruker ha 4 vedtak
 
@@ -186,7 +187,7 @@ Egenskap: Korrigert egenrapportering
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal gjenstående egenandel være 0 kr
-    Så skal gjenstående stønadsdager være 250
+    Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
     Så skal utbetalingen være 5600
     Så skal bruker ha 2 vedtak
 
@@ -208,7 +209,7 @@ Egenskap: Korrigert egenrapportering
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal gjenstående egenandel være 0 kr
-    Så skal gjenstående stønadsdager være 240
+    Så skal gjenstående stønadsdager være 240 fra "08.01.2023"
     Så skal utbetalingen være 8000
     Så skal bruker ha 3 vedtak
 
@@ -231,6 +232,6 @@ Egenskap: Korrigert egenrapportering
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 9 dager
     Så skal gjenstående egenandel være 0 kr
-    Så skal gjenstående stønadsdager være 241
+    Så skal gjenstående stønadsdager være 241 fra "08.01.2023"
     Så skal utbetalingen være 6400
     Så skal bruker ha 4 vedtak

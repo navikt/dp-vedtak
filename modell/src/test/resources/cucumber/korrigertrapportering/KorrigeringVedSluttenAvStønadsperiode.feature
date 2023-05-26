@@ -28,7 +28,7 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal utbetalingen være 8000
-    Så skal gjenstående stønadsdager være 0
+    Så skal gjenstående stønadsdager være 0 fra "25.12.2022"
     Så skal bruker ha 2 vedtak
 
     # Korrigerer forrige egenrapportering med arbeid over terskel, slik at forbruk og utbetaling skal nullstilles.
@@ -50,7 +50,7 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 0 dager
     Så skal utbetalingen være 0
-    Så skal gjenstående stønadsdager være 10
+    Så skal gjenstående stønadsdager være 10 fra "25.12.2022"
     Så skal bruker ha 3 vedtak
 
     # Leverer påfølgende egenrapportering, som igjen medfører at dagpengeperioden er oppbrukt.
@@ -72,10 +72,9 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal utbetalingen være 8000
-    Så skal gjenstående stønadsdager være 0
+    Så skal gjenstående stønadsdager være 0 fra "08.01.2023"
     Så skal bruker ha 4 vedtak
 
-  @wip
   Scenario: Rapporterer først fravær en dag, slik at 1 dag gjenstår av dagpengeperioden. Rapporterer påfølgende uke, slik at dagpengeperioden er oppbrukt.
   Korrigerer deretter første rapportering, slik at dagpengeperioden brukes opp tidligere.
 
@@ -98,7 +97,7 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 9 dager
     Så skal utbetalingen være 7200
-    Så skal gjenstående stønadsdager være 1
+    Så skal gjenstående stønadsdager være 1 fra "25.12.2022"
     Så skal bruker ha 2 vedtak
 
     # Leverer påfølgende egenrapportering, som medfører at dagpengeperioden er oppbrukt.
@@ -120,7 +119,7 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 1 dager
     Så skal utbetalingen være 800
-    Så skal gjenstående stønadsdager være 0
+    Så skal gjenstående stønadsdager være 0 fra "08.01.2023"
     Så skal bruker ha 3 vedtak
 
     # Korrigerer første egenrapportering og fjerner fraværet, slik at dagpengeperioden blir brukt opp
@@ -142,5 +141,5 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal utbetalingen være 8000
-    Så skal gjenstående stønadsdager være 0
+    Så skal gjenstående stønadsdager være 0 fra "25.12.2022"
     Så skal bruker ha 4 vedtak

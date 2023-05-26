@@ -10,7 +10,7 @@ class Stønadsdager(private val dager: Int) : Comparable<Stønadsdager> {
 
     override fun hashCode() = dager.hashCode()
 
-    override fun toString() = "Stønadsperiode($dager)"
+    override fun toString() = "Stønadsdager($dager)"
 
     infix operator fun plus(other: Stønadsdager) = Stønadsdager(dager = this.dager + other.dager)
 

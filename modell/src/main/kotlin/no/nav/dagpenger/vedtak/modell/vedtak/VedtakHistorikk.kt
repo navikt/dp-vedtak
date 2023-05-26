@@ -72,7 +72,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     fun accept(visitor: VedtakHistorikkVisitor) {
         if (forbrukHistorikk.harHistorikk()) {
-            val gjenstående = stønadsdagerHistorikk.get(LocalDate.now()) - forbrukHistorikk.summer(LocalDate.now()) // TODO: Hvilken dato skal vi summere fra?
+            val gjenstående = stønadsdagerHistorikk.get(LocalDate.now()) - forbrukHistorikk.summer(LocalDate.now())
             visitor.visitGjenståendeStønadsperiode(gjenstående)
         }
         if (egenandelHistorikk.harHistorikk()) {
@@ -84,6 +84,8 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
         vedtak.forEach { it.accept(visitor) }
         visitor.postVisitVedtak()
     }
+
+    fun gjenståendeStønadsdagerFra(dato: LocalDate): Stønadsdager = stønadsdagerHistorikk.get(dato) - forbrukHistorikk.summer(dato)
 
     private fun leggTilVedtak(vedtak: Vedtak) {
         this.vedtak.add(

@@ -143,8 +143,9 @@ class RettighetStegTest : No {
             assertEquals(beløp.beløp, inspektør.beløpTilUtbetaling)
         }
 
-        Så("skal gjenstående stønadsdager være {int}") { dager: Int ->
-            assertEquals(Stønadsdager(dager = dager), inspektør.gjenståendeStønadsdager)
+        Så("skal gjenstående stønadsdager være {int} fra {string}") { dager: Int, virkningsdato: String ->
+            val gjenståendeStønadsdager = person.gjenståendeStønadsdagerFra(LocalDate.parse(virkningsdato, datoformatterer))
+            assertEquals(Stønadsdager(dager = dager),gjenståendeStønadsdager)
         }
 
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
@@ -195,7 +196,6 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
-        lateinit var gjenståendeStønadsdager: Stønadsdager
         lateinit var gjenståendeEgenandel: Beløp
         lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
@@ -209,10 +209,6 @@ class RettighetStegTest : No {
         lateinit var forbruk: Stønadsdager
         var antallVedtak = 0
         var allEgenandelTrukket: Boolean = false
-
-        override fun visitGjenståendeStønadsperiode(gjenståendePeriode: Stønadsdager) {
-            this.gjenståendeStønadsdager = gjenståendePeriode
-        }
 
         override fun visitGjenståendeEgenandel(gjenståendeEgenandel: Beløp) {
             this.gjenståendeEgenandel = gjenståendeEgenandel

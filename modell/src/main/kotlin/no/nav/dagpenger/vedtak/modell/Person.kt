@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
+import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
@@ -10,6 +11,7 @@ import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperioder
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
+import java.time.LocalDate
 
 class Person private constructor(
     private val ident: PersonIdentifikator,
@@ -42,6 +44,8 @@ class Person private constructor(
         kontekst(stansHendelse)
         vedtakHistorikk.håndter(stansHendelse)
     }
+
+    fun gjenståendeStønadsdagerFra(dato: LocalDate): Stønadsdager = vedtakHistorikk.gjenståendeStønadsdagerFra(dato)
 
     override fun vedtakFattet(vedtakFattet: VedtakObserver.VedtakFattet) {
         observers.forEach {
