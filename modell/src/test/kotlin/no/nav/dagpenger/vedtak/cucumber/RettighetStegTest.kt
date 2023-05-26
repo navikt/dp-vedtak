@@ -145,7 +145,7 @@ class RettighetStegTest : No {
 
         Så("skal gjenstående stønadsdager være {int} fra {string}") { dager: Int, virkningsdato: String ->
             val gjenståendeStønadsdager = person.gjenståendeStønadsdagerFra(LocalDate.parse(virkningsdato, datoformatterer))
-            assertEquals(Stønadsdager(dager = dager),gjenståendeStønadsdager)
+            assertEquals(Stønadsdager(dager = dager), gjenståendeStønadsdager)
         }
 
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
