@@ -24,7 +24,7 @@ Egenskap: Egenandel
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal gjenstående egenandel være 0 kr
+    Så skal gjenstående egenandel være 0 fra "25.12.2022"
     Så skal bruker ha 2 vedtak
     #Så skal utbetalingen være 4000
 
@@ -46,7 +46,7 @@ Egenskap: Egenandel
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 0 dager
-    Så skal ikke all egenandel være trukket. Gjenstående egenandel er 2400 kroner
+    Så skal gjenstående egenandel være 2400 fra "25.12.2022"
     Så skal bruker ha 2 vedtak
 
 
@@ -68,5 +68,5 @@ Egenskap: Egenandel
       | 17.12.2022 | false  | 0     |
       | 18.12.2022 | false  | 0     |
     Så skal forbruket være 5 dager
-    Så skal ikke all egenandel være trukket. Gjenstående egenandel er 400 kroner
+    Så skal gjenstående egenandel være 400 fra "18.12.2022"
     Så skal bruker ha 2 vedtak

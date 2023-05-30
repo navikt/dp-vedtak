@@ -19,7 +19,6 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     private val vedtak = historiskeVedtak.sorted().toMutableList()
     private val observers = mutableSetOf<VedtakObserver>()
     internal val dagsatsHistorikk = TemporalCollection<BigDecimal>()
-
     internal val trukketEgenandelHistorikk = TrukketEgenandelHistorikk()
     internal val grunnlagHistorikk = TemporalCollection<BigDecimal>()
     internal val stønadsdagerHistorikk = TemporalCollection<Stønadsdager>()
@@ -86,6 +85,8 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     }
 
     fun gjenståendeStønadsdagerFra(dato: LocalDate): Stønadsdager = stønadsdagerHistorikk.get(dato) - forbrukHistorikk.summer(dato)
+
+    fun gjenståendeEgenandelFra(dato: LocalDate): Beløp = egenandelHistorikk.get(dato) - trukketEgenandelHistorikk.summer(dato)
 
     private fun leggTilVedtak(vedtak: Vedtak) {
         this.vedtak.add(

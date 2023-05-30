@@ -19,7 +19,6 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -130,15 +129,6 @@ class RettighetStegTest : No {
             assertEquals(Stønadsdager(dager = forbruk), inspektør.forbruk)
         }
 
-        Så("skal gjenstående egenandel være {bigdecimal} kr") { egenandel: BigDecimal ->
-            assertEquals(Beløp.fra(egenandel), inspektør.gjenståendeEgenandel)
-        }
-
-        Så("skal ikke all egenandel være trukket. Gjenstående egenandel er {bigdecimal} kroner") { egenandel: BigDecimal ->
-            assertFalse(inspektør.allEgenandelTrukket) { "Forventet ikke at all egenandel er trukket" }
-            assertEquals(Beløp.fra(egenandel), inspektør.gjenståendeEgenandel)
-        }
-
         Så("skal utbetalingen være {bigdecimal}") { beløp: BigDecimal ->
             assertEquals(beløp.beløp, inspektør.beløpTilUtbetaling)
         }
@@ -146,6 +136,11 @@ class RettighetStegTest : No {
         Så("skal gjenstående stønadsdager være {int} fra {string}") { dager: Int, virkningsdato: String ->
             val gjenståendeStønadsdager = person.gjenståendeStønadsdagerFra(LocalDate.parse(virkningsdato, datoformatterer))
             assertEquals(Stønadsdager(dager = dager), gjenståendeStønadsdager)
+        }
+
+        Så("skal gjenstående egenandel være {bigdecimal} fra {string}") { egenandel: BigDecimal, virkningsdato: String ->
+            val gjenståendeEgenandel = person.gjenståendeEgenandelFra(LocalDate.parse(virkningsdato, datoformatterer))
+            assertEquals(Beløp.fra(egenandel), gjenståendeEgenandel)
         }
 
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
@@ -196,7 +191,6 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
-        lateinit var gjenståendeEgenandel: Beløp
         lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
@@ -208,12 +202,6 @@ class RettighetStegTest : No {
         lateinit var beløpTilUtbetaling: Beløp
         lateinit var forbruk: Stønadsdager
         var antallVedtak = 0
-        var allEgenandelTrukket: Boolean = false
-
-        override fun visitGjenståendeEgenandel(gjenståendeEgenandel: Beløp) {
-            this.gjenståendeEgenandel = gjenståendeEgenandel
-            this.allEgenandelTrukket = this.gjenståendeEgenandel == 0.beløp
-        }
 
         override fun visitRammeVedtak(
             vedtakId: UUID,
