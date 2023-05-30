@@ -23,8 +23,7 @@ interface VedtakVisitor {
         vanligArbeidstidPerDag: Timer,
         dagpengerettighet: Dagpengerettighet,
         egenandel: Beløp,
-    ) {
-    }
+    ) {}
 
     fun visitUtbetalingsVedtak(
         vedtakId: UUID,
@@ -33,8 +32,8 @@ interface VedtakVisitor {
         utfall: Boolean,
         virkningsdato: LocalDate,
         forbruk: Stønadsdager,
-        beløpTilUtbetaling: Beløp,
         trukketEgenandel: Beløp,
+        beløpTilUtbetaling: Beløp,
     ) {}
 
     fun visitAvslagVedtak(
@@ -43,8 +42,7 @@ interface VedtakVisitor {
         vedtakstidspunkt: LocalDateTime,
         utfall: Boolean,
         virkningsdato: LocalDate,
-    ) {
-    }
+    ) {}
 
     fun visitStansVedtak(
         vedtakId: UUID,

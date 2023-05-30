@@ -28,6 +28,7 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal utbetalingen være 8000
+    Så skal beregnet utbetaling være 8000 kr for "25.12.2022"
     Så skal gjenstående stønadsdager være 0 fra "25.12.2022"
     Så skal bruker ha 2 vedtak
 
@@ -50,6 +51,7 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 0 dager
     Så skal utbetalingen være 0
+    Så skal beregnet utbetaling være 0 kr for "25.12.2022"
     Så skal gjenstående stønadsdager være 10 fra "25.12.2022"
     Så skal bruker ha 3 vedtak
 
@@ -72,6 +74,7 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal utbetalingen være 8000
+    Så skal beregnet utbetaling være 8000 kr for "08.01.2023"
     Så skal gjenstående stønadsdager være 0 fra "08.01.2023"
     Så skal bruker ha 4 vedtak
 
@@ -97,6 +100,7 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 9 dager
     Så skal utbetalingen være 7200
+    Så skal beregnet utbetaling være 7200 kr for "25.12.2022"
     Så skal gjenstående stønadsdager være 1 fra "25.12.2022"
     Så skal bruker ha 2 vedtak
 
@@ -119,6 +123,7 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 1 dager
     Så skal utbetalingen være 800
+    Så skal beregnet utbetaling være 800 kr for "08.01.2023"
     Så skal gjenstående stønadsdager være 0 fra "08.01.2023"
     Så skal bruker ha 3 vedtak
 
@@ -141,5 +146,6 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal utbetalingen være 8000
+    Så skal beregnet utbetaling være 8000 kr for "25.12.2022"
     Så skal gjenstående stønadsdager være 0 fra "25.12.2022"
     Så skal bruker ha 4 vedtak

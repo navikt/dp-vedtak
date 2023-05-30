@@ -133,6 +133,11 @@ class RettighetStegTest : No {
             assertEquals(beløp.beløp, inspektør.beløpTilUtbetaling)
         }
 
+        Så("skal beregnet utbetaling være {bigdecimal} kr for {string}") { beløp: BigDecimal, virkningsdato: String ->
+            val beløpTilUtbetaling = person.beløpTilUtbetalingFor(LocalDate.parse(virkningsdato, datoformatterer))
+            assertEquals(beløp.beløp, beløpTilUtbetaling)
+        }
+
         Så("skal gjenstående stønadsdager være {int} fra {string}") { dager: Int, virkningsdato: String ->
             val gjenståendeStønadsdager = person.gjenståendeStønadsdagerFra(LocalDate.parse(virkningsdato, datoformatterer))
             assertEquals(Stønadsdager(dager = dager), gjenståendeStønadsdager)
@@ -234,8 +239,9 @@ class RettighetStegTest : No {
             utfall: Boolean,
             virkningsdato: LocalDate,
             forbruk: Stønadsdager,
-            beløpTilUtbetaling: Beløp,
             trukketEgenandel: Beløp,
+            beløpTilUtbetaling: Beløp,
+
         ) {
             antallVedtak++
             this.forbruk = forbruk

@@ -50,15 +50,16 @@ internal class LøpendeBehandling(
                 .filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilBetalingsdag() }
 
         val initieltTrukketEgenandel = trukketEgenandelHistorikk.summer(forrigeRapporteringsdato)
-        val originalSum = utbetalingsdager.summer()
+        val beløpTilUtbetalingFørTrekkAvEgenandel = utbetalingsdager.summer()
         val egenandel = egenandelHistorikk.get(sisteRapporteringdato)
         val gjenståendeEgenandel = egenandel - initieltTrukketEgenandel
 
-        val trukketEgenandel = if (gjenståendeEgenandel > 0.beløp && originalSum > 0.beløp) {
-            minOf(gjenståendeEgenandel, originalSum)
+        val trukketEgenandel = if (gjenståendeEgenandel > 0.beløp && beløpTilUtbetalingFørTrekkAvEgenandel > 0.beløp) {
+            minOf(gjenståendeEgenandel, beløpTilUtbetalingFørTrekkAvEgenandel)
         } else {
             0.beløp
         }
+        val beløpTilUtbetaling = beløpTilUtbetalingFørTrekkAvEgenandel - trukketEgenandel
 
         return Vedtak.løpendeVedtak(
             behandlingId = UUID.randomUUID(),
@@ -67,6 +68,7 @@ internal class LøpendeBehandling(
             forbruk = Stønadsdager(arbeidsdagerMedForbruk.size),
             betalingsdager = utbetalingsdager,
             trukketEgenandel = trukketEgenandel,
+            beløpTilUtbetaling = beløpTilUtbetaling,
         )
     }
 

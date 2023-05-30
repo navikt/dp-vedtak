@@ -49,8 +49,8 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         utfall: Boolean,
         virkningsdato: LocalDate,
         forbruk: Stønadsdager,
-        beløpTilUtbetaling: Beløp,
         trukketEgenandel: Beløp,
+        beløpTilUtbetaling: Beløp,
     ) {
         vedtakFattet = VedtakObserver.VedtakFattet(
             vedtakId = vedtakId,

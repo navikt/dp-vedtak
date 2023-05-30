@@ -51,6 +51,7 @@ sealed class Vedtak(
             forbruk: Stønadsdager,
             betalingsdager: List<Betalingsdag>,
             trukketEgenandel: Beløp,
+            beløpTilUtbetaling: Beløp,
         ) =
             UtbetalingsVedtak(
                 behandlingId = behandlingId,
@@ -59,6 +60,7 @@ sealed class Vedtak(
                 forbruk = forbruk,
                 betalingsdager = betalingsdager,
                 trukketEgenandel = trukketEgenandel,
+                beløpTilUtbetaling = beløpTilUtbetaling,
             )
 
         internal fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean =
@@ -153,6 +155,7 @@ class UtbetalingsVedtak(
     private val forbruk: Stønadsdager,
     private val betalingsdager: List<Betalingsdag>,
     private val trukketEgenandel: Beløp,
+    private val beløpTilUtbetaling: Beløp,
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
@@ -169,14 +172,15 @@ class UtbetalingsVedtak(
             utfall = utfall,
             virkningsdato = virkningsdato,
             forbruk = forbruk,
-            beløpTilUtbetaling = beløpTilUtbetaling,
             trukketEgenandel = trukketEgenandel,
+            beløpTilUtbetaling = beløpTilUtbetaling,
         )
     }
 
     override fun populer(vedtakHistorikk: VedtakHistorikk) {
         vedtakHistorikk.forbrukHistorikk.put(virkningsdato, forbruk)
         vedtakHistorikk.trukketEgenandelHistorikk.put(virkningsdato, trukketEgenandel)
+        vedtakHistorikk.beløpTilUtbetalingHistorikk.put(virkningsdato, beløpTilUtbetaling)
     }
 }
 

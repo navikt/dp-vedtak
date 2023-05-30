@@ -50,6 +50,8 @@ class Person private constructor(
 
     fun gjenståendeEgenandelFra(dato: LocalDate): Beløp = vedtakHistorikk.gjenståendeEgenandelFra(dato)
 
+    fun beløpTilUtbetalingFor(dato: LocalDate): Beløp = vedtakHistorikk.beløpTilUtbetalingFor(dato)
+
     override fun vedtakFattet(vedtakFattet: VedtakObserver.VedtakFattet) {
         observers.forEach {
             it.vedtaktFattet(ident.identifikator(), vedtakFattet)

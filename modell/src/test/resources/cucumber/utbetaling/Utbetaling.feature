@@ -26,6 +26,7 @@ Egenskap: Utbetaling
     Så skal forbruket være 10 dager
     Så skal gjenstående egenandel være 0 fra "25.12.2022"
     Så skal utbetalingen være 4116
+    Så skal beregnet utbetaling være 4116 kr for "25.12.2022"
     Så skal bruker ha 2 vedtak
 
   Scenario: Rapporterer arbeid i helg tilsvarende to hele arbeidsdager
@@ -48,6 +49,7 @@ Egenskap: Utbetaling
     Så skal forbruket være 10 dager
     Så skal gjenstående egenandel være 0 fra "25.12.2022"
     Så skal utbetalingen være 2940
+    Så skal beregnet utbetaling være 2940 kr for "25.12.2022"
     Så skal bruker ha 2 vedtak
 
   Scenario: Rapporterer fravær og arbeid
@@ -70,6 +72,7 @@ Egenskap: Utbetaling
     Så skal forbruket være 8 dager
     Så skal gjenstående egenandel være 0 fra "25.12.2022"
     Så skal utbetalingen være 1176
+    Så skal beregnet utbetaling være 1176 kr for "25.12.2022"
     Så skal bruker ha 2 vedtak
 
 
@@ -93,5 +96,6 @@ Egenskap: Utbetaling
     Så skal forbruket være 10 dager
     Så skal gjenstående egenandel være 0 fra "25.12.2022"
     Så skal utbetalingen være 1176
+    Så skal beregnet utbetaling være 1176 kr for "25.12.2022"
     Så skal bruker ha 2 vedtak
 

@@ -18,14 +18,17 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     private val vedtak = historiskeVedtak.sorted().toMutableList()
     private val observers = mutableSetOf<VedtakObserver>()
-    internal val dagsatsHistorikk = TemporalCollection<BigDecimal>()
-    internal val trukketEgenandelHistorikk = TrukketEgenandelHistorikk()
+
+    internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
     internal val grunnlagHistorikk = TemporalCollection<BigDecimal>()
+    internal val dagsatsHistorikk = TemporalCollection<BigDecimal>()
+    internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
+
     internal val stønadsdagerHistorikk = TemporalCollection<Stønadsdager>()
     internal val forbrukHistorikk = ForbrukHistorikk()
-    internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
-    internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
     internal val egenandelHistorikk = TemporalCollection<Beløp>()
+    internal val trukketEgenandelHistorikk = TrukketEgenandelHistorikk()
+    internal val beløpTilUtbetalingHistorikk = TemporalCollection<Beløp>()
 
     init {
         vedtak.forEach { it.populer(this) }
@@ -87,6 +90,8 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     fun gjenståendeStønadsdagerFra(dato: LocalDate): Stønadsdager = stønadsdagerHistorikk.get(dato) - forbrukHistorikk.summer(dato)
 
     fun gjenståendeEgenandelFra(dato: LocalDate): Beløp = egenandelHistorikk.get(dato) - trukketEgenandelHistorikk.summer(dato)
+
+    fun beløpTilUtbetalingFor(dato: LocalDate): Beløp = beløpTilUtbetalingHistorikk.get(dato)
 
     private fun leggTilVedtak(vedtak: Vedtak) {
         this.vedtak.add(
