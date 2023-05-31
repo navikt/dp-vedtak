@@ -15,6 +15,8 @@ sealed class Dag(protected val dato: LocalDate) : Comparable<LocalDate> {
     internal fun dato(): LocalDate = dato
     internal fun innenfor(periode: Periode) = dato in periode
     override fun compareTo(other: LocalDate): Int = this.dato.compareTo(other)
+    internal fun sammenfallerMed(other: Dag) = this.dato == other.dato
+
     companion object {
         internal fun fraværsdag(dato: LocalDate) = Fraværsdag(dato)
 

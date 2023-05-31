@@ -20,4 +20,15 @@ class Rapporteringsperiode(internal val rapporteringsId: UUID, dager: List<Dag>)
     override fun iterator(): Iterator<Dag> {
         return dager.iterator()
     }
+
+    companion object {
+        internal fun Iterable<Rapporteringsperiode>.merge(other: Rapporteringsperiode): List<Rapporteringsperiode> {
+            val index = this.indexOfFirst { it.sammenfallerMed(other) }
+            if (index == -1) return this.toMutableList().also { it.add(other) }
+            return this.mapIndexed { i, meldeperiode -> if (i == index) other else meldeperiode }
+        }
+    }
+
+    private fun sammenfallerMed(other: Rapporteringsperiode): Boolean =
+        this.dager.first().sammenfallerMed(other.dager.first())
 }

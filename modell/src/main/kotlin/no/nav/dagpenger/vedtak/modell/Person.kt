@@ -38,6 +38,7 @@ class Person private constructor(
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         kontekst(rapporteringshendelse)
         val rapporteringsperiode = rapporteringsperioder.håndter(rapporteringshendelse)
+        // @todo: En burde håndtere hendelsen inn i vedtakhistorikk for sporing
         vedtakHistorikk.håndter(rapporteringsperiode)
     }
 
