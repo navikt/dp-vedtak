@@ -1,11 +1,12 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
 import no.nav.dagpenger.vedtak.modell.visitor.RapporteringsperiodeVisitor
+import java.util.SortedSet
 import java.util.UUID
 
 class Rapporteringsperiode(internal val rapporteringsId: UUID, dager: List<Dag>) : Iterable<Dag> {
     constructor(rapporteringsId: UUID) : this(rapporteringsId, emptyList())
-    private val dager = dager.toMutableList()
+    private val dager: SortedSet<Dag> = dager.toSortedSet()
 
     fun leggTilDag(dag: Dag) {
         dager.add(dag)

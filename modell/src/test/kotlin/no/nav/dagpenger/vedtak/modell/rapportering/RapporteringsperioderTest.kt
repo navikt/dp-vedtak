@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.modell.rapportering
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.vedtak.hjelpere.februar
 import no.nav.dagpenger.vedtak.hjelpere.mai
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
@@ -40,6 +41,7 @@ internal class RapporteringsperioderTest {
         val dager = inspektør.dager
         dager.size shouldBe 2
         dager.first().dato() shouldBe 1.februar(2023)
+        dager.first().arbeidstimer() shouldBe 6.timer
         dager.last().dato() shouldBe 2.februar(2023)
         inspektør.antallRapporteringsperioder shouldBe 1
     }

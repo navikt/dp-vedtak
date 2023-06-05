@@ -8,13 +8,13 @@ import no.nav.dagpenger.vedtak.modell.visitor.RapporteringsperiodeVisitor
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-sealed class Dag(protected val dato: LocalDate) : Comparable<LocalDate> {
+sealed class Dag(protected val dato: LocalDate) : Comparable<Dag> {
     abstract fun accept(visitor: RapporteringsperiodeVisitor)
     abstract fun arbeidstimer(): Timer
 
     internal fun dato(): LocalDate = dato
     internal fun innenfor(periode: Periode) = dato in periode
-    override fun compareTo(other: LocalDate): Int = this.dato.compareTo(other)
+    override fun compareTo(other: Dag): Int = eldsteDagFørst.compare(this, other)
     internal fun sammenfallerMed(other: Dag) = this.dato == other.dato
 
     companion object {
@@ -28,7 +28,7 @@ sealed class Dag(protected val dato: LocalDate) : Comparable<LocalDate> {
             }
         }
         internal fun Collection<Dag>.summerArbeidstimer() = map(Dag::arbeidstimer).summer()
-
+        private val eldsteDagFørst = Comparator<Dag> { a, b -> a.dato.compareTo(b.dato) }
         private fun LocalDate.erHelg() = dayOfWeek in setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
     }
 }
