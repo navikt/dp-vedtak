@@ -71,6 +71,4 @@ internal class LøpendeBehandling(
             beløpTilUtbetaling = beløpTilUtbetaling,
         )
     }
-
-    private fun sisteRettighetsdag() = beregningsgrunnlag.rettighetsdager().last().dag.dato()
 }
