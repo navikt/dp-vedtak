@@ -43,6 +43,7 @@ internal class RapporteringsperioderTest {
         dager.first().dato() shouldBe 1.februar(2023)
         dager.first().arbeidstimer() shouldBe 6.timer
         dager.last().dato() shouldBe 2.februar(2023)
+        dager.last().arbeidstimer() shouldBe 0.timer
         inspektør.antallRapporteringsperioder shouldBe 1
     }
 
