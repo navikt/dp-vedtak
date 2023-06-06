@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.entitet
 
+import java.time.Duration
+
 class Timer(timer: Number) : Comparable<Timer> {
     internal val timer = timer.toDouble()
 
@@ -23,6 +25,7 @@ class Timer(timer: Number) : Comparable<Timer> {
 
     companion object {
         val Number.timer get() = Timer(this)
+        val Duration.timer get() = this.toHours().timer
         fun List<Timer>.summer() = this.sumOf { it.timer }.timer
     }
 }
