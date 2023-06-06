@@ -68,7 +68,6 @@ sealed class Vedtak(
     }
 
     abstract fun accept(visitor: VedtakVisitor)
-    internal abstract fun populer(vedtakHistorikk: VedtakHistorikk)
 
     override fun compareTo(other: Vedtak): Int {
         return this.vedtakstidspunkt.compareTo(other.vedtakstidspunkt)
@@ -95,9 +94,6 @@ class Avslag(
             utfall = utfall,
             virkningsdato = virkningsdato,
         )
-    }
-
-    override fun populer(vedtakHistorikk: VedtakHistorikk) {
     }
 }
 
@@ -135,15 +131,6 @@ class Rammevedtak(
             egenandel = egenandel,
         )
     }
-
-    override fun populer(vedtakHistorikk: VedtakHistorikk) {
-        vedtakHistorikk.dagsatsHistorikk.put(virkningsdato, dagsats)
-        vedtakHistorikk.grunnlagHistorikk.put(virkningsdato, grunnlag)
-        vedtakHistorikk.stønadsdagerHistorikk.put(virkningsdato, stønadsdager)
-        vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, dagpengerettighet)
-        vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato, vanligArbeidstidPerDag)
-        vedtakHistorikk.egenandelHistorikk.put(virkningsdato, egenandel)
-    }
 }
 
 class UtbetalingsVedtak(
@@ -176,12 +163,6 @@ class UtbetalingsVedtak(
             beløpTilUtbetaling = beløpTilUtbetaling,
         )
     }
-
-    override fun populer(vedtakHistorikk: VedtakHistorikk) {
-        vedtakHistorikk.forbrukHistorikk.put(virkningsdato, forbruk)
-        vedtakHistorikk.trukketEgenandelHistorikk.put(virkningsdato, trukketEgenandel)
-        vedtakHistorikk.beløpTilUtbetalingHistorikk.put(virkningsdato, beløpTilUtbetaling)
-    }
 }
 
 class StansVedtak(
@@ -198,9 +179,5 @@ class StansVedtak(
             vedtakstidspunkt,
             utfall,
         )
-    }
-
-    override fun populer(vedtakHistorikk: VedtakHistorikk) {
-        vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, Dagpengerettighet.Ingen)
     }
 }

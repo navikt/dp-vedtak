@@ -11,12 +11,16 @@ import no.nav.dagpenger.vedtak.modell.rapportering.LøpendeBehandling
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
+import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.SortedSet
+import java.util.UUID
 
 class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
-    private val vedtak = historiskeVedtak.sorted().toMutableList()
+    private val vedtak: SortedSet<Vedtak> = historiskeVedtak.toSortedSet()
     private val observers = mutableSetOf<VedtakObserver>()
 
     internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
@@ -31,7 +35,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     internal val beløpTilUtbetalingHistorikk = TemporalCollection<Beløp>()
 
     init {
-        vedtak.forEach { it.populer(this) }
+        vedtak.forEach { HistorikkOppdaterer(this).apply(it::accept) }
     }
 
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
@@ -96,13 +100,70 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     private fun leggTilVedtak(vedtak: Vedtak) {
         this.vedtak.add(
             vedtak.also {
-                it.populer(this)
+                HistorikkOppdaterer(this).apply(it::accept)
             },
         )
         this.observers.forEach {
             it.vedtakFattet(
                 VedtakFattetVisitor().apply(vedtak::accept).vedtakFattet,
             )
+        }
+    }
+
+    private class HistorikkOppdaterer(private val vedtakHistorikk: VedtakHistorikk) : VedtakVisitor {
+
+        override fun visitRammeVedtak(
+            vedtakId: UUID,
+            behandlingId: UUID,
+            virkningsdato: LocalDate,
+            vedtakstidspunkt: LocalDateTime,
+            utfall: Boolean,
+            grunnlag: BigDecimal,
+            dagsats: BigDecimal,
+            stønadsdager: Stønadsdager,
+            vanligArbeidstidPerDag: Timer,
+            dagpengerettighet: Dagpengerettighet,
+            egenandel: Beløp,
+        ) {
+            vedtakHistorikk.dagsatsHistorikk.put(virkningsdato, dagsats)
+            vedtakHistorikk.grunnlagHistorikk.put(virkningsdato, grunnlag)
+            vedtakHistorikk.stønadsdagerHistorikk.put(virkningsdato, stønadsdager)
+            vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, dagpengerettighet)
+            vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato, vanligArbeidstidPerDag)
+            vedtakHistorikk.egenandelHistorikk.put(virkningsdato, egenandel)
+        }
+
+        override fun visitUtbetalingsVedtak(
+            vedtakId: UUID,
+            behandlingId: UUID,
+            vedtakstidspunkt: LocalDateTime,
+            utfall: Boolean,
+            virkningsdato: LocalDate,
+            forbruk: Stønadsdager,
+            trukketEgenandel: Beløp,
+            beløpTilUtbetaling: Beløp,
+        ) {
+            vedtakHistorikk.forbrukHistorikk.put(virkningsdato, forbruk)
+            vedtakHistorikk.trukketEgenandelHistorikk.put(virkningsdato, trukketEgenandel)
+            vedtakHistorikk.beløpTilUtbetalingHistorikk.put(virkningsdato, beløpTilUtbetaling)
+        }
+        override fun visitAvslagVedtak(
+            vedtakId: UUID,
+            behandlingId: UUID,
+            vedtakstidspunkt: LocalDateTime,
+            utfall: Boolean,
+            virkningsdato: LocalDate,
+        ) {
+        }
+
+        override fun visitStansVedtak(
+            vedtakId: UUID,
+            behandlingId: UUID,
+            virkningsdato: LocalDate,
+            vedtakstidspunkt: LocalDateTime,
+            utfall: Boolean,
+        ) {
+            vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, Dagpengerettighet.Ingen)
         }
     }
 }
