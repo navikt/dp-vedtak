@@ -48,6 +48,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     }
 
     fun håndter(rapporteringsperiode: Rapporteringsperiode) {
+        // @todo: Sjekk at vi ikke har behandlet denne før..
         this.leggTilVedtak(
             LøpendeBehandling(
                 rapporteringsId = rapporteringsperiode.rapporteringsId,
