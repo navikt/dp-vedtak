@@ -24,6 +24,9 @@ jobs:
           java-version: 19
 
       - uses: gradle/gradle-build-action@v2
+        env:
+          ORG_GRADLE_PROJECT_githubUser: x-access-token
+          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         with:
           gradle-version: wrapper
           arguments: --configuration-cache build installDist
