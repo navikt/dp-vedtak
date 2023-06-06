@@ -21,7 +21,7 @@ import io.ktor.serialization.jackson.jackson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.IverksettDagpengerdDto
+import no.nav.dagpenger.kontrakter.iverksett.IverksettDagpengerdDto
 import no.nav.dagpenger.vedtak.mediator.Configuration
 import org.slf4j.MDC
 

@@ -3,9 +3,25 @@ plugins {
     application
 }
 
+val githubUser: String? by project
+val githubPassword: String? by project
+
+repositories {
+    maven {
+        url = uri("https://maven.pkg.github.com/navikt/dp-kontrakter")
+        credentials {
+            username = githubUser
+            password = githubPassword
+        }
+    }
+}
+
 dependencies {
     implementation(project(path = ":modell"))
     implementation(project(path = ":aktivitetslogg"))
+
+    // Kontrakter for dp-iverksett
+    implementation("no.nav.dagpenger.kontrakter:iverksett:2.0_20230605163913_57c4446")
 
     implementation(libs.jackson.core)
     implementation(libs.jackson.datatype.jsr310)

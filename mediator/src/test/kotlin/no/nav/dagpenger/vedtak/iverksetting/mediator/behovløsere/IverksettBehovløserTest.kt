@@ -7,7 +7,7 @@ import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.IverksettDagpengerdDto
+import no.nav.dagpenger.kontrakter.iverksett.IverksettDagpengerdDto
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.iverksettJson
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
