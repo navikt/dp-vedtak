@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.mediator
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 object Meldingsfabrikk {
@@ -56,6 +57,41 @@ object Meldingsfabrikk {
             {"dato":"${LocalDate.now().plusDays(1)}", "timer":0, "fravær":false},
             {"dato":"${LocalDate.now().plusDays(2)}", "timer":0, "fravær":false}          
           ]
+        } 
+        """.trimIndent()
+
+    fun rapporteringInnsendtJson(ident: String = "12345123451") =
+        //language=JSON
+        """
+          {
+            "@event_name": "rapportering_innsendt_hendelse",
+            "@id": "${UUID.randomUUID()}",
+            "@opprettet": "${LocalDateTime.now()}",
+            "ident": "$ident",
+            "rapporteringsId": "${UUID.randomUUID()}",
+            "fom": "2022-01-01",
+            "tom": "2022-01-14",
+            "dager": [
+              {
+                "dato": "2022-01-05",
+                "aktiviteter": [
+                  {
+                    "type": "Arbeid",
+                    "timer": "PT8H30M"
+                  }
+                ]
+              },
+              {
+                "dato": "2022-01-10",
+                "aktiviteter": [
+                  {
+                    "type": "Syk",
+                    "timer": "P1D"
+                  }
+                ]
+              }
+            ]
+          }
         } 
         """.trimIndent()
 

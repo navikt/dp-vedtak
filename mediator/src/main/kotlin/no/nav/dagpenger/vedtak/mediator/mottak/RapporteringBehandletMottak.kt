@@ -22,17 +22,16 @@ internal class RapporteringBehandletMottak(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "rapportering_behandlet_hendelse") }
+            validate { it.demandValue("@event_name", "rapportering_innsendt_hendelse") }
             validate {
                 it.requireKey("@id", "@opprettet")
                 it.require("ident") { ident ->
                     PersonIdentifikator(ident.asText())
                 }
                 it.requireKey(
-                    "behandlingId",
-                    "periodeId",
-                    "virkningsdato",
-                    "innvilget",
+                    "rapporteringsId",
+                    "fom",
+                    "tom",
                     "dager",
                 )
             }
@@ -40,10 +39,10 @@ internal class RapporteringBehandletMottak(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        val behandlingId = UUID.fromString(packet["behandlingId"].asText())
-        withLoggingContext("behandlingId" to behandlingId.toString()) {
+        val rapporteringsId = UUID.fromString(packet["rapporteringsId"].asText())
+        withLoggingContext("rapporteringsId" to rapporteringsId.toString()) {
             val rapporteringBehandletHendelseMessage = RapporteringBehandletHendelseMessage(packet)
-            logger.info { "Fått rapportering behandlet hendelse" }
+            logger.info { "Fått rapportering innsendt hendelse" }
             rapporteringBehandletHendelseMessage.behandle(hendelseMediator, context)
         }
     }

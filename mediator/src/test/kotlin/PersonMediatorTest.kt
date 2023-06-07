@@ -7,7 +7,7 @@ import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringBehandletJson
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringInnsendtJson
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
@@ -70,7 +70,7 @@ internal class PersonMediatorTest {
     @Test
     fun `Tar imot rapportering behandlet hendelse som fører til vedtak fattet`() {
         testRapid.sendTestMessage(dagpengerInnvilgetJson(ident = ident))
-        testRapid.sendTestMessage(rapporteringBehandletJson(ident = ident))
+        testRapid.sendTestMessage(rapporteringInnsendtJson(ident = ident))
 
         testRapid.inspektør.size shouldBe 2
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {

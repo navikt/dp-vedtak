@@ -166,7 +166,15 @@ class RettighetStegTest : No {
     }
 
     private fun håndterRapporteringsHendelse(rapporteringsdager: List<Rapporteringsdag>) {
-        person.håndter(Rapporteringshendelse(ident, UUID.randomUUID(), rapporteringsdager))
+        person.håndter(
+            Rapporteringshendelse(
+                ident,
+                UUID.randomUUID(),
+                rapporteringsdager,
+                fom = packet["fom"].asLocalDate(),
+                tom = packet["tom"].asLocalDate(),
+            ),
+        )
     }
 
     private data class SøknadAvslåttHendelseCucumber(

@@ -88,6 +88,8 @@ internal class RapporteringsperioderTest {
         ident = "123",
         rapporteringsId = UUID.randomUUID(),
         rapporteringsdager = rapporteringsdager.toList(),
+        fom = packet["fom"].asLocalDate(),
+        tom = packet["tom"].asLocalDate(),
 
     )
 

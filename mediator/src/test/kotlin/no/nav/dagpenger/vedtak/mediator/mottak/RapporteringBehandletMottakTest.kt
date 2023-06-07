@@ -6,7 +6,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringBehandletJson
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringInnsendtJson
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,7 +27,7 @@ class RapporteringBehandletMottakTest {
 
     @Test
     fun `motta rapportering behandlet hendelse`() {
-        testRapid.sendTestMessage(rapporteringBehandletJson())
+        testRapid.sendTestMessage(rapporteringInnsendtJson())
         verify(exactly = 1) {
             hendelseMediatorMock.behandle(any(), any<RapporteringBehandletHendelseMessage>(), any())
         }

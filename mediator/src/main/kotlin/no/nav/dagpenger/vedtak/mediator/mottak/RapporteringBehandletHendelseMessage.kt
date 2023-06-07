@@ -7,19 +7,25 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.asLocalDate
+import kotlin.time.Duration
 
 internal class RapporteringBehandletHendelseMessage(private val packet: JsonMessage) : HendelseMessage(packet) {
-    override val ident: String
-        get() = packet["ident"].asText()
+    override val ident: String get() = packet["ident"].asText()
 
     private val hendelse = Rapporteringshendelse(
         ident = ident,
-        rapporteringsId = packet["periodeId"].asUUID(),
+        rapporteringsId = packet["rapporteringsId"].asUUID(),
+        fom = packet["fom"].asLocalDate(),
+        tom = packet["tom"].asLocalDate(),
         rapporteringsdager = packet["dager"].map { dag ->
             Rapporteringsdag(
                 dato = dag["dato"].asLocalDate(),
-                fravær = dag["fravær"].asBoolean(),
-                timer = dag["timer"].asDouble(),
+                aktiviteter = dag["aktiviteter"].map { jsonAktivitet ->
+                    Rapporteringsdag.Aktivitet(
+                        type = Rapporteringsdag.Aktivitet.Type.valueOf(jsonAktivitet["type"].asText()),
+                        timer = Duration.parseIsoString(jsonAktivitet["timer"].asText()),
+                    )
+                },
             )
         },
     )
