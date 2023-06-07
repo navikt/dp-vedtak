@@ -12,9 +12,10 @@ jobs:
   build:
     name: Build and publish Docker image
     runs-on: ubuntu-latest
-    permissions:
+    permissions: # Sjekk https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
       contents: "read"
       checks: "write"
+      pull-requests: "write"
       id-token: "write"
     steps:
       - uses: actions/checkout@v3
@@ -24,6 +25,9 @@ jobs:
           java-version: 19
 
       - uses: gradle/gradle-build-action@v2
+        env:
+          ORG_GRADLE_PROJECT_githubUser: x-access-token
+          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         with:
           gradle-version: wrapper
           arguments: --configuration-cache build installDist
@@ -36,6 +40,7 @@ jobs:
 
       - name: docker-build-push
         uses: nais/docker-build-push@v0
+        if: github.ref == 'refs/heads/main'
         id: docker-build-push
         with:
           team: teamdagpenger

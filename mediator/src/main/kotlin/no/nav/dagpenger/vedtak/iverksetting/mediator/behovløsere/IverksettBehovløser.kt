@@ -5,15 +5,10 @@ import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.BehandlingType
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.BehandlingsdetaljerDto
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.BehandlingÅrsak
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.IverksettDagpengerdDto
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.SakDto
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.SøkerDto
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.VedtaksdetaljerDagpengerDto
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.VedtaksperiodeDagpengerDto
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.models.Vedtaksresultat
+import no.nav.dagpenger.kontrakter.iverksett.IverksettDagpengerdDto
+import no.nav.dagpenger.kontrakter.iverksett.VedtaksdetaljerDto
+import no.nav.dagpenger.kontrakter.iverksett.VedtaksperiodeDto
+import no.nav.dagpenger.kontrakter.iverksett.Vedtaksresultat
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -22,6 +17,7 @@ import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.util.UUID
+
 private val BehovIverksett = "Iverksett"
 
 val behandlingId = "behandlingId"
@@ -79,24 +75,14 @@ internal class IverksettBehovløser(
 }
 
 internal fun JsonMessage.tilIverksettDagpengerDTO(): IverksettDagpengerdDto = IverksettDagpengerdDto(
-    sak = SakDto(
-        sakId = UUID.randomUUID(),
-    ),
-    behandling = behandlingsdetaljerDto(this),
-    søker = SøkerDto(
-        personIdent = this["ident"].asText(),
-    ),
+    sakId = UUID.randomUUID(),
+    behandlingId = this["$BehovIverksett.behandlingId"].asText().let { UUID.fromString(it) },
+    personIdent = this["ident"].asText(),
     vedtak = vedtaksdetaljerDagpengerDto(this),
 )
-private fun behandlingsdetaljerDto(packet: JsonMessage) =
-    BehandlingsdetaljerDto(
-        behandlingId = packet["$BehovIverksett.behandlingId"].asText().let { UUID.fromString(it) },
-        behandlingType = BehandlingType.FØRSTEGANGSBEHANDLING,
-        behandlingÅrsak = BehandlingÅrsak.SØKNAD,
-    )
 
 private fun vedtaksdetaljerDagpengerDto(packet: JsonMessage) =
-    VedtaksdetaljerDagpengerDto(
+    VedtaksdetaljerDto(
         vedtakstidspunkt = packet["$BehovIverksett.vedtakstidspunkt"].asLocalDateTime(),
         resultat = when (packet.utfall()) {
             "Innvilget" -> Vedtaksresultat.INNVILGET
@@ -109,7 +95,7 @@ private fun vedtaksdetaljerDagpengerDto(packet: JsonMessage) =
         saksbehandlerId = "DIGIDAG",
         beslutterId = "DIGIDAG",
         vedtaksperioder = listOf(
-            VedtaksperiodeDagpengerDto(
+            VedtaksperiodeDto(
                 fraOgMedDato = packet["$BehovIverksett.virkningsdato"].asLocalDate(),
             ),
         ),
