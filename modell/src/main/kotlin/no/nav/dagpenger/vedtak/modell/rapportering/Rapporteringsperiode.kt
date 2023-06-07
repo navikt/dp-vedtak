@@ -13,9 +13,9 @@ class Rapporteringsperiode(internal val rapporteringsId: UUID, dager: List<Dag>)
     }
 
     fun accept(visitor: RapporteringsperiodeVisitor) {
-        visitor.preVisitRapporteringPeriode(this)
+        visitor.preVisitRapporteringsperiode(this)
         dager.forEach { it.accept(visitor) }
-        visitor.postVisitRapporteringPeriode(this)
+        visitor.postVisitRapporteringsperiode(this)
     }
 
     override fun iterator(): Iterator<Dag> {
