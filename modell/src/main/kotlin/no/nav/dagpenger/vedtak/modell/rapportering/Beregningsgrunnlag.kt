@@ -6,9 +6,9 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.utbetaling.BeregnetBeløpDag
 import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag
-import no.nav.dagpenger.vedtak.modell.utbetaling.IkkeUtbetalingsdag
-import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
+import no.nav.dagpenger.vedtak.modell.utbetaling.NullBeløpDag
 import java.math.BigDecimal
 
 internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = mutableListOf()) {
@@ -78,7 +78,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         override fun terskelTaptArbeidstid(): Prosent =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har derfor ikke terskel for tapt arbeidstid")
 
-        override fun tilBetalingsdag(): Betalingsdag = IkkeUtbetalingsdag(dag.dato())
+        override fun tilBetalingsdag(): Betalingsdag = NullBeløpDag(dag.dato())
     }
 
     internal class Rettighetsdag(
@@ -98,7 +98,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
             val utbetalingstimer = utbetalingstimer()
             val timeSats = timeSats()
             val beløp = timeSats * utbetalingstimer
-            return Utbetalingsdag(dag.dato(), beløp)
+            return BeregnetBeløpDag(dag.dato(), beløp)
         }
         private fun utbetalingstimer(): Timer {
             return if (dag is Helgedag) {

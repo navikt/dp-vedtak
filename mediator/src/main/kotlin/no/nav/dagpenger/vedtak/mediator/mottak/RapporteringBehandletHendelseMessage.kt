@@ -23,7 +23,7 @@ internal class RapporteringBehandletHendelseMessage(private val packet: JsonMess
                 aktiviteter = dag["aktiviteter"].map { jsonAktivitet ->
                     Rapporteringsdag.Aktivitet(
                         type = Rapporteringsdag.Aktivitet.Type.valueOf(jsonAktivitet["type"].asText()),
-                        timer = Duration.parseIsoString(jsonAktivitet["timer"].asText()),
+                        varighet = Duration.parseIsoString(jsonAktivitet["timer"].asText()),
                     )
                 },
             )

@@ -13,6 +13,7 @@ import no.nav.dagpenger.vedtak.modell.vedtak.ForbrukHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.TrukketEgenandelHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.util.UUID
 
 internal class LøpendeBehandling(
@@ -34,46 +35,55 @@ internal class LøpendeBehandling(
 
     fun håndter(rapporteringsperiode: Rapporteringsperiode): Vedtak {
         beregningsgrunnlag.populer(rapporteringsperiode, this)
-        val sisteRapporteringdato = rapporteringsperiode.maxOf { it.dato() }
-        val forrigeRapporteringsdato = rapporteringsperiode.minOf { it.dato() }.minusDays(1)
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
 
+        val sisteRapporteringsdato = rapporteringsperiode.maxOf { it.dato() }
+        val forrigeRapporteringsdato = rapporteringsperiode.minOf { it.dato() }.minusDays(1)
         val initieltForbruk = forbrukHistorikk.summer(forrigeRapporteringsdato)
-        val stønadsperiode = stønadsdagerHistorikk.get(sisteRapporteringdato)
+        val stønadsdager = stønadsdagerHistorikk.get(sisteRapporteringsdato)
 
-        val arbeidsdagerMedForbruk = when {
-            vilkårOppfylt -> {
-                val gjenståendeStønadsperiode = stønadsperiode - initieltForbruk
-                Forbruk().håndter(beregningsgrunnlag, gjenståendeStønadsperiode)
-            }
+        val arbeidsdagerMedForbruk = arbeidsdagerMedForbruk(vilkårOppfylt, stønadsdager, initieltForbruk)
 
-            else -> emptyList()
-        }
-
-        val utbetalingsdager =
+        val beregnetBeløpDager =
             arbeidsdagerMedForbruk.map { it.tilBetalingsdag() } + beregningsgrunnlag.helgedagerMedRettighet()
                 .filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilBetalingsdag() }
-
-        val initieltTrukketEgenandel = trukketEgenandelHistorikk.summer(forrigeRapporteringsdato)
-        val beløpTilUtbetalingFørTrekkAvEgenandel = utbetalingsdager.summer()
-        val egenandel = egenandelHistorikk.get(sisteRapporteringdato)
-        val gjenståendeEgenandel = egenandel - initieltTrukketEgenandel
-
-        val trukketEgenandel = if (gjenståendeEgenandel > 0.beløp && beløpTilUtbetalingFørTrekkAvEgenandel > 0.beløp) {
-            minOf(gjenståendeEgenandel, beløpTilUtbetalingFørTrekkAvEgenandel)
-        } else {
-            0.beløp
-        }
-        val beløpTilUtbetaling = beløpTilUtbetalingFørTrekkAvEgenandel - trukketEgenandel
+        val beregnetBeløpFørTrekkAvEgenandel = beregnetBeløpDager.summer()
+        val trukketEgenandel = beregnEgenandel(forrigeRapporteringsdato, sisteRapporteringsdato, beregnetBeløpFørTrekkAvEgenandel)
+        val beløpTilUtbetaling = beregnetBeløpFørTrekkAvEgenandel - trukketEgenandel
 
         return Vedtak.løpendeVedtak(
             behandlingId = UUID.randomUUID(),
             utfall = vilkårOppfylt,
-            virkningsdato = sisteRapporteringdato,
+            virkningsdato = sisteRapporteringsdato,
             forbruk = Stønadsdager(arbeidsdagerMedForbruk.size),
-            betalingsdager = utbetalingsdager,
+            betalingsdager = beregnetBeløpDager,
             trukketEgenandel = trukketEgenandel,
             beløpTilUtbetaling = beløpTilUtbetaling,
         )
+    }
+
+    private fun arbeidsdagerMedForbruk(
+        vilkårOppfylt: Boolean,
+        stønadsperiode: Stønadsdager,
+        initieltForbruk: Stønadsdager,
+    ) = when {
+        vilkårOppfylt -> {
+            val gjenståendeStønadsperiode = stønadsperiode - initieltForbruk
+            Forbruk().håndter(beregningsgrunnlag, gjenståendeStønadsperiode)
+        }
+
+        else -> emptyList()
+    }
+
+    private fun beregnEgenandel(forrigeRapporteringsdato: LocalDate, sisteRapporteringsdato: LocalDate, beregnetBeløpFørTrekkAvEgenandel: Beløp): Beløp {
+        val initieltTrukketEgenandel = trukketEgenandelHistorikk.summer(forrigeRapporteringsdato)
+        val egenandel = egenandelHistorikk.get(sisteRapporteringsdato)
+        val gjenståendeEgenandel = egenandel - initieltTrukketEgenandel
+
+        return if (gjenståendeEgenandel > 0.beløp && beregnetBeløpFørTrekkAvEgenandel > 0.beløp) {
+            minOf(gjenståendeEgenandel, beregnetBeløpFørTrekkAvEgenandel)
+        } else {
+            0.beløp
+        }
     }
 }

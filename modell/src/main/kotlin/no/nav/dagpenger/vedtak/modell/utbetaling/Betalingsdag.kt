@@ -11,5 +11,5 @@ sealed class Betalingsdag(private val dato: LocalDate, private val beløp: Belø
         fun Collection<Betalingsdag>.summer(): Beløp = this.map { it.beløp }.summerBeløp()
     }
 }
-class Utbetalingsdag(dato: LocalDate, beløp: Beløp) : Betalingsdag(dato, beløp)
-class IkkeUtbetalingsdag(dato: LocalDate) : Betalingsdag(dato, 0.beløp)
+class BeregnetBeløpDag(dato: LocalDate, beløp: Beløp) : Betalingsdag(dato, beløp)
+class NullBeløpDag(dato: LocalDate) : Betalingsdag(dato, 0.beløp)

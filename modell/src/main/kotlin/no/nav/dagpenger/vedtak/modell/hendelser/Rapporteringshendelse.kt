@@ -24,7 +24,7 @@ class Rapporteringshendelse(
             rapporteringsdager.forEach { rapporteringdag ->
                 val dag = when (rapporteringdag.aktiviteter.any { it.type == Arbeid }) {
                     false -> Dag.fraværsdag(rapporteringdag.dato)
-                    true -> Dag.arbeidsdag(rapporteringdag.dato, rapporteringdag.aktiviteter.first().timer.timer)
+                    true -> Dag.arbeidsdag(rapporteringdag.dato, rapporteringdag.aktiviteter.first().varighet.timer)
                 }
                 periode.leggTilDag(dag)
             }
@@ -38,7 +38,7 @@ class Rapporteringshendelse(
 class Rapporteringsdag(val dato: LocalDate, val aktiviteter: List<Rapporteringsdag.Aktivitet>) : Comparable<Rapporteringsdag> {
     override fun compareTo(other: Rapporteringsdag) = this.dato.compareTo(other.dato)
 
-    class Aktivitet(val type: Type, val timer: Duration) {
+    class Aktivitet(val type: Type, val varighet: Duration) {
 
         enum class Type {
             Arbeid, Syk, Fravær
