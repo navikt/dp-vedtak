@@ -42,24 +42,6 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
-    fun rapporteringBehandletJson(ident: String = "12345123451") =
-        //language=JSON
-        """
-        {        
-          "@event_name": "rapportering_behandlet_hendelse",
-          "ident" : "$ident",
-          "behandlingId": "${UUID.randomUUID()}",
-          "periodeId": "${UUID.randomUUID()}",
-          "virkningsdato": "${LocalDate.now()}",
-          "innvilget": false,
-          "dager": [
-            {"dato":"${LocalDate.now()}", "timer":0, "fravær":false},
-            {"dato":"${LocalDate.now().plusDays(1)}", "timer":0, "fravær":false},
-            {"dato":"${LocalDate.now().plusDays(2)}", "timer":0, "fravær":false}          
-          ]
-        } 
-        """.trimIndent()
-
     fun rapporteringInnsendtJson(ident: String = "12345123451") =
         //language=JSON
         """
@@ -69,11 +51,11 @@ object Meldingsfabrikk {
             "@opprettet": "${LocalDateTime.now()}",
             "ident": "$ident",
             "rapporteringsId": "${UUID.randomUUID()}",
-            "fom": "2022-01-01",
-            "tom": "2022-01-14",
+            "fom": "${LocalDate.now()}",
+            "tom": "${LocalDate.now().plusDays(1)}",
             "dager": [
               {
-                "dato": "2022-01-05",
+                "dato": "${LocalDate.now()}",
                 "aktiviteter": [
                   {
                     "type": "Arbeid",
@@ -82,7 +64,7 @@ object Meldingsfabrikk {
                 ]
               },
               {
-                "dato": "2022-01-10",
+                "dato": "${LocalDate.now().plusDays(1)}",
                 "aktiviteter": [
                   {
                     "type": "Syk",

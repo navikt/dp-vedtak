@@ -25,6 +25,8 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 
 class RettighetStegTest : No {
     private val datoformatterer = DateTimeFormatter.ofPattern("dd.MM.yyyy")
@@ -139,7 +141,8 @@ class RettighetStegTest : No {
         }
 
         Så("skal gjenstående stønadsdager være {int} fra {string}") { dager: Int, virkningsdato: String ->
-            val gjenståendeStønadsdager = person.gjenståendeStønadsdagerFra(LocalDate.parse(virkningsdato, datoformatterer))
+            val gjenståendeStønadsdager =
+                person.gjenståendeStønadsdagerFra(LocalDate.parse(virkningsdato, datoformatterer))
             assertEquals(Stønadsdager(dager = dager), gjenståendeStønadsdager)
         }
 
@@ -150,15 +153,25 @@ class RettighetStegTest : No {
 
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
             assertPersonOpprettet()
-//            val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
-//                Rapporteringsdag(
-//                    dato = LocalDate.parse(it[0], datoformatterer),
-//                    fravær = it[1].toBooleanStrict(),
-//                    timer = it[2].toDouble(),
-//                )
-//            }
-//            håndterRapporteringsHendelse(rapporteringsdager)
+            val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
+                Rapporteringsdag(
+                    dato = LocalDate.parse(it[0], datoformatterer),
+                    aktiviteter = listOf(
+                        lagAktivitet(it),
+                    ),
+
+                )
+            }
+            håndterRapporteringsHendelse(rapporteringsdager)
         }
+    }
+
+    private fun lagAktivitet(data: MutableList<String>) = when (data[1].toBooleanStrict()) {
+        true -> Rapporteringsdag.Aktivitet(Rapporteringsdag.Aktivitet.Type.Fravær, 1.days)
+        false -> Rapporteringsdag.Aktivitet(
+            Rapporteringsdag.Aktivitet.Type.Arbeid,
+            data[2].toDouble().hours,
+        )
     }
 
     private fun assertPersonOpprettet() {
