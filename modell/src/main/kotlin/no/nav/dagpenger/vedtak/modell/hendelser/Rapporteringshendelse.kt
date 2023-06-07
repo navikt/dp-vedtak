@@ -2,6 +2,9 @@ package no.nav.dagpenger.vedtak.modell.hendelser
 
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag.Aktivitet.Type.Arbeid
+import no.nav.dagpenger.vedtak.modell.rapportering.Dag
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import java.time.LocalDate
 import java.util.UUID
@@ -18,10 +21,10 @@ class Rapporteringshendelse(
     private val rapporteringsdager = rapporteringsdager.sorted()
     internal fun populerRapporteringsperiode(): Rapporteringsperiode {
         return Rapporteringsperiode(rapporteringsId).also { periode ->
-            rapporteringsdager.forEach {
-                val dag = when (it.fravær) {
-                    true -> Dag.fraværsdag(it.dato)
-                    false -> Dag.arbeidsdag(it.dato, it.timer.timer)
+            rapporteringsdager.forEach { rapporteringdag ->
+                val dag = when (rapporteringdag.aktiviteter.any { it.type == Arbeid }) {
+                    false -> Dag.fraværsdag(rapporteringdag.dato)
+                    true -> Dag.arbeidsdag(rapporteringdag.dato, rapporteringdag.aktiviteter.first().timer.timer)
                 }
                 periode.leggTilDag(dag)
             }

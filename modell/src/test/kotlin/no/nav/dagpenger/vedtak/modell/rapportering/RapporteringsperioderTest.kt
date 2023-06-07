@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 import kotlin.random.Random
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 
 internal class RapporteringsperioderTest {
     private lateinit var rapporteringsperioder: Rapporteringsperioder
@@ -22,8 +24,8 @@ internal class RapporteringsperioderTest {
         rapporteringsperioder = Rapporteringsperioder().also {
             it.håndter(
                 rapporteringshendelse(
-                    Rapporteringsdag(1.februar(2023), false, 3),
-                    Rapporteringsdag(2.februar(2023), false, 0),
+                    Rapporteringsdag(1.februar(2023), listOf(arbeid(3.hours))),
+                    Rapporteringsdag(2.februar(2023), listOf(arbeid(0.hours))),
                 ),
             )
         }
@@ -33,8 +35,8 @@ internal class RapporteringsperioderTest {
     fun `kan merge to rapporteringsperioder`() {
         rapporteringsperioder.håndter(
             rapporteringshendelse(
-                Rapporteringsdag(1.februar(2023), false, 6),
-                Rapporteringsdag(2.februar(2023), false, 0),
+                Rapporteringsdag(1.februar(2023), listOf(arbeid(6.hours))),
+                Rapporteringsdag(2.februar(2023), listOf(arbeid(0.hours))),
             ),
         )
 
@@ -51,8 +53,8 @@ internal class RapporteringsperioderTest {
     fun `kan legge til rapportering`() {
         rapporteringsperioder.håndter(
             rapporteringshendelse(
-                Rapporteringsdag(3.februar(2023), false, 6),
-                Rapporteringsdag(4.februar(2023), false, 0),
+                Rapporteringsdag(3.februar(2023), listOf(arbeid(6.hours))),
+                Rapporteringsdag(4.februar(2023), listOf(arbeid(0.hours))),
             ),
         )
         val dager = inspektør.dager
@@ -67,9 +69,9 @@ internal class RapporteringsperioderTest {
         val mai = (1 until 32).map { dag -> dag.mai(2023) }
         val maiTilRapporteringsperioder = mai.partition { it < 14.mai(2023) }
         val førsteRapporteringsHendelse =
-            maiTilRapporteringsperioder.first.map { Rapporteringsdag(it, Random.nextBoolean(), Random.nextInt()) }
+            maiTilRapporteringsperioder.first.map { Rapporteringsdag(it, listOf(arbeid(Random.nextInt(0, 8).hours))) }
         val andreRapporteringsHendelse =
-            maiTilRapporteringsperioder.second.map { Rapporteringsdag(it, Random.nextBoolean(), Random.nextInt()) }
+            maiTilRapporteringsperioder.second.map { Rapporteringsdag(it, listOf(arbeid(Random.nextInt(0, 8).hours))) }
         rapporteringsperioder.håndter(
             rapporteringshendelse(*førsteRapporteringsHendelse.toTypedArray()),
         )
@@ -88,10 +90,12 @@ internal class RapporteringsperioderTest {
         ident = "123",
         rapporteringsId = UUID.randomUUID(),
         rapporteringsdager = rapporteringsdager.toList(),
-        fom = packet["fom"].asLocalDate(),
-        tom = packet["tom"].asLocalDate(),
+        fom = rapporteringsdager.minOf { it.dato },
+        tom = rapporteringsdager.maxOf { it.dato },
 
     )
+
+    private fun arbeid(tid: Duration) = Rapporteringsdag.Aktivitet(Rapporteringsdag.Aktivitet.Type.Arbeid, tid)
 
     private class RapporteringsdagerVisitor(rapporteringsperioder: Rapporteringsperioder) : PersonVisitor {
 

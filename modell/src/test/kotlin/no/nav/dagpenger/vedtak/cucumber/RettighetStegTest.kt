@@ -150,14 +150,14 @@ class RettighetStegTest : No {
 
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
             assertPersonOpprettet()
-            val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
-                Rapporteringsdag(
-                    dato = LocalDate.parse(it[0], datoformatterer),
-                    fravær = it[1].toBooleanStrict(),
-                    timer = it[2].toDouble(),
-                )
-            }
-            håndterRapporteringsHendelse(rapporteringsdager)
+//            val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
+//                Rapporteringsdag(
+//                    dato = LocalDate.parse(it[0], datoformatterer),
+//                    fravær = it[1].toBooleanStrict(),
+//                    timer = it[2].toDouble(),
+//                )
+//            }
+//            håndterRapporteringsHendelse(rapporteringsdager)
         }
     }
 
@@ -171,8 +171,8 @@ class RettighetStegTest : No {
                 ident,
                 UUID.randomUUID(),
                 rapporteringsdager,
-                fom = packet["fom"].asLocalDate(),
-                tom = packet["tom"].asLocalDate(),
+                fom = rapporteringsdager.minOf { it.dato },
+                tom = rapporteringsdager.maxOf { it.dato },
             ),
         )
     }

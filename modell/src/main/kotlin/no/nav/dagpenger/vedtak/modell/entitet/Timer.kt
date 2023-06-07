@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.entitet
 
+import kotlin.time.Duration
+
 class Timer(timer: Number) : Comparable<Timer> {
     internal val timer = timer.toDouble()
 
@@ -17,12 +19,11 @@ class Timer(timer: Number) : Comparable<Timer> {
 
     override fun equals(other: Any?) = other is Timer && other.timer == this.timer
 
-    override fun hashCode(): Int = timer.hashCode()
-
     override fun toString() = "Timer($timer)"
 
     companion object {
         val Number.timer get() = Timer(this)
+        val Duration.timer: Timer get() = (this.inWholeMinutes.toDouble() / 60).timer
         fun List<Timer>.summer() = this.sumOf { it.timer }.timer
     }
 }
