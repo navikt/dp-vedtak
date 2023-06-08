@@ -11,6 +11,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.ForbrukHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.TrukketEgenandelHistorikk
+import no.nav.dagpenger.vedtak.modell.vedtak.UtbetalingsVedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -37,12 +38,24 @@ internal class LøpendeBehandling(
         beregningsgrunnlag.populer(rapporteringsperiode, this)
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
 
+        if (vilkårOppfylt) {
+            return utbetalingsvedtak(rapporteringsperiode)
+        } else {
+            return Vedtak.løpendeVedtak(
+                behandlingId = UUID.randomUUID(),
+                utfall = vilkårOppfylt,
+                virkningsdato = rapporteringsperiode.maxOf { it.dato() },
+            )
+        }
+    }
+
+    private fun utbetalingsvedtak(rapporteringsperiode: Rapporteringsperiode): UtbetalingsVedtak {
         val sisteRapporteringsdato = rapporteringsperiode.maxOf { it.dato() }
         val forrigeRapporteringsdato = rapporteringsperiode.minOf { it.dato() }.minusDays(1)
         val initieltForbruk = forbrukHistorikk.summer(forrigeRapporteringsdato)
         val stønadsdager = stønadsdagerHistorikk.get(sisteRapporteringsdato)
 
-        val arbeidsdagerMedForbruk = arbeidsdagerMedForbruk(vilkårOppfylt, stønadsdager, initieltForbruk)
+        val arbeidsdagerMedForbruk = arbeidsdagerMedForbruk(vilkårOppfylt = true, stønadsdager, initieltForbruk)
 
         val beregnetBeløpDager =
             arbeidsdagerMedForbruk.map { it.tilBetalingsdag() } + beregningsgrunnlag.helgedagerMedRettighet()
@@ -53,8 +66,8 @@ internal class LøpendeBehandling(
 
         return Vedtak.løpendeVedtak(
             behandlingId = UUID.randomUUID(),
-            utfall = vilkårOppfylt,
-            virkningsdato = sisteRapporteringsdato,
+            utfall = true,
+            virkningsdato = rapporteringsperiode.maxOf { it.dato() },
             forbruk = Stønadsdager(arbeidsdagerMedForbruk.size),
             betalingsdager = beregnetBeløpDager,
             trukketEgenandel = trukketEgenandel,
