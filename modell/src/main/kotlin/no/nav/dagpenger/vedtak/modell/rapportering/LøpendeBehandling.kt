@@ -8,10 +8,10 @@ import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
-import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag.Companion.summer
+import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.ForbrukHistorikk
+import no.nav.dagpenger.vedtak.modell.vedtak.LøpendeRettighetVedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.TrukketEgenandelHistorikk
-import no.nav.dagpenger.vedtak.modell.vedtak.UtbetalingsVedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -38,40 +38,37 @@ internal class LøpendeBehandling(
         beregningsgrunnlag.populer(rapporteringsperiode, this)
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
 
-        if (vilkårOppfylt) {
-            return utbetalingsvedtak(rapporteringsperiode)
+        return if (vilkårOppfylt) {
+            løpendeRettighetVedtak(rapporteringsperiode)
         } else {
-            return Vedtak.løpendeVedtak(
+            Vedtak.løpendeRettighet(
                 behandlingId = UUID.randomUUID(),
-                utfall = vilkårOppfylt,
+                utfall = false,
                 virkningsdato = rapporteringsperiode.maxOf { it.dato() },
             )
         }
     }
 
-    private fun utbetalingsvedtak(rapporteringsperiode: Rapporteringsperiode): UtbetalingsVedtak {
+    private fun løpendeRettighetVedtak(rapporteringsperiode: Rapporteringsperiode): LøpendeRettighetVedtak {
         val sisteRapporteringsdato = rapporteringsperiode.maxOf { it.dato() }
         val forrigeRapporteringsdato = rapporteringsperiode.minOf { it.dato() }.minusDays(1)
         val initieltForbruk = forbrukHistorikk.summer(forrigeRapporteringsdato)
         val stønadsdager = stønadsdagerHistorikk.get(sisteRapporteringsdato)
 
         val arbeidsdagerMedForbruk = arbeidsdagerMedForbruk(vilkårOppfylt = true, stønadsdager, initieltForbruk)
-
-        val beregnetBeløpDager =
-            arbeidsdagerMedForbruk.map { it.tilBetalingsdag() } + beregningsgrunnlag.helgedagerMedRettighet()
-                .filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilBetalingsdag() }
-        val beregnetBeløpFørTrekkAvEgenandel = beregnetBeløpDager.summer()
+        val rettighetsdager =
+            arbeidsdagerMedForbruk.map { it.tilLøpendeRettighetDag() } + beregningsgrunnlag.helgedagerMedRettighet()
+                .filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilLøpendeRettighetDag() }
+        val beregnetBeløpFørTrekkAvEgenandel = rettighetsdager.summer()
         val trukketEgenandel = beregnEgenandel(forrigeRapporteringsdato, sisteRapporteringsdato, beregnetBeløpFørTrekkAvEgenandel)
-        val beløpTilUtbetaling = beregnetBeløpFørTrekkAvEgenandel - trukketEgenandel
 
-        return Vedtak.løpendeVedtak(
+        return Vedtak.løpendeRettighet(
             behandlingId = UUID.randomUUID(),
             utfall = true,
             virkningsdato = rapporteringsperiode.maxOf { it.dato() },
             forbruk = Stønadsdager(arbeidsdagerMedForbruk.size),
-            betalingsdager = beregnetBeløpDager,
+            rettighetsdager = rettighetsdager,
             trukketEgenandel = trukketEgenandel,
-            beløpTilUtbetaling = beløpTilUtbetaling,
         )
     }
 

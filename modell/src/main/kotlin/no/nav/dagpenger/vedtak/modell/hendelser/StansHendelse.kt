@@ -1,7 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.hendelser
 
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
-import no.nav.dagpenger.vedtak.modell.vedtak.StansVedtak
+import no.nav.dagpenger.vedtak.modell.vedtak.Stansvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.time.LocalDate
 import java.util.UUID
@@ -13,7 +13,7 @@ class StansHendelse(
     aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Hendelse(ident, aktivitetslogg) {
     fun tilVedtak(): Vedtak {
-        return StansVedtak(
+        return Stansvedtak(
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
         )

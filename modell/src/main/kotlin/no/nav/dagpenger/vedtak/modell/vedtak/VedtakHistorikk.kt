@@ -113,7 +113,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     private class HistorikkOppdaterer(private val vedtakHistorikk: VedtakHistorikk) : VedtakVisitor {
 
-        override fun visitRammeVedtak(
+        override fun visitRammevedtak(
             vedtakId: UUID,
             behandlingId: UUID,
             virkningsdato: LocalDate,
@@ -134,7 +134,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
             vedtakHistorikk.egenandelHistorikk.put(virkningsdato, egenandel)
         }
 
-        override fun visitUtbetalingsVedtak(
+        override fun visitLøpendeRettighet(
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
@@ -148,7 +148,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
             vedtakHistorikk.trukketEgenandelHistorikk.put(virkningsdato, trukketEgenandel)
             vedtakHistorikk.beløpTilUtbetalingHistorikk.put(virkningsdato, beløpTilUtbetaling)
         }
-        override fun visitAvslagVedtak(
+        override fun visitAvslag(
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
@@ -157,7 +157,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
         ) {
         }
 
-        override fun visitStansVedtak(
+        override fun visitStans(
             vedtakId: UUID,
             behandlingId: UUID,
             virkningsdato: LocalDate,

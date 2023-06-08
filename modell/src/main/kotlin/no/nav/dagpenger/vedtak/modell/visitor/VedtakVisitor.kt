@@ -11,7 +11,7 @@ import java.util.UUID
 
 interface VedtakVisitor {
 
-    fun visitRammeVedtak(
+    fun visitRammevedtak(
         vedtakId: UUID,
         behandlingId: UUID,
         virkningsdato: LocalDate,
@@ -25,7 +25,7 @@ interface VedtakVisitor {
         egenandel: Beløp,
     ) {}
 
-    fun visitUtbetalingsVedtak(
+    fun visitLøpendeRettighet(
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
@@ -36,7 +36,7 @@ interface VedtakVisitor {
         beløpTilUtbetaling: Beløp,
     ) {}
 
-    fun visitAvslagVedtak(
+    fun visitAvslag(
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
@@ -44,7 +44,7 @@ interface VedtakVisitor {
         virkningsdato: LocalDate,
     ) {}
 
-    fun visitStansVedtak(
+    fun visitStans(
         vedtakId: UUID,
         behandlingId: UUID,
         virkningsdato: LocalDate,

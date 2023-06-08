@@ -7,7 +7,6 @@ import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.BeregnetBeløpDag
-import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag
 import no.nav.dagpenger.vedtak.modell.utbetaling.NullBeløpDag
 import java.math.BigDecimal
 
@@ -43,8 +42,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         abstract fun dagpengerettighet(): Dagpengerettighet
         abstract fun vanligArbeidstid(): Timer
         abstract fun terskelTaptArbeidstid(): Prosent
-
-        abstract fun tilBetalingsdag(): Betalingsdag
+        abstract fun tilLøpendeRettighetDag(): no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
 
         companion object {
             fun opprett(
@@ -78,7 +76,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         override fun terskelTaptArbeidstid(): Prosent =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har derfor ikke terskel for tapt arbeidstid")
 
-        override fun tilBetalingsdag(): Betalingsdag = NullBeløpDag(dag.dato())
+        override fun tilLøpendeRettighetDag(): no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag = NullBeløpDag(dag.dato())
     }
 
     internal class Rettighetsdag(
@@ -93,8 +91,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         override fun dagpengerettighet(): Dagpengerettighet = dagpengerettighet
         override fun vanligArbeidstid(): Timer = vanligArbeidstid
         override fun terskelTaptArbeidstid(): Prosent = terskelProsent
-        override fun tilBetalingsdag(): Betalingsdag {
-            // val utbetalingstimer = (if (dag is Helgedag) 0.timer else vanligArbeidstid) - dag.arbeidstimer()
+        override fun tilLøpendeRettighetDag(): no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag {
             val utbetalingstimer = utbetalingstimer()
             val timeSats = timeSats()
             val beløp = timeSats * utbetalingstimer

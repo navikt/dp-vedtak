@@ -229,7 +229,7 @@ class RettighetStegTest : No {
         lateinit var forbruk: Stønadsdager
         var antallVedtak = 0
 
-        override fun visitRammeVedtak(
+        override fun visitRammevedtak(
             vedtakId: UUID,
             behandlingId: UUID,
             virkningsdato: LocalDate,
@@ -253,7 +253,7 @@ class RettighetStegTest : No {
             this.behandlingId = behandlingId
         }
 
-        override fun visitUtbetalingsVedtak(
+        override fun visitLøpendeRettighet(
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
@@ -271,7 +271,7 @@ class RettighetStegTest : No {
             this.behandlingId = behandlingId
         }
 
-        override fun visitStansVedtak(
+        override fun visitStans(
             vedtakId: UUID,
             behandlingId: UUID,
             virkningsdato: LocalDate,
@@ -283,7 +283,7 @@ class RettighetStegTest : No {
             this.behandlingId = behandlingId
         }
 
-        override fun visitAvslagVedtak(
+        override fun visitAvslag(
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,

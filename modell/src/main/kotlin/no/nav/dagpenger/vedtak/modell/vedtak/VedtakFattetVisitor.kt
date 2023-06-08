@@ -16,7 +16,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
 
     lateinit var vedtakFattet: VedtakObserver.VedtakFattet
 
-    override fun visitRammeVedtak(
+    override fun visitRammevedtak(
         vedtakId: UUID,
         behandlingId: UUID,
         virkningsdato: LocalDate,
@@ -42,7 +42,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         )
     }
 
-    override fun visitUtbetalingsVedtak(
+    override fun visitLøpendeRettighet(
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
@@ -65,7 +65,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         )
     }
 
-    override fun visitAvslagVedtak(
+    override fun visitAvslag(
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
@@ -85,7 +85,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         )
     }
 
-    override fun visitStansVedtak(
+    override fun visitStans(
         vedtakId: UUID,
         behandlingId: UUID,
         virkningsdato: LocalDate,

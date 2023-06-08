@@ -5,8 +5,8 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
-import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag
-import no.nav.dagpenger.vedtak.modell.utbetaling.Betalingsdag.Companion.summer
+import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
+import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -45,23 +45,21 @@ sealed class Vedtak(
             egenandel = egenandel,
         )
 
-        fun løpendeVedtak(
+        fun løpendeRettighet(
             behandlingId: UUID,
             utfall: Boolean,
             virkningsdato: LocalDate,
             forbruk: Stønadsdager = Stønadsdager(dager = 0),
-            betalingsdager: List<Betalingsdag> = emptyList(),
+            rettighetsdager: List<LøpendeRettighetDag> = emptyList(),
             trukketEgenandel: Beløp = 0.beløp,
-            beløpTilUtbetaling: Beløp = 0.beløp,
         ) =
-            UtbetalingsVedtak(
+            LøpendeRettighetVedtak(
                 behandlingId = behandlingId,
                 utfall = utfall,
                 virkningsdato = virkningsdato,
                 forbruk = forbruk,
-                betalingsdager = betalingsdager,
+                rettighetsdager = rettighetsdager,
                 trukketEgenandel = trukketEgenandel,
-                beløpTilUtbetaling = beløpTilUtbetaling,
             )
 
         internal fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean =
@@ -88,7 +86,7 @@ class Avslag(
     virkningsdato = virkningsdato,
 ) {
     override fun accept(visitor: VedtakVisitor) {
-        visitor.visitAvslagVedtak(
+        visitor.visitAvslag(
             vedtakId = vedtakId,
             behandlingId = behandlingId,
             vedtakstidspunkt = vedtakstidspunkt,
@@ -108,7 +106,7 @@ class Rammevedtak(
     private val dagsats: BigDecimal,
     private val stønadsdager: Stønadsdager,
     private val dagpengerettighet: Dagpengerettighet,
-    private val egenandel: Beløp, // @todo: Beløp
+    private val egenandel: Beløp,
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
@@ -118,7 +116,7 @@ class Rammevedtak(
 ) {
 
     override fun accept(visitor: VedtakVisitor) {
-        visitor.visitRammeVedtak(
+        visitor.visitRammevedtak(
             vedtakId = vedtakId,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
@@ -134,16 +132,15 @@ class Rammevedtak(
     }
 }
 
-class UtbetalingsVedtak(
+class LøpendeRettighetVedtak(
     vedtakId: UUID = UUID.randomUUID(),
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     utfall: Boolean,
     virkningsdato: LocalDate,
     private val forbruk: Stønadsdager,
-    private val betalingsdager: List<Betalingsdag>,
+    private val rettighetsdager: List<LøpendeRettighetDag>,
     private val trukketEgenandel: Beløp,
-    private val beløpTilUtbetaling: Beløp,
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
@@ -152,8 +149,8 @@ class UtbetalingsVedtak(
     virkningsdato = virkningsdato,
 ) {
     override fun accept(visitor: VedtakVisitor) {
-        val beløpTilUtbetaling = betalingsdager.summer() - trukketEgenandel
-        visitor.visitUtbetalingsVedtak(
+        val beløpTilUtbetaling = rettighetsdager.summer() - trukketEgenandel
+        visitor.visitLøpendeRettighet(
             vedtakId = vedtakId,
             behandlingId = behandlingId,
             vedtakstidspunkt = vedtakstidspunkt,
@@ -166,14 +163,14 @@ class UtbetalingsVedtak(
     }
 }
 
-class StansVedtak(
+class Stansvedtak(
     vedtakId: UUID = UUID.randomUUID(),
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     virkningsdato: LocalDate,
 ) : Vedtak(vedtakId, behandlingId, vedtakstidspunkt, utfall = false, virkningsdato) {
     override fun accept(visitor: VedtakVisitor) {
-        visitor.visitStansVedtak(
+        visitor.visitStans(
             vedtakId,
             behandlingId,
             virkningsdato,
