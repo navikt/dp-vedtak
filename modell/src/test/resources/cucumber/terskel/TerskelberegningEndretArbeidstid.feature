@@ -14,7 +14,7 @@
       Scenario: Rapporterer arbeidstimer eksakt lik terskel
         Når rapporteringshendelse mottas
           | dato       | fravær | timer |
-          | 01.05.2023 | false  | 5.5   |
+          | 01.05.2023 | false  | 5     |
           | 02.05.2023 | false  | 5     |
           | 03.05.2023 | false  | 5     |
           | 04.05.2023 | false  | 0     |
@@ -28,5 +28,26 @@
           | 12.05.2023 | false  | 0     |
           | 13.05.2023 | false  | 0     |
           | 14.05.2023 | false  | 0     |
-        Så skal forbruket være 0 dager
+        Så skal forbruket være 10 dager
         Så skal bruker ha 3 vedtak
+
+    Scenario: Rapporterer arbeidstimer eksakt lik terskel
+      Når rapporteringshendelse mottas
+        | dato       | fravær | timer |
+        | 01.05.2023 | false  | 5.5   |
+        | 02.05.2023 | false  | 5     |
+        | 03.05.2023 | false  | 5     |
+        | 04.05.2023 | false  | 0     |
+        | 05.05.2023 | false  | 0     |
+        | 06.05.2023 | false  | 0     |
+        | 07.05.2023 | false  | 0     |
+        | 08.05.2023 | false  | 5     |
+        | 09.05.2023 | false  | 5     |
+        | 10.05.2023 | false  | 5     |
+        | 11.05.2023 | false  | 0     |
+        | 12.05.2023 | false  | 0     |
+        | 13.05.2023 | false  | 0     |
+        | 14.05.2023 | false  | 0     |
+      Så skal forbruket være 0 dager
+      Så skal bruker ha 3 vedtak
+
