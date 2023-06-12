@@ -42,6 +42,38 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
+    fun tull() =
+        //language=JSON
+        """
+            {
+              "@event_name": "rapporteringsperiode_innsendt_hendelse",
+              "ident": "12345123451",
+              "rapporteringsId": "64dc9ae2-68d7-4df3-8dbc-cace10241394",
+              "fom": "2018-01-01",
+              "tom": "2018-01-14",
+              "dager": [
+                {
+                  "dato": "2018-01-05",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT5H"
+                    }
+                  ]
+                }
+              ],
+              "@id": "c1e95eca-cc53-4c58-aa16-957f1e623f74",
+              "@opprettet": "2023-06-12T08:40:44.544584",
+              "system_read_count": 0,
+              "system_participating_services": [
+                {
+                  "id": "c1e95eca-cc53-4c58-aa16-957f1e623f74",
+                  "time": "2023-06-12T08:40:44.544584"
+                }
+              ]
+            }
+        """.trimIndent()
+
     fun rapporteringInnsendtJson(ident: String = "12345123451") =
         //language=JSON
         """
