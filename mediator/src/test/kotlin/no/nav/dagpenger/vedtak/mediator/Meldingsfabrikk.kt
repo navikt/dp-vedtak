@@ -1,19 +1,18 @@
 package no.nav.dagpenger.vedtak.mediator
 
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.UUID
 
 object Meldingsfabrikk {
 
-    fun dagpengerInnvilgetJson(rettighetstype: String = "Ordinær", ident: String = "12345123451") =
+    fun dagpengerInnvilgetJson(rettighetstype: String = "Ordinær", ident: String = "12345123451", virkningsdato: LocalDate = LocalDate.now()) =
         //language=JSON
         """
         {        
           "@event_name": "søknad_behandlet_hendelse",
           "ident" : "$ident",
           "behandlingId": "${UUID.randomUUID()}",
-          "Virkningsdato": "${LocalDate.now()}",
+          "Virkningsdato": "$virkningsdato",
           "innvilget": true,
           "Rettighetstype": "$rettighetstype",
           "Dagsats": "500",
@@ -42,71 +41,58 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
-    fun tull() =
-        //language=JSON
-        """
-            {
-              "@event_name": "rapporteringsperiode_innsendt_hendelse",
-              "ident": "12345123451",
-              "rapporteringsId": "64dc9ae2-68d7-4df3-8dbc-cace10241394",
-              "fom": "2018-01-01",
-              "tom": "2018-01-14",
-              "dager": [
-                {
-                  "dato": "2018-01-05",
-                  "aktiviteter": [
-                    {
-                      "type": "Arbeid",
-                      "tid": "PT5H"
-                    }
-                  ]
-                }
-              ],
-              "@id": "c1e95eca-cc53-4c58-aa16-957f1e623f74",
-              "@opprettet": "2023-06-12T08:40:44.544584",
-              "system_read_count": 0,
-              "system_participating_services": [
-                {
-                  "id": "c1e95eca-cc53-4c58-aa16-957f1e623f74",
-                  "time": "2023-06-12T08:40:44.544584"
-                }
-              ]
-            }
-        """.trimIndent()
-
     fun rapporteringInnsendtJson(ident: String = "12345123451") =
         //language=JSON
         """
-          {
-            "@event_name": "rapportering_innsendt_hendelse",
-            "@id": "${UUID.randomUUID()}",
-            "@opprettet": "${LocalDateTime.now()}",
-            "ident": "$ident",
-            "rapporteringsId": "${UUID.randomUUID()}",
-            "fom": "${LocalDate.now()}",
-            "tom": "${LocalDate.now().plusDays(1)}",
-            "dager": [
-              {
-                "dato": "${LocalDate.now()}",
-                "aktiviteter": [
-                  {
-                    "type": "Arbeid",
-                    "timer": "PT8H30M"
-                  }
-                ]
-              },
-              {
-                "dato": "${LocalDate.now().plusDays(1)}",
-                "aktiviteter": [
-                  {
-                    "type": "Syk",
-                    "timer": "P1D"
-                  }
-                ]
-              }
-            ]
-          }
-        } 
+{
+	"@event_name": "rapporteringsperiode_innsendt_hendelse",
+	"ident" : "$ident",
+	"rapporteringsId": "64dc9ae2-68d7-4df3-8dbc-cace10241394",
+	"fom": "2018-01-01",
+	"tom": "2018-01-14",
+	"dager": [
+		{
+			"dato": "2018-01-01",
+			"aktiviteter": []
+		},
+		{
+			"dato": "2018-01-05",
+			"aktiviteter": [
+				{
+					"type": "Arbeid",
+					"tid": "PT5H"
+				}
+			]
+		},
+		{
+			"dato": "2018-01-10",
+			"aktiviteter": [
+				{
+					"type": "Ferie",
+					"tid": "PT24H"
+				}
+			]
+		},
+		{
+			"dato": "2018-01-13",
+			"aktiviteter": [
+				{
+					"type": "Syk",
+					"tid": "PT24H"
+				}
+			]
+		}
+	],
+	"@id": "c1e95eca-cc53-4c58-aa16-957f1e623f74",
+	"@opprettet": "2023-06-12T08:40:44.544584",
+	"system_read_count": 0,
+	"system_participating_services": [
+		{
+			"id": "c1e95eca-cc53-4c58-aa16-957f1e623f74",
+			"time": "2023-06-12T08:40:44.544584"
+		}
+	]
+}
         """.trimIndent()
 
     fun iverksettJson(vedtakId: UUID = UUID.fromString("408f11d9-4be8-450a-8b7a-c2f3f9811859")) =

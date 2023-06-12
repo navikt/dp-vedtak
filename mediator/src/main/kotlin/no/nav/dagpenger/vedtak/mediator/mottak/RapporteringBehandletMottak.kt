@@ -6,7 +6,6 @@ import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.util.UUID
@@ -46,13 +45,5 @@ internal class RapporteringBehandletMottak(
             logger.info { "Fått rapportering innsendt hendelse" }
             rapporteringBehandletHendelseMessage.behandle(hendelseMediator, context)
         }
-    }
-
-    override fun onSevere(error: MessageProblems.MessageException, context: MessageContext) {
-        throw RuntimeException(error.message)
-    }
-
-    override fun onError(problems: MessageProblems, context: MessageContext) {
-        throw RuntimeException(problems.toExtendedReport())
     }
 }

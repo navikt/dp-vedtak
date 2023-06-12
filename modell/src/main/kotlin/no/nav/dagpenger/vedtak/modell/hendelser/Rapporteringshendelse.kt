@@ -41,7 +41,7 @@ class Rapporteringsdag(val dato: LocalDate, val aktiviteter: List<Rapporteringsd
     class Aktivitet(val type: Type, val varighet: Duration) {
 
         enum class Type {
-            Arbeid, Syk, Fravær
+            Arbeid, Syk, Fravær, Ferie
         }
     }
 }
