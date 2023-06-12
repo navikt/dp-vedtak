@@ -22,7 +22,7 @@ internal class RapporteringBehandletMottak(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "rapportering_innsendt_hendelse") }
+            validate { it.demandValue("@event_name", "rapporteringsperiode_innsendt_hendelse") }
             validate {
                 it.requireKey("@id", "@opprettet")
                 it.require("ident") { ident ->

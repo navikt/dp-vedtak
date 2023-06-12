@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 
 internal class PersonMediatorTest {
 
@@ -69,8 +70,8 @@ internal class PersonMediatorTest {
 
     @Test
     fun `Tar imot rapportering behandlet hendelse som fører til vedtak fattet`() {
-        testRapid.sendTestMessage(dagpengerInnvilgetJson(ident = ident))
-        testRapid.sendTestMessage(rapporteringInnsendtJson(ident = ident))
+        testRapid.sendTestMessage(dagpengerInnvilgetJson(ident = ident, virkningsdato = LocalDate.of(2023, 5, 2)))
+        testRapid.sendTestMessage(rapporteringInnsendtJson(ident = ident, fom = LocalDate.of(2023, 5, 1)))
 
         testRapid.inspektør.size shouldBe 2
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
