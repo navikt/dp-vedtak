@@ -23,8 +23,8 @@ class Rapporteringshendelse(
         return Rapporteringsperiode(rapporteringsId).also { periode ->
             rapporteringsdager.forEach { rapporteringdag ->
                 val dag = when (rapporteringdag.aktiviteter.any { it.type == Arbeid }) {
-                    false -> Dag.fraværsdag(rapporteringdag.dato)
                     true -> Dag.arbeidsdag(rapporteringdag.dato, rapporteringdag.aktiviteter.first().varighet.timer)
+                    false -> Dag.fraværsdag(rapporteringdag.dato)
                 }
                 periode.leggTilDag(dag)
             }

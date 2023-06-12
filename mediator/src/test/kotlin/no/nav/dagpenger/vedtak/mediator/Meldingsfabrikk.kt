@@ -41,22 +41,18 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
-    fun rapporteringInnsendtJson(ident: String = "12345123451") =
+    fun rapporteringInnsendtJson(ident: String = "12345123451", fom: LocalDate = LocalDate.now()) =
         //language=JSON
         """
 {
 	"@event_name": "rapporteringsperiode_innsendt_hendelse",
 	"ident" : "$ident",
 	"rapporteringsId": "64dc9ae2-68d7-4df3-8dbc-cace10241394",
-	"fom": "2018-01-01",
-	"tom": "2018-01-14",
+	"fom": "$fom",
+	"tom": "${fom.plusDays(13)}",
 	"dager": [
 		{
-			"dato": "2018-01-01",
-			"aktiviteter": []
-		},
-		{
-			"dato": "2018-01-05",
+			"dato": "$fom",
 			"aktiviteter": [
 				{
 					"type": "Arbeid",
@@ -65,7 +61,11 @@ object Meldingsfabrikk {
 			]
 		},
 		{
-			"dato": "2018-01-10",
+			"dato": "${fom.plusDays(1)}",
+			"aktiviteter": []
+		},
+		{
+			"dato": "${fom.plusDays(2)}",
 			"aktiviteter": [
 				{
 					"type": "Ferie",
@@ -74,13 +74,58 @@ object Meldingsfabrikk {
 			]
 		},
 		{
-			"dato": "2018-01-13",
+			"dato": "${fom.plusDays(3)}",
 			"aktiviteter": [
 				{
 					"type": "Syk",
 					"tid": "PT24H"
 				}
 			]
+		},
+		{
+			"dato": "${fom.plusDays(4)}",
+			"aktiviteter": [
+				{
+					"type": "Arbeid",
+					"tid": "PT2H"
+				}
+			]
+		},
+		{
+			"dato": "${fom.plusDays(5)}",
+			"aktiviteter": []
+		},
+		{
+			"dato": "${fom.plusDays(6)}",
+			"aktiviteter": []
+		},
+		{
+			"dato": "${fom.plusDays(7)}",
+			"aktiviteter": []
+		},
+		{
+			"dato": "${fom.plusDays(8)}",
+			"aktiviteter": []
+		},
+		{
+			"dato": "${fom.plusDays(9)}",
+			"aktiviteter": []
+		},
+		{
+			"dato": "${fom.plusDays(10)}",
+			"aktiviteter": []
+		},
+		{
+			"dato": "${fom.plusDays(11)}",
+			"aktiviteter": []
+		},
+		{
+			"dato": "${fom.plusDays(12)}",
+			"aktiviteter": []
+		},
+		{
+			"dato": "${fom.plusDays(13)}",
+			"aktiviteter": []
 		}
 	],
 	"@id": "c1e95eca-cc53-4c58-aa16-957f1e623f74",

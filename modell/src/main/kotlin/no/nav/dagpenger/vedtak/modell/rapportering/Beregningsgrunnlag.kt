@@ -35,7 +35,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
     fun helgedagerMedRettighet(): List<DagGrunnlag> = fakta.filter(rettighetsdag()).filter(helgedag())
 
     private fun rettighetsdag(): (DagGrunnlag) -> Boolean = { it is Rettighetsdag }
-    private fun arbeidsdag() = { it: DagGrunnlag -> it.dag is Arbeidsdag }
+    private fun arbeidsdag() = { it: DagGrunnlag -> it.dag is MandagTilFredag }
     private fun helgedag() = { it: DagGrunnlag -> it.dag is Helgedag }
 
     internal sealed class DagGrunnlag(internal val dag: Dag) {
@@ -109,7 +109,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         }
         private fun timeSats(): Beløp {
             return when (dag) {
-                is Arbeidsdag, is Helgedag -> Beløp.fra(sats) / vanligArbeidstid
+                is MandagTilFredag, is Helgedag -> Beløp.fra(sats) / vanligArbeidstid
                 is Fraværsdag -> 0.beløp
             }
         }

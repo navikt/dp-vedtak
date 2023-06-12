@@ -24,7 +24,7 @@ sealed class Dag(protected val dato: LocalDate) : Comparable<Dag> {
             return if (dato.erHelg()) {
                 Helgedag(dato, timer)
             } else {
-                Arbeidsdag(dato, timer)
+                MandagTilFredag(dato, timer)
             }
         }
         internal fun Collection<Dag>.summerArbeidstimer() = map(Dag::arbeidstimer).summer()
@@ -45,13 +45,13 @@ class Fraværsdag(dato: LocalDate) : Dag(dato) {
     }
 }
 
-class Arbeidsdag(dato: LocalDate, private val timer: Timer) : Dag(dato) {
+class MandagTilFredag(dato: LocalDate, private val timer: Timer) : Dag(dato) {
     override fun arbeidstimer(): Timer = timer
     override fun accept(visitor: RapporteringsperiodeVisitor) {
-        visitor.visitArbeidsdag(this)
+        visitor.visitMandagTilFredag(this)
     }
     override fun toString(): String {
-        return "Arbeidsdag(dato=$dato,timer=${arbeidstimer()})"
+        return "MandagTilFredag(dato=$dato,timer=${arbeidstimer()})"
     }
 }
 class Helgedag(dato: LocalDate, private val timer: Timer) : Dag(dato) {

@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.mediator.mottak
 
+import com.fasterxml.jackson.databind.JsonNode
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
@@ -20,17 +21,30 @@ internal class RapporteringBehandletHendelseMessage(private val packet: JsonMess
         rapporteringsdager = packet["dager"].map { dag ->
             Rapporteringsdag(
                 dato = dag["dato"].asLocalDate(),
-                aktiviteter = dag["aktiviteter"].map { jsonAktivitet ->
-                    Rapporteringsdag.Aktivitet(
-                        type = Rapporteringsdag.Aktivitet.Type.valueOf(jsonAktivitet["type"].asText()),
-                        varighet = Duration.parseIsoString(jsonAktivitet["tid"].asText()),
-                    )
-                },
+                aktiviteter = aktiviteter(dag["aktiviteter"]),
             )
         },
     )
 
     override fun behandle(mediator: IHendelseMediator, context: MessageContext) {
         mediator.behandle(hendelse, this, context)
+    }
+
+    private fun aktiviteter(aktiviteter: JsonNode): List<Rapporteringsdag.Aktivitet> {
+        return if (aktiviteter.isEmpty) {
+            return listOf(
+                Rapporteringsdag.Aktivitet(
+                    type = Rapporteringsdag.Aktivitet.Type.Arbeid,
+                    varighet = Duration.parseIsoString("PT0H"),
+                ),
+            )
+        } else {
+            aktiviteter.map { jsonAktivitet ->
+                Rapporteringsdag.Aktivitet(
+                    type = Rapporteringsdag.Aktivitet.Type.valueOf(jsonAktivitet["type"].asText()),
+                    varighet = Duration.parseIsoString(jsonAktivitet["tid"].asText()),
+                )
+            }
+        }
     }
 }
