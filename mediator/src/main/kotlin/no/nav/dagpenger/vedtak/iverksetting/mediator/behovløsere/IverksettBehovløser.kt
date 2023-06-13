@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.kontrakter.iverksett.IverksettDto
+import no.nav.dagpenger.kontrakter.iverksett.UtbetalingDto
 import no.nav.dagpenger.kontrakter.iverksett.VedtaksdetaljerDto
 import no.nav.dagpenger.kontrakter.iverksett.VedtaksperiodeDto
 import no.nav.dagpenger.kontrakter.iverksett.Vedtaksresultat
@@ -58,7 +59,7 @@ internal class IverksettBehovløser(
         ) {
             logger.info { "Fått behov $BehovIverksett" }
 
-            val iverksettDagpengerDto = packet.tilIverksettDagpengerDTO()
+            val iverksettDagpengerDto = packet.tilIverksettDTO()
             runBlocking {
                 withContext(MDCContext()) {
                     iverksettClient.iverksett(iverksettDagpengerDto)
@@ -77,7 +78,7 @@ internal class IverksettBehovløser(
     }
 }
 
-internal fun JsonMessage.tilIverksettDagpengerDTO(): IverksettDto = IverksettDto(
+internal fun JsonMessage.tilIverksettDTO(): IverksettDto = IverksettDto(
     sakId = UUID.randomUUID(),
     behandlingId = this["$BehovIverksett.behandlingId"].asText().let { UUID.fromString(it) },
     personIdent = this["ident"].asText(),
@@ -94,7 +95,13 @@ private fun vedtaksdetaljerDagpengerDto(packet: JsonMessage) =
                 throw IllegalArgumentException("Ugyldig utfall - vet ikke hvordan en mapper ${packet.utfall()} ")
             }
         },
-
+        utbetalinger = packet["$BehovIverksett.utbetalingsdager"].map { utbetalingsdagJson ->
+            UtbetalingDto(
+                belopPerDag = utbetalingsdagJson["beløp"].asInt(),
+                fraOgMedDato = utbetalingsdagJson["dato"].asLocalDate(),
+                tilOgMedDato = utbetalingsdagJson["dato"].asLocalDate(),
+            )
+        },
         saksbehandlerId = "DIGIDAG",
         beslutterId = "DIGIDAG",
         vedtaksperioder = listOf(
