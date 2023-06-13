@@ -6,7 +6,7 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
-import no.nav.dagpenger.kontrakter.iverksett.IverksettDagpengerdDto
+import no.nav.dagpenger.kontrakter.iverksett.IverksettDto
 import no.nav.dagpenger.kontrakter.iverksett.VedtaksdetaljerDto
 import no.nav.dagpenger.kontrakter.iverksett.VedtaksperiodeDto
 import no.nav.dagpenger.kontrakter.iverksett.Vedtaksresultat
@@ -51,7 +51,7 @@ internal class IverksettClientTest {
         }
     }
 
-    private fun iverksettDagpengerdDtoDummy(): IverksettDagpengerdDto = IverksettDagpengerdDto(
+    private fun iverksettDagpengerdDtoDummy(): IverksettDto = IverksettDto(
         sakId = UUID.randomUUID(),
 
         behandlingId = UUID.randomUUID(),

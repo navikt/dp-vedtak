@@ -5,7 +5,7 @@ import kotlinx.coroutines.slf4j.MDCContext
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.kontrakter.iverksett.IverksettDagpengerdDto
+import no.nav.dagpenger.kontrakter.iverksett.IverksettDto
 import no.nav.dagpenger.kontrakter.iverksett.VedtaksdetaljerDto
 import no.nav.dagpenger.kontrakter.iverksett.VedtaksperiodeDto
 import no.nav.dagpenger.kontrakter.iverksett.Vedtaksresultat
@@ -46,6 +46,7 @@ internal class IverksettBehovløser(
             validate { it.rejectKey("@løsning") }
         }.register(this)
     }
+
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         withLoggingContext(
             mapOf(
@@ -56,9 +57,6 @@ internal class IverksettBehovløser(
             ),
         ) {
             logger.info { "Fått behov $BehovIverksett" }
-
-            println("KAKTUS")
-            println(packet.toJson())
 
             val iverksettDagpengerDto = packet.tilIverksettDagpengerDTO()
             runBlocking {
@@ -79,7 +77,7 @@ internal class IverksettBehovløser(
     }
 }
 
-internal fun JsonMessage.tilIverksettDagpengerDTO(): IverksettDagpengerdDto = IverksettDagpengerdDto(
+internal fun JsonMessage.tilIverksettDagpengerDTO(): IverksettDto = IverksettDto(
     sakId = UUID.randomUUID(),
     behandlingId = this["$BehovIverksett.behandlingId"].asText().let { UUID.fromString(it) },
     personIdent = this["ident"].asText(),
@@ -105,4 +103,5 @@ private fun vedtaksdetaljerDagpengerDto(packet: JsonMessage) =
             ),
         ),
     )
+
 private fun JsonMessage.utfall(): String = this["$BehovIverksett.utfall"].asText()

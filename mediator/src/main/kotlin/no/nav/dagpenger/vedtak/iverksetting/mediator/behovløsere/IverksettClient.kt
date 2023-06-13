@@ -21,7 +21,7 @@ import io.ktor.serialization.jackson.jackson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mu.KotlinLogging
-import no.nav.dagpenger.kontrakter.iverksett.IverksettDagpengerdDto
+import no.nav.dagpenger.kontrakter.iverksett.IverksettDto
 import no.nav.dagpenger.vedtak.mediator.Configuration
 import org.slf4j.MDC
 
@@ -58,7 +58,7 @@ internal class IverksettClient(
         }
     }
 
-    suspend fun iverksett(iverksettDagpengerDto: IverksettDagpengerdDto) {
+    suspend fun iverksett(iverksettDagpengerDto: IverksettDto) {
         val url = URLBuilder(baseUrl).appendEncodedPathSegments("api", "iverksetting").build()
         withContext(Dispatchers.IO) {
             httpClient.post(url) {
