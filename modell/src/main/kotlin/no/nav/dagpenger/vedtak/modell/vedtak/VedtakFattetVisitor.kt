@@ -4,6 +4,7 @@ import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.VedtakFattet.Utfall.Avslått
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.VedtakFattet.Utfall.Innvilget
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
@@ -51,6 +52,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         forbruk: Stønadsdager,
         trukketEgenandel: Beløp,
         beløpTilUtbetaling: Beløp,
+        rettighetsdager: List<LøpendeRettighetDag>,
     ) {
         vedtakFattet = VedtakObserver.VedtakFattet(
             vedtakId = vedtakId,

@@ -23,7 +23,10 @@ internal class VedtakFattetMottakTest {
     private val testRapid = TestRapid()
 
     private val iHendelseMediator = mockk<IHendelseMediator>()
-    private val vedtakFattetMottak = VedtakFattetMottak(testRapid, iHendelseMediator)
+
+    init {
+        VedtakFattetMottak(testRapid, iHendelseMediator)
+    }
 
     @Test
     fun `Skal lese vedtakfattet hendelser `() {

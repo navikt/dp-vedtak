@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.iverksetting.mediator
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -15,6 +16,9 @@ internal fun fattetVedtakJsonHendelse(vedtakId: UUID = UUID.fromString("df5e6587
                   "vedtakId": "$vedtakId",
                   "vedtaktidspunkt": "2019-08-24T14:15:22",
                   "virkningsdato": "2019-08-24",
+                  "utbetalingsdager":  [
+                    {"dato": "${LocalDate.of(2019, 8, 24)}", "beløp":"800"}
+                  ],
                   "utfall": "Innvilget"
                 }
     """.trimIndent()

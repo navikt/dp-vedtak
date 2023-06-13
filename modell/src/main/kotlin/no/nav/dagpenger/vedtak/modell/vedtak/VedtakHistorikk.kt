@@ -9,6 +9,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.rapportering.LøpendeBehandling
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
+import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
@@ -143,6 +144,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
             forbruk: Stønadsdager,
             trukketEgenandel: Beløp,
             beløpTilUtbetaling: Beløp,
+            rettighetsdager: List<LøpendeRettighetDag>,
         ) {
             vedtakHistorikk.forbrukHistorikk.put(virkningsdato, forbruk)
             vedtakHistorikk.trukketEgenandelHistorikk.put(virkningsdato, trukketEgenandel)

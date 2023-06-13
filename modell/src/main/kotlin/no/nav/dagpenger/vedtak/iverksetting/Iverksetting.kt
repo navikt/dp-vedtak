@@ -122,6 +122,7 @@ class Iverksetting private constructor(
                     "behandlingId" to vedtakFattetHendelse.iverksettingsVedtak.behandlingId,
                     "vedtakstidspunkt" to vedtakFattetHendelse.iverksettingsVedtak.vedtakstidspunkt,
                     "virkningsdato" to vedtakFattetHendelse.iverksettingsVedtak.virkningsdato,
+                    "utbetalingsdager" to vedtakFattetHendelse.iverksettingsVedtak.utbetalingsdager,
                     "utfall" to vedtakFattetHendelse.iverksettingsVedtak.utfall,
                 ),
             )

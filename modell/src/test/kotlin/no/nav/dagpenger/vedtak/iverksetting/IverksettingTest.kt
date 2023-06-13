@@ -8,6 +8,8 @@ import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.I
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Mottatt
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
+import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
+import no.nav.dagpenger.vedtak.modell.utbetaling.BeregnetBeløpDag
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -38,6 +40,7 @@ class IverksettingTest {
                     behandlingId = behandlingId,
                     vedtakstidspunkt = vedtakstidspunkt,
                     virkningsdato = virkningsdato,
+                    utbetalingsdager = beregnetBeløpDager(),
                     utfall = utfall,
                 ),
             ),
@@ -52,6 +55,7 @@ class IverksettingTest {
                 "vedtakstidspunkt" to vedtakstidspunkt,
                 "virkningsdato" to virkningsdato,
                 "utfall" to utfall,
+                "utbetalingsdager" to beregnetBeløpDager(),
                 "iverksettingId" to inspektør.iverksettingId.toString(),
                 "tilstand" to "Mottatt",
             ),
@@ -67,6 +71,10 @@ class IverksettingTest {
             Iverksatt,
         )
     }
+
+    private fun beregnetBeløpDager() = listOf(
+        BeregnetBeløpDag(dato = virkningsdato, beløp = 10.beløp),
+    )
 
     private fun assertTilstander(vararg tilstander: Iverksetting.Tilstand.TilstandNavn) {
         tilstander.asList() shouldBe testObservatør.tilstander

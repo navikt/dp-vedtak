@@ -159,6 +159,7 @@ class LøpendeRettighetVedtak(
             forbruk = forbruk,
             trukketEgenandel = trukketEgenandel,
             beløpTilUtbetaling = beløpTilUtbetaling,
+            rettighetsdager = rettighetsdager,
         )
     }
 }

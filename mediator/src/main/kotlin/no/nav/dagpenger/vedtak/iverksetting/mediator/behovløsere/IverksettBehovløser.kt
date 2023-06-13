@@ -40,6 +40,7 @@ internal class IverksettBehovløser(
             validate { it.requireKey("$BehovIverksett.behandlingId") }
             validate { it.requireKey("$BehovIverksett.vedtakstidspunkt") }
             validate { it.requireKey("$BehovIverksett.virkningsdato") }
+            validate { it.requireKey("$BehovIverksett.utbetalingsdager") }
             validate { it.requireKey("$BehovIverksett.utfall") }
             validate { it.interestedIn("@behovId", "iverksettingId") }
             validate { it.rejectKey("@løsning") }
@@ -55,6 +56,10 @@ internal class IverksettBehovløser(
             ),
         ) {
             logger.info { "Fått behov $BehovIverksett" }
+
+            println("KAKTUS")
+            println(packet.toJson())
+
             val iverksettDagpengerDto = packet.tilIverksettDagpengerDTO()
             runBlocking {
                 withContext(MDCContext()) {

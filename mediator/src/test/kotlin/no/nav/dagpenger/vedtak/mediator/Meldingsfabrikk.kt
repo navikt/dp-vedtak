@@ -5,7 +5,11 @@ import java.util.UUID
 
 object Meldingsfabrikk {
 
-    fun dagpengerInnvilgetJson(rettighetstype: String = "Ordinær", ident: String = "12345123451", virkningsdato: LocalDate = LocalDate.now()) =
+    fun dagpengerInnvilgetJson(
+        rettighetstype: String = "Ordinær",
+        ident: String = "12345123451",
+        virkningsdato: LocalDate = LocalDate.now(),
+    ) =
         //language=JSON
         """
         {        
@@ -140,7 +144,10 @@ object Meldingsfabrikk {
 }
         """.trimIndent()
 
-    fun iverksettJson(vedtakId: UUID = UUID.fromString("408f11d9-4be8-450a-8b7a-c2f3f9811859")) =
+    fun iverksettJson(
+        vedtakId: UUID = UUID.fromString("408f11d9-4be8-450a-8b7a-c2f3f9811859"),
+        virkningsdato: LocalDate = LocalDate.of(2023, 6, 11),
+    ) =
         //language=JSON
         """{
         "@event_name": "behov",
@@ -156,7 +163,19 @@ object Meldingsfabrikk {
           "vedtakId": "408f11d9-4be8-450a-8b7a-c2f3f9811859",
           "behandlingId": "0aaa66b9-35c2-4398-aca0-d1d0a9465292",
           "vedtakstidspunkt": "2019-08-24T14:15:22",
-          "virkningsdato": "2019-08-24",
+          "virkningsdato": "$virkningsdato",
+          "utbetalingsdager": [
+            {"dato": "${virkningsdato.minusDays(13)}", "beløp": "800"},
+            {"dato": "${virkningsdato.minusDays(12)}", "beløp": "800"},
+            {"dato": "${virkningsdato.minusDays(11)}", "beløp": "800"},
+            {"dato": "${virkningsdato.minusDays(10)}", "beløp": "800"},
+            {"dato": "${virkningsdato.minusDays(9)}", "beløp": "800"},
+            {"dato": "${virkningsdato.minusDays(6)}", "beløp": "800"},
+            {"dato": "${virkningsdato.minusDays(5)}", "beløp": "800"},
+            {"dato": "${virkningsdato.minusDays(4)}", "beløp": "800"},
+            {"dato": "${virkningsdato.minusDays(3)}", "beløp": "800"},
+            {"dato": "${virkningsdato.minusDays(2)}", "beløp": "800"}
+          ],
           "utfall": "Innvilget"
         },
         "behandlingId": "0aaa66b9-35c2-4398-aca0-d1d0a9465292",
