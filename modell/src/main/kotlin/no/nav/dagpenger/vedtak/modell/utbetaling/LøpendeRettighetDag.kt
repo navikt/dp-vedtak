@@ -19,6 +19,8 @@ sealed class LøpendeRettighetDag(val dato: LocalDate, val beløp: Beløp) { // 
         result = 31 * result + beløp.hashCode()
         return result
     }
+
+    override fun toString() = "LøpendeRettighetDag(dato: $dato, beløp: $beløp)"
 }
 
 class BeregnetBeløpDag(dato: LocalDate, beløp: Beløp) : LøpendeRettighetDag(dato, beløp)

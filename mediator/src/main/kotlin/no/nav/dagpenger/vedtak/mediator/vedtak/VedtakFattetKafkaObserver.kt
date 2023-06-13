@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak.mediator.vedtak
 
+import mu.KotlinLogging
+import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.behandlingId
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -7,7 +9,13 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 
 internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsConnection) : PersonObserver {
 
+    companion object {
+        val logger = KotlinLogging.logger { }
+        val sikkerlogger = KotlinLogging.logger { "tjenestekall.VedtakFattetKafkaObserver" }
+    }
+
     override fun vedtaktFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
+        sikkerlogger.info { "Vedtak for $ident fattet. Vedtak: $vedtakFattet" }
         val message = JsonMessage.newMessage(
             eventName = "vedtak_fattet",
             map = mapOf(
@@ -16,6 +24,7 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                 "vedtakId" to vedtakFattet.vedtakId.toString(),
                 "vedtaktidspunkt" to vedtakFattet.vedtakstidspunkt,
                 "virkningsdato" to vedtakFattet.virkningsdato,
+                "utbetalingsdager" to vedtakFattet.utbetalingsdager,
                 "utfall" to vedtakFattet.utfall.name,
             ),
         )
@@ -24,5 +33,6 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
             key = ident,
             message = message.toJson(),
         )
+        logger.info { "Vedtak fattet melding publisert. BehandlingId: $behandlingId" }
     }
 }

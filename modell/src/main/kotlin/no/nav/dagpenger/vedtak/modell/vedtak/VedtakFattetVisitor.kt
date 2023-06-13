@@ -39,7 +39,6 @@ internal class VedtakFattetVisitor : VedtakVisitor {
                 true -> Innvilget
                 false -> Avslått
             },
-
         )
     }
 
@@ -59,11 +58,11 @@ internal class VedtakFattetVisitor : VedtakVisitor {
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
+            utbetalingsdager = rettighetsdager,
             utfall = when (utfall) {
                 true -> Innvilget
                 false -> Avslått
             },
-
         )
     }
 
@@ -83,7 +82,6 @@ internal class VedtakFattetVisitor : VedtakVisitor {
                 true -> Innvilget
                 false -> Avslått
             },
-
         )
     }
 
@@ -103,7 +101,6 @@ internal class VedtakFattetVisitor : VedtakVisitor {
                 true -> Innvilget
                 false -> Avslått
             },
-
         )
     }
 }
