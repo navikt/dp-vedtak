@@ -7,6 +7,7 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.kontrakter.iverksett.IverksettDto
 import no.nav.dagpenger.kontrakter.iverksett.UtbetalingDto
+import no.nav.dagpenger.kontrakter.iverksett.VedtakType
 import no.nav.dagpenger.kontrakter.iverksett.VedtaksdetaljerDto
 import no.nav.dagpenger.kontrakter.iverksett.VedtaksperiodeDto
 import no.nav.dagpenger.kontrakter.iverksett.Vedtaksresultat
@@ -87,6 +88,7 @@ internal fun JsonMessage.tilIverksettDTO(): IverksettDto = IverksettDto(
 
 private fun vedtaksdetaljerDagpengerDto(packet: JsonMessage) =
     VedtaksdetaljerDto(
+        vedtakstype = VedtakType.UTBETALINGSVEDTAK,
         vedtakstidspunkt = packet["$BehovIverksett.vedtakstidspunkt"].asLocalDateTime(),
         resultat = when (packet.utfall()) {
             "Innvilget" -> Vedtaksresultat.INNVILGET
