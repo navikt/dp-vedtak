@@ -84,7 +84,8 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
             visitor.visitGjenståendeStønadsperiode(gjenstående)
         }
         if (egenandelHistorikk.harHistorikk()) {
-            val gjenstående = egenandelHistorikk.get(LocalDate.now()) - trukketEgenandelHistorikk.summer(LocalDate.now())
+            val gjenstående =
+                egenandelHistorikk.get(LocalDate.now()) - trukketEgenandelHistorikk.summer(LocalDate.now())
             visitor.visitGjenståendeEgenandel(gjenstående)
         }
 
@@ -93,9 +94,11 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
         visitor.postVisitVedtak()
     }
 
-    fun gjenståendeStønadsdagerFra(dato: LocalDate): Stønadsdager = stønadsdagerHistorikk.get(dato) - forbrukHistorikk.summer(dato)
+    fun gjenståendeStønadsdagerFra(dato: LocalDate): Stønadsdager =
+        stønadsdagerHistorikk.get(dato) - forbrukHistorikk.summer(dato)
 
-    fun gjenståendeEgenandelFra(dato: LocalDate): Beløp = egenandelHistorikk.get(dato) - trukketEgenandelHistorikk.summer(dato)
+    fun gjenståendeEgenandelFra(dato: LocalDate): Beløp =
+        egenandelHistorikk.get(dato) - trukketEgenandelHistorikk.summer(dato)
 
     fun beløpTilUtbetalingFor(dato: LocalDate): Beløp = beløpTilUtbetalingHistorikk.get(dato)
 
@@ -105,10 +108,15 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
                 HistorikkOppdaterer(this).apply(it::accept)
             },
         )
-        this.observers.forEach {
-            it.rammevedtakFattet(
-                VedtakFattetVisitor().apply(vedtak::accept).rammevedtakFattet,
-            )
+        this.observers.forEach { vedtakObserver ->
+            when (vedtak) {
+                is LøpendeRettighetVedtak -> {
+                    val løpendeVedtakFattet = VedtakFattetVisitor().apply(vedtak::accept).løpendeVedtakFattet
+                    vedtakObserver.løpendeVedtakFattet(løpendeVedtakFattet)
+                }
+
+                else -> vedtakObserver.rammevedtakFattet(VedtakFattetVisitor().apply(vedtak::accept).rammevedtakFattet)
+            }
         }
     }
 
@@ -150,6 +158,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
             vedtakHistorikk.trukketEgenandelHistorikk.put(virkningsdato, trukketEgenandel)
             vedtakHistorikk.beløpTilUtbetalingHistorikk.put(virkningsdato, beløpTilUtbetaling)
         }
+
         override fun visitAvslag(
             vedtakId: UUID,
             behandlingId: UUID,

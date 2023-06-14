@@ -59,6 +59,12 @@ class Person private constructor(
         }
     }
 
+    override fun løpendeVedtakFattet(løpendeVedtakFattet: VedtakObserver.LøpendeVedtakFattet) {
+        observers.forEach {
+            it.løpendeVedtakFattet(ident.identifikator(), løpendeVedtakFattet)
+        }
+    }
+
     fun addObserver(personObserver: PersonObserver) {
         observers.add(personObserver)
     }

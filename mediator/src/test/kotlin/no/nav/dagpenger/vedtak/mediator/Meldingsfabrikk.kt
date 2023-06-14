@@ -45,7 +45,7 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
-    fun rapportering2(ident: String = "12345123451") =
+    fun rapporteringInnsendtHendelse(ident: String = "12345123451") =
         //language=JSON
         """
         
