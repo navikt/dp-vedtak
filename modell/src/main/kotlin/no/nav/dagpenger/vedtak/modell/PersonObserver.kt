@@ -4,5 +4,6 @@ import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 
 interface PersonObserver {
 
-    fun vedtaktFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {}
+    fun rammevedtakFattet(ident: String, rammevedtakFattet: VedtakObserver.RammevedtakFattet) {}
+    fun løpendeVedtakFattet(ident: String, løpendeVedtakFattet: VedtakObserver.LøpendeVedtakFattet) {}
 }

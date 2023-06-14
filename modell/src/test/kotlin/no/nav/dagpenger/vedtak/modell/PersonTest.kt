@@ -53,9 +53,9 @@ internal class PersonTest {
 
     private class TestObservatør : PersonObserver {
 
-        val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
-        override fun vedtaktFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
-            vedtak.add(vedtakFattet)
+        val vedtak = mutableListOf<VedtakObserver.RammevedtakFattet>()
+        override fun rammevedtakFattet(ident: String, rammevedtakFattet: VedtakObserver.RammevedtakFattet) {
+            vedtak.add(rammevedtakFattet)
         }
     }
 }

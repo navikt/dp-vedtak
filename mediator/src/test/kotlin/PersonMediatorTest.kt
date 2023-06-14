@@ -7,7 +7,7 @@ import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringInnsendtJson
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapportering2
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
@@ -68,10 +68,12 @@ internal class PersonMediatorTest {
         testObservatør.vedtak.shouldNotBeEmpty()
     }
 
+    // fom = LocalDate.of(2023, 5, 1))
+
     @Test
     fun `Tar imot rapportering behandlet hendelse som fører til vedtak fattet`() {
         testRapid.sendTestMessage(dagpengerInnvilgetJson(ident = ident, virkningsdato = LocalDate.of(2023, 5, 2)))
-        testRapid.sendTestMessage(rapporteringInnsendtJson(ident = ident, fom = LocalDate.of(2023, 5, 1)))
+        testRapid.sendTestMessage(rapportering2(ident = ident))
 
         testRapid.inspektør.size shouldBe 2
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
@@ -79,6 +81,7 @@ internal class PersonMediatorTest {
         }
 
         testRapid.inspektør.message(testRapid.inspektør.size - 2).also {
+            println(it)
             assertEquals("vedtak_fattet", it["@event_name"].asText())
         }
         testObservatør.vedtak.shouldNotBeEmpty()
@@ -114,8 +117,8 @@ internal class PersonMediatorKonsistensTest {
 
 internal class TestObservatør : PersonObserver {
 
-    val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
-    override fun vedtaktFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
-        vedtak.add(vedtakFattet)
+    val vedtak = mutableListOf<VedtakObserver.RammevedtakFattet>()
+    override fun rammevedtakFattet(ident: String, rammevedtakFattet: VedtakObserver.RammevedtakFattet) {
+        vedtak.add(rammevedtakFattet)
     }
 }

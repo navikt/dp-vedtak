@@ -106,8 +106,8 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
             },
         )
         this.observers.forEach {
-            it.vedtakFattet(
-                VedtakFattetVisitor().apply(vedtak::accept).vedtakFattet,
+            it.rammevedtakFattet(
+                VedtakFattetVisitor().apply(vedtak::accept).rammevedtakFattet,
             )
         }
     }

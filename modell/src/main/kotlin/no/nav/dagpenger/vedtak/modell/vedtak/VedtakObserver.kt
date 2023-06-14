@@ -7,9 +7,24 @@ import java.util.UUID
 
 interface VedtakObserver {
 
-    fun vedtakFattet(vedtakFattet: VedtakFattet) {}
+    fun rammevedtakFattet(rammevedtakFattet: RammevedtakFattet) {}
+    fun løpendeVedtakFattet(løpendeVedtakFattet: LøpendeVedtakFattet) {}
 
-    data class VedtakFattet(
+    enum class Utfall {
+        Innvilget,
+        Avslått,
+    }
+
+    data class RammevedtakFattet(
+        val vedtakId: UUID,
+        val behandlingId: UUID,
+        val vedtakstidspunkt: LocalDateTime,
+        val virkningsdato: LocalDate,
+        val utfall: Utfall,
+        // @todo: Type rettighet? Ordinær, Permittering etc
+    )
+
+    data class LøpendeVedtakFattet(
         val vedtakId: UUID,
         val behandlingId: UUID,
         val vedtakstidspunkt: LocalDateTime,
@@ -17,11 +32,5 @@ interface VedtakObserver {
         val utbetalingsdager: List<LøpendeRettighetDag> = emptyList(),
         val utfall: Utfall,
         // @todo: Type rettighet? Ordinær, Permittering etc
-
-    ) {
-        enum class Utfall {
-            Innvilget,
-            Avslått,
-        }
-    }
+    )
 }

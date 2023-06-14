@@ -4,14 +4,14 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeBlank
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
-import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.VedtakFattet.Utfall.Innvilget
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Innvilget
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class VedtakFattetKafkaObserverTest {
+class RammevedtakFattetKafkaObserverTest {
     private val testRapid = TestRapid()
     private val vedtakFattetKafkaObserver = VedtakFattetKafkaObserver(testRapid)
 
@@ -21,9 +21,9 @@ class VedtakFattetKafkaObserverTest {
         val behandlingId = UUID.randomUUID()
         val vedtakstidspunkt = LocalDateTime.now()
         val virkningsdato = LocalDate.now()
-        vedtakFattetKafkaObserver.vedtaktFattet(
+        vedtakFattetKafkaObserver.rammevedtakFattet(
             ident = "1234568901",
-            VedtakObserver.VedtakFattet(
+            VedtakObserver.RammevedtakFattet(
                 vedtakId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 behandlingId = behandlingId,

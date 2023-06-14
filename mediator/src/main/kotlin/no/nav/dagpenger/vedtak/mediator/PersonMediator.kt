@@ -79,12 +79,12 @@ internal class PersonMediator(
 
 private class DelegatedObserver(private val observers: List<PersonObserver>) : PersonObserver {
 
-    private val delegated = mutableListOf<Pair<String, VedtakObserver.VedtakFattet>>()
-    override fun vedtaktFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
-        delegated.add(Pair(ident, vedtakFattet))
+    private val delegated = mutableListOf<Pair<String, VedtakObserver.RammevedtakFattet>>()
+    override fun rammevedtakFattet(ident: String, rammevedtakFattet: VedtakObserver.RammevedtakFattet) {
+        delegated.add(Pair(ident, rammevedtakFattet))
     }
 
     fun finalize() = delegated.forEach { (ident, vedtak) ->
-        observers.forEach { it.vedtaktFattet(ident, vedtak) }
+        observers.forEach { it.rammevedtakFattet(ident, vedtak) }
     }
 }

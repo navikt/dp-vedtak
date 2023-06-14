@@ -5,8 +5,10 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
-import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.VedtakFattet.Utfall.Avslått
-import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.VedtakFattet.Utfall.Innvilget
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.LøpendeVedtakFattet
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.RammevedtakFattet
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Avslått
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Innvilget
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -15,7 +17,8 @@ import java.util.UUID
 
 internal class VedtakFattetVisitor : VedtakVisitor {
 
-    lateinit var vedtakFattet: VedtakObserver.VedtakFattet
+    lateinit var rammevedtakFattet: RammevedtakFattet
+    lateinit var løpendeVedtakFattet: LøpendeVedtakFattet
 
     override fun visitRammevedtak(
         vedtakId: UUID,
@@ -30,7 +33,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         dagpengerettighet: Dagpengerettighet,
         egenandel: Beløp,
     ) {
-        vedtakFattet = VedtakObserver.VedtakFattet(
+        rammevedtakFattet = RammevedtakFattet(
             vedtakId = vedtakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
@@ -53,7 +56,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         beløpTilUtbetaling: Beløp,
         rettighetsdager: List<LøpendeRettighetDag>,
     ) {
-        vedtakFattet = VedtakObserver.VedtakFattet(
+        løpendeVedtakFattet = LøpendeVedtakFattet(
             vedtakId = vedtakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
@@ -73,7 +76,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         utfall: Boolean,
         virkningsdato: LocalDate,
     ) {
-        vedtakFattet = VedtakObserver.VedtakFattet(
+        rammevedtakFattet = RammevedtakFattet(
             vedtakId = vedtakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
@@ -92,7 +95,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         vedtakstidspunkt: LocalDateTime,
         utfall: Boolean,
     ) {
-        vedtakFattet = VedtakObserver.VedtakFattet(
+        rammevedtakFattet = RammevedtakFattet(
             vedtakId = vedtakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
