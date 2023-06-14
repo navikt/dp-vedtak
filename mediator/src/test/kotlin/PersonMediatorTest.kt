@@ -16,6 +16,7 @@ import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
+import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -76,7 +77,11 @@ internal class PersonMediatorTest {
         testRapid.inspektør.size shouldBe 2
 
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
-            assertEquals("vedtak_fattet", it["@event_name"].asText())
+            it["utbetalingsdager"].map { utbetalingsdagJson ->
+                utbetalingsdagJson["dato"].asLocalDate() // TODO: Sjekk noe her?
+                utbetalingsdagJson["beløp"].asDouble() shouldBe 0.0
+            }
+            it["@event_name"].asText() shouldBe "vedtak_fattet"
         }
 
         testRapid.inspektør.message(testRapid.inspektør.size - 2).also {
@@ -115,8 +120,8 @@ internal class PersonMediatorKonsistensTest {
 
 internal class TestObservatør : PersonObserver {
 
-    val vedtak = mutableListOf<VedtakObserver.RammevedtakFattet>()
-    override fun rammevedtakFattet(ident: String, rammevedtakFattet: VedtakObserver.RammevedtakFattet) {
-        vedtak.add(rammevedtakFattet)
+    val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
+    override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
+        vedtak.add(vedtakFattet)
     }
 }

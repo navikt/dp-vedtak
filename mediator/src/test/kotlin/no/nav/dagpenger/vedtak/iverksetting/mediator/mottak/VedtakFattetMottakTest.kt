@@ -18,7 +18,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class RammevedtakFattetMottakTest {
+internal class VedtakFattetMottakTest {
 
     private val testRapid = TestRapid()
 

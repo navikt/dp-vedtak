@@ -11,7 +11,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class RammevedtakFattetKafkaObserverTest {
+class VedtakFattetKafkaObserverTest {
     private val testRapid = TestRapid()
     private val vedtakFattetKafkaObserver = VedtakFattetKafkaObserver(testRapid)
 
@@ -21,9 +21,9 @@ class RammevedtakFattetKafkaObserverTest {
         val behandlingId = UUID.randomUUID()
         val vedtakstidspunkt = LocalDateTime.now()
         val virkningsdato = LocalDate.now()
-        vedtakFattetKafkaObserver.rammevedtakFattet(
+        vedtakFattetKafkaObserver.vedtakFattet(
             ident = "1234568901",
-            VedtakObserver.RammevedtakFattet(
+            VedtakObserver.VedtakFattet(
                 vedtakId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 behandlingId = behandlingId,

@@ -6,6 +6,7 @@ import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
+import java.time.LocalDate
 
 internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsConnection) : PersonObserver {
 
@@ -14,17 +15,17 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
         val sikkerlogger = KotlinLogging.logger { "tjenestekall.VedtakFattetKafkaObserver" }
     }
 
-    override fun rammevedtakFattet(ident: String, rammevedtakFattet: VedtakObserver.RammevedtakFattet) {
-        sikkerlogger.info { "Vedtak for $ident fattet. Vedtak: $rammevedtakFattet" }
+    override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
+        sikkerlogger.info { "Vedtak for $ident fattet. Vedtak: $vedtakFattet" }
         val message = JsonMessage.newMessage(
             eventName = "vedtak_fattet",
             map = mapOf(
                 "ident" to ident,
-                "behandlingId" to rammevedtakFattet.behandlingId.toString(),
-                "vedtakId" to rammevedtakFattet.vedtakId.toString(),
-                "vedtaktidspunkt" to rammevedtakFattet.vedtakstidspunkt,
-                "virkningsdato" to rammevedtakFattet.virkningsdato,
-                "utfall" to rammevedtakFattet.utfall.name,
+                "behandlingId" to vedtakFattet.behandlingId.toString(),
+                "vedtakId" to vedtakFattet.vedtakId.toString(),
+                "vedtaktidspunkt" to vedtakFattet.vedtakstidspunkt,
+                "virkningsdato" to vedtakFattet.virkningsdato,
+                "utfall" to vedtakFattet.utfall.name,
             ),
         )
 
@@ -37,6 +38,7 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
 
     override fun løpendeVedtakFattet(ident: String, løpendeVedtakFattet: VedtakObserver.LøpendeVedtakFattet) {
         sikkerlogger.info { "Vedtak for $ident fattet. Vedtak: $løpendeVedtakFattet" }
+
         val message = JsonMessage.newMessage(
             eventName = "vedtak_fattet",
             map = mapOf(
@@ -45,7 +47,9 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                 "vedtakId" to løpendeVedtakFattet.vedtakId.toString(),
                 "vedtaktidspunkt" to løpendeVedtakFattet.vedtakstidspunkt,
                 "virkningsdato" to løpendeVedtakFattet.virkningsdato,
-                "utbetalingsdager" to løpendeVedtakFattet.utbetalingsdager,
+                "utbetalingsdager" to løpendeVedtakFattet.utbetalingsdager.map { løpendeRettighetDag ->
+                    UtbetalingsdagDto(løpendeRettighetDag.dato, løpendeRettighetDag.beløp.toString())
+                },
                 "utfall" to løpendeVedtakFattet.utfall.name,
             ),
         )
@@ -56,4 +60,6 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
         )
         logger.info { "Vedtak fattet melding publisert. BehandlingId: $behandlingId" }
     }
+
+    private data class UtbetalingsdagDto(val dato: LocalDate, val beløp: String)
 }

@@ -7,7 +7,7 @@ import java.util.UUID
 
 interface VedtakObserver {
 
-    fun rammevedtakFattet(rammevedtakFattet: RammevedtakFattet) {}
+    fun vedtakFattet(vedtakFattet: VedtakFattet) {}
     fun løpendeVedtakFattet(løpendeVedtakFattet: LøpendeVedtakFattet) {}
 
     enum class Utfall {
@@ -15,7 +15,7 @@ interface VedtakObserver {
         Avslått,
     }
 
-    data class RammevedtakFattet(
+    data class VedtakFattet(
         val vedtakId: UUID,
         val behandlingId: UUID,
         val vedtakstidspunkt: LocalDateTime,

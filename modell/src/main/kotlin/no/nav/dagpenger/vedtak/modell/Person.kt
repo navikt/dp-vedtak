@@ -53,9 +53,9 @@ class Person private constructor(
 
     fun beløpTilUtbetalingFor(dato: LocalDate): Beløp = vedtakHistorikk.beløpTilUtbetalingFor(dato)
 
-    override fun rammevedtakFattet(rammevedtakFattet: VedtakObserver.RammevedtakFattet) {
+    override fun vedtakFattet(vedtakFattet: VedtakObserver.VedtakFattet) {
         observers.forEach {
-            it.rammevedtakFattet(ident.identifikator(), rammevedtakFattet)
+            it.vedtakFattet(ident.identifikator(), vedtakFattet)
         }
     }
 

@@ -6,9 +6,9 @@ import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.LøpendeVedtakFattet
-import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.RammevedtakFattet
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Avslått
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Innvilget
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.VedtakFattet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -17,7 +17,7 @@ import java.util.UUID
 
 internal class VedtakFattetVisitor : VedtakVisitor {
 
-    lateinit var rammevedtakFattet: RammevedtakFattet
+    lateinit var vedtakFattet: VedtakFattet
     lateinit var løpendeVedtakFattet: LøpendeVedtakFattet
 
     override fun visitRammevedtak(
@@ -33,7 +33,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         dagpengerettighet: Dagpengerettighet,
         egenandel: Beløp,
     ) {
-        rammevedtakFattet = RammevedtakFattet(
+        vedtakFattet = VedtakFattet(
             vedtakId = vedtakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
@@ -76,7 +76,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         utfall: Boolean,
         virkningsdato: LocalDate,
     ) {
-        rammevedtakFattet = RammevedtakFattet(
+        vedtakFattet = VedtakFattet(
             vedtakId = vedtakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
@@ -95,7 +95,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         vedtakstidspunkt: LocalDateTime,
         utfall: Boolean,
     ) {
-        rammevedtakFattet = RammevedtakFattet(
+        vedtakFattet = VedtakFattet(
             vedtakId = vedtakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,

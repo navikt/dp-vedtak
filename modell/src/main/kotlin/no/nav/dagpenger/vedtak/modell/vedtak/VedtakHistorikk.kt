@@ -115,7 +115,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
                     vedtakObserver.løpendeVedtakFattet(løpendeVedtakFattet)
                 }
 
-                else -> vedtakObserver.rammevedtakFattet(VedtakFattetVisitor().apply(vedtak::accept).rammevedtakFattet)
+                else -> vedtakObserver.vedtakFattet(VedtakFattetVisitor().apply(vedtak::accept).vedtakFattet)
             }
         }
     }
