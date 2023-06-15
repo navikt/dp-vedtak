@@ -1,7 +1,10 @@
 package no.nav.dagpenger.vedtak.mediator
 
+import no.nav.dagpenger.vedtak.juni
+import no.nav.dagpenger.vedtak.mai
 import java.time.LocalDate
 import java.util.UUID
+import kotlin.time.Duration
 
 object Meldingsfabrikk {
 
@@ -9,6 +12,8 @@ object Meldingsfabrikk {
         rettighetstype: String = "Ordinær",
         ident: String = "12345123451",
         virkningsdato: LocalDate = LocalDate.now(),
+        dagsats: Double = 500.0,
+        fastsattVanligArbeidstid: Int = 8,
     ) =
         //language=JSON
         """
@@ -19,10 +24,10 @@ object Meldingsfabrikk {
           "Virkningsdato": "$virkningsdato",
           "innvilget": true,
           "Rettighetstype": "$rettighetstype",
-          "Dagsats": "500",
+          "Dagsats": "$dagsats",
           "Grunnlag": "500000",
           "Periode": "52",
-          "Fastsatt vanlig arbeidstid": "8",
+          "Fastsatt vanlig arbeidstid": "$fastsattVanligArbeidstid",
           "egenandel": "1500",
           "barnetillegg" : [ {
               "fødselsdato" : "2012-03-03"
@@ -45,156 +50,163 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
-    fun rapporteringInnsendtHendelse(ident: String = "12345123451") =
+    fun rapporteringInnsendtHendelse(
+        ident: String = "12345123451",
+        fom: LocalDate = 26 mai 2023,
+        tom: LocalDate = 9 juni 2023,
+        tidArbeidetPerArbeidsdag: Duration = Duration.ZERO,
+    ): String {
+        val arbeidstid = tidArbeidetPerArbeidsdag.toIsoString()
         //language=JSON
-        """
-        
-        {
-          "@event_name": "rapporteringsperiode_innsendt_hendelse",
-          "ident": "$ident",
-          "rapporteringsId": "5e5dc83c-33fd-409d-92f2-513790c72e23",
-          "fom": "2023-05-29",
-          "tom": "2023-06-11",
-          "dager": [
+        return """
             {
-              "dato": "2023-05-29",
-              "aktiviteter": [
+              "@event_name": "rapporteringsperiode_innsendt_hendelse",
+              "ident": "$ident",
+              "rapporteringsId": "5e5dc83c-33fd-409d-92f2-513790c72e23",
+              "fom": "$fom",
+              "tom": "$tom",
+              "dager": [
                 {
-                  "type": "Arbeid",
-                  "tid": "PT1H"
+                  "dato": "$fom",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "$arbeidstid"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(1)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "$arbeidstid"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(2)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "$arbeidstid"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(3)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "$arbeidstid"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(4)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "$arbeidstid"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(5)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0S"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(6)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0S"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(7)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "$arbeidstid"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(8)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "$arbeidstid"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(9)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "$arbeidstid"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(10)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "$arbeidstid"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(11)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "$arbeidstid"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(12)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0S"
+                    }
+                  ]
+                },
+                {
+                  "dato": "${fom.plusDays(13)}",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0S"
+                    }
+                  ]
                 }
-              ]
-            },
-            {
-              "dato": "2023-05-30",
-              "aktiviteter": [
+              ],
+              "@id": "d05a24a2-bb59-40ab-a3bb-789c2999b4c3",
+              "@opprettet": "2023-06-13T13:49:43.957357",
+              "system_read_count": 0,
+              "system_participating_services": [
                 {
-                  "type": "Arbeid",
-                  "tid": "PT1H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-05-31",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT1H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-06-01",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT1H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-06-02",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT1H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-06-03",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT0H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-06-04",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT0H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-06-05",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT1H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-06-06",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT1H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-06-07",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT1H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-06-08",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT1H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-06-09",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT1H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-06-10",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT0H"
-                }
-              ]
-            },
-            {
-              "dato": "2023-06-11",
-              "aktiviteter": [
-                {
-                  "type": "Arbeid",
-                  "tid": "PT0H"
+                  "id": "d05a24a2-bb59-40ab-a3bb-789c2999b4c3",
+                  "time": "2023-06-13T13:49:43.957357"
                 }
               ]
             }
-          ],
-          "@id": "d05a24a2-bb59-40ab-a3bb-789c2999b4c3",
-          "@opprettet": "2023-06-13T13:49:43.957357",
-          "system_read_count": 0,
-          "system_participating_services": [
-            {
-              "id": "d05a24a2-bb59-40ab-a3bb-789c2999b4c3",
-              "time": "2023-06-13T13:49:43.957357"
-            }
-          ]
-        }
-        
+            
         """.trimIndent()
+    }
+
     fun rapporteringInnsendtJson(ident: String = "12345123451", fom: LocalDate = LocalDate.now()) =
         //language=JSON
         """

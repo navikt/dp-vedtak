@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak.hjelpere
+package no.nav.dagpenger.vedtak
 
 import java.time.LocalDate
 import java.time.YearMonth
