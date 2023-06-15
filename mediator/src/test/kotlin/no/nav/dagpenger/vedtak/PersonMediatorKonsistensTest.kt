@@ -42,12 +42,12 @@ internal class PersonMediatorKonsistensTest {
         assertThrows<RuntimeException> { testRapid.sendTestMessage(dagpengerInnvilgetJson(ident = feilendeIdent)) }
         testObservatør.vedtak.shouldBeEmpty()
     }
-}
 
-internal class TestObservatør : PersonObserver {
+    private class TestObservatør : PersonObserver {
 
-    val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
-    override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
-        vedtak.add(vedtakFattet)
+        val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
+        override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
+            vedtak.add(vedtakFattet)
+        }
     }
 }

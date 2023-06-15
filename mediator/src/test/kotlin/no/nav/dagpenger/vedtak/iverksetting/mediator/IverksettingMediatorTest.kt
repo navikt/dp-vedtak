@@ -14,12 +14,13 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
+import java.util.UUID.randomUUID
 
 internal class IverksettingMediatorTest {
 
     private val testRapid = TestRapid()
     private val vedtakId = UUID.fromString("408F11D9-4BE8-450A-8B7A-C2F3F9811859")
-
+    private val ident = "12345123451"
     private val iverksettingRepository = InMemoryIverksettingRepository()
 
     init {
@@ -41,7 +42,7 @@ internal class IverksettingMediatorTest {
 
     @Test
     fun `Vedtakfattet hendelse fører til en iverksettelse og behov om iverksetting`() {
-        testRapid.sendTestMessage(fattetVedtakJsonHendelse(vedtakId))
+        testRapid.sendTestMessage(fattetVedtakJsonHendelse(vedtakId, behandlingId = randomUUID(), ident))
         assertSoftly {
             testRapid.inspektør.size shouldBe 1
             val message = testRapid.inspektør.message(0)

@@ -15,12 +15,14 @@ internal class VedtakFattetMottak(
 
     private companion object {
         val logger = KotlinLogging.logger { }
+        val sikkerlogger = KotlinLogging.logger { "tjenestekall.VedtakFattetMottak" }
     }
 
     init {
         River(rapidsConnection).apply {
             validate { it.requireValue("@event_name", "vedtak_fattet") }
             validate { it.requireKey("@id", "@opprettet") }
+            validate { it.interestedIn("utbetalingsdager") }
             validate {
                 it.requireKey(
                     "ident",
@@ -28,7 +30,6 @@ internal class VedtakFattetMottak(
                     "vedtakId",
                     "vedtaktidspunkt",
                     "virkningsdato",
-                    "utbetalingsdager",
                     "utfall",
                 )
             }
@@ -39,6 +40,7 @@ internal class VedtakFattetMottak(
         val vedtakId = packet["vedtakId"].asText()
         withLoggingContext("vedtakId" to vedtakId) {
             logger.info { "Fått vedtak_fattet hendelse" }
+            sikkerlogger.info { "Fått vedtak_fattet hendelse. Hendelse: ${packet.toJson()}" }
             val vedtakFattetHendelseMessage = VedtakFattetHendelseMessage(packet)
             vedtakFattetHendelseMessage.behandle(hendelseMediator, context)
         }
