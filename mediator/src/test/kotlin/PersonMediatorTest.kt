@@ -14,7 +14,6 @@ import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.time.Duration
@@ -49,7 +48,7 @@ internal class PersonMediatorTest {
         testRapid.sendTestMessage(dagpengerInnvilgetJson(ident = ident))
         testRapid.inspektør.size shouldBe 1
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
-            assertEquals("vedtak_fattet", it["@event_name"].asText())
+            it["@event_name"].asText() shouldBe "vedtak_fattet"
         }
         testObservatør.vedtak.shouldNotBeEmpty()
     }
@@ -59,7 +58,7 @@ internal class PersonMediatorTest {
         testRapid.sendTestMessage(dagpengerAvslåttJson(ident = ident))
         testRapid.inspektør.size shouldBe 1
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
-            assertEquals("vedtak_fattet", it["@event_name"].asText())
+            it["@event_name"].asText() shouldBe "vedtak_fattet"
         }
         testObservatør.vedtak.shouldNotBeEmpty()
     }
@@ -95,7 +94,7 @@ internal class PersonMediatorTest {
         }
 
         testRapid.inspektør.message(testRapid.inspektør.size - 2).also {
-            assertEquals("vedtak_fattet", it["@event_name"].asText())
+            it["@event_name"].asText() shouldBe "vedtak_fattet"
         }
         testObservatør.vedtak.shouldNotBeEmpty()
     }
