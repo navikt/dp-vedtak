@@ -22,12 +22,17 @@ internal class IverksettingMediatorTest {
 
     private val iverksettingRepository = InMemoryIverksettingRepository()
 
-    val iverksettingMediator = HendelseMediator(
-        rapidsConnection = testRapid,
-        hendelseRepository = InMemoryMeldingRepository(),
-        personMediator = PersonMediator(mockk(), mockk()),
-        iverksettingMediator = IverksettingMediator(iverksettingRepository, BehovMediator(testRapid, KotlinLogging.logger {})),
-    )
+    init {
+        HendelseMediator(
+            rapidsConnection = testRapid,
+            hendelseRepository = InMemoryMeldingRepository(),
+            personMediator = PersonMediator(mockk(), mockk()),
+            iverksettingMediator = IverksettingMediator(
+                iverksettingRepository,
+                BehovMediator(testRapid, KotlinLogging.logger {}),
+            ),
+        )
+    }
 
     @BeforeEach
     fun setUp() {

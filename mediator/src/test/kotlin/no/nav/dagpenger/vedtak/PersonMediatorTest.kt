@@ -1,8 +1,9 @@
+package no.nav.dagpenger.vedtak
+
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
-import no.nav.dagpenger.vedtak.mai
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
@@ -64,8 +65,8 @@ internal class PersonMediatorTest {
     }
 
     @Test
-    fun `Tar imot rapportering behandlet hendelse som fører til vedtak fattet`() {
-        val rettighetFraDato = 26 mai 2023
+    fun `Rapporteringshendelse fører til et løpende vedtak fattet`() {
+        val rettighetFraDato = 29 mai 2023
         testRapid.sendTestMessage(
             dagpengerInnvilgetJson(
                 ident = ident,
@@ -86,24 +87,30 @@ internal class PersonMediatorTest {
 
         testRapid.inspektør.size shouldBe 2
 
-        testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
-            it["utbetalingsdager"].map { utbetalingsdagJson ->
-                utbetalingsdagJson["beløp"].asDouble() shouldBe 0.0
-            }
-            it["@event_name"].asText() shouldBe "vedtak_fattet"
-        }
+        testObservatør.vedtak.size shouldBe 1
+        val rammevedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 2)
+        rammevedtakJson["@event_name"].asText() shouldBe "vedtak_fattet"
 
-        testRapid.inspektør.message(testRapid.inspektør.size - 2).also {
-            it["@event_name"].asText() shouldBe "vedtak_fattet"
+        testObservatør.løpendeVedtak.size shouldBe 1
+        val løpendeVedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 1)
+        løpendeVedtakJson["@event_name"].asText() shouldBe "vedtak_fattet"
+        løpendeVedtakJson["utbetalingsdager"].size() shouldBe 10
+        løpendeVedtakJson["utbetalingsdager"].map { utbetalingsdagJson ->
+            utbetalingsdagJson["beløp"].asDouble() shouldBe 0.0 // TODO: Dette burde ikke være slik
         }
-        testObservatør.vedtak.shouldNotBeEmpty()
     }
-}
 
-internal class TestObservatør : PersonObserver {
+    private class TestObservatør : PersonObserver {
 
-    val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
-    override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
-        vedtak.add(vedtakFattet)
+        val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
+        val løpendeVedtak = mutableListOf<VedtakObserver.LøpendeVedtakFattet>()
+
+        override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
+            vedtak.add(vedtakFattet)
+        }
+
+        override fun løpendeVedtakFattet(ident: String, løpendeVedtakFattet: VedtakObserver.LøpendeVedtakFattet) {
+            løpendeVedtak.add(løpendeVedtakFattet)
+        }
     }
 }
