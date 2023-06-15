@@ -6,10 +6,9 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.AvventerIverksetting
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Iverksatt
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Mottatt
+import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak.Utbetalingsdag
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
-import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
-import no.nav.dagpenger.vedtak.modell.utbetaling.BeregnetBeløpDag
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -40,7 +39,7 @@ class IverksettingTest {
                     behandlingId = behandlingId,
                     vedtakstidspunkt = vedtakstidspunkt,
                     virkningsdato = virkningsdato,
-                    utbetalingsdager = beregnetBeløpDager(),
+                    utbetalingsdager = utbetalingsdager(),
                     utfall = utfall,
                 ),
             ),
@@ -55,7 +54,7 @@ class IverksettingTest {
                 "vedtakstidspunkt" to vedtakstidspunkt,
                 "virkningsdato" to virkningsdato,
                 "utfall" to utfall,
-                "utbetalingsdager" to beregnetBeløpDager(),
+                "utbetalingsdager" to utbetalingsdager(),
                 "iverksettingId" to inspektør.iverksettingId.toString(),
                 "tilstand" to "Mottatt",
             ),
@@ -72,8 +71,8 @@ class IverksettingTest {
         )
     }
 
-    private fun beregnetBeløpDager() = listOf(
-        BeregnetBeløpDag(dato = virkningsdato, beløp = 10.beløp),
+    private fun utbetalingsdager() = listOf(
+        Utbetalingsdag(dato = virkningsdato, beløp = 10.0),
     )
 
     private fun assertTilstander(vararg tilstander: Iverksetting.Tilstand.TilstandNavn) {

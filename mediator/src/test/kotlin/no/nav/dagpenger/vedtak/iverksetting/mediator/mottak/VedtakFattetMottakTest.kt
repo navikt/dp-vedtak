@@ -2,7 +2,6 @@ package no.nav.dagpenger.vedtak.iverksetting.mediator.mottak
 
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -16,7 +15,6 @@ import no.nav.dagpenger.vedtak.iverksetting.mediator.fattetVedtakJsonHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.løpendeVedtakFattet
 import no.nav.dagpenger.vedtak.juni
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
-import no.nav.dagpenger.vedtak.modell.utbetaling.BeregnetBeløpDag
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -77,7 +75,7 @@ internal class VedtakFattetMottakTest {
             løpendeVedtakFattet.iverksettingsVedtak.behandlingId shouldBe behandlingId
             løpendeVedtakFattet.iverksettingsVedtak.virkningsdato shouldBe (11 juni 2023)
             løpendeVedtakFattet.iverksettingsVedtak.vedtakstidspunkt shouldBe LocalDateTime.MAX
-            løpendeVedtakFattet.iverksettingsVedtak.utbetalingsdager shouldNotBe emptyList<BeregnetBeløpDag>()
+            løpendeVedtakFattet.iverksettingsVedtak.utbetalingsdager.size shouldBe 10
             løpendeVedtakFattet.iverksettingsVedtak.utfall shouldBe Innvilget
         }
     }

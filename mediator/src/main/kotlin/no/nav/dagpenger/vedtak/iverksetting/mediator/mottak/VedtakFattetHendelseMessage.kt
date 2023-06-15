@@ -1,11 +1,12 @@
 package no.nav.dagpenger.vedtak.iverksetting.mediator.mottak
 
 import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak
+import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak.Utbetalingsdag
+import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak.Utfall.Avslått
+import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak.Utfall.Innvilget
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
-import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
-import no.nav.dagpenger.vedtak.modell.utbetaling.BeregnetBeløpDag
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.asLocalDate
@@ -26,13 +27,11 @@ internal class VedtakFattetHendelseMessage(private val packet: JsonMessage) : He
                 behandlingId = packet["behandlingId"].asUUID(),
                 vedtakstidspunkt = packet["vedtaktidspunkt"].asLocalDateTime(),
                 virkningsdato = packet["virkningsdato"].asLocalDate(),
-                utbetalingsdager = utbetalingsdager(), // TODO: Map om fra intern modell (BeregnetBeløpDag) til f.eks. Utbetalingsdag og fjern dager med nullbeløp
+                utbetalingsdager = utbetalingsdager(),
                 utfall = when (packet.utfall()) {
-                    "Innvilget" -> IverksettingsVedtak.Utfall.Innvilget
-                    "Avslått" -> IverksettingsVedtak.Utfall.Avslått
-                    else -> {
-                        throw IllegalArgumentException("Vet ikke om utfall ${packet.utfall()}")
-                    }
+                    "Innvilget" -> Innvilget
+                    "Avslått" -> Avslått
+                    else -> throw IllegalArgumentException("Vet ikke om utfall ${packet.utfall()}")
                 },
             ),
         )
@@ -41,13 +40,12 @@ internal class VedtakFattetHendelseMessage(private val packet: JsonMessage) : He
         mediator.behandle(hendelse, this, context)
     }
 
-    private fun utbetalingsdager() =
-        packet["utbetalingsdager"].map { løpendeRettighetsdagJson ->
-            BeregnetBeløpDag(
-                dato = løpendeRettighetsdagJson["dato"].asLocalDate(),
-                beløp = løpendeRettighetsdagJson["beløp"].asDouble().beløp,
-            )
-        }.toList()
+    private fun utbetalingsdager() = packet["utbetalingsdager"].map { løpendeRettighetsdagJson ->
+        Utbetalingsdag(
+            dato = løpendeRettighetsdagJson["dato"].asLocalDate(),
+            beløp = løpendeRettighetsdagJson["beløp"].asDouble(),
+        )
+    }.toList()
 
     private fun JsonMessage.utfall(): String = this["utfall"].asText()
 }
