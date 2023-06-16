@@ -18,6 +18,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
+import java.lang.Exception
 import java.util.UUID
 
 private val BehovIverksett = "Iverksett"
@@ -31,6 +32,7 @@ internal class IverksettBehovløser(
 
     private companion object {
         val logger = KotlinLogging.logger { }
+        val sikkerlogger = KotlinLogging.logger("tjenestekall.IverksettBehovløser")
     }
 
     init {
@@ -59,11 +61,15 @@ internal class IverksettBehovløser(
             ),
         ) {
             logger.info { "Fått behov $BehovIverksett" }
-
             val iverksettDagpengerDto = packet.tilIverksettDTO()
+            sikkerlogger.info("Request body mot iverksetting: $iverksettDagpengerDto")
             runBlocking {
                 withContext(MDCContext()) {
-                    iverksettClient.iverksett(iverksettDagpengerDto)
+                    try { // TODO: Prøv mer enn 1 gang dersom noe feiler
+                        iverksettClient.iverksett(iverksettDagpengerDto)
+                    } catch (e: Exception) {
+                        logger.error { "Feiler mot iverksetting: ${e.message}" }
+                    }
                 }
             }
             packet["@løsning"] = mapOf(BehovIverksett to true)
