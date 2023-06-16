@@ -12,7 +12,7 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
 
     companion object {
         val logger = KotlinLogging.logger { }
-        val sikkerlogger = KotlinLogging.logger { "tjenestekall.VedtakFattetKafkaObserver" }
+        val sikkerlogger = KotlinLogging.logger("tjenestekall.VedtakFattetKafkaObserver")
     }
 
     override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {

@@ -15,7 +15,7 @@ internal class VedtakFattetMottak(
 
     private companion object {
         val logger = KotlinLogging.logger { }
-        val sikkerlogger = KotlinLogging.logger { "tjenestekall.VedtakFattetMottak" }
+        val sikkerlogger = KotlinLogging.logger("tjenestekall.VedtakFattetMottak")
     }
 
     init {
