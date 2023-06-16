@@ -96,7 +96,7 @@ internal class PersonMediatorTest {
         løpendeVedtakJson["@event_name"].asText() shouldBe "vedtak_fattet"
         løpendeVedtakJson["utbetalingsdager"].size() shouldBe 10
         løpendeVedtakJson["utbetalingsdager"].map { utbetalingsdagJson ->
-            utbetalingsdagJson["beløp"].asDouble() shouldBe 0.0 // TODO: Dette burde ikke være slik
+            utbetalingsdagJson["beløp"].asDouble() shouldBe 1000.0
         }
     }
 

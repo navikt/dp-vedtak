@@ -52,8 +52,8 @@ object Meldingsfabrikk {
 
     fun rapporteringInnsendtHendelse(
         ident: String = "12345123451",
-        fom: LocalDate = 26 mai 2023,
-        tom: LocalDate = 9 juni 2023,
+        fom: LocalDate = 29 mai 2023,
+        tom: LocalDate = 11 juni 2023,
         tidArbeidetPerArbeidsdag: Duration = Duration.ZERO,
     ): String {
         val arbeidstid = tidArbeidetPerArbeidsdag.toIsoString()

@@ -57,9 +57,9 @@ internal class VedtakFattetMottakTest {
     }
 
     @Test
-    fun `Skal lese løpendevedtakFattet hendelser`() {
-        val løpendevedtakFattetSlot = slot<VedtakFattetHendelse>()
-        every { iHendelseMediator.behandle(capture(løpendevedtakFattetSlot), any(), any()) } just Runs
+    fun `Skal lese løpendeVedtakFattet hendelser`() {
+        val løpendeVedtakFattetSlot = slot<VedtakFattetHendelse>()
+        every { iHendelseMediator.behandle(capture(løpendeVedtakFattetSlot), any(), any()) } just Runs
         val løpendeVedtakJson = løpendeVedtakFattet(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId)
         testRapid.sendTestMessage(løpendeVedtakJson)
 
@@ -68,8 +68,8 @@ internal class VedtakFattetMottakTest {
         }
 
         assertSoftly {
-            løpendevedtakFattetSlot.isCaptured shouldBe true
-            val løpendeVedtakFattet = løpendevedtakFattetSlot.captured
+            løpendeVedtakFattetSlot.isCaptured shouldBe true
+            val løpendeVedtakFattet = løpendeVedtakFattetSlot.captured
             løpendeVedtakFattet.ident() shouldBe ident
             løpendeVedtakFattet.iverksettingsVedtak.vedtakId shouldBe vedtakId
             løpendeVedtakFattet.iverksettingsVedtak.behandlingId shouldBe behandlingId

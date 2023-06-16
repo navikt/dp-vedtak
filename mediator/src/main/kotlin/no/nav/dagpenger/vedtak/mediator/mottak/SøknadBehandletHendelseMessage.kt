@@ -41,12 +41,12 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
         behandlingId = behandlingId,
         virkningsdato = LocalDate.parse(packet["Virkningsdato"].asText()),
         dagpengerettighet = Dagpengerettighet.valueOf(packet["Rettighetstype"].asText()),
-        dagsats = packet["Dagsats"].decimalValue(),
-        grunnlag = packet["Grunnlag"].decimalValue(),
+        dagsats = packet["Dagsats"].asText().toBigDecimal(),
+        grunnlag = packet["Grunnlag"].asText().toBigDecimal(),
         stønadsdager = Dagpengeperiode(antallUker = packet["Periode"].asInt()).tilStønadsdager(),
         vanligArbeidstidPerDag = packet["Fastsatt vanlig arbeidstid"].asDouble().timer,
         egenandel = when (Dagpengerettighet.valueOf(packet["Rettighetstype"].asText())) {
-            Dagpengerettighet.Ordinær, Dagpengerettighet.Permittering -> 3.beløp * packet["Dagsats"].decimalValue().beløp
+            Dagpengerettighet.Ordinær, Dagpengerettighet.Permittering -> 3.beløp * packet["Dagsats"].asText().toBigDecimal().beløp
             else -> 0.beløp
         }, // @todo: hva/hvem skal sette egenandel?
     )
