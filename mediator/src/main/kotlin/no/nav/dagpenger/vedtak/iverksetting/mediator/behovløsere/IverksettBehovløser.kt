@@ -94,7 +94,7 @@ internal fun JsonMessage.tilIverksettDTO(): IverksettDto = IverksettDto(
 
 private fun vedtaksdetaljerDagpengerDto(packet: JsonMessage) =
     VedtaksdetaljerDto(
-        vedtakstype = VedtakType.UTBETALINGSVEDTAK,
+        vedtakstype = bestemVedtakstype(packet),
         vedtakstidspunkt = packet["$BehovIverksett.vedtakstidspunkt"].asLocalDateTime(),
         resultat = when (packet.utfall()) {
             "Innvilget" -> Vedtaksresultat.INNVILGET
@@ -118,5 +118,8 @@ private fun vedtaksdetaljerDagpengerDto(packet: JsonMessage) =
             ),
         ),
     )
+
+private fun bestemVedtakstype(packet: JsonMessage) =
+    if (packet["$BehovIverksett.utbetalingsdager"].size() == 0) VedtakType.RAMMEVEDTAK else VedtakType.UTBETALINGSVEDTAK
 
 private fun JsonMessage.utfall(): String = this["$BehovIverksett.utfall"].asText()
