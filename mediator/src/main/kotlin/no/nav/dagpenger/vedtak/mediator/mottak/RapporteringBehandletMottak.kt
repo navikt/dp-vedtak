@@ -18,6 +18,7 @@ internal class RapporteringBehandletMottak(
 
     companion object {
         private val logger = KotlinLogging.logger { }
+        private val sikkerLogger = KotlinLogging.logger("tjenestekall.RapporteringBehandletMottak")
     }
 
     init {
@@ -43,6 +44,7 @@ internal class RapporteringBehandletMottak(
         withLoggingContext("rapporteringsId" to rapporteringsId.toString()) {
             val rapporteringBehandletHendelseMessage = RapporteringBehandletHendelseMessage(packet)
             logger.info { "Fått rapportering innsendt hendelse" }
+            sikkerLogger.info { "Fått rapportering innsendt hendelse: ${packet.toJson()}" }
             rapporteringBehandletHendelseMessage.behandle(hendelseMediator, context)
         }
     }
