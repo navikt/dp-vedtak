@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Person
+import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
@@ -57,11 +58,12 @@ internal class PersonMediator(
     private fun lagre(person: Person) {
         personRepository.lagre(person)
     }
+
     private fun hentEllerOpprettPerson(hendelse: Hendelse): Person {
         val person = personRepository.hent(hendelse.ident().tilPersonIdentfikator())
         return when (hendelse) {
             is SøknadBehandletHendelse -> person ?: Person(hendelse.ident().tilPersonIdentfikator())
-            else -> person ?: throw RuntimeException("har ikke informasjon om person")
+            else -> person ?: Person(PersonIdentifikator("12345123451")) // TODO: Fjern når vi har database
         }
     }
 
