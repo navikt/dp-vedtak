@@ -43,6 +43,8 @@ internal class IverksettingMediator(
             sikkerLogger.error("alvorlig feil i aktivitetslogg: ${err.message}", err)
         }
         throw err
+    } catch (oie: OpprettIverksettingException) {
+        sikkerLogger.error { oie }
     } catch (e: Exception) {
         errorHandler(e, e.message ?: "Ukjent feil")
         throw e
@@ -54,13 +56,15 @@ internal class IverksettingMediator(
                 ?: Iverksetting(hendelse.iverksettingsVedtak.vedtakId, hendelse.ident())
 
             is IverksattHendelse -> iverksettingRepository.hent(hendelse.vedtakId)
-                ?: throw RuntimeException("Kan ikke knytte iverksatthendelse til en Iverksetting")
+                ?: throw OpprettIverksettingException("Kan ikke knytte iverksatthendelse til en Iverksetting")
 
             else -> {
                 TODO("Støtter bare VedtakFattetHendelse pt")
             }
         }
     }
+
+    class OpprettIverksettingException(message: String) : RuntimeException(message)
 
     private fun finalize(hendelse: Hendelse) {
         // if (!hendelse.hasMessages()) return
