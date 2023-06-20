@@ -63,7 +63,8 @@ internal class PersonMediator(
         val person = personRepository.hent(hendelse.ident().tilPersonIdentfikator())
         return when (hendelse) {
             is SøknadBehandletHendelse -> person ?: Person(hendelse.ident().tilPersonIdentfikator())
-            else -> person ?: Person(PersonIdentifikator("12345123451")) // TODO: Fjern når vi har database
+            else -> person ?: Person(PersonIdentifikator("12345123451"))
+                .also { logger.error { "Oppretter default person 👨🏽" } } // TODO: Fjern når vi har database
         }
     }
 

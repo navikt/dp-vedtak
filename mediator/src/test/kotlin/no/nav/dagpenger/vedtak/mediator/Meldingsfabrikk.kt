@@ -3,7 +3,7 @@ package no.nav.dagpenger.vedtak.mediator
 import no.nav.dagpenger.vedtak.juni
 import no.nav.dagpenger.vedtak.mai
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 import kotlin.time.Duration
 
 object Meldingsfabrikk {
@@ -354,4 +354,168 @@ object Meldingsfabrikk {
           }
         ]
       }"""
+
+    fun rapporteringPåPersonUtenRammevetak(): String {
+        // language=json
+        return """
+            {
+              "@event_name": "rapporteringsperiode_innsendt_hendelse",
+              "ident": "00000000000",
+              "rapporteringsId": "5e5dc83c-33fd-409d-92f2-513790c72e23",
+              "fom": "2023-05-29",
+              "tom": "2023-06-11",
+              "dager": [
+                {
+                  "dato": "2023-05-29",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-05-30",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-05-31",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-06-01",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-06-02",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-06-03",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-06-04",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-06-05",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-06-06",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-06-07",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-06-08",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-06-09",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-06-10",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                },
+                {
+                  "dato": "2023-06-11",
+                  "aktiviteter": [
+                    {
+                      "type": "Arbeid",
+                      "tid": "PT0H"
+                    }
+                  ]
+                }
+              ],
+              "@id": "d05a24a2-bb59-40ab-a3bb-789c2999b4c3",
+              "@opprettet": "2023-06-16T10:11:07.397317679",
+              "system_read_count": 2,
+              "system_participating_services": [
+                {
+                  "id": "d05a24a2-bb59-40ab-a3bb-789c2999b4c3",
+                  "time": "2023-06-13T13:49:43.957357"
+                },
+                {
+                  "id": "d05a24a2-bb59-40ab-a3bb-789c2999b4c3",
+                  "time": "2023-06-16T10:11:07.396525607",
+                  "service": "dp-quizmaster",
+                  "instance": "dp-quizmaster-b5d4cd8b5-pcs4p",
+                  "image": "docker.pkg.github.com/navikt/dp-quizmaster/dp-quizmaster:c67861e66772fbc190274e3613d1f588c96e8eb1"
+                },
+                {
+                  "id": "d05a24a2-bb59-40ab-a3bb-789c2999b4c3",
+                  "time": "2023-06-20T12:12:37.078119837",
+                  "service": "dp-vedtak",
+                  "instance": "dp-vedtak-54469d4d6b-jb8f9",
+                  "image": "europe-north1-docker.pkg.dev/nais-management-233d/teamdagpenger/dp-vedtak:2023.06.19-11.10-0c163f8"
+                }
+              ]
+            }
+        """.trimIndent()
+    }
 }

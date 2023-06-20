@@ -50,18 +50,20 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     fun håndter(rapporteringsperiode: Rapporteringsperiode) {
         // @todo: Sjekk at vi ikke har behandlet denne før..
-        this.leggTilVedtak(
-            vedtak = LøpendeBehandling(
-                rapporteringsId = rapporteringsperiode.rapporteringsId,
-                stønadsdagerHistorikk = stønadsdagerHistorikk,
-                satsHistorikk = dagsatsHistorikk,
-                dagpengerettighetHistorikk = dagpengerettighetHistorikk,
-                vanligArbeidstidHistorikk = vanligArbeidstidHistorikk,
-                egenandelHistorikk = egenandelHistorikk,
-                forbrukHistorikk = forbrukHistorikk,
-                trukketEgenandelHistorikk = trukketEgenandelHistorikk,
-            ).håndter(rapporteringsperiode),
-        )
+        if (vanligArbeidstidHistorikk.harHistorikk()) {
+            this.leggTilVedtak(
+                vedtak = LøpendeBehandling(
+                    rapporteringsId = rapporteringsperiode.rapporteringsId,
+                    stønadsdagerHistorikk = stønadsdagerHistorikk,
+                    satsHistorikk = dagsatsHistorikk,
+                    dagpengerettighetHistorikk = dagpengerettighetHistorikk,
+                    vanligArbeidstidHistorikk = vanligArbeidstidHistorikk,
+                    egenandelHistorikk = egenandelHistorikk,
+                    forbrukHistorikk = forbrukHistorikk,
+                    trukketEgenandelHistorikk = trukketEgenandelHistorikk,
+                ).håndter(rapporteringsperiode),
+            )
+        }
     }
 
     fun håndter(stansHendelse: StansHendelse) {

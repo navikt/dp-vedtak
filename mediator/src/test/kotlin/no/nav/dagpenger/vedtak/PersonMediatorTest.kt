@@ -8,6 +8,7 @@ import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringInnsendtHendelse
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringPåPersonUtenRammevetak
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
@@ -81,7 +82,7 @@ internal class PersonMediatorTest {
                 ident = ident,
                 fom = rettighetFraDato,
                 tom = rettighetFraDato.plusDays(13),
-                tidArbeidetPerArbeidsdag = Duration.ZERO,
+                tidArbeidetPerArbeidsdag = Duration.parseIsoString("PT0S"),
             ),
         )
 
@@ -98,6 +99,27 @@ internal class PersonMediatorTest {
         løpendeVedtakJson["utbetalingsdager"].map { utbetalingsdagJson ->
             utbetalingsdagJson["beløp"].asDouble() shouldBe 1000.0
         }
+    }
+
+    @Test
+    fun `Dersom person vi prøver å rapportere for ikke har noe rammevedtak så da lager vi ikke et vedtak`() {
+        val rettighetFraDato = 29 mai 2023
+        testRapid.sendTestMessage(
+            dagpengerInnvilgetJson(
+                ident = ident,
+                virkningsdato = rettighetFraDato,
+                dagsats = 1000.0,
+                fastsattVanligArbeidstid = 8,
+            ),
+        )
+
+        testRapid.sendTestMessage(
+            rapporteringPåPersonUtenRammevetak(),
+        )
+
+        testObservatør.vedtak.size shouldBe 1
+        val rammevedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 1)
+        rammevedtakJson["@event_name"].asText() shouldBe "vedtak_fattet"
     }
 
     private class TestObservatør : PersonObserver {
