@@ -7,7 +7,7 @@ import io.mockk.mockk
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.mediator.BehovMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.iverksettJson
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.behovOmIverksettingAvLøpendeVedtak
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -45,13 +45,13 @@ internal class IverksettingMediatorTest {
         testRapid.sendTestMessage(fattetVedtakJsonHendelse(vedtakId, behandlingId = randomUUID(), ident))
         assertSoftly {
             testRapid.inspektør.size shouldBe 1
-            val message = testRapid.inspektør.message(0)
-            message["@event_name"].asText() shouldBe "behov"
-            message["@behov"].map { it.asText() } shouldBe listOf("Iverksett")
+            val rammevedtakJson = testRapid.inspektør.message(0)
+            rammevedtakJson["@event_name"].asText() shouldBe "behov"
+            rammevedtakJson["@behov"].map { it.asText() } shouldBe listOf("Iverksett")
+            rammevedtakJson["Iverksett"]["utbetalingsdager"].size() shouldBe 0
         }
-        testRapid.sendTestMessage(
-            iverksettJson(vedtakId),
-        )
+
+        testRapid.sendTestMessage(behovOmIverksettingAvLøpendeVedtak(vedtakId))
 
         iverksettingRepository.hent(vedtakId) shouldNotBe null
     }
