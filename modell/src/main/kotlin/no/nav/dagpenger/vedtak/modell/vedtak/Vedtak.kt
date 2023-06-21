@@ -73,10 +73,10 @@ sealed class Vedtak(
     }
 }
 
-class Avslag(
-    vedtakId: UUID = UUID.randomUUID(),
+class Avslag private constructor(
+    vedtakId: UUID,
     behandlingId: UUID,
-    vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
+    vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
 ) : Vedtak(
     vedtakId = vedtakId,
@@ -85,6 +85,14 @@ class Avslag(
     utfall = false,
     virkningsdato = virkningsdato,
 ) {
+
+    constructor(behandlingId: UUID, virkningsdato: LocalDate) : this(
+        vedtakId = UUID.randomUUID(),
+        behandlingId = behandlingId,
+        vedtakstidspunkt = LocalDateTime.now(),
+        virkningsdato = virkningsdato,
+    )
+
     override fun accept(visitor: VedtakVisitor) {
         visitor.visitAvslag(
             vedtakId = vedtakId,
