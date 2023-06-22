@@ -136,6 +136,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
             vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,
             egenandel: Beløp,
+            tilstand: Vedtak.Tilstand,
         ) {
             vedtakHistorikk.dagsatsHistorikk.put(virkningsdato, dagsats)
             vedtakHistorikk.grunnlagHistorikk.put(virkningsdato, grunnlag)

@@ -24,7 +24,7 @@ class Iverksetting private constructor(
         id = UUID.randomUUID(),
         personIdent = ident.tilPersonIdentfikator(),
         vedtakId = vedtakId,
-        Mottatt,
+        tilstand = Mottatt,
     )
 
     fun accept(iverksettingVisitor: IverksettingVisitor) {

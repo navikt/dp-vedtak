@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
+import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
+import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
@@ -20,6 +22,7 @@ sealed class Vedtak(
     // @todo: Har alle vedtak utfall?
     protected val utfall: Boolean,
     protected val virkningsdato: LocalDate,
+    protected val tilstand: Tilstand = Fattet,
 ) : Comparable<Vedtak> {
     companion object {
         fun avslag(behandlingId: UUID, virkningsdato: LocalDate) =
@@ -70,6 +73,28 @@ sealed class Vedtak(
 
     override fun compareTo(other: Vedtak): Int {
         return this.vedtakstidspunkt.compareTo(other.vedtakstidspunkt)
+    }
+
+    sealed class Tilstand(val tilstandnavn: TilstandNavn) : Aktivitetskontekst {
+
+        enum class TilstandNavn {
+            Fattet,
+            Iverksatt,
+        }
+    }
+
+    object Fattet : Tilstand(tilstandnavn = TilstandNavn.Fattet) {
+
+        override fun toSpesifikkKontekst(): SpesifikkKontekst {
+            TODO("Not yet implemented")
+        }
+    }
+
+    object Iverksatt : Tilstand(tilstandnavn = TilstandNavn.Iverksatt) {
+
+        override fun toSpesifikkKontekst(): SpesifikkKontekst {
+            TODO("Not yet implemented")
+        }
     }
 }
 
@@ -136,6 +161,7 @@ class Rammevedtak(
             vanligArbeidstidPerDag = vanligArbeidstidPerDag,
             dagpengerettighet = dagpengerettighet,
             egenandel = egenandel,
+            tilstand = tilstand,
         )
     }
 }
