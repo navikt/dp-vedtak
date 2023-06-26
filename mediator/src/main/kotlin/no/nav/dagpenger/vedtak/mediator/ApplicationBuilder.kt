@@ -34,14 +34,6 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
                 behovMediator = BehovMediator(rapidsConnection, KotlinLogging.logger("tjenestekall.BehovMediator")),
             ),
         )
-        /*
-        IverksettBehovløser(
-            rapidsConnection = rapidsConnection,
-            iverksettClient = IverksettClient(
-                Configuration.iverksettApiUrl,
-                Configuration.iverksettClientTokenSupplier,
-            ),
-        )*/
 
         rapidsConnection.register(this)
     }

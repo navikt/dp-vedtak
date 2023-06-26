@@ -1,12 +1,13 @@
 package no.nav.dagpenger.vedtak.mediator.vedtak
 
 import mu.KotlinLogging
-import no.nav.dagpenger.vedtak.iverksetting.mediator.behovløsere.behandlingId
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 import java.time.LocalDate
+
+val behandlingId = "behandlingId"
 
 internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsConnection) : PersonObserver {
 
