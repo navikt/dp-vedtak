@@ -36,7 +36,7 @@ internal class IverksettingMediator(
         val iverksetting = hentEllerOpprettIverksett(hendelse)
         håndter(iverksetting)
         iverksettingRepository.lagre(iverksetting)
-        finalize(hendelse)
+        ferdigstill(hendelse)
     } catch (err: Aktivitetslogg.AktivitetException) {
         logger.error("alvorlig feil i aktivitetslogg (se sikkerlogg for detaljer)")
         withMDC(err.kontekst()) {
@@ -66,7 +66,7 @@ internal class IverksettingMediator(
 
     class OpprettIverksettingException(message: String) : RuntimeException(message)
 
-    private fun finalize(hendelse: Hendelse) {
+    private fun ferdigstill(hendelse: Hendelse) {
         // if (!hendelse.hasMessages()) return
         // if (hendelse.hasErrors()) return sikkerLogger.info("aktivitetslogg inneholder errors: ${hendelse.toLogString()}")
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")

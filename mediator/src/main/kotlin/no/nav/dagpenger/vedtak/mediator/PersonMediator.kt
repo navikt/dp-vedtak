@@ -40,8 +40,8 @@ internal class PersonMediator(
         person.addObserver(delegatedObserver)
         håndter(person)
         lagre(person)
-        finalize(hendelse).also {
-            delegatedObserver.finalize()
+        ferdigstill(hendelse).also {
+            delegatedObserver.ferdigstill()
         }
     } catch (err: Aktivitetslogg.AktivitetException) {
         logger.error("alvorlig feil i aktivitetslogg (se sikkerlogg for detaljer)")
@@ -68,7 +68,7 @@ internal class PersonMediator(
         }
     }
 
-    private fun finalize(hendelse: Hendelse) {
+    private fun ferdigstill(hendelse: Hendelse) {
         // if (!hendelse.hasMessages()) return
         // if (hendelse.hasErrors()) return sikkerLogger.info("aktivitetslogg inneholder errors: ${hendelse.toLogString()}")
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
@@ -93,7 +93,7 @@ private class DelegatedObserver(private val observers: List<PersonObserver>) : P
         løpendeVedtakDelegate.add(Pair(ident, løpendeVedtakFattet))
     }
 
-    fun finalize() {
+    fun ferdigstill() {
         vedtakDelegate.forEach { (ident, vedtak) ->
             observers.forEach {
                 it.vedtakFattet(ident, vedtak)
