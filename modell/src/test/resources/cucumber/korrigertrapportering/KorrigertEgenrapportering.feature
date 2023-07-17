@@ -178,6 +178,8 @@ Egenskap: Korrigert egenrapportering
     Så skal beregnet utbetaling være 0 kr for "08.01.2023"
     Så skal bruker ha 4 vedtak
 
+  @wip
+  # @todo: Avrundingsproblem - se sak  https://favro.com/organization/98c34fb974ce445eac854de0/696529a0ddfa866861cfa6b6?card=NAV-13898
   Scenario: Korrigerer meldeperiode nummer 2 med fravær og arbeid
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |

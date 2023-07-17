@@ -2,7 +2,7 @@ package no.nav.dagpenger.vedtak.modell.entitet
 
 internal class Prosent(prosent: Number) : Comparable<Prosent> {
     private val prosent = prosent.toDouble()
-    private val prosentfaktor get() = prosent / 100
+    private val prosentfaktor get(): Double = prosent / 100
 
     init {
         require(this.prosent >= 0) { "Arbeidsprosent må være større enn eller lik 0, er ${this.prosent}" }
@@ -15,6 +15,8 @@ internal class Prosent(prosent: Number) : Comparable<Prosent> {
     infix operator fun div(nevner: Double) = Prosent(this.prosent / nevner)
 
     infix fun av(vanligArbeidstid: Timer) = vanligArbeidstid * prosentfaktor
+
+    infix operator fun times(beløp: Beløp) = beløp * prosentfaktor
 
     override fun compareTo(other: Prosent): Int = this.prosent.compareTo(other.prosent)
 

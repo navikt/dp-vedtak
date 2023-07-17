@@ -26,7 +26,7 @@ class DagpengerInnvilgetHendelse(
     behandlingId: UUID,
     virkningsdato: LocalDate,
     private val dagpengerettighet: Dagpengerettighet,
-    private val dagsats: BigDecimal,
+    private val dagsats: Beløp,
     private val grunnlag: BigDecimal,
     private val stønadsdager: Stønadsdager,
     private val vanligArbeidstidPerDag: Timer,

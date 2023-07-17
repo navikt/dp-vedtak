@@ -5,10 +5,11 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.BeregnetBeløpDag
+import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
 import no.nav.dagpenger.vedtak.modell.utbetaling.NullBeløpDag
-import java.math.BigDecimal
 
 internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = mutableListOf()) {
 
@@ -18,7 +19,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
                 DagGrunnlag.opprett(
                     dag = dag,
                     sats = kotlin.runCatching { løpendeBehandling.satsHistorikk.get(dag.dato()) }
-                        .getOrDefault(0.toBigDecimal()),
+                        .getOrDefault(0.beløp),
                     dagpengerettighet = kotlin.runCatching { løpendeBehandling.dagpengerettighetHistorikk.get(dag.dato()) }
                         .getOrDefault(Dagpengerettighet.Ingen),
                     vanligArbeidstid = kotlin.runCatching { løpendeBehandling.vanligArbeidstidHistorikk.get(dag.dato()) }
@@ -30,25 +31,29 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
 
     fun rettighetsdager(): List<DagGrunnlag> = fakta.filter(rettighetsdag())
     fun arbeidsdagerMedRettighet(): List<DagGrunnlag> = fakta.filter(rettighetsdag()).filter(arbeidsdag())
-
     fun helgedagerMedRettighet(): List<DagGrunnlag> = fakta.filter(rettighetsdag()).filter(helgedag())
+
+    private fun vanligArbeidstid() = arbeidsdagerMedRettighet().map { it.vanligArbeidstid() }.summer()
+    private fun arbeidedeTimer() = rettighetsdager().map { it.dag.arbeidstimer() }.summer()
+    private fun taptArbeidstid() = (vanligArbeidstid() - arbeidedeTimer())
+    fun graderingsProsent() = taptArbeidstid() prosentAv vanligArbeidstid()
 
     private fun rettighetsdag(): (DagGrunnlag) -> Boolean = { it is Rettighetsdag }
     private fun arbeidsdag() = { it: DagGrunnlag -> it.dag is MandagTilFredag }
     private fun helgedag() = { it: DagGrunnlag -> it.dag is Helgedag }
 
     internal sealed class DagGrunnlag(internal val dag: Dag) {
-        abstract fun sats(): BigDecimal
+        abstract fun sats(): Beløp
         abstract fun dagpengerettighet(): Dagpengerettighet
         abstract fun vanligArbeidstid(): Timer
         abstract fun terskelTaptArbeidstid(): Prosent
-        abstract fun tilLøpendeRettighetDag(): no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
+        abstract fun tilLøpendeRettighetDag(graderingsProsent: Prosent): LøpendeRettighetDag
 
         companion object {
             fun opprett(
                 dag: Dag,
                 dagpengerettighet: Dagpengerettighet,
-                sats: BigDecimal,
+                sats: Beløp,
                 vanligArbeidstid: Timer,
             ): DagGrunnlag {
                 return when (dagpengerettighet) {
@@ -65,7 +70,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
             require(dagpengerettighet == Dagpengerettighet.Ingen) { "Støtter bare Dagpengerettighet.Ingen" }
         }
 
-        override fun sats(): BigDecimal =
+        override fun sats(): Beløp =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har derfor ikke sats")
 
         override fun dagpengerettighet(): Dagpengerettighet = dagpengerettighet
@@ -76,39 +81,24 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         override fun terskelTaptArbeidstid(): Prosent =
             throw IllegalArgumentException("Dag ${dag.dato()} har ingen rettighet og har derfor ikke terskel for tapt arbeidstid")
 
-        override fun tilLøpendeRettighetDag(): no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag = NullBeløpDag(dag.dato())
+        override fun tilLøpendeRettighetDag(graderingsProsent: Prosent): LøpendeRettighetDag = NullBeløpDag(dag.dato())
     }
 
     internal class Rettighetsdag(
         dag: Dag,
         private val dagpengerettighet: Dagpengerettighet,
-        private val sats: BigDecimal,
+        private val sats: Beløp,
         private val vanligArbeidstid: Timer,
     ) : DagGrunnlag(dag) {
 
         private val terskelProsent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
-        override fun sats(): BigDecimal = sats
+        override fun sats(): Beløp = sats
         override fun dagpengerettighet(): Dagpengerettighet = dagpengerettighet
         override fun vanligArbeidstid(): Timer = vanligArbeidstid
         override fun terskelTaptArbeidstid(): Prosent = terskelProsent
-        override fun tilLøpendeRettighetDag(): no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag {
-            val utbetalingstimer = utbetalingstimer()
-            val timeSats = timeSats()
-            val beløp = timeSats * utbetalingstimer
+        override fun tilLøpendeRettighetDag(graderingsProsent: Prosent): LøpendeRettighetDag {
+            val beløp = graderingsProsent * sats()
             return BeregnetBeløpDag(dag.dato(), beløp)
-        }
-        private fun utbetalingstimer(): Timer {
-            return if (dag is Helgedag) {
-                0.timer - dag.arbeidstimer()
-            } else {
-                vanligArbeidstid - dag.arbeidstimer()
-            }
-        }
-        private fun timeSats(): Beløp {
-            return when (dag) {
-                is MandagTilFredag, is Helgedag -> Beløp.fra(sats) / vanligArbeidstid
-                is Fraværsdag -> 0.beløp
-            }
         }
     }
 }

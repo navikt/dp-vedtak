@@ -28,7 +28,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         vedtakstidspunkt: LocalDateTime,
         utfall: Boolean,
         grunnlag: BigDecimal,
-        dagsats: BigDecimal,
+        dagsats: Beløp,
         stønadsdager: Stønadsdager,
         vanligArbeidstidPerDag: Timer,
         dagpengerettighet: Dagpengerettighet,

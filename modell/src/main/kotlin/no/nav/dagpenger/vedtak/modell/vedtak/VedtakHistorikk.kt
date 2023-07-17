@@ -26,7 +26,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     private val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
     private val grunnlagHistorikk = TemporalCollection<BigDecimal>()
-    private val dagsatsHistorikk = TemporalCollection<BigDecimal>()
+    private val dagsatsHistorikk = TemporalCollection<Beløp>()
     private val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
 
     private val stønadsdagerHistorikk = TemporalCollection<Stønadsdager>()
@@ -131,7 +131,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
             vedtakstidspunkt: LocalDateTime,
             utfall: Boolean,
             grunnlag: BigDecimal,
-            dagsats: BigDecimal,
+            dagsats: Beløp,
             stønadsdager: Stønadsdager,
             vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,

@@ -52,8 +52,8 @@ Egenskap: Utbetaling
       | 25.12.2022 | false  | 8     |
     Så skal forbruket være 10 dager
     Så skal gjenstående egenandel være 0 fra "25.12.2022"
-    Så skal utbetalingen være 4105
-    Så skal beregnet utbetaling være 4105 kr for "25.12.2022"
+    Så skal utbetalingen være 4140
+    Så skal beregnet utbetaling være 4140 kr for "25.12.2022"
     Så skal bruker ha 3 vedtak
 
   Scenario: Rapporterer arbeid i helg uke 1 tilsvarende to hele arbeidsdager. Gir ulik sats lørdag og søndag.

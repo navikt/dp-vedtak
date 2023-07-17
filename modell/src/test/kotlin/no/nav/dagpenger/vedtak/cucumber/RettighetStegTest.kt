@@ -47,7 +47,7 @@ class RettighetStegTest : No {
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
-                    dagsats = søknadHendelse.dagsats.toBigDecimal(),
+                    dagsats = søknadHendelse.dagsats.beløp,
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsdager = Dagpengeperiode(søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
@@ -64,7 +64,7 @@ class RettighetStegTest : No {
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
-                    dagsats = søknadHendelse.dagsats.toBigDecimal(),
+                    dagsats = søknadHendelse.dagsats.beløp,
                     grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
                     stønadsdager = Dagpengeperiode(antallUker = søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
@@ -110,7 +110,7 @@ class RettighetStegTest : No {
         }
 
         Så("vedtaket har dagsats på {bigdecimal} kroner") { dagsats: BigDecimal ->
-            assertEquals(dagsats, inspektør.dagsats)
+            assertEquals(dagsats.beløp, inspektør.dagsats)
         }
 
         Så("vedtaket har grunnlag på {bigdecimal} kroner") { grunnlag: BigDecimal ->
@@ -224,7 +224,7 @@ class RettighetStegTest : No {
         lateinit var vanligArbeidstidPerDag: Timer
         lateinit var stønadsdager: Stønadsdager
         lateinit var grunnlag: BigDecimal
-        lateinit var dagsats: BigDecimal
+        lateinit var dagsats: Beløp
         lateinit var egenandel: Beløp
         lateinit var virkningsdato: LocalDate
         lateinit var beløpTilUtbetaling: Beløp
@@ -238,7 +238,7 @@ class RettighetStegTest : No {
             vedtakstidspunkt: LocalDateTime,
             utfall: Boolean,
             grunnlag: BigDecimal,
-            dagsats: BigDecimal,
+            dagsats: Beløp,
             stønadsdager: Stønadsdager,
             vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,

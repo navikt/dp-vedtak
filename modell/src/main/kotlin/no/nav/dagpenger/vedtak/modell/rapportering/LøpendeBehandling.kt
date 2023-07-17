@@ -6,7 +6,6 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
-import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.ForbrukHistorikk
@@ -14,13 +13,12 @@ import no.nav.dagpenger.vedtak.modell.vedtak.TrukketEgenandelHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak.Companion.utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
 
 internal class LøpendeBehandling(
     private val rapporteringsId: UUID,
-    internal val satsHistorikk: TemporalCollection<BigDecimal>,
+    internal val satsHistorikk: TemporalCollection<Beløp>,
     internal val stønadsdagerHistorikk: TemporalCollection<Stønadsdager>,
     internal val dagpengerettighetHistorikk: TemporalCollection<Dagpengerettighet>,
     internal val vanligArbeidstidHistorikk: TemporalCollection<Timer>,
@@ -58,8 +56,7 @@ internal class LøpendeBehandling(
 
         val arbeidsdagerMedForbruk = arbeidsdagerMedForbruk(vilkårOppfylt = true, stønadsdager, initieltForbruk)
         val rettighetsdager =
-            arbeidsdagerMedForbruk.map { it.tilLøpendeRettighetDag() } + beregningsgrunnlag.helgedagerMedRettighet()
-                .filter { it.dag.arbeidstimer() > 0.timer }.map { it.tilLøpendeRettighetDag() }
+            arbeidsdagerMedForbruk.map { it.tilLøpendeRettighetDag(beregningsgrunnlag.graderingsProsent()) }
         val beregnetBeløpFørTrekkAvEgenandel = rettighetsdager.summer()
         val trukketEgenandel = beregnEgenandel(forrigeRapporteringsdato, sisteRapporteringsdato, beregnetBeløpFørTrekkAvEgenandel)
 
