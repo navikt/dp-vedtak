@@ -10,8 +10,9 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.ForbrukHistorikk
-import no.nav.dagpenger.vedtak.modell.vedtak.LøpendeRettighetVedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.TrukketEgenandelHistorikk
+import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
+import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak.Companion.utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -39,9 +40,9 @@ internal class LøpendeBehandling(
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
 
         return if (vilkårOppfylt) {
-            løpendeRettighetVedtak(rapporteringsperiode)
+            utbetalingsvedtak(rapporteringsperiode)
         } else {
-            Vedtak.løpendeRettighet(
+            utbetalingsvedtak(
                 behandlingId = UUID.randomUUID(),
                 utfall = false,
                 virkningsdato = rapporteringsperiode.maxOf { it.dato() },
@@ -49,7 +50,7 @@ internal class LøpendeBehandling(
         }
     }
 
-    private fun løpendeRettighetVedtak(rapporteringsperiode: Rapporteringsperiode): LøpendeRettighetVedtak {
+    private fun utbetalingsvedtak(rapporteringsperiode: Rapporteringsperiode): Utbetalingsvedtak {
         val sisteRapporteringsdato = rapporteringsperiode.maxOf { it.dato() }
         val forrigeRapporteringsdato = rapporteringsperiode.minOf { it.dato() }.minusDays(1)
         val initieltForbruk = forbrukHistorikk.summer(forrigeRapporteringsdato)
@@ -62,7 +63,7 @@ internal class LøpendeBehandling(
         val beregnetBeløpFørTrekkAvEgenandel = rettighetsdager.summer()
         val trukketEgenandel = beregnEgenandel(forrigeRapporteringsdato, sisteRapporteringsdato, beregnetBeløpFørTrekkAvEgenandel)
 
-        return Vedtak.løpendeRettighet(
+        return utbetalingsvedtak(
             behandlingId = UUID.randomUUID(),
             utfall = true,
             virkningsdato = rapporteringsperiode.maxOf { it.dato() },

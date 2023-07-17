@@ -5,6 +5,8 @@ import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import no.nav.dagpenger.vedtak.modell.vedtak.Avslag.Companion.avslag
+import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak.Companion.innvilgelse
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -34,7 +36,7 @@ class DagpengerInnvilgetHendelse(
     behandlingId,
     virkningsdato,
 ) {
-    override fun tilVedtak(): Vedtak = Vedtak.innvilgelse(
+    override fun tilVedtak(): Vedtak = innvilgelse(
         behandlingId = behandlingId,
         virkningsdato = virkningsdato,
         grunnlag = grunnlag,
@@ -54,6 +56,6 @@ class DagpengerAvslåttHendelse(ident: String, behandlingId: UUID, virkningsdato
         behandlingId,
         virkningsdato,
     ) {
-    override fun tilVedtak(): Vedtak = Vedtak.avslag(behandlingId, virkningsdato)
+    override fun tilVedtak(): Vedtak = avslag(behandlingId, virkningsdato)
     override fun kontekstMap(): Map<String, String> = emptyMap()
 }

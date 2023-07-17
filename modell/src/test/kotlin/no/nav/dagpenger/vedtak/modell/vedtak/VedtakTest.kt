@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak.mediator.vedtak
+package no.nav.dagpenger.vedtak.modell.vedtak
 
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
@@ -8,7 +8,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
-import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
+import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak.Companion.innvilgelse
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Fattet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import org.junit.jupiter.api.Test
@@ -30,7 +30,7 @@ class VedtakTest {
         VedtakInspektør(vedtak).tilstand shouldBe tilstand
     }
 
-    private fun innvilgetRammevedtak() = Vedtak.innvilgelse(
+    private fun innvilgetRammevedtak() = innvilgelse(
         behandlingId = UUID.randomUUID(),
         virkningsdato = LocalDate.MAX,
         grunnlag = BigDecimal.ONE,
