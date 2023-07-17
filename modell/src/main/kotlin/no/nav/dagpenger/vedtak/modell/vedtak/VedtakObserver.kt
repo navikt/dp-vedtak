@@ -1,6 +1,5 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
-import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -29,8 +28,10 @@ interface VedtakObserver {
         val behandlingId: UUID,
         val vedtakstidspunkt: LocalDateTime,
         val virkningsdato: LocalDate,
-        val utbetalingsdager: List<LøpendeRettighetDag> = emptyList(),
+        val utbetalingsdager: List<UtbetalingsdagDto> = emptyList(),
         val utfall: Utfall,
         // @todo: Type rettighet? Ordinær, Permittering etc
     )
+
+    data class UtbetalingsdagDto(val dato: LocalDate, val beløp: Double) // TODO: Avventer avrundsregler: https://favro.com/organization/98c34fb974ce445eac854de0/696529a0ddfa866861cfa6b6?card=NAV-13898
 }

@@ -14,6 +14,9 @@ class Beløp private constructor(verdi: Number) : Comparable<Beløp> {
 
         val Number.beløp get() = Beløp(this)
     }
+
+    fun <R> reflection(block: (Double) -> R) = block(verdi)
+
     override fun compareTo(other: Beløp): Int = verdi.compareTo(other.verdi)
     override fun equals(other: Any?) = other is Beløp && other.verdi == this.verdi
     override fun hashCode() = verdi.hashCode()

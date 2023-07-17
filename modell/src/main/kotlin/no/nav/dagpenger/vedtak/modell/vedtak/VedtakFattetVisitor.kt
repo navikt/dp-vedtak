@@ -6,6 +6,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.LøpendeVedtakFattet
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.UtbetalingsdagDto
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Avslått
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Innvilget
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.VedtakFattet
@@ -62,7 +63,12 @@ internal class VedtakFattetVisitor : VedtakVisitor {
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
-            utbetalingsdager = rettighetsdager,
+            utbetalingsdager = rettighetsdager.map { løpendeRettighetDag ->
+                UtbetalingsdagDto(
+                    dato = løpendeRettighetDag.dato,
+                    beløp = løpendeRettighetDag.beløp.reflection { it },
+                )
+            },
             utfall = when (utfall) {
                 true -> Innvilget
                 false -> Avslått

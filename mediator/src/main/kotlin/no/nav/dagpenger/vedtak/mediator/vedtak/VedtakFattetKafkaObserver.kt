@@ -5,7 +5,6 @@ import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
-import java.time.LocalDate
 
 val behandlingId = "behandlingId"
 
@@ -48,9 +47,7 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                 "vedtakId" to løpendeVedtakFattet.vedtakId.toString(),
                 "vedtaktidspunkt" to løpendeVedtakFattet.vedtakstidspunkt,
                 "virkningsdato" to løpendeVedtakFattet.virkningsdato,
-                "utbetalingsdager" to løpendeVedtakFattet.utbetalingsdager.map { løpendeRettighetDag ->
-                    UtbetalingsdagDto(løpendeRettighetDag.dato, løpendeRettighetDag.beløp.toString())
-                },
+                "utbetalingsdager" to løpendeVedtakFattet.utbetalingsdager,
                 "utfall" to løpendeVedtakFattet.utfall.name,
             ),
         )
@@ -61,6 +58,4 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
         )
         logger.info { "Vedtak fattet melding publisert. BehandlingId: $behandlingId" }
     }
-
-    private data class UtbetalingsdagDto(val dato: LocalDate, val beløp: String)
 }
