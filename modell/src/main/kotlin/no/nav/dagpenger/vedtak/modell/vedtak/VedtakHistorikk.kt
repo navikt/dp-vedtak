@@ -24,16 +24,16 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     private val vedtak: SortedSet<Vedtak> = historiskeVedtak.toSortedSet()
     private val observers = mutableSetOf<VedtakObserver>()
 
-    internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
-    internal val grunnlagHistorikk = TemporalCollection<BigDecimal>()
-    internal val dagsatsHistorikk = TemporalCollection<BigDecimal>()
-    internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
+    private val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
+    private val grunnlagHistorikk = TemporalCollection<BigDecimal>()
+    private val dagsatsHistorikk = TemporalCollection<BigDecimal>()
+    private val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
 
-    internal val stønadsdagerHistorikk = TemporalCollection<Stønadsdager>()
-    internal val forbrukHistorikk = ForbrukHistorikk()
-    internal val egenandelHistorikk = TemporalCollection<Beløp>()
-    internal val trukketEgenandelHistorikk = TrukketEgenandelHistorikk()
-    internal val beløpTilUtbetalingHistorikk = TemporalCollection<Beløp>()
+    private val stønadsdagerHistorikk = TemporalCollection<Stønadsdager>()
+    private val forbrukHistorikk = ForbrukHistorikk()
+    private val egenandelHistorikk = TemporalCollection<Beløp>()
+    private val trukketEgenandelHistorikk = TrukketEgenandelHistorikk()
+    private val beløpTilUtbetalingHistorikk = TemporalCollection<Beløp>()
 
     init {
         vedtak.forEach { HistorikkOppdaterer(this).apply(it::accept) }
