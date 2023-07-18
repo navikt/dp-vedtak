@@ -4,6 +4,8 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag.Aktivitet.Type.Arbeid
+import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag.Aktivitet.Type.Ferie
+import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag.Aktivitet.Type.Syk
 import no.nav.dagpenger.vedtak.modell.rapportering.Dag
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import java.time.LocalDate
@@ -22,10 +24,14 @@ class Rapporteringshendelse(
     internal fun populerRapporteringsperiode(): Rapporteringsperiode {
         return Rapporteringsperiode(rapporteringsId).also { periode ->
             rapporteringsdager.forEach { rapporteringdag ->
-                val dag = when (rapporteringdag.aktiviteter.any { it.type == Arbeid }) {
-                    true -> Dag.arbeidsdag(rapporteringdag.dato, rapporteringdag.aktiviteter.first().varighet.timer)
-                    false -> Dag.fraværsdag(rapporteringdag.dato)
+                val aktiviteter = rapporteringdag.aktiviteter.map {
+                    when (it.type) {
+                        Arbeid -> no.nav.dagpenger.vedtak.modell.rapportering.Arbeid(it.varighet.timer)
+                        Syk -> no.nav.dagpenger.vedtak.modell.rapportering.Syk(it.varighet.timer)
+                        Ferie -> no.nav.dagpenger.vedtak.modell.rapportering.Ferie(it.varighet.timer)
+                    }
                 }
+                val dag = Dag.opprett(rapporteringdag.dato, aktiviteter)
                 periode.leggTilDag(dag)
             }
         }
@@ -35,13 +41,13 @@ class Rapporteringshendelse(
     override fun kontekstMap(): Map<String, String> = mapOf("rapporteringsId" to rapporteringsId.toString())
 }
 
-class Rapporteringsdag(val dato: LocalDate, val aktiviteter: List<Rapporteringsdag.Aktivitet>) : Comparable<Rapporteringsdag> {
+class Rapporteringsdag(val dato: LocalDate, val aktiviteter: List<Aktivitet>) : Comparable<Rapporteringsdag> {
     override fun compareTo(other: Rapporteringsdag) = this.dato.compareTo(other.dato)
 
     class Aktivitet(val type: Type, val varighet: Duration) {
 
         enum class Type {
-            Arbeid, Syk, Fravær, Ferie
+            Arbeid, Syk, Ferie
         }
     }
 }

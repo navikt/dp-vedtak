@@ -110,16 +110,8 @@ internal class RapporteringsperioderTest {
             antallRapporteringsperioder++
         }
 
-        override fun visitMandagTilFredag(mandagTilFredag: MandagTilFredag) {
-            dager.add(mandagTilFredag)
-        }
-
-        override fun visitFraværsdag(fraværsdag: Fraværsdag) {
-            dager.add(fraværsdag)
-        }
-
-        override fun visitHelgedag(helgedag: Helgedag) {
-            dager.add(helgedag)
+        override fun visitdag(dag: Dag) {
+            dager.add(dag)
         }
     }
 }

@@ -169,7 +169,7 @@ class RettighetStegTest : No {
     }
 
     private fun lagAktivitet(data: MutableList<String>) = when (data[1].toBooleanStrict()) {
-        true -> Rapporteringsdag.Aktivitet(Rapporteringsdag.Aktivitet.Type.Fravær, 1.days)
+        true -> Rapporteringsdag.Aktivitet(Rapporteringsdag.Aktivitet.Type.Syk, 1.days)
         false -> Rapporteringsdag.Aktivitet(
             Rapporteringsdag.Aktivitet.Type.Arbeid,
             data[2].toDouble().hours,

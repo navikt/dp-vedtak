@@ -25,7 +25,7 @@ internal class Periode(private val fomDato: LocalDate, private val tomDato: Loca
             currentDate.also { currentDate = it.plusDays(1) }
     }
 
-    public operator fun contains(dag: Dag): Boolean = dag.innenfor(this)
+    operator fun contains(dag: Dag): Boolean = dag.innenfor(this)
 
     infix operator fun plus(annen: Periode): Periode {
         return Periode(minOf(this.start, annen.start), maxOf(this.endInclusive, annen.endInclusive))
