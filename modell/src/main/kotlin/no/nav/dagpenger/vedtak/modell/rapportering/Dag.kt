@@ -30,8 +30,6 @@ class Dag private constructor(
         fun opprett(dato: LocalDate, aktiviteter: List<Aktivitet>): Dag {
             return Dag(dato, aktiviteter)
         }
-        internal fun Collection<Dag>.summerArbeidstimer() = map(Dag::arbeidstimer).summer()
-
         private val eldsteDagFørst = Comparator<Dag> { a, b -> a.dato.compareTo(b.dato) }
     }
 }

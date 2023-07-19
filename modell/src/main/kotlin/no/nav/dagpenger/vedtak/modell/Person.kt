@@ -11,6 +11,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.rapportering.Behandling
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperioder
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
+import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
@@ -20,6 +21,7 @@ class Person private constructor(
     private val ident: PersonIdentifikator,
     internal val vedtakHistorikk: VedtakHistorikk,
     private val rapporteringsperioder: Rapporteringsperioder,
+    private val behandlinger: MutableList<Behandling>,
     internal val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Aktivitetskontekst by ident, VedtakObserver {
 
@@ -27,30 +29,36 @@ class Person private constructor(
         vedtakHistorikk.addObserver(this)
     }
 
-    constructor(ident: PersonIdentifikator) : this(ident, VedtakHistorikk(), Rapporteringsperioder())
+    constructor(ident: PersonIdentifikator) : this(ident, VedtakHistorikk(), Rapporteringsperioder(), mutableListOf<Behandling>())
 
     private val observers = mutableListOf<PersonObserver>()
 
     fun ident() = ident
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
         kontekst(søknadBehandletHendelse)
-        vedtakHistorikk.håndter(søknadBehandletHendelse)
+        if (vedtakHistorikk.harBehandlet(søknadBehandletHendelse.behandlingId)) {
+            søknadBehandletHendelse.info("Har allerede behandlet SøknadBehandletHendelse")
+            return
+        }
+        leggTilVedtak(søknadBehandletHendelse.tilVedtak())
     }
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         kontekst(rapporteringshendelse)
-        val rapporteringsperiode = rapporteringsperioder.håndter(rapporteringshendelse)
-
+        rapporteringsperioder.håndter(rapporteringshendelse)
         val behandling = Behandling(this)
+        behandlinger.add(behandling)
         behandling.håndter(rapporteringshendelse)
-
-        // @todo: En burde håndtere hendelsen inn i vedtakhistorikk for sporing
-        // vedtakHistorikk.håndter(rapporteringsperiode)
     }
 
     fun håndter(stansHendelse: StansHendelse) {
         kontekst(stansHendelse)
-        vedtakHistorikk.håndter(stansHendelse)
+        if (vedtakHistorikk.harBehandlet(stansHendelse.behandlingId)) {
+            stansHendelse.info("Har allerede behandlet SøknadBehandletHendelse")
+            return
+        }
+
+        leggTilVedtak(stansHendelse.tilVedtak())
     }
 
     fun gjenståendeStønadsdagerFra(dato: LocalDate): Stønadsdager = vedtakHistorikk.gjenståendeStønadsdagerFra(dato)

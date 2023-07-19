@@ -5,10 +5,7 @@ import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
-import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
-import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.math.BigDecimal
@@ -17,9 +14,10 @@ import java.time.LocalDateTime
 import java.util.SortedSet
 import java.util.UUID
 
-class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
+class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>) : Collection<Vedtak> by vedtak {
 
-    private val vedtak: SortedSet<Vedtak> = historiskeVedtak.toSortedSet()
+    constructor() : this(emptySet<Vedtak>().toSortedSet())
+
     private val observers = mutableSetOf<VedtakObserver>()
 
     internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
@@ -36,26 +34,6 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     init {
         vedtak.forEach { HistorikkOppdaterer(this).apply(it::accept) }
     }
-
-    fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
-        if (vedtak.harBehandlet(søknadBehandletHendelse.behandlingId)) {
-            søknadBehandletHendelse.info("Har allerede behandlet SøknadBehandletHendelse")
-            return
-        }
-        val vedtak = søknadBehandletHendelse.tilVedtak()
-        leggTilVedtak(vedtak)
-    }
-
-    fun håndter(stansHendelse: StansHendelse) {
-        if (vedtak.harBehandlet(stansHendelse.behandlingId)) {
-            stansHendelse.info("Har allerede behandlet StansHendelse")
-            return
-        }
-        this.leggTilVedtak(
-            stansHendelse.tilVedtak(),
-        )
-    }
-
     fun addObserver(vedtakObserver: VedtakObserver) {
         this.observers.add(vedtakObserver)
     }
