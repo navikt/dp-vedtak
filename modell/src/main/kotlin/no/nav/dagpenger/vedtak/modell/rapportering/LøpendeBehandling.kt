@@ -6,7 +6,6 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.ForbrukHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.TrukketEgenandelHistorikk
@@ -28,10 +27,6 @@ internal class LøpendeBehandling(
 
 ) {
     private val beregningsgrunnlag = Beregningsgrunnlag()
-
-    fun håndter(rapporteringshendelse: Rapporteringshendelse) {
-        val somPeriode = rapporteringshendelse.somPeriode()
-    }
 
     fun håndter(rapporteringsperiode: Rapporteringsperiode): Vedtak {
         beregningsgrunnlag.populer(rapporteringsperiode, this)
