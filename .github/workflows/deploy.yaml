@@ -24,12 +24,15 @@ jobs:
           distribution: temurin
           java-version: 19
 
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v2.6.1
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
+          # Eksluder test dependencies
+          DEPENDENCY_GRAPH_INCLUDE_CONFIGURATIONS: compileClasspath|runtimeClasspath
         with:
           gradle-version: wrapper
+          dependency-graph: generate-and-submit
           arguments: --configuration-cache build installDist
 
       - name: Publish results (unit test)
@@ -43,6 +46,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         id: docker-build-push
         with:
+          byosbom: dependency-graph-reports/deploy-build.json
           team: teamdagpenger
           push_image: true # optional, default true
           tag: ${{ github.sha }}
