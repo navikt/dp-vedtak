@@ -24,10 +24,10 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     private val vedtak: SortedSet<Vedtak> = historiskeVedtak.toSortedSet()
     private val observers = mutableSetOf<VedtakObserver>()
 
-    private val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
+    internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
     private val grunnlagHistorikk = TemporalCollection<BigDecimal>()
-    private val dagsatsHistorikk = TemporalCollection<Beløp>()
-    private val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
+    internal val dagsatsHistorikk = TemporalCollection<Beløp>()
+    internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
 
     private val stønadsdagerHistorikk = TemporalCollection<Stønadsdager>()
     private val forbrukHistorikk = ForbrukHistorikk()

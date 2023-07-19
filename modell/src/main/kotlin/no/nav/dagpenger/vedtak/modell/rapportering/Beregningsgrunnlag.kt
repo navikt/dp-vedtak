@@ -10,9 +10,25 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.BeregnetBeløpDag
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
 import no.nav.dagpenger.vedtak.modell.utbetaling.NullBeløpDag
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
 
 internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = mutableListOf()) {
 
+    fun populer(rapporteringsperiode: List<Dag>, vedtakHistorikk: VedtakHistorikk) {
+        rapporteringsperiode.map { dag ->
+            fakta.add(
+                DagGrunnlag.opprett(
+                    dag = dag,
+                    sats = kotlin.runCatching { vedtakHistorikk.dagsatsHistorikk.get(dag.dato()) }
+                        .getOrDefault(0.beløp),
+                    dagpengerettighet = kotlin.runCatching { vedtakHistorikk.dagpengerettighetHistorikk.get(dag.dato()) }
+                        .getOrDefault(Dagpengerettighet.Ingen),
+                    vanligArbeidstid = kotlin.runCatching { vedtakHistorikk.vanligArbeidstidHistorikk.get(dag.dato()) }
+                        .getOrDefault(0.timer),
+                ),
+            )
+        }
+    }
     fun populer(rapporteringsperiode: Rapporteringsperiode, rapporteringsBehandling: Rapporteringsbehandling) {
         rapporteringsperiode.map { dag ->
             fakta.add(

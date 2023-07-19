@@ -17,7 +17,7 @@ import java.time.LocalDate
 
 class Person private constructor(
     private val ident: PersonIdentifikator,
-    private val vedtakHistorikk: VedtakHistorikk,
+    internal val vedtakHistorikk: VedtakHistorikk,
     private val rapporteringsperioder: Rapporteringsperioder,
     internal val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Aktivitetskontekst by ident, VedtakObserver {
