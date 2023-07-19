@@ -14,7 +14,7 @@ internal class Prosent(prosent: Number) : Comparable<Prosent> {
 
     infix operator fun div(nevner: Double) = Prosent(this.prosent / nevner)
 
-    infix fun av(vanligArbeidstid: Timer) = vanligArbeidstid * prosentfaktor
+    infix fun av(timer: Timer) = timer * prosentfaktor
 
     infix operator fun times(beløp: Beløp) = beløp * prosentfaktor
 
