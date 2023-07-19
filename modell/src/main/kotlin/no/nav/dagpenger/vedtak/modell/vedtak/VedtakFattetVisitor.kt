@@ -5,7 +5,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
-import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.LøpendeVedtakFattet
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.UtbetalingVedtakFattet
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.UtbetalingsdagDto
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Avslått
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Innvilget
@@ -19,7 +19,7 @@ import java.util.UUID
 internal class VedtakFattetVisitor : VedtakVisitor {
 
     lateinit var vedtakFattet: VedtakFattet
-    lateinit var løpendeVedtakFattet: LøpendeVedtakFattet
+    lateinit var utbetalingVedtakFattet: UtbetalingVedtakFattet
 
     override fun visitRammevedtak(
         vedtakId: UUID,
@@ -58,7 +58,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         beløpTilUtbetaling: Beløp,
         rettighetsdager: List<LøpendeRettighetDag>,
     ) {
-        løpendeVedtakFattet = LøpendeVedtakFattet(
+        utbetalingVedtakFattet = UtbetalingVedtakFattet(
             vedtakId = vedtakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,

@@ -125,14 +125,14 @@ internal class PersonMediatorTest {
     private class TestObservatør : PersonObserver {
 
         val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
-        val løpendeVedtak = mutableListOf<VedtakObserver.LøpendeVedtakFattet>()
+        val løpendeVedtak = mutableListOf<VedtakObserver.UtbetalingVedtakFattet>()
 
         override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
             vedtak.add(vedtakFattet)
         }
 
-        override fun løpendeVedtakFattet(ident: String, løpendeVedtakFattet: VedtakObserver.LøpendeVedtakFattet) {
-            løpendeVedtak.add(løpendeVedtakFattet)
+        override fun løpendeVedtakFattet(ident: String, utbetalingVedtakFattet: VedtakObserver.UtbetalingVedtakFattet) {
+            løpendeVedtak.add(utbetalingVedtakFattet)
         }
     }
 }

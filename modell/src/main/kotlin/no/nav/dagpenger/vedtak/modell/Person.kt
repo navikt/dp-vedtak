@@ -59,9 +59,9 @@ class Person private constructor(
         }
     }
 
-    override fun løpendeVedtakFattet(løpendeVedtakFattet: VedtakObserver.LøpendeVedtakFattet) {
+    override fun løpendeVedtakFattet(utbetalingVedtakFattet: VedtakObserver.UtbetalingVedtakFattet) {
         observers.forEach {
-            it.løpendeVedtakFattet(ident.identifikator(), løpendeVedtakFattet)
+            it.løpendeVedtakFattet(ident.identifikator(), utbetalingVedtakFattet)
         }
     }
 
