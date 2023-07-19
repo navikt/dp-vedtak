@@ -29,10 +29,10 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
     internal val dagsatsHistorikk = TemporalCollection<Beløp>()
     internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
 
-    private val stønadsdagerHistorikk = TemporalCollection<Stønadsdager>()
-    private val forbrukHistorikk = ForbrukHistorikk()
-    private val egenandelHistorikk = TemporalCollection<Beløp>()
-    private val trukketEgenandelHistorikk = TrukketEgenandelHistorikk()
+    internal val stønadsdagerHistorikk = TemporalCollection<Stønadsdager>()
+    internal val forbrukHistorikk = ForbrukHistorikk()
+    internal val egenandelHistorikk = TemporalCollection<Beløp>()
+    internal val trukketEgenandelHistorikk = TrukketEgenandelHistorikk()
     private val beløpTilUtbetalingHistorikk = TemporalCollection<Beløp>()
 
     init {
