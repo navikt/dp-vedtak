@@ -66,7 +66,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
             utbetalingsdager = rettighetsdager.map { løpendeRettighetDag ->
                 UtbetalingsdagDto(
                     dato = løpendeRettighetDag.dato,
-                    beløp = løpendeRettighetDag.beløp.reflection { it },
+                    beløp = løpendeRettighetDag.beløp.reflection { it }.toDouble(),
                 )
             },
             utfall = when (utfall) {
