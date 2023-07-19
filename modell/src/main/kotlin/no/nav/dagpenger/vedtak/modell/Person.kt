@@ -8,6 +8,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
+import no.nav.dagpenger.vedtak.modell.rapportering.Behandling
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperioder
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
@@ -38,6 +39,10 @@ class Person private constructor(
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         kontekst(rapporteringshendelse)
         val rapporteringsperiode = rapporteringsperioder.håndter(rapporteringshendelse)
+
+        val behandling = Behandling(this)
+        behandling.håndter(rapporteringshendelse)
+
         // @todo: En burde håndtere hendelsen inn i vedtakhistorikk for sporing
         vedtakHistorikk.håndter(rapporteringsperiode)
     }
