@@ -7,8 +7,6 @@ import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
-import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsbehandling
-import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
@@ -46,26 +44,6 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
         }
         val vedtak = søknadBehandletHendelse.tilVedtak()
         leggTilVedtak(vedtak)
-    }
-
-    fun håndter(rapporteringsperiode: Rapporteringsperiode) {
-        // @todo: Sjekk at vi ikke har behandlet denne før..
-
-        // Sjekk at en har rammevedtak?
-        if (vanligArbeidstidHistorikk.harHistorikk()) {
-            this.leggTilVedtak(
-                vedtak = Rapporteringsbehandling(
-                    rapporteringsId = rapporteringsperiode.rapporteringsId,
-                    stønadsdagerHistorikk = stønadsdagerHistorikk,
-                    satsHistorikk = dagsatsHistorikk,
-                    dagpengerettighetHistorikk = dagpengerettighetHistorikk,
-                    vanligArbeidstidHistorikk = vanligArbeidstidHistorikk,
-                    egenandelHistorikk = egenandelHistorikk,
-                    forbrukHistorikk = forbrukHistorikk,
-                    trukketEgenandelHistorikk = trukketEgenandelHistorikk,
-                ).håndter(rapporteringsperiode),
-            )
-        }
     }
 
     fun håndter(stansHendelse: StansHendelse) {

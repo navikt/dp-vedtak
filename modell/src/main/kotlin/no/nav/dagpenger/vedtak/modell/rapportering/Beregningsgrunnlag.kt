@@ -29,21 +29,6 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
             )
         }
     }
-    fun populer(rapporteringsperiode: Rapporteringsperiode, rapporteringsBehandling: Rapporteringsbehandling) {
-        rapporteringsperiode.map { dag ->
-            fakta.add(
-                DagGrunnlag.opprett(
-                    dag = dag,
-                    sats = kotlin.runCatching { rapporteringsBehandling.satsHistorikk.get(dag.dato()) }
-                        .getOrDefault(0.beløp),
-                    dagpengerettighet = kotlin.runCatching { rapporteringsBehandling.dagpengerettighetHistorikk.get(dag.dato()) }
-                        .getOrDefault(Dagpengerettighet.Ingen),
-                    vanligArbeidstid = kotlin.runCatching { rapporteringsBehandling.vanligArbeidstidHistorikk.get(dag.dato()) }
-                        .getOrDefault(0.timer),
-                ),
-            )
-        }
-    }
 
     fun rettighetsdager(): List<DagGrunnlag> = fakta.filter(rettighetsdag())
     fun mandagTilFredagMedRettighet(): List<DagGrunnlag> = fakta.filter(rettighetsdag()).filterNot(helgedag())
@@ -104,7 +89,7 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         private val vanligArbeidstid: Timer,
     ) : DagGrunnlag(dag) {
 
-        private val terskelProsent = TaptArbeidstid.Terskel.terskelFor(dagpengerettighet, dag.dato())
+        private val terskelProsent = TaptArbeidstidTerskel.terskelFor(dagpengerettighet, dag.dato())
         override fun sats(): Beløp = sats
         override fun dagpengerettighet(): Dagpengerettighet = dagpengerettighet
         override fun vanligArbeidstid(): Timer = vanligArbeidstid
