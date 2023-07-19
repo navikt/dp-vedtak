@@ -113,8 +113,8 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
         this.observers.forEach { vedtakObserver ->
             when (vedtak) {
                 is Utbetalingsvedtak -> {
-                    val løpendeVedtakFattet = VedtakFattetVisitor().apply(vedtak::accept).utbetalingVedtakFattet
-                    vedtakObserver.løpendeVedtakFattet(løpendeVedtakFattet)
+                    val utbetalingVedtakFattet = VedtakFattetVisitor().apply(vedtak::accept).utbetalingsvedtakFattet
+                    vedtakObserver.utbetalingsvedtakFattet(utbetalingVedtakFattet)
                 }
 
                 else -> vedtakObserver.vedtakFattet(VedtakFattetVisitor().apply(vedtak::accept).vedtakFattet)

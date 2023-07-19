@@ -83,14 +83,14 @@ internal class PersonMediator(
 private class DelegatedObserver(private val observers: List<PersonObserver>) : PersonObserver {
 
     private val vedtakDelegate = mutableListOf<Pair<String, VedtakObserver.VedtakFattet>>()
-    private val løpendeVedtakDelegate = mutableListOf<Pair<String, VedtakObserver.UtbetalingVedtakFattet>>()
+    private val løpendeVedtakDelegate = mutableListOf<Pair<String, VedtakObserver.UtbetalingsvedtakFattet>>()
 
     override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
         vedtakDelegate.add(Pair(ident, vedtakFattet))
     }
 
-    override fun løpendeVedtakFattet(ident: String, utbetalingVedtakFattet: VedtakObserver.UtbetalingVedtakFattet) {
-        løpendeVedtakDelegate.add(Pair(ident, utbetalingVedtakFattet))
+    override fun løpendeVedtakFattet(ident: String, utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet) {
+        løpendeVedtakDelegate.add(Pair(ident, utbetalingsvedtakFattet))
     }
 
     fun ferdigstill() {

@@ -7,7 +7,7 @@ import java.util.UUID
 interface VedtakObserver {
 
     fun vedtakFattet(vedtakFattet: VedtakFattet) {}
-    fun løpendeVedtakFattet(utbetalingVedtakFattet: UtbetalingVedtakFattet) {}
+    fun utbetalingsvedtakFattet(utbetalingsvedtakFattet: UtbetalingsvedtakFattet) {}
 
     enum class Utfall {
         Innvilget,
@@ -23,7 +23,7 @@ interface VedtakObserver {
         // @todo: Type rettighet? Ordinær, Permittering etc
     )
 
-    data class UtbetalingVedtakFattet(
+    data class UtbetalingsvedtakFattet(
         val vedtakId: UUID,
         val behandlingId: UUID,
         val vedtakstidspunkt: LocalDateTime,

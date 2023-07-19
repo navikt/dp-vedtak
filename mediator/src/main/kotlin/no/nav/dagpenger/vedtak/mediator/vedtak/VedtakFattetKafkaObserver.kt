@@ -42,25 +42,25 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
         }
     }
 
-    override fun løpendeVedtakFattet(ident: String, utbetalingVedtakFattet: VedtakObserver.UtbetalingVedtakFattet) {
+    override fun løpendeVedtakFattet(ident: String, utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet) {
         withLoggingContext(
             mapOf(
-                "behandlingId" to utbetalingVedtakFattet.behandlingId.toString(),
-                "vedtakId" to utbetalingVedtakFattet.vedtakId.toString(),
+                "behandlingId" to utbetalingsvedtakFattet.behandlingId.toString(),
+                "vedtakId" to utbetalingsvedtakFattet.vedtakId.toString(),
             ),
         ) {
-            sikkerlogger.info { "Vedtak for $ident fattet. Vedtak: $utbetalingVedtakFattet" }
+            sikkerlogger.info { "Vedtak for $ident fattet. Vedtak: $utbetalingsvedtakFattet" }
 
             val message = JsonMessage.newMessage(
                 eventName = "vedtak_fattet",
                 map = mapOf(
                     "ident" to ident,
-                    "behandlingId" to utbetalingVedtakFattet.behandlingId.toString(),
-                    "vedtakId" to utbetalingVedtakFattet.vedtakId.toString(),
-                    "vedtaktidspunkt" to utbetalingVedtakFattet.vedtakstidspunkt,
-                    "virkningsdato" to utbetalingVedtakFattet.virkningsdato,
-                    "utbetalingsdager" to utbetalingVedtakFattet.utbetalingsdager,
-                    "utfall" to utbetalingVedtakFattet.utfall.name,
+                    "behandlingId" to utbetalingsvedtakFattet.behandlingId.toString(),
+                    "vedtakId" to utbetalingsvedtakFattet.vedtakId.toString(),
+                    "vedtaktidspunkt" to utbetalingsvedtakFattet.vedtakstidspunkt,
+                    "virkningsdato" to utbetalingsvedtakFattet.virkningsdato,
+                    "utbetalingsdager" to utbetalingsvedtakFattet.utbetalingsdager,
+                    "utfall" to utbetalingsvedtakFattet.utfall.name,
                 ),
             )
 
