@@ -13,16 +13,16 @@ import no.nav.dagpenger.vedtak.modell.utbetaling.NullBeløpDag
 
 internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = mutableListOf()) {
 
-    fun populer(rapporteringsperiode: Rapporteringsperiode, løpendeBehandling: LøpendeBehandling) {
+    fun populer(rapporteringsperiode: Rapporteringsperiode, rapporteringsBehandling: Rapporteringsbehandling) {
         rapporteringsperiode.map { dag ->
             fakta.add(
                 DagGrunnlag.opprett(
                     dag = dag,
-                    sats = kotlin.runCatching { løpendeBehandling.satsHistorikk.get(dag.dato()) }
+                    sats = kotlin.runCatching { rapporteringsBehandling.satsHistorikk.get(dag.dato()) }
                         .getOrDefault(0.beløp),
-                    dagpengerettighet = kotlin.runCatching { løpendeBehandling.dagpengerettighetHistorikk.get(dag.dato()) }
+                    dagpengerettighet = kotlin.runCatching { rapporteringsBehandling.dagpengerettighetHistorikk.get(dag.dato()) }
                         .getOrDefault(Dagpengerettighet.Ingen),
-                    vanligArbeidstid = kotlin.runCatching { løpendeBehandling.vanligArbeidstidHistorikk.get(dag.dato()) }
+                    vanligArbeidstid = kotlin.runCatching { rapporteringsBehandling.vanligArbeidstidHistorikk.get(dag.dato()) }
                         .getOrDefault(0.timer),
                 ),
             )
@@ -30,8 +30,8 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
     }
 
     fun rettighetsdager(): List<DagGrunnlag> = fakta.filter(rettighetsdag())
-    fun arbeidsdagerMedRettighet(): List<DagGrunnlag> = fakta.filter(rettighetsdag()).filterNot(helgedag())
-    internal fun vanligArbeidstid() = arbeidsdagerMedRettighet().map { it.vanligArbeidstid() }.summer()
+    fun mandagTilFredagMedRettighet(): List<DagGrunnlag> = fakta.filter(rettighetsdag()).filterNot(helgedag())
+    internal fun vanligArbeidstid() = mandagTilFredagMedRettighet().map { it.vanligArbeidstid() }.summer()
     internal fun arbeidedeTimer() = rettighetsdager().map { it.dag.arbeidstimer() }.summer()
     private fun taptArbeidstid() = (vanligArbeidstid() - arbeidedeTimer())
     fun graderingsProsent() = taptArbeidstid() prosentAv vanligArbeidstid()

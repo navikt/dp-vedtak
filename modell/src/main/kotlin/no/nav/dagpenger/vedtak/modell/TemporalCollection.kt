@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 // Temporal object pattern from https://martinfowler.com/eaaDev/TemporalObject.html
 internal open class TemporalCollection<R> {
-    protected val contents = mutableMapOf<LocalDateTime, R>()
+    private val contents = mutableMapOf<LocalDateTime, R>()
 
     private val milestones get() = contents.keys.toList().reversed()
 

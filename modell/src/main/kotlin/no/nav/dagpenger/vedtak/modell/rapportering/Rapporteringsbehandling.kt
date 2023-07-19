@@ -15,7 +15,7 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.time.LocalDate
 import java.util.UUID
 
-internal class LøpendeBehandling(
+internal class Rapporteringsbehandling(
     private val rapporteringsId: UUID,
     internal val satsHistorikk: TemporalCollection<Beløp>,
     internal val stønadsdagerHistorikk: TemporalCollection<Stønadsdager>,
@@ -30,9 +30,12 @@ internal class LøpendeBehandling(
 
     fun håndter(rapporteringsperiode: Rapporteringsperiode): Vedtak {
         beregningsgrunnlag.populer(rapporteringsperiode, this)
+
+        // 4-13 2.ledd - terskelvurdering
         val vilkårOppfylt = TaptArbeidstid().håndter(beregningsgrunnlag)
 
         return if (vilkårOppfylt) {
+            // 4-13 3. ledd gradering
             utbetalingsvedtak(rapporteringsperiode)
         } else {
             utbetalingsvedtak(

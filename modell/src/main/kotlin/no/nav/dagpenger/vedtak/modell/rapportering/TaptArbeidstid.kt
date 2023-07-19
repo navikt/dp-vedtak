@@ -5,14 +5,13 @@ import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
-import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
 import java.time.LocalDate
 
 internal class TaptArbeidstid : Regel {
 
     fun håndter(beregningsgrunnlag: Beregningsgrunnlag): Boolean {
         val arbeidstimer = beregningsgrunnlag.arbeidedeTimer()
-        val arbeidsdagerMedRettighet = beregningsgrunnlag.arbeidsdagerMedRettighet()
+        val arbeidsdagerMedRettighet = beregningsgrunnlag.mandagTilFredagMedRettighet()
         val vanligArbeidstid: Timer = beregningsgrunnlag.vanligArbeidstid()
 
         val terskel: Prosent = arbeidsdagerMedRettighet.map { it.terskelTaptArbeidstid() }.summer() / arbeidsdagerMedRettighet.size.toDouble()

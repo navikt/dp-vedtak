@@ -8,7 +8,7 @@ internal class Forbruk : Regel {
         beregningsgrunnlag: Beregningsgrunnlag,
         gjenståendeStønadsdager: Stønadsdager,
     ): List<Beregningsgrunnlag.DagGrunnlag> {
-        val arbeidsdagerMedRettighet = beregningsgrunnlag.arbeidsdagerMedRettighet()
+        val arbeidsdagerMedRettighet = beregningsgrunnlag.mandagTilFredagMedRettighet()
         val antallArbeidsdagerMedRettighet = Stønadsdager(dager = arbeidsdagerMedRettighet.size)
         return if (antallArbeidsdagerMedRettighet > gjenståendeStønadsdager) {
             arbeidsdagerMedRettighet.subList(0, gjenståendeStønadsdager.stønadsdager())
