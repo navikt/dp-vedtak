@@ -255,6 +255,7 @@ Egenskap: Korrigert egenrapportering
     Så skal bruker ha 4 vedtak
 
   @wip
+  # @todo: reberegning av etterfølgende meldeperioder
   Scenario: Leverer tre meldeperioder der egenandel trekkes på alle tre periodene. Korrigerer deretter første periode,
   med arbeid over terskel. Etterfølgende perioder reberegnes.
     Når rapporteringshendelse mottas

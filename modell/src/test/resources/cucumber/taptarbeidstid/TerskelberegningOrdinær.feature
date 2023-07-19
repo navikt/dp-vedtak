@@ -1,6 +1,6 @@
 # language: no
 
-  Egenskap: Terskel
+  Egenskap: VurderTerskelForTaptArbeidstid
 
     Bakgrunn: Ordinære dagpenger er innvileget fra 12. desember (uten egenandel)
       Gitt en ny hendelse om innvilget søknad

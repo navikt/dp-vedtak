@@ -1,6 +1,6 @@
 # language: no
 
-  Egenskap: Terskel
+  Egenskap: VurderTerskelForTaptArbeidstid
 
     Bakgrunn: Dagpenger under permittering fra fiskeindustrien innvilget fra 12. desember. Endres til ordinære dagpenger 15. desember. Gir ulike terskler i meldeperioden.
       Gitt en ny hendelse om innvilget søknad

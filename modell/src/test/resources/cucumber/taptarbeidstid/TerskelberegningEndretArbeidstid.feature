@@ -1,6 +1,6 @@
 # language: no
 
-  Egenskap: Terskel
+  Egenskap: VurderTerskelForTaptArbeidstid
 
     Bakgrunn: Ordinære dagpenger er innvileget fra 1. mai (uten egenandel). Fra 8. mai endres vanligArbeidstidPerDag fra 8 til 4 timer. VA for meldeperioden blir da 60 timer.
       Gitt en ny hendelse om innvilget søknad

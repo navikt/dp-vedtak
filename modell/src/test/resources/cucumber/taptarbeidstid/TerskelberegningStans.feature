@@ -1,6 +1,6 @@
 # language: no
 
-  Egenskap: Stans
+  Egenskap: StansAvDagpengerettighet
 
     Bakgrunn: Ordinære dagpenger er innvilget uten egenandel fra 12. desember. Stanses fra 19. desember.
       Gitt en ny hendelse om innvilget søknad
@@ -34,7 +34,7 @@
     Scenario: Har ikke vedtak hele perioden fordi dagpengevedtaket er stanset fra og med uke 2. Rapporterer arbeidstimer over terskel i uke 1, under terskel i uke 2.
       Når rapporteringshendelse mottas
         | dato       | fravær | timer |
-        | 12.12.2022 | false  | 4.5     |
+        | 12.12.2022 | false  | 4.5   |
         | 13.12.2022 | false  | 4     |
         | 14.12.2022 | false  | 4     |
         | 15.12.2022 | false  | 4     |

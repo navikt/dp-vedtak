@@ -1,6 +1,6 @@
 # language: no
 
-  Egenskap: Terskel
+  Egenskap: VurderTerskelForTaptArbeidstid
 
     Bakgrunn: Dagpenger under permittering fra fiskeindustrien innvilges fra 12. desember (ingen egenandel)
       Gitt en ny hendelse om innvilget søknad

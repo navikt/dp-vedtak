@@ -106,7 +106,7 @@ class VedtakHistorikk(historiskeVedtak: List<Vedtak> = listOf()) {
 
     fun beløpTilUtbetalingFor(dato: LocalDate): Beløp = beløpTilUtbetalingHistorikk.get(dato)
 
-    private fun leggTilVedtak(vedtak: Vedtak) {
+    internal fun leggTilVedtak(vedtak: Vedtak) {
         this.vedtak.add(
             vedtak.also {
                 HistorikkOppdaterer(this).apply(it::accept)

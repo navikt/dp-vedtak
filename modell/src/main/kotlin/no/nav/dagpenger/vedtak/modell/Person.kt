@@ -10,6 +10,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.rapportering.Behandling
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperioder
+import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
@@ -44,7 +45,7 @@ class Person private constructor(
         behandling.håndter(rapporteringshendelse)
 
         // @todo: En burde håndtere hendelsen inn i vedtakhistorikk for sporing
-        vedtakHistorikk.håndter(rapporteringsperiode)
+        // vedtakHistorikk.håndter(rapporteringsperiode)
     }
 
     fun håndter(stansHendelse: StansHendelse) {
@@ -57,6 +58,10 @@ class Person private constructor(
     fun gjenståendeEgenandelFra(dato: LocalDate): Beløp = vedtakHistorikk.gjenståendeEgenandelFra(dato)
 
     fun beløpTilUtbetalingFor(dato: LocalDate): Beløp = vedtakHistorikk.beløpTilUtbetalingFor(dato)
+
+    internal fun leggTilVedtak(vedtak: Vedtak) {
+        vedtakHistorikk.leggTilVedtak(vedtak)
+    }
 
     override fun vedtakFattet(vedtakFattet: VedtakObserver.VedtakFattet) {
         observers.forEach {
