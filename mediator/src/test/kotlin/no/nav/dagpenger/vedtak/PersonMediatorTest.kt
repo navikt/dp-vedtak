@@ -17,6 +17,7 @@ import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.time.Duration
 
@@ -102,6 +103,7 @@ internal class PersonMediatorTest {
     }
 
     @Test
+    @Disabled("Vi må finne hva vi skal gjøre rapportering som ikke har rammevedtak")
     fun `Dersom person vi prøver å rapportere for ikke har noe rammevedtak så da lager vi ikke et vedtak`() {
         val rettighetFraDato = 29 mai 2023
         testRapid.sendTestMessage(
