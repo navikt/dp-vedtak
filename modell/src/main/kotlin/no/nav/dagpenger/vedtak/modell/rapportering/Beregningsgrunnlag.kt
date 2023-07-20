@@ -30,10 +30,10 @@ internal class Beregningsgrunnlag(private val fakta: MutableList<DagGrunnlag> = 
         }
     }
 
-    fun rettighetsdager(): List<DagGrunnlag> = fakta.filter(rettighetsdag())
-    fun mandagTilFredagMedRettighet(): List<DagGrunnlag> = fakta.filter(rettighetsdag()).filterNot(helgedag())
+    fun rettighetsdagerUtenFravær(): List<DagGrunnlag> = fakta.filter(rettighetsdag())
+    fun mandagTilFredagMedRettighet(): List<DagGrunnlag> = rettighetsdagerUtenFravær().filterNot(helgedag())
     internal fun vanligArbeidstid() = mandagTilFredagMedRettighet().map { it.vanligArbeidstid() }.summer()
-    internal fun arbeidedeTimer() = rettighetsdager().map { it.dag.arbeidstimer() }.summer()
+    internal fun arbeidedeTimer() = rettighetsdagerUtenFravær().map { it.dag.arbeidstimer() }.summer()
     private fun taptArbeidstid() = (vanligArbeidstid() - arbeidedeTimer())
     fun graderingsProsent() = taptArbeidstid() prosentAv vanligArbeidstid()
 

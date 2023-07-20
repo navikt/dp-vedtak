@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
+import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
@@ -7,6 +8,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
@@ -20,6 +22,13 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
     private val beregningsgrunnlag = Beregningsgrunnlag()
 
     private val rapporteringsdager = mutableListOf<Dag>()
+    private val rettighetsdagerUtenFravær get() = rapporteringsdager.filter(dagpengerRettighetsdag()).filterNot(fravær())
+    private fun fravær(): (Dag) -> Boolean = { it.fravær() }
+    private fun dagpengerRettighetsdag(): (Dag) -> Boolean =
+        {
+            kotlin.runCatching { person.vedtakHistorikk.dagpengerettighetHistorikk.get(it.dato()) }
+                .getOrDefault(Dagpengerettighet.Ingen) != Dagpengerettighet.Ingen
+        }
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         behandlingssteg.håndter(rapporteringshendelse, this)
@@ -53,7 +62,7 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
 
     object VurderTerskelForTaptArbeidstid : Behandlingssteg() {
         override fun onEntry(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
-            val arbeidedeTimer = behandling.beregningsgrunnlag.arbeidedeTimer()
+            val arbeidedeTimer = behandling.rettighetsdagerUtenFravær.map { it.arbeidstimer() }.summer()
             val mandagTilFredagMedRettighet = behandling.beregningsgrunnlag.mandagTilFredagMedRettighet()
             val vanligArbeidstid: Timer = behandling.beregningsgrunnlag.vanligArbeidstid()
 
