@@ -34,6 +34,7 @@ class Person private constructor(
     private val observers = mutableListOf<PersonObserver>()
 
     fun ident() = ident
+
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
         kontekst(søknadBehandletHendelse)
         if (vedtakHistorikk.harBehandlet(søknadBehandletHendelse.behandlingId)) {
