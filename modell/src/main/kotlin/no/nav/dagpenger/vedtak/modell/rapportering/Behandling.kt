@@ -26,9 +26,12 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
     private fun fravær(): (Dag) -> Boolean = { it.fravær() }
     private fun dagpengerRettighetsdag(): (Dag) -> Boolean =
         {
-            kotlin.runCatching { person.vedtakHistorikk.dagpengerettighetHistorikk.get(it.dato()) }
-                .getOrDefault(Dagpengerettighet.Ingen) != Dagpengerettighet.Ingen
+            dagpengerettighet(it) != Dagpengerettighet.Ingen
         }
+
+    private fun dagpengerettighet(dag: Dag) =
+        kotlin.runCatching { person.vedtakHistorikk.dagpengerettighetHistorikk.get(dag.dato()) }
+            .getOrDefault(Dagpengerettighet.Ingen)
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         behandlingssteg.håndter(rapporteringshendelse, this)
@@ -63,11 +66,12 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
     object VurderTerskelForTaptArbeidstid : Behandlingssteg() {
         override fun onEntry(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
             val arbeidedeTimer = behandling.rettighetsdagerUtenFravær.map { it.arbeidstimer() }.summer()
-            val mandagTilFredagMedRettighet = behandling.beregningsgrunnlag.mandagTilFredagMedRettighet()
+            val mandagTilFredagMedRettighet = behandling.rettighetsdagerUtenFravær.filterNot { it.erHelg() }
             val vanligArbeidstid: Timer = behandling.beregningsgrunnlag.vanligArbeidstid()
 
-            val gjennomsnittsterskel: Prosent = mandagTilFredagMedRettighet.map { it.terskelTaptArbeidstid() }
-                .summer() / mandagTilFredagMedRettighet.size.toDouble()
+            val gjennomsnittsterskel: Prosent = mandagTilFredagMedRettighet.map {
+                TaptArbeidstidTerskel.terskelFor(behandling.dagpengerettighet(it), it.dato())
+            }.summer() / mandagTilFredagMedRettighet.size.toDouble()
             val minsteTapteArbeidstid: Timer = gjennomsnittsterskel av vanligArbeidstid
 
             val vilkårForTaptArbeidstidOppfylt = arbeidedeTimer <= vanligArbeidstid - minsteTapteArbeidstid
