@@ -19,6 +19,8 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
 
     private val beregningsgrunnlag = Beregningsgrunnlag()
 
+    private val rapporteringsdager = mutableListOf<Dag>()
+
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         behandlingssteg.håndter(rapporteringshendelse, this)
     }
@@ -39,10 +41,9 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
 
     object FinnBeregningsgrunnlag : Behandlingssteg() {
         override fun håndter(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
-            val rapporteringsdager =
-                RapporteringsdagerForPeriode(rapporteringshendelse.somPeriode(), behandling.person).dager
+            behandling.rapporteringsdager.addAll(RapporteringsdagerForPeriode(rapporteringshendelse.somPeriode(), behandling.person).dager)
             behandling.beregningsgrunnlag.populer(
-                rapporteringsdager,
+                behandling.rapporteringsdager,
                 behandling.person.vedtakHistorikk,
             )
 
