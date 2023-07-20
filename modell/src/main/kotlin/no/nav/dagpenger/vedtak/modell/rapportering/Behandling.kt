@@ -24,9 +24,9 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
     private val rapporteringsdager = mutableListOf<Dag>()
     private val rettighetsdagerUtenFravær
         get() = rapporteringsdager.filter(dagpengerRettighetsdag()).filterNot(fravær())
-    private val mandagTilFredagMedRettighet get() = rettighetsdagerUtenFravær.filterNot(helgedag())
+    private val tellendeRapporteringsdager get() = rettighetsdagerUtenFravær.filterNot(helgedag())
     private val vanligArbeidstid
-        get() = mandagTilFredagMedRettighet.map {
+        get() = tellendeRapporteringsdager.map {
             vanligArbeidstid(it)
         }.summer()
 
@@ -55,7 +55,7 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
 
     private fun nesteSteg(behandlingssteg: Behandlingssteg, rapporteringshendelse: Rapporteringshendelse) {
         this.behandlingssteg = behandlingssteg
-        this.behandlingssteg.onEntry(rapporteringshendelse, this)
+        this.behandlingssteg.entering(rapporteringshendelse, this)
     }
 
     sealed class Behandlingssteg {
@@ -64,7 +64,7 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
             rapporteringshendelse.severe("Forventet ikke ${rapporteringshendelse.javaClass.simpleName} i ${this.javaClass.simpleName}")
         }
 
-        open fun onEntry(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {}
+        open fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {}
     }
 
     object FinnBeregningsgrunnlag : Behandlingssteg() {
@@ -81,17 +81,16 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
     }
 
     object VurderTerskelForTaptArbeidstid : Behandlingssteg() {
-        override fun onEntry(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
+        override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
             val arbeidedeTimer = behandling.rettighetsdagerUtenFravær.map { it.arbeidstimer() }.summer()
-            val mandagTilFredagMedRettighet = behandling.mandagTilFredagMedRettighet
-            val vanligArbeidstid: Timer = behandling.vanligArbeidstid
 
-            val gjennomsnittsterskel: Prosent = mandagTilFredagMedRettighet.map {
+            val terskelProsent: Prosent = behandling.tellendeRapporteringsdager.map {
                 TaptArbeidstidTerskel.terskelFor(behandling.dagpengerettighet(it), it.dato())
-            }.summer() / mandagTilFredagMedRettighet.size.toDouble()
-            val minsteTapteArbeidstid: Timer = gjennomsnittsterskel av vanligArbeidstid
+            }.summer() / behandling.tellendeRapporteringsdager.size.toDouble()
 
-            val vilkårForTaptArbeidstidOppfylt = arbeidedeTimer <= vanligArbeidstid - minsteTapteArbeidstid
+            val minsteTapteArbeidstid: Timer = terskelProsent av behandling.vanligArbeidstid
+
+            val vilkårForTaptArbeidstidOppfylt = arbeidedeTimer <= behandling.vanligArbeidstid - minsteTapteArbeidstid
 
             if (vilkårForTaptArbeidstidOppfylt) {
                 behandling.nesteSteg(GraderUtbetaling, rapporteringshendelse)
@@ -108,7 +107,7 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
     }
 
     object GraderUtbetaling : Behandlingssteg() {
-        override fun onEntry(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
+        override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
             val rapporteringsperiode = rapporteringshendelse.somPeriode()
             val sisteRapporteringsdato = rapporteringsperiode.endInclusive
             val forrigeRapporteringsdato = rapporteringsperiode.start.minusDays(1)
@@ -116,7 +115,7 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
             val stønadsdager = behandling.person.vedtakHistorikk.stønadsdagerHistorikk.get(sisteRapporteringsdato)
 
             val gjenståendeStønadsperiode = stønadsdager - initieltForbruk
-            val arbeidsdagerMedRettighet = behandling.mandagTilFredagMedRettighet
+            val arbeidsdagerMedRettighet = behandling.tellendeRapporteringsdager
 
             val antallArbeidsdagerMedRettighet = Stønadsdager(dager = arbeidsdagerMedRettighet.size)
             val arbeidsdagerMedForbruk = if (antallArbeidsdagerMedRettighet > gjenståendeStønadsperiode) {
