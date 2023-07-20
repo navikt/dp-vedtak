@@ -9,7 +9,9 @@ import no.nav.dagpenger.vedtak.modell.entitet.Prosent.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.utbetaling.BeregnetBeløpDag
 import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
@@ -19,10 +21,24 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
 
     constructor(person: Person) : this(UUID.randomUUID(), person, FinnBeregningsgrunnlag)
 
-    private val beregningsgrunnlag = Beregningsgrunnlag()
-
     private val rapporteringsdager = mutableListOf<Dag>()
-    private val rettighetsdagerUtenFravær get() = rapporteringsdager.filter(dagpengerRettighetsdag()).filterNot(fravær())
+    private val rettighetsdagerUtenFravær
+        get() = rapporteringsdager.filter(dagpengerRettighetsdag()).filterNot(fravær())
+    private val mandagTilFredagMedRettighet get() = rettighetsdagerUtenFravær.filterNot(helgedag())
+    private val vanligArbeidstid
+        get() = mandagTilFredagMedRettighet.map {
+            vanligArbeidstid(it)
+        }.summer()
+
+    private fun vanligArbeidstid(it: Dag) =
+        kotlin.runCatching { person.vedtakHistorikk.vanligArbeidstidHistorikk.get(it.dato()) }
+            .getOrDefault(0.timer)
+
+    private val arbeidedeTimer get() = rettighetsdagerUtenFravær.map { it.arbeidstimer() }.summer()
+    private val taptArbeidstid get() = (vanligArbeidstid - arbeidedeTimer)
+    private val graderingsProsent get() = taptArbeidstid prosentAv vanligArbeidstid
+
+    private fun helgedag(): (Dag) -> Boolean = { it.erHelg() }
     private fun fravær(): (Dag) -> Boolean = { it.fravær() }
     private fun dagpengerRettighetsdag(): (Dag) -> Boolean =
         {
@@ -53,10 +69,11 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
 
     object FinnBeregningsgrunnlag : Behandlingssteg() {
         override fun håndter(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
-            behandling.rapporteringsdager.addAll(RapporteringsdagerForPeriode(rapporteringshendelse.somPeriode(), behandling.person).dager)
-            behandling.beregningsgrunnlag.populer(
-                behandling.rapporteringsdager,
-                behandling.person.vedtakHistorikk,
+            behandling.rapporteringsdager.addAll(
+                RapporteringsdagerForPeriode(
+                    rapporteringshendelse.somPeriode(),
+                    behandling.person,
+                ).dager,
             )
 
             behandling.nesteSteg(VurderTerskelForTaptArbeidstid, rapporteringshendelse)
@@ -66,8 +83,8 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
     object VurderTerskelForTaptArbeidstid : Behandlingssteg() {
         override fun onEntry(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
             val arbeidedeTimer = behandling.rettighetsdagerUtenFravær.map { it.arbeidstimer() }.summer()
-            val mandagTilFredagMedRettighet = behandling.rettighetsdagerUtenFravær.filterNot { it.erHelg() }
-            val vanligArbeidstid: Timer = behandling.beregningsgrunnlag.vanligArbeidstid()
+            val mandagTilFredagMedRettighet = behandling.mandagTilFredagMedRettighet
+            val vanligArbeidstid: Timer = behandling.vanligArbeidstid
 
             val gjennomsnittsterskel: Prosent = mandagTilFredagMedRettighet.map {
                 TaptArbeidstidTerskel.terskelFor(behandling.dagpengerettighet(it), it.dato())
@@ -99,7 +116,7 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
             val stønadsdager = behandling.person.vedtakHistorikk.stønadsdagerHistorikk.get(sisteRapporteringsdato)
 
             val gjenståendeStønadsperiode = stønadsdager - initieltForbruk
-            val arbeidsdagerMedRettighet = behandling.beregningsgrunnlag.mandagTilFredagMedRettighet()
+            val arbeidsdagerMedRettighet = behandling.mandagTilFredagMedRettighet
 
             val antallArbeidsdagerMedRettighet = Stønadsdager(dager = arbeidsdagerMedRettighet.size)
             val arbeidsdagerMedForbruk = if (antallArbeidsdagerMedRettighet > gjenståendeStønadsperiode) {
@@ -107,8 +124,15 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
             } else {
                 arbeidsdagerMedRettighet
             }
+
             val rettighetsdager =
-                arbeidsdagerMedForbruk.map { it.tilLøpendeRettighetDag(behandling.beregningsgrunnlag.graderingsProsent()) }
+                arbeidsdagerMedForbruk.map {
+                    BeregnetBeløpDag(
+                        it.dato(),
+                        behandling.graderingsProsent * behandling.person.vedtakHistorikk.dagsatsHistorikk.get(it.dato()),
+                    )
+                }
+
             val beregnetBeløpFørTrekkAvEgenandel = rettighetsdager.summer()
             val initieltTrukketEgenandel =
                 behandling.person.vedtakHistorikk.trukketEgenandelHistorikk.summer(forrigeRapporteringsdato)
