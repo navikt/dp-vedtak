@@ -88,11 +88,11 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
                 TaptArbeidstidTerskel.terskelFor(behandling.dagpengerettighet(it), it.dato())
             }.summer() / behandling.tellendeRapporteringsdager.size.toDouble()
 
-            val minsteTapteArbeidstid: Timer = terskelProsent av behandling.vanligArbeidstid
+            val terskelTimer: Timer = terskelProsent av behandling.vanligArbeidstid
 
-            val vilkårForTaptArbeidstidOppfylt = arbeidedeTimer <= behandling.vanligArbeidstid - minsteTapteArbeidstid
+            val vilkårOppfylt = arbeidedeTimer <= behandling.vanligArbeidstid - terskelTimer
 
-            if (vilkårForTaptArbeidstidOppfylt) {
+            if (vilkårOppfylt) {
                 behandling.nesteSteg(GraderUtbetaling, rapporteringshendelse)
             } else {
                 behandling.person.leggTilVedtak(
@@ -109,23 +109,22 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
     object GraderUtbetaling : Behandlingssteg() {
         override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
             val rapporteringsperiode = rapporteringshendelse.somPeriode()
-            val sisteRapporteringsdato = rapporteringsperiode.endInclusive
+            val rapporteringsdato = rapporteringsperiode.endInclusive
+
             val forrigeRapporteringsdato = rapporteringsperiode.start.minusDays(1)
-            val initieltForbruk = behandling.person.vedtakHistorikk.forbrukHistorikk.summer(forrigeRapporteringsdato)
-            val stønadsdager = behandling.person.vedtakHistorikk.stønadsdagerHistorikk.get(sisteRapporteringsdato)
+            val forrigeAkkumulerteForbruk = behandling.person.vedtakHistorikk.forbrukHistorikk.summer(forrigeRapporteringsdato)
+            val forrigeGjenståendeStønadsdager = behandling.person.vedtakHistorikk.stønadsdagerHistorikk.get(rapporteringsdato)
 
-            val gjenståendeStønadsperiode = stønadsdager - initieltForbruk
-            val arbeidsdagerMedRettighet = behandling.tellendeRapporteringsdager
+            val gjenståendeStønadsperiode = forrigeGjenståendeStønadsdager - forrigeAkkumulerteForbruk
 
-            val antallArbeidsdagerMedRettighet = Stønadsdager(dager = arbeidsdagerMedRettighet.size)
-            val arbeidsdagerMedForbruk = if (antallArbeidsdagerMedRettighet > gjenståendeStønadsperiode) {
-                arbeidsdagerMedRettighet.subList(0, gjenståendeStønadsperiode.stønadsdager())
+            val forbruksdager = if (Stønadsdager(dager = behandling.tellendeRapporteringsdager.size) > gjenståendeStønadsperiode) {
+                behandling.tellendeRapporteringsdager.subList(0, gjenståendeStønadsperiode.stønadsdager())
             } else {
-                arbeidsdagerMedRettighet
+                behandling.tellendeRapporteringsdager
             }
 
             val rettighetsdager =
-                arbeidsdagerMedForbruk.map {
+                forbruksdager.map {
                     BeregnetBeløpDag(
                         it.dato(),
                         behandling.graderingsProsent * behandling.person.vedtakHistorikk.dagsatsHistorikk.get(it.dato()),
@@ -133,12 +132,11 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
                 }
 
             val beregnetBeløpFørTrekkAvEgenandel = rettighetsdager.summer()
-            val initieltTrukketEgenandel =
+            val forrigeTrukketEgenandel =
                 behandling.person.vedtakHistorikk.trukketEgenandelHistorikk.summer(forrigeRapporteringsdato)
 
-            val egenandel = behandling.person.vedtakHistorikk.egenandelHistorikk.get(sisteRapporteringsdato)
-            val gjenståendeEgenandel = egenandel - initieltTrukketEgenandel
-
+            val egenandel = behandling.person.vedtakHistorikk.egenandelHistorikk.get(rapporteringsdato)
+            val gjenståendeEgenandel = egenandel - forrigeTrukketEgenandel
             val trukketEgenandel = if (gjenståendeEgenandel > 0.beløp && beregnetBeløpFørTrekkAvEgenandel > 0.beløp) {
                 minOf(gjenståendeEgenandel, beregnetBeløpFørTrekkAvEgenandel)
             } else {
@@ -150,7 +148,7 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
                     behandlingId = behandling.behandlingId,
                     utfall = true,
                     virkningsdato = rapporteringsperiode.endInclusive,
-                    forbruk = Stønadsdager(arbeidsdagerMedForbruk.size),
+                    forbruk = Stønadsdager(forbruksdager.size),
                     rettighetsdager = rettighetsdager,
                     trukketEgenandel = trukketEgenandel,
                 ),
