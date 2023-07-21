@@ -1,7 +1,8 @@
 package no.nav.dagpenger.vedtak.modell
 
-import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
+import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
+import no.nav.dagpenger.aktivitetslogg.Subaktivitetskontekst
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
@@ -22,8 +23,8 @@ class Person private constructor(
     internal val vedtakHistorikk: VedtakHistorikk,
     private val rapporteringsperioder: Rapporteringsperioder,
     private val behandlinger: MutableList<Behandling>,
-    internal val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
-) : Aktivitetskontekst by ident, VedtakObserver {
+    override val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
+) : Subaktivitetskontekst, VedtakObserver {
 
     init {
         vedtakHistorikk.addObserver(this)
@@ -102,4 +103,6 @@ class Person private constructor(
     companion object {
         val kontekstType: String = "Person"
     }
+
+    override fun toSpesifikkKontekst() = SpesifikkKontekst(kontekstType, mapOf("ident" to ident.identifikator()))
 }

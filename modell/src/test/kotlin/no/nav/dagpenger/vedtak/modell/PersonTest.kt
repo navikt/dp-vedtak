@@ -1,6 +1,8 @@
 package no.nav.dagpenger.vedtak.modell
 
+import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.aktivitetslogg.Aktivitet
+import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
@@ -17,6 +19,7 @@ internal class PersonTest {
     private val person = Person(PersonIdentifikator(ident)).also {
         it.addObserver(testObservatør)
     }
+    private val inspektør get() = PersonInspektør(person)
 
     @Test
     fun `behandling med samme id skal bare behandles 1 gang og logge en warning aktivitetsloggen`() {
@@ -33,22 +36,8 @@ internal class PersonTest {
             søknadBehandletHendelse,
         )
 
-        assertEquals(1, testObservatør.vedtak.size)
-
-        object : PersonVisitor {
-            override fun visitInfo(
-                id: UUID,
-                kontekster: List<SpesifikkKontekst>,
-                aktivitet: Aktivitet.Info,
-                melding: String,
-                tidsstempel: String,
-            ) {
-                assertEquals("Har allerede behandlet SøknadBehandletHendelse", melding)
-                assertEquals(mapOf("ident" to ident), kontekster.first { it.kontekstType == Person.kontekstType }.kontekstMap)
-            }
-        }.also { visitor ->
-            person.accept(visitor)
-        }
+        testObservatør.vedtak.size shouldBe 1
+        inspektør.aktivitetslogg.aktivitetsteller() shouldBe 1
     }
 
     private class TestObservatør : PersonObserver {
@@ -56,6 +45,29 @@ internal class PersonTest {
         val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
         override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
             vedtak.add(vedtakFattet)
+        }
+    }
+
+    private class PersonInspektør(private val person: Person) : PersonVisitor {
+
+        lateinit var aktivitetslogg: Aktivitetslogg
+        init {
+            person.accept(this)
+        }
+
+        override fun postVisitAktivitetslogg(aktivitetslogg: Aktivitetslogg) {
+            this.aktivitetslogg = aktivitetslogg
+        }
+
+        override fun visitInfo(
+            id: UUID,
+            kontekster: List<SpesifikkKontekst>,
+            aktivitet: Aktivitet.Info,
+            melding: String,
+            tidsstempel: String,
+        ) {
+            assertEquals("Har allerede behandlet SøknadBehandletHendelse", melding)
+            assertEquals(mapOf("ident" to person.ident().identifikator()), kontekster.first { it.kontekstType == Person.kontekstType }.kontekstMap)
         }
     }
 }

@@ -1,9 +1,6 @@
 package no.nav.dagpenger.vedtak.modell
 
-import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
-import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
-
-class PersonIdentifikator(private val ident: String) : Aktivitetskontekst {
+class PersonIdentifikator(private val ident: String) {
 
     init {
         require(ident.matches(Regex("\\d{11}"))) { "personident må ha 11 siffer" }
@@ -14,9 +11,6 @@ class PersonIdentifikator(private val ident: String) : Aktivitetskontekst {
     }
 
     fun identifikator() = ident
-
-    override fun toSpesifikkKontekst() = SpesifikkKontekst("Person", mapOf("ident" to ident))
-
     override fun equals(other: Any?): Boolean = other is PersonIdentifikator && other.ident == this.ident
 
     override fun hashCode() = ident.hashCode()
