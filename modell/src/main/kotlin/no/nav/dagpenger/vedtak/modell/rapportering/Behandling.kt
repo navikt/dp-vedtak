@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
+import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
+import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
@@ -17,7 +19,8 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.util.UUID
 
-class Behandling(val behandlingId: UUID, private val person: Person, private var behandlingssteg: Behandlingssteg) {
+class Behandling(val behandlingId: UUID, private val person: Person, private var behandlingssteg: Behandlingssteg) :
+    Aktivitetskontekst {
 
     constructor(person: Person) : this(UUID.randomUUID(), person, FinnBeregningsgrunnlag)
 
@@ -50,6 +53,7 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
             .getOrDefault(Dagpengerettighet.Ingen)
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
+        rapporteringshendelse.kontekst(this)
         behandlingssteg.håndter(rapporteringshendelse, this)
     }
 
@@ -169,5 +173,9 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
                 dager.add(dag)
             }
         }
+    }
+
+    override fun toSpesifikkKontekst(): SpesifikkKontekst {
+        return SpesifikkKontekst("behandling", mapOf("behandlingId" to behandlingId.toString()))
     }
 }
