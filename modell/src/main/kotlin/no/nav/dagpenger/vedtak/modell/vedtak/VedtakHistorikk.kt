@@ -5,7 +5,7 @@ import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
-import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
+import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.math.BigDecimal
@@ -113,7 +113,7 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             forbruk: Stønadsdager,
             trukketEgenandel: Beløp,
             beløpTilUtbetaling: Beløp,
-            rettighetsdager: List<LøpendeRettighetDag>,
+            rettighetsdager: List<Utbetalingsdag>,
         ) {
             vedtakHistorikk.forbrukHistorikk.put(virkningsdato, forbruk)
             vedtakHistorikk.trukketEgenandelHistorikk.put(virkningsdato, trukketEgenandel)

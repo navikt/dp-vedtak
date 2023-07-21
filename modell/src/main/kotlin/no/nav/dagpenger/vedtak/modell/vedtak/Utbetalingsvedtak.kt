@@ -3,8 +3,8 @@ package no.nav.dagpenger.vedtak.modell.vedtak
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
-import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
-import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag.Companion.summer
+import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
+import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,7 +17,7 @@ class Utbetalingsvedtak(
     utfall: Boolean,
     virkningsdato: LocalDate,
     private val forbruk: Stønadsdager,
-    private val rettighetsdager: List<LøpendeRettighetDag>,
+    private val rettighetsdager: List<Utbetalingsdag>,
     private val trukketEgenandel: Beløp,
 ) : Vedtak(
     vedtakId = vedtakId,
@@ -33,7 +33,7 @@ class Utbetalingsvedtak(
             utfall: Boolean,
             virkningsdato: LocalDate,
             forbruk: Stønadsdager = Stønadsdager(dager = 0),
-            rettighetsdager: List<LøpendeRettighetDag> = emptyList(),
+            rettighetsdager: List<Utbetalingsdag> = emptyList(),
             trukketEgenandel: Beløp = 0.beløp,
         ) =
             Utbetalingsvedtak(

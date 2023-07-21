@@ -13,8 +13,8 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
-import no.nav.dagpenger.vedtak.modell.utbetaling.BeregnetBeløpDag
-import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag.Companion.summer
+import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
+import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.util.UUID
@@ -127,15 +127,15 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
                 behandling.tellendeRapporteringsdager
             }
 
-            val rettighetsdager =
+            val utbetalingsdager =
                 forbruksdager.map {
-                    BeregnetBeløpDag(
+                    Utbetalingsdag(
                         it.dato(),
                         behandling.graderingsProsent * behandling.person.vedtakHistorikk.dagsatsHistorikk.get(it.dato()),
                     )
                 }
 
-            val beregnetBeløpFørTrekkAvEgenandel = rettighetsdager.summer()
+            val beregnetBeløpFørTrekkAvEgenandel = utbetalingsdager.summer()
             val forrigeTrukketEgenandel =
                 behandling.person.vedtakHistorikk.trukketEgenandelHistorikk.summer(forrigeRapporteringsdato)
 
@@ -153,7 +153,7 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
                     utfall = true,
                     virkningsdato = rapporteringsperiode.endInclusive,
                     forbruk = Stønadsdager(forbruksdager.size),
-                    rettighetsdager = rettighetsdager,
+                    rettighetsdager = utbetalingsdager,
                     trukketEgenandel = trukketEgenandel,
                 ),
             )

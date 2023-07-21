@@ -17,7 +17,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
-import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
+import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -265,7 +265,7 @@ class RettighetStegTest : No {
             forbruk: Stønadsdager,
             trukketEgenandel: Beløp,
             beløpTilUtbetaling: Beløp,
-            rettighetsdager: List<LøpendeRettighetDag>,
+            rettighetsdager: List<Utbetalingsdag>,
 
         ) {
             antallVedtak++

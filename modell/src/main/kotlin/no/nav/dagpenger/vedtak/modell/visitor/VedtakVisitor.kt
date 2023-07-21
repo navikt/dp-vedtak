@@ -4,7 +4,7 @@ import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
-import no.nav.dagpenger.vedtak.modell.utbetaling.LøpendeRettighetDag
+import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -37,7 +37,7 @@ interface VedtakVisitor {
         forbruk: Stønadsdager,
         trukketEgenandel: Beløp,
         beløpTilUtbetaling: Beløp,
-        rettighetsdager: List<LøpendeRettighetDag>,
+        rettighetsdager: List<Utbetalingsdag>,
     ) {}
 
     fun visitAvslag(
