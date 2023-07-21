@@ -117,9 +117,9 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
 
             val forrigeRapporteringsdato = rapporteringsperiode.start.minusDays(1)
             val forrigeAkkumulerteForbruk = behandling.person.vedtakHistorikk.forbrukHistorikk.summer(forrigeRapporteringsdato)
-            val forrigeGjenståendeStønadsdager = behandling.person.vedtakHistorikk.stønadsdagerHistorikk.get(rapporteringsdato)
+            val innvilgedeStønadsdager = behandling.person.vedtakHistorikk.stønadsdagerHistorikk.get(rapporteringsdato)
 
-            val gjenståendeStønadsperiode = forrigeGjenståendeStønadsdager - forrigeAkkumulerteForbruk
+            val gjenståendeStønadsperiode = innvilgedeStønadsdager - forrigeAkkumulerteForbruk
 
             val forbruksdager = if (Stønadsdager(dager = behandling.tellendeRapporteringsdager.size) > gjenståendeStønadsperiode) {
                 behandling.tellendeRapporteringsdager.subList(0, gjenståendeStønadsperiode.stønadsdager())
