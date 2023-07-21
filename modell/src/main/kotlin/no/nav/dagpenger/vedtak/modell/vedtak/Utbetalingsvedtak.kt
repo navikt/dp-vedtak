@@ -1,7 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
-import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag.Companion.summer
@@ -32,9 +31,9 @@ class Utbetalingsvedtak(
             behandlingId: UUID,
             utfall: Boolean,
             virkningsdato: LocalDate,
-            forbruk: Stønadsdager = Stønadsdager(dager = 0),
-            utbetalingsdager: List<Utbetalingsdag> = emptyList(),
-            trukketEgenandel: Beløp = 0.beløp,
+            forbruk: Stønadsdager,
+            utbetalingsdager: List<Utbetalingsdag>,
+            trukketEgenandel: Beløp,
         ) =
             Utbetalingsvedtak(
                 behandlingId = behandlingId,

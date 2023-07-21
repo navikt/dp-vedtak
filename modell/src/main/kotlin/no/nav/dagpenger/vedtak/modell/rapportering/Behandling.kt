@@ -100,17 +100,11 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
             val terskelTimer: Timer = terskelProsent av behandling.vanligArbeidstid
 
             val vilkårOppfylt = arbeidedeTimer <= behandling.vanligArbeidstid - terskelTimer
-
+            behandling.resultatBuilder.utfall(vilkårOppfylt)
             if (vilkårOppfylt) {
                 behandling.nesteSteg(GraderUtbetaling, rapporteringshendelse)
             } else {
-                behandling.person.leggTilVedtak(
-                    Utbetalingsvedtak.utbetalingsvedtak(
-                        behandlingId = UUID.randomUUID(),
-                        utfall = false,
-                        virkningsdato = rapporteringshendelse.somPeriode().endInclusive,
-                    ),
-                )
+                behandling.nesteSteg(Ferdigstill, rapporteringshendelse)
             }
         }
     }
@@ -173,13 +167,12 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
     object Ferdigstill : Behandlingssteg() {
         override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
             val rapporteringsperiode = rapporteringshendelse.somPeriode()
-
             val resultat = behandling.resultatBuilder.build()
 
             behandling.person.leggTilVedtak(
                 Utbetalingsvedtak.utbetalingsvedtak(
                     behandlingId = behandling.behandlingId,
-                    utfall = true,
+                    utfall = resultat.utfall,
                     virkningsdato = rapporteringsperiode.endInclusive,
                     forbruk = Stønadsdager(resultat.forbruksdager.size),
                     utbetalingsdager = resultat.utbetalingsdager,
@@ -190,17 +183,21 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
     }
 
     private class Resultat(
+        val utfall: Boolean,
         val forbruksdager: List<Dag> = emptyList(),
         val utbetalingsdager: List<Utbetalingsdag> = emptyList(),
         val trukketEgenandel: Beløp,
     ) {
         class Builder {
-            var forbruksdager: List<Dag> = emptyList()
-                private set
-            var utbetalingsdager: List<Utbetalingsdag> = emptyList()
-                private set
-            var trukketEgenandel: Beløp = 0.beløp
-                private set
+
+            private var utfall: Boolean? = null
+            private var forbruksdager: List<Dag> = emptyList()
+            private var utbetalingsdager: List<Utbetalingsdag> = emptyList()
+            private var trukketEgenandel: Beløp = 0.beløp
+
+            fun utfall(utfall: Boolean) {
+                this.utfall = utfall
+            }
 
             fun forbruksdager(forbruksdager: Collection<Dag>) {
                 this.forbruksdager = forbruksdager.toList()
@@ -214,7 +211,12 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
                 this.trukketEgenandel = trukketEgenandel
             }
 
-            fun build() = Resultat(forbruksdager, utbetalingsdager, trukketEgenandel)
+            fun build() = Resultat(
+                utfall = requireNotNull(this.utfall) { "Forventer at utfall er satt på resultat" },
+                forbruksdager = forbruksdager,
+                utbetalingsdager = utbetalingsdager,
+                trukketEgenandel = trukketEgenandel,
+            )
         }
     }
 
