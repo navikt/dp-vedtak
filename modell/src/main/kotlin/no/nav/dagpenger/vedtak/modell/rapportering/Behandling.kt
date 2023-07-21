@@ -4,6 +4,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
+import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
@@ -40,6 +41,10 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
     private val arbeidedeTimer get() = rettighetsdagerUtenFravær.map { it.arbeidstimer() }.summer()
     private val taptArbeidstid get() = (vanligArbeidstid - arbeidedeTimer)
     private val graderingsProsent get() = taptArbeidstid prosentAv vanligArbeidstid
+
+    private var beregnetBeløpFørTrekkAvEgenandel: Beløp? = null
+
+    private val resultatBuilder: Resultat.Builder = Resultat.Builder()
 
     private fun helgedag(): (Dag) -> Boolean = { it.erHelg() }
     private fun fravær(): (Dag) -> Boolean = { it.fravær() }
@@ -127,6 +132,8 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
                 behandling.tellendeRapporteringsdager
             }
 
+            behandling.resultatBuilder.forbruksdager(forbruksdager)
+
             val utbetalingsdager =
                 forbruksdager.map {
                     Utbetalingsdag(
@@ -134,29 +141,80 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
                         behandling.graderingsProsent * behandling.person.vedtakHistorikk.dagsatsHistorikk.get(it.dato()),
                     )
                 }
+            behandling.resultatBuilder.utbetalingsdager(utbetalingsdager)
+            behandling.beregnetBeløpFørTrekkAvEgenandel = utbetalingsdager.summer()
 
-            val beregnetBeløpFørTrekkAvEgenandel = utbetalingsdager.summer()
+            behandling.nesteSteg(TrekkEgenandel, rapporteringshendelse)
+        }
+    }
+
+    object TrekkEgenandel : Behandlingssteg() {
+        override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
+            val beregnetBeløpFørTrekkAvEgenandel = requireNotNull(behandling.beregnetBeløpFørTrekkAvEgenandel)
+            val rapporteringsperiode = rapporteringshendelse.somPeriode()
+            val rapporteringsdato = rapporteringsperiode.endInclusive
+            val forrigeRapporteringsdato = rapporteringsperiode.start.minusDays(1)
             val forrigeTrukketEgenandel =
                 behandling.person.vedtakHistorikk.trukketEgenandelHistorikk.summer(forrigeRapporteringsdato)
 
             val egenandel = behandling.person.vedtakHistorikk.egenandelHistorikk.get(rapporteringsdato)
             val gjenståendeEgenandel = egenandel - forrigeTrukketEgenandel
-            val trukketEgenandel = if (gjenståendeEgenandel > 0.beløp && beregnetBeløpFørTrekkAvEgenandel > 0.beløp) {
-                minOf(gjenståendeEgenandel, beregnetBeløpFørTrekkAvEgenandel)
-            } else {
-                0.beløp
-            }
+            val trukketEgenandel =
+                if (gjenståendeEgenandel > 0.beløp && beregnetBeløpFørTrekkAvEgenandel > 0.beløp) {
+                    minOf(gjenståendeEgenandel, beregnetBeløpFørTrekkAvEgenandel)
+                } else {
+                    0.beløp
+                }
+            behandling.resultatBuilder.trukketEgenandel(trukketEgenandel)
+            behandling.nesteSteg(Ferdigstill, rapporteringshendelse)
+        }
+    }
+
+    object Ferdigstill : Behandlingssteg() {
+        override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
+            val rapporteringsperiode = rapporteringshendelse.somPeriode()
+
+            val resultat = behandling.resultatBuilder.build()
 
             behandling.person.leggTilVedtak(
                 Utbetalingsvedtak.utbetalingsvedtak(
                     behandlingId = behandling.behandlingId,
                     utfall = true,
                     virkningsdato = rapporteringsperiode.endInclusive,
-                    forbruk = Stønadsdager(forbruksdager.size),
-                    rettighetsdager = utbetalingsdager,
-                    trukketEgenandel = trukketEgenandel,
+                    forbruk = Stønadsdager(resultat.forbruksdager.size),
+                    utbetalingsdager = resultat.utbetalingsdager,
+                    trukketEgenandel = resultat.trukketEgenandel,
                 ),
             )
+        }
+    }
+
+    private class Resultat(
+        val forbruksdager: List<Dag> = emptyList(),
+        val utbetalingsdager: List<Utbetalingsdag> = emptyList(),
+        val trukketEgenandel: Beløp,
+    ) {
+        class Builder {
+            var forbruksdager: List<Dag> = emptyList()
+                private set
+            var utbetalingsdager: List<Utbetalingsdag> = emptyList()
+                private set
+            var trukketEgenandel: Beløp = 0.beløp
+                private set
+
+            fun forbruksdager(forbruksdager: Collection<Dag>) {
+                this.forbruksdager = forbruksdager.toList()
+            }
+
+            fun utbetalingsdager(utbetalingsdager: Collection<Utbetalingsdag>) {
+                this.utbetalingsdager = utbetalingsdager.toList()
+            }
+
+            fun trukketEgenandel(trukketEgenandel: Beløp) {
+                this.trukketEgenandel = trukketEgenandel
+            }
+
+            fun build() = Resultat(forbruksdager, utbetalingsdager, trukketEgenandel)
         }
     }
 

@@ -17,7 +17,7 @@ class Utbetalingsvedtak(
     utfall: Boolean,
     virkningsdato: LocalDate,
     private val forbruk: Stønadsdager,
-    private val rettighetsdager: List<Utbetalingsdag>,
+    private val utbetalingsdager: List<Utbetalingsdag>,
     private val trukketEgenandel: Beløp,
 ) : Vedtak(
     vedtakId = vedtakId,
@@ -33,7 +33,7 @@ class Utbetalingsvedtak(
             utfall: Boolean,
             virkningsdato: LocalDate,
             forbruk: Stønadsdager = Stønadsdager(dager = 0),
-            rettighetsdager: List<Utbetalingsdag> = emptyList(),
+            utbetalingsdager: List<Utbetalingsdag> = emptyList(),
             trukketEgenandel: Beløp = 0.beløp,
         ) =
             Utbetalingsvedtak(
@@ -41,12 +41,12 @@ class Utbetalingsvedtak(
                 utfall = utfall,
                 virkningsdato = virkningsdato,
                 forbruk = forbruk,
-                rettighetsdager = rettighetsdager,
+                utbetalingsdager = utbetalingsdager,
                 trukketEgenandel = trukketEgenandel,
             )
     }
     override fun accept(visitor: VedtakVisitor) {
-        val beløpTilUtbetaling = rettighetsdager.summer() - trukketEgenandel
+        val beløpTilUtbetaling = utbetalingsdager.summer() - trukketEgenandel
         visitor.visitLøpendeRettighet(
             vedtakId = vedtakId,
             behandlingId = behandlingId,
@@ -56,7 +56,7 @@ class Utbetalingsvedtak(
             forbruk = forbruk,
             trukketEgenandel = trukketEgenandel,
             beløpTilUtbetaling = beløpTilUtbetaling,
-            rettighetsdager = rettighetsdager,
+            utbetalingsdager = utbetalingsdager,
         )
     }
 }

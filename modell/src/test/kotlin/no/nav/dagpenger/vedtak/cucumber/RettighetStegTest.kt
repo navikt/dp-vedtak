@@ -265,7 +265,7 @@ class RettighetStegTest : No {
             forbruk: Stønadsdager,
             trukketEgenandel: Beløp,
             beløpTilUtbetaling: Beløp,
-            rettighetsdager: List<Utbetalingsdag>,
+            utbetalingsdager: List<Utbetalingsdag>,
 
         ) {
             antallVedtak++

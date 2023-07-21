@@ -113,7 +113,7 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             forbruk: Stønadsdager,
             trukketEgenandel: Beløp,
             beløpTilUtbetaling: Beløp,
-            rettighetsdager: List<Utbetalingsdag>,
+            utbetalingsdager: List<Utbetalingsdag>,
         ) {
             vedtakHistorikk.forbrukHistorikk.put(virkningsdato, forbruk)
             vedtakHistorikk.trukketEgenandelHistorikk.put(virkningsdato, trukketEgenandel)

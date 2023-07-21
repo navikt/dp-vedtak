@@ -56,14 +56,14 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         forbruk: Stønadsdager,
         trukketEgenandel: Beløp,
         beløpTilUtbetaling: Beløp,
-        rettighetsdager: List<Utbetalingsdag>,
+        utbetalingsdager: List<Utbetalingsdag>,
     ) {
         utbetalingsvedtakFattet = UtbetalingsvedtakFattet(
             vedtakId = vedtakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
-            utbetalingsdager = rettighetsdager.map { løpendeRettighetDag ->
+            utbetalingsdager = utbetalingsdager.map { løpendeRettighetDag ->
                 UtbetalingsdagDto(
                     dato = løpendeRettighetDag.dato,
                     beløp = løpendeRettighetDag.beløp.reflection { it }.toDouble(),

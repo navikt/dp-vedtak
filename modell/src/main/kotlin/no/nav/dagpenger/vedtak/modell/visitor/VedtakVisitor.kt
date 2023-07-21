@@ -37,7 +37,7 @@ interface VedtakVisitor {
         forbruk: Stønadsdager,
         trukketEgenandel: Beløp,
         beløpTilUtbetaling: Beløp,
-        rettighetsdager: List<Utbetalingsdag>,
+        utbetalingsdager: List<Utbetalingsdag>,
     ) {}
 
     fun visitAvslag(
