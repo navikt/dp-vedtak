@@ -27,6 +27,6 @@ class Beløp private constructor(verdi: BigDecimal) : Comparable<Beløp> {
     infix operator fun times(beløp: Beløp): Beløp = Beløp(verdi * beløp.verdi)
     infix operator fun div(beløp: Beløp): Beløp = Beløp((verdi / beløp.verdi).setScale(antallDesimaler))
     infix operator fun div(timer: Timer): Beløp = this / timer.timer.beløp // @todo: Ikke eksponer "private" timer verdier
-    internal infix operator fun times(faktor: Number): Beløp = Beløp(this.verdi * BigDecimal.valueOf(faktor.toDouble()))
+    infix operator fun times(faktor: Number): Beløp = Beløp(this.verdi * BigDecimal.valueOf(faktor.toDouble()))
     override fun toString(): String = verdi.toString()
 }
