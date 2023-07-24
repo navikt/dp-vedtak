@@ -1,5 +1,8 @@
 package no.nav.dagpenger.vedtak.mediator.persistens
 
+import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.vedtak.assertDeepEquals
 import no.nav.dagpenger.vedtak.db.Postgres.withMigratedDb
 import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder
@@ -11,10 +14,8 @@ import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.LocalDate
 import java.util.UUID
-import kotlin.test.assertEquals
 
 class PostgresPersonRepositoryTest {
 
@@ -27,11 +28,11 @@ class PostgresPersonRepositoryTest {
         withMigratedDb {
             val postgresPersonRepository = PostgresPersonRepository(PostgresDataSourceBuilder.dataSource)
             postgresPersonRepository.lagre(person)
-            assertDoesNotThrow {
+            shouldNotThrowAny {
                 postgresPersonRepository.lagre(person)
             }
-            val hentetPerson = postgresPersonRepository.hent(ident)
-            assertEquals(person.ident(), hentetPerson?.ident())
+            val hentetPerson = postgresPersonRepository.hent(ident).shouldNotBeNull()
+            person.ident() shouldBe hentetPerson.ident()
         }
     }
 
@@ -56,7 +57,7 @@ class PostgresPersonRepositoryTest {
             val personRepository = PostgresPersonRepository(PostgresDataSourceBuilder.dataSource)
             personRepository.lagre(person)
 
-            val rehydrertPerson = personRepository.hent(ident)
+            val rehydrertPerson = personRepository.hent(ident).shouldNotBeNull()
 
             assertDeepEquals(
                 person,
