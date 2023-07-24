@@ -39,16 +39,6 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
     }
 
     fun accept(visitor: VedtakHistorikkVisitor) {
-        if (forbrukHistorikk.harHistorikk()) {
-            val gjenstående = stønadsdagerHistorikk.get(LocalDate.now()) - forbrukHistorikk.summer(LocalDate.now())
-            visitor.visitGjenståendeStønadsperiode(gjenstående)
-        }
-        if (egenandelHistorikk.harHistorikk()) {
-            val gjenstående =
-                egenandelHistorikk.get(LocalDate.now()) - trukketEgenandelHistorikk.summer(LocalDate.now())
-            visitor.visitGjenståendeEgenandel(gjenstående)
-        }
-
         visitor.preVisitVedtak()
         vedtak.forEach { it.accept(visitor) }
         visitor.postVisitVedtak()
