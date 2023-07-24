@@ -18,7 +18,6 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
-import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -243,7 +242,6 @@ class RettighetStegTest : No {
             vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,
             egenandel: Beløp,
-            tilstand: Vedtak.Tilstand,
         ) {
             antallVedtak++
             this.grunnlag = grunnlag

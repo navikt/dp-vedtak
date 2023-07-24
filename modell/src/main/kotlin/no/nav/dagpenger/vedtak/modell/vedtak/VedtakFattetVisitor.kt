@@ -33,7 +33,6 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         vanligArbeidstidPerDag: Timer,
         dagpengerettighet: Dagpengerettighet,
         egenandel: Beløp,
-        tilstand: Vedtak.Tilstand,
     ) {
         vedtakFattet = VedtakFattet(
             vedtakId = vedtakId,

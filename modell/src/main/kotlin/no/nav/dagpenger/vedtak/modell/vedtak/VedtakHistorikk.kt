@@ -94,7 +94,6 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             vanligArbeidstidPerDag: Timer,
             dagpengerettighet: Dagpengerettighet,
             egenandel: Beløp,
-            tilstand: Vedtak.Tilstand,
         ) {
             vedtakHistorikk.dagsatsHistorikk.put(virkningsdato, dagsats)
             vedtakHistorikk.grunnlagHistorikk.put(virkningsdato, grunnlag)

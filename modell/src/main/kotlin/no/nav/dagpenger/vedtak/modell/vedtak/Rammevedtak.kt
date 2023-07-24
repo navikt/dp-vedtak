@@ -63,7 +63,6 @@ class Rammevedtak(
             vanligArbeidstidPerDag = vanligArbeidstidPerDag,
             dagpengerettighet = dagpengerettighet,
             egenandel = egenandel,
-            tilstand = tilstand,
         )
     }
 }
