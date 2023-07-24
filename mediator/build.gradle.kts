@@ -10,6 +10,9 @@ dependencies {
     implementation(libs.jackson.core)
     implementation(libs.jackson.datatype.jsr310)
 
+    // Database avhengighetere
+    implementation(libs.bundles.postgres)
+
     // https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-slf4j/
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:${libs.versions.kotlinx.coroutines.slf4j.get()}")
 
@@ -21,6 +24,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core-jvm:${libs.versions.kotest.get()}")
 
     testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
+    testImplementation(libs.bundles.postgres.test)
 }
 
 application {

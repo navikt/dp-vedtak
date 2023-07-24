@@ -10,6 +10,7 @@ mockk = "1.13.4"
 junit-platform-suite = "1.9.3" #relatert til cucumber
 kotlinx-coroutines-slf4j = "1.7.1"
 dagpenger-biblioteker = "2023.01.16-10.20.e8450fdff15a"
+testContainer = "1.18.3"
 
 [libraries]
 dp-biblioteker-oauth2-klient = { group = "com.github.navikt.dp-biblioteker", name = "oauth2-klient", version = "2023.04.27-09.33.fcf0798bf943" }
@@ -29,6 +30,15 @@ ktor-server-content-negotiation = { group = "io.ktor", name = "ktor-server-conte
 ktor-serialization-jackson = { group = "io.ktor", name = "ktor-serialization-jackson", version.ref = "ktor" }
 ktor-server-logging-jvm = { group = "io.ktor", name = "ktor-server-call-logging-jvm", version.ref = "ktor" }
 
+# Database
+flywaydb = { group = "org.flywaydb", name = "flyway-core", version = "9.20.1" }
+postgresql-driver = { group = "org.postgresql", name = "postgresql", version = "42.6.0" }
+hikariCP = { group = "com.zaxxer", name = "HikariCP", version = "5.0.1" }
+kotlinquery = { group = "com.github.seratch", name = "kotliquery", version = "1.9.0" }
+testContainer = { group = "org.testcontainers", name = "testcontainers", version.ref = "testContainer" }
+testContainer-postgresql = { group = "org.testcontainers", name = "postgresql", version.ref = "testContainer" }
+
+
 jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin", version.ref = "jackson" }
 jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
 jackson-annotation = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jackson" }
@@ -46,4 +56,5 @@ shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
 [bundles]
 ktor-server = ["ktor-server", "ktor-server-auth-jvm", "ktor-server-content-negotiation", "ktor-serialization-jackson", "ktor-server-logging-jvm", "jackson-datatype-jsr310"]
 jackson = ["jackson-core", "jackson-datatype-jsr310", "jackson-annotation", "jackson-module-kotlin"]
-
+postgres = ["flywaydb", "postgresql-driver", "hikariCP", "kotlinquery"]
+postgres-test = ["testContainer", "testContainer-postgresql"]
