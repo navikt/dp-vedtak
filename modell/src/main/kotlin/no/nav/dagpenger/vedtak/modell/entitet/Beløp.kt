@@ -13,8 +13,8 @@ class Beløp private constructor(verdi: BigDecimal) : Comparable<Beløp> {
 
         fun Iterable<Beløp>.summerBeløp() = sumOf { it.verdi }.beløp
 
-        val Number.beløp get() = Beløp(BigDecimal.valueOf(this.toDouble()).setScale(antallDesimaler))
-        val BigDecimal.beløp get() = Beløp(this.setScale(antallDesimaler))
+        val Number.beløp get() = Beløp(BigDecimal.valueOf(this.toDouble()))
+        val BigDecimal.beløp get() = Beløp(this)
     }
 
     fun <R> reflection(block: (BigDecimal) -> R) = block(verdi)
