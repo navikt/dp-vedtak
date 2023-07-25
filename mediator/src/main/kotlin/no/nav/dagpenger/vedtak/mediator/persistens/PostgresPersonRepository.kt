@@ -9,6 +9,9 @@ import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.UUID
 import javax.sql.DataSource
 
 class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepository {
@@ -31,11 +34,23 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
     }
 
     override fun lagre(person: Person) {
-        val lagrePersonVisitor = LagrePersonVisitor(person)
-
         using(sessionOf(dataSource)) { session ->
             session.transaction { transactionalSession: TransactionalSession ->
-                lagrePersonVisitor.queries.forEach {
+                val dbPersonId = transactionalSession.run(
+                    queryOf(
+                        // langutage=PostgreSQL
+                        statement = """SELECT id FROM person WHERE ident = :ident""",
+                        paramMap = mapOf("ident" to person.ident().identifikator()),
+                    ).map { rad -> rad.longOrNull("id") }.asSingle,
+                ) ?: transactionalSession.run(
+                    queryOf(
+                        //language=PostgreSQL
+                        statement = """INSERT INTO person (ident) VALUES (:ident) ON CONFLICT DO NOTHING RETURNING id""",
+                        paramMap = mapOf("ident" to person.ident().identifikator()),
+                    ).map { rad -> rad.long("id") }.asSingle,
+                ) ?: throw RuntimeException("Kunne ikke finne eller opprette person")
+                val populerQueries = PopulerQueries(person, dbPersonId)
+                populerQueries.queries.forEach {
                     transactionalSession.run(it.asUpdate)
                 }
             }
@@ -43,7 +58,7 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
     }
 }
 
-class LagrePersonVisitor(person: Person) : PersonVisitor {
+class PopulerQueries(person: Person, private val dbPersonId: Long) : PersonVisitor {
 
     // private val personIdentifikator =
     val queries = mutableListOf<Query>()
@@ -52,12 +67,22 @@ class LagrePersonVisitor(person: Person) : PersonVisitor {
         person.accept(this)
     }
 
-    override fun visitPerson(personIdentifikator: PersonIdentifikator) {
+    override fun preVisitVedtak(
+        vedtakId: UUID,
+        behandlingId: UUID,
+        virkningsdato: LocalDate,
+        vedtakstidspunkt: LocalDateTime,
+    ) {
         queries.add(
             queryOf(
                 //language=PostgreSQL
-                statement = """INSERT INTO person (ident) VALUES (:ident) ON CONFLICT DO NOTHING""",
-                paramMap = mapOf("ident" to personIdentifikator.identifikator()),
+                statement = """
+                    |INSERT INTO vedtak 
+                    |       (id, person_id, behandling_id, virkningsdato, vedtakstidspunkt) 
+                    |VALUES (:id, :person_id, :behandling_id, :virkningsdato, :vedtakstidspunkt )
+                    |ON CONFLICT DO NOTHING
+                """.trimMargin(),
+                paramMap = mapOf("id" to vedtakId, "person_id" to dbPersonId, "behandling_id" to behandlingId, "virkningsdato" to virkningsdato, "vedtakstidspunkt" to vedtakstidspunkt),
             ),
         )
     }
