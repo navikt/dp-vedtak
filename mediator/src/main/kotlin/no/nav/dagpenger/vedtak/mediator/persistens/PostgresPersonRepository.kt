@@ -9,6 +9,8 @@ import kotliquery.using
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -26,8 +28,9 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
                     """.trimIndent(),
                     paramMap = mapOf("ident" to ident.identifikator()),
                 ).map { row ->
-                    Person(
-                        row.string("ident").tilPersonIdentfikator(),
+                    Person.rehydrer(
+                        ident = row.string("ident").tilPersonIdentfikator(),
+                        vedtakHistorikk = VedtakHistorikk(session.hentVedtak(row.long("id"))),
                     )
                 }.asSingle,
             )
@@ -54,6 +57,23 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
             statement = """SELECT id FROM person WHERE ident = :ident""",
             paramMap = mapOf("ident" to ident),
         ).map { rad -> rad.longOrNull("id") }.asSingle,
+    )
+
+    private fun Session.hentVedtak(personId: Long) = this.run(
+        queryOf(
+            //language=PostgreSQL
+            statement = """ SELECT * FROM vedtak WHERE person_id = :personId """,
+            paramMap = mapOf("personId" to personId),
+        ).map { rad ->
+            Rammevedtak(
+                vedtakId = rad.uuid("id"),
+                behandlingId = rad.uuid("behandling_id"),
+                vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
+                virkningsdato = rad.localDate("virkningsdato"),
+                fakta = emptyList(),
+                rettigheter = emptyList(),
+            )
+        }.asList,
     )
 
     private fun Session.opprettPerson(ident: String) = this.run(
@@ -94,7 +114,7 @@ class PopulerQueries(person: Person, private val dbPersonId: Long) : PersonVisit
                     "person_id" to dbPersonId,
                     "behandling_id" to behandlingId,
                     "virkningsdato" to virkningsdato,
-                    "vedtakstidspunkt" to vedtakstidspunkt
+                    "vedtakstidspunkt" to vedtakstidspunkt,
                 ),
             ),
         )

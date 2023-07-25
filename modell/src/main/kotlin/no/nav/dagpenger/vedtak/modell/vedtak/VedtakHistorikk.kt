@@ -20,6 +20,8 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
 
     constructor() : this(emptySet<Vedtak>().toSortedSet())
 
+    constructor(vedtak: List<Vedtak>) : this(vedtak = vedtak.toSortedSet())
+
     private val observers = mutableSetOf<VedtakObserver>()
 
     internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()

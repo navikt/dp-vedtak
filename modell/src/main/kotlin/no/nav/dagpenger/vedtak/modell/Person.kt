@@ -18,7 +18,7 @@ import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.time.LocalDate
 
-class Person private constructor(
+class Person internal constructor(
     private val ident: PersonIdentifikator,
     internal val vedtakHistorikk: VedtakHistorikk,
     private val rapporteringsperioder: Rapporteringsperioder,
@@ -30,7 +30,23 @@ class Person private constructor(
         vedtakHistorikk.addObserver(this)
     }
 
-    constructor(ident: PersonIdentifikator) : this(ident, VedtakHistorikk(), Rapporteringsperioder(), mutableListOf<Behandling>())
+    constructor(ident: PersonIdentifikator) : this(
+        ident,
+        VedtakHistorikk(),
+        Rapporteringsperioder(),
+        mutableListOf<Behandling>(),
+    )
+
+    companion object {
+        val kontekstType: String = "Person"
+
+        fun rehydrer(
+            ident: PersonIdentifikator,
+            vedtakHistorikk: VedtakHistorikk,
+        ): Person {
+            return Person(ident, vedtakHistorikk, Rapporteringsperioder(), mutableListOf())
+        }
+    }
 
     private val observers = mutableListOf<PersonObserver>()
 
@@ -98,10 +114,6 @@ class Person private constructor(
 
     private fun kontekst(hendelse: Hendelse) {
         hendelse.kontekst(this)
-    }
-
-    companion object {
-        val kontekstType: String = "Person"
     }
 
     override fun toSpesifikkKontekst() = SpesifikkKontekst(kontekstType, mapOf("ident" to ident.identifikator()))
