@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.mediator.persistens
 
 import kotliquery.Query
+import kotliquery.Session
 import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
@@ -36,19 +37,9 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
     override fun lagre(person: Person) {
         using(sessionOf(dataSource)) { session ->
             session.transaction { transactionalSession: TransactionalSession ->
-                val dbPersonId = transactionalSession.run(
-                    queryOf(
-                        // langutage=PostgreSQL
-                        statement = """SELECT id FROM person WHERE ident = :ident""",
-                        paramMap = mapOf("ident" to person.ident().identifikator()),
-                    ).map { rad -> rad.longOrNull("id") }.asSingle,
-                ) ?: transactionalSession.run(
-                    queryOf(
-                        //language=PostgreSQL
-                        statement = """INSERT INTO person (ident) VALUES (:ident) ON CONFLICT DO NOTHING RETURNING id""",
-                        paramMap = mapOf("ident" to person.ident().identifikator()),
-                    ).map { rad -> rad.long("id") }.asSingle,
-                ) ?: throw RuntimeException("Kunne ikke finne eller opprette person")
+                val dbPersonId = transactionalSession.hentPerson(person.ident().identifikator())
+                    ?: transactionalSession.opprettPerson(person.ident().identifikator())
+                    ?: throw RuntimeException("Kunne ikke finne eller opprette person")
                 val populerQueries = PopulerQueries(person, dbPersonId)
                 populerQueries.queries.forEach {
                     transactionalSession.run(it.asUpdate)
@@ -56,6 +47,22 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
             }
         }
     }
+
+    private fun Session.hentPerson(ident: String) = this.run(
+        queryOf(
+            //language=PostgreSQL
+            statement = """SELECT id FROM person WHERE ident = :ident""",
+            paramMap = mapOf("ident" to ident),
+        ).map { rad -> rad.longOrNull("id") }.asSingle,
+    )
+
+    private fun Session.opprettPerson(ident: String) = this.run(
+        queryOf(
+            //language=PostgreSQL
+            statement = """INSERT INTO person (ident) VALUES (:ident) ON CONFLICT DO NOTHING RETURNING id""",
+            paramMap = mapOf("ident" to ident),
+        ).map { rad -> rad.long("id") }.asSingle,
+    )
 }
 
 class PopulerQueries(person: Person, private val dbPersonId: Long) : PersonVisitor {
@@ -82,7 +89,13 @@ class PopulerQueries(person: Person, private val dbPersonId: Long) : PersonVisit
                     |VALUES (:id, :person_id, :behandling_id, :virkningsdato, :vedtakstidspunkt )
                     |ON CONFLICT DO NOTHING
                 """.trimMargin(),
-                paramMap = mapOf("id" to vedtakId, "person_id" to dbPersonId, "behandling_id" to behandlingId, "virkningsdato" to virkningsdato, "vedtakstidspunkt" to vedtakstidspunkt),
+                paramMap = mapOf(
+                    "id" to vedtakId,
+                    "person_id" to dbPersonId,
+                    "behandling_id" to behandlingId,
+                    "virkningsdato" to virkningsdato,
+                    "vedtakstidspunkt" to vedtakstidspunkt
+                ),
             ),
         )
     }
