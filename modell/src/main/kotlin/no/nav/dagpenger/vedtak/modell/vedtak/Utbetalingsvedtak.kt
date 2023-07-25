@@ -13,8 +13,8 @@ class Utbetalingsvedtak(
     vedtakId: UUID = UUID.randomUUID(),
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
-    utfall: Boolean,
     virkningsdato: LocalDate,
+    private val utfall: Boolean,
     private val forbruk: Stønadsdager,
     private val utbetalingsdager: List<Utbetalingsdag>,
     private val trukketEgenandel: Beløp,
@@ -22,7 +22,6 @@ class Utbetalingsvedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
     vedtakstidspunkt = vedtakstidspunkt,
-    utfall = utfall,
     virkningsdato = virkningsdato,
 ) {
 

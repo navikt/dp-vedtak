@@ -30,7 +30,6 @@ class Rammevedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
     vedtakstidspunkt = vedtakstidspunkt,
-    utfall = true,
     virkningsdato = virkningsdato,
 ) {
 

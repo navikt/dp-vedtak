@@ -10,11 +10,11 @@ class Avslag private constructor(
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
+    private val utfall: Boolean = false,
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
     vedtakstidspunkt = vedtakstidspunkt,
-    utfall = false,
     virkningsdato = virkningsdato,
 ) {
 
