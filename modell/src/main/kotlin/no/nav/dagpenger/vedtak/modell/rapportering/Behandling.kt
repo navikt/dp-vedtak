@@ -229,7 +229,7 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
         }
 
         override fun visitdag(dag: Dag) {
-            if (dag.dato() in periode) {
+            if (dag in periode) {
                 dager.add(dag)
             }
         }
