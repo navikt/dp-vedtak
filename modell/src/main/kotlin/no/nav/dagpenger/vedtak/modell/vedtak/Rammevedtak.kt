@@ -11,6 +11,8 @@ import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Faktum
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Grunnlag
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.VanligArbeidstidPerDag
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Rettighet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.time.LocalDate
@@ -44,9 +46,9 @@ class Rammevedtak(
             egenandel: Beløp,
         ): Rammevedtak {
             val rettighet = when (dagpengerettighet) {
-                Dagpengerettighet.Ordinær -> Ordinær(UUID.randomUUID(), virkningsdato, utfall = true)
-                Dagpengerettighet.Permittering -> TODO()
-                Dagpengerettighet.PermitteringFraFiskeindustrien -> TODO()
+                Dagpengerettighet.Ordinær -> Ordinær(UUID.randomUUID(), utfall = true)
+                Dagpengerettighet.Permittering -> Permittering(UUID.randomUUID(), utfall = true)
+                Dagpengerettighet.PermitteringFraFiskeindustrien -> PermitteringFraFiskeindustrien(UUID.randomUUID(), utfall = true)
                 Dagpengerettighet.ForskutterteLønnsgarantimidler -> TODO()
                 Dagpengerettighet.Ingen -> TODO()
             }
@@ -66,8 +68,23 @@ class Rammevedtak(
     }
 
     override fun accept(visitor: VedtakVisitor) {
+        visitor.preVisitVedtak(
+            vedtakId = vedtakId,
+            behandlingId = behandlingId,
+            virkningsdato = virkningsdato,
+            vedtakstidspunkt = vedtakstidspunkt,
+        )
         fakta.forEach {
             it.accept(visitor)
         }
+        rettigheter.forEach {
+            it.accept(visitor)
+        }
+        visitor.postVisitVedtak(
+            vedtakId = vedtakId,
+            behandlingId = behandlingId,
+            virkningsdato = virkningsdato,
+            vedtakstidspunkt = vedtakstidspunkt,
+        )
     }
 }

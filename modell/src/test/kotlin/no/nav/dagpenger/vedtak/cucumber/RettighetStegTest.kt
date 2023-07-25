@@ -18,6 +18,9 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -113,7 +116,7 @@ class RettighetStegTest : No {
         }
 
         Så("vedtaket har grunnlag på {bigdecimal} kroner") { grunnlag: BigDecimal ->
-            assertEquals(grunnlag, inspektør.grunnlag)
+            assertEquals(grunnlag.beløp, inspektør.grunnlag)
         }
 
         Så("vedtaket har stønadsperiode på {int} uker") { stønadsperiode: Int ->
@@ -218,11 +221,12 @@ class RettighetStegTest : No {
             person.accept(this)
         }
 
+        private var vedtakId: UUID? = null
         lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
         lateinit var stønadsdager: Stønadsdager
-        lateinit var grunnlag: BigDecimal
+        lateinit var grunnlag: Beløp
         lateinit var dagsats: Beløp
         lateinit var egenandel: Beløp
         lateinit var virkningsdato: LocalDate
@@ -230,28 +234,57 @@ class RettighetStegTest : No {
         lateinit var forbruk: Stønadsdager
         var antallVedtak = 0
 
-        override fun visitRammevedtak(
+        override fun preVisitVedtak(
             vedtakId: UUID,
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean?,
-            grunnlag: BigDecimal,
-            dagsats: Beløp,
-            stønadsdager: Stønadsdager,
-            vanligArbeidstidPerDag: Timer,
-            dagpengerettighet: Dagpengerettighet,
-            egenandel: Beløp,
         ) {
-            antallVedtak++
-            this.grunnlag = grunnlag
-            this.dagsats = dagsats
-            this.stønadsdager = stønadsdager
-            this.vanligArbeidstidPerDag = vanligArbeidstidPerDag
-            this.dagpengerettighet = dagpengerettighet
-            this.egenandel = egenandel
+            this.vedtakId = vedtakId
             this.virkningsdato = virkningsdato
             this.behandlingId = behandlingId
+            antallVedtak++
+        }
+
+        override fun visitOrdinær(ordinær: Ordinær) {
+            this.dagpengerettighet = Dagpengerettighet.Ordinær
+        }
+
+        override fun visitPermitteringFraFiskeindustrien(permitteringFraFiskeindustrien: PermitteringFraFiskeindustrien) {
+            this.dagpengerettighet = Dagpengerettighet.PermitteringFraFiskeindustrien
+        }
+
+        override fun visitPermittering(permittering: Permittering) {
+            this.dagpengerettighet = Dagpengerettighet.Permittering
+        }
+
+        override fun visitAntallStønadsdager(dager: Stønadsdager) {
+            this.stønadsdager = dager
+        }
+
+        override fun visitVanligArbeidstidPerDag(timer: Timer) {
+            this.vanligArbeidstidPerDag = timer
+        }
+
+        override fun visitDagsats(beløp: Beløp) {
+            this.dagsats = beløp
+        }
+
+        override fun visitEgenandel(beløp: Beløp) {
+            this.egenandel = beløp
+        }
+
+        override fun visitGrunnlag(beløp: Beløp) {
+            this.grunnlag = beløp
+        }
+
+        override fun postVisitVedtak(
+            vedtakId: UUID,
+            behandlingId: UUID,
+            virkningsdato: LocalDate,
+            vedtakstidspunkt: LocalDateTime,
+        ) {
+            this.vedtakId = null
         }
 
         override fun visitLøpendeRettighet(

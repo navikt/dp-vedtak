@@ -6,9 +6,11 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.SortedSet
@@ -21,7 +23,7 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
     private val observers = mutableSetOf<VedtakObserver>()
 
     internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
-    private val grunnlagHistorikk = TemporalCollection<BigDecimal>()
+    private val grunnlagHistorikk = TemporalCollection<Beløp>()
     internal val dagsatsHistorikk = TemporalCollection<Beløp>()
     internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
 
@@ -72,25 +74,57 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
 
     private class HistorikkOppdaterer(private val vedtakHistorikk: VedtakHistorikk) : VedtakVisitor {
 
-        override fun visitRammevedtak(
+        private var virkningsdato: LocalDate? = null
+
+        private fun virkningsdato() = requireNotNull(virkningsdato) { " Forventet at virkninsdato er satt. Har du husket preVisitVedtak?" }
+        override fun preVisitVedtak(
             vedtakId: UUID,
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean?,
-            grunnlag: BigDecimal,
-            dagsats: Beløp,
-            stønadsdager: Stønadsdager,
-            vanligArbeidstidPerDag: Timer,
-            dagpengerettighet: Dagpengerettighet,
-            egenandel: Beløp,
         ) {
-            vedtakHistorikk.dagsatsHistorikk.put(virkningsdato, dagsats)
-            vedtakHistorikk.grunnlagHistorikk.put(virkningsdato, grunnlag)
-            vedtakHistorikk.stønadsdagerHistorikk.put(virkningsdato, stønadsdager)
-            vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, dagpengerettighet)
-            vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato, vanligArbeidstidPerDag)
-            vedtakHistorikk.egenandelHistorikk.put(virkningsdato, egenandel)
+            this.virkningsdato = virkningsdato
+        }
+
+        override fun visitOrdinær(ordinær: Ordinær) {
+            vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.Ordinær)
+        }
+
+        override fun visitPermitteringFraFiskeindustrien(permitteringFraFiskeindustrien: PermitteringFraFiskeindustrien) {
+            vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.PermitteringFraFiskeindustrien)
+        }
+
+        override fun visitPermittering(permittering: Permittering) {
+            vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.Permittering)
+        }
+
+        override fun visitAntallStønadsdager(dager: Stønadsdager) {
+            vedtakHistorikk.stønadsdagerHistorikk.put(virkningsdato(), dager)
+        }
+
+        override fun visitVanligArbeidstidPerDag(timer: Timer) {
+            vedtakHistorikk.vanligArbeidstidHistorikk.put(virkningsdato(), timer)
+        }
+
+        override fun visitDagsats(beløp: Beløp) {
+            vedtakHistorikk.dagsatsHistorikk.put(virkningsdato(), beløp)
+        }
+
+        override fun visitEgenandel(beløp: Beløp) {
+            vedtakHistorikk.egenandelHistorikk.put(virkningsdato(), beløp)
+        }
+
+        override fun visitGrunnlag(beløp: Beløp) {
+            vedtakHistorikk.grunnlagHistorikk.put(virkningsdato(), beløp)
+        }
+
+        override fun postVisitVedtak(
+            vedtakId: UUID,
+            behandlingId: UUID,
+            virkningsdato: LocalDate,
+            vedtakstidspunkt: LocalDateTime,
+        ) {
+            this.virkningsdato = null
         }
 
         override fun visitLøpendeRettighet(

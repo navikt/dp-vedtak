@@ -1,29 +1,26 @@
 package no.nav.dagpenger.vedtak.modell.visitor
 
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
-import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-interface VedtakVisitor : FaktumVisitor {
+interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
 
-    fun visitRammevedtak(
+    fun preVisitVedtak(
         vedtakId: UUID,
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean?,
-        grunnlag: BigDecimal,
-        dagsats: Beløp,
-        stønadsdager: Stønadsdager,
-        vanligArbeidstidPerDag: Timer,
-        dagpengerettighet: Dagpengerettighet,
-        egenandel: Beløp,
+    ) {}
+
+    fun postVisitVedtak(
+        vedtakId: UUID,
+        behandlingId: UUID,
+        virkningsdato: LocalDate,
+        vedtakstidspunkt: LocalDateTime,
     ) {}
 
     fun visitLøpendeRettighet(
