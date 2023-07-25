@@ -4,8 +4,15 @@ import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
+import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
+import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Egenandel
+import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Faktum
+import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Grunnlag
+import no.nav.dagpenger.vedtak.modell.vedtak.fakta.VanligArbeidstidPerDag
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Rettighet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -15,12 +22,8 @@ class Rammevedtak(
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     virkningsdato: LocalDate,
-    private val vanligArbeidstidPerDag: Timer,
-    private val grunnlag: BigDecimal,
-    private val dagsats: Beløp,
-    private val stønadsdager: Stønadsdager,
-    private val dagpengerettighet: Dagpengerettighet,
-    private val egenandel: Beløp,
+    private val fakta: List<Faktum<*>>,
+    private val rettigheter: List<Rettighet>,
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
@@ -33,36 +36,38 @@ class Rammevedtak(
         fun innvilgelse(
             behandlingId: UUID,
             virkningsdato: LocalDate,
-            grunnlag: BigDecimal,
+            grunnlag: Beløp,
             dagsats: Beløp,
             stønadsdager: Stønadsdager,
             dagpengerettighet: Dagpengerettighet,
             vanligArbeidstidPerDag: Timer,
             egenandel: Beløp,
-        ) = Rammevedtak(
-            behandlingId = behandlingId,
-            virkningsdato = virkningsdato,
-            vanligArbeidstidPerDag = vanligArbeidstidPerDag,
-            grunnlag = grunnlag,
-            dagsats = dagsats,
-            stønadsdager = stønadsdager,
-            dagpengerettighet = dagpengerettighet,
-            egenandel = egenandel,
-        )
+        ): Rammevedtak {
+            val rettighet = when (dagpengerettighet) {
+                Dagpengerettighet.Ordinær -> Ordinær(UUID.randomUUID(), virkningsdato, utfall = true)
+                Dagpengerettighet.Permittering -> TODO()
+                Dagpengerettighet.PermitteringFraFiskeindustrien -> TODO()
+                Dagpengerettighet.ForskutterteLønnsgarantimidler -> TODO()
+                Dagpengerettighet.Ingen -> TODO()
+            }
+            return Rammevedtak(
+                behandlingId = behandlingId,
+                virkningsdato = virkningsdato,
+                fakta = listOf(
+                    VanligArbeidstidPerDag(vanligArbeidstidPerDag),
+                    Grunnlag(grunnlag),
+                    Dagsats(dagsats),
+                    AntallStønadsdager(stønadsdager),
+                    Egenandel(egenandel),
+                ),
+                rettigheter = listOf(rettighet),
+            )
+        }
     }
+
     override fun accept(visitor: VedtakVisitor) {
-        visitor.visitRammevedtak(
-            vedtakId = vedtakId,
-            behandlingId = behandlingId,
-            virkningsdato = virkningsdato,
-            vedtakstidspunkt = vedtakstidspunkt,
-            utfall = utfall,
-            grunnlag = grunnlag,
-            dagsats = dagsats,
-            stønadsdager = stønadsdager,
-            vanligArbeidstidPerDag = vanligArbeidstidPerDag,
-            dagpengerettighet = dagpengerettighet,
-            egenandel = egenandel,
-        )
+        fakta.forEach {
+            it.accept(visitor)
+        }
     }
 }

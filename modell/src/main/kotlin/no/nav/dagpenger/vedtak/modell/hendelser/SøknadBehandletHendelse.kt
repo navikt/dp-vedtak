@@ -8,7 +8,6 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.vedtak.Avslag.Companion.avslag
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak.Companion.innvilgelse
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
-import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
 
@@ -27,7 +26,7 @@ class DagpengerInnvilgetHendelse(
     virkningsdato: LocalDate,
     private val dagpengerettighet: Dagpengerettighet,
     private val dagsats: Beløp,
-    private val grunnlag: BigDecimal,
+    private val grunnlag: Beløp,
     private val stønadsdager: Stønadsdager,
     private val vanligArbeidstidPerDag: Timer,
     private val egenandel: Beløp,

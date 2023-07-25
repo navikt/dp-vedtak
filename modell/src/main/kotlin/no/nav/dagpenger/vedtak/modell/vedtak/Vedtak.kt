@@ -10,7 +10,7 @@ abstract class Vedtak(
     protected val behandlingId: UUID,
     protected val vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     // @todo: Har alle vedtak utfall?
-    protected val utfall: Boolean,
+    protected val utfall: Boolean?,
     protected val virkningsdato: LocalDate,
 ) : Comparable<Vedtak> {
     companion object {

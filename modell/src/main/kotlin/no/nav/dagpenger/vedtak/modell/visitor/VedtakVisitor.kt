@@ -10,14 +10,14 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-interface VedtakVisitor {
+interface VedtakVisitor : FaktumVisitor {
 
     fun visitRammevedtak(
         vedtakId: UUID,
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean,
+        utfall: Boolean?,
         grunnlag: BigDecimal,
         dagsats: Beløp,
         stønadsdager: Stønadsdager,
@@ -30,7 +30,7 @@ interface VedtakVisitor {
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean,
+        utfall: Boolean?,
         virkningsdato: LocalDate,
         forbruk: Stønadsdager,
         trukketEgenandel: Beløp,
@@ -42,7 +42,7 @@ interface VedtakVisitor {
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean,
+        utfall: Boolean?,
         virkningsdato: LocalDate,
     ) {}
 
@@ -51,6 +51,6 @@ interface VedtakVisitor {
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean,
+        utfall: Boolean?,
     ) {}
 }

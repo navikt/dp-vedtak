@@ -77,7 +77,7 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean,
+            utfall: Boolean?,
             grunnlag: BigDecimal,
             dagsats: Beløp,
             stønadsdager: Stønadsdager,
@@ -97,7 +97,7 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean,
+            utfall: Boolean?,
             virkningsdato: LocalDate,
             forbruk: Stønadsdager,
             trukketEgenandel: Beløp,
@@ -113,7 +113,7 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean,
+            utfall: Boolean?,
             virkningsdato: LocalDate,
         ) {
         }
@@ -123,7 +123,7 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean,
+            utfall: Boolean?,
         ) {
             vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, Dagpengerettighet.Ingen)
         }

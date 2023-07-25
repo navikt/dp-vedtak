@@ -47,7 +47,7 @@ class RettighetStegTest : No {
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                     dagsats = søknadHendelse.dagsats.beløp,
-                    grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
+                    grunnlag = søknadHendelse.grunnlag.beløp,
                     stønadsdager = Dagpengeperiode(søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
                     egenandel = søknadHendelse.egenandel.beløp,
@@ -64,7 +64,7 @@ class RettighetStegTest : No {
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                     dagsats = søknadHendelse.dagsats.beløp,
-                    grunnlag = søknadHendelse.grunnlag.toBigDecimal(),
+                    grunnlag = søknadHendelse.grunnlag.beløp,
                     stønadsdager = Dagpengeperiode(antallUker = søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
                     egenandel = søknadHendelse.egenandel.beløp,
@@ -235,7 +235,7 @@ class RettighetStegTest : No {
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean,
+            utfall: Boolean?,
             grunnlag: BigDecimal,
             dagsats: Beløp,
             stønadsdager: Stønadsdager,
@@ -258,7 +258,7 @@ class RettighetStegTest : No {
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean,
+            utfall: Boolean?,
             virkningsdato: LocalDate,
             forbruk: Stønadsdager,
             trukketEgenandel: Beløp,
@@ -278,7 +278,7 @@ class RettighetStegTest : No {
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean,
+            utfall: Boolean?,
         ) {
             antallVedtak++
             this.virkningsdato = virkningsdato
@@ -289,7 +289,7 @@ class RettighetStegTest : No {
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean,
+            utfall: Boolean?,
             virkningsdato: LocalDate,
         ) {
             antallVedtak++

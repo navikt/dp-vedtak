@@ -26,7 +26,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean,
+        utfall: Boolean?,
         grunnlag: BigDecimal,
         dagsats: Beløp,
         stønadsdager: Stønadsdager,
@@ -39,7 +39,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
-            utfall = when (utfall) {
+            utfall = when (utfall == true) {
                 true -> Innvilget
                 false -> Avslått
             },
@@ -50,7 +50,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean,
+        utfall: Boolean?,
         virkningsdato: LocalDate,
         forbruk: Stønadsdager,
         trukketEgenandel: Beløp,
@@ -68,7 +68,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
                     beløp = løpendeRettighetDag.beløp.reflection { it }.toDouble(),
                 )
             },
-            utfall = when (utfall) {
+            utfall = when (utfall == true) {
                 true -> Innvilget
                 false -> Avslått
             },
@@ -79,7 +79,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean,
+        utfall: Boolean?,
         virkningsdato: LocalDate,
     ) {
         vedtakFattet = VedtakFattet(
@@ -87,7 +87,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
-            utfall = when (utfall) {
+            utfall = when (utfall == true) {
                 true -> Innvilget
                 false -> Avslått
             },
@@ -99,14 +99,14 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean,
+        utfall: Boolean?,
     ) {
         vedtakFattet = VedtakFattet(
             vedtakId = vedtakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
-            utfall = when (utfall) {
+            utfall = when (utfall == true) {
                 true -> Innvilget
                 false -> Avslått
             },
