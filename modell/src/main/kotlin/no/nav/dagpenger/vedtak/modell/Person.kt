@@ -97,7 +97,7 @@ class Person internal constructor(
 
     override fun utbetalingsvedtakFattet(utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet) {
         observers.forEach {
-            it.løpendeVedtakFattet(ident.identifikator(), utbetalingsvedtakFattet)
+            it.utbetalingsvedtakFattet(ident.identifikator(), utbetalingsvedtakFattet)
         }
     }
 

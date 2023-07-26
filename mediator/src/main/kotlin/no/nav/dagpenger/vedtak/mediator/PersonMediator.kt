@@ -89,7 +89,7 @@ private class DelegatedObserver(private val observers: List<PersonObserver>) : P
         vedtakDelegate.add(Pair(ident, vedtakFattet))
     }
 
-    override fun løpendeVedtakFattet(ident: String, utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet) {
+    override fun utbetalingsvedtakFattet(ident: String, utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet) {
         løpendeVedtakDelegate.add(Pair(ident, utbetalingsvedtakFattet))
     }
 
@@ -101,7 +101,7 @@ private class DelegatedObserver(private val observers: List<PersonObserver>) : P
         }
         løpendeVedtakDelegate.forEach { (ident, vedtak) ->
             observers.forEach {
-                it.løpendeVedtakFattet(ident, vedtak)
+                it.utbetalingsvedtakFattet(ident, vedtak)
             }
         }
     }
