@@ -42,7 +42,7 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
         }
     }
 
-    override fun løpendeVedtakFattet(ident: String, utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet) {
+    override fun utbetalingsvedtakFattet(ident: String, utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet) {
         withLoggingContext(
             mapOf(
                 "behandlingId" to utbetalingsvedtakFattet.behandlingId.toString(),
