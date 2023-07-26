@@ -10,7 +10,6 @@ import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
-import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -30,7 +29,7 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
                 ).map { row ->
                     Person.rehydrer(
                         ident = row.string("ident").tilPersonIdentfikator(),
-                        vedtakHistorikk = VedtakHistorikk(session.hentVedtak(row.long("id"))),
+                        vedtak = session.hentVedtak(row.long("id")),
                     )
                 }.asSingle,
             )

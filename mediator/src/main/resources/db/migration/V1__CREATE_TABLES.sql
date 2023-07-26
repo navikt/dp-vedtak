@@ -12,3 +12,5 @@ CREATE TABLE IF NOT EXISTS vedtak
     virkningsdato     DATE      NOT NULL,
     vedtakstidspunkt  TIMESTAMP NOT NULL
 );
+
+CREATE INDEX IF NOT EXISTS vedtak_person_idx ON vedtak(person_id);

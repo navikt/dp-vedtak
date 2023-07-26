@@ -42,9 +42,9 @@ class Person internal constructor(
 
         fun rehydrer(
             ident: PersonIdentifikator,
-            vedtakHistorikk: VedtakHistorikk,
+            vedtak: List<Vedtak>,
         ): Person {
-            return Person(ident, vedtakHistorikk, Rapporteringsperioder(), mutableListOf())
+            return Person(ident, VedtakHistorikk(vedtak), Rapporteringsperioder(), mutableListOf())
         }
     }
 

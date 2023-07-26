@@ -18,9 +18,8 @@ import java.util.UUID
 
 class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>) : Collection<Vedtak> by vedtak {
 
-    constructor() : this(emptySet<Vedtak>().toSortedSet())
-
-    constructor(vedtak: List<Vedtak>) : this(vedtak = vedtak.toSortedSet())
+    internal constructor(vedtak: List<Vedtak>) : this(vedtak = vedtak.toSortedSet())
+    internal constructor() : this(emptyList<Vedtak>())
 
     private val observers = mutableSetOf<VedtakObserver>()
 
