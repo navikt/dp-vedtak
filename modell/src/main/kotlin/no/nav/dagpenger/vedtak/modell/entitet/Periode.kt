@@ -4,7 +4,7 @@ import no.nav.dagpenger.vedtak.modell.rapportering.Dag
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-internal class Periode(private val fomDato: LocalDate, private val tomDato: LocalDate) : ClosedRange<LocalDate>, Iterable<LocalDate> {
+class Periode(private val fomDato: LocalDate, private val tomDato: LocalDate) : ClosedRange<LocalDate>, Iterable<LocalDate> {
     override val endInclusive: LocalDate
         get() = tomDato
     override val start: LocalDate
