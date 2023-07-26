@@ -23,7 +23,7 @@ interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
         vedtakstidspunkt: LocalDateTime,
     ) {}
 
-    fun visitLøpendeRettighet(
+    fun visitUtbetalingsvedtak(
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,

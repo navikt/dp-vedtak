@@ -287,7 +287,7 @@ class RettighetStegTest : No {
             this.vedtakId = null
         }
 
-        override fun visitLøpendeRettighet(
+        override fun visitUtbetalingsvedtak(
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,

@@ -128,7 +128,7 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             this.virkningsdato = null
         }
 
-        override fun visitLøpendeRettighet(
+        override fun visitUtbetalingsvedtak(
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,

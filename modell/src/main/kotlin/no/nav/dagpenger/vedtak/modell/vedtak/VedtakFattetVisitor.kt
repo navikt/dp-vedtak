@@ -67,7 +67,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         this.utfall = null
     }
 
-    override fun visitLøpendeRettighet(
+    override fun visitUtbetalingsvedtak(
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,

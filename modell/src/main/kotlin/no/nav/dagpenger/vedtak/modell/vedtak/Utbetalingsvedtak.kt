@@ -45,7 +45,7 @@ class Utbetalingsvedtak(
     }
     override fun accept(visitor: VedtakVisitor) {
         val beløpTilUtbetaling = utbetalingsdager.summer() - trukketEgenandel
-        visitor.visitLøpendeRettighet(
+        visitor.visitUtbetalingsvedtak(
             vedtakId = vedtakId,
             behandlingId = behandlingId,
             vedtakstidspunkt = vedtakstidspunkt,
