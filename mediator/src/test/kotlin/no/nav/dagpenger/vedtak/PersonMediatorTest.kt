@@ -133,7 +133,10 @@ internal class PersonMediatorTest {
             vedtak.add(vedtakFattet)
         }
 
-        override fun løpendeVedtakFattet(ident: String, utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet) {
+        override fun utbetalingsvedtakFattet(
+            ident: String,
+            utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet,
+        ) {
             løpendeVedtak.add(utbetalingsvedtakFattet)
         }
     }
