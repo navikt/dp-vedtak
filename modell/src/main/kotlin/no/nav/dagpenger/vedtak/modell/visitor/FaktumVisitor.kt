@@ -8,8 +8,6 @@ interface FaktumVisitor {
 
     fun visitVanligArbeidstidPerDag(timer: Timer) {}
 
-    fun visitGrunnlag(beløp: Beløp) {}
-
     fun visitDagsats(beløp: Beløp) {}
 
     fun visitAntallStønadsdager(dager: Stønadsdager) {}

@@ -3,12 +3,12 @@ Egenskap: Utbetaling
 
   Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember med egenandel på tre dagsatser og dagsats på 800 kroner. Dagsats endres pga. barnetillegg fra søndag i uke 1.
     Gitt en ny hendelse om innvilget søknad
-      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 490921   | 52             | 8                      | Ordinær           | 2400      |
+      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
+      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 52             | 8                      | Ordinær           | 2400      |
 
     Gitt et endringsvedtak
-      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-      | 12345678901   | CA1BD250-8A03-45AA-B9A3-5BC5A49B7076 | true   | 18.12.2022    | 835     | 490921   | 52             | 8                      | Ordinær           | 2400      |
+      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
+      | 12345678901   | CA1BD250-8A03-45AA-B9A3-5BC5A49B7076 | true   | 18.12.2022    | 835     | 52             | 8                      | Ordinær           | 2400      |
 
   Scenario: Rapporterer ingen arbeidstimer
     Når rapporteringshendelse mottas

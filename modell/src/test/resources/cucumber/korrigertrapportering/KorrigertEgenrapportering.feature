@@ -4,8 +4,8 @@ Egenskap: Korrigert egenrapportering
 
   Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember
     Gitt en ny hendelse om innvilget søknad
-      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 333333   | 52             | 8                      | Ordinær           | 2400      |
+      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
+      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 52             | 8                      | Ordinær           | 2400      |
 
   Scenario: Rapporterer først ingen arbeidstimer. Korrigerer deretter med arbeid = 41 timer, altså over terskel.
     Når rapporteringshendelse mottas

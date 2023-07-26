@@ -42,7 +42,6 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
         virkningsdato = LocalDate.parse(packet["Virkningsdato"].asText()),
         dagpengerettighet = Dagpengerettighet.valueOf(packet["Rettighetstype"].asText()),
         dagsats = packet["Dagsats"].asDouble().beløp,
-        grunnlag = packet["Grunnlag"].asDouble().beløp,
         stønadsdager = Dagpengeperiode(antallUker = packet["Periode"].asInt()).tilStønadsdager(),
         vanligArbeidstidPerDag = packet["Fastsatt vanlig arbeidstid"].asDouble().timer,
         egenandel = when (Dagpengerettighet.valueOf(packet["Rettighetstype"].asText())) {

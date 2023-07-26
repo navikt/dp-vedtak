@@ -3,8 +3,8 @@ Egenskap: Utbetaling
 
   Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember med egenandel på tre dagsatser
     Gitt en ny hendelse om innvilget søknad
-      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 490921   | 52             | 8                      | Ordinær           | 2400      |
+      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
+      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 52             | 8                      | Ordinær           | 2400      |
 
   Scenario: Rapporterer ingen arbeidstimer
     Når rapporteringshendelse mottas

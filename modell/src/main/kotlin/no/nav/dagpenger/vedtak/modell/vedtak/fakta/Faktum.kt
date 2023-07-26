@@ -18,13 +18,6 @@ value class VanligArbeidstidPerDag(val timer: Timer) : Faktum<Timer> {
 }
 
 @JvmInline
-value class Grunnlag(val beløp: Beløp) : Faktum<Beløp> {
-    override fun accept(faktumVisitor: FaktumVisitor) {
-        faktumVisitor.visitGrunnlag(beløp)
-    }
-}
-
-@JvmInline
 value class Dagsats(val beløp: Beløp) : Faktum<Beløp> {
     override fun accept(faktumVisitor: FaktumVisitor) {
         faktumVisitor.visitDagsats(beløp)

@@ -26,7 +26,6 @@ class DagpengerInnvilgetHendelse(
     virkningsdato: LocalDate,
     private val dagpengerettighet: Dagpengerettighet,
     private val dagsats: Beløp,
-    private val grunnlag: Beløp,
     private val stønadsdager: Stønadsdager,
     private val vanligArbeidstidPerDag: Timer,
     private val egenandel: Beløp,
@@ -38,7 +37,6 @@ class DagpengerInnvilgetHendelse(
     override fun tilVedtak(): Vedtak = innvilgelse(
         behandlingId = behandlingId,
         virkningsdato = virkningsdato,
-        grunnlag = grunnlag,
         dagsats = dagsats,
         stønadsdager = stønadsdager,
         dagpengerettighet = dagpengerettighet,

@@ -50,7 +50,6 @@ class RettighetStegTest : No {
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                     dagsats = søknadHendelse.dagsats.beløp,
-                    grunnlag = søknadHendelse.grunnlag.beløp,
                     stønadsdager = Dagpengeperiode(søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
                     egenandel = søknadHendelse.egenandel.beløp,
@@ -67,7 +66,6 @@ class RettighetStegTest : No {
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                     dagsats = søknadHendelse.dagsats.beløp,
-                    grunnlag = søknadHendelse.grunnlag.beløp,
                     stønadsdager = Dagpengeperiode(antallUker = søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
                     egenandel = søknadHendelse.egenandel.beløp,
@@ -113,10 +111,6 @@ class RettighetStegTest : No {
 
         Så("vedtaket har dagsats på {bigdecimal} kroner") { dagsats: BigDecimal ->
             assertEquals(dagsats.beløp, inspektør.dagsats)
-        }
-
-        Så("vedtaket har grunnlag på {bigdecimal} kroner") { grunnlag: BigDecimal ->
-            assertEquals(grunnlag.beløp, inspektør.grunnlag)
         }
 
         Så("vedtaket har stønadsperiode på {int} uker") { stønadsperiode: Int ->
@@ -210,7 +204,6 @@ class RettighetStegTest : No {
         val virkningsdato: LocalDate,
         val dagpengerettighet: Dagpengerettighet,
         val dagsats: Int,
-        val grunnlag: Int,
         val stønadsperiode: Int,
         val vanligArbeidstidPerDag: Double,
         val egenandel: Int,
@@ -226,7 +219,6 @@ class RettighetStegTest : No {
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
         lateinit var stønadsdager: Stønadsdager
-        lateinit var grunnlag: Beløp
         lateinit var dagsats: Beløp
         lateinit var egenandel: Beløp
         lateinit var virkningsdato: LocalDate
@@ -272,10 +264,6 @@ class RettighetStegTest : No {
 
         override fun visitEgenandel(beløp: Beløp) {
             this.egenandel = beløp
-        }
-
-        override fun visitGrunnlag(beløp: Beløp) {
-            this.grunnlag = beløp
         }
 
         override fun postVisitVedtak(

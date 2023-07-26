@@ -8,7 +8,6 @@ import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Egenandel
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Faktum
-import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Grunnlag
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.VanligArbeidstidPerDag
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
@@ -37,7 +36,6 @@ class Rammevedtak(
         fun innvilgelse(
             behandlingId: UUID,
             virkningsdato: LocalDate,
-            grunnlag: Beløp,
             dagsats: Beløp,
             stønadsdager: Stønadsdager,
             dagpengerettighet: Dagpengerettighet,
@@ -56,7 +54,6 @@ class Rammevedtak(
                 virkningsdato = virkningsdato,
                 fakta = listOf(
                     VanligArbeidstidPerDag(vanligArbeidstidPerDag),
-                    Grunnlag(grunnlag),
                     Dagsats(dagsats),
                     AntallStønadsdager(stønadsdager),
                     Egenandel(egenandel),

@@ -24,7 +24,6 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
     private val observers = mutableSetOf<VedtakObserver>()
 
     internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
-    private val grunnlagHistorikk = TemporalCollection<Beløp>()
     internal val dagsatsHistorikk = TemporalCollection<Beløp>()
     internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
 
@@ -113,10 +112,6 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
 
         override fun visitEgenandel(beløp: Beløp) {
             vedtakHistorikk.egenandelHistorikk.put(virkningsdato(), beløp)
-        }
-
-        override fun visitGrunnlag(beløp: Beløp) {
-            vedtakHistorikk.grunnlagHistorikk.put(virkningsdato(), beløp)
         }
 
         override fun postVisitVedtak(

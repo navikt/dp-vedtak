@@ -3,8 +3,8 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
 
   Bakgrunn: 2 arbeidsuker igjen av ordinære dagpenger
     Gitt en ny hendelse om innvilget søknad
-      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | grunnlag | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 333333   | 2              | 8                      | Ordinær           | 0         |
+      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
+      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 2              | 8                      | Ordinær           | 0         |
 
   Scenario: Rapporterer først ingen arbeidstimer, slik at dagpengeperioden brukes opp. Korrigerer deretter med arbeid over terskel,
   slik at to uker likevel gjenstår og ny rapportering for påfølgende uker leveres.

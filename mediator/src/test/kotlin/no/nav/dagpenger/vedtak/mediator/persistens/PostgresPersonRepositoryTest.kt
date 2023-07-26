@@ -46,7 +46,6 @@ class PostgresPersonRepositoryTest {
                 virkningsdato = LocalDate.now(),
                 dagpengerettighet = Dagpengerettighet.Ordinær,
                 dagsats = 800.beløp,
-                grunnlag = 3333333.beløp,
                 stønadsdager = Dagpengeperiode(52).tilStønadsdager(),
                 vanligArbeidstidPerDag = 8.timer,
                 egenandel = 800.beløp * 3,
