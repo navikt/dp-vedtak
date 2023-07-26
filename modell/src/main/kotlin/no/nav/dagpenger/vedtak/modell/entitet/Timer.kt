@@ -29,4 +29,6 @@ class Timer(timer: Number) : Comparable<Timer> {
         val Duration.timer: Timer get() = (this.inWholeMinutes.toDouble() / 60).timer
         fun List<Timer>.summer() = this.sumOf { it.timer }.timer
     }
+
+    fun <R> reflection(block: (Double) -> R) = block(timer)
 }

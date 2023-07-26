@@ -9,6 +9,9 @@ import kotliquery.using
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.vedtak.modell.entitet.Beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
+import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.time.LocalDate
@@ -88,6 +91,7 @@ class PopulerQueries(person: Person, private val dbPersonId: Long) : PersonVisit
 
     // private val personIdentifikator =
     val queries = mutableListOf<Query>()
+    private var vedtakId: UUID? = null
 
     init {
         person.accept(this)
@@ -99,6 +103,7 @@ class PopulerQueries(person: Person, private val dbPersonId: Long) : PersonVisit
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
     ) {
+        this.vedtakId = vedtakId
         queries.add(
             queryOf(
                 //language=PostgreSQL
@@ -117,5 +122,68 @@ class PopulerQueries(person: Person, private val dbPersonId: Long) : PersonVisit
                 ),
             ),
         )
+    }
+
+    override fun visitDagsats(beløp: Beløp) {
+        queries.add(
+            queryOf(
+                //language=PostgreSQL
+                statement = """
+                    INSERT INTO dagsats
+                           (vedtak_id, beløp)
+                    VALUES (:vedtak_id, :belop)
+                    ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                paramMap = mapOf(
+                    "vedtak_id" to vedtakId,
+                    "belop" to beløp.reflection { it },
+                ),
+            ),
+        )
+    }
+
+    override fun visitVanligArbeidstidPerDag(timer: Timer) {
+        queries.add(
+            queryOf(
+                //language=PostgreSQL
+                statement = """
+                    INSERT INTO vanlig_arbeidstid
+                           (vedtak_id, antall_timer_per_dag)
+                    VALUES (:vedtak_id, :timer)
+                    ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                paramMap = mapOf(
+                    "vedtak_id" to vedtakId,
+                    "timer" to timer.reflection { it },
+                ),
+            ),
+        )
+    }
+
+    override fun visitAntallStønadsdager(dager: Stønadsdager) {
+        queries.add(
+            queryOf(
+                //language=PostgreSQL
+                statement = """
+                    INSERT INTO stønadsperiode
+                           (vedtak_id, antall_dager)
+                    VALUES (:vedtak_id, :antall_dager)
+                    ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                paramMap = mapOf(
+                    "vedtak_id" to vedtakId,
+                    "antall_dager" to dager.stønadsdager(),
+                ),
+            ),
+        )
+    }
+
+    override fun postVisitVedtak(
+        vedtakId: UUID,
+        behandlingId: UUID,
+        virkningsdato: LocalDate,
+        vedtakstidspunkt: LocalDateTime,
+    ) {
+        this.vedtakId = null
     }
 }
