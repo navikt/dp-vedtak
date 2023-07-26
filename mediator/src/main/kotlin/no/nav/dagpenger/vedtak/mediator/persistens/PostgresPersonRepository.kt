@@ -10,10 +10,17 @@ import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
+import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
+import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
+import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Faktum
+import no.nav.dagpenger.vedtak.modell.vedtak.fakta.VanligArbeidstidPerDag
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -72,10 +79,51 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
                 behandlingId = rad.uuid("behandling_id"),
                 vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
                 virkningsdato = rad.localDate("virkningsdato"),
-                fakta = emptyList(),
+                fakta = this.hentFakta(vedtakId = rad.uuid("id"))?.fakta ?: emptyList(),
                 rettigheter = emptyList(),
             )
         }.asList,
+    )
+
+    private data class FaktaRad(
+        val dagsats: BigDecimal?,
+        val stønadsperiode: Int?,
+        val vanligArbeidstidPerDag: BigDecimal?,
+    ) {
+
+        val fakta = mutableListOf<Faktum<*>>()
+        init {
+            if (dagsats != null) {
+                fakta.add(Dagsats(dagsats.beløp))
+            }
+            if (stønadsperiode != null) {
+                fakta.add(AntallStønadsdager(Stønadsdager(stønadsperiode)))
+            }
+
+            if (vanligArbeidstidPerDag != null) {
+                fakta.add(VanligArbeidstidPerDag(vanligArbeidstidPerDag.timer))
+            }
+        }
+    }
+
+    private fun Session.hentFakta(vedtakId: UUID) = this.run(
+        queryOf(
+            //language=PostgreSQL
+            statement = """ SELECT dagsats.beløp AS dagsats,  stønadsperiode.antall_dager AS  stønadsperiode, vanlig_arbeidstid.antall_timer_per_dag AS  vanlig_arbeidstid_per_dag
+                |FROM vedtak
+                |LEFT JOIN dagsats ON vedtak.id = dagsats.vedtak_id
+                |LEFT JOIN stønadsperiode ON vedtak.id= stønadsperiode.vedtak_id
+                |LEFT JOIN vanlig_arbeidstid ON  vedtak.id= vanlig_arbeidstid.vedtak_id
+                |  WHERE vedtak.id= :vedtakId  
+            """.trimMargin(),
+            paramMap = mapOf("vedtakId" to vedtakId),
+        ).map { rad ->
+            FaktaRad(
+                dagsats = rad.bigDecimalOrNull("dagsats"),
+                stønadsperiode = rad.intOrNull("stønadsperiode"),
+                vanligArbeidstidPerDag = rad.bigDecimalOrNull("vanlig_arbeidstid_per_dag"),
+            )
+        }.asSingle,
     )
 
     private fun Session.opprettPerson(ident: String) = this.run(
