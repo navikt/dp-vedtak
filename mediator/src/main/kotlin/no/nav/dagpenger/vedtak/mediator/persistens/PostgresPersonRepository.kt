@@ -16,6 +16,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.rapportering.Aktivitet
 import no.nav.dagpenger.vedtak.modell.rapportering.Dag
+import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
@@ -79,9 +80,9 @@ private class PopulerQueries(
         person.accept(this)
     }
 
-    override fun preVisitRapporteringsperiode(rapporteringsperiodeId: UUID, fom: LocalDate, tom: LocalDate) {
+    override fun preVisitRapporteringsperiode(rapporteringsperiodeId: UUID, periode: Rapporteringsperiode) {
         this.rapporteringDbId = session.hentRapportering(rapporteringsperiodeId)
-            ?: session.opprettRapportering(dbPersonId, rapporteringsperiodeId, fom, tom)
+            ?: session.opprettRapportering(dbPersonId, rapporteringsperiodeId, periode)
             ?: throw RuntimeException("Vi kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
     }
 
@@ -119,7 +120,7 @@ private class PopulerQueries(
         }
     }
 
-    override fun postVisitRapporteringsperiode(rapporteringsperiode: UUID, fom: LocalDate, tom: LocalDate) {
+    override fun postVisitRapporteringsperiode(rapporteringsperiodeId: UUID, periode: Rapporteringsperiode) {
         this.rapporteringDbId = null
     }
 
@@ -284,8 +285,7 @@ private fun Session.hentRapportering(rapporteringsperiodeId: UUID) = this.run(
 private fun Session.opprettRapportering(
     dbPersonId: Long,
     rapporteringsperiodeId: UUID,
-    fom: LocalDate,
-    tom: LocalDate,
+    periode: Rapporteringsperiode,
 ) = this.run(
 
     queryOf(
@@ -295,7 +295,7 @@ private fun Session.opprettRapportering(
                 INSERT INTO rapporteringsperiode(uuid, person_id, fom, tom, endret)
                 VALUES (:uuid, :personId, :fom, :tom, now()) RETURNING id;
         """.trimIndent(),
-        paramMap = mapOf("uuid" to rapporteringsperiodeId, "personId" to dbPersonId, "fom" to fom, "tom" to tom),
+        paramMap = mapOf("uuid" to rapporteringsperiodeId, "personId" to dbPersonId, "fom" to periode.start, "tom" to periode.endInclusive),
     ).map { rad ->
         rad.long("id")
     }.asSingle,
