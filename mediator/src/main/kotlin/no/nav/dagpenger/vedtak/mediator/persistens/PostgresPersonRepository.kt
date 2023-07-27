@@ -62,30 +62,6 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
             }
         }
     }
-
-    private data class FaktaRad(
-        val dagsats: BigDecimal?,
-        val stønadsperiode: Int?,
-        val vanligArbeidstidPerDag: BigDecimal?,
-    ) {
-
-        val fakta = mutableListOf<Faktum<*>>()
-
-        init {
-            if (dagsats != null) {
-                fakta.add(Dagsats(dagsats.beløp))
-            }
-            if (stønadsperiode != null) {
-                fakta.add(AntallStønadsdager(Stønadsdager(stønadsperiode)))
-            }
-
-            if (vanligArbeidstidPerDag != null) {
-                fakta.add(VanligArbeidstidPerDag(vanligArbeidstidPerDag.timer))
-            }
-        }
-    }
-
-
 }
 
 private class PopulerQueries(
@@ -103,16 +79,12 @@ private class PopulerQueries(
     }
 
     override fun preVisitRapporteringsperiode(rapporteringsperiodeId: UUID, fom: LocalDate, tom: LocalDate) {
-        this.rapporteringDbId = session.hentRapportering(rapporteringsperiodeId) ?: session.opprettRapportering(
-            rapporteringsperiodeId,
-            fom,
-            tom,
-        ) ?: throw RuntimeException("Vi kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
-
+        this.rapporteringDbId = session.hentRapportering(rapporteringsperiodeId)
+            ?: session.opprettRapportering(dbPersonId, rapporteringsperiodeId, fom, tom)
+            ?: throw RuntimeException("Vi kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
     }
 
     override fun visitdag(dag: Dag) {
-
     }
 
     override fun postVisitRapporteringsperiode(rapporteringsperiode: UUID, fom: LocalDate, tom: LocalDate) {
@@ -246,10 +218,10 @@ private fun Session.hentFakta(vedtakId: UUID) = this.run(
                          LEFT JOIN stønadsperiode ON vedtak.id = stønadsperiode.vedtak_id
                          LEFT JOIN vanlig_arbeidstid ON vedtak.id = vanlig_arbeidstid.vedtak_id
                 WHERE vedtak.id = :vedtakId  
-            """.trimMargin(),
+        """.trimMargin(),
         paramMap = mapOf("vedtakId" to vedtakId),
     ).map { rad ->
-        PostgresPersonRepository.FaktaRad(
+        FaktaRad(
             dagsats = rad.bigDecimalOrNull("dagsats"),
             stønadsperiode = rad.intOrNull("stønadsperiode"),
             vanligArbeidstidPerDag = rad.bigDecimalOrNull("vanlig_arbeidstid_per_dag"),
@@ -276,7 +248,12 @@ private fun Session.hentRapportering(rapporteringsperiodeId: UUID) = this.run(
     }.asSingle,
 )
 
-private fun Session.opprettRapportering(rapporteringsperiodeId: UUID, fom: LocalDate, tom: LocalDate) = this.run(
+private fun Session.opprettRapportering(
+    dbPersonId: Long,
+    rapporteringsperiodeId: UUID,
+    fom: LocalDate,
+    tom: LocalDate,
+) = this.run(
 
     queryOf(
 
@@ -284,9 +261,31 @@ private fun Session.opprettRapportering(rapporteringsperiodeId: UUID, fom: Local
         """ 
                 INSERT INTO rapporteringsperiode(uuid, person_id, fom, tom, endret)
                 VALUES (:uuid, :personId, :fom, :tom, now()) RETURNING id;
-            """.trimIndent(),
+        """.trimIndent(),
         paramMap = mapOf("uuid" to rapporteringsperiodeId, "personId" to dbPersonId, "fom" to fom, "tom" to tom),
     ).map { rad ->
         rad.long("id")
     }.asSingle,
 )
+
+private data class FaktaRad(
+    val dagsats: BigDecimal?,
+    val stønadsperiode: Int?,
+    val vanligArbeidstidPerDag: BigDecimal?,
+) {
+
+    val fakta = mutableListOf<Faktum<*>>()
+
+    init {
+        if (dagsats != null) {
+            fakta.add(Dagsats(dagsats.beløp))
+        }
+        if (stønadsperiode != null) {
+            fakta.add(AntallStønadsdager(Stønadsdager(stønadsperiode)))
+        }
+
+        if (vanligArbeidstidPerDag != null) {
+            fakta.add(VanligArbeidstidPerDag(vanligArbeidstidPerDag.timer))
+        }
+    }
+}
