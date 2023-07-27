@@ -5,6 +5,9 @@ CREATE TABLE IF NOT EXISTS person
     opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL
 );
 
+
+--- VEDTAK
+
 CREATE TABLE IF NOT EXISTS vedtak
 (
     id               UUID PRIMARY KEY,
@@ -36,3 +39,37 @@ CREATE TABLE IF NOT EXISTS vanlig_arbeidstid
     vedtak_id            UUID PRIMARY KEY REFERENCES vedtak (id),
     antall_timer_per_dag DECIMAL NOT NULL
 );
+
+
+--- RAPPORTERING
+
+
+CREATE TABLE IF NOT EXISTS rapporteringsperiode
+(
+    id        BIGSERIAL PRIMARY KEY,
+    uuid      uuid                                                              NOT NULL UNIQUE,
+    person_id BIGINT                                                            NOT NULL REFERENCES person (id),
+    fom       DATE                                                              NOT NULL,
+    tom       DATE                                                              NOT NULL,
+    opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL,
+    endret    TIMESTAMP  NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS dag
+(
+    id                      BIGSERIAL PRIMARY KEY,
+    rapporteringsperiode_id BIGINT NOT NULL REFERENCES rapporteringsperiode (id),
+    dato                    DATE   NOT NULL,
+    UNIQUE (rapporteringsperiode_id, dato)
+);
+
+CREATE TABLE IF NOT EXISTS aktivitet
+(
+    id        BIGSERIAL PRIMARY KEY,
+    dag_id    BIGINT                                                            NOT NULL REFERENCES dag (id),
+    "type"    TEXT                                                              NOT NULL,
+    timer     DECIMAL                                                           NOT NULL,
+    opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL
+);
+

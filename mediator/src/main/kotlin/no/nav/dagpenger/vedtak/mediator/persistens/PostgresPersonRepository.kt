@@ -14,6 +14,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.rapportering.Dag
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
@@ -54,38 +55,13 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
                 val dbPersonId = transactionalSession.hentPerson(person.ident().identifikator())
                     ?: transactionalSession.opprettPerson(person.ident().identifikator())
                     ?: throw RuntimeException("Kunne ikke finne eller opprette person")
-                val populerQueries = PopulerQueries(person, dbPersonId)
+                val populerQueries = PopulerQueries(person, dbPersonId, transactionalSession)
                 populerQueries.queries.forEach {
                     transactionalSession.run(it.asUpdate)
                 }
             }
         }
     }
-
-    private fun Session.hentPerson(ident: String) = this.run(
-        queryOf(
-            //language=PostgreSQL
-            statement = """SELECT id FROM person WHERE ident = :ident""",
-            paramMap = mapOf("ident" to ident),
-        ).map { rad -> rad.longOrNull("id") }.asSingle,
-    )
-
-    private fun Session.hentVedtak(personId: Long) = this.run(
-        queryOf(
-            //language=PostgreSQL
-            statement = """ SELECT * FROM vedtak WHERE person_id = :personId """,
-            paramMap = mapOf("personId" to personId),
-        ).map { rad ->
-            Rammevedtak(
-                vedtakId = rad.uuid("id"),
-                behandlingId = rad.uuid("behandling_id"),
-                vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
-                virkningsdato = rad.localDate("virkningsdato"),
-                fakta = this.hentFakta(vedtakId = rad.uuid("id"))?.fakta ?: emptyList(),
-                rettigheter = emptyList(),
-            )
-        }.asList,
-    )
 
     private data class FaktaRad(
         val dagsats: BigDecimal?,
@@ -94,6 +70,7 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
     ) {
 
         val fakta = mutableListOf<Faktum<*>>()
+
         init {
             if (dagsats != null) {
                 fakta.add(Dagsats(dagsats.beløp))
@@ -108,46 +85,37 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
         }
     }
 
-    private fun Session.hentFakta(vedtakId: UUID) = this.run(
-        queryOf(
-            //language=PostgreSQL
-            statement = """
-                SELECT dagsats.beløp                          AS dagsats,
-                       stønadsperiode.antall_dager            AS stønadsperiode,
-                       vanlig_arbeidstid.antall_timer_per_dag AS vanlig_arbeidstid_per_dag
-                FROM vedtak
-                         LEFT JOIN dagsats ON vedtak.id = dagsats.vedtak_id
-                         LEFT JOIN stønadsperiode ON vedtak.id = stønadsperiode.vedtak_id
-                         LEFT JOIN vanlig_arbeidstid ON vedtak.id = vanlig_arbeidstid.vedtak_id
-                WHERE vedtak.id = :vedtakId  
-            """.trimMargin(),
-            paramMap = mapOf("vedtakId" to vedtakId),
-        ).map { rad ->
-            FaktaRad(
-                dagsats = rad.bigDecimalOrNull("dagsats"),
-                stønadsperiode = rad.intOrNull("stønadsperiode"),
-                vanligArbeidstidPerDag = rad.bigDecimalOrNull("vanlig_arbeidstid_per_dag"),
-            )
-        }.asSingle,
-    )
 
-    private fun Session.opprettPerson(ident: String) = this.run(
-        queryOf(
-            //language=PostgreSQL
-            statement = """INSERT INTO person (ident) VALUES (:ident) ON CONFLICT DO NOTHING RETURNING id""",
-            paramMap = mapOf("ident" to ident),
-        ).map { rad -> rad.long("id") }.asSingle,
-    )
 }
 
-class PopulerQueries(person: Person, private val dbPersonId: Long) : PersonVisitor {
+private class PopulerQueries(
+    person: Person,
+    private val dbPersonId: Long,
+    private val session: Session,
+) : PersonVisitor {
 
-    // private val personIdentifikator =
     val queries = mutableListOf<Query>()
     private var vedtakId: UUID? = null
+    private var rapporteringDbId: Long? = null
 
     init {
         person.accept(this)
+    }
+
+    override fun preVisitRapporteringsperiode(rapporteringsperiodeId: UUID, fom: LocalDate, tom: LocalDate) {
+        this.rapporteringDbId = session.hentRapportering(rapporteringsperiodeId) ?: session.opprettRapportering(
+            rapporteringsperiodeId,
+            fom,
+            tom,
+        ) ?: throw RuntimeException("Vi kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
+
+    }
+
+    override fun visitdag(dag: Dag) {
+
+    }
+
+    override fun postVisitRapporteringsperiode(rapporteringsperiode: UUID, fom: LocalDate, tom: LocalDate) {
     }
 
     override fun preVisitVedtak(
@@ -240,3 +208,85 @@ class PopulerQueries(person: Person, private val dbPersonId: Long) : PersonVisit
         this.vedtakId = null
     }
 }
+
+private fun Session.hentPerson(ident: String) = this.run(
+    queryOf(
+        //language=PostgreSQL
+        statement = """SELECT id FROM person WHERE ident = :ident""",
+        paramMap = mapOf("ident" to ident),
+    ).map { rad -> rad.longOrNull("id") }.asSingle,
+)
+
+private fun Session.hentVedtak(personId: Long) = this.run(
+    queryOf(
+        //language=PostgreSQL
+        statement = """ SELECT * FROM vedtak WHERE person_id = :personId """,
+        paramMap = mapOf("personId" to personId),
+    ).map { rad ->
+        Rammevedtak(
+            vedtakId = rad.uuid("id"),
+            behandlingId = rad.uuid("behandling_id"),
+            vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
+            virkningsdato = rad.localDate("virkningsdato"),
+            fakta = this.hentFakta(vedtakId = rad.uuid("id"))?.fakta ?: emptyList(),
+            rettigheter = emptyList(),
+        )
+    }.asList,
+)
+
+private fun Session.hentFakta(vedtakId: UUID) = this.run(
+    queryOf(
+        //language=PostgreSQL
+        statement = """
+                SELECT dagsats.beløp                          AS dagsats,
+                       stønadsperiode.antall_dager            AS stønadsperiode,
+                       vanlig_arbeidstid.antall_timer_per_dag AS vanlig_arbeidstid_per_dag
+                FROM vedtak
+                         LEFT JOIN dagsats ON vedtak.id = dagsats.vedtak_id
+                         LEFT JOIN stønadsperiode ON vedtak.id = stønadsperiode.vedtak_id
+                         LEFT JOIN vanlig_arbeidstid ON vedtak.id = vanlig_arbeidstid.vedtak_id
+                WHERE vedtak.id = :vedtakId  
+            """.trimMargin(),
+        paramMap = mapOf("vedtakId" to vedtakId),
+    ).map { rad ->
+        PostgresPersonRepository.FaktaRad(
+            dagsats = rad.bigDecimalOrNull("dagsats"),
+            stønadsperiode = rad.intOrNull("stønadsperiode"),
+            vanligArbeidstidPerDag = rad.bigDecimalOrNull("vanlig_arbeidstid_per_dag"),
+        )
+    }.asSingle,
+)
+
+private fun Session.opprettPerson(ident: String) = this.run(
+    queryOf(
+        //language=PostgreSQL
+        statement = """INSERT INTO person (ident) VALUES (:ident) ON CONFLICT DO NOTHING RETURNING id""",
+        paramMap = mapOf("ident" to ident),
+    ).map { rad -> rad.long("id") }.asSingle,
+)
+
+private fun Session.hentRapportering(rapporteringsperiodeId: UUID) = this.run(
+
+    queryOf(
+        statement = //language=PostgreSQL
+        """SELECT id FROM rapporteringsperiode WHERE uuid = :uuid""".trimIndent(),
+        paramMap = mapOf("uuid" to rapporteringsperiodeId),
+    ).map { rad ->
+        rad.long("id")
+    }.asSingle,
+)
+
+private fun Session.opprettRapportering(rapporteringsperiodeId: UUID, fom: LocalDate, tom: LocalDate) = this.run(
+
+    queryOf(
+
+        statement = //language=PostgreSQL
+        """ 
+                INSERT INTO rapporteringsperiode(uuid, person_id, fom, tom, endret)
+                VALUES (:uuid, :personId, :fom, :tom, now()) RETURNING id;
+            """.trimIndent(),
+        paramMap = mapOf("uuid" to rapporteringsperiodeId, "personId" to dbPersonId, "fom" to fom, "tom" to tom),
+    ).map { rad ->
+        rad.long("id")
+    }.asSingle,
+)

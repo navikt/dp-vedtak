@@ -4,7 +4,7 @@ import no.nav.dagpenger.vedtak.modell.visitor.RapporteringsperiodeVisitor
 import java.util.SortedSet
 import java.util.UUID
 
-class Rapporteringsperiode(internal val rapporteringsId: UUID, dager: List<Dag>) : Iterable<Dag> {
+class Rapporteringsperiode(private val rapporteringsId: UUID, dager: List<Dag>) : Iterable<Dag> {
     constructor(rapporteringsId: UUID) : this(rapporteringsId, emptyList())
     private val dager: SortedSet<Dag> = dager.toSortedSet()
 
@@ -13,9 +13,9 @@ class Rapporteringsperiode(internal val rapporteringsId: UUID, dager: List<Dag>)
     }
 
     fun accept(visitor: RapporteringsperiodeVisitor) {
-        visitor.preVisitRapporteringsperiode(this)
+        visitor.preVisitRapporteringsperiode(rapporteringsId, dager.first().dato(), dager.last().dato())
         dager.forEach { visitor.visitdag(it) }
-        visitor.postVisitRapporteringsperiode(this)
+        visitor.postVisitRapporteringsperiode(rapporteringsId, dager.first().dato(), dager.last().dato())
     }
 
     override fun iterator(): Iterator<Dag> {

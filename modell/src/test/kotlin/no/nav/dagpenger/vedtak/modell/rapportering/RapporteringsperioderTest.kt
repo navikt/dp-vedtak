@@ -9,6 +9,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 import java.util.UUID
 import kotlin.random.Random
 import kotlin.time.Duration
@@ -106,7 +107,7 @@ internal class RapporteringsperioderTest {
             rapporteringsperioder.accept(this)
         }
 
-        override fun preVisitRapporteringsperiode(rapporteringsperiode: Rapporteringsperiode) {
+        override fun preVisitRapporteringsperiode(rapporteringsperiode: UUID, fom: LocalDate, tom: LocalDate) {
             antallRapporteringsperioder++
         }
 
