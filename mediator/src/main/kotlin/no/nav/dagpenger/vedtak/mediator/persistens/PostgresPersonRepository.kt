@@ -14,6 +14,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.rapportering.Aktivitet
 import no.nav.dagpenger.vedtak.modell.rapportering.Dag
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
@@ -84,10 +85,42 @@ private class PopulerQueries(
             ?: throw RuntimeException("Vi kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
     }
 
-    override fun visitdag(dag: Dag) {
+    override fun visitdag(dag: Dag, aktiviteter: List<Aktivitet>) {
+        queries.add(
+            queryOf(
+                //language=PostgreSQL
+                statement = """INSERT INTO dag (person_id, rapporteringsperiode_id, dato)
+                |VALUES (:person_id, :rapporteringsperiode_id, :dato)
+                |ON CONFLICT DO NOTHING
+                """.trimMargin(),
+                paramMap = mapOf(
+                    "person_id" to dbPersonId,
+                    "rapporteringsperiode_id" to rapporteringDbId,
+                    "dato" to dag.dato(),
+                ),
+            ),
+        )
+        aktiviteter.map { aktivitet ->
+            queries.add(
+                queryOf(
+                    //language=PostgreSQL
+                    statement = """INSERT INTO aktivitet (person_id, dato, "type", timer)
+                |VALUES (:person_id, :dato, :type, :timer)
+                |ON CONFLICT DO NOTHING
+                    """.trimMargin(),
+                    paramMap = mapOf(
+                        "person_id" to dbPersonId,
+                        "dato" to dag.dato(),
+                        "type" to aktivitet.type.name,
+                        "timer" to aktivitet.timer.reflection { it },
+                    ),
+                ),
+            )
+        }
     }
 
     override fun postVisitRapporteringsperiode(rapporteringsperiode: UUID, fom: LocalDate, tom: LocalDate) {
+        this.rapporteringDbId = null
     }
 
     override fun preVisitVedtak(

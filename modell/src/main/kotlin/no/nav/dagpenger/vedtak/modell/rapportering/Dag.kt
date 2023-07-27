@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.modell.rapportering
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
+import no.nav.dagpenger.vedtak.modell.visitor.DagVisitor
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -24,6 +25,10 @@ class Dag private constructor(
     internal fun innenfor(periode: Periode) = this.dato in periode
     override fun toString(): String {
         return "Aktivitetsdag(dato=$dato, aktiviteter=$aktiviteter)"
+    }
+
+    fun accept(visitor: DagVisitor) {
+        visitor.visitdag(this, aktiviteter)
     }
 
     companion object {

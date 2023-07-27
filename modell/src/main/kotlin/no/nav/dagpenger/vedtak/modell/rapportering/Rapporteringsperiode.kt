@@ -14,7 +14,7 @@ class Rapporteringsperiode(private val rapporteringsId: UUID, dager: List<Dag>) 
 
     fun accept(visitor: RapporteringsperiodeVisitor) {
         visitor.preVisitRapporteringsperiode(rapporteringsId, dager.first().dato(), dager.last().dato())
-        dager.forEach { visitor.visitdag(it) }
+        dager.forEach { it.accept(visitor) }
         visitor.postVisitRapporteringsperiode(rapporteringsId, dager.first().dato(), dager.last().dato())
     }
 

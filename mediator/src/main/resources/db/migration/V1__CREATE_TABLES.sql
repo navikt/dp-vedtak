@@ -52,13 +52,14 @@ CREATE TABLE IF NOT EXISTS rapporteringsperiode
     fom       DATE                                                              NOT NULL,
     tom       DATE                                                              NOT NULL,
     opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL,
-    endret    TIMESTAMP  NOT NULL
+    endret    TIMESTAMP                                                         NOT NULL
 );
 
 
 CREATE TABLE IF NOT EXISTS dag
 (
     id                      BIGSERIAL PRIMARY KEY,
+    person_id               BIGINT NOT NULL REFERENCES person (id),
     rapporteringsperiode_id BIGINT NOT NULL REFERENCES rapporteringsperiode (id),
     dato                    DATE   NOT NULL,
     UNIQUE (rapporteringsperiode_id, dato)
@@ -67,7 +68,8 @@ CREATE TABLE IF NOT EXISTS dag
 CREATE TABLE IF NOT EXISTS aktivitet
 (
     id        BIGSERIAL PRIMARY KEY,
-    dag_id    BIGINT                                                            NOT NULL REFERENCES dag (id),
+    person_id BIGINT                                                            NOT NULL REFERENCES person (id),
+    dato      DATE                                                              NOT NULL,
     "type"    TEXT                                                              NOT NULL,
     timer     DECIMAL                                                           NOT NULL,
     opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL
