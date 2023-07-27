@@ -33,7 +33,9 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
                 queryOf(
                     //language=PostgreSQL
                     statement = """
-                     SELECT * FROM person WHERE ident = :ident
+                     SELECT *
+                     FROM person
+                     WHERE ident = :ident
                     """.trimIndent(),
                     paramMap = mapOf("ident" to ident.identifikator()),
                 ).map { row ->
@@ -109,12 +111,15 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
     private fun Session.hentFakta(vedtakId: UUID) = this.run(
         queryOf(
             //language=PostgreSQL
-            statement = """ SELECT dagsats.beløp AS dagsats,  stønadsperiode.antall_dager AS  stønadsperiode, vanlig_arbeidstid.antall_timer_per_dag AS  vanlig_arbeidstid_per_dag
-                |FROM vedtak
-                |LEFT JOIN dagsats ON vedtak.id = dagsats.vedtak_id
-                |LEFT JOIN stønadsperiode ON vedtak.id= stønadsperiode.vedtak_id
-                |LEFT JOIN vanlig_arbeidstid ON  vedtak.id= vanlig_arbeidstid.vedtak_id
-                |  WHERE vedtak.id= :vedtakId  
+            statement = """
+                SELECT dagsats.beløp                          AS dagsats,
+                       stønadsperiode.antall_dager            AS stønadsperiode,
+                       vanlig_arbeidstid.antall_timer_per_dag AS vanlig_arbeidstid_per_dag
+                FROM vedtak
+                         LEFT JOIN dagsats ON vedtak.id = dagsats.vedtak_id
+                         LEFT JOIN stønadsperiode ON vedtak.id = stønadsperiode.vedtak_id
+                         LEFT JOIN vanlig_arbeidstid ON vedtak.id = vanlig_arbeidstid.vedtak_id
+                WHERE vedtak.id = :vedtakId  
             """.trimMargin(),
             paramMap = mapOf("vedtakId" to vedtakId),
         ).map { rad ->
@@ -156,10 +161,10 @@ class PopulerQueries(person: Person, private val dbPersonId: Long) : PersonVisit
             queryOf(
                 //language=PostgreSQL
                 statement = """
-                    |INSERT INTO vedtak 
-                    |       (id, person_id, behandling_id, virkningsdato, vedtakstidspunkt) 
-                    |VALUES (:id, :person_id, :behandling_id, :virkningsdato, :vedtakstidspunkt )
-                    |ON CONFLICT DO NOTHING
+                    INSERT INTO vedtak
+                        (id, person_id, behandling_id, virkningsdato, vedtakstidspunkt)
+                    VALUES (:id, :person_id, :behandling_id, :virkningsdato, :vedtakstidspunkt)
+                    ON CONFLICT DO NOTHING
                 """.trimMargin(),
                 paramMap = mapOf(
                     "id" to vedtakId,
@@ -178,7 +183,7 @@ class PopulerQueries(person: Person, private val dbPersonId: Long) : PersonVisit
                 //language=PostgreSQL
                 statement = """
                     INSERT INTO dagsats
-                           (vedtak_id, beløp)
+                        (vedtak_id, beløp)
                     VALUES (:vedtak_id, :belop)
                     ON CONFLICT DO NOTHING
                 """.trimIndent(),
