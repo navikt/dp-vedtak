@@ -233,7 +233,7 @@ class Behandling(
             person.accept(this)
         }
 
-        override fun visitdag(dag: Dag, aktiviteter: List<Aktivitet>) {
+        override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
             if (dag in periode) {
                 dager.add(dag)
             }

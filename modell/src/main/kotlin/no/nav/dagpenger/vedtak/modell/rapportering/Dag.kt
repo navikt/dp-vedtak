@@ -28,7 +28,7 @@ class Dag private constructor(
     }
 
     fun accept(visitor: DagVisitor) {
-        visitor.visitdag(this, aktiviteter)
+        visitor.visitDag(this, aktiviteter)
     }
 
     companion object {

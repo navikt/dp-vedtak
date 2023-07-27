@@ -36,9 +36,9 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
                 queryOf(
                     //language=PostgreSQL
                     statement = """
-                     SELECT *
-                     FROM person
-                     WHERE ident = :ident
+                        SELECT *
+                        FROM person
+                        WHERE ident = :ident
                     """.trimIndent(),
                     paramMap = mapOf("ident" to ident.identifikator()),
                 ).map { row ->
@@ -83,17 +83,18 @@ private class PopulerQueries(
     override fun preVisitRapporteringsperiode(rapporteringsperiodeId: UUID, periode: Rapporteringsperiode) {
         this.rapporteringDbId = session.hentRapportering(rapporteringsperiodeId)
             ?: session.opprettRapportering(dbPersonId, rapporteringsperiodeId, periode)
-            ?: throw RuntimeException("Vi kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
+            ?: throw RuntimeException("Kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
     }
 
-    override fun visitdag(dag: Dag, aktiviteter: List<Aktivitet>) {
+    override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
         queries.add(
             queryOf(
                 //language=PostgreSQL
-                statement = """INSERT INTO dag (person_id, rapporteringsperiode_id, dato)
-                |VALUES (:person_id, :rapporteringsperiode_id, :dato)
-                |ON CONFLICT DO NOTHING
-                """.trimMargin(),
+                statement = """
+                    INSERT INTO dag (person_id, rapporteringsperiode_id, dato)
+                    VALUES (:person_id, :rapporteringsperiode_id, :dato)
+                    ON CONFLICT DO NOTHING
+                """.trimIndent(),
                 paramMap = mapOf(
                     "person_id" to dbPersonId,
                     "rapporteringsperiode_id" to rapporteringDbId,
@@ -105,10 +106,11 @@ private class PopulerQueries(
             queries.add(
                 queryOf(
                     //language=PostgreSQL
-                    statement = """INSERT INTO aktivitet (person_id, dato, "type", timer)
-                |VALUES (:person_id, :dato, :type, :timer)
-                |ON CONFLICT DO NOTHING
-                    """.trimMargin(),
+                    statement = """
+                        INSERT INTO aktivitet (person_id, dato, "type", timer)
+                        VALUES (:person_id, :dato, :type, :timer)
+                        ON CONFLICT DO NOTHING
+                    """.trimIndent(),
                     paramMap = mapOf(
                         "person_id" to dbPersonId,
                         "dato" to dag.dato(),
@@ -137,9 +139,10 @@ private class PopulerQueries(
                 statement = """
                     INSERT INTO vedtak
                         (id, person_id, behandling_id, virkningsdato, vedtakstidspunkt)
-                    VALUES (:id, :person_id, :behandling_id, :virkningsdato, :vedtakstidspunkt)
+                    VALUES 
+                        (:id, :person_id, :behandling_id, :virkningsdato, :vedtakstidspunkt)
                     ON CONFLICT DO NOTHING
-                """.trimMargin(),
+                """.trimIndent(),
                 paramMap = mapOf(
                     "id" to vedtakId,
                     "person_id" to dbPersonId,
@@ -158,7 +161,8 @@ private class PopulerQueries(
                 statement = """
                     INSERT INTO dagsats
                         (vedtak_id, beløp)
-                    VALUES (:vedtak_id, :belop)
+                    VALUES 
+                        (:vedtak_id, :belop)
                     ON CONFLICT DO NOTHING
                 """.trimIndent(),
                 paramMap = mapOf(
@@ -175,8 +179,9 @@ private class PopulerQueries(
                 //language=PostgreSQL
                 statement = """
                     INSERT INTO vanlig_arbeidstid
-                           (vedtak_id, antall_timer_per_dag)
-                    VALUES (:vedtak_id, :timer)
+                        (vedtak_id, antall_timer_per_dag)
+                    VALUES
+                        (:vedtak_id, :timer)
                     ON CONFLICT DO NOTHING
                 """.trimIndent(),
                 paramMap = mapOf(
@@ -218,7 +223,11 @@ private class PopulerQueries(
 private fun Session.hentPerson(ident: String) = this.run(
     queryOf(
         //language=PostgreSQL
-        statement = """SELECT id FROM person WHERE ident = :ident""",
+        statement = """
+            SELECT id 
+            FROM person 
+            WHERE ident = :ident
+        """.trimIndent(),
         paramMap = mapOf("ident" to ident),
     ).map { rad -> rad.longOrNull("id") }.asSingle,
 )
@@ -226,8 +235,12 @@ private fun Session.hentPerson(ident: String) = this.run(
 private fun Session.hentVedtak(personId: Long) = this.run(
     queryOf(
         //language=PostgreSQL
-        statement = """ SELECT * FROM vedtak WHERE person_id = :personId """,
-        paramMap = mapOf("personId" to personId),
+        statement = """
+            SELECT * 
+            FROM vedtak 
+            WHERE person_id = :person_id
+        """.trimIndent(),
+        paramMap = mapOf("person_id" to personId),
     ).map { rad ->
         Rammevedtak(
             vedtakId = rad.uuid("id"),
@@ -244,16 +257,16 @@ private fun Session.hentFakta(vedtakId: UUID) = this.run(
     queryOf(
         //language=PostgreSQL
         statement = """
-                SELECT dagsats.beløp                          AS dagsats,
-                       stønadsperiode.antall_dager            AS stønadsperiode,
-                       vanlig_arbeidstid.antall_timer_per_dag AS vanlig_arbeidstid_per_dag
-                FROM vedtak
-                         LEFT JOIN dagsats ON vedtak.id = dagsats.vedtak_id
-                         LEFT JOIN stønadsperiode ON vedtak.id = stønadsperiode.vedtak_id
-                         LEFT JOIN vanlig_arbeidstid ON vedtak.id = vanlig_arbeidstid.vedtak_id
-                WHERE vedtak.id = :vedtakId  
-        """.trimMargin(),
-        paramMap = mapOf("vedtakId" to vedtakId),
+            SELECT      dagsats.beløp                          AS dagsats,
+                        stønadsperiode.antall_dager            AS stønadsperiode,
+                        vanlig_arbeidstid.antall_timer_per_dag AS vanlig_arbeidstid_per_dag
+            FROM        vedtak
+            LEFT JOIN   dagsats           ON vedtak.id = dagsats.vedtak_id
+            LEFT JOIN   stønadsperiode    ON vedtak.id = stønadsperiode.vedtak_id
+            LEFT JOIN   vanlig_arbeidstid ON vedtak.id = vanlig_arbeidstid.vedtak_id
+            WHERE       vedtak.id = :vedtak_id
+        """.trimIndent(),
+        paramMap = mapOf("vedtak_id" to vedtakId),
     ).map { rad ->
         FaktaRad(
             dagsats = rad.bigDecimalOrNull("dagsats"),
@@ -266,7 +279,10 @@ private fun Session.hentFakta(vedtakId: UUID) = this.run(
 private fun Session.opprettPerson(ident: String) = this.run(
     queryOf(
         //language=PostgreSQL
-        statement = """INSERT INTO person (ident) VALUES (:ident) ON CONFLICT DO NOTHING RETURNING id""",
+        statement = """
+            INSERT INTO person (ident) 
+            VALUES (:ident) ON CONFLICT DO NOTHING RETURNING id
+        """.trimIndent(),
         paramMap = mapOf("ident" to ident),
     ).map { rad -> rad.long("id") }.asSingle,
 )
@@ -274,8 +290,12 @@ private fun Session.opprettPerson(ident: String) = this.run(
 private fun Session.hentRapportering(rapporteringsperiodeId: UUID) = this.run(
 
     queryOf(
-        statement = //language=PostgreSQL
-        """SELECT id FROM rapporteringsperiode WHERE uuid = :uuid""".trimIndent(),
+        //language=PostgreSQL
+        statement = """
+            SELECT  id 
+            FROM    rapporteringsperiode 
+            WHERE   uuid = :uuid
+        """.trimIndent(),
         paramMap = mapOf("uuid" to rapporteringsperiodeId),
     ).map { rad ->
         rad.long("id")
@@ -289,13 +309,20 @@ private fun Session.opprettRapportering(
 ) = this.run(
 
     queryOf(
-
-        statement = //language=PostgreSQL
-        """ 
-                INSERT INTO rapporteringsperiode(uuid, person_id, fom, tom, endret)
-                VALUES (:uuid, :personId, :fom, :tom, now()) RETURNING id;
+        //language=PostgreSQL
+        statement = """
+            INSERT INTO rapporteringsperiode
+                (uuid, person_id, fom, tom, endret)
+            VALUES 
+                (:uuid, :person_id, :fom, :tom, now())
+            RETURNING id;
         """.trimIndent(),
-        paramMap = mapOf("uuid" to rapporteringsperiodeId, "personId" to dbPersonId, "fom" to periode.start, "tom" to periode.endInclusive),
+        paramMap = mapOf(
+            "uuid" to rapporteringsperiodeId,
+            "person_id" to dbPersonId,
+            "fom" to periode.start,
+            "tom" to periode.endInclusive
+        ),
     ).map { rad ->
         rad.long("id")
     }.asSingle,

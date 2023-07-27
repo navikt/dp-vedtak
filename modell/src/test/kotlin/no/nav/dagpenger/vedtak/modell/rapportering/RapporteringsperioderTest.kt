@@ -110,7 +110,7 @@ internal class RapporteringsperioderTest {
             antallRapporteringsperioder++
         }
 
-        override fun visitdag(dag: Dag, aktiviteter: List<Aktivitet>) {
+        override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
             dager.add(dag)
         }
     }

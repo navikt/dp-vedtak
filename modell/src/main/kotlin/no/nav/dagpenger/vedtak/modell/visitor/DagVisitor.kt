@@ -4,5 +4,5 @@ import no.nav.dagpenger.vedtak.modell.rapportering.Aktivitet
 import no.nav.dagpenger.vedtak.modell.rapportering.Dag
 
 interface DagVisitor {
-    fun visitdag(dag: Dag, aktiviteter: List<Aktivitet>) {}
+    fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {}
 }

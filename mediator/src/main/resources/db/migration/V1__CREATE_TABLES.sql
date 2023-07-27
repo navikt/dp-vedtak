@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS rapporteringsperiode
 CREATE TABLE IF NOT EXISTS dag
 (
     id                      BIGSERIAL PRIMARY KEY,
-    person_id               BIGINT NOT NULL REFERENCES person (id),
+    person_id               BIGINT NOT NULL REFERENCES person (id), -- Blir dette litt smør på flesk, siden rapporteringsperiode refererer person?
     rapporteringsperiode_id BIGINT NOT NULL REFERENCES rapporteringsperiode (id),
     dato                    DATE   NOT NULL,
     UNIQUE (rapporteringsperiode_id, dato)
