@@ -106,11 +106,11 @@ internal class RapporteringsperioderTest {
             rapporteringsperioder.accept(this)
         }
 
-        override fun preVisitRapporteringsperiode(rapporteringsperiode: Rapporteringsperiode) {
+        override fun preVisitRapporteringsperiode(rapporteringsperiode: UUID, periode: Rapporteringsperiode) {
             antallRapporteringsperioder++
         }
 
-        override fun visitdag(dag: Dag) {
+        override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
             dager.add(dag)
         }
     }

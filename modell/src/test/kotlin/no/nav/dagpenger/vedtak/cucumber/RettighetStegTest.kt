@@ -18,6 +18,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
+import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
@@ -231,6 +232,7 @@ class RettighetStegTest : No {
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
+            type: Vedtak.VedtakType,
         ) {
             this.vedtakId = vedtakId
             this.virkningsdato = virkningsdato
@@ -271,23 +273,19 @@ class RettighetStegTest : No {
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
+            type: Vedtak.VedtakType,
         ) {
             this.vedtakId = null
         }
 
         override fun visitUtbetalingsvedtak(
-            vedtakId: UUID,
-            behandlingId: UUID,
-            vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean?,
-            virkningsdato: LocalDate,
+            utfall: Boolean,
             forbruk: Stønadsdager,
             trukketEgenandel: Beløp,
             beløpTilUtbetaling: Beløp,
             utbetalingsdager: List<Utbetalingsdag>,
 
         ) {
-            antallVedtak++
             this.forbruk = forbruk
             this.beløpTilUtbetaling = beløpTilUtbetaling
             this.virkningsdato = virkningsdato
@@ -310,7 +308,7 @@ class RettighetStegTest : No {
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean?,
+            utfall: Boolean,
             virkningsdato: LocalDate,
         ) {
             antallVedtak++

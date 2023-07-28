@@ -23,6 +23,10 @@ internal class VedtakFattetVisitor : VedtakVisitor {
     private var vedtakId: UUID? = null
     private var utfall: Boolean? = null
 
+    private var behandlingId: UUID? = null
+    private var virkningsdato: LocalDate? = null
+    private var vedtakstidspunkt: LocalDateTime? = null
+
     private fun vedtakId() = requireNotNull(vedtakId) { " Forventet at vedtakId er satt. Har du husket preVisitVedtak?" }
     private fun utfall() = requireNotNull(utfall) { " Forventet at utfall er satt. Har du husket preVisitVedtak?" }
 
@@ -31,8 +35,12 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
+        type: Vedtak.VedtakType,
     ) {
         this.vedtakId = vedtakId
+        this.behandlingId = behandlingId
+        this.virkningsdato = virkningsdato
+        this.vedtakstidspunkt = vedtakstidspunkt
     }
 
     override fun visitOrdinær(ordinær: Ordinær) {
@@ -52,37 +60,39 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
+        type: Vedtak.VedtakType,
     ) {
-        vedtakFattet = VedtakFattet(
-            vedtakId = vedtakId(),
-            vedtakstidspunkt = vedtakstidspunkt,
-            behandlingId = behandlingId,
-            virkningsdato = virkningsdato,
-            utfall = when (utfall()) {
-                true -> Innvilget
-                false -> Avslått
-            },
-        )
+        if (!this::utbetalingsvedtakFattet.isInitialized) {
+            vedtakFattet = VedtakFattet(
+                vedtakId = vedtakId(),
+                vedtakstidspunkt = vedtakstidspunkt,
+                behandlingId = behandlingId,
+                virkningsdato = virkningsdato,
+                utfall = when (utfall()) {
+                    true -> Innvilget
+                    false -> Avslått
+                },
+            )
+        }
         this.vedtakId = null
         this.utfall = null
+        this.virkningsdato = null
+        this.behandlingId = null
+        this.vedtakstidspunkt = null
     }
 
     override fun visitUtbetalingsvedtak(
-        vedtakId: UUID,
-        behandlingId: UUID,
-        vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean?,
-        virkningsdato: LocalDate,
+        utfall: Boolean,
         forbruk: Stønadsdager,
         trukketEgenandel: Beløp,
         beløpTilUtbetaling: Beløp,
         utbetalingsdager: List<Utbetalingsdag>,
     ) {
         utbetalingsvedtakFattet = UtbetalingsvedtakFattet(
-            vedtakId = vedtakId,
-            vedtakstidspunkt = vedtakstidspunkt,
-            behandlingId = behandlingId,
-            virkningsdato = virkningsdato,
+            vedtakId = this.vedtakId(),
+            vedtakstidspunkt = this.vedtakstidspunkt!!,
+            behandlingId = this.behandlingId!!,
+            virkningsdato = this.virkningsdato!!,
             utbetalingsdager = utbetalingsdager.map { løpendeRettighetDag ->
                 UtbetalingsdagDto(
                     dato = løpendeRettighetDag.dato,
@@ -100,7 +110,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean?,
+        utfall: Boolean,
         virkningsdato: LocalDate,
     ) {
         vedtakFattet = VedtakFattet(

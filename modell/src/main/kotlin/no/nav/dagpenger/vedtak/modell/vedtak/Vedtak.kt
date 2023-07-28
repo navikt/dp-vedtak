@@ -10,7 +10,15 @@ abstract class Vedtak(
     protected val behandlingId: UUID,
     protected val vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     protected val virkningsdato: LocalDate,
+    protected val type: VedtakType,
 ) : Comparable<Vedtak> {
+    enum class VedtakType {
+        Ramme,
+        Utbetaling,
+        Avslag,
+        Stans,
+    }
+
     companion object {
         internal fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean =
             this.any { it.behandlingId == behandlingId }

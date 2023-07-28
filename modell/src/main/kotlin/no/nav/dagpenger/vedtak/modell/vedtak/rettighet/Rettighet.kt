@@ -1,49 +1,52 @@
 package no.nav.dagpenger.vedtak.modell.vedtak.rettighet
 
 import no.nav.dagpenger.vedtak.modell.visitor.RettighetVisitor
-import java.util.UUID
 
 interface Rettighet {
 
-    val id: UUID
     val utfall: Boolean
+    val type: RettighetType
+
+    enum class RettighetType {
+        Ordinær,
+        PermitteringFraFiskeindustrien,
+        Permittering,
+    }
     fun accept(visitor: RettighetVisitor)
 }
 
 abstract class Hovedrettighet() : Rettighet
 class Ordinær(
-    override val id: UUID,
     override val utfall: Boolean,
 ) : Hovedrettighet() {
+    override val type: Rettighet.RettighetType
+        get() = Rettighet.RettighetType.Ordinær
+
     override fun accept(visitor: RettighetVisitor) {
         visitor.visitOrdinær(this)
     }
 }
 
 class PermitteringFraFiskeindustrien(
-    override val id: UUID,
     override val utfall: Boolean,
 ) : Hovedrettighet() {
+
+    override val type: Rettighet.RettighetType
+        get() = Rettighet.RettighetType.PermitteringFraFiskeindustrien
     override fun accept(visitor: RettighetVisitor) {
         visitor.visitPermitteringFraFiskeindustrien(this)
     }
 }
 
 class Permittering(
-    override val id: UUID,
     override val utfall: Boolean,
 ) : Hovedrettighet() {
+
+    override val type: Rettighet.RettighetType
+        get() = Rettighet.RettighetType.Permittering
     override fun accept(visitor: RettighetVisitor) {
         visitor.visitPermittering(this)
     }
 }
 
 abstract class Tilleggsrettighet() : Rettighet
-class Barn(
-    override val id: UUID,
-    override val utfall: Boolean,
-) : Tilleggsrettighet() {
-    override fun accept(visitor: RettighetVisitor) {
-        TODO("Not yet implemented")
-    }
-}

@@ -10,12 +10,14 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.rapportering.Behandling
+import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperioder
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
+import java.time.Instant
 import java.time.LocalDate
 
 class Person internal constructor(
@@ -43,8 +45,9 @@ class Person internal constructor(
         fun rehydrer(
             ident: PersonIdentifikator,
             vedtak: List<Vedtak>,
+            perioder: List<Rapporteringsperiode>,
         ): Person {
-            return Person(ident, VedtakHistorikk(vedtak), Rapporteringsperioder(), mutableListOf())
+            return Person(ident, VedtakHistorikk(vedtak), Rapporteringsperioder(perioder), mutableListOf())
         }
     }
 
@@ -117,4 +120,8 @@ class Person internal constructor(
     }
 
     override fun toSpesifikkKontekst() = SpesifikkKontekst(kontekstType, mapOf("ident" to ident.identifikator()))
+}
+
+fun main() {
+    println(Instant.now())
 }

@@ -82,6 +82,7 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
+            type: Vedtak.VedtakType,
         ) {
             this.virkningsdato = virkningsdato
         }
@@ -119,31 +120,28 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
+            type: Vedtak.VedtakType,
         ) {
             this.virkningsdato = null
         }
 
         override fun visitUtbetalingsvedtak(
-            vedtakId: UUID,
-            behandlingId: UUID,
-            vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean?,
-            virkningsdato: LocalDate,
+            utfall: Boolean,
             forbruk: Stønadsdager,
             trukketEgenandel: Beløp,
             beløpTilUtbetaling: Beløp,
             utbetalingsdager: List<Utbetalingsdag>,
         ) {
-            vedtakHistorikk.forbrukHistorikk.put(virkningsdato, forbruk)
-            vedtakHistorikk.trukketEgenandelHistorikk.put(virkningsdato, trukketEgenandel)
-            vedtakHistorikk.beløpTilUtbetalingHistorikk.put(virkningsdato, beløpTilUtbetaling)
+            vedtakHistorikk.forbrukHistorikk.put(this.virkningsdato(), forbruk)
+            vedtakHistorikk.trukketEgenandelHistorikk.put(this.virkningsdato(), trukketEgenandel)
+            vedtakHistorikk.beløpTilUtbetalingHistorikk.put(this.virkningsdato(), beløpTilUtbetaling)
         }
 
         override fun visitAvslag(
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean?,
+            utfall: Boolean,
             virkningsdato: LocalDate,
         ) {
         }

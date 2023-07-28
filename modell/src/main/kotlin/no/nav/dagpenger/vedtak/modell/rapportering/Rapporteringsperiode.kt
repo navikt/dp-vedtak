@@ -1,11 +1,14 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.visitor.RapporteringsperiodeVisitor
+import java.time.LocalDate
 import java.util.SortedSet
 import java.util.UUID
 
-class Rapporteringsperiode(internal val rapporteringsId: UUID, dager: List<Dag>) : Iterable<Dag> {
-    constructor(rapporteringsId: UUID) : this(rapporteringsId, emptyList())
+class Rapporteringsperiode(private val rapporteringsId: UUID, private val periode: Periode, dager: List<Dag>) : ClosedRange<LocalDate> by periode {
+    constructor(rapporteringsId: UUID, periode: Periode) : this(rapporteringsId, periode, emptyList())
+
     private val dager: SortedSet<Dag> = dager.toSortedSet()
 
     fun leggTilDag(dag: Dag) {
@@ -13,13 +16,9 @@ class Rapporteringsperiode(internal val rapporteringsId: UUID, dager: List<Dag>)
     }
 
     fun accept(visitor: RapporteringsperiodeVisitor) {
-        visitor.preVisitRapporteringsperiode(this)
-        dager.forEach { visitor.visitdag(it) }
-        visitor.postVisitRapporteringsperiode(this)
-    }
-
-    override fun iterator(): Iterator<Dag> {
-        return dager.iterator()
+        visitor.preVisitRapporteringsperiode(rapporteringsId, this)
+        dager.forEach { it.accept(visitor) }
+        visitor.postVisitRapporteringsperiode(rapporteringsId, this)
     }
 
     companion object {

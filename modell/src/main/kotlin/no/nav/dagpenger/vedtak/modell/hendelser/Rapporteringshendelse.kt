@@ -22,7 +22,7 @@ class Rapporteringshendelse(
 ) : Hendelse(ident, aktivitetslogg) {
     private val rapporteringsdager = rapporteringsdager.sorted()
     internal fun populerRapporteringsperiode(): Rapporteringsperiode {
-        return Rapporteringsperiode(rapporteringsId).also { periode ->
+        return Rapporteringsperiode(rapporteringsId, Periode(fom, tom)).also { periode ->
             rapporteringsdager.forEach { rapporteringdag ->
                 val aktiviteter = rapporteringdag.aktiviteter.map {
                     when (it.type) {

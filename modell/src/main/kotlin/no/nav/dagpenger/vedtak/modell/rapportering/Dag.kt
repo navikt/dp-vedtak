@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.modell.rapportering
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
+import no.nav.dagpenger.vedtak.modell.visitor.DagVisitor
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -11,6 +12,11 @@ class Dag private constructor(
     private val aktiviteter: List<Aktivitet>,
 ) : Comparable<Dag> {
     init {
+        /**
+         * NB! Databasen støtter kun 1 aktivitet av samme type
+         *
+         */
+
         require(aktiviteter.isEmpty() || aktiviteter.size == 1) {
             "Støtter bare 1 aktivitet per dag pt."
         }
@@ -24,6 +30,10 @@ class Dag private constructor(
     internal fun innenfor(periode: Periode) = this.dato in periode
     override fun toString(): String {
         return "Aktivitetsdag(dato=$dato, aktiviteter=$aktiviteter)"
+    }
+
+    fun accept(visitor: DagVisitor) {
+        visitor.visitDag(this, aktiviteter)
     }
 
     companion object {

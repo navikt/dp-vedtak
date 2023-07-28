@@ -16,6 +16,7 @@ class Avslag private constructor(
     behandlingId = behandlingId,
     vedtakstidspunkt = vedtakstidspunkt,
     virkningsdato = virkningsdato,
+    type = VedtakType.Avslag,
 ) {
 
     companion object {

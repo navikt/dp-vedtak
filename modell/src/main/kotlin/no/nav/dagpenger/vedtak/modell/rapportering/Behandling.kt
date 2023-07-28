@@ -20,8 +20,11 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.util.UUID
 
-class Behandling(val behandlingId: UUID, private val person: Person, private var behandlingssteg: Behandlingssteg) :
-    Aktivitetskontekst {
+class Behandling(
+    private val behandlingId: UUID,
+    private val person: Person,
+    private var behandlingssteg: Behandlingssteg,
+) : Aktivitetskontekst {
 
     constructor(person: Person) : this(UUID.randomUUID(), person, FinnBeregningsgrunnlag)
 
@@ -115,16 +118,18 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
             val rapporteringsdato = rapporteringsperiode.endInclusive
 
             val forrigeRapporteringsdato = rapporteringsperiode.start.minusDays(1)
-            val forrigeAkkumulerteForbruk = behandling.person.vedtakHistorikk.forbrukHistorikk.summer(forrigeRapporteringsdato)
+            val forrigeAkkumulerteForbruk =
+                behandling.person.vedtakHistorikk.forbrukHistorikk.summer(forrigeRapporteringsdato)
             val innvilgedeStønadsdager = behandling.person.vedtakHistorikk.stønadsdagerHistorikk.get(rapporteringsdato)
 
             val gjenståendeStønadsperiode = innvilgedeStønadsdager - forrigeAkkumulerteForbruk
 
-            val forbruksdager = if (Stønadsdager(dager = behandling.tellendeRapporteringsdager.size) > gjenståendeStønadsperiode) {
-                behandling.tellendeRapporteringsdager.subList(0, gjenståendeStønadsperiode.stønadsdager())
-            } else {
-                behandling.tellendeRapporteringsdager
-            }
+            val forbruksdager =
+                if (Stønadsdager(dager = behandling.tellendeRapporteringsdager.size) > gjenståendeStønadsperiode) {
+                    behandling.tellendeRapporteringsdager.subList(0, gjenståendeStønadsperiode.stønadsdager())
+                } else {
+                    behandling.tellendeRapporteringsdager
+                }
 
             behandling.resultatBuilder.forbruksdager(forbruksdager)
 
@@ -228,7 +233,7 @@ class Behandling(val behandlingId: UUID, private val person: Person, private var
             person.accept(this)
         }
 
-        override fun visitdag(dag: Dag) {
+        override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
             if (dag in periode) {
                 dager.add(dag)
             }
