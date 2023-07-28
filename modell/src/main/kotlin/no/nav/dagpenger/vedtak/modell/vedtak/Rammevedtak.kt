@@ -4,6 +4,7 @@ import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
+import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.VedtakType.Ramme
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Egenandel
@@ -30,6 +31,7 @@ class Rammevedtak(
     behandlingId = behandlingId,
     vedtakstidspunkt = vedtakstidspunkt,
     virkningsdato = virkningsdato,
+    type = Ramme,
 ) {
 
     companion object {
@@ -69,6 +71,7 @@ class Rammevedtak(
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
             vedtakstidspunkt = vedtakstidspunkt,
+            type = type,
         )
         fakta.forEach {
             it.accept(visitor)
@@ -81,6 +84,7 @@ class Rammevedtak(
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
             vedtakstidspunkt = vedtakstidspunkt,
+            type = type,
         )
     }
 }

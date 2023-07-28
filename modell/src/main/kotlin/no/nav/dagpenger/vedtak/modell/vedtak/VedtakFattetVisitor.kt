@@ -35,6 +35,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
+        type: Vedtak.VedtakType,
     ) {
         this.vedtakId = vedtakId
         this.behandlingId = behandlingId
@@ -59,6 +60,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
+        type: Vedtak.VedtakType,
     ) {
         if (!this::utbetalingsvedtakFattet.isInitialized) {
             vedtakFattet = VedtakFattet(

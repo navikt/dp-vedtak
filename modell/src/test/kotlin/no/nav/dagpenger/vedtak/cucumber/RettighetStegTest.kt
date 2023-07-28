@@ -18,6 +18,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
+import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
@@ -231,6 +232,7 @@ class RettighetStegTest : No {
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
+            type: Vedtak.VedtakType,
         ) {
             this.vedtakId = vedtakId
             this.virkningsdato = virkningsdato
@@ -271,6 +273,7 @@ class RettighetStegTest : No {
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
+            type: Vedtak.VedtakType,
         ) {
             this.vedtakId = null
         }

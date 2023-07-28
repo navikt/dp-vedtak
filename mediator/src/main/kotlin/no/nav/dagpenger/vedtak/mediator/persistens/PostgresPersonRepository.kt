@@ -23,6 +23,7 @@ import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.Syk
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
+import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Egenandel
@@ -127,6 +128,7 @@ private class PopulerQueries(
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
+        type: Vedtak.VedtakType,
     ) {
         this.vedtakId = vedtakId
         queries.add(
@@ -290,6 +292,7 @@ private class PopulerQueries(
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
+        type: Vedtak.VedtakType,
     ) {
         this.vedtakId = null
     }

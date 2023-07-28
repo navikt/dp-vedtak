@@ -82,6 +82,7 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
+            type: Vedtak.VedtakType,
         ) {
             this.virkningsdato = virkningsdato
         }
@@ -119,6 +120,7 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
+            type: Vedtak.VedtakType,
         ) {
             this.virkningsdato = null
         }

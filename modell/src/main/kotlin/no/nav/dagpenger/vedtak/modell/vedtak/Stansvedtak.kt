@@ -11,7 +11,7 @@ class Stansvedtak(
     vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     virkningsdato: LocalDate,
     private val utfall: Boolean = false,
-) : Vedtak(vedtakId, behandlingId, vedtakstidspunkt, virkningsdato) {
+) : Vedtak(vedtakId, behandlingId, vedtakstidspunkt, virkningsdato, VedtakType.Stans) {
     override fun accept(visitor: VedtakVisitor) {
         visitor.visitStans(
             vedtakId,

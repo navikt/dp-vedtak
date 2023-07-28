@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS vedtak
     behandling_id    UUID                                                              NOT NULL, -- todo: I hvilken kontekst kommer behandling_id fra? dp-behandling eller dp-vedtak?
     virkningsdato    DATE                                                              NOT NULL,
     vedtakstidspunkt TIMESTAMP                                                         NOT NULL,
+    "type"           TEXT                                                              NOT NULL,
     opprettet        TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL
 );
 
