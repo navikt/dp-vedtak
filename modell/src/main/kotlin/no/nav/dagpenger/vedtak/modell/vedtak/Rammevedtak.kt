@@ -17,13 +17,12 @@ import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Rettighet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class Rammevedtak(
     vedtakId: UUID = UUID.randomUUID(),
     behandlingId: UUID,
-    vedtakstidspunkt: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
+    vedtakstidspunkt: LocalDateTime = LocalDateTime.now(),
     virkningsdato: LocalDate,
     private val fakta: List<Faktum<*>>,
     private val rettigheter: List<Rettighet>,
