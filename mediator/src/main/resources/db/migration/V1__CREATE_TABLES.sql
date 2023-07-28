@@ -40,6 +40,22 @@ CREATE TABLE IF NOT EXISTS vanlig_arbeidstid
     antall_timer_per_dag DECIMAL NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS egenandel
+(
+    vedtak_id            UUID      PRIMARY KEY REFERENCES vedtak(id),
+    beløp                DECIMAL   NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS rettighet
+(
+    id                   BIGSERIAL   PRIMARY KEY,
+    vedtak_id            UUID        NOT NULL REFERENCES vedtak(id),
+    rettighetstype       VARCHAR     NOT NULL,
+    utfall               BOOLEAN     NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS rettighet_vedtak_idx ON rettighet(vedtak_id);
+
 
 --- RAPPORTERING
 

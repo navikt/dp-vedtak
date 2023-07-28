@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak
 
+import io.kotest.matchers.collections.shouldContainAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import java.math.BigDecimal
@@ -72,8 +73,12 @@ private class ModelDeepEquals {
 
     private fun assertCollectionEquals(one: Collection<*>, other: Collection<*>, fieldName: String) {
         assertEquals(one.size, other.size, "Failure for size of field: $fieldName")
-        (one.toTypedArray() to other.toTypedArray()).forEach { i1, i2 ->
-            this.assertDeepEquals(i1, i2, fieldName)
+        if (fieldName == "fakta") {
+            one.shouldContainAll(other)
+        } else {
+            (one.toTypedArray() to other.toTypedArray()).forEach { i1, i2 ->
+                this.assertDeepEquals(i1, i2, fieldName)
+            }
         }
     }
 

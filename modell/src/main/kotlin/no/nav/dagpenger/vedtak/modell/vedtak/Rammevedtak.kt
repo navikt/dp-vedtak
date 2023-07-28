@@ -43,9 +43,9 @@ class Rammevedtak(
             egenandel: Beløp,
         ): Rammevedtak {
             val rettighet = when (dagpengerettighet) {
-                Dagpengerettighet.Ordinær -> Ordinær(UUID.randomUUID(), utfall = true)
-                Dagpengerettighet.Permittering -> Permittering(UUID.randomUUID(), utfall = true)
-                Dagpengerettighet.PermitteringFraFiskeindustrien -> PermitteringFraFiskeindustrien(UUID.randomUUID(), utfall = true)
+                Dagpengerettighet.Ordinær -> Ordinær(utfall = true)
+                Dagpengerettighet.Permittering -> Permittering(utfall = true)
+                Dagpengerettighet.PermitteringFraFiskeindustrien -> PermitteringFraFiskeindustrien(utfall = true)
                 Dagpengerettighet.ForskutterteLønnsgarantimidler -> TODO()
                 Dagpengerettighet.Ingen -> TODO()
             }

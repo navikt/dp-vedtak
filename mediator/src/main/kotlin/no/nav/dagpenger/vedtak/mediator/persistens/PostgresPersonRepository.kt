@@ -24,8 +24,10 @@ import no.nav.dagpenger.vedtak.modell.rapportering.Syk
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
+import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Egenandel
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Faktum
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.VanligArbeidstidPerDag
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -203,6 +205,43 @@ private class PopulerQueries(
         )
     }
 
+    override fun visitEgenandel(beløp: Beløp) {
+        queries.add(
+            queryOf(
+                //language=PostgreSQL
+                statement = """
+                    INSERT INTO egenandel
+                           (vedtak_id, beløp)
+                    VALUES (:vedtak_id, :belop)
+                    ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                paramMap = mapOf(
+                    "vedtak_id" to vedtakId,
+                    "belop" to beløp.reflection { it },
+                ),
+            ),
+        )
+    }
+
+    override fun visitOrdinær(ordinær: Ordinær) {
+        queries.add(
+            queryOf(
+                //language=PostgreSQL
+                statement = """
+                    INSERT INTO rettighet
+                           (vedtak_id, rettighetstype, utfall)
+                    VALUES (:vedtak_id, :rettighetstype, :utfall)
+                    ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                paramMap = mapOf(
+                    "vedtak_id" to vedtakId,
+                    "rettighetstype" to ordinær.type.name,
+                    "utfall" to ordinær.utfall,
+                ),
+            ),
+        )
+    }
+
     override fun postVisitVedtak(
         vedtakId: UUID,
         behandlingId: UUID,
@@ -235,13 +274,20 @@ private fun Session.hentVedtak(personId: Long) = this.run(
         """.trimIndent(),
         paramMap = mapOf("person_id" to personId),
     ).map { rad ->
+        val vedtakId = rad.uuid("id")
         Rammevedtak(
-            vedtakId = rad.uuid("id"),
+            vedtakId = vedtakId,
             behandlingId = rad.uuid("behandling_id"),
             vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
             virkningsdato = rad.localDate("virkningsdato"),
-            fakta = this.hentFakta(vedtakId = rad.uuid("id"))?.fakta ?: emptyList(),
-            rettigheter = emptyList(),
+            fakta = this.hentFakta(vedtakId = vedtakId)?.fakta ?: emptyList(),
+            rettigheter = this.hentRettigheter(vedtakId = vedtakId).map { rettighetDTO ->
+                when (rettighetDTO.rettighetstype) {
+                    RettighetDTO.Rettighetstype.Ordinær -> Ordinær(rettighetDTO.utfall)
+                    RettighetDTO.Rettighetstype.PermitteringFraFiskeindustrien -> TODO()
+                    RettighetDTO.Rettighetstype.Permittering -> TODO()
+                }
+            },
         )
     }.asList,
 )
@@ -250,14 +296,16 @@ private fun Session.hentFakta(vedtakId: UUID) = this.run(
     queryOf(
         //language=PostgreSQL
         statement = """
-            SELECT      dagsats.beløp                          AS dagsats,
-                        stønadsperiode.antall_dager            AS stønadsperiode,
-                        vanlig_arbeidstid.antall_timer_per_dag AS vanlig_arbeidstid_per_dag
-            FROM        vedtak
-            LEFT JOIN   dagsats           ON vedtak.id = dagsats.vedtak_id
-            LEFT JOIN   stønadsperiode    ON vedtak.id = stønadsperiode.vedtak_id
-            LEFT JOIN   vanlig_arbeidstid ON vedtak.id = vanlig_arbeidstid.vedtak_id
-            WHERE       vedtak.id = :vedtak_id
+            SELECT dagsats.beløp                          AS dagsats,
+                   stønadsperiode.antall_dager            AS stønadsperiode,
+                   vanlig_arbeidstid.antall_timer_per_dag AS vanlig_arbeidstid_per_dag,
+                   egenandel.beløp                        AS egenandel
+            FROM vedtak
+                     LEFT JOIN dagsats ON vedtak.id = dagsats.vedtak_id
+                     LEFT JOIN stønadsperiode ON vedtak.id = stønadsperiode.vedtak_id
+                     LEFT JOIN vanlig_arbeidstid ON vedtak.id = vanlig_arbeidstid.vedtak_id
+                     LEFT JOIN egenandel ON vedtak.id = egenandel.vedtak_id
+            WHERE vedtak.id = :vedtak_id
         """.trimIndent(),
         paramMap = mapOf("vedtak_id" to vedtakId),
     ).map { rad ->
@@ -265,8 +313,22 @@ private fun Session.hentFakta(vedtakId: UUID) = this.run(
             dagsats = rad.bigDecimalOrNull("dagsats"),
             stønadsperiode = rad.intOrNull("stønadsperiode"),
             vanligArbeidstidPerDag = rad.bigDecimalOrNull("vanlig_arbeidstid_per_dag"),
+            egenandel = rad.bigDecimalOrNull("egenandel"),
         )
     }.asSingle,
+)
+
+private fun Session.hentRettigheter(vedtakId: UUID) = this.run(
+    queryOf(
+        //language=PostgreSQL
+        statement = """ SELECT rettighetstype, utfall 
+                |FROM rettighet
+                |WHERE vedtak_id= :vedtakId  
+        """.trimMargin(),
+        paramMap = mapOf("vedtakId" to vedtakId),
+    ).map { rad ->
+        RettighetDTO(RettighetDTO.Rettighetstype.valueOf(rad.string("rettighetstype")), rad.boolean("utfall"))
+    }.asList,
 )
 
 private fun Session.opprettPerson(ident: String) = this.run(
@@ -364,6 +426,7 @@ private data class FaktaRad(
     val dagsats: BigDecimal?,
     val stønadsperiode: Int?,
     val vanligArbeidstidPerDag: BigDecimal?,
+    val egenandel: BigDecimal?,
 ) {
 
     val fakta = mutableListOf<Faktum<*>>()
@@ -379,5 +442,19 @@ private data class FaktaRad(
         if (vanligArbeidstidPerDag != null) {
             fakta.add(VanligArbeidstidPerDag(vanligArbeidstidPerDag.timer))
         }
+        if (egenandel != null) {
+            fakta.add(Egenandel(egenandel.beløp))
+        }
+    }
+}
+
+private data class RettighetDTO(
+    val rettighetstype: Rettighetstype,
+    val utfall: Boolean,
+) {
+    enum class Rettighetstype {
+        Ordinær,
+        PermitteringFraFiskeindustrien,
+        Permittering,
     }
 }
