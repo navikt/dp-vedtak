@@ -31,7 +31,7 @@ ktor-serialization-jackson = { group = "io.ktor", name = "ktor-serialization-jac
 ktor-server-logging-jvm = { group = "io.ktor", name = "ktor-server-call-logging-jvm", version.ref = "ktor" }
 
 # Database
-flywaydb = { group = "org.flywaydb", name = "flyway-core", version = "9.21.0" }
+flywaydb = { group = "org.flywaydb", name = "flyway-core", version = "9.21.1" }
 postgresql-driver = { group = "org.postgresql", name = "postgresql", version = "42.6.0" }
 hikariCP = { group = "com.zaxxer", name = "HikariCP", version = "5.0.1" }
 kotlinquery = { group = "com.github.seratch", name = "kotliquery", version = "1.9.0" }
