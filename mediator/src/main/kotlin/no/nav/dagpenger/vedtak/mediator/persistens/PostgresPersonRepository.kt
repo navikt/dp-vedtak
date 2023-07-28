@@ -94,7 +94,7 @@ private class PopulerQueries(
     override fun preVisitRapporteringsperiode(rapporteringsperiodeId: UUID, periode: Rapporteringsperiode) {
         this.rapporteringDbId = session.hentRapportering(rapporteringsperiodeId)
             ?: session.opprettRapportering(dbPersonId, rapporteringsperiodeId, periode)
-                ?: throw RuntimeException("Kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
+            ?: throw RuntimeException("Kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
     }
 
     override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
@@ -356,7 +356,7 @@ private fun Session.hentVedtak(personId: Long) = this.run(
                     forbruk = Stønadsdager(utbetaling.forbruk),
                     utfall = utbetaling.utfall,
                     trukketEgenandel = utbetaling.trukketEgenandel.beløp,
-                    utbetalingsdager = emptyList()
+                    utbetalingsdager = this.hentUtbetalingsdager(vedtakId),
                 )
             }
 
@@ -372,16 +372,30 @@ private fun Session.hentUtbetaling(vedtakId: UUID) = this.run(
         statement = """
             SELECT utfall, forbruk, trukket_egenandel
             FROM utbetaling 
-            WHERE vedtak.id = :vedtak_id
+            WHERE vedtak_id = :vedtak_id
         """.trimIndent(),
-        paramMap = mapOf("vedtak_id" to vedtakId)
+        paramMap = mapOf("vedtak_id" to vedtakId),
     ).map { row ->
         UtbetalingRad(
             utfall = row.boolean("utfall"),
             forbruk = row.int("forbruk"),
-            trukketEgenandel = row.bigDecimal("trukket_egenandel")
+            trukketEgenandel = row.bigDecimal("trukket_egenandel"),
         )
-    }.asSingle
+    }.asSingle,
+)
+
+private fun Session.hentUtbetalingsdager(vedtakId: UUID) = this.run(
+    queryOf(
+        //language=PostgreSQL
+        statement = """
+            SELECT dato, beløp
+            FROM utbetalingsdag
+            WHERE vedtak_id = :vedtak_id
+        """.trimIndent(),
+        paramMap = mapOf("vedtak_id" to vedtakId),
+    ).map { rad ->
+        Utbetalingsdag(dato = rad.localDate("dato"), beløp = rad.bigDecimal("beløp").beløp)
+    }.asList,
 )
 
 private class UtbetalingRad(val utfall: Boolean, val forbruk: Int, val trukketEgenandel: BigDecimal)

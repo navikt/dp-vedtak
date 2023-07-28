@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.modell.vedtak
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class Avslag private constructor(
@@ -26,7 +27,7 @@ class Avslag private constructor(
     constructor(behandlingId: UUID, virkningsdato: LocalDate) : this(
         vedtakId = UUID.randomUUID(),
         behandlingId = behandlingId,
-        vedtakstidspunkt = LocalDateTime.now(),
+        vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
         virkningsdato = virkningsdato,
     )
 

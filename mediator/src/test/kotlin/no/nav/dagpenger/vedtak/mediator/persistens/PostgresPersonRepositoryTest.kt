@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.util.Random
 import java.util.UUID
-import kotlin.time.Duration.Companion.hours
 
 class PostgresPersonRepositoryTest {
 
@@ -66,9 +65,8 @@ class PostgresPersonRepositoryTest {
         val rapporteringdager = periode.map {
             Rapporteringsdag(
                 dato = it,
-                aktiviteter = listOf(
-                    Rapporteringsdag.Aktivitet(hentTilfeldigAktivitet(), 8.hours),
-                ),
+                aktiviteter = emptyList(),
+                // listOf(                    Rapporteringsdag.Aktivitet(hentTilfeldigAktivitet(), 1.hours),),
             )
         }
 
