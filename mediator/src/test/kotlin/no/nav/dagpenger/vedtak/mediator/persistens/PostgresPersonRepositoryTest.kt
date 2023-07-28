@@ -40,17 +40,6 @@ class PostgresPersonRepositoryTest {
             person.ident() shouldBe hentetPerson.ident()
         }
     }
-
-    private fun hentTilfeldigAktivitet(): Rapporteringsdag.Aktivitet.Type {
-        val antallAktiviteter = Rapporteringsdag.Aktivitet.Type.values().size
-        return Rapporteringsdag.Aktivitet.Type.values()[
-            kotlin.random.Random.nextInt(
-                0,
-                antallAktiviteter - 1,
-            ),
-        ]
-    }
-
     @Test
     fun `lagring og henter en komplett person`() {
         val person = Person(ident = ident)
@@ -105,4 +94,15 @@ class PostgresPersonRepositoryTest {
             )
         }
     }
+
+    private fun hentTilfeldigAktivitet(): Rapporteringsdag.Aktivitet.Type {
+        val antallAktiviteter = Rapporteringsdag.Aktivitet.Type.values().size
+        return Rapporteringsdag.Aktivitet.Type.values()[
+            kotlin.random.Random.nextInt(
+                0,
+                antallAktiviteter - 1,
+            ),
+        ]
+    }
+
 }
