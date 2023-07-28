@@ -40,6 +40,7 @@ class PostgresPersonRepositoryTest {
             person.ident() shouldBe hentetPerson.ident()
         }
     }
+
     @Test
     fun `lagring og henter en komplett person`() {
         val person = Person(ident = ident)
@@ -104,5 +105,4 @@ class PostgresPersonRepositoryTest {
             ),
         ]
     }
-
 }

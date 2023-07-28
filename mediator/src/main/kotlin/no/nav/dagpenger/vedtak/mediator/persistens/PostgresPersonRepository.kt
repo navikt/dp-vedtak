@@ -11,6 +11,7 @@ import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
@@ -42,9 +43,11 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
                     """.trimIndent(),
                     paramMap = mapOf("ident" to ident.identifikator()),
                 ).map { row ->
+                    val personId = row.long("id")
                     Person.rehydrer(
                         ident = row.string("ident").tilPersonIdentfikator(),
-                        vedtak = session.hentVedtak(row.long("id")),
+                        vedtak = session.hentVedtak(personId),
+                        perioder = session.hentRapporteringsperioder(personId),
                     )
                 }.asSingle,
             )
@@ -321,11 +324,26 @@ private fun Session.opprettRapportering(
             "uuid" to rapporteringsperiodeId,
             "person_id" to dbPersonId,
             "fom" to periode.start,
-            "tom" to periode.endInclusive
+            "tom" to periode.endInclusive,
         ),
     ).map { rad ->
         rad.long("id")
     }.asSingle,
+)
+
+private fun Session.hentRapporteringsperioder(personId: Long) = this.run(
+    queryOf( //language=PostgreSQL
+        statement = """
+            SELECT * FROM rapporteringsperiode 
+            WHERE person_id = :personId
+        """.trimIndent(),
+        paramMap = mapOf("personId" to personId),
+    ).map { rad ->
+        Rapporteringsperiode(
+            rapporteringsId = rad.uuid("uuid"),
+            periode = Periode(rad.localDate("fom"), rad.localDate("tom")),
+        )
+    }.asList,
 )
 
 private data class FaktaRad(
