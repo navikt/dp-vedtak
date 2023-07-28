@@ -286,7 +286,6 @@ class RettighetStegTest : No {
             utbetalingsdager: List<Utbetalingsdag>,
 
         ) {
-            antallVedtak++
             this.forbruk = forbruk
             this.beløpTilUtbetaling = beløpTilUtbetaling
             this.virkningsdato = virkningsdato

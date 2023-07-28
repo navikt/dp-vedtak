@@ -23,6 +23,7 @@ import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.Syk
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
+import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
@@ -93,7 +94,7 @@ private class PopulerQueries(
     override fun preVisitRapporteringsperiode(rapporteringsperiodeId: UUID, periode: Rapporteringsperiode) {
         this.rapporteringDbId = session.hentRapportering(rapporteringsperiodeId)
             ?: session.opprettRapportering(dbPersonId, rapporteringsperiodeId, periode)
-            ?: throw RuntimeException("Kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
+                ?: throw RuntimeException("Kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
     }
 
     override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
@@ -136,9 +137,9 @@ private class PopulerQueries(
                 //language=PostgreSQL
                 statement = """
                     INSERT INTO vedtak
-                        (id, person_id, behandling_id, virkningsdato, vedtakstidspunkt)
+                        (id, person_id, behandling_id, virkningsdato, vedtakstidspunkt, "type")
                     VALUES 
-                        (:id, :person_id, :behandling_id, :virkningsdato, :vedtakstidspunkt)
+                        (:id, :person_id, :behandling_id, :virkningsdato, :vedtakstidspunkt, :type)
                     ON CONFLICT DO NOTHING
                 """.trimIndent(),
                 paramMap = mapOf(
@@ -147,6 +148,7 @@ private class PopulerQueries(
                     "behandling_id" to behandlingId,
                     "virkningsdato" to virkningsdato,
                     "vedtakstidspunkt" to vedtakstidspunkt,
+                    "type" to type.name,
                 ),
             ),
         )
@@ -188,7 +190,11 @@ private class PopulerQueries(
                         VALUES (:vedtak_id, :dato, :belop)
                         ON CONFLICT DO NOTHING 
                     """.trimIndent(),
-                    paramMap = mapOf("vedtak_id" to vedtakId, "dato" to dag.dato, "belop" to dag.beløp.reflection { it }),
+                    paramMap = mapOf(
+                        "vedtak_id" to vedtakId,
+                        "dato" to dag.dato,
+                        "belop" to dag.beløp.reflection { it },
+                    ),
                 ),
             )
         }
@@ -316,27 +322,69 @@ private fun Session.hentVedtak(personId: Long) = this.run(
         statement = """
             SELECT * 
             FROM vedtak 
-            WHERE person_id = :person_id
+            WHERE person_id = :person_id 
         """.trimIndent(),
         paramMap = mapOf("person_id" to personId),
     ).map { rad ->
         val vedtakId = rad.uuid("id")
-        Rammevedtak(
-            vedtakId = vedtakId,
-            behandlingId = rad.uuid("behandling_id"),
-            vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
-            virkningsdato = rad.localDate("virkningsdato"),
-            fakta = this.hentFakta(vedtakId = vedtakId)?.fakta ?: emptyList(),
-            rettigheter = this.hentRettigheter(vedtakId = vedtakId).map { rettighetDTO ->
-                when (rettighetDTO.rettighetstype) {
-                    RettighetDTO.Rettighetstype.Ordinær -> Ordinær(rettighetDTO.utfall)
-                    RettighetDTO.Rettighetstype.PermitteringFraFiskeindustrien -> TODO()
-                    RettighetDTO.Rettighetstype.Permittering -> TODO()
-                }
-            },
-        )
+        when (VedtakTypeDTO.valueOf(rad.string("type"))) {
+            VedtakTypeDTO.Ramme -> {
+                Rammevedtak(
+                    vedtakId = vedtakId,
+                    behandlingId = rad.uuid("behandling_id"),
+                    vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
+                    virkningsdato = rad.localDate("virkningsdato"),
+                    fakta = this.hentFakta(vedtakId = vedtakId)?.fakta ?: emptyList(),
+                    rettigheter = this.hentRettigheter(vedtakId = vedtakId).map { rettighetDTO ->
+                        when (rettighetDTO.rettighetstype) {
+                            RettighetDTO.Rettighetstype.Ordinær -> Ordinær(rettighetDTO.utfall)
+                            RettighetDTO.Rettighetstype.PermitteringFraFiskeindustrien -> TODO()
+                            RettighetDTO.Rettighetstype.Permittering -> TODO()
+                        }
+                    },
+                )
+            }
+
+            VedtakTypeDTO.Utbetaling -> {
+                val utbetaling =
+                    this.hentUtbetaling(vedtakId) ?: throw RuntimeException("Utbetalingsvedtak med manglende felter")
+                Utbetalingsvedtak(
+                    vedtakId = vedtakId,
+                    behandlingId = rad.uuid("behandling_id"),
+                    vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
+                    virkningsdato = rad.localDate("virkningsdato"),
+                    forbruk = Stønadsdager(utbetaling.forbruk),
+                    utfall = utbetaling.utfall,
+                    trukketEgenandel = utbetaling.trukketEgenandel.beløp,
+                    utbetalingsdager = emptyList()
+                )
+            }
+
+            VedtakTypeDTO.Avslag -> TODO()
+            VedtakTypeDTO.Stans -> TODO()
+        }
     }.asList,
 )
+
+private fun Session.hentUtbetaling(vedtakId: UUID) = this.run(
+    queryOf(
+        //language=PostgreSQL
+        statement = """
+            SELECT utfall, forbruk, trukket_egenandel
+            FROM utbetaling 
+            WHERE vedtak.id = :vedtak_id
+        """.trimIndent(),
+        paramMap = mapOf("vedtak_id" to vedtakId)
+    ).map { row ->
+        UtbetalingRad(
+            utfall = row.boolean("utfall"),
+            forbruk = row.int("forbruk"),
+            trukketEgenandel = row.bigDecimal("trukket_egenandel")
+        )
+    }.asSingle
+)
+
+private class UtbetalingRad(val utfall: Boolean, val forbruk: Int, val trukketEgenandel: BigDecimal)
 
 private fun Session.hentFakta(vedtakId: UUID) = this.run(
     queryOf(
@@ -430,7 +478,8 @@ private fun Session.opprettRapportering(
 )
 
 private fun Session.hentRapporteringsperioder(personId: Long) = this.run(
-    queryOf( //language=PostgreSQL
+    queryOf(
+        //language=PostgreSQL
         statement = """
             SELECT id, uuid, fom, tom FROM rapporteringsperiode 
             WHERE person_id = :personId
@@ -447,7 +496,8 @@ private fun Session.hentRapporteringsperioder(personId: Long) = this.run(
 )
 
 private fun Session.hentDager(rapporteringsperiodeId: Long) = this.run(
-    queryOf( //language=PostgreSQL
+    queryOf(
+        //language=PostgreSQL
         statement = """
             SELECT dato, syk_timer, arbeid_timer, ferie_timer
             FROM dag
@@ -503,4 +553,11 @@ private data class RettighetDTO(
         PermitteringFraFiskeindustrien,
         Permittering,
     }
+}
+
+enum class VedtakTypeDTO {
+    Ramme,
+    Utbetaling,
+    Avslag,
+    Stans,
 }
