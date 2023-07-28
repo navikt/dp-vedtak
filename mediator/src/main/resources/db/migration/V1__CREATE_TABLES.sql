@@ -56,6 +56,22 @@ CREATE TABLE IF NOT EXISTS rettighet
 
 CREATE INDEX IF NOT EXISTS rettighet_vedtak_idx ON rettighet(vedtak_id);
 
+CREATE TABLE IF NOT EXISTS utbetaling
+(
+    vedtak_id           UUID PRIMARY KEY REFERENCES vedtak(id),
+    utfall              BOOLEAN NOT NULL,
+    forbruk             INTEGER NOT NULL,
+    trukket_egenandel   DECIMAL NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS utbetalingsdag
+(
+    vedtak_id           UUID REFERENCES vedtak(id),
+    dato                DATE NOT NULL,
+    beløp               DECIMAL NOT NULL,
+    PRIMARY KEY (vedtak_id, dato)
+);
+
 
 --- RAPPORTERING
 
@@ -70,6 +86,8 @@ CREATE TABLE IF NOT EXISTS rapporteringsperiode
     opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL,
     endret    TIMESTAMP                                                         NOT NULL
 );
+
+
 
 
 CREATE TABLE IF NOT EXISTS dag

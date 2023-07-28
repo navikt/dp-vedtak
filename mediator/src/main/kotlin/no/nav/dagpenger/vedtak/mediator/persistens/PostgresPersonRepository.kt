@@ -21,6 +21,7 @@ import no.nav.dagpenger.vedtak.modell.rapportering.Dag
 import no.nav.dagpenger.vedtak.modell.rapportering.Ferie
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.Syk
+import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
@@ -147,6 +148,48 @@ private class PopulerQueries(
                 ),
             ),
         )
+    }
+
+    override fun visitUtbetalingsvedtak(
+        utfall: Boolean,
+        forbruk: Stønadsdager,
+        trukketEgenandel: Beløp,
+        beløpTilUtbetaling: Beløp,
+        utbetalingsdager: List<Utbetalingsdag>,
+    ) {
+        queries.add(
+            queryOf(
+                //language=PostgreSQL
+                statement = """
+                INSERT INTO utbetaling
+                    (vedtak_id, utfall, forbruk, trukket_egenandel)
+                VALUES 
+                    (:vedtak_id, :utfall, :forbruk, :trukket_egenandel)
+                ON CONFLICT DO NOTHING 
+                """.trimIndent(),
+                paramMap = mapOf(
+                    "vedtak_id" to vedtakId,
+                    "utfall" to utfall,
+                    "forbruk" to forbruk.stønadsdager(),
+                    "trukket_egenandel" to trukketEgenandel.reflection { it },
+                ),
+            ),
+        )
+
+        utbetalingsdager.forEach { dag ->
+            queries.add(
+                queryOf(
+                    //language=PostgreSQL
+                    statement = """
+                        INSERT INTO utbetalingsdag
+                            (vedtak_id, dato, beløp)
+                        VALUES (:vedtak_id, :dato, :belop)
+                        ON CONFLICT DO NOTHING 
+                    """.trimIndent(),
+                    paramMap = mapOf("vedtak_id" to vedtakId, "dato" to dag.dato, "belop" to dag.beløp.reflection { it }),
+                ),
+            )
+        }
     }
 
     override fun visitDagsats(beløp: Beløp) {

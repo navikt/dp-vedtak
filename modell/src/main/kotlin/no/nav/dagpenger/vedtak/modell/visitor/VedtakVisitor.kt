@@ -24,11 +24,7 @@ interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
     ) {}
 
     fun visitUtbetalingsvedtak(
-        vedtakId: UUID,
-        behandlingId: UUID,
-        vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean?,
-        virkningsdato: LocalDate,
+        utfall: Boolean,
         forbruk: Stønadsdager,
         trukketEgenandel: Beløp,
         beløpTilUtbetaling: Beløp,
@@ -39,7 +35,7 @@ interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
         vedtakId: UUID,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
-        utfall: Boolean?,
+        utfall: Boolean,
         virkningsdato: LocalDate,
     ) {}
 

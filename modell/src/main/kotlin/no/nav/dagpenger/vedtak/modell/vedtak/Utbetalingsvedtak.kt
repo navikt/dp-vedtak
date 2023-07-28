@@ -44,17 +44,27 @@ class Utbetalingsvedtak(
             )
     }
     override fun accept(visitor: VedtakVisitor) {
-        val beløpTilUtbetaling = utbetalingsdager.summer() - trukketEgenandel
-        visitor.visitUtbetalingsvedtak(
+        visitor.preVisitVedtak(
             vedtakId = vedtakId,
             behandlingId = behandlingId,
             vedtakstidspunkt = vedtakstidspunkt,
-            utfall = utfall,
             virkningsdato = virkningsdato,
+        )
+
+        val beløpTilUtbetaling = utbetalingsdager.summer() - trukketEgenandel
+        visitor.visitUtbetalingsvedtak(
+            utfall = utfall,
             forbruk = forbruk,
             trukketEgenandel = trukketEgenandel,
             beløpTilUtbetaling = beløpTilUtbetaling,
             utbetalingsdager = utbetalingsdager,
+        )
+
+        visitor.postVisitVedtak(
+            vedtakId = vedtakId,
+            behandlingId = behandlingId,
+            vedtakstidspunkt = vedtakstidspunkt,
+            virkningsdato = virkningsdato,
         )
     }
 }

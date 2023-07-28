@@ -276,11 +276,7 @@ class RettighetStegTest : No {
         }
 
         override fun visitUtbetalingsvedtak(
-            vedtakId: UUID,
-            behandlingId: UUID,
-            vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean?,
-            virkningsdato: LocalDate,
+            utfall: Boolean,
             forbruk: Stønadsdager,
             trukketEgenandel: Beløp,
             beløpTilUtbetaling: Beløp,
@@ -310,7 +306,7 @@ class RettighetStegTest : No {
             vedtakId: UUID,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
-            utfall: Boolean?,
+            utfall: Boolean,
             virkningsdato: LocalDate,
         ) {
             antallVedtak++
