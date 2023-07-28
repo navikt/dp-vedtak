@@ -60,7 +60,7 @@ class PostgresPersonRepositoryTest {
 
         val periode = Periode(
             idag,
-            idag.plusDays(14),
+            idag.plusDays(13),
         )
 
         val rapporteringdager = periode.map {

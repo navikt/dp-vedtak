@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS vanlig_arbeidstid
 CREATE TABLE IF NOT EXISTS rapporteringsperiode
 (
     id        BIGSERIAL PRIMARY KEY,
-    uuid      uuid                                                              NOT NULL UNIQUE,
+    uuid      UUID                                                              NOT NULL UNIQUE,
     person_id BIGINT                                                            NOT NULL REFERENCES person (id),
     fom       DATE                                                              NOT NULL,
     tom       DATE                                                              NOT NULL,
@@ -59,19 +59,23 @@ CREATE TABLE IF NOT EXISTS rapporteringsperiode
 CREATE TABLE IF NOT EXISTS dag
 (
     id                      BIGSERIAL PRIMARY KEY,
-    person_id               BIGINT NOT NULL REFERENCES person (id), -- Blir dette litt smør på flesk, siden rapporteringsperiode refererer person?
     rapporteringsperiode_id BIGINT NOT NULL REFERENCES rapporteringsperiode (id),
     dato                    DATE   NOT NULL,
+    syk_timer               DECIMAL NULL,
+    arbeid_timer            DECIMAL NUll,
+    ferie_timer             DECIMAL NULL,
+    opprettet               TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL,
     UNIQUE (rapporteringsperiode_id, dato)
 );
-
-CREATE TABLE IF NOT EXISTS aktivitet
-(
-    id        BIGSERIAL PRIMARY KEY,
-    person_id BIGINT                                                            NOT NULL REFERENCES person (id),
-    dato      DATE                                                              NOT NULL,
-    "type"    TEXT                                                              NOT NULL,
-    timer     DECIMAL                                                           NOT NULL,
-    opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL
-);
+--
+-- CREATE TABLE IF NOT EXISTS aktivitet
+-- (
+--     id                      BIGSERIAL PRIMARY KEY,
+--     person_id               BIGINT                                                            NOT NULL REFERENCES person (id),
+--     rapporteringsperiode_id BIGINT                                                            NOT NULL REFERENCES rapporteringsperiode (id),
+--     dato                    DATE                                                              NOT NULL,
+--     "type"                  TEXT                                                              NOT NULL,
+--     timer                   DECIMAL                                                           NOT NULL,
+--     opprettet               TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL
+-- );
 

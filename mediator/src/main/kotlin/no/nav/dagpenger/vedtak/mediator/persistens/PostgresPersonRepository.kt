@@ -16,8 +16,11 @@ import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.rapportering.Aktivitet
+import no.nav.dagpenger.vedtak.modell.rapportering.Arbeid
 import no.nav.dagpenger.vedtak.modell.rapportering.Dag
+import no.nav.dagpenger.vedtak.modell.rapportering.Ferie
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
+import no.nav.dagpenger.vedtak.modell.rapportering.Syk
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
@@ -90,39 +93,26 @@ private class PopulerQueries(
     }
 
     override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
+        val arbeidedetimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Arbeid }?.timer
+        val ferieTimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Ferie }?.timer
+        val sykeTimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Syk }?.timer
         queries.add(
             queryOf(
                 //language=PostgreSQL
                 statement = """
-                    INSERT INTO dag (person_id, rapporteringsperiode_id, dato)
-                    VALUES (:person_id, :rapporteringsperiode_id, :dato)
+                    INSERT INTO dag (rapporteringsperiode_id, dato, syk_timer, arbeid_timer, ferie_timer)
+                    VALUES (:rapporteringsperiode_id, :dato, :syk, :arbeid, :ferie)
                     ON CONFLICT DO NOTHING
                 """.trimIndent(),
                 paramMap = mapOf(
-                    "person_id" to dbPersonId,
                     "rapporteringsperiode_id" to rapporteringDbId,
                     "dato" to dag.dato(),
+                    "syk" to sykeTimer?.let { timer -> timer.reflection { it } },
+                    "arbeid" to arbeidedetimer?.let { timer -> timer.reflection { it } },
+                    "ferie" to ferieTimer?.let { timer -> timer.reflection { it } },
                 ),
             ),
         )
-        aktiviteter.map { aktivitet ->
-            queries.add(
-                queryOf(
-                    //language=PostgreSQL
-                    statement = """
-                        INSERT INTO aktivitet (person_id, dato, "type", timer)
-                        VALUES (:person_id, :dato, :type, :timer)
-                        ON CONFLICT DO NOTHING
-                    """.trimIndent(),
-                    paramMap = mapOf(
-                        "person_id" to dbPersonId,
-                        "dato" to dag.dato(),
-                        "type" to aktivitet.type.name,
-                        "timer" to aktivitet.timer.reflection { it },
-                    ),
-                ),
-            )
-        }
     }
 
     override fun postVisitRapporteringsperiode(rapporteringsperiodeId: UUID, periode: Rapporteringsperiode) {
@@ -334,14 +324,38 @@ private fun Session.opprettRapportering(
 private fun Session.hentRapporteringsperioder(personId: Long) = this.run(
     queryOf( //language=PostgreSQL
         statement = """
-            SELECT * FROM rapporteringsperiode 
+            SELECT id, uuid, fom, tom FROM rapporteringsperiode 
             WHERE person_id = :personId
         """.trimIndent(),
         paramMap = mapOf("personId" to personId),
     ).map { rad ->
+        val rapporteringsId = rad.uuid("uuid")
         Rapporteringsperiode(
-            rapporteringsId = rad.uuid("uuid"),
+            rapporteringsId = rapporteringsId,
             periode = Periode(rad.localDate("fom"), rad.localDate("tom")),
+            dager = this.hentDager(rad.long("id")),
+        )
+    }.asList,
+)
+
+private fun Session.hentDager(rapporteringsperiodeId: Long) = this.run(
+    queryOf( //language=PostgreSQL
+        statement = """
+            SELECT dato, syk_timer, arbeid_timer, ferie_timer
+            FROM dag
+            WHERE rapporteringsperiode_id = :rapporteringsperiodeId 
+        """.trimIndent(),
+        paramMap = mapOf(
+            "rapporteringsperiodeId" to rapporteringsperiodeId,
+        ),
+    ).map { rad ->
+        val syk = rad.doubleOrNull("syk_timer")?.let { Syk(it.timer) }
+        val ferie = rad.doubleOrNull("ferie_timer")?.let { Ferie(it.timer) }
+        val arbeid = rad.doubleOrNull("arbeid_timer")?.let { Arbeid(it.timer) }
+
+        Dag.opprett(
+            dato = rad.localDate("dato"),
+            aktiviteter = listOf(syk, ferie, arbeid).mapNotNull { it },
         )
     }.asList,
 )

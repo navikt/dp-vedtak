@@ -12,6 +12,11 @@ class Dag private constructor(
     private val aktiviteter: List<Aktivitet>,
 ) : Comparable<Dag> {
     init {
+        /**
+         * NB! Databasen støtter kun 1 aktivitet av samme type
+         *
+         */
+
         require(aktiviteter.isEmpty() || aktiviteter.size == 1) {
             "Støtter bare 1 aktivitet per dag pt."
         }
