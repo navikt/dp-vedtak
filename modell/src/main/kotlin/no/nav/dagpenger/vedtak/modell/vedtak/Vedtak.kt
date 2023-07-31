@@ -23,11 +23,11 @@ abstract class Vedtak(
     companion object {
         internal fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean =
             this.any { it.behandlingId == behandlingId }
+
+        private val etterVedtakstidspunkt = Comparator<Vedtak> { a, b -> a.vedtakstidspunkt.compareTo(b.vedtakstidspunkt) }
     }
 
     abstract fun accept(visitor: VedtakVisitor)
 
-    override fun compareTo(other: Vedtak): Int {
-        return this.vedtakstidspunkt.compareTo(other.vedtakstidspunkt)
-    }
+    override fun compareTo(other: Vedtak) = etterVedtakstidspunkt.compare(this, other)
 }
