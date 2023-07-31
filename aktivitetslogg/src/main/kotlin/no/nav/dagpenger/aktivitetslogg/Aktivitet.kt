@@ -52,7 +52,7 @@ sealed class Aktivitet(
                 return aktiviteter.filterIsInstance<Info>()
             }
 
-            internal fun gjenopprett(
+            fun gjenopprett(
                 id: UUID,
                 kontekster: List<SpesifikkKontekst>,
                 melding: String,
@@ -82,7 +82,7 @@ sealed class Aktivitet(
                 return aktiviteter.filterIsInstance<Behov>()
             }
 
-            internal fun gjenopprett(
+            fun gjenopprett(
                 id: UUID,
                 type: Behovtype,
                 kontekster: List<SpesifikkKontekst>,
@@ -126,6 +126,17 @@ sealed class Aktivitet(
             internal fun filter(aktiviteter: List<Aktivitet>): List<Severe> {
                 return aktiviteter.filterIsInstance<Severe>()
             }
+            fun gjenopprett(
+                id: UUID,
+                kontekster: List<SpesifikkKontekst>,
+                melding: String,
+                tidsstempel: String,
+            ) = Severe(
+                id = id,
+                kontekster = kontekster,
+                melding = melding,
+                tidsstempel = tidsstempel,
+            )
             internal fun opprett(
                 kontekster: List<SpesifikkKontekst>,
                 melding: String,

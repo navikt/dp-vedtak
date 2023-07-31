@@ -9,6 +9,7 @@ dependencies {
 
     implementation(libs.jackson.core)
     implementation(libs.jackson.datatype.jsr310)
+    implementation(libs.jackson.blackbird)
 
     // Database avhengighetere
     implementation(libs.bundles.postgres)

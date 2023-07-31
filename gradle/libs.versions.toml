@@ -43,6 +43,7 @@ jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackso
 jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
 jackson-annotation = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jackson" }
 jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
+jackson-blackbird = { group = "com.fasterxml.jackson.module", name = "jackson-module-blackbird", version.ref = "jackson" }
 
 urnlib = { group = "de.slub-dresden", name = "urnlib", version = "2.0.1" }
 rapids-and-rivers = { group = "com.github.navikt", name = "rapids-and-rivers", version = "2023050308441683096263.f5a276d7bd28" }
