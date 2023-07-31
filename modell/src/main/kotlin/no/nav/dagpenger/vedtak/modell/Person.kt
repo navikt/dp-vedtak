@@ -61,11 +61,14 @@ class Person internal constructor(
             søknadBehandletHendelse.info("Har allerede behandlet SøknadBehandletHendelse")
             return
         }
-        leggTilVedtak(søknadBehandletHendelse.tilVedtak())
+        val vedtak = søknadBehandletHendelse.tilVedtak()
+        søknadBehandletHendelse.info("Mottatt hendelse om behandlet søknad og opprettet vedtak.")
+        leggTilVedtak(vedtak)
     }
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         kontekst(rapporteringshendelse)
+        rapporteringshendelse.info("Mottatt rapporteringshendelse")
         rapporteringsperioder.håndter(rapporteringshendelse)
         val behandling = Behandling(this)
         behandlinger.add(behandling)

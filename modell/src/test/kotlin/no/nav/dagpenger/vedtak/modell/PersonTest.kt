@@ -1,13 +1,10 @@
 package no.nav.dagpenger.vedtak.modell
 
 import io.kotest.matchers.shouldBe
-import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
-import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.util.UUID
@@ -37,7 +34,7 @@ internal class PersonTest {
         )
 
         testObservatør.vedtak.size shouldBe 1
-        inspektør.aktivitetslogg.aktivitetsteller() shouldBe 1
+        inspektør.aktivitetslogg.aktivitetsteller() shouldBe 2
     }
 
     private class TestObservatør : PersonObserver {
@@ -57,17 +54,6 @@ internal class PersonTest {
 
         override fun postVisitAktivitetslogg(aktivitetslogg: Aktivitetslogg) {
             this.aktivitetslogg = aktivitetslogg
-        }
-
-        override fun visitInfo(
-            id: UUID,
-            kontekster: List<SpesifikkKontekst>,
-            aktivitet: Aktivitet.Info,
-            melding: String,
-            tidsstempel: String,
-        ) {
-            assertEquals("Har allerede behandlet SøknadBehandletHendelse", melding)
-            assertEquals(mapOf("ident" to person.ident().identifikator()), kontekster.first { it.kontekstType == Person.kontekstType }.kontekstMap)
         }
     }
 }
