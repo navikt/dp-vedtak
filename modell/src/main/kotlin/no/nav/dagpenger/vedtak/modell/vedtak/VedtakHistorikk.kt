@@ -6,6 +6,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
+import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
@@ -13,13 +14,11 @@ import no.nav.dagpenger.vedtak.modell.visitor.VedtakHistorikkVisitor
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.SortedSet
 import java.util.UUID
 
-class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>) : Collection<Vedtak> by vedtak {
+class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedtak>) {
 
-    internal constructor(vedtak: List<Vedtak>) : this(vedtak = vedtak.toSortedSet())
-    internal constructor() : this(emptyList<Vedtak>())
+    internal constructor() : this(mutableListOf<Vedtak>())
 
     private val observers = mutableSetOf<VedtakObserver>()
 
@@ -71,6 +70,8 @@ class VedtakHistorikk private constructor(private val vedtak: SortedSet<Vedtak>)
             }
         }
     }
+
+    internal fun harBehandlet(behandlingId: UUID) = this.vedtak.harBehandlet(behandlingId)
 
     private class HistorikkOppdaterer(private val vedtakHistorikk: VedtakHistorikk) : VedtakVisitor {
 

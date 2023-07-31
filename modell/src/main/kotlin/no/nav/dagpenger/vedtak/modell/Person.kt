@@ -47,7 +47,7 @@ class Person internal constructor(
             vedtak: List<Vedtak>,
             perioder: List<Rapporteringsperiode>,
         ): Person {
-            return Person(ident, VedtakHistorikk(vedtak), Rapporteringsperioder(perioder), mutableListOf())
+            return Person(ident, VedtakHistorikk(vedtak.toMutableList()), Rapporteringsperioder(perioder), mutableListOf())
         }
     }
 
