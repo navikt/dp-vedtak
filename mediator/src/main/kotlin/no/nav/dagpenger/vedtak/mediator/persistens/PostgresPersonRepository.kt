@@ -98,9 +98,9 @@ private class PopulerQueries(
     }
 
     override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
-        val arbeidedetimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Arbeid }?.timer
+        val arbeidTimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Arbeid }?.timer
         val ferieTimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Ferie }?.timer
-        val sykeTimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Syk }?.timer
+        val sykTimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Syk }?.timer
         queries.add(
             queryOf(
                 //language=PostgreSQL
@@ -112,8 +112,8 @@ private class PopulerQueries(
                 paramMap = mapOf(
                     "rapporteringsperiode_id" to rapporteringDbId,
                     "dato" to dag.dato(),
-                    "syk" to sykeTimer?.let { timer -> timer.reflection { it } },
-                    "arbeid" to arbeidedetimer?.let { timer -> timer.reflection { it } },
+                    "syk" to sykTimer?.let { timer -> timer.reflection { it } },
+                    "arbeid" to arbeidTimer?.let { timer -> timer.reflection { it } },
                     "ferie" to ferieTimer?.let { timer -> timer.reflection { it } },
                 ),
             ),
@@ -431,9 +431,9 @@ private fun Session.hentRettigheter(vedtakId: UUID) = this.run(
         //language=PostgreSQL
         statement = """ SELECT rettighetstype, utfall 
                 |FROM rettighet
-                |WHERE vedtak_id= :vedtakId  
+                |WHERE vedtak_id= :vedtak_id  
         """.trimMargin(),
-        paramMap = mapOf("vedtakId" to vedtakId),
+        paramMap = mapOf("vedtak_id" to vedtakId),
     ).map { rad ->
         RettighetDTO(RettighetDTO.Rettighetstype.valueOf(rad.string("rettighetstype")), rad.boolean("utfall"))
     }.asList,
@@ -496,9 +496,9 @@ private fun Session.hentRapporteringsperioder(personId: Long) = this.run(
         //language=PostgreSQL
         statement = """
             SELECT id, uuid, fom, tom FROM rapporteringsperiode 
-            WHERE person_id = :personId
+            WHERE person_id = :person_id
         """.trimIndent(),
-        paramMap = mapOf("personId" to personId),
+        paramMap = mapOf("person_id" to personId),
     ).map { rad ->
         val rapporteringsId = rad.uuid("uuid")
         Rapporteringsperiode(
@@ -515,10 +515,10 @@ private fun Session.hentDager(rapporteringsperiodeId: Long) = this.run(
         statement = """
             SELECT dato, syk_timer, arbeid_timer, ferie_timer
             FROM dag
-            WHERE rapporteringsperiode_id = :rapporteringsperiodeId 
+            WHERE rapporteringsperiode_id = :rapporteringsperiode_id 
         """.trimIndent(),
         paramMap = mapOf(
-            "rapporteringsperiodeId" to rapporteringsperiodeId,
+            "rapporteringsperiode_id" to rapporteringsperiodeId,
         ),
     ).map { rad ->
         val syk = rad.doubleOrNull("syk_timer")?.let { Syk(it.timer) }
