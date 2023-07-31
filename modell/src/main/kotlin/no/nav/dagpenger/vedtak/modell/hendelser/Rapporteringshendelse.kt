@@ -19,8 +19,11 @@ class Rapporteringshendelse(
     aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
     private val fom: LocalDate,
     private val tom: LocalDate,
-) : Hendelse(ident, aktivitetslogg) {
+) : Hendelse(ident, aktivitetslogg), ClosedRange<LocalDate> {
     private val rapporteringsdager = rapporteringsdager.sorted()
+
+    override val endInclusive: LocalDate = tom
+    override val start: LocalDate = fom
     internal fun populerRapporteringsperiode(): Rapporteringsperiode {
         return Rapporteringsperiode(rapporteringsId, Periode(fom, tom)).also { periode ->
             rapporteringsdager.forEach { rapporteringdag ->
@@ -36,8 +39,6 @@ class Rapporteringshendelse(
             }
         }
     }
-
-    internal fun somPeriode() = Periode(fom, tom)
     override fun kontekstMap(): Map<String, String> = mapOf("rapporteringsId" to rapporteringsId.toString())
 }
 

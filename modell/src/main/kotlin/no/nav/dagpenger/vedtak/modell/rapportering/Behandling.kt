@@ -6,7 +6,6 @@ import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
-import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
@@ -83,7 +82,7 @@ class Behandling(
         override fun håndter(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
             behandling.rapporteringsdager.addAll(
                 RapporteringsdagerForPeriode(
-                    rapporteringshendelse.somPeriode(),
+                    rapporteringshendelse,
                     behandling.person,
                 ).dager,
             )
@@ -114,10 +113,8 @@ class Behandling(
 
     object GraderUtbetaling : Behandlingssteg() {
         override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
-            val rapporteringsperiode = rapporteringshendelse.somPeriode()
-            val rapporteringsdato = rapporteringsperiode.endInclusive
-
-            val forrigeRapporteringsdato = rapporteringsperiode.start.minusDays(1)
+            val rapporteringsdato = rapporteringshendelse.endInclusive
+            val forrigeRapporteringsdato = rapporteringshendelse.start.minusDays(1)
             val forrigeAkkumulerteForbruk =
                 behandling.person.vedtakHistorikk.forbrukHistorikk.summer(forrigeRapporteringsdato)
             val innvilgedeStønadsdager = behandling.person.vedtakHistorikk.stønadsdagerHistorikk.get(rapporteringsdato)
@@ -150,9 +147,8 @@ class Behandling(
     object TrekkEgenandel : Behandlingssteg() {
         override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
             val beregnetBeløpFørTrekkAvEgenandel = requireNotNull(behandling.beregnetBeløpFørTrekkAvEgenandel)
-            val rapporteringsperiode = rapporteringshendelse.somPeriode()
-            val rapporteringsdato = rapporteringsperiode.endInclusive
-            val forrigeRapporteringsdato = rapporteringsperiode.start.minusDays(1)
+            val rapporteringsdato = rapporteringshendelse.endInclusive
+            val forrigeRapporteringsdato = rapporteringshendelse.start.minusDays(1)
             val forrigeTrukketEgenandel =
                 behandling.person.vedtakHistorikk.trukketEgenandelHistorikk.summer(forrigeRapporteringsdato)
 
@@ -171,14 +167,12 @@ class Behandling(
 
     object Ferdigstill : Behandlingssteg() {
         override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
-            val rapporteringsperiode = rapporteringshendelse.somPeriode()
             val resultat = behandling.resultatBuilder.build()
-
             behandling.person.leggTilVedtak(
                 Utbetalingsvedtak.utbetalingsvedtak(
                     behandlingId = behandling.behandlingId,
                     utfall = resultat.utfall,
-                    virkningsdato = rapporteringsperiode.endInclusive,
+                    virkningsdato = rapporteringshendelse.endInclusive,
                     forbruk = Stønadsdager(resultat.forbruksdager.size),
                     utbetalingsdager = resultat.utbetalingsdager,
                     trukketEgenandel = resultat.trukketEgenandel,
@@ -225,7 +219,7 @@ class Behandling(
         }
     }
 
-    private class RapporteringsdagerForPeriode(private val periode: Periode, person: Person) : PersonVisitor {
+    private class RapporteringsdagerForPeriode(private val rapporteringshendelse: Rapporteringshendelse, person: Person) : PersonVisitor {
 
         val dager = mutableListOf<Dag>()
 
@@ -234,7 +228,7 @@ class Behandling(
         }
 
         override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
-            if (dag in periode) {
+            if (dag.dato() in rapporteringshendelse) {
                 dager.add(dag)
             }
         }
