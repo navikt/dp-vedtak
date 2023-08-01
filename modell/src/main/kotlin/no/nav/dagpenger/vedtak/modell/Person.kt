@@ -69,6 +69,7 @@ class Person internal constructor(
             return
         }
         val vedtak = søknadBehandletHendelse.tilVedtak()
+        søknadBehandletHendelse.kontekst(vedtak)
         søknadBehandletHendelse.info("Mottatt hendelse om behandlet søknad og opprettet vedtak.")
         leggTilVedtak(vedtak)
     }
