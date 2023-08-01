@@ -10,7 +10,7 @@ data class AktivitetsloggDTO(
 ) {
     data class AktivitetDTO(
         val id: UUID,
-        val alvorlighetsgrad: Alvorlighetsgrad,
+        val aktivitetType: AktivitetType,
         val label: Char,
         val behovtype: String?,
         val melding: String,
@@ -24,11 +24,12 @@ data class AktivitetsloggDTO(
         val kontekstMap: Map<String, String>,
     )
 
-    enum class Alvorlighetsgrad {
+    enum class AktivitetType {
         INFO,
         BEHOV,
-
-        SEVERE,
+        LOGISK_FEIL,
+        FUNKSJONELL_FEIL,
+        VARSEL,
     }
 
     fun konverterTilAktivitetslogg(): Aktivitetslogg = konverterTilAktivitetslogg(this)
@@ -43,20 +44,14 @@ data class AktivitetsloggDTO(
                 )
             }
             aktiviteter.add(
-                when (it.alvorlighetsgrad) {
-                    Alvorlighetsgrad.INFO -> Aktivitet.Info.gjenopprett(
+                when (it.aktivitetType) {
+                    AktivitetType.INFO -> Aktivitet.Info.gjenopprett(
                         id = it.id,
                         kontekster = kontekster,
                         melding = it.melding,
                         tidsstempel = it.tidsstempel,
                     )
-                    Alvorlighetsgrad.BEHOV -> TODO("Vi har ingen Behov i vedtaksmodellen enda")
-                    Alvorlighetsgrad.SEVERE -> Aktivitet.Severe.gjenopprett(
-                        id = it.id,
-                        kontekster = kontekster,
-                        melding = it.melding,
-                        tidsstempel = it.tidsstempel,
-                    )
+                    else -> TODO("TODO!!! Har ikke mappet ${it.aktivitetType} fra databasen enda.")
                 },
             )
         }

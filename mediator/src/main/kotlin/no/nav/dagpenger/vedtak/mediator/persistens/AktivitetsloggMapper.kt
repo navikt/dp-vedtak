@@ -4,24 +4,27 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.AktivitetsloggVisitor
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
+import no.nav.dagpenger.aktivitetslogg.Varselkode
 import java.util.UUID
 
 class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
 
-    enum class Alvorlighetsgrad {
+    private enum class AktivitetType {
         INFO,
         BEHOV,
-        SEVERE,
+        LOGISK_FEIL,
+        FUNKSJONELL_FEIL,
+        VARSEL,
     }
 
     private val aktiviteter = Aktivitetslogginspektør(aktivitetslogg).aktiviteter
 
-    internal fun toMap() = mutableMapOf(
+    internal fun toMap() = mapOf(
         "aktiviteter" to aktiviteter,
     )
 
     private inner class Aktivitetslogginspektør(aktivitetslogg: Aktivitetslogg) : AktivitetsloggVisitor {
-        internal val aktiviteter = mutableListOf<Map<String, Any>>()
+        val aktiviteter = mutableListOf<Map<String, Any>>()
 
         init {
             aktivitetslogg.accept(this)
@@ -35,11 +38,63 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
             tidsstempel: String,
         ) {
             leggTilMelding(
-                id,
-                kontekster,
-                Alvorlighetsgrad.INFO,
-                melding,
-                tidsstempel,
+                id = id,
+                kontekster = kontekster,
+                aktivitetType = AktivitetType.INFO,
+                melding = melding,
+                tidsstempel = tidsstempel,
+
+            )
+        }
+
+        override fun visitLogiskfeil(
+            id: UUID,
+            kontekster: List<SpesifikkKontekst>,
+            aktivitet: Aktivitet.LogiskFeil,
+            melding: String,
+            tidsstempel: String,
+        ) {
+            leggTilMelding(
+                id = id,
+                kontekster = kontekster,
+                aktivitetType = AktivitetType.LOGISK_FEIL,
+                melding = melding,
+                tidsstempel = melding,
+
+            )
+        }
+
+        override fun visitFunksjonellFeil(
+            id: UUID,
+            kontekster: List<SpesifikkKontekst>,
+            funksjonellFeil: Aktivitet.FunksjonellFeil,
+            melding: String,
+            tidsstempel: String,
+        ) {
+            leggTilMelding(
+                id = id,
+                kontekster = kontekster,
+                aktivitetType = AktivitetType.FUNKSJONELL_FEIL,
+                melding = melding,
+                tidsstempel = melding,
+            )
+        }
+
+        override fun visitVarsel(
+            id: UUID,
+            kontekster: List<SpesifikkKontekst>,
+            varsel: Aktivitet.Varsel,
+            kode: Varselkode?,
+            melding: String,
+            tidsstempel: String,
+        ) {
+            leggTilMelding(
+                id = id,
+                varselkode = kode,
+                kontekster = kontekster,
+                aktivitetType = AktivitetType.VARSEL,
+                melding = melding,
+                tidsstempel = melding,
             )
         }
 
@@ -54,37 +109,26 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
         ) {
         }
 
-        override fun visitSevere(
-            kontekster: List<SpesifikkKontekst>,
-            severe: Aktivitet.Severe,
-            melding: String,
-            tidsstempel: String,
-        ) {
-            leggTilMelding(
-                id = null,
-                kontekster = listOf(),
-                alvorlighetsgrad = Alvorlighetsgrad.SEVERE,
-                melding = melding,
-                tidsstempel = tidsstempel,
-            )
-        }
-
         private fun leggTilMelding(
             id: UUID?,
+            varselkode: Varselkode? = null,
             kontekster: List<SpesifikkKontekst>,
-            alvorlighetsgrad: Alvorlighetsgrad,
+            aktivitetType: AktivitetType,
             melding: String,
             tidsstempel: String,
         ) {
             val aktiviteterFraMelding = mutableMapOf<String, Any>(
                 "kontekster" to map(kontekster),
-                "alvorlighetsgrad" to alvorlighetsgrad.name,
+                "aktivitetType" to aktivitetType.name,
                 "melding" to melding,
                 "detaljer" to emptyMap<String, Any>(),
                 "tidsstempel" to tidsstempel,
             )
             if (id != null) {
                 aktiviteterFraMelding["id"] = id.toString()
+            }
+            if (varselkode != null) {
+                TODO("Støtter ikke varselkode i lagring enda.")
             }
 
             aktiviteter.add(

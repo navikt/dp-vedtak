@@ -27,9 +27,29 @@ interface AktivitetsloggVisitor {
     ) {
     }
 
-    fun visitSevere(
+    fun visitLogiskfeil(
+        id: UUID,
         kontekster: List<SpesifikkKontekst>,
-        severe: Aktivitet.Severe,
+        aktivitet: Aktivitet.LogiskFeil,
+        melding: String,
+        tidsstempel: String,
+    ) {
+    }
+
+    fun visitVarsel(
+        id: UUID,
+        kontekster: List<SpesifikkKontekst>,
+        varsel: Aktivitet.Varsel,
+        kode: Varselkode?,
+        melding: String,
+        tidsstempel: String,
+    ) {
+    }
+
+    fun visitFunksjonellFeil(
+        id: UUID,
+        kontekster: List<SpesifikkKontekst>,
+        funksjonellFeil: Aktivitet.FunksjonellFeil,
         melding: String,
         tidsstempel: String,
     ) {

@@ -32,12 +32,12 @@ class AktivitetsloggTest {
     }
 
     @Test
-    fun `severe oppdaget og kaster exception`() {
+    fun `logisk feil oppdaget og kaster exception`() {
         val melding = "Severe error"
-        org.junit.jupiter.api.assertThrows<Aktivitetslogg.AktivitetException> { aktivitetslogg.severe(melding) }
+        org.junit.jupiter.api.assertThrows<Aktivitetslogg.AktivitetException> { aktivitetslogg.logiskFeil(melding) }
         // assertTrue(aktivitetslogg.hasErrors())
         assertTrue(aktivitetslogg.toString().contains(melding))
-        assertSevere(melding)
+        assertLogiskfeil(melding)
     }
 
     @Test
@@ -130,13 +130,15 @@ class AktivitetsloggTest {
         assertEquals(param1, aktivitetslogg.behov().first().detaljer()["param1"])
         assertEquals(param2, aktivitetslogg.behov().first().detaljer()["param2"])
     }
-    private fun assertSevere(message: String, aktivitetslogg: Aktivitetslogg = this.aktivitetslogg) {
+    private fun assertLogiskfeil(message: String, aktivitetslogg: Aktivitetslogg = this.aktivitetslogg) {
         var visitorCalled = false
         aktivitetslogg.accept(
             object : AktivitetsloggVisitor {
-                override fun visitSevere(
+
+                override fun visitLogiskfeil(
+                    id: UUID,
                     kontekster: List<SpesifikkKontekst>,
-                    aktivitet: Aktivitet.Severe,
+                    aktivitet: Aktivitet.LogiskFeil,
                     melding: String,
                     tidsstempel: String,
                 ) {

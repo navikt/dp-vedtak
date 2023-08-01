@@ -31,8 +31,20 @@ class Aktivitetslogg(
         add(Behov.opprett(type, kontekster.toSpesifikk(), melding, detaljer))
     }
 
-    override fun severe(melding: String, vararg params: Any?): Nothing {
-        add(Aktivitet.Severe.opprett(kontekster.toSpesifikk(), String.format(melding, *params)))
+    override fun funksjonellFeil(kode: Varselkode) {
+        TODO("Brukes i kombinasjon med varsel til saksbehandler")
+        // add(kode.funksjonellFeil(kontekster.toSpesifikk()))
+    }
+
+    override fun varsel(melding: String) {
+        add(Aktivitet.Varsel.opprett(kontekster.toSpesifikk(), melding = melding))
+    }
+    override fun varsel(kode: Varselkode) {
+        add(kode.varsel(kontekster.toSpesifikk()))
+    }
+
+    override fun logiskFeil(melding: String, vararg params: Any?): Nothing {
+        add(Aktivitet.LogiskFeil.opprett(kontekster.toSpesifikk(), String.format(melding, *params)))
 
         throw AktivitetException(this)
     }

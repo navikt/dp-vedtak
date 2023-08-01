@@ -72,7 +72,7 @@ class Behandling(
     sealed class Behandlingssteg {
         // peke til hvilken paragraf eller forskrift
         open fun håndter(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
-            rapporteringshendelse.severe("Forventet ikke ${rapporteringshendelse.javaClass.simpleName} i ${this.javaClass.simpleName}")
+            rapporteringshendelse.logiskFeil("Forventet ikke ${rapporteringshendelse.javaClass.simpleName} i ${this.javaClass.simpleName}")
         }
 
         open fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {}

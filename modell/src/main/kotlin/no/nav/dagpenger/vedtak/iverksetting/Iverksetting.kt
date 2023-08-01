@@ -108,8 +108,8 @@ class Iverksetting private constructor(
             iverksattHendelse.feiltilstand()
         }
 
-        private fun Hendelse.feiltilstand() =
-            this.severe("Kan ikke håndtere ${this.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
+        private fun Hendelse.feiltilstand(): Nothing =
+            this.logiskFeil("Kan ikke håndtere ${this.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
     }
 
     object Mottatt : Tilstand(TilstandNavn.Mottatt) {
