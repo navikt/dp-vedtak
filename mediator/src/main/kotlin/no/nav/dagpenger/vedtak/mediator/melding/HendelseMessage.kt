@@ -9,6 +9,10 @@ import org.slf4j.Logger
 import java.util.UUID
 
 internal abstract class HendelseMessage(private val packet: JsonMessage) {
+
+    init {
+        packet.interestedIn("@id", "@event_name", "@opprettet")
+    }
     internal val id: UUID = packet["@id"].asUUID()
     private val navn = packet["@event_name"].asText()
     private val opprettet = packet["@opprettet"].asLocalDateTime()
