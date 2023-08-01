@@ -34,6 +34,7 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
             ident = ident,
             behandlingId = behandlingId,
             virkningsdato = LocalDate.parse(packet["Virkningsdato"].asText()),
+            dagpengerettighet = Dagpengerettighet.valueOf(packet["Rettighetstype"].asText()),
         )
 
     private fun dagpengerInnvilgetHendelse(

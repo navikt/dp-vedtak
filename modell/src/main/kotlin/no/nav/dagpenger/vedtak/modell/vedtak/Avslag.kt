@@ -1,17 +1,22 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
+import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Rettighet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
-class Avslag private constructor(
-    vedtakId: UUID,
+class Avslag(
+    vedtakId: UUID = UUID.randomUUID(),
     behandlingId: UUID,
-    vedtakstidspunkt: LocalDateTime,
+    vedtakstidspunkt: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
     virkningsdato: LocalDate,
-    private val utfall: Boolean = false,
+    private val rettigheter: List<Rettighet>,
 ) : Vedtak(
     vedtakId = vedtakId,
     behandlingId = behandlingId,
@@ -21,23 +26,60 @@ class Avslag private constructor(
 ) {
 
     companion object {
-        fun avslag(behandlingId: UUID, virkningsdato: LocalDate) =
-            Avslag(behandlingId = behandlingId, virkningsdato = virkningsdato)
+        fun avslag(
+            behandlingId: UUID,
+            virkningsdato: LocalDate,
+            dagpengerettighet: Dagpengerettighet,
+        ): Avslag {
+            val rettighet = when (dagpengerettighet) {
+                Dagpengerettighet.Ordinær -> Ordinær(utfall = false)
+                Dagpengerettighet.Permittering -> Permittering(utfall = false)
+                Dagpengerettighet.PermitteringFraFiskeindustrien -> PermitteringFraFiskeindustrien(utfall = false)
+                Dagpengerettighet.ForskutterteLønnsgarantimidler -> TODO()
+                Dagpengerettighet.Ingen -> TODO()
+            }
+            return Avslag(
+                behandlingId = behandlingId,
+                virkningsdato = virkningsdato,
+                rettigheter = listOf(rettighet),
+            )
+        }
     }
-    constructor(behandlingId: UUID, virkningsdato: LocalDate) : this(
-        vedtakId = UUID.randomUUID(),
-        behandlingId = behandlingId,
-        vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
-        virkningsdato = virkningsdato,
-    )
+//    constructor(behandlingId: UUID, virkningsdato: LocalDate, rettigheter: List<Rettighet>) : this(
+//        vedtakId = UUID.randomUUID(),
+//        behandlingId = behandlingId,
+//        vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+//        virkningsdato = virkningsdato,
+//        rettigheter = rettigheter,
+//    )
 
     override fun accept(visitor: VedtakVisitor) {
-        visitor.visitAvslag(
+        visitor.preVisitVedtak(
             vedtakId = vedtakId,
             behandlingId = behandlingId,
-            vedtakstidspunkt = vedtakstidspunkt,
-            utfall = utfall,
             virkningsdato = virkningsdato,
+            vedtakstidspunkt = vedtakstidspunkt,
+            type = type,
+        )
+        rettigheter.forEach {
+            it.accept(visitor)
+        }
+        visitor.postVisitVedtak(
+            vedtakId = vedtakId,
+            behandlingId = behandlingId,
+            virkningsdato = virkningsdato,
+            vedtakstidspunkt = vedtakstidspunkt,
+            type = type,
         )
     }
+
+//    override fun accept(visitor: VedtakVisitor) {
+//        visitor.visitAvslag(
+//            vedtakId = vedtakId,
+//            behandlingId = behandlingId,
+//            vedtakstidspunkt = vedtakstidspunkt,
+//            utfall = utfall,
+//            virkningsdato = virkningsdato,
+//        )
+//    }
 }

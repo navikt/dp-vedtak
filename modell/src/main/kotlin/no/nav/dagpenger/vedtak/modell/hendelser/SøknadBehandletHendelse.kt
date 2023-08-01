@@ -47,12 +47,20 @@ class DagpengerInnvilgetHendelse(
     override fun kontekstMap(): Map<String, String> = emptyMap()
 }
 
-class DagpengerAvslåttHendelse(ident: String, behandlingId: UUID, virkningsdato: LocalDate) :
-    SøknadBehandletHendelse(
-        ident,
-        behandlingId,
-        virkningsdato,
-    ) {
-    override fun tilVedtak(): Vedtak = avslag(behandlingId, virkningsdato)
+class DagpengerAvslåttHendelse(
+    ident: String,
+    behandlingId: UUID,
+    virkningsdato: LocalDate,
+    private val dagpengerettighet: Dagpengerettighet,
+) : SøknadBehandletHendelse(
+    ident,
+    behandlingId,
+    virkningsdato,
+) {
+    override fun tilVedtak(): Vedtak = avslag(
+        behandlingId = behandlingId,
+        virkningsdato = virkningsdato,
+        dagpengerettighet = dagpengerettighet,
+    )
     override fun kontekstMap(): Map<String, String> = emptyMap()
 }

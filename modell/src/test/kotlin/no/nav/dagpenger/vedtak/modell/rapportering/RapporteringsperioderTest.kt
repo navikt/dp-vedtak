@@ -106,7 +106,7 @@ internal class RapporteringsperioderTest {
             rapporteringsperioder.accept(this)
         }
 
-        override fun preVisitRapporteringsperiode(rapporteringsperiode: UUID, periode: Rapporteringsperiode) {
+        override fun preVisitRapporteringsperiode(rapporteringsperiodeId: UUID, periode: Rapporteringsperiode) {
             antallRapporteringsperioder++
         }
 

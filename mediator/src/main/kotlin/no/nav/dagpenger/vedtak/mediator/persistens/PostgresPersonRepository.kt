@@ -24,6 +24,7 @@ import no.nav.dagpenger.vedtak.modell.rapportering.Ferie
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.Syk
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
+import no.nav.dagpenger.vedtak.modell.vedtak.Avslag
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
@@ -386,7 +387,22 @@ private fun Session.hentVedtak(personId: Long) = this.run(
                 )
             }
 
-            VedtakTypeDTO.Avslag -> TODO()
+            VedtakTypeDTO.Avslag -> {
+                Avslag(
+                    vedtakId = vedtakId,
+                    behandlingId = rad.uuid("behandling_id"),
+                    vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
+                    virkningsdato = rad.localDate("virkningsdato"),
+                    rettigheter = this.hentRettigheter(vedtakId = vedtakId).map { rettighetDTO ->
+                        when (rettighetDTO.rettighetstype) {
+                            RettighetDTO.Rettighetstype.Ordinær -> Ordinær(rettighetDTO.utfall)
+                            RettighetDTO.Rettighetstype.PermitteringFraFiskeindustrien -> TODO()
+                            RettighetDTO.Rettighetstype.Permittering -> TODO()
+                        }
+                    },
+                )
+            }
+
             VedtakTypeDTO.Stans -> TODO()
         }
     }.asList,

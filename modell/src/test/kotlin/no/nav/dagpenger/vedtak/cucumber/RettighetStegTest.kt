@@ -82,6 +82,7 @@ class RettighetStegTest : No {
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     virkningsdato = søknadHendelse.virkningsdato,
+                    dagpengerettighet = søknadHendelse.dagpengerettighet,
                 ),
             )
         }
@@ -192,6 +193,7 @@ class RettighetStegTest : No {
     private data class SøknadAvslåttHendelseCucumber(
         val fødselsnummer: String,
         val behandlingId: String,
+        val dagpengerettighet: Dagpengerettighet,
         val utfall: Boolean,
         @JsonFormat(pattern = "dd.MM.yyyy")
         val virkningsdato: LocalDate,

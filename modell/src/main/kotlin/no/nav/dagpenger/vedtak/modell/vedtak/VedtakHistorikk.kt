@@ -89,11 +89,17 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
         }
 
         override fun visitOrdinær(ordinær: Ordinær) {
-            vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.Ordinær)
+            when (ordinær.utfall) {
+                true -> vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.Ordinær)
+                false -> vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.Ingen)
+            }
         }
 
         override fun visitPermitteringFraFiskeindustrien(permitteringFraFiskeindustrien: PermitteringFraFiskeindustrien) {
-            vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.PermitteringFraFiskeindustrien)
+            when (permitteringFraFiskeindustrien.utfall) {
+                true -> vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.PermitteringFraFiskeindustrien)
+                false -> vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.Ingen)
+            }
         }
 
         override fun visitPermittering(permittering: Permittering) {

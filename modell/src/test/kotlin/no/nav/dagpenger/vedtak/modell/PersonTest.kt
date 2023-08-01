@@ -24,7 +24,7 @@ internal class PersonTest {
             behandlingId = UUID.randomUUID(),
             ident = ident,
             virkningsdato = LocalDate.now(),
-
+            dagpengerettighet = Dagpengerettighet.Ordinær,
         )
         person.håndter(
             søknadBehandletHendelse,

@@ -1,16 +1,18 @@
 # language: no
 
-  Egenskap: StansAvDagpengerettighet
+  Egenskap: Stans av dagpengerettighet
 
     Bakgrunn: Ordinære dagpenger er innvilget uten egenandel fra 12. desember. Stanses fra 19. desember.
       Gitt en ny hendelse om innvilget søknad
         | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
         | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 104            | 8                      | Ordinær           | 0         |
-      Og en ny hendelse om stans
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato |
-        | 12345678901   | 2D085CE8-F5E3-47B5-8C3B-873FE99E4EF4 | false  | 19.12.2022    |
 
-    Scenario: Har ikke vedtak hele perioden fordi dagpengevedtaket er stanset fra og med uke 2. Rapporterer arbeidstimer eksakt lik terskel i uke 1, over terskel i uke 2.
+      # @todo: Vurder hvordan stans-hendelse skal se ut og håndteres
+      Og en ny hendelse om stans
+        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagpengerettighet |
+        | 12345678901   | 2D085CE8-F5E3-47B5-8C3B-873FE99E4EF4 | false  | 19.12.2022    | Ordinær           |
+
+      Scenario: Har ikke vedtak hele perioden fordi dagpengevedtaket er stanset fra og med uke 2. Rapporterer arbeidstimer eksakt lik terskel i uke 1, over terskel i uke 2.
       Når rapporteringshendelse mottas
         | dato       | fravær | timer |
         | 12.12.2022 | false  | 4     |

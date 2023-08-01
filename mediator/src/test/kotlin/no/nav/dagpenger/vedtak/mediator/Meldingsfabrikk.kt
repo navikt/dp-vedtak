@@ -38,7 +38,10 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
-    fun dagpengerAvslåttJson(ident: String = "12345123451") =
+    fun dagpengerAvslåttJson(
+        rettighetstype: String = "Ordinær",
+        ident: String = "12345123451",
+    ) =
         //language=JSON
         """
         {        
@@ -46,7 +49,8 @@ object Meldingsfabrikk {
           "ident" : "$ident",
           "behandlingId": "${UUID.randomUUID()}",
           "Virkningsdato": "${LocalDate.now()}",
-          "innvilget": false
+          "innvilget": false,
+          "Rettighetstype": "$rettighetstype"
         } 
         """.trimIndent()
 

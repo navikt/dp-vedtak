@@ -13,6 +13,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
@@ -26,7 +27,7 @@ class PostgresPersonRepositoryTest {
     val ident = PersonIdentifikator("12345678901")
 
     @Test
-    fun `lagre og hent person`() {
+    fun `lagrer og henter person`() {
         val person = Person(ident = ident)
 
         withMigratedDb {
@@ -41,7 +42,7 @@ class PostgresPersonRepositoryTest {
     }
 
     @Test
-    fun `lagring og henter en komplett person`() {
+    fun `lagrer og henter komplett person med innvilgelse`() {
         val person = Person(ident = ident)
         val idag = LocalDate.now()
         person.håndter(
@@ -78,6 +79,32 @@ class PostgresPersonRepositoryTest {
                 fom = periode.start,
                 tom = periode.endInclusive,
 
+            ),
+        )
+
+        withMigratedDb {
+            val personRepository = PostgresPersonRepository(PostgresDataSourceBuilder.dataSource)
+            personRepository.lagre(person)
+
+            val rehydrertPerson = personRepository.hent(ident).shouldNotBeNull()
+
+            assertDeepEquals(
+                person,
+                rehydrertPerson,
+            )
+        }
+    }
+
+    @Test
+    fun `lagrer og henter komplett person med avslag`() {
+        val person = Person(ident = ident)
+        val idag = LocalDate.now()
+        person.håndter(
+            DagpengerAvslåttHendelse(
+                ident = ident.identifikator(),
+                behandlingId = UUID.randomUUID(),
+                virkningsdato = idag,
+                dagpengerettighet = Dagpengerettighet.Ordinær,
             ),
         )
 
