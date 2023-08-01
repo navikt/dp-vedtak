@@ -83,7 +83,6 @@ CREATE TABLE IF NOT EXISTS utbetalingsdag
 
 --- RAPPORTERING
 
-
 CREATE TABLE IF NOT EXISTS rapporteringsperiode
 (
     id        BIGSERIAL PRIMARY KEY,
@@ -93,31 +92,35 @@ CREATE TABLE IF NOT EXISTS rapporteringsperiode
     tom       DATE                                                              NOT NULL,
     opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL,
     endret    TIMESTAMP                                                         NOT NULL
+    -- TODO: Hva med meldedato? Trengs ifm trekk ved for sen melding.
 );
-
-
 
 
 CREATE TABLE IF NOT EXISTS dag
 (
     id                      BIGSERIAL PRIMARY KEY,
-    rapporteringsperiode_id BIGINT NOT NULL REFERENCES rapporteringsperiode (id),
-    dato                    DATE   NOT NULL,
-    syk_timer               DECIMAL NULL,
-    arbeid_timer            DECIMAL NUll,
-    ferie_timer             DECIMAL NULL,
+    rapporteringsperiode_id BIGINT    REFERENCES rapporteringsperiode (id)                        NOT NULL,
+    dato                    DATE                                                                  NOT NULL,
+    syk_timer               DECIMAL                                                               NULL,
+    arbeid_timer            DECIMAL                                                               NULL,
+    ferie_timer             DECIMAL                                                               NULL,
     opprettet               TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL,
     UNIQUE (rapporteringsperiode_id, dato)
 );
---
--- CREATE TABLE IF NOT EXISTS aktivitet
--- (
---     id                      BIGSERIAL PRIMARY KEY,
---     person_id               BIGINT                                                            NOT NULL REFERENCES person (id),
---     rapporteringsperiode_id BIGINT                                                            NOT NULL REFERENCES rapporteringsperiode (id),
---     dato                    DATE                                                              NOT NULL,
---     "type"                  TEXT                                                              NOT NULL,
---     timer                   DECIMAL                                                           NOT NULL,
---     opprettet               TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL
--- );
 
+
+-- HENDELSE
+
+CREATE TABLE IF NOT EXISTS hendelse
+(
+    id              BIGSERIAL PRIMARY KEY,
+    hendelse_id     UUID                                                              NOT NULL,
+    hendelse_type   TEXT                                                              NOT NULL,
+    ident           VARCHAR(11)                                                       NOT NULL,
+    --person_id       BIGINT                                                            NOT NULL REFERENCES person (id),
+    status          TEXT                                                              NOT NULL,
+    melding         JSON                                                              NOT NULL,
+    opprettet       TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL,
+    endret          TIMESTAMP                                                         NOT NULL,
+    UNIQUE (hendelse_id, hendelse_type)
+);
