@@ -1,22 +1,20 @@
 package no.nav.dagpenger.vedtak.mediator.persistens
 
-import java.util.UUID
-import javax.sql.DataSource
-import kotliquery.Row
 import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
-import no.nav.dagpenger.vedtak.modell.Person
-import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
-import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
-import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
+import no.nav.dagpenger.vedtak.mediator.mottak.SøknadBehandletHendelseMessage
+import no.nav.dagpenger.vedtak.objectMapper
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageProblems
+import org.postgresql.util.PGobject
+import java.util.UUID
+import javax.sql.DataSource
 
-internal class PostgresHendelseRepository( private val dataSource: DataSource): HendelseRepository {
+internal class PostgresHendelseRepository(private val dataSource: DataSource) : HendelseRepository {
     override fun lagreMelding(hendelseMessage: HendelseMessage, ident: String, id: UUID, toJson: String) {
         using(sessionOf(dataSource)) { session ->
             session.transaction { transactionalSession: TransactionalSession ->
@@ -25,7 +23,7 @@ internal class PostgresHendelseRepository( private val dataSource: DataSource): 
                         //language=PostgreSQL
                         statement =
                         """
-                            INSERT INTO hendlse
+                            INSERT INTO hendelse
                                 (hendelse_id, hendelse_type, ident, status, melding, endret)
                             VALUES
                                 (:hendelse_id, :hendelse_type, :ident, :status, :melding, now())
@@ -33,42 +31,50 @@ internal class PostgresHendelseRepository( private val dataSource: DataSource): 
                         """.trimIndent(),
                         paramMap = mapOf(
                             "hendelse_id" to id,
-                            "hendelse_type" to hendelseMessage.tracinginfo().get("event_name"),
+                            "hendelse_type" to "søknad_behandlet_hendelse",
                             "ident" to ident,
-                            "status" to MeldingStatus.MOTTATT,
-                            "melding" to toJson,
-                        )
-                    ).asUpdate
+                            "status" to MeldingStatus.MOTTATT.name,
+                            "melding" to PGobject().apply {
+                                type = "json"
+                                value = objectMapper.writeValueAsString(toJson)
+                            },
+                        ),
+                    ).asUpdate,
                 )
             }
         }
     }
-
 
     override fun markerSomBehandlet(meldingId: UUID) {
         TODO("Not yet implemented")
     }
 
     override fun hentMottatte(): List<HendelseMessage> {
-      return using(sessionOf(dataSource)) {session ->
-          session.run(
-              queryOf(
-                  //language=PostgreSQL
-                  statement = """
+        return using(sessionOf(dataSource)) { session ->
+            session.run(
+                queryOf(
+                    //language=PostgreSQL
+                    statement = """
                       SELECT *
                       FROM hendelse
                       WHERE status = :status
-                      """.trimIndent(),
-                  paramMap = mapOf(
-                      "status" to MeldingStatus.MOTTATT.name)),
-          ).map { rad ->
-              HendelseMessage(JsonMessage(rad.string("melding"), null ))
-
-          }
-
-
-      }
-
+                    """.trimIndent(),
+                    paramMap = mapOf("status" to MeldingStatus.MOTTATT.name),
+                ).map { rad ->
+                    val melding = rad.string("melding")
+                    /*when (HendelseTypeDTO.valueOf(rad.string("hendelse_type"))) {
+                        HendelseTypeDTO.DagpengerInnvilgetHendelse -> */
+                    SøknadBehandletHendelseMessage(
+                        JsonMessage(
+                            melding,
+                            MessageProblems(melding),
+                        ),
+                    )
+                    // HendelseTypeDTO.DagpengerAvslåttHendelse -> TODO()
+                    // }
+                }.asList,
+            )
+        }
     }
 
     override fun hentBehandlede(): List<HendelseMessage> {
@@ -80,8 +86,7 @@ internal class PostgresHendelseRepository( private val dataSource: DataSource): 
     }
 }
 
-
 enum class HendelseTypeDTO {
     DagpengerInnvilgetHendelse,
-    DagpengerAvslåttHendelse
+    DagpengerAvslåttHendelse,
 }

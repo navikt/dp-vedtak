@@ -18,7 +18,7 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
     override val ident: String
         get() = packet["ident"].asText()
 
-    fun getIdent() = this.ident
+    fun hentIdent() = this.ident
 
     val behandlingId = packet["behandlingId"].asUUID()
 
