@@ -20,7 +20,8 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
 
     fun hentIdent() = this.ident
 
-    val behandlingId = packet["behandlingId"].asUUID()
+    val behandlingId: UUID
+        get() = packet["behandlingId"].asUUID()
 
     private val hendelse
         get() = when (packet["innvilget"].asBoolean()) {

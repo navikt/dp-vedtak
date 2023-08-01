@@ -7,7 +7,6 @@ import kotliquery.using
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
 import no.nav.dagpenger.vedtak.mediator.mottak.SøknadBehandletHendelseMessage
-import no.nav.dagpenger.vedtak.objectMapper
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
 import org.postgresql.util.PGobject
@@ -36,7 +35,7 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
                             "status" to MeldingStatus.MOTTATT.name,
                             "melding" to PGobject().apply {
                                 type = "json"
-                                value = objectMapper.writeValueAsString(toJson)
+                                value = toJson
                             },
                         ),
                     ).asUpdate,
@@ -66,8 +65,8 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
                         HendelseTypeDTO.DagpengerInnvilgetHendelse -> */
                     SøknadBehandletHendelseMessage(
                         JsonMessage(
-                            melding,
-                            MessageProblems(melding),
+                            originalMessage = melding,
+                            problems = MessageProblems(melding),
                         ),
                     )
                     // HendelseTypeDTO.DagpengerAvslåttHendelse -> TODO()
