@@ -14,11 +14,13 @@ object Meldingsfabrikk {
         virkningsdato: LocalDate = LocalDate.now(),
         dagsats: Double = 500.0,
         fastsattVanligArbeidstid: Int = 8,
+        meldingId: UUID = UUID.randomUUID(),
     ) =
         //language=JSON
         """
         {        
           "@event_name": "søknad_behandlet_hendelse",
+          "@id": "$meldingId",
           "ident" : "$ident",
           "behandlingId": "${UUID.randomUUID()}",
           "Virkningsdato": "$virkningsdato",

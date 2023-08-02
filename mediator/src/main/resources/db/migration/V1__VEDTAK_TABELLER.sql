@@ -113,14 +113,13 @@ CREATE TABLE IF NOT EXISTS dag
 
 CREATE TABLE IF NOT EXISTS hendelse
 (
-    id              BIGSERIAL PRIMARY KEY,
-    hendelse_id     UUID                                                              NOT NULL,
-    hendelse_type   TEXT                                                              NOT NULL,
-    ident           VARCHAR(11)                                                       NOT NULL,
-    --person_id       BIGINT                                                            NOT NULL REFERENCES person (id),
-    status          TEXT                                                              NOT NULL,
-    melding         JSON                                                              NOT NULL,
-    opprettet       TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL,
-    endret          TIMESTAMP                                                         NOT NULL,
+    id                  BIGSERIAL PRIMARY KEY,
+    hendelse_id         UUID                                                              NOT NULL,
+    hendelse_type       TEXT                                                              NOT NULL,
+    ident               VARCHAR(11)                                                       NOT NULL,
+    melding             JSON                                                              NOT NULL,
+    opprettet           TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL,
+    endret              TIMESTAMP                                                         NOT NULL,
+    behandlet_tidspunkt TIMESTAMP                                                         NULL,
     UNIQUE (hendelse_id, hendelse_type)
 );

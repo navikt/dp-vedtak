@@ -1,38 +1,41 @@
 package no.nav.dagpenger.vedtak.mediator.persistens
 
+import io.ktor.utils.io.core.use
 import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import kotliquery.using
+import mu.KotlinLogging
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksattHendelseMessage
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.VedtakFattetHendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
+import no.nav.dagpenger.vedtak.mediator.mottak.RapporteringBehandletHendelseMessage
 import no.nav.dagpenger.vedtak.mediator.mottak.SøknadBehandletHendelseMessage
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageProblems
 import org.postgresql.util.PGobject
 import java.util.UUID
 import javax.sql.DataSource
 
 internal class PostgresHendelseRepository(private val dataSource: DataSource) : HendelseRepository {
+
     override fun lagreMelding(hendelseMessage: HendelseMessage, ident: String, id: UUID, toJson: String) {
-        using(sessionOf(dataSource)) { session ->
+        val hendelseType = hendelseType(hendelseMessage) ?: return
+
+        sessionOf(dataSource).use { session ->
             session.transaction { transactionalSession: TransactionalSession ->
                 transactionalSession.run(
                     queryOf(
                         //language=PostgreSQL
-                        statement =
-                        """
+                        statement = """
                             INSERT INTO hendelse
-                                (hendelse_id, hendelse_type, ident, status, melding, endret)
+                                (hendelse_id, hendelse_type, ident, melding, endret)
                             VALUES
-                                (:hendelse_id, :hendelse_type, :ident, :status, :melding, now())
+                                (:hendelse_id, :hendelse_type, :ident, :melding, now())
                             ON CONFLICT DO NOTHING
                         """.trimIndent(),
                         paramMap = mapOf(
                             "hendelse_id" to id,
-                            "hendelse_type" to "søknad_behandlet_hendelse",
+                            "hendelse_type" to hendelseType.name,
                             "ident" to ident,
-                            "status" to MeldingStatus.MOTTATT.name,
                             "melding" to PGobject().apply {
                                 type = "json"
                                 value = toJson
@@ -44,48 +47,53 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
         }
     }
 
-    override fun markerSomBehandlet(meldingId: UUID) {
-        TODO("Not yet implemented")
+    override fun markerSomBehandlet(hendelseId: UUID) = sessionOf(dataSource).use { session ->
+        session.run(
+            queryOf(
+                //language=PostgreSQL
+                statement = """
+                    UPDATE hendelse
+                    SET behandlet_tidspunkt=now()
+                    WHERE hendelse_id = :hendelse_id
+                      AND behandlet_tidspunkt IS NULL
+                """.trimIndent(),
+                paramMap = mapOf("hendelse_id" to hendelseId),
+            ).asUpdate,
+        )
     }
 
-    override fun hentMottatte(): List<HendelseMessage> {
-        return using(sessionOf(dataSource)) { session ->
-            session.run(
-                queryOf(
-                    //language=PostgreSQL
-                    statement = """
-                      SELECT *
-                      FROM hendelse
-                      WHERE status = :status
-                    """.trimIndent(),
-                    paramMap = mapOf("status" to MeldingStatus.MOTTATT.name),
-                ).map { rad ->
-                    val melding = rad.string("melding")
-                    /*when (HendelseTypeDTO.valueOf(rad.string("hendelse_type"))) {
-                        HendelseTypeDTO.DagpengerInnvilgetHendelse -> */
-                    SøknadBehandletHendelseMessage(
-                        JsonMessage(
-                            originalMessage = melding,
-                            problems = MessageProblems(melding),
-                        ),
-                    )
-                    // HendelseTypeDTO.DagpengerAvslåttHendelse -> TODO()
-                    // }
-                }.asList,
-            )
+    override fun erBehandlet(hendelseId: UUID): Boolean = sessionOf(dataSource).use { session ->
+        session.run(
+            queryOf(
+                //language=PostgreSQL
+                statement = """
+                    SELECT behandlet_tidspunkt FROM hendelse WHERE hendelse_id = :hendelse_id
+                """.trimIndent(),
+                paramMap = mapOf("hendelse_id" to hendelseId),
+            ).map { rad -> rad.localDateTimeOrNull("behandlet_tidspunkt") }.asSingle,
+        ) != null
+    }
+
+    private fun hendelseType(hendelseMessage: HendelseMessage): HendelseTypeDTO? {
+        return when (hendelseMessage) {
+            is SøknadBehandletHendelseMessage -> HendelseTypeDTO.SØKNAD_BEHANDLET
+            is RapporteringBehandletHendelseMessage -> HendelseTypeDTO.RAPPORTERING_BEHANDLET
+            is IverksattHendelseMessage -> HendelseTypeDTO.IVERKSATT
+            is VedtakFattetHendelseMessage -> HendelseTypeDTO.VEDTAK_FATTET
+            else -> null.also {
+                logger.warn { "ukjent meldingstype ${hendelseMessage::class.simpleName}: melding lagres ikke" }
+            }
         }
     }
 
-    override fun hentBehandlede(): List<HendelseMessage> {
-        TODO("Not yet implemented")
-    }
-
-    private enum class MeldingStatus {
-        MOTTATT, BEHANDLET
+    companion object {
+        private val logger = KotlinLogging.logger { }
     }
 }
 
 enum class HendelseTypeDTO {
-    DagpengerInnvilgetHendelse,
-    DagpengerAvslåttHendelse,
+    SØKNAD_BEHANDLET,
+    RAPPORTERING_BEHANDLET,
+    IVERKSATT,
+    VEDTAK_FATTET,
 }

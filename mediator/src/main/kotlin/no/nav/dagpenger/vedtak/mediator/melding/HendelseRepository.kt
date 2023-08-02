@@ -4,8 +4,6 @@ import java.util.UUID
 
 internal interface HendelseRepository {
     fun lagreMelding(hendelseMessage: HendelseMessage, ident: String, id: UUID, toJson: String)
-    fun markerSomBehandlet(meldingId: UUID)
-
-    fun hentMottatte(): List<HendelseMessage>
-    fun hentBehandlede(): List<HendelseMessage>
+    fun markerSomBehandlet(hendelseId: UUID): Int
+    fun erBehandlet(hendelseId: UUID): Boolean
 }

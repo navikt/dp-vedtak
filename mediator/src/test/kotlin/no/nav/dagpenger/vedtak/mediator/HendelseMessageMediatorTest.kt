@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.UUID
 
 internal class HendelseMessageMediatorTest {
 
@@ -30,17 +31,18 @@ internal class HendelseMessageMediatorTest {
 
     @Test
     fun `Ta imot melding om innvilgelse, lagre og behandle`() {
+        val meldingId = UUID.randomUUID()
         every { personMediatorMock.håndter(capture(meldingSlot)) } just Runs
-        testRapid.sendTestMessage(dagpengerInnvilgetJson())
+        testRapid.sendTestMessage(dagpengerInnvilgetJson(meldingId = meldingId))
         assertTrue(meldingSlot.isCaptured)
-        assertEquals(1, meldingRepository.hentBehandlede().size)
+        assertEquals(true, meldingRepository.erBehandlet(meldingId))
     }
 
     @Test
     fun `Ta i mot melding som feiler under behandling`() {
+        val meldingId = UUID.randomUUID()
         every { personMediatorMock.håndter(any<SøknadBehandletHendelse>()) } throws RuntimeException("Feilet behandling")
-        assertThrows<RuntimeException> { testRapid.sendTestMessage(dagpengerInnvilgetJson()) }
-        assertEquals(0, meldingRepository.hentBehandlede().size)
-        assertEquals(1, meldingRepository.hentMottatte().size)
+        assertThrows<RuntimeException> { testRapid.sendTestMessage(dagpengerInnvilgetJson(meldingId = meldingId)) }
+        assertEquals(false, meldingRepository.erBehandlet(meldingId))
     }
 }
