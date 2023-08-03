@@ -111,6 +111,7 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
                 id = id,
                 kontekster = kontekster,
                 aktivitetType = AktivitetType.BEHOV,
+                behovtype = type,
                 melding = melding,
                 detaljer = detaljer,
                 tidsstempel = melding,
@@ -125,6 +126,7 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
             melding: String,
             detaljer: Map<String, Any?> = emptyMap(),
             tidsstempel: String,
+            behovtype: Aktivitet.Behov.Behovtype? = null,
         ) {
             val aktiviteterFraMelding = mutableMapOf<String, Any>(
                 "kontekster" to map(kontekster),
@@ -138,6 +140,9 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
             }
             if (varselkode != null) {
                 TODO("Støtter ikke varselkode i lagring enda.")
+            }
+            if (behovtype != null) {
+                aktiviteterFraMelding["behovtype"] = behovtype.name
             }
 
             aktiviteter.add(

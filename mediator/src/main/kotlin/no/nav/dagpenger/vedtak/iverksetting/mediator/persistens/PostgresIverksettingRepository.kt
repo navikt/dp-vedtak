@@ -4,11 +4,14 @@ import kotliquery.Query
 import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
+import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.aktivitetslogg
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting
+import no.nav.dagpenger.vedtak.iverksetting.IverksettingBehov
 import no.nav.dagpenger.vedtak.iverksetting.IverksettingVisitor
 import no.nav.dagpenger.vedtak.mediator.persistens.AktivitetsloggMapper
+import no.nav.dagpenger.vedtak.mediator.persistens.BehovTypeMapper
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.objectMapper
@@ -41,7 +44,9 @@ internal class PostgresIverksettingRepository(private val dataSource: DataSource
                             TilstandDTO.AvventerIverksetting -> Iverksetting.AvventerIverksetting
                             TilstandDTO.Iverksatt -> Iverksetting.Iverksatt
                         },
-                        aktivitetslogg = session.hentAktivitetslogg(iverksettingId)?.konverterTilAktivitetslogg() ?: throw RuntimeException("Iverksetting uten aktivitetslogg"),
+                        aktivitetslogg = session.hentAktivitetslogg(iverksettingId)
+                            ?.konverterTilAktivitetslogg(IverksettingBehovTypeMapper)
+                            ?: throw RuntimeException("Iverksetting uten aktivitetslogg!"),
                     )
                 }.asSingle,
             )
@@ -73,9 +78,24 @@ internal class PostgresIverksettingRepository(private val dataSource: DataSource
         }.asSingle,
     )
 
+    private object IverksettingBehovTypeMapper : BehovTypeMapper {
+
+        enum class IverksettingBehovDto {
+            Iverksett,
+        }
+
+        override fun map(behovNavn: String?): Aktivitet.Behov.Behovtype {
+            val behov = requireNotNull(behovNavn) { "Forventer at behov navn er satt" }
+            return when (IverksettingBehovDto.valueOf(behov)) {
+                IverksettingBehovDto.Iverksett -> IverksettingBehov.Iverksett
+            }
+        }
+    }
+
     private class PopulerQueries(iverksetting: Iverksetting) : IverksettingVisitor {
         var iverksettingId: UUID? = null
         val queries = mutableListOf<Query>()
+
         init {
             iverksetting.accept(this)
         }
@@ -123,7 +143,7 @@ internal class PostgresIverksettingRepository(private val dataSource: DataSource
                             value = objectMapper.writeValueAsString(AktivitetsloggMapper(aktivitetslogg).toMap())
                         },
 
-                    ),
+                        ),
                 ),
             )
         }
