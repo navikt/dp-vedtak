@@ -8,6 +8,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import no.nav.dagpenger.vedtak.mediator.api.VedtakForPersonVisitor.VedtakDto
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 
@@ -19,8 +20,11 @@ fun Application.vedtakApi(personRepository: PersonRepository) {
             post {
                 val identDto = call.receive<IdentDto>()
                 val person = personRepository.hent(identDto.ident.tilPersonIdentfikator())
-                // TODO: Lag visitor som henter ut alle vedtak fra person og deretter lager en vedtakListeDto. returner dette objektet
-                call.respond(HttpStatusCode.OK)
+                val vedtakListe = mutableListOf<VedtakDto>()
+                if (person != null) {
+                    vedtakListe.addAll(VedtakForPersonVisitor(person).vedtakListeDto())
+                }
+                call.respond(HttpStatusCode.OK, vedtakListe)
             }
         }
     }
