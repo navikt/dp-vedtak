@@ -5,6 +5,16 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import java.util.UUID
 
+fun interface BehovTypeMapper {
+    fun map(behovNavn: String?): Aktivitet.Behov.Behovtype
+}
+
+private object NoOpBehovtypeMapper : BehovTypeMapper {
+    override fun map(behovNavn: String?): Aktivitet.Behov.Behovtype {
+        throw RuntimeException("Implementer egen BehovTypeMapper")
+    }
+}
+
 data class AktivitetsloggDTO(
     val aktiviteter: List<AktivitetDTO>,
 ) {
@@ -32,9 +42,9 @@ data class AktivitetsloggDTO(
         VARSEL,
     }
 
-    fun konverterTilAktivitetslogg(): Aktivitetslogg = konverterTilAktivitetslogg(this)
+    fun konverterTilAktivitetslogg(behovTypeMapper: BehovTypeMapper = NoOpBehovtypeMapper): Aktivitetslogg = konverterTilAktivitetslogg(this, behovTypeMapper)
 
-    private fun konverterTilAktivitetslogg(aktivitetsloggDTO: AktivitetsloggDTO): Aktivitetslogg {
+    private fun konverterTilAktivitetslogg(aktivitetsloggDTO: AktivitetsloggDTO, behovTypeMapper: BehovTypeMapper): Aktivitetslogg {
         val aktiviteter = mutableListOf<Aktivitet>()
         aktivitetsloggDTO.aktiviteter.forEach {
             val kontekster = it.kontekster.map { spesifikkKontekstData ->
@@ -50,6 +60,14 @@ data class AktivitetsloggDTO(
                         kontekster = kontekster,
                         melding = it.melding,
                         tidsstempel = it.tidsstempel,
+                    )
+                    AktivitetType.BEHOV -> Aktivitet.Behov.gjenopprett(
+                        id = it.id,
+                        kontekster = kontekster,
+                        melding = it.melding,
+                        tidsstempel = it.tidsstempel,
+                        type = behovTypeMapper.map(it.behovtype),
+                        detaljer = it.detaljer,
                     )
                     else -> TODO("TODO!!! Har ikke mappet ${it.aktivitetType} fra databasen enda.")
                 },

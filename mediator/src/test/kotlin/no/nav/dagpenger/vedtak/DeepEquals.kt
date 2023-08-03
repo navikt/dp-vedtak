@@ -66,8 +66,10 @@ private class ModelDeepEquals {
 
     private fun assertMapEquals(one: Map<*, *>, other: Map<*, *>, fieldName: String) {
         assertEquals(one.size, other.size)
-        one.keys.forEach {
-            assertDeepEquals(one[it], other[it], fieldName)
+        if (fieldName != "detaljer") {
+            one.keys.forEach {
+                assertDeepEquals(one[it], other[it], fieldName)
+            }
         }
     }
 

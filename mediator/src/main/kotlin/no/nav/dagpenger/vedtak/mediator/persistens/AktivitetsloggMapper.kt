@@ -59,7 +59,7 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
                 kontekster = kontekster,
                 aktivitetType = AktivitetType.LOGISK_FEIL,
                 melding = melding,
-                tidsstempel = melding,
+                tidsstempel = tidsstempel,
 
             )
         }
@@ -76,7 +76,7 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
                 kontekster = kontekster,
                 aktivitetType = AktivitetType.FUNKSJONELL_FEIL,
                 melding = melding,
-                tidsstempel = melding,
+                tidsstempel = tidsstempel,
             )
         }
 
@@ -94,7 +94,7 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
                 kontekster = kontekster,
                 aktivitetType = AktivitetType.VARSEL,
                 melding = melding,
-                tidsstempel = melding,
+                tidsstempel = tidsstempel,
             )
         }
 
@@ -107,6 +107,15 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
             detaljer: Map<String, Any?>,
             tidsstempel: String,
         ) {
+            leggTilMelding(
+                id = id,
+                kontekster = kontekster,
+                aktivitetType = AktivitetType.BEHOV,
+                behovtype = type,
+                melding = melding,
+                detaljer = detaljer,
+                tidsstempel = tidsstempel,
+            )
         }
 
         private fun leggTilMelding(
@@ -115,13 +124,15 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
             kontekster: List<SpesifikkKontekst>,
             aktivitetType: AktivitetType,
             melding: String,
+            detaljer: Map<String, Any?> = emptyMap(),
             tidsstempel: String,
+            behovtype: Aktivitet.Behov.Behovtype? = null,
         ) {
             val aktiviteterFraMelding = mutableMapOf<String, Any>(
                 "kontekster" to map(kontekster),
                 "aktivitetType" to aktivitetType.name,
                 "melding" to melding,
-                "detaljer" to emptyMap<String, Any>(),
+                "detaljer" to detaljer,
                 "tidsstempel" to tidsstempel,
             )
             if (id != null) {
@@ -129,6 +140,9 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
             }
             if (varselkode != null) {
                 TODO("Støtter ikke varselkode i lagring enda.")
+            }
+            if (behovtype != null) {
+                aktiviteterFraMelding["behovtype"] = behovtype.name
             }
 
             aktiviteter.add(
