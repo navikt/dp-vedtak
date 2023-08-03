@@ -115,6 +115,7 @@ internal class PostgresIverksettingRepository(private val dataSource: DataSource
                     """
                     INSERT INTO iverksetting (id, vedtak_id, person_id, tilstand, endret)
                     VALUES (:id, :vedtak_id, (SELECT id FROM person WHERE ident = :ident), :tilstand, :endret)
+                    ON CONFLICT (id) DO UPDATE SET tilstand = :tilstand, endret = :endret
                     """.trimIndent(),
                     paramMap = mapOf(
                         "id" to id,

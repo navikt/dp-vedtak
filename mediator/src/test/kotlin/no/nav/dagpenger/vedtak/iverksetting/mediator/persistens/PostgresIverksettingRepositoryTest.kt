@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.iverksetting.mediator.persistens
 
+import io.kotest.matchers.nulls.shouldNotBeNull
 import no.nav.dagpenger.vedtak.assertDeepEquals
 import no.nav.dagpenger.vedtak.db.Postgres.withMigratedDb
 import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder
@@ -64,11 +65,14 @@ class PostgresIverksettingRepositoryTest {
             )
 
             postgresIverksettingRepository.lagre(iverksetting)
-            val rehydrertIverksetting = postgresIverksettingRepository.hent(vedtakId)
+
+            val rehydrertIverksetting = postgresIverksettingRepository.hent(vedtakId).shouldNotBeNull()
             assertDeepEquals(
                 iverksetting,
                 rehydrertIverksetting,
             )
+
+            postgresIverksettingRepository.lagre(rehydrertIverksetting)
         }
     }
 
