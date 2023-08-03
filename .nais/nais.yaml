@@ -24,10 +24,15 @@ spec:
   azure:
     application:
       enabled: true
-  accessPolicy:
-    outbound:
-      rules:
-        - application: dp-iverksett
-
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_15
+        highAvailability: true
+        diskAutoresize: true
+        pointInTimeRecovery: true
+        tier: {{gcp.sql.tier}}
+        databases:
+          - name: vedtak
+            envVarPrefix: DB
   kafka:
     pool: {{ kafka_pool }}
