@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.mediator.persistens
 import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
+import no.nav.dagpenger.vedtak.iverksetting.IverksettingBehov
 import java.util.UUID
 
 data class AktivitetsloggDTO(
@@ -50,6 +51,14 @@ data class AktivitetsloggDTO(
                         kontekster = kontekster,
                         melding = it.melding,
                         tidsstempel = it.tidsstempel,
+                    )
+                    AktivitetType.BEHOV -> Aktivitet.Behov.gjenopprett(
+                        id = it.id,
+                        kontekster = kontekster,
+                        melding = it.melding,
+                        tidsstempel = it.tidsstempel,
+                        type = IverksettingBehov.Iverksett,
+                        detaljer = it.detaljer,
                     )
                     else -> TODO("TODO!!! Har ikke mappet ${it.aktivitetType} fra databasen enda.")
                 },

@@ -135,3 +135,10 @@ CREATE TABLE IF NOT EXISTS iverksetting
     opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL,
     endret    TIMESTAMP                                                         NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS iverksetting_aktivitetslogg
+(
+    iverksetting_id UUID PRIMARY KEY REFERENCES iverksetting (id),
+    data      JSON                                                              NOT NULL,
+    opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL
+);

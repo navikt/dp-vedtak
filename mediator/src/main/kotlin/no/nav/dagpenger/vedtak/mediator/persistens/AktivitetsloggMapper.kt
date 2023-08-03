@@ -107,6 +107,14 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
             detaljer: Map<String, Any?>,
             tidsstempel: String,
         ) {
+            leggTilMelding(
+                id = id,
+                kontekster = kontekster,
+                aktivitetType = AktivitetType.BEHOV,
+                melding = melding,
+                detaljer = detaljer,
+                tidsstempel = melding,
+            )
         }
 
         private fun leggTilMelding(
@@ -115,13 +123,14 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
             kontekster: List<SpesifikkKontekst>,
             aktivitetType: AktivitetType,
             melding: String,
+            detaljer: Map<String, Any?> = emptyMap(),
             tidsstempel: String,
         ) {
             val aktiviteterFraMelding = mutableMapOf<String, Any>(
                 "kontekster" to map(kontekster),
                 "aktivitetType" to aktivitetType.name,
                 "melding" to melding,
-                "detaljer" to emptyMap<String, Any>(),
+                "detaljer" to detaljer,
                 "tidsstempel" to tidsstempel,
             )
             if (id != null) {

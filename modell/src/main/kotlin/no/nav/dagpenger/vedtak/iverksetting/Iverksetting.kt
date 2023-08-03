@@ -33,12 +33,14 @@ class Iverksetting private constructor(
             personIdentifikator: PersonIdentifikator,
             vedtakId: UUID,
             tilstand: Tilstand,
+            aktivitetslogg: Aktivitetslogg,
         ): Iverksetting {
             return Iverksetting(
                 id = id,
                 personIdent = personIdentifikator,
                 vedtakId = vedtakId,
                 tilstand = tilstand,
+                aktivitetslogg = aktivitetslogg,
             )
         }
     }
