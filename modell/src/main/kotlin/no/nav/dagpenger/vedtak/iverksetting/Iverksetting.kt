@@ -28,7 +28,7 @@ class Iverksetting private constructor(
     )
 
     fun accept(iverksettingVisitor: IverksettingVisitor) {
-        iverksettingVisitor.visitIverksetting(id, vedtakId, tilstand)
+        iverksettingVisitor.visitIverksetting(id, vedtakId, personIdent, tilstand)
         aktivitetslogg.accept(iverksettingVisitor)
     }
 
@@ -79,14 +79,14 @@ class Iverksetting private constructor(
                 IverksettingObserver.IverksettingEndretTilstandEvent(
                     iversettingId = id,
                     vedtakId = vedtakId,
-                    forrigeTilstand = forrigeTilstand.tilstandnavn,
-                    gjeldendeTilstand = tilstand.tilstandnavn,
+                    forrigeTilstand = forrigeTilstand.tilstandNavn,
+                    gjeldendeTilstand = tilstand.tilstandNavn,
                 ),
             )
         }
     }
 
-    sealed class Tilstand(val tilstandnavn: TilstandNavn) : Aktivitetskontekst {
+    sealed class Tilstand(val tilstandNavn: TilstandNavn) : Aktivitetskontekst {
 
         enum class TilstandNavn {
             Mottatt,
@@ -98,7 +98,7 @@ class Iverksetting private constructor(
         fun leaving(hendelse: Hendelse, iverksetting: Iverksetting) {}
 
         override fun toSpesifikkKontekst(): SpesifikkKontekst =
-            SpesifikkKontekst("IverksettingTilstand", mapOf("tilstand" to tilstandnavn.name))
+            SpesifikkKontekst("IverksettingTilstand", mapOf("tilstand" to tilstandNavn.name))
 
         open fun håndter(vedtakFattetHendelse: VedtakFattetHendelse, iverksetting: Iverksetting) {
             vedtakFattetHendelse.feiltilstand()
@@ -109,7 +109,7 @@ class Iverksetting private constructor(
         }
 
         private fun Hendelse.feiltilstand(): Nothing =
-            this.logiskFeil("Kan ikke håndtere ${this.javaClass.simpleName} i iverksetting-tilstand $tilstandnavn")
+            this.logiskFeil("Kan ikke håndtere ${this.javaClass.simpleName} i iverksetting-tilstand $tilstandNavn")
     }
 
     object Mottatt : Tilstand(TilstandNavn.Mottatt) {
