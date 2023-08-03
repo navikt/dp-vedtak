@@ -66,7 +66,7 @@ internal class PersonMediatorTest {
         testObservatør.vedtak.shouldNotBeEmpty()
     }
 
-    @Test @Disabled
+    @Test
     fun `Rapporteringshendelse fører til et løpende vedtak fattet`() {
         val rettighetFraDato = 29 mai 2023
         testRapid.sendTestMessage(

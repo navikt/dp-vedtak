@@ -29,9 +29,9 @@ internal class PersonMediator(
     }
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
-//        behandle(rapporteringshendelse) { person ->
-//            person.håndter(rapporteringshendelse)
-//        }
+        behandle(rapporteringshendelse) { person ->
+            person.håndter(rapporteringshendelse)
+        }
     }
 
     private fun behandle(hendelse: Hendelse, håndter: (Person) -> Unit) = try {
