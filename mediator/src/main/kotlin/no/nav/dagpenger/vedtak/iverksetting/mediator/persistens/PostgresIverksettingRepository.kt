@@ -143,7 +143,7 @@ internal class PostgresIverksettingRepository(private val dataSource: DataSource
                             value = objectMapper.writeValueAsString(AktivitetsloggMapper(aktivitetslogg).toMap())
                         },
 
-                        ),
+                    ),
                 ),
             )
         }

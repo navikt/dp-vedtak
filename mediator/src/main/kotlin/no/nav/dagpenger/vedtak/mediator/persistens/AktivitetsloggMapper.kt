@@ -59,7 +59,7 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
                 kontekster = kontekster,
                 aktivitetType = AktivitetType.LOGISK_FEIL,
                 melding = melding,
-                tidsstempel = melding,
+                tidsstempel = tidsstempel,
 
             )
         }
@@ -76,7 +76,7 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
                 kontekster = kontekster,
                 aktivitetType = AktivitetType.FUNKSJONELL_FEIL,
                 melding = melding,
-                tidsstempel = melding,
+                tidsstempel = tidsstempel,
             )
         }
 
@@ -94,7 +94,7 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
                 kontekster = kontekster,
                 aktivitetType = AktivitetType.VARSEL,
                 melding = melding,
-                tidsstempel = melding,
+                tidsstempel = tidsstempel,
             )
         }
 
@@ -114,7 +114,7 @@ class AktivitetsloggMapper(aktivitetslogg: Aktivitetslogg) {
                 behovtype = type,
                 melding = melding,
                 detaljer = detaljer,
-                tidsstempel = melding,
+                tidsstempel = tidsstempel,
             )
         }
 
