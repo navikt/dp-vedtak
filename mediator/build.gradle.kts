@@ -21,11 +21,17 @@ dependencies {
     implementation(libs.konfig)
     implementation(libs.kotlin.logging)
 
+    implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.server.logging.jvm)
+    implementation(libs.ktor.serialization.jackson)
+
     testImplementation(libs.ktor.client.mock)
     testImplementation("io.kotest:kotest-assertions-core-jvm:${libs.versions.kotest.get()}")
 
     testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
     testImplementation(libs.bundles.postgres.test)
+    testImplementation(libs.ktor.server.test.host.jvm)
+    // testImplementation("no.nav.security:mock-oauth2-server:0.5.6")
 }
 
 application {
