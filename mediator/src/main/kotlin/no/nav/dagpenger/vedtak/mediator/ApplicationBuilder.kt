@@ -1,10 +1,12 @@
 package no.nav.dagpenger.vedtak.mediator
 
 import mu.KotlinLogging
-import no.nav.dagpenger.vedtak.iverksetting.mediator.InMemoryIverksettingRepository
+import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder
+import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
-import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
-import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
+import no.nav.dagpenger.vedtak.iverksetting.mediator.persistens.PostgresIverksettingRepository
+import no.nav.dagpenger.vedtak.mediator.persistens.PostgresHendelseRepository
+import no.nav.dagpenger.vedtak.mediator.persistens.PostgresPersonRepository
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -22,15 +24,15 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     init {
         HendelseMediator(
             rapidsConnection = rapidsConnection,
-            hendelseRepository = InMemoryMeldingRepository(),
+            hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),
             personMediator = PersonMediator(
-                personRepository = InMemoryPersonRepository(),
+                personRepository = PostgresPersonRepository(PostgresDataSourceBuilder.dataSource),
                 personObservers = listOf(
                     VedtakFattetKafkaObserver(rapidsConnection),
                 ),
             ),
             iverksettingMediator = IverksettingMediator(
-                iverksettingRepository = InMemoryIverksettingRepository(),
+                iverksettingRepository = PostgresIverksettingRepository(PostgresDataSourceBuilder.dataSource),
                 behovMediator = BehovMediator(rapidsConnection, KotlinLogging.logger("tjenestekall.BehovMediator")),
             ),
         )
@@ -42,6 +44,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
+        runMigration()
         logger.info { "Starter opp dp-vedtak" }
     }
 }
