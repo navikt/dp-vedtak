@@ -27,6 +27,22 @@ class Iverksetting private constructor(
         tilstand = Mottatt,
     )
 
+    companion object {
+        fun rehydrer(
+            id: UUID,
+            personIdentifikator: PersonIdentifikator,
+            vedtakId: UUID,
+            tilstand: Tilstand,
+        ): Iverksetting {
+            return Iverksetting(
+                id = id,
+                personIdent = personIdentifikator,
+                vedtakId = vedtakId,
+                tilstand = tilstand,
+            )
+        }
+    }
+
     fun accept(iverksettingVisitor: IverksettingVisitor) {
         iverksettingVisitor.visitIverksetting(id, vedtakId, personIdent, tilstand)
         aktivitetslogg.accept(iverksettingVisitor)
