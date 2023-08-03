@@ -58,6 +58,7 @@ class Aktivitetslogg(
     private fun MutableList<Aktivitetskontekst>.toSpesifikk() = this.map { it.toSpesifikkKontekst() }
 
     override fun harAktiviteter() = info().isNotEmpty() || behov().isNotEmpty()
+    override fun harFunksjonelleFeilEllerVerre() = funksjonelleFeil().isNotEmpty() || logiskFeil().isNotEmpty()
 
     override fun barn() = Aktivitetslogg(this).also { it.kontekster.addAll(this.kontekster) }
 
@@ -110,6 +111,8 @@ class Aktivitetslogg(
             .map { Aktivitetslogg(this).apply { aktiviteter.addAll(it.value) } }
 
     private fun info() = Aktivitet.Info.filter(aktiviteter)
+    private fun funksjonelleFeil() = Aktivitet.FunksjonellFeil.filter(aktiviteter)
+    private fun logiskFeil() = Aktivitet.LogiskFeil.filter(aktiviteter)
     override fun behov() = Behov.filter(aktiviteter)
 
     class AktivitetException internal constructor(private val aktivitetslogg: Aktivitetslogg) :

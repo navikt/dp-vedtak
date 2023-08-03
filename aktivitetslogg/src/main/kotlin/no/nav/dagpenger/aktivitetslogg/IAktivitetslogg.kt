@@ -8,6 +8,7 @@ interface IAktivitetslogg {
     fun funksjonellFeil(kode: Varselkode)
     fun behov(type: Aktivitet.Behov.Behovtype, melding: String, detaljer: Map<String, Any> = emptyMap())
     fun harAktiviteter(): Boolean
+    fun harFunksjonelleFeilEllerVerre(): Boolean
     fun aktivitetsteller(): Int
     fun behov(): List<Aktivitet.Behov>
     fun barn(): IAktivitetslogg

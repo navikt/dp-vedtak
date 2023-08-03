@@ -69,8 +69,13 @@ internal class PersonMediator(
     }
 
     private fun ferdigstill(hendelse: Hendelse) {
-        // if (!hendelse.hasMessages()) return
-        // if (hendelse.hasErrors()) return sikkerLogger.info("aktivitetslogg inneholder errors: ${hendelse.toLogString()}")
+        if (!hendelse.harAktiviteter()) return
+        if (hendelse.harFunksjonelleFeilEllerVerre()) {
+            logger.info("aktivitetslogg inneholder feil (se sikkerlogg)")
+            sikkerLogger.error("aktivitetslogg inneholder feil:\n${hendelse.toLogString()}")
+        } else {
+            sikkerLogger.info("aktivitetslogg inneholder meldinger:\n${hendelse.toLogString()}")
+        }
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
     }
 
