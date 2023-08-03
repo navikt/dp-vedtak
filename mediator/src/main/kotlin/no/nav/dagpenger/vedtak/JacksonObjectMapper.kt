@@ -18,4 +18,4 @@ val objectMapper = jacksonObjectMapper().apply {
     registerModule(JavaTimeModule())
 }
 
-fun InputStream.aktivitetslogg(): AktivitetsloggDTO = objectMapper.readValue(this, AktivitetsloggDTO::class.java)
+fun InputStream.aktivitetslogg(): AktivitetsloggDTO = this.use { objectMapper.readValue(it, AktivitetsloggDTO::class.java) }
