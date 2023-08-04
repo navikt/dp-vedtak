@@ -36,3 +36,7 @@ spec:
             envVarPrefix: DB
   kafka:
     pool: {{ kafka_pool }}
+  env:
+    - name: flyway.cleanDisabled
+      value: {{ flyway.cleanDisabled }}
+

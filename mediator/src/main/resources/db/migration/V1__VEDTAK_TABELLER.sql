@@ -56,10 +56,10 @@ CREATE TABLE IF NOT EXISTS egenandel
 
 CREATE TABLE IF NOT EXISTS rettighet
 (
-    id             BIGSERIAL PRIMARY KEY,
     vedtak_id      UUID    NOT NULL REFERENCES vedtak (id),
     rettighetstype VARCHAR NOT NULL,
-    utfall         BOOLEAN NOT NULL
+    utfall         BOOLEAN NOT NULL,
+    PRIMARY KEY (vedtak_id, rettighetstype)
 );
 
 CREATE INDEX IF NOT EXISTS rettighet_vedtak_idx ON rettighet (vedtak_id);

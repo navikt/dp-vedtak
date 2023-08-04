@@ -24,7 +24,7 @@ class VedtakForPersonVisitor(person: Person) : PersonVisitor {
         type: Vedtak.VedtakType,
     ) {
         this.vedtakListeDto.add(
-            VedtakDto(vedtakId = vedtakId, vedtakType = type), //TODO: Lag dto for vedtakType, ikke bruk vedtaktype eksplisitt
+            VedtakDto(vedtakId = vedtakId, vedtakType = type), // TODO: Lag dto for vedtakType, ikke bruk vedtaktype eksplisitt
         )
     }
 

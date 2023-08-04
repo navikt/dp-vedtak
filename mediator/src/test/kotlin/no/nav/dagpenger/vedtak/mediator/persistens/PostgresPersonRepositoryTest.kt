@@ -3,6 +3,9 @@ package no.nav.dagpenger.vedtak.mediator.persistens
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotliquery.queryOf
+import kotliquery.sessionOf
+import kotliquery.using
 import no.nav.dagpenger.vedtak.assertDeepEquals
 import no.nav.dagpenger.vedtak.db.Postgres.withMigratedDb
 import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder
@@ -17,9 +20,9 @@ import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.util.Random
 import java.util.UUID
 
 class PostgresPersonRepositoryTest {
@@ -38,6 +41,9 @@ class PostgresPersonRepositoryTest {
             }
             val hentetPerson = postgresPersonRepository.hent(ident).shouldNotBeNull()
             person.ident() shouldBe hentetPerson.ident()
+
+            assertAntallRader("person", 1)
+            assertAntallRader("person_aktivitetslogg", 1)
         }
     }
 
@@ -92,6 +98,19 @@ class PostgresPersonRepositoryTest {
                 person,
                 rehydrertPerson,
             )
+
+            assertAntallRader("person", 1)
+            assertAntallRader("person_aktivitetslogg", 1)
+            assertAntallRader("vedtak", 2)
+            assertAntallRader("dagsats", 1)
+            assertAntallRader("stønadsperiode", 1)
+            assertAntallRader("vanlig_arbeidstid", 1)
+            assertAntallRader("rettighet", 1)
+            assertAntallRader("egenandel", 1)
+            assertAntallRader("utbetaling", 1)
+            assertAntallRader("utbetalingsdag", 10)
+            assertAntallRader("rapporteringsperiode", 1)
+            assertAntallRader("dag", 14)
         }
     }
 
@@ -121,13 +140,14 @@ class PostgresPersonRepositoryTest {
         }
     }
 
-    private fun hentTilfeldigAktivitet(): Rapporteringsdag.Aktivitet.Type {
-        val antallAktiviteter = Rapporteringsdag.Aktivitet.Type.values().size
-        return Rapporteringsdag.Aktivitet.Type.values()[
-            kotlin.random.Random.nextInt(
-                0,
-                antallAktiviteter - 1,
-            ),
-        ]
+    private fun assertAntallRader(tabell: String, antallRader: Int) {
+        val faktiskeRader = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+            session.run(
+                queryOf("select count(1) from $tabell").map { row ->
+                    row.int(1)
+                }.asSingle,
+            )
+        }
+        Assertions.assertEquals(antallRader, faktiskeRader, "Feil antall rader for tabell: $tabell")
     }
 }
