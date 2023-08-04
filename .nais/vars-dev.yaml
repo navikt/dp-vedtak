@@ -1,7 +1,7 @@
 kafka_pool: nav-dev
 
 flyway:
-  cleanDisabled: "false"
+  cleanDisabled: false
 
 gcp:
   sql:
