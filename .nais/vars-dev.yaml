@@ -1,5 +1,8 @@
 kafka_pool: nav-dev
 
+flyway:
+  cleanDisabled: false
+
 gcp:
   sql:
     tier: db-custom-1-3840
