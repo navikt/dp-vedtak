@@ -26,7 +26,7 @@ internal class HendelseMessageMediatorTest {
         rapidsConnection = testRapid,
         hendelseRepository = meldingRepository,
         personMediator = personMediatorMock,
-        iverksettingMediator = IverksettingMediator(mockk(), mockk()),
+        iverksettingMediator = IverksettingMediator(mockk(), mockk(), mockk()),
     )
 
     @Test

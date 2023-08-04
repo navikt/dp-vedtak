@@ -6,12 +6,14 @@ import no.nav.dagpenger.vedtak.iverksetting.Iverksetting
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.persistens.IverksettingRepository
+import no.nav.dagpenger.vedtak.mediator.AktivitetsloggMediator
 import no.nav.dagpenger.vedtak.mediator.BehovMediator
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.helse.rapids_rivers.withMDC
 
 internal class IverksettingMediator(
     private val iverksettingRepository: IverksettingRepository,
+    private val aktivitetsloggMediator: AktivitetsloggMediator,
     private val behovMediator: BehovMediator,
 ) {
 
@@ -67,10 +69,16 @@ internal class IverksettingMediator(
     class OpprettIverksettingException(message: String) : RuntimeException(message)
 
     private fun ferdigstill(hendelse: Hendelse) {
-        // if (!hendelse.hasMessages()) return
-        // if (hendelse.hasErrors()) return sikkerLogger.info("aktivitetslogg inneholder errors: ${hendelse.toLogString()}")
+        if (!hendelse.harAktiviteter()) return
+        if (hendelse.harFunksjonelleFeilEllerVerre()) {
+            logger.info("aktivitetslogg inneholder feil (se sikkerlogg)")
+            sikkerLogger.error("aktivitetslogg inneholder feil:\n${hendelse.toLogString()}")
+        } else {
+            sikkerLogger.info("aktivitetslogg inneholder meldinger:\n${hendelse.toLogString()}")
+        }
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
         behovMediator.håndter(hendelse)
+        aktivitetsloggMediator.håndter(hendelse)
     }
 
     private fun errorHandler(err: Exception, message: String, context: Map<String, String> = emptyMap()) {

@@ -29,8 +29,9 @@ internal class IverksettingMediatorTest {
             hendelseRepository = InMemoryMeldingRepository(),
             personMediator = PersonMediator(mockk(), mockk()),
             iverksettingMediator = IverksettingMediator(
-                iverksettingRepository,
-                BehovMediator(testRapid, KotlinLogging.logger {}),
+                aktivitetsloggMediator = mockk(relaxed = true),
+                iverksettingRepository = iverksettingRepository,
+                behovMediator = BehovMediator(testRapid, KotlinLogging.logger {}),
             ),
         )
     }

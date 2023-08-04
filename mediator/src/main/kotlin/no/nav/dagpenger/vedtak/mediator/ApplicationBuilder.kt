@@ -26,12 +26,14 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
             rapidsConnection = rapidsConnection,
             hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),
             personMediator = PersonMediator(
+                aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
                 personRepository = PostgresPersonRepository(PostgresDataSourceBuilder.dataSource),
                 personObservers = listOf(
                     VedtakFattetKafkaObserver(rapidsConnection),
                 ),
             ),
             iverksettingMediator = IverksettingMediator(
+                aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
                 iverksettingRepository = PostgresIverksettingRepository(PostgresDataSourceBuilder.dataSource),
                 behovMediator = BehovMediator(rapidsConnection, KotlinLogging.logger("tjenestekall.BehovMediator")),
             ),

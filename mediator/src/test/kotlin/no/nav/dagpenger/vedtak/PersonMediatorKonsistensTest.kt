@@ -27,10 +27,11 @@ internal class PersonMediatorKonsistensTest {
             rapidsConnection = testRapid,
             hendelseRepository = InMemoryMeldingRepository(),
             personMediator = PersonMediator(
+                aktivitetsloggMediator = mockk(relaxed = true),
                 personRepository = personRepository,
                 personObservers = listOf(VedtakFattetKafkaObserver(testRapid), testObservatør),
             ),
-            iverksettingMediator = IverksettingMediator(mockk(), mockk()),
+            iverksettingMediator = IverksettingMediator(mockk(), mockk(), mockk()),
         )
     }
 
