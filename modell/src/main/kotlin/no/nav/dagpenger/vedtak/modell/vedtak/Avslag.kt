@@ -8,13 +8,12 @@ import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Rettighet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class Avslag(
     vedtakId: UUID = UUID.randomUUID(),
     behandlingId: UUID,
-    vedtakstidspunkt: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+    vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
     private val rettigheter: List<Rettighet>,
 ) : Vedtak(
@@ -28,6 +27,7 @@ class Avslag(
     companion object {
         fun avslag(
             behandlingId: UUID,
+            vedtakstidspunkt: LocalDateTime,
             virkningsdato: LocalDate,
             dagpengerettighet: Dagpengerettighet,
         ): Avslag {
@@ -40,18 +40,12 @@ class Avslag(
             }
             return Avslag(
                 behandlingId = behandlingId,
+                vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
                 rettigheter = listOf(rettighet),
             )
         }
     }
-//    constructor(behandlingId: UUID, virkningsdato: LocalDate, rettigheter: List<Rettighet>) : this(
-//        vedtakId = UUID.randomUUID(),
-//        behandlingId = behandlingId,
-//        vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
-//        virkningsdato = virkningsdato,
-//        rettigheter = rettigheter,
-//    )
 
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(
@@ -72,14 +66,4 @@ class Avslag(
             type = type,
         )
     }
-
-//    override fun accept(visitor: VedtakVisitor) {
-//        visitor.visitAvslag(
-//            vedtakId = vedtakId,
-//            behandlingId = behandlingId,
-//            vedtakstidspunkt = vedtakstidspunkt,
-//            utfall = utfall,
-//            virkningsdato = virkningsdato,
-//        )
-//    }
 }

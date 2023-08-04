@@ -17,6 +17,8 @@ import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class Behandling(
@@ -172,6 +174,7 @@ class Behandling(
                 Utbetalingsvedtak.utbetalingsvedtak(
                     behandlingId = behandling.behandlingId,
                     utfall = resultat.utfall,
+                    vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = rapporteringshendelse.endInclusive,
                     forbruk = Stønadsdager(resultat.forbruksdager.size),
                     utbetalingsdager = resultat.utbetalingsdager,

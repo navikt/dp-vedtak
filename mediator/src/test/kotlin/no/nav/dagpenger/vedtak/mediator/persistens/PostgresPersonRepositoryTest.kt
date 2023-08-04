@@ -23,6 +23,8 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class PostgresPersonRepositoryTest {
@@ -55,6 +57,7 @@ class PostgresPersonRepositoryTest {
             DagpengerInnvilgetHendelse(
                 ident = ident.identifikator(),
                 behandlingId = UUID.randomUUID(),
+                vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                 virkningsdato = idag,
                 dagpengerettighet = Dagpengerettighet.Ordinær,
                 dagsats = 800.beløp,
@@ -73,7 +76,6 @@ class PostgresPersonRepositoryTest {
             Rapporteringsdag(
                 dato = it,
                 aktiviteter = emptyList(),
-                // listOf(                    Rapporteringsdag.Aktivitet(hentTilfeldigAktivitet(), 1.hours),),
             )
         }
 
@@ -122,6 +124,7 @@ class PostgresPersonRepositoryTest {
             DagpengerAvslåttHendelse(
                 ident = ident.identifikator(),
                 behandlingId = UUID.randomUUID(),
+                vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                 virkningsdato = idag,
                 dagpengerettighet = Dagpengerettighet.Ordinær,
             ),

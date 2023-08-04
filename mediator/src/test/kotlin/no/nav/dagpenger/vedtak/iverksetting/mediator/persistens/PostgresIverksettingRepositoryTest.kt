@@ -20,6 +20,7 @@ import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class PostgresIverksettingRepositoryTest {
@@ -35,6 +36,7 @@ class PostgresIverksettingRepositoryTest {
             DagpengerInnvilgetHendelse(
                 ident = testIdent.identifikator(),
                 behandlingId = UUID.randomUUID(),
+                vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                 virkningsdato = idag,
                 dagpengerettighet = Dagpengerettighet.Ordinær,
                 dagsats = 800.beløp,

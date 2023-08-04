@@ -8,13 +8,12 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.VedtakType.Utbetaling
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class Utbetalingsvedtak(
     vedtakId: UUID = UUID.randomUUID(),
     behandlingId: UUID,
-    vedtakstidspunkt: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+    vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
     private val utfall: Boolean,
     private val forbruk: Stønadsdager,
@@ -32,6 +31,7 @@ class Utbetalingsvedtak(
         fun utbetalingsvedtak(
             behandlingId: UUID,
             utfall: Boolean,
+            vedtakstidspunkt: LocalDateTime,
             virkningsdato: LocalDate,
             forbruk: Stønadsdager,
             utbetalingsdager: List<Utbetalingsdag>,
@@ -40,6 +40,7 @@ class Utbetalingsvedtak(
             Utbetalingsvedtak(
                 behandlingId = behandlingId,
                 utfall = utfall,
+                vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
                 forbruk = forbruk,
                 utbetalingsdager = utbetalingsdager,

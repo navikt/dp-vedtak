@@ -29,6 +29,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
@@ -48,6 +49,7 @@ class RettighetStegTest : No {
                 DagpengerInnvilgetHendelse(
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
+                    vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                     dagsats = søknadHendelse.dagsats.beløp,
@@ -64,6 +66,7 @@ class RettighetStegTest : No {
                 DagpengerInnvilgetHendelse(
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
+                    vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                     dagsats = søknadHendelse.dagsats.beløp,
@@ -81,6 +84,7 @@ class RettighetStegTest : No {
                 DagpengerAvslåttHendelse(
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
+                    vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                 ),
@@ -94,6 +98,7 @@ class RettighetStegTest : No {
                 StansHendelse(
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
+                    vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
                 ),
             )
