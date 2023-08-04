@@ -21,6 +21,7 @@ internal class VedtakFattetHendelseMessage(private val packet: JsonMessage) : He
 
     private val hendelse
         get() = VedtakFattetHendelse(
+            meldingsreferanseId = id,
             ident = ident,
             iverksettingsVedtak = IverksettingsVedtak(
                 vedtakId = vedtakId,

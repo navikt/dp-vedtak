@@ -115,6 +115,20 @@ sealed class Aktivitet(
                 return aktiviteter.filterIsInstance<FunksjonellFeil>()
             }
 
+            fun gjennopprett(
+                id: UUID,
+                kontekster: List<SpesifikkKontekst>,
+                kode: Varselkode,
+                melding: String,
+                tidsstempel: String,
+            ) = FunksjonellFeil(
+                id = id,
+                kontekster = kontekster,
+                kode = kode,
+                melding = melding,
+                tidsstempel = tidsstempel,
+            )
+
             internal fun opprett(kontekster: List<SpesifikkKontekst>, kode: Varselkode, melding: String) =
                 FunksjonellFeil(UUID.randomUUID(), kontekster, kode, melding)
         }
@@ -159,7 +173,7 @@ sealed class Aktivitet(
         }
 
         override fun accept(visitor: AktivitetsloggVisitor) {
-            visitor.visitLogiskfeil(id, kontekster, this, melding, tidsstempel)
+            visitor.visitWarn(id, kontekster, this, melding, tidsstempel)
         }
     }
 
@@ -205,6 +219,7 @@ sealed class Aktivitet(
         override fun accept(visitor: AktivitetsloggVisitor) {
             visitor.visitBehov(id, kontekster, this, type, melding, detaljer, tidsstempel)
         }
+
         interface Behovtype {
             val name: String
         }

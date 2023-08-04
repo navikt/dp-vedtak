@@ -135,7 +135,7 @@ class AktivitetsloggTest {
         aktivitetslogg.accept(
             object : AktivitetsloggVisitor {
 
-                override fun visitLogiskfeil(
+                override fun visitWarn(
                     id: UUID,
                     kontekster: List<SpesifikkKontekst>,
                     aktivitet: Aktivitet.LogiskFeil,

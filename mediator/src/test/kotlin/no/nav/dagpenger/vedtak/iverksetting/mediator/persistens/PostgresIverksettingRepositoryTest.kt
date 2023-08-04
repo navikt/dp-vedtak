@@ -34,6 +34,7 @@ class PostgresIverksettingRepositoryTest {
         val idag = LocalDate.now()
         person.håndter(
             DagpengerInnvilgetHendelse(
+                meldingsreferanseId = UUID.randomUUID(),
                 ident = testIdent.identifikator(),
                 behandlingId = UUID.randomUUID(),
                 vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
@@ -54,8 +55,9 @@ class PostgresIverksettingRepositoryTest {
 
             iverksetting.håndter(
                 VedtakFattetHendelse(
-                    testIdent.identifikator(),
-                    IverksettingsVedtak(
+                    meldingsreferanseId = UUID.randomUUID(),
+                    ident = testIdent.identifikator(),
+                    iverksettingsVedtak = IverksettingsVedtak(
                         vedtakId = vedtakId,
                         behandlingId = UUID.randomUUID(),
                         utbetalingsdager = emptyList(),

@@ -20,7 +20,7 @@ data class AktivitetsloggDTO(
 ) {
     data class AktivitetDTO(
         val id: UUID,
-        val aktivitetType: AktivitetType,
+        val alvorlighetsgrad: AlvorlighetsgradDTO,
         val label: Char,
         val behovtype: String?,
         val melding: String,
@@ -34,12 +34,12 @@ data class AktivitetsloggDTO(
         val kontekstMap: Map<String, String>,
     )
 
-    enum class AktivitetType {
+    enum class AlvorlighetsgradDTO {
         INFO,
+        WARN,
         BEHOV,
-        LOGISK_FEIL,
-        FUNKSJONELL_FEIL,
-        VARSEL,
+        ERROR,
+        SEVERE,
     }
 
     fun konverterTilAktivitetslogg(behovTypeMapper: BehovTypeMapper = NoOpBehovtypeMapper): Aktivitetslogg = konverterTilAktivitetslogg(this, behovTypeMapper)
@@ -54,14 +54,14 @@ data class AktivitetsloggDTO(
                 )
             }
             aktiviteter.add(
-                when (it.aktivitetType) {
-                    AktivitetType.INFO -> Aktivitet.Info.gjenopprett(
+                when (it.alvorlighetsgrad) {
+                    AlvorlighetsgradDTO.INFO -> Aktivitet.Info.gjenopprett(
                         id = it.id,
                         kontekster = kontekster,
                         melding = it.melding,
                         tidsstempel = it.tidsstempel,
                     )
-                    AktivitetType.BEHOV -> Aktivitet.Behov.gjenopprett(
+                    AlvorlighetsgradDTO.BEHOV -> Aktivitet.Behov.gjenopprett(
                         id = it.id,
                         kontekster = kontekster,
                         melding = it.melding,
@@ -69,7 +69,27 @@ data class AktivitetsloggDTO(
                         type = behovTypeMapper.map(it.behovtype),
                         detaljer = it.detaljer,
                     )
-                    else -> TODO("TODO!!! Har ikke mappet ${it.aktivitetType} fra databasen enda.")
+                    AlvorlighetsgradDTO.SEVERE -> Aktivitet.LogiskFeil.gjenopprett(
+                        id = it.id,
+                        kontekster = kontekster,
+                        melding = it.melding,
+                        tidsstempel = it.tidsstempel,
+                    )
+                    AlvorlighetsgradDTO.WARN -> Aktivitet.FunksjonellFeil.gjennopprett(
+                        id = it.id,
+                        kontekster = kontekster,
+                        melding = it.melding,
+                        kode = TODO("Vi har ikke mappe kode enda. "),
+                        tidsstempel = it.tidsstempel,
+                    )
+                    AlvorlighetsgradDTO.ERROR -> Aktivitet.Varsel.gjennopprett(
+                        id = it.id,
+                        kontekster = kontekster,
+                        kode = TODO("Vi har ikke mappe kode enda. "),
+                        melding = it.melding,
+                        tidsstempel = it.tidsstempel,
+
+                    )
                 },
             )
         }

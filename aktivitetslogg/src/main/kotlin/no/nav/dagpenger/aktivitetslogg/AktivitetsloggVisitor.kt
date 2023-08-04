@@ -27,7 +27,7 @@ interface AktivitetsloggVisitor {
     ) {
     }
 
-    fun visitLogiskfeil(
+    fun visitWarn(
         id: UUID,
         kontekster: List<SpesifikkKontekst>,
         aktivitet: Aktivitet.LogiskFeil,

@@ -33,6 +33,7 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
 
     private fun dagpengerAvslåttHendelse(packet: JsonMessage, behandlingId: UUID) =
         DagpengerAvslåttHendelse(
+            meldingsreferanseId = id,
             ident = ident,
             behandlingId = behandlingId,
             vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),
@@ -44,6 +45,7 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
         packet: JsonMessage,
         behandlingId: UUID,
     ) = DagpengerInnvilgetHendelse(
+        meldingsreferanseId = id,
         ident = ident,
         behandlingId = behandlingId,
         vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),

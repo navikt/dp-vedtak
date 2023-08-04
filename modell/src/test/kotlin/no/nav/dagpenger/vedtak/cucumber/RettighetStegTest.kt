@@ -47,6 +47,7 @@ class RettighetStegTest : No {
             person = Person(ident.tilPersonIdentfikator())
             person.håndter(
                 DagpengerInnvilgetHendelse(
+                    meldingsreferanseId = UUID.randomUUID(),
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
@@ -64,6 +65,7 @@ class RettighetStegTest : No {
             assertPersonOpprettet()
             person.håndter(
                 DagpengerInnvilgetHendelse(
+                    meldingsreferanseId = UUID.randomUUID(),
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
@@ -82,6 +84,7 @@ class RettighetStegTest : No {
             person = Person(ident.tilPersonIdentfikator())
             person.håndter(
                 DagpengerAvslåttHendelse(
+                    meldingsreferanseId = UUID.randomUUID(),
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
@@ -96,6 +99,7 @@ class RettighetStegTest : No {
             assertPersonOpprettet()
             person.håndter(
                 StansHendelse(
+                    meldingsreferanseId = UUID.randomUUID(),
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
@@ -186,11 +190,13 @@ class RettighetStegTest : No {
     private fun håndterRapporteringsHendelse(rapporteringsdager: List<Rapporteringsdag>) {
         person.håndter(
             Rapporteringshendelse(
-                ident,
-                UUID.randomUUID(),
-                rapporteringsdager,
+                meldingsreferanseId = UUID.randomUUID(),
+                ident = ident,
+                rapporteringsId = UUID.randomUUID(),
+                rapporteringsdager = rapporteringsdager,
                 fom = rapporteringsdager.minOf { it.dato },
                 tom = rapporteringsdager.maxOf { it.dato },
+
             ),
         )
     }

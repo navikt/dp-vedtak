@@ -11,6 +11,7 @@ internal class IverksattHendelseMessage(private val packet: JsonMessage) : Hende
 
     private val hendelse
         get() = IverksattHendelse(
+            meldingsreferanseId = id,
             ident = ident,
             iverksettingId = packet["iverksettingId"].asUUID(),
             vedtakId = packet["vedtakId"].asUUID(),

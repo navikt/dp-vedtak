@@ -55,6 +55,7 @@ class PostgresPersonRepositoryTest {
         val idag = LocalDate.now()
         person.håndter(
             DagpengerInnvilgetHendelse(
+                meldingsreferanseId = UUID.randomUUID(),
                 ident = ident.identifikator(),
                 behandlingId = UUID.randomUUID(),
                 vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
@@ -81,6 +82,7 @@ class PostgresPersonRepositoryTest {
 
         person.håndter(
             Rapporteringshendelse(
+                meldingsreferanseId = UUID.randomUUID(),
                 ident = ident.identifikator(),
                 rapporteringsId = UUID.randomUUID(),
                 rapporteringsdager = rapporteringdager,
@@ -122,6 +124,7 @@ class PostgresPersonRepositoryTest {
         val idag = LocalDate.now()
         person.håndter(
             DagpengerAvslåttHendelse(
+                meldingsreferanseId = UUID.randomUUID(),
                 ident = ident.identifikator(),
                 behandlingId = UUID.randomUUID(),
                 vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),

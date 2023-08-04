@@ -33,6 +33,7 @@ class IverksettingTest {
     fun `Skal starte iverksetting når vedtak fattes`() {
         iverksetting.håndter(
             VedtakFattetHendelse(
+                meldingsreferanseId = UUID.randomUUID(),
                 ident = ident,
                 iverksettingsVedtak = IverksettingsVedtak(
                     vedtakId = vedtakId,
@@ -61,7 +62,12 @@ class IverksettingTest {
         )
 
         iverksetting.håndter(
-            IverksattHendelse(ident = ident, iverksettingId = inspektør.iverksettingId, vedtakId = inspektør.vedtakId),
+            IverksattHendelse(
+                meldingsreferanseId = UUID.randomUUID(),
+                ident = ident,
+                iverksettingId = inspektør.iverksettingId,
+                vedtakId = inspektør.vedtakId,
+            ),
         )
 
         assertTilstander(
