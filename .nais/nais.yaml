@@ -38,5 +38,5 @@ spec:
     pool: {{ kafka_pool }}
   env:
     - name: flyway.cleanDisabled
-      value: {{ flyway.cleanDisabled }}
+      value: "false"
 
