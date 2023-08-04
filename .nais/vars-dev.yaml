@@ -1,6 +1,6 @@
 kafka_pool: nav-dev
-
-
+ingresses:
+  - https://dp-vedtak.intern.dev.nav.no
 gcp:
   sql:
     tier: db-custom-1-3840

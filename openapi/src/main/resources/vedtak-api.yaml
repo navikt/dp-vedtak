@@ -5,6 +5,11 @@ info:
   description: API for vedtaksdata
   contact:
     name: '#team-dagpenger'
+servers:
+  - url: https://dp-vedtak.intern.dev.nav.no
+    description: dev
+  - url: https://dp-vedtak.intern.nav.no
+    description: prod
 paths:
   /vedtak:
     post:
