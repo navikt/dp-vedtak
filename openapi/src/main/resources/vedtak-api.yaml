@@ -1,0 +1,33 @@
+openapi: 3.0.0
+info:
+  title: Vedtak API
+  version: 1.0.0
+  description: API for vedtaksdata
+  contact:
+    name: '#team-dagpenger'
+paths:
+  /vedtak:
+    post:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vedtak'
+          description: OK
+      summary: Hent alle vedtak for en gitt person
+      description: Noe greier
+      security:
+        - azureAd: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vedtak'
+components:
+  schemas:
+    Vedtak:
+      type: object
