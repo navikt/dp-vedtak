@@ -18,8 +18,8 @@ fun Application.vedtakApi(personRepository: PersonRepository) {
     routing {
         route("vedtak") {
             post {
-                val identDto = call.receive<IdentDto>()
-                val person = personRepository.hent(identDto.ident.tilPersonIdentfikator())
+                val identForespørsel = call.receive<IdentForespørsel>()
+                val person = personRepository.hent(identForespørsel.ident.tilPersonIdentfikator())
                 val vedtakListe = mutableListOf<VedtakDto>()
                 if (person != null) {
                     vedtakListe.addAll(VedtakForPersonVisitor(person).vedtakListeDto())
