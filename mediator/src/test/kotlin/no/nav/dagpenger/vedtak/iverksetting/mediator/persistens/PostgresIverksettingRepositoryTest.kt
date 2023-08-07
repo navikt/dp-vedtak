@@ -5,8 +5,7 @@ import no.nav.dagpenger.vedtak.assertDeepEquals
 import no.nav.dagpenger.vedtak.db.Postgres.withMigratedDb
 import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting
-import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import no.nav.dagpenger.vedtak.mediator.persistens.PostgresPersonRepository
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
@@ -54,17 +53,15 @@ class PostgresIverksettingRepositoryTest {
             val iverksetting = Iverksetting(vedtakId = vedtakId, ident = testIdent.identifikator())
 
             iverksetting.håndter(
-                VedtakFattetHendelse(
+                UtbetalingsvedtakFattetHendelse(
                     meldingsreferanseId = UUID.randomUUID(),
                     ident = testIdent.identifikator(),
-                    iverksettingsVedtak = IverksettingsVedtak(
-                        vedtakId = vedtakId,
-                        behandlingId = UUID.randomUUID(),
-                        utbetalingsdager = emptyList(),
-                        utfall = IverksettingsVedtak.Utfall.Innvilget,
-                        vedtakstidspunkt = LocalDateTime.now(),
-                        virkningsdato = LocalDate.now(),
-                    ),
+                    vedtakId = vedtakId,
+                    behandlingId = UUID.randomUUID(),
+                    utbetalingsdager = emptyList(),
+                    utfall = UtbetalingsvedtakFattetHendelse.Utfall.Innvilget,
+                    vedtakstidspunkt = LocalDateTime.now(),
+                    virkningsdato = LocalDate.now(),
                 ),
             )
 

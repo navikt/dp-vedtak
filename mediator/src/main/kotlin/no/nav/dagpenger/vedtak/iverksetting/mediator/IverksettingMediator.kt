@@ -3,7 +3,9 @@ package no.nav.dagpenger.vedtak.iverksetting.mediator
 import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.HovedrettighetVedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.persistens.IverksettingRepository
 import no.nav.dagpenger.vedtak.mediator.AktivitetsloggMediator
@@ -22,15 +24,21 @@ internal class IverksettingMediator(
         val sikkerLogger = KotlinLogging.logger("tjenestekall.IverksettingMediator")
     }
 
-    fun håndter(vedtakFattetHendelse: VedtakFattetHendelse) {
-        håndter(vedtakFattetHendelse) { iverksetting ->
-            iverksetting.håndter(vedtakFattetHendelse)
+    fun håndter(hendelse: UtbetalingsvedtakFattetHendelse) {
+        håndter(hendelse) { iverksetting ->
+            iverksetting.håndter(hendelse)
         }
     }
 
     fun håndter(iverksattHendelse: IverksattHendelse) {
         håndter(iverksattHendelse) { iverksetting ->
             iverksetting.håndter(iverksattHendelse)
+        }
+    }
+
+    fun håndter(hendelse: HovedrettighetVedtakFattetHendelse) {
+        håndter(hendelse) { iverksetting ->
+            iverksetting.håndter(hendelse)
         }
     }
 
@@ -54,9 +62,8 @@ internal class IverksettingMediator(
 
     private fun hentEllerOpprettIverksett(hendelse: Hendelse): Iverksetting {
         return when (hendelse) {
-            is VedtakFattetHendelse -> iverksettingRepository.hent(hendelse.iverksettingsVedtak.vedtakId)
-                ?: Iverksetting(hendelse.iverksettingsVedtak.vedtakId, hendelse.ident())
-
+            is VedtakFattetHendelse -> iverksettingRepository.hent(hendelse.vedtakId)
+                ?: Iverksetting(hendelse.vedtakId, hendelse.ident())
             is IverksattHendelse -> iverksettingRepository.hent(hendelse.vedtakId)
                 ?: throw OpprettIverksettingException("Kan ikke knytte iverksatthendelse til en Iverksetting")
 

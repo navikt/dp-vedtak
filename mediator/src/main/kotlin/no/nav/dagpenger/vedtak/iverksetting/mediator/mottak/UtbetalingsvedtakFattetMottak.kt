@@ -8,7 +8,7 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
-internal class VedtakFattetMottak(
+internal class UtbetalingsvedtakFattetMottak(
     rapidsConnection: RapidsConnection,
     private val hendelseMediator: IHendelseMediator,
 ) : River.PacketListener {
@@ -20,9 +20,9 @@ internal class VedtakFattetMottak(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.requireValue("@event_name", "vedtak_fattet") }
+            validate { it.requireValue("@event_name", "utbetaling_vedtak_fattet") }
             validate { it.requireKey("@id", "@opprettet") }
-            validate { it.interestedIn("utbetalingsdager") }
+            validate { it.requireKey("utbetalingsdager") }
             validate {
                 it.requireKey(
                     "ident",
@@ -39,9 +39,9 @@ internal class VedtakFattetMottak(
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val vedtakId = packet["vedtakId"].asText()
         withLoggingContext("vedtakId" to vedtakId) {
-            logger.info { "Fått vedtak_fattet hendelse" }
-            sikkerlogger.info { "Fått vedtak_fattet hendelse. Hendelse: ${packet.toJson()}" }
-            val vedtakFattetHendelseMessage = VedtakFattetHendelseMessage(packet)
+            logger.info { "Fått utbetaling_vedtak_fattet hendelse" }
+            sikkerlogger.info { "Fått utbetaling_vedtak_fattet hendelse. Hendelse: ${packet.toJson()}" }
+            val vedtakFattetHendelseMessage = UtbetalingsvedtakFattetHendelseMessage(packet)
             vedtakFattetHendelseMessage.behandle(hendelseMediator, context)
         }
     }
