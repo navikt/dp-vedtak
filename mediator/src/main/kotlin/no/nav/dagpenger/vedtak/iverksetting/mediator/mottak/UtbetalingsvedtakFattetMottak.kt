@@ -38,7 +38,8 @@ internal class UtbetalingsvedtakFattetMottak(
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val vedtakId = packet["vedtakId"].asText()
-        withLoggingContext("vedtakId" to vedtakId) {
+        val behandlingId = packet["behandlingId"].asText()
+        withLoggingContext(mapOf("vedtakId" to vedtakId, "behandlingId" to behandlingId)) {
             logger.info { "Fått utbetaling_vedtak_fattet hendelse" }
             sikkerlogger.info { "Fått utbetaling_vedtak_fattet hendelse. Hendelse: ${packet.toJson()}" }
             val vedtakFattetHendelseMessage = UtbetalingsvedtakFattetHendelseMessage(packet)
