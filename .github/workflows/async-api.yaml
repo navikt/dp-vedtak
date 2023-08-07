@@ -19,7 +19,7 @@ jobs:
 
       - name: Generating HTML from AsyncAPI file
         run: |
-          npx @asyncapi/generator docs/api/async-api.yml @asyncapi/html-template -o docs
+          npx @asyncapi/generator docs/api/async-api.yaml @asyncapi/html-template -o docs
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
