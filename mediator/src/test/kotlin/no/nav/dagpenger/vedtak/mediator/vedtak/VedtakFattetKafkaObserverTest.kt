@@ -35,7 +35,7 @@ class VedtakFattetKafkaObserverTest {
         val message = testRapid.inspektør.message(0)
 
         assertSoftly {
-            message["@event_name"].asText() shouldBe "vedtak_fattet"
+            message["@event_name"].asText() shouldBe "hovedrettighet_vedtak_fattet"
             message["ident"].asText() shouldBe "1234568901"
             message["behandlingId"].asText() shouldBe behandlingId.toString()
             message["vedtakId"].asText() shouldBe vedtakId.toString()

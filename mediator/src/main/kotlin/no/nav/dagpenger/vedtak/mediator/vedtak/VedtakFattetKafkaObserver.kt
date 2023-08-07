@@ -21,9 +21,9 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                 "vedtakId" to vedtakFattet.vedtakId.toString(),
             ),
         ) {
-            sikkerlogger.info { "Vedtak for $ident fattet. Vedtak: $vedtakFattet" }
+            sikkerlogger.info { "Vedtak om hovedrettighet for $ident fattet. Vedtak: $vedtakFattet" }
             val message = JsonMessage.newMessage(
-                eventName = "vedtak_fattet",
+                eventName = "hovedrettighet_vedtak_fattet",
                 map = mapOf(
                     "ident" to ident,
                     "behandlingId" to vedtakFattet.behandlingId.toString(),
@@ -38,7 +38,7 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                 key = ident,
                 message = message.toJson(),
             )
-            logger.info { "Vedtak fattet melding publisert." }
+            logger.info { "Vedtak om fattet hovedrettighet publisert." }
         }
     }
 
@@ -49,10 +49,10 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                 "vedtakId" to utbetalingsvedtakFattet.vedtakId.toString(),
             ),
         ) {
-            sikkerlogger.info { "Vedtak for $ident fattet. Vedtak: $utbetalingsvedtakFattet" }
+            sikkerlogger.info { "Utbetalingsvedtak for $ident fattet. Vedtak: $utbetalingsvedtakFattet" }
 
             val message = JsonMessage.newMessage(
-                eventName = "vedtak_fattet",
+                eventName = "utbetaling_vedtak_fattet",
                 map = mapOf(
                     "ident" to ident,
                     "behandlingId" to utbetalingsvedtakFattet.behandlingId.toString(),
@@ -68,7 +68,7 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                 key = ident,
                 message = message.toJson(),
             )
-            logger.info { "Vedtak fattet melding publisert." }
+            logger.info { "Utbetalingsvedtak fattet publisert." }
         }
     }
 }

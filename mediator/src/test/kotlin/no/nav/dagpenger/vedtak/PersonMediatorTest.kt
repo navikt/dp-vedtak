@@ -52,7 +52,7 @@ internal class PersonMediatorTest {
         testRapid.sendTestMessage(dagpengerInnvilgetJson(ident = ident))
         testRapid.inspektør.size shouldBe 1
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
-            it["@event_name"].asText() shouldBe "vedtak_fattet"
+            it["@event_name"].asText() shouldBe "hovedrettighet_vedtak_fattet"
         }
         testObservatør.vedtak.shouldNotBeEmpty()
     }
@@ -62,7 +62,7 @@ internal class PersonMediatorTest {
         testRapid.sendTestMessage(dagpengerAvslåttJson(ident = ident))
         testRapid.inspektør.size shouldBe 1
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
-            it["@event_name"].asText() shouldBe "vedtak_fattet"
+            it["@event_name"].asText() shouldBe "hovedrettighet_vedtak_fattet"
         }
         testObservatør.vedtak.shouldNotBeEmpty()
     }
@@ -92,13 +92,13 @@ internal class PersonMediatorTest {
 
         testObservatør.vedtak.size shouldBe 1
         val rammevedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 2)
-        rammevedtakJson["@event_name"].asText() shouldBe "vedtak_fattet"
+        rammevedtakJson["@event_name"].asText() shouldBe "hovedrettighet_vedtak_fattet"
 
         testObservatør.løpendeVedtak.size shouldBe 1
-        val løpendeVedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 1)
-        løpendeVedtakJson["@event_name"].asText() shouldBe "vedtak_fattet"
-        løpendeVedtakJson["utbetalingsdager"].size() shouldBe 10
-        løpendeVedtakJson["utbetalingsdager"].map { utbetalingsdagJson ->
+        val utbetalingsvedtak = testRapid.inspektør.message(testRapid.inspektør.size - 1)
+        utbetalingsvedtak["@event_name"].asText() shouldBe "utbetaling_vedtak_fattet"
+        utbetalingsvedtak["utbetalingsdager"].size() shouldBe 10
+        utbetalingsvedtak["utbetalingsdager"].map { utbetalingsdagJson ->
             utbetalingsdagJson["beløp"].asDouble() shouldBe 1000.0
         }
     }
