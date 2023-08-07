@@ -6,12 +6,15 @@ info:
 
 channels:
   teamdagpenger.rapid.v1:
-    subscribe:
+    publish:
       message:
-        $ref: '#/components/messages/vedtak'
+        oneOf:
+          - $ref: '#/components/messages/hovedrettighet_vedtak'
+          - $ref: '#/components/messages/utbetaling_vedtak'
+
 components:
   messages:
-    vedtak:
+    hovedrettighet_vedtak:
       payload:
         type: object
         properties:
@@ -40,6 +43,56 @@ components:
             type: string
             format: date
             description: Vedtakets virkningstidspunkt
+          utfall:
+            type: string
+            description: Innvilget eller Avslått
+            enum: [
+              "Innvilget",
+              "Avslått"
+            ]
+    utbetaling_vedtak:
+      payload:
+        type: object
+        properties:
+          '@event_type':
+            type: string
+            description: Event som forteller resultatet om utbetalingsvedak
+            enum: [
+              "utbetaling_vedtak_fattet"
+            ]
+          ident:
+            type: string
+            description: Ident til mottaker av vedtaket
+          vedtakId:
+            type: string
+            format: uuid
+            description: Vedtakets interne id
+          vedtaktidspunkt:
+            type: string
+            format: date-time
+            description: Tidspunkt for når vedtaket er fattet
+          behandlingId:
+            type: string
+            format: uuid
+            description: Behandling id som førte vedtaket
+          virkningsdato:
+            type: string
+            format: date
+            description: Vedtakets virkningstidspunkt
+          utbetalingsdager:
+            type: array
+            items:
+              type: object
+              properties:
+                dato:
+                  type: string
+                  format: date
+                  description: Datoen det utbetales
+                beløp:
+                  type: number
+                  format: double
+                  description: Beløp for dagen
+
           utfall:
             type: string
             description: Innvilget eller Avslått
