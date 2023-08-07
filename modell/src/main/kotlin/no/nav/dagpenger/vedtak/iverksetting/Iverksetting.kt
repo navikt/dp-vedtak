@@ -69,7 +69,7 @@ class Iverksetting private constructor(
 
     fun håndter(hovedrettighetVedtakFattetHendelse: HovedrettighetVedtakFattetHendelse) {
         kontekst(hovedrettighetVedtakFattetHendelse)
-        tilstand.håndter(hovedrettighetVedtakFattetHendelse)
+        tilstand.håndter(hovedrettighetVedtakFattetHendelse, this)
     }
 
     fun håndter(iverksattHendelse: IverksattHendelse) {
@@ -132,7 +132,7 @@ class Iverksetting private constructor(
             iverksattHendelse.feiltilstand()
         }
 
-        open fun håndter(hovedrettighetVedtakFattetHendelse: HovedrettighetVedtakFattetHendelse) {
+        open fun håndter(hovedrettighetVedtakFattetHendelse: HovedrettighetVedtakFattetHendelse, iverksetting: Iverksetting) {
             hovedrettighetVedtakFattetHendelse.feiltilstand()
         }
 
@@ -157,7 +157,10 @@ class Iverksetting private constructor(
             iverksetting.endreTilstand(utbetalingsvedtakFattetHendelse, AvventerIverksetting)
         }
 
-        override fun håndter(hovedrettighetVedtakFattetHendelse: HovedrettighetVedtakFattetHendelse) {
+        override fun håndter(
+            hovedrettighetVedtakFattetHendelse: HovedrettighetVedtakFattetHendelse,
+            iverksetting: Iverksetting,
+        ) {
             hovedrettighetVedtakFattetHendelse.behov(
                 type = IverksettingBehov.Iverksett,
                 melding = "Sender behov for å iverksette vedtak med hovedrettighet",
@@ -169,10 +172,15 @@ class Iverksetting private constructor(
                     "utfall" to hovedrettighetVedtakFattetHendelse.utfall.name,
                 ),
             )
+            iverksetting.endreTilstand(hovedrettighetVedtakFattetHendelse, AvventerIverksetting)
         }
     }
 
     object AvventerIverksetting : Tilstand(TilstandNavn.AvventerIverksetting) {
+
+        override fun entering(hendelse: Hendelse, iverksetting: Iverksetting) {
+            hendelse.info("Avventer iverksetting")
+        }
         override fun håndter(iverksattHendelse: IverksattHendelse, iverksetting: Iverksetting) {
             iverksetting.endreTilstand(iverksattHendelse, Iverksatt)
         }

@@ -9,12 +9,13 @@ import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.M
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.HovedrettighetVedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class IverksettingTest {
+internal class IverksettingTest {
 
     private val ident = "12345678911"
     private val testObservatør = IverksettingObservatør()
@@ -23,10 +24,15 @@ class IverksettingTest {
     private val vedtakstidspunkt = LocalDateTime.now()
     private val virkningsdato = LocalDate.now()
 
-    private val iverksetting = Iverksetting(vedtakId, ident).also {
-        it.addObserver(testObservatør)
-    }
+    private lateinit var iverksetting: Iverksetting
     private val inspektør get() = IverksettingInspektør(iverksetting)
+
+    @BeforeEach
+    fun setup() {
+        iverksetting = Iverksetting(vedtakId, ident).also {
+            it.addObserver(testObservatør)
+        }
+    }
 
     @Test
     fun `Skal starte iverksetting når hovedrettighetvedtak fattes`() {
@@ -40,6 +46,34 @@ class IverksettingTest {
                 virkningsdato = virkningsdato,
                 utfall = HovedrettighetVedtakFattetHendelse.Utfall.Avslått,
             ),
+        )
+        assertBehov(
+            IverksettingBehov.Iverksett,
+            forventetDetaljer = mapOf(
+                "ident" to ident,
+                "vedtakId" to vedtakId.toString(),
+                "behandlingId" to behandlingId,
+                "vedtakstidspunkt" to vedtakstidspunkt,
+                "virkningsdato" to virkningsdato,
+                "utfall" to "Avslått",
+                "iverksettingId" to inspektør.iverksettingId.toString(),
+                "tilstand" to "Mottatt",
+            ),
+        )
+
+        iverksetting.håndter(
+            IverksattHendelse(
+                meldingsreferanseId = UUID.randomUUID(),
+                ident = ident,
+                iverksettingId = inspektør.iverksettingId,
+                vedtakId = inspektør.vedtakId,
+            ),
+        )
+
+        assertTilstander(
+            Mottatt,
+            AvventerIverksetting,
+            Iverksatt,
         )
     }
 
