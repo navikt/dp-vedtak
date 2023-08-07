@@ -9,12 +9,12 @@ channels:
     publish:
       message:
         oneOf:
-          - $ref: '#/components/messages/hovedrettighet_vedtak'
-          - $ref: '#/components/messages/utbetaling_vedtak'
+          - $ref: '#/components/messages/hovedrettighet_vedtak_fattet'
+          - $ref: '#/components/messages/utbetaling_vedtak_fattet'
 
 components:
   messages:
-    hovedrettighet_vedtak:
+    hovedrettighet_vedtak_fattet:
       payload:
         type: object
         properties:
@@ -50,7 +50,7 @@ components:
               "Innvilget",
               "Avslått"
             ]
-    utbetaling_vedtak:
+    utbetaling_vedtak_fattet:
       payload:
         type: object
         properties:
