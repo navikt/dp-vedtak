@@ -5,11 +5,11 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Subaktivitetskontekst
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import java.util.UUID
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 
 class Iverksetting private constructor(
     val id: UUID,
@@ -61,9 +61,9 @@ class Iverksetting private constructor(
         )
     }
 
-    fun håndter(vedtakFattetHendelse: VedtakFattetHendelse) {
-        kontekst(vedtakFattetHendelse)
-        tilstand.håndter(vedtakFattetHendelse, this)
+    fun håndter(utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse) {
+        kontekst(utbetalingsvedtakFattetHendelse)
+        tilstand.håndter(utbetalingsvedtakFattetHendelse, this)
     }
 
     fun håndter(iverksattHendelse: IverksattHendelse) {
@@ -118,8 +118,8 @@ class Iverksetting private constructor(
         override fun toSpesifikkKontekst(): SpesifikkKontekst =
             SpesifikkKontekst("IverksettingTilstand", mapOf("tilstand" to tilstandNavn.name))
 
-        open fun håndter(vedtakFattetHendelse: VedtakFattetHendelse, iverksetting: Iverksetting) {
-            vedtakFattetHendelse.feiltilstand()
+        open fun håndter(utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse, iverksetting: Iverksetting) {
+            utbetalingsvedtakFattetHendelse.feiltilstand()
         }
 
         open fun håndter(iverksattHendelse: IverksattHendelse, iverksetting: Iverksetting) {
@@ -131,20 +131,20 @@ class Iverksetting private constructor(
     }
 
     object Mottatt : Tilstand(TilstandNavn.Mottatt) {
-        override fun håndter(vedtakFattetHendelse: VedtakFattetHendelse, iverksetting: Iverksetting) {
-            vedtakFattetHendelse.behov(
+        override fun håndter(utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse, iverksetting: Iverksetting) {
+            utbetalingsvedtakFattetHendelse.behov(
                 type = IverksettingBehov.Iverksett,
                 melding = "Trenger å iverksette vedtak",
                 detaljer = mapOf(
-                    "vedtakId" to vedtakFattetHendelse.iverksettingsVedtak.vedtakId,
-                    "behandlingId" to vedtakFattetHendelse.iverksettingsVedtak.behandlingId,
-                    "vedtakstidspunkt" to vedtakFattetHendelse.iverksettingsVedtak.vedtakstidspunkt,
-                    "virkningsdato" to vedtakFattetHendelse.iverksettingsVedtak.virkningsdato,
-                    "utbetalingsdager" to vedtakFattetHendelse.iverksettingsVedtak.utbetalingsdager,
-                    "utfall" to vedtakFattetHendelse.iverksettingsVedtak.utfall,
+                    "vedtakId" to utbetalingsvedtakFattetHendelse.vedtakId,
+                    "behandlingId" to utbetalingsvedtakFattetHendelse.behandlingId,
+                    "vedtakstidspunkt" to utbetalingsvedtakFattetHendelse.vedtakstidspunkt,
+                    "virkningsdato" to utbetalingsvedtakFattetHendelse.virkningsdato,
+                    "utbetalingsdager" to utbetalingsvedtakFattetHendelse.utbetalingsdager,
+                    "utfall" to utbetalingsvedtakFattetHendelse.utfall,
                 ),
             )
-            iverksetting.endreTilstand(vedtakFattetHendelse, AvventerIverksetting)
+            iverksetting.endreTilstand(utbetalingsvedtakFattetHendelse, AvventerIverksetting)
         }
     }
 

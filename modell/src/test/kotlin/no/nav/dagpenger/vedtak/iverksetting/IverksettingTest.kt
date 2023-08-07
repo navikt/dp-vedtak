@@ -6,9 +6,8 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.AvventerIverksetting
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Iverksatt
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Mottatt
-import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak.Utbetalingsdag
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,7 +21,7 @@ class IverksettingTest {
     private val behandlingId = UUID.randomUUID()
     private val vedtakstidspunkt = LocalDateTime.now()
     private val virkningsdato = LocalDate.now()
-    private val utfall = IverksettingsVedtak.Utfall.Innvilget
+    private val utfall = UtbetalingsvedtakFattetHendelse.Utfall.Innvilget
 
     private val iverksetting = Iverksetting(vedtakId, ident).also {
         it.addObserver(testObservatør)
@@ -32,17 +31,15 @@ class IverksettingTest {
     @Test
     fun `Skal starte iverksetting når vedtak fattes`() {
         iverksetting.håndter(
-            VedtakFattetHendelse(
+            UtbetalingsvedtakFattetHendelse(
                 meldingsreferanseId = UUID.randomUUID(),
                 ident = ident,
-                iverksettingsVedtak = IverksettingsVedtak(
                     vedtakId = vedtakId,
                     behandlingId = behandlingId,
                     vedtakstidspunkt = vedtakstidspunkt,
                     virkningsdato = virkningsdato,
                     utbetalingsdager = utbetalingsdager(),
                     utfall = utfall,
-                ),
             ),
         )
 

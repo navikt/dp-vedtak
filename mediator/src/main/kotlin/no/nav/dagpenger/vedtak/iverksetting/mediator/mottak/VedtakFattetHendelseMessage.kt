@@ -1,16 +1,12 @@
 package no.nav.dagpenger.vedtak.iverksetting.mediator.mottak
 
-import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak
 import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak.Utbetalingsdag
-import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak.Utfall.Avslått
-import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak.Utfall.Innvilget
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
+import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.asLocalDate
-import no.nav.helse.rapids_rivers.asLocalDateTime
 
 internal class VedtakFattetHendelseMessage(private val packet: JsonMessage) : HendelseMessage(packet) {
 
@@ -19,8 +15,9 @@ internal class VedtakFattetHendelseMessage(private val packet: JsonMessage) : He
 
     private val vedtakId = packet["vedtakId"].asUUID()
 
-    private val hendelse
-        get() = VedtakFattetHendelse(
+    private val hendelse: Hendelse
+        get() = TODO()
+            /*VedtakFattetHendelse(
             meldingsreferanseId = id,
             ident = ident,
             iverksettingsVedtak = IverksettingsVedtak(
@@ -35,10 +32,11 @@ internal class VedtakFattetHendelseMessage(private val packet: JsonMessage) : He
                     else -> throw IllegalArgumentException("Vet ikke om utfall ${packet.utfall()}")
                 },
             ),
-        )
+        ) */
 
     override fun behandle(mediator: IHendelseMediator, context: MessageContext) {
-        mediator.behandle(hendelse, this, context)
+        TODO()
+        // mediator.behandle(hendelse, this, context)
     }
 
     private fun utbetalingsdager() = packet["utbetalingsdager"].map { løpendeRettighetsdagJson ->
