@@ -17,9 +17,9 @@ components:
         properties:
           '@event_type':
             type: string
-            description: Event navnet 'vedtak_fattet'
+            description: Event som forteller om en har rett på dagpenger eller ikke (gitt utfall)
             enum: [
-              "vedtak_fattet"
+              "hovedrettighet_vedtak_fattet"
             ]
           ident:
             type: string
