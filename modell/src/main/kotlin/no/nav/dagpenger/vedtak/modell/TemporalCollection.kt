@@ -12,7 +12,7 @@ internal open class TemporalCollection<R> {
     fun get(date: LocalDateTime): R = milestones
         .firstOrNull { it.isBefore(date) || it.isEqual(date) }?.let {
             contents[it]
-        } ?: throw IllegalArgumentException("No records that early")
+        } ?: throw IllegalArgumentException("No records that early. Asked for date $date. Milestones=$milestones")
 
     fun get(date: LocalDate): R = get(date.atStartOfDay())
 

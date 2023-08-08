@@ -170,16 +170,19 @@ class Behandling(
     object Ferdigstill : Behandlingssteg() {
         override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
             val resultat = behandling.resultatBuilder.build()
+            val utbetalingsvedtak = Utbetalingsvedtak.utbetalingsvedtak(
+                behandlingId = behandling.behandlingId,
+                utfall = resultat.utfall,
+                vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+                virkningsdato = rapporteringshendelse.endInclusive,
+                forbruk = Stønadsdager(resultat.forbruksdager.size),
+                utbetalingsdager = resultat.utbetalingsdager,
+                trukketEgenandel = resultat.trukketEgenandel,
+            )
+            rapporteringshendelse.kontekst(utbetalingsvedtak)
+            rapporteringshendelse.info("Fattet utbetalingsvedtak")
             behandling.person.leggTilVedtak(
-                Utbetalingsvedtak.utbetalingsvedtak(
-                    behandlingId = behandling.behandlingId,
-                    utfall = resultat.utfall,
-                    vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
-                    virkningsdato = rapporteringshendelse.endInclusive,
-                    forbruk = Stønadsdager(resultat.forbruksdager.size),
-                    utbetalingsdager = resultat.utbetalingsdager,
-                    trukketEgenandel = resultat.trukketEgenandel,
-                ),
+                utbetalingsvedtak,
             )
         }
     }
