@@ -132,7 +132,3 @@ class Person internal constructor(
 
     override fun toSpesifikkKontekst() = SpesifikkKontekst(kontekstType, mapOf("ident" to ident.identifikator()))
 }
-
-fun main() {
-    println(Instant.now())
-}
