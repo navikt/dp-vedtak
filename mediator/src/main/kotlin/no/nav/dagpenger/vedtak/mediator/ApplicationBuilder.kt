@@ -5,6 +5,7 @@ import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.iverksetting.mediator.persistens.PostgresIverksettingRepository
+import no.nav.dagpenger.vedtak.mediator.api.vedtakApi
 import no.nav.dagpenger.vedtak.mediator.persistens.PostgresHendelseRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.PostgresPersonRepository
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
@@ -17,9 +18,13 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
         private val logger = KotlinLogging.logger { }
     }
 
+    private val personRepository = PostgresPersonRepository(PostgresDataSourceBuilder.dataSource)
+
     private val rapidsConnection = RapidApplication.Builder(
         RapidApplication.RapidApplicationConfig.fromEnv(config),
-    ).build()
+    )
+        .withKtorModule { vedtakApi(personRepository = personRepository) }
+        .build()
 
     init {
         HendelseMediator(
@@ -27,7 +32,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
             hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),
             personMediator = PersonMediator(
                 aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
-                personRepository = PostgresPersonRepository(PostgresDataSourceBuilder.dataSource),
+                personRepository = personRepository,
                 personObservers = listOf(
                     VedtakFattetKafkaObserver(rapidsConnection),
                 ),
