@@ -12,6 +12,14 @@ CREATE TABLE IF NOT EXISTS person_aktivitetslogg
     opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS sak
+(
+    id        TEXT   PRIMARY KEY,
+    person_id BIGINT NOT NULL REFERENCES person (id)
+);
+
+CREATE INDEX IF NOT EXISTS sak_person_idx ON sak (person_id);
+
 
 --- VEDTAK
 
@@ -19,6 +27,7 @@ CREATE TABLE IF NOT EXISTS vedtak
 (
     id               UUID PRIMARY KEY,
     person_id        BIGINT                                                            NOT NULL REFERENCES person (id),
+    sak_id           TEXT                                                              NOT NULL REFERENCES sak (id),
     behandling_id    UUID                                                              NOT NULL, -- todo: I hvilken kontekst kommer behandling_id fra? dp-behandling eller dp-vedtak?
     virkningsdato    DATE                                                              NOT NULL,
     vedtakstidspunkt TIMESTAMP                                                         NOT NULL,
@@ -27,6 +36,7 @@ CREATE TABLE IF NOT EXISTS vedtak
 );
 
 CREATE INDEX IF NOT EXISTS vedtak_person_idx ON vedtak (person_id);
+CREATE INDEX IF NOT EXISTS vedtak_sak_idx ON vedtak (sak_id);
 
 CREATE TABLE IF NOT EXISTS dagsats
 (

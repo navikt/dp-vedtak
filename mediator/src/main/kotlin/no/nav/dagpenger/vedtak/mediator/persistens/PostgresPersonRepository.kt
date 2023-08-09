@@ -42,6 +42,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.sql.DataSource
+import no.nav.dagpenger.vedtak.modell.SakId
 
 class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepository {
     override fun hent(ident: PersonIdentifikator): Person? {
@@ -124,6 +125,23 @@ private class PopulerQueries(
             ?: throw RuntimeException("Kunne ikke lagre rapporteringsperiode med uuid $rapporteringsperiodeId. Noe er veldig galt!")
     }
 
+    override fun visitSak(sakId: SakId) {
+        queries.add(
+            queryOf(
+                //language=PostgreSQL
+                statement = """
+                    INSERT INTO sak (id, person_id)
+                    VALUES (:id, :person_id)
+                    ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                paramMap = mapOf(
+                    "id" to sakId,
+                    "person_id" to dbPersonId
+                )
+            )
+        )
+    }
+
     override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
         val arbeidTimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Arbeid }?.timer
         val ferieTimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Ferie }?.timer
@@ -153,6 +171,7 @@ private class PopulerQueries(
 
     override fun preVisitVedtak(
         vedtakId: UUID,
+        sakId: SakId,
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
@@ -164,14 +183,15 @@ private class PopulerQueries(
                 //language=PostgreSQL
                 statement = """
                     INSERT INTO vedtak
-                        (id, person_id, behandling_id, virkningsdato, vedtakstidspunkt, "type")
+                        (id, person_id, sak_id, behandling_id, virkningsdato, vedtakstidspunkt, "type")
                     VALUES 
-                        (:id, :person_id, :behandling_id, :virkningsdato, :vedtakstidspunkt, :type)
+                        (:id, :person_id, :sak_id, :behandling_id, :virkningsdato, :vedtakstidspunkt, :type)
                     ON CONFLICT DO NOTHING
                 """.trimIndent(),
                 paramMap = mapOf(
                     "id" to vedtakId,
                     "person_id" to dbPersonId,
+                    "sak_id" to sakId,
                     "behandling_id" to behandlingId,
                     "virkningsdato" to virkningsdato,
                     "vedtakstidspunkt" to vedtakstidspunkt,

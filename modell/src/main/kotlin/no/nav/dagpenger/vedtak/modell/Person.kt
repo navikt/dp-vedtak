@@ -125,6 +125,9 @@ class Person internal constructor(
         aktivitetslogg.accept(visitor)
         rapporteringsperioder.accept(visitor)
         vedtakHistorikk.accept(visitor)
+        saker.forEach { sak ->
+            sak.accept(visitor)
+        }
     }
 
     private fun kontekst(hendelse: Hendelse) {

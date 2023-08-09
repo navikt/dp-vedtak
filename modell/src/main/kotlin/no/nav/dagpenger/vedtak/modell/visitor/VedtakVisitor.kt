@@ -7,11 +7,13 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
+import no.nav.dagpenger.vedtak.modell.SakId
 
 interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
 
     fun preVisitVedtak(
         vedtakId: UUID,
+        sakId: SakId,
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
@@ -20,6 +22,7 @@ interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
 
     fun postVisitVedtak(
         vedtakId: UUID,
+        sakId: SakId,
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,

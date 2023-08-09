@@ -74,6 +74,7 @@ class Rammevedtak(
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(
             vedtakId = vedtakId,
+            sakId = sakId,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
             vedtakstidspunkt = vedtakstidspunkt,
@@ -87,6 +88,7 @@ class Rammevedtak(
         }
         visitor.postVisitVedtak(
             vedtakId = vedtakId,
+            sakId = sakId,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
             vedtakstidspunkt = vedtakstidspunkt,

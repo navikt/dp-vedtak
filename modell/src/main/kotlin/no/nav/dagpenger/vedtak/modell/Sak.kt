@@ -7,6 +7,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.rapportering.Behandling
+import no.nav.dagpenger.vedtak.modell.visitor.SakVisitor
 
 typealias SakId = String
 
@@ -23,6 +24,10 @@ class Sak private constructor(
 
     override fun toSpesifikkKontekst(): SpesifikkKontekst {
         return SpesifikkKontekst("sak", mapOf("sakId" to sakId))
+    }
+
+    fun accept(sakVisitor: SakVisitor){
+        sakVisitor.visitSak(sakId)
     }
 
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {

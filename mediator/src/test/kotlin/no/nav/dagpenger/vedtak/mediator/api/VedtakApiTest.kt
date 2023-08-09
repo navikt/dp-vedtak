@@ -92,6 +92,7 @@ class VedtakApiTest {
 
     private fun utbetalingsvedtak() = Utbetalingsvedtak.utbetalingsvedtak(
         behandlingId = UUID.randomUUID(),
+        sakId = "SAK_NUMMER_1",
         utfall = true,
         vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
         virkningsdato = LocalDate.MAX,
@@ -102,6 +103,7 @@ class VedtakApiTest {
 
     private fun rammevedtak() = Rammevedtak.innvilgelse(
         behandlingId = UUID.randomUUID(),
+        sakId = "SAK_NUMMER_1",
         vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
         virkningsdato = LocalDate.MAX,
         dagsats = 1000.beløp,
