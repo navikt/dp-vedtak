@@ -43,7 +43,7 @@ internal class IverksettingMediatorTest {
 
     @Test
     fun `Vedtakfattet hendelse fører til en iverksettelse og behov om iverksetting`() {
-        testRapid.sendTestMessage(hovedrettighetfattetVedtakJsonHendelse(vedtakId, behandlingId = randomUUID(), ident))
+        testRapid.sendTestMessage(dagpengerInnvilgetHendelse(vedtakId, behandlingId = randomUUID(), ident))
         assertSoftly {
             testRapid.inspektør.size shouldBe 1
             val rammevedtakJson = testRapid.inspektør.message(0)

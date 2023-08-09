@@ -1,11 +1,14 @@
 package no.nav.dagpenger.vedtak.mediator
 
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.HovedrettighetVedtakFattetHendelse
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerAvslått
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerInnvilget
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
-import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.HovedrettighetVedtakFattetHendelseMessage
-import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.HovedrettighetvedtakFattetMottak
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.DagpengerAvslåttMessage
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.DagpengerAvslåttMottak
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.DagpengerInnvilgetMessage
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.DagpengerInnvilgetMottak
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksattHendelseMessage
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksettingLøstMottak
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.UtbetalingsvedtakFattetHendelseMessage
@@ -31,7 +34,8 @@ internal class HendelseMediator(
 
     init {
         SøknadBehandletMottak(rapidsConnection, this)
-        HovedrettighetvedtakFattetMottak(rapidsConnection, this)
+        DagpengerInnvilgetMottak(rapidsConnection, this)
+        DagpengerAvslåttMottak(rapidsConnection, this)
         UtbetalingsvedtakFattetMottak(rapidsConnection, this)
         IverksettingLøstMottak(rapidsConnection, this)
         RapporteringBehandletMottak(rapidsConnection, this)
@@ -78,8 +82,18 @@ internal class HendelseMediator(
     }
 
     override fun behandle(
-        hendelse: HovedrettighetVedtakFattetHendelse,
-        message: HovedrettighetVedtakFattetHendelseMessage,
+        hendelse: DagpengerInnvilget,
+        message: DagpengerInnvilgetMessage,
+        context: MessageContext,
+    ) {
+        behandle(hendelse, message) {
+            iverksettingMediator.håndter(hendelse)
+        }
+    }
+
+    override fun behandle(
+        hendelse: DagpengerAvslått,
+        message: DagpengerAvslåttMessage,
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
@@ -114,8 +128,10 @@ internal interface IHendelseMediator {
     )
 
     fun behandle(
-        hendelse: HovedrettighetVedtakFattetHendelse,
-        message: HovedrettighetVedtakFattetHendelseMessage,
+        hendelse: DagpengerInnvilget,
+        message: DagpengerInnvilgetMessage,
         context: MessageContext,
     )
+
+    fun behandle(hendelse: DagpengerAvslått, message: DagpengerAvslåttMessage, context: MessageContext)
 }

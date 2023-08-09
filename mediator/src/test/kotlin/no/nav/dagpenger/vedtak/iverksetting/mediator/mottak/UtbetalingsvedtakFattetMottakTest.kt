@@ -9,9 +9,11 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.dagpenger.vedtak.august
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.HovedrettighetVedtakFattetHendelse
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerAvslått
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerInnvilget
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
-import no.nav.dagpenger.vedtak.iverksetting.mediator.hovedrettighetfattetVedtakJsonHendelse
+import no.nav.dagpenger.vedtak.iverksetting.mediator.dagpengerAvslåttHendelse
+import no.nav.dagpenger.vedtak.iverksetting.mediator.dagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.utbetalingVedtakFattet
 import no.nav.dagpenger.vedtak.juni
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
@@ -30,18 +32,19 @@ internal class UtbetalingsvedtakFattetMottakTest {
 
     init {
         UtbetalingsvedtakFattetMottak(testRapid, iHendelseMediator)
-        HovedrettighetvedtakFattetMottak(testRapid, iHendelseMediator)
+        DagpengerInnvilgetMottak(testRapid, iHendelseMediator)
+        DagpengerAvslåttMottak(testRapid, iHendelseMediator)
     }
 
     @Test
-    fun `Skal lese HovedrettighetVedtakFattet hendelser`() {
-        val vedtakFattetHendelseSlot = slot<HovedrettighetVedtakFattetHendelse>()
+    fun `Skal lese DagpengerInnvilget hendelser`() {
+        val vedtakFattetHendelseSlot = slot<DagpengerInnvilget>()
         every { iHendelseMediator.behandle(capture(vedtakFattetHendelseSlot), any(), any()) } just Runs
-        val fattetvedtakJson = hovedrettighetfattetVedtakJsonHendelse(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId)
+        val fattetvedtakJson = dagpengerInnvilgetHendelse(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId)
         testRapid.sendTestMessage(fattetvedtakJson)
 
         verify(exactly = 1) {
-            iHendelseMediator.behandle(any<HovedrettighetVedtakFattetHendelse>(), any(), any())
+            iHendelseMediator.behandle(any<DagpengerInnvilget>(), any(), any())
         }
 
         assertSoftly {
@@ -52,7 +55,28 @@ internal class UtbetalingsvedtakFattetMottakTest {
             vedtakFattetHendelse.behandlingId shouldBe behandlingId
             vedtakFattetHendelse.virkningsdato shouldBe (24 august 2019)
             vedtakFattetHendelse.vedtakstidspunkt shouldBe LocalDateTime.MAX
-            vedtakFattetHendelse.utfall shouldBe HovedrettighetVedtakFattetHendelse.Utfall.Innvilget
+        }
+    }
+
+    @Test
+    fun `Skal lese DagpengerAvslått hendelser`() {
+        val dagpengerAvslåttSlot = slot<DagpengerAvslått>()
+        every { iHendelseMediator.behandle(capture(dagpengerAvslåttSlot), any(), any()) } just Runs
+        val fattetvedtakJson = dagpengerAvslåttHendelse(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId)
+        testRapid.sendTestMessage(fattetvedtakJson)
+
+        verify(exactly = 1) {
+            iHendelseMediator.behandle(any<DagpengerAvslått>(), any(), any())
+        }
+
+        assertSoftly {
+            dagpengerAvslåttSlot.isCaptured shouldBe true
+            val vedtakFattetHendelse = dagpengerAvslåttSlot.captured
+            vedtakFattetHendelse.ident() shouldBe ident
+            vedtakFattetHendelse.vedtakId shouldBe vedtakId
+            vedtakFattetHendelse.behandlingId shouldBe behandlingId
+            vedtakFattetHendelse.virkningsdato shouldBe (24 august 2019)
+            vedtakFattetHendelse.vedtakstidspunkt shouldBe LocalDateTime.MAX
         }
     }
 

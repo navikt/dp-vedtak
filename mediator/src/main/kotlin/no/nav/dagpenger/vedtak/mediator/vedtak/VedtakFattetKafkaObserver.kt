@@ -22,23 +22,30 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
             ),
         ) {
             sikkerlogger.info { "Vedtak om hovedrettighet for $ident fattet. Vedtak: $vedtakFattet" }
+
+            val vedtakdetaljer = mapOf(
+                "ident" to ident,
+                "behandlingId" to vedtakFattet.behandlingId.toString(),
+                "vedtakId" to vedtakFattet.vedtakId.toString(),
+                "vedtaktidspunkt" to vedtakFattet.vedtakstidspunkt,
+                "virkningsdato" to vedtakFattet.virkningsdato,
+            )
+
+            val eventNavn = when (vedtakFattet.utfall) {
+                VedtakObserver.Utfall.Innvilget -> "dagpenger_innvilget"
+                VedtakObserver.Utfall.Avslått -> "dagpenger_avslått"
+            }
+
             val message = JsonMessage.newMessage(
-                eventName = "hovedrettighet_vedtak_fattet",
-                map = mapOf(
-                    "ident" to ident,
-                    "behandlingId" to vedtakFattet.behandlingId.toString(),
-                    "vedtakId" to vedtakFattet.vedtakId.toString(),
-                    "vedtaktidspunkt" to vedtakFattet.vedtakstidspunkt,
-                    "virkningsdato" to vedtakFattet.virkningsdato,
-                    "utfall" to vedtakFattet.utfall.name,
-                ),
+                eventName = eventNavn,
+                map = vedtakdetaljer,
             )
 
             rapidsConnection.publish(
                 key = ident,
                 message = message.toJson(),
             )
-            logger.info { "Vedtak om fattet hovedrettighet publisert." }
+            logger.info { "Vedtak fattet: $eventNavn publisert." }
         }
     }
 

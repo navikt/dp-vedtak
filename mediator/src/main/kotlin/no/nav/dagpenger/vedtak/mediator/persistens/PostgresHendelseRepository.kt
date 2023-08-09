@@ -5,7 +5,7 @@ import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import mu.KotlinLogging
-import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.HovedrettighetVedtakFattetHendelseMessage
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.DagpengerInnvilgetMessage
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksattHendelseMessage
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.UtbetalingsvedtakFattetHendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
@@ -81,7 +81,7 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
             is RapporteringBehandletHendelseMessage -> HendelseTypeDTO.RAPPORTERING_BEHANDLET
             is IverksattHendelseMessage -> HendelseTypeDTO.IVERKSATT
             is UtbetalingsvedtakFattetHendelseMessage -> HendelseTypeDTO.UTBETALING_VEDTAK_FATTET
-            is HovedrettighetVedtakFattetHendelseMessage -> HendelseTypeDTO.HOVEDRETTIGHET_VEDTAK_FATTET
+            is DagpengerInnvilgetMessage -> HendelseTypeDTO.HOVEDRETTIGHET_VEDTAK_FATTET
             else -> null.also {
                 logger.warn { "ukjent meldingstype ${hendelseMessage::class.simpleName}: melding lagres ikke" }
             }

@@ -17,7 +17,6 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
-import java.time.Instant
 import java.time.LocalDate
 
 class Person internal constructor(

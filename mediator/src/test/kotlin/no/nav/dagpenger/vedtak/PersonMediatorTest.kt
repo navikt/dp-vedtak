@@ -52,7 +52,7 @@ internal class PersonMediatorTest {
         testRapid.sendTestMessage(dagpengerInnvilgetJson(ident = ident))
         testRapid.inspektør.size shouldBe 1
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
-            it["@event_name"].asText() shouldBe "hovedrettighet_vedtak_fattet"
+            it["@event_name"].asText() shouldBe "dagpenger_innvilget"
         }
         testObservatør.vedtak.shouldNotBeEmpty()
     }
@@ -62,7 +62,7 @@ internal class PersonMediatorTest {
         testRapid.sendTestMessage(dagpengerAvslåttJson(ident = ident))
         testRapid.inspektør.size shouldBe 1
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
-            it["@event_name"].asText() shouldBe "hovedrettighet_vedtak_fattet"
+            it["@event_name"].asText() shouldBe "dagpenger_avslått"
         }
         testObservatør.vedtak.shouldNotBeEmpty()
     }
@@ -92,7 +92,7 @@ internal class PersonMediatorTest {
 
         testObservatør.vedtak.size shouldBe 1
         val rammevedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 2)
-        rammevedtakJson["@event_name"].asText() shouldBe "hovedrettighet_vedtak_fattet"
+        rammevedtakJson["@event_name"].asText() shouldBe "dagpenger_innvilget"
 
         testObservatør.løpendeVedtak.size shouldBe 1
         val utbetalingsvedtak = testRapid.inspektør.message(testRapid.inspektør.size - 1)
