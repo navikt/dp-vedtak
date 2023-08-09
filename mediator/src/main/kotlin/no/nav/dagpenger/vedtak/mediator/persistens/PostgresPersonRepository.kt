@@ -358,6 +358,7 @@ private fun Session.hentVedtak(personId: Long) = this.run(
             VedtakTypeDTO.Ramme -> {
                 Rammevedtak(
                     vedtakId = vedtakId,
+                    sakId = TODO(),
                     behandlingId = rad.uuid("behandling_id"),
                     vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
                     virkningsdato = rad.localDate("virkningsdato"),
@@ -377,6 +378,7 @@ private fun Session.hentVedtak(personId: Long) = this.run(
                     this.hentUtbetaling(vedtakId) ?: throw RuntimeException("Utbetalingsvedtak med manglende felter")
                 Utbetalingsvedtak(
                     vedtakId = vedtakId,
+                    sakId = TODO(),
                     behandlingId = rad.uuid("behandling_id"),
                     vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
                     virkningsdato = rad.localDate("virkningsdato"),
@@ -390,6 +392,7 @@ private fun Session.hentVedtak(personId: Long) = this.run(
             VedtakTypeDTO.Avslag -> {
                 Avslag(
                     vedtakId = vedtakId,
+                    sakId = TODO(),
                     behandlingId = rad.uuid("behandling_id"),
                     vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
                     virkningsdato = rad.localDate("virkningsdato"),

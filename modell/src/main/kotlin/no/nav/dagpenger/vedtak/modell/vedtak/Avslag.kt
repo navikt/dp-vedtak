@@ -12,12 +12,14 @@ import java.util.UUID
 
 class Avslag(
     vedtakId: UUID = UUID.randomUUID(),
+    sakId: String,
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
     private val rettigheter: List<Rettighet>,
 ) : Vedtak(
     vedtakId = vedtakId,
+    sakId = sakId,
     behandlingId = behandlingId,
     vedtakstidspunkt = vedtakstidspunkt,
     virkningsdato = virkningsdato,
@@ -27,6 +29,7 @@ class Avslag(
     companion object {
         fun avslag(
             behandlingId: UUID,
+            sakId: String,
             vedtakstidspunkt: LocalDateTime,
             virkningsdato: LocalDate,
             dagpengerettighet: Dagpengerettighet,
@@ -40,6 +43,7 @@ class Avslag(
             }
             return Avslag(
                 behandlingId = behandlingId,
+                sakId = sakId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
                 rettigheter = listOf(rettighet),

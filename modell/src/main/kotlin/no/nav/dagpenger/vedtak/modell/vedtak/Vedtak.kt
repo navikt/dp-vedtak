@@ -9,6 +9,7 @@ import java.util.UUID
 
 abstract class Vedtak(
     protected val vedtakId: UUID = UUID.randomUUID(),
+    protected val sakId: String,
     protected val behandlingId: UUID,
     protected val vedtakstidspunkt: LocalDateTime,
     protected val virkningsdato: LocalDate,

@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.modell
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Subaktivitetskontekst
+import no.nav.dagpenger.vedtak.modell.Sak.Companion.finnSak
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
@@ -13,7 +14,6 @@ import no.nav.dagpenger.vedtak.modell.rapportering.Behandling
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperioder
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
-import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakHistorikk
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
@@ -21,6 +21,7 @@ import java.time.LocalDate
 
 class Person internal constructor(
     private val ident: PersonIdentifikator,
+    private val saker: MutableList<Sak>,
     internal val vedtakHistorikk: VedtakHistorikk,
     private val rapporteringsperioder: Rapporteringsperioder,
     private val behandlinger: MutableList<Behandling>,
@@ -32,10 +33,11 @@ class Person internal constructor(
     }
 
     constructor(ident: PersonIdentifikator) : this(
-        ident,
-        VedtakHistorikk(),
-        Rapporteringsperioder(),
-        mutableListOf<Behandling>(),
+        ident = ident,
+        saker = mutableListOf(),
+        vedtakHistorikk = VedtakHistorikk(),
+        rapporteringsperioder = Rapporteringsperioder(),
+        behandlinger = mutableListOf<Behandling>(),
     )
 
     companion object {
@@ -49,6 +51,7 @@ class Person internal constructor(
         ): Person {
             return Person(
                 ident = ident,
+                saker = mutableListOf(),
                 vedtakHistorikk = VedtakHistorikk(vedtak.toMutableList()),
                 rapporteringsperioder = Rapporteringsperioder(perioder),
                 behandlinger = mutableListOf(),
@@ -63,33 +66,32 @@ class Person internal constructor(
 
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
         kontekst(søknadBehandletHendelse)
-        if (vedtakHistorikk.harBehandlet(søknadBehandletHendelse.behandlingId)) {
-            søknadBehandletHendelse.info("Har allerede behandlet SøknadBehandletHendelse")
-            return
-        }
-        val vedtak = søknadBehandletHendelse.tilVedtak()
-        søknadBehandletHendelse.kontekst(vedtak)
-        søknadBehandletHendelse.info("Mottatt hendelse om behandlet søknad og opprettet vedtak.")
-        leggTilVedtak(vedtak)
+        val sak = finnEllerOpprettSak(søknadBehandletHendelse)
+        sak.håndter(søknadBehandletHendelse)
     }
+
+    private fun finnEllerOpprettSak(søknadBehandletHendelse: SøknadBehandletHendelse) =
+        saker.finnSak(søknadBehandletHendelse.sakId) ?: Sak(
+            søknadBehandletHendelse.sakId,
+            this,
+        ).also { sak ->
+            saker.add(
+                sak,
+            )
+        }
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         kontekst(rapporteringshendelse)
         rapporteringshendelse.info("Mottatt rapporteringshendelse")
         rapporteringsperioder.håndter(rapporteringshendelse)
-        val behandling = Behandling(this)
-        behandlinger.add(behandling)
-        behandling.håndter(rapporteringshendelse)
+        val sak = saker.firstOrNull() ?: rapporteringshendelse.logiskFeil("Vi har ingen sak!")
+        sak.håndter(rapporteringshendelse)
     }
 
     fun håndter(stansHendelse: StansHendelse) {
         kontekst(stansHendelse)
-        if (vedtakHistorikk.harBehandlet(stansHendelse.behandlingId)) {
-            stansHendelse.info("Har allerede behandlet SøknadBehandletHendelse")
-            return
-        }
-
-        leggTilVedtak(stansHendelse.tilVedtak())
+        val sak = saker.firstOrNull() ?: stansHendelse.logiskFeil("Vi har ingen sak!")
+        sak.håndter(stansHendelse)
     }
 
     fun gjenståendeStønadsdagerFra(dato: LocalDate): Stønadsdager = vedtakHistorikk.gjenståendeStønadsdagerFra(dato)

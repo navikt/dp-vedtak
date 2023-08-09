@@ -12,6 +12,7 @@ import java.util.UUID
 
 class Utbetalingsvedtak(
     vedtakId: UUID = UUID.randomUUID(),
+    sakId: String,
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
@@ -21,6 +22,7 @@ class Utbetalingsvedtak(
     private val trukketEgenandel: Beløp,
 ) : Vedtak(
     vedtakId = vedtakId,
+    sakId = sakId,
     behandlingId = behandlingId,
     vedtakstidspunkt = vedtakstidspunkt,
     virkningsdato = virkningsdato,
@@ -30,6 +32,7 @@ class Utbetalingsvedtak(
     companion object {
         fun utbetalingsvedtak(
             behandlingId: UUID,
+            sakId: String,
             utfall: Boolean,
             vedtakstidspunkt: LocalDateTime,
             virkningsdato: LocalDate,
@@ -38,6 +41,7 @@ class Utbetalingsvedtak(
             trukketEgenandel: Beløp,
         ) =
             Utbetalingsvedtak(
+                sakId = sakId,
                 behandlingId = behandlingId,
                 utfall = utfall,
                 vedtakstidspunkt = vedtakstidspunkt,

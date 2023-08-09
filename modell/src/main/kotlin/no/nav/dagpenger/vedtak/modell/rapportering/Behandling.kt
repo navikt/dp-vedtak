@@ -23,11 +23,12 @@ import java.util.UUID
 
 class Behandling(
     private val behandlingId: UUID,
+    private val sakId: String,
     private val person: Person,
     private var behandlingssteg: Behandlingssteg,
 ) : Aktivitetskontekst {
 
-    constructor(person: Person) : this(UUID.randomUUID(), person, FinnBeregningsgrunnlag)
+    constructor(person: Person, sakId: String) : this(UUID.randomUUID(), sakId, person, FinnBeregningsgrunnlag)
 
     private val rapporteringsdager = mutableListOf<Dag>()
     private val rettighetsdagerUtenFravær
@@ -172,6 +173,7 @@ class Behandling(
             val resultat = behandling.resultatBuilder.build()
             val utbetalingsvedtak = Utbetalingsvedtak.utbetalingsvedtak(
                 behandlingId = behandling.behandlingId,
+                sakId = behandling.sakId,
                 utfall = resultat.utfall,
                 vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                 virkningsdato = rapporteringshendelse.endInclusive,

@@ -22,19 +22,20 @@ internal class PersonTest {
 
     @Test
     fun `behandling med samme id skal bare behandles 1 gang og logge en warning aktivitetsloggen`() {
-        val søknadBehandletHendelse = DagpengerAvslåttHendelse(
+        val dagpengerAvslåttHendelse = DagpengerAvslåttHendelse(
             meldingsreferanseId = UUID.randomUUID(),
             behandlingId = UUID.randomUUID(),
+            sakId = "SAK_NUMMER_1",
             ident = ident,
             vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
             virkningsdato = LocalDate.now(),
             dagpengerettighet = Dagpengerettighet.Ordinær,
         )
         person.håndter(
-            søknadBehandletHendelse,
+            dagpengerAvslåttHendelse,
         )
         person.håndter(
-            søknadBehandletHendelse,
+            dagpengerAvslåttHendelse,
         )
 
         testObservatør.vedtak.size shouldBe 1

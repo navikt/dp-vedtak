@@ -7,11 +7,12 @@ import java.util.UUID
 
 class Stansvedtak(
     vedtakId: UUID = UUID.randomUUID(),
+    sakId: String,
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
     private val utfall: Boolean = false,
-) : Vedtak(vedtakId, behandlingId, vedtakstidspunkt, virkningsdato, VedtakType.Stans) {
+) : Vedtak(vedtakId, sakId, behandlingId, vedtakstidspunkt, virkningsdato, VedtakType.Stans) {
     override fun accept(visitor: VedtakVisitor) {
         visitor.visitStans(
             vedtakId,
