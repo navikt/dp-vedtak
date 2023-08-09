@@ -15,12 +15,9 @@ import io.ktor.serialization.jackson.jackson
 import io.ktor.server.auth.jwt.JWTAuthenticationProvider
 import io.ktor.server.auth.jwt.JWTPrincipal
 import kotlinx.coroutines.runBlocking
-import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.mediator.Configuration
 import java.net.URL
 import java.util.concurrent.TimeUnit
-
-private val logger = KotlinLogging.logger {}
 
 object AuthFactory {
 
@@ -36,9 +33,8 @@ object AuthFactory {
         }
     }
 
-
     enum class Issuer {
-        AzureAD
+        AzureAD,
     }
 
     fun issuerFromString(issuer: String?) = when (issuer) {

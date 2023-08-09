@@ -10,6 +10,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
+import no.nav.dagpenger.vedtak.mediator.api.TestApplication.autentisert
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
@@ -22,7 +23,6 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.util.UUID
@@ -39,7 +39,7 @@ class VedtakApiTest {
 
     @Test
     fun `ikke autentiserte kall returnerer 401`() {
-        withVedtakApi {
+        medSikretVedtakApi {
             val response = client.post("/vedtak") {
                 contentType(Json)
                 setBody("""{"ident": "$ident"}""")
@@ -48,7 +48,6 @@ class VedtakApiTest {
         }
     }
 
-    @Disabled
     @Test
     fun `200 OK og liste med alle vedtak for en person`() {
         personRepository.lagre(
@@ -58,11 +57,9 @@ class VedtakApiTest {
             ),
         )
 
-        withVedtakApi {
-            val response = client.post("/vedtak") {
-                contentType(Json)
-                setBody("""{"ident": "$ident"}""")
-            }
+        medSikretVedtakApi {
+            val response = autentisert(endepunkt = "/vedtak", body = """{"ident": "$ident"}""")
+
             response.status shouldBe HttpStatusCode.OK
             response.contentType().toString() shouldContain "application/json"
             response.bodyAsText() shouldContain "Ramme"
@@ -70,21 +67,18 @@ class VedtakApiTest {
         }
     }
 
-    @Disabled
     @Test
     internal fun `200 OK og tom liste hvis person ikke eksisterer i db`() {
-        withVedtakApi {
-            val response = client.post("/vedtak") {
-                contentType(Json)
-                setBody("""{"ident": "$ident"}""")
-            }
+        medSikretVedtakApi {
+            val response = autentisert(endepunkt = "/vedtak", body = """{"ident": "$ident"}""")
+
             response.status shouldBe HttpStatusCode.OK
             response.contentType().toString() shouldContain "application/json"
             response.bodyAsText() shouldBe "[]"
         }
     }
 
-    private fun withVedtakApi(
+    private fun medSikretVedtakApi(
         personRepository: PersonRepository = this.personRepository,
         test: suspend ApplicationTestBuilder.() -> Unit,
     ) {
