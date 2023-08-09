@@ -20,10 +20,10 @@ spec:
     requests:
       memory: 256Mi
   {{#if ingresses}}
-    ingresses:
-      {{#each ingresses as |url|}}
-         - {{url}}
-        {{/each}}
+  ingresses:
+    {{#each ingresses as |url|}}
+     - {{url}}
+    {{/each}}
   {{/if}}
   secureLogs:
     enabled: true
