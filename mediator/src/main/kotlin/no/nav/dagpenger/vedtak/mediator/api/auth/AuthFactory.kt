@@ -23,11 +23,6 @@ import java.util.concurrent.TimeUnit
 private val logger = KotlinLogging.logger {}
 
 object AuthFactory {
-    @Suppress("ClassName")
-    private object token_x : PropertyGroup() {
-        val well_known_url by stringType
-        val client_id by stringType
-    }
 
     @Suppress("ClassName")
     private object azure_app : PropertyGroup() {
@@ -40,31 +35,16 @@ object AuthFactory {
             httpClient.get(Configuration.properties[azure_app.well_known_url]).body()
         }
     }
-    private val tokenXConfiguration: OpenIdConfiguration by lazy {
-        runBlocking {
-            httpClient.get(Configuration.properties[token_x.well_known_url]).body()
-        }
-    }
+
 
     enum class Issuer {
-        AzureAD, TokenX,
+        AzureAD
     }
 
     fun issuerFromString(issuer: String?) = when (issuer) {
         azureAdConfiguration.issuer -> Issuer.AzureAD
-        tokenXConfiguration.issuer -> Issuer.TokenX
         else -> {
             throw IllegalArgumentException("Ikke støttet issuer: $issuer")
-        }
-    }
-
-    fun JWTAuthenticationProvider.Config.tokenX() {
-        verifier(JwkProvider(URL(tokenXConfiguration.jwksUri)), tokenXConfiguration.issuer) {
-            withAudience(Configuration.properties[token_x.client_id])
-        }
-        realm = Configuration.appName
-        validate { credentials ->
-            validator(credentials)
         }
     }
 

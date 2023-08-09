@@ -12,11 +12,9 @@ import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import no.nav.dagpenger.vedtak.mediator.api.auth.AuthFactory.azureAd
-import no.nav.dagpenger.vedtak.mediator.api.auth.AuthFactory.tokenX
 
 internal fun Application.konfigurerApi(
     auth: AuthenticationConfig.() -> Unit = {
-        jwt("tokenX") { tokenX() }
         jwt("azureAd") { azureAd() }
     },
 ) {
