@@ -6,10 +6,18 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.AuthenticationConfig
+import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import no.nav.dagpenger.vedtak.mediator.api.auth.AuthFactory.azureAd
 
-internal fun Application.konfigurerApi() {
+internal fun Application.konfigurerApi(
+    auth: AuthenticationConfig.() -> Unit = {
+        jwt("azureAd") { azureAd() }
+    },
+) {
     install(ContentNegotiation) {
         jackson {
             registerModule(JavaTimeModule())
@@ -19,5 +27,9 @@ internal fun Application.konfigurerApi() {
     }
     install(CallLogging) {
         disableDefaultColors()
+    }
+
+    install(Authentication) {
+        auth()
     }
 }

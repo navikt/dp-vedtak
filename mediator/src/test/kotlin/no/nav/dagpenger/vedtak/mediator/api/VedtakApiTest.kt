@@ -9,8 +9,8 @@ import io.ktor.http.ContentType.Application.Json
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
-import io.ktor.server.testing.testApplication
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
+import no.nav.dagpenger.vedtak.mediator.api.TestApplication.autentisert
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
@@ -40,6 +40,17 @@ class VedtakApiTest {
     }
 
     @Test
+    fun `ikke autentiserte kall returnerer 401`() {
+        medSikretVedtakApi {
+            val response = client.post("/vedtak") {
+                contentType(Json)
+                setBody("""{"ident": "$ident"}""")
+            }
+            response.status shouldBe HttpStatusCode.Unauthorized
+        }
+    }
+
+    @Test
     fun `200 OK og liste med alle vedtak for en person`() {
         personRepository.lagre(
             testPersonMed(
@@ -48,11 +59,9 @@ class VedtakApiTest {
             ),
         )
 
-        withVedtakApi {
-            val response = client.post("/vedtak") {
-                contentType(Json)
-                setBody("""{"ident": "$ident"}""")
-            }
+        medSikretVedtakApi {
+            val response = autentisert(endepunkt = "/vedtak", body = """{"ident": "$ident"}""")
+
             response.status shouldBe HttpStatusCode.OK
             response.contentType().toString() shouldContain "application/json"
             response.bodyAsText() shouldContain "Ramme"
@@ -62,25 +71,25 @@ class VedtakApiTest {
 
     @Test
     internal fun `200 OK og tom liste hvis person ikke eksisterer i db`() {
-        withVedtakApi {
-            val response = client.post("/vedtak") {
-                contentType(Json)
-                setBody("""{"ident": "$ident"}""")
-            }
+        medSikretVedtakApi {
+            val response = autentisert(endepunkt = "/vedtak", body = """{"ident": "$ident"}""")
+
             response.status shouldBe HttpStatusCode.OK
             response.contentType().toString() shouldContain "application/json"
             response.bodyAsText() shouldBe "[]"
         }
     }
 
-    private fun withVedtakApi(
+    private fun medSikretVedtakApi(
         personRepository: PersonRepository = this.personRepository,
         test: suspend ApplicationTestBuilder.() -> Unit,
     ) {
-        testApplication {
-            application { vedtakApi(personRepository) }
-            test()
-        }
+        TestApplication.withMockAuthServerAndTestApplication(
+            moduleFunction = {
+                vedtakApi(personRepository)
+            },
+            test,
+        )
     }
 
     private fun testPersonMed(vararg vedtak: Vedtak) = Person.rehydrer(
