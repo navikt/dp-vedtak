@@ -28,12 +28,13 @@ spec:
   secureLogs:
     enabled: true
   azure:
-    enabled: true
-    tenant: {{azure.tenant}}
-    claims:
-      groups:
-        - id: {{azure.grupper.saksbehandler}}
-        - id: {{azure.grupper.beslutter}}
+    application:
+      enabled: true
+      tenant: {{azure.tenant}}
+      claims:
+        groups:
+          - id: {{azure.grupper.saksbehandler}}
+          - id: {{azure.grupper.beslutter}}
 
   gcp:
     sqlInstances:
