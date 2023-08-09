@@ -28,8 +28,13 @@ spec:
   secureLogs:
     enabled: true
   azure:
-    application:
-      enabled: true
+    enabled: true
+    tenant: {{azure.tenant}}
+    claims:
+      groups:
+        - id: {{azure.grupper.saksbehandler}}
+        - id: {{azure.grupper.beslutter}}
+
   gcp:
     sqlInstances:
       - type: POSTGRES_15
