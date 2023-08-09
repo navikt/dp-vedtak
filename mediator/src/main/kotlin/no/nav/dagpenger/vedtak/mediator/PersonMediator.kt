@@ -15,6 +15,7 @@ import no.nav.helse.rapids_rivers.withMDC
 
 internal class PersonMediator(
     private val personRepository: PersonRepository,
+    private val aktivitetsloggMediator: AktivitetsloggMediator,
     private val personObservers: List<PersonObserver> = emptyList(),
 ) {
     private companion object {
@@ -77,6 +78,7 @@ internal class PersonMediator(
             sikkerLogger.info("aktivitetslogg inneholder meldinger:\n${hendelse.toLogString()}")
         }
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
+        aktivitetsloggMediator.håndter(hendelse)
     }
 
     private fun errorHandler(err: Exception, message: String, context: Map<String, String> = emptyMap()) {

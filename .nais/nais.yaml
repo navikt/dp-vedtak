@@ -47,3 +47,4 @@ spec:
             envVarPrefix: DB
   kafka:
     pool: {{ kafka_pool }}
+

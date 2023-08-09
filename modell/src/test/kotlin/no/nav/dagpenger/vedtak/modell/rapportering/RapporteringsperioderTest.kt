@@ -87,12 +87,12 @@ internal class RapporteringsperioderTest {
     }
 
     private fun rapporteringshendelse(vararg rapporteringsdager: Rapporteringsdag) = Rapporteringshendelse(
+        meldingsreferanseId = UUID.randomUUID(),
         ident = "123",
         rapporteringsId = UUID.randomUUID(),
         rapporteringsdager = rapporteringsdager.toList(),
         fom = rapporteringsdager.minOf { it.dato },
         tom = rapporteringsdager.maxOf { it.dato },
-
     )
 
     private fun arbeid(tid: Duration) = Rapporteringsdag.Aktivitet(Rapporteringsdag.Aktivitet.Type.Arbeid, tid)

@@ -40,7 +40,7 @@ class Dag private constructor(
         fun opprett(dato: LocalDate, aktiviteter: List<Aktivitet>): Dag {
             return Dag(dato, aktiviteter)
         }
-        private val eldsteDagFørst = Comparator<Dag> { a, b -> a.dato.compareTo(b.dato) }
+        internal val eldsteDagFørst = Comparator<Dag> { a, b -> a.dato.compareTo(b.dato) }
     }
 }
 

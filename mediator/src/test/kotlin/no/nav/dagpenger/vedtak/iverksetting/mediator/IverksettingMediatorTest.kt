@@ -29,8 +29,9 @@ internal class IverksettingMediatorTest {
             hendelseRepository = InMemoryMeldingRepository(),
             personMediator = PersonMediator(mockk(), mockk()),
             iverksettingMediator = IverksettingMediator(
-                iverksettingRepository,
-                BehovMediator(testRapid, KotlinLogging.logger {}),
+                aktivitetsloggMediator = mockk(relaxed = true),
+                iverksettingRepository = iverksettingRepository,
+                behovMediator = BehovMediator(testRapid, KotlinLogging.logger {}),
             ),
         )
     }
@@ -42,13 +43,12 @@ internal class IverksettingMediatorTest {
 
     @Test
     fun `Vedtakfattet hendelse fører til en iverksettelse og behov om iverksetting`() {
-        testRapid.sendTestMessage(fattetVedtakJsonHendelse(vedtakId, behandlingId = randomUUID(), ident))
+        testRapid.sendTestMessage(dagpengerInnvilgetHendelse(vedtakId, behandlingId = randomUUID(), ident))
         assertSoftly {
             testRapid.inspektør.size shouldBe 1
             val rammevedtakJson = testRapid.inspektør.message(0)
             rammevedtakJson["@event_name"].asText() shouldBe "behov"
             rammevedtakJson["@behov"].map { it.asText() } shouldBe listOf("Iverksett")
-            rammevedtakJson["Iverksett"]["utbetalingsdager"].size() shouldBe 0
         }
 
         testRapid.sendTestMessage(behovOmIverksettingAvLøpendeVedtak(vedtakId))

@@ -10,7 +10,9 @@ import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import java.time.LocalDate
+import no.nav.helse.rapids_rivers.asLocalDate
+import no.nav.helse.rapids_rivers.asLocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) : HendelseMessage(packet) {
@@ -31,9 +33,11 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
 
     private fun dagpengerAvslåttHendelse(packet: JsonMessage, behandlingId: UUID) =
         DagpengerAvslåttHendelse(
+            meldingsreferanseId = id,
             ident = ident,
             behandlingId = behandlingId,
-            virkningsdato = LocalDate.parse(packet["Virkningsdato"].asText()),
+            vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),
+            virkningsdato = packet["Virkningsdato"].asLocalDate(),
             dagpengerettighet = Dagpengerettighet.valueOf(packet["Rettighetstype"].asText()),
         )
 
@@ -41,9 +45,11 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
         packet: JsonMessage,
         behandlingId: UUID,
     ) = DagpengerInnvilgetHendelse(
+        meldingsreferanseId = id,
         ident = ident,
         behandlingId = behandlingId,
-        virkningsdato = LocalDate.parse(packet["Virkningsdato"].asText()),
+        vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),
+        virkningsdato = packet["Virkningsdato"].asLocalDate(),
         dagpengerettighet = Dagpengerettighet.valueOf(packet["Rettighetstype"].asText()),
         dagsats = packet["Dagsats"].asDouble().beløp,
         stønadsdager = Dagpengeperiode(antallUker = packet["Periode"].asInt()).tilStønadsdager(),

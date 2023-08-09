@@ -7,6 +7,8 @@ import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 internal class PersonTest {
@@ -21,8 +23,10 @@ internal class PersonTest {
     @Test
     fun `behandling med samme id skal bare behandles 1 gang og logge en warning aktivitetsloggen`() {
         val søknadBehandletHendelse = DagpengerAvslåttHendelse(
+            meldingsreferanseId = UUID.randomUUID(),
             behandlingId = UUID.randomUUID(),
             ident = ident,
+            vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
             virkningsdato = LocalDate.now(),
             dagpengerettighet = Dagpengerettighet.Ordinær,
         )

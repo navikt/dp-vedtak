@@ -21,24 +21,31 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                 "vedtakId" to vedtakFattet.vedtakId.toString(),
             ),
         ) {
-            sikkerlogger.info { "Vedtak for $ident fattet. Vedtak: $vedtakFattet" }
+            sikkerlogger.info { "Vedtak om hovedrettighet for $ident fattet. Vedtak: $vedtakFattet" }
+
+            val vedtakdetaljer = mapOf(
+                "ident" to ident,
+                "behandlingId" to vedtakFattet.behandlingId.toString(),
+                "vedtakId" to vedtakFattet.vedtakId.toString(),
+                "vedtaktidspunkt" to vedtakFattet.vedtakstidspunkt,
+                "virkningsdato" to vedtakFattet.virkningsdato,
+            )
+
+            val eventNavn = when (vedtakFattet.utfall) {
+                VedtakObserver.Utfall.Innvilget -> "dagpenger_innvilget"
+                VedtakObserver.Utfall.Avslått -> "dagpenger_avslått"
+            }
+
             val message = JsonMessage.newMessage(
-                eventName = "vedtak_fattet",
-                map = mapOf(
-                    "ident" to ident,
-                    "behandlingId" to vedtakFattet.behandlingId.toString(),
-                    "vedtakId" to vedtakFattet.vedtakId.toString(),
-                    "vedtaktidspunkt" to vedtakFattet.vedtakstidspunkt,
-                    "virkningsdato" to vedtakFattet.virkningsdato,
-                    "utfall" to vedtakFattet.utfall.name,
-                ),
+                eventName = eventNavn,
+                map = vedtakdetaljer,
             )
 
             rapidsConnection.publish(
                 key = ident,
                 message = message.toJson(),
             )
-            logger.info { "Vedtak fattet melding publisert." }
+            logger.info { "Vedtak fattet: $eventNavn publisert." }
         }
     }
 
@@ -49,10 +56,10 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                 "vedtakId" to utbetalingsvedtakFattet.vedtakId.toString(),
             ),
         ) {
-            sikkerlogger.info { "Vedtak for $ident fattet. Vedtak: $utbetalingsvedtakFattet" }
+            sikkerlogger.info { "Utbetalingsvedtak for $ident fattet. Vedtak: $utbetalingsvedtakFattet" }
 
             val message = JsonMessage.newMessage(
-                eventName = "vedtak_fattet",
+                eventName = "utbetaling_vedtak_fattet",
                 map = mapOf(
                     "ident" to ident,
                     "behandlingId" to utbetalingsvedtakFattet.behandlingId.toString(),
@@ -68,7 +75,7 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                 key = ident,
                 message = message.toJson(),
             )
-            logger.info { "Vedtak fattet melding publisert." }
+            logger.info { "Utbetalingsvedtak fattet publisert." }
         }
     }
 }

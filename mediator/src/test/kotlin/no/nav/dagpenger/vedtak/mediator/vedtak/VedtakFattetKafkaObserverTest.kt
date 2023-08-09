@@ -1,9 +1,11 @@
 package no.nav.dagpenger.vedtak.mediator.vedtak
 
+import com.fasterxml.jackson.databind.JsonNode
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeBlank
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
+import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Avslått
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Innvilget
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
@@ -17,31 +19,43 @@ class VedtakFattetKafkaObserverTest {
 
     @Test
     fun `Skal sende ut melding om at vedtak er fattet på rapiden`() {
-        val vedtakId = UUID.randomUUID()
-        val behandlingId = UUID.randomUUID()
-        val vedtakstidspunkt = LocalDateTime.now()
-        val virkningsdato = LocalDate.now()
         vedtakFattetKafkaObserver.vedtakFattet(
             ident = "1234568901",
-            VedtakObserver.VedtakFattet(
-                vedtakId,
-                vedtakstidspunkt = vedtakstidspunkt,
-                behandlingId = behandlingId,
-                virkningsdato = virkningsdato,
-                utfall = Innvilget,
-            ),
+            vedtakFattet(utfall = Innvilget),
         )
-        testRapid.inspektør.size shouldBe 1
-        val message = testRapid.inspektør.message(0)
+
+        vedtakFattetKafkaObserver.vedtakFattet(
+            ident = "1234568901",
+            vedtakFattet(utfall = Avslått),
+        )
+
+        testRapid.inspektør.size shouldBe 2
+        val message1 = testRapid.inspektør.message(0)
+        val message2 = testRapid.inspektør.message(1)
 
         assertSoftly {
-            message["@event_name"].asText() shouldBe "vedtak_fattet"
-            message["ident"].asText() shouldBe "1234568901"
-            message["behandlingId"].asText() shouldBe behandlingId.toString()
-            message["vedtakId"].asText() shouldBe vedtakId.toString()
-            message["vedtaktidspunkt"].asText().shouldNotBeBlank()
-            message["virkningsdato"].asText() shouldBe virkningsdato.toString()
-            message["utfall"].asText() shouldBe "Innvilget"
+            message1["@event_name"].asText() shouldBe "dagpenger_innvilget"
+            assertVedtakInformasjon(message1)
+            message2["@event_name"].asText() shouldBe "dagpenger_avslått"
+            assertVedtakInformasjon(message2)
         }
     }
+
+    private fun assertVedtakInformasjon(json: JsonNode) {
+        json["ident"].asText() shouldBe "1234568901"
+        json["behandlingId"]?.asText().shouldNotBeBlank()
+        json["vedtakId"].asText().shouldNotBeBlank()
+        json["vedtaktidspunkt"].asText().shouldNotBeBlank()
+        json["virkningsdato"].asText().shouldNotBeBlank()
+    }
+
+    private fun vedtakFattet(
+        utfall: VedtakObserver.Utfall,
+    ) = VedtakObserver.VedtakFattet(
+        vedtakId = UUID.randomUUID(),
+        vedtakstidspunkt = LocalDateTime.now(),
+        behandlingId = UUID.randomUUID(),
+        virkningsdato = LocalDate.now(),
+        utfall = utfall,
+    )
 }

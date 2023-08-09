@@ -9,20 +9,25 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Avslag.Companion.avslag
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak.Companion.innvilgelse
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 sealed class SøknadBehandletHendelse(
+    meldingsreferanseId: UUID,
     protected val ident: String,
     internal val behandlingId: UUID,
+    protected val vedtakstidspunkt: LocalDateTime,
     protected val virkningsdato: LocalDate,
     aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
-) : Hendelse(ident, aktivitetslogg) {
+) : Hendelse(meldingsreferanseId, ident, aktivitetslogg) {
     abstract fun tilVedtak(): Vedtak
 }
 
 class DagpengerInnvilgetHendelse(
+    meldingsreferanseId: UUID,
     ident: String,
     behandlingId: UUID,
+    vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
     private val dagpengerettighet: Dagpengerettighet,
     private val dagsats: Beløp,
@@ -30,12 +35,15 @@ class DagpengerInnvilgetHendelse(
     private val vanligArbeidstidPerDag: Timer,
     private val egenandel: Beløp,
 ) : SøknadBehandletHendelse(
+    meldingsreferanseId,
     ident,
     behandlingId,
+    vedtakstidspunkt,
     virkningsdato,
 ) {
     override fun tilVedtak(): Vedtak = innvilgelse(
         behandlingId = behandlingId,
+        vedtakstidspunkt = vedtakstidspunkt,
         virkningsdato = virkningsdato,
         dagsats = dagsats,
         stønadsdager = stønadsdager,
@@ -48,17 +56,22 @@ class DagpengerInnvilgetHendelse(
 }
 
 class DagpengerAvslåttHendelse(
+    meldingsreferanseId: UUID,
     ident: String,
     behandlingId: UUID,
+    vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
     private val dagpengerettighet: Dagpengerettighet,
 ) : SøknadBehandletHendelse(
+    meldingsreferanseId,
     ident,
     behandlingId,
+    vedtakstidspunkt,
     virkningsdato,
 ) {
     override fun tilVedtak(): Vedtak = avslag(
         behandlingId = behandlingId,
+        vedtakstidspunkt = vedtakstidspunkt,
         virkningsdato = virkningsdato,
         dagpengerettighet = dagpengerettighet,
     )

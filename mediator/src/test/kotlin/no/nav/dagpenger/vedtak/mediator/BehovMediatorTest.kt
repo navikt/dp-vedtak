@@ -171,7 +171,7 @@ internal class BehovMediatorTest {
 
     private class TestHendelse(
         val logg: Aktivitetslogg,
-    ) : Hendelse(testIdent, logg), Aktivitetskontekst {
+    ) : Hendelse(UUID.randomUUID(), testIdent, logg), Aktivitetskontekst {
         init {
             logg.kontekst(this)
         }

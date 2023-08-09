@@ -13,13 +13,14 @@ import java.util.UUID
 import kotlin.time.Duration
 
 class Rapporteringshendelse(
+    meldingsreferanseId: UUID,
     ident: String,
     internal val rapporteringsId: UUID,
     rapporteringsdager: List<Rapporteringsdag>,
     aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
     private val fom: LocalDate,
     private val tom: LocalDate,
-) : Hendelse(ident, aktivitetslogg), ClosedRange<LocalDate> {
+) : Hendelse(meldingsreferanseId, ident, aktivitetslogg), ClosedRange<LocalDate> {
     private val rapporteringsdager = rapporteringsdager.sorted()
 
     override val endInclusive: LocalDate = tom

@@ -5,8 +5,7 @@ import no.nav.dagpenger.vedtak.assertDeepEquals
 import no.nav.dagpenger.vedtak.db.Postgres.withMigratedDb
 import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting
-import no.nav.dagpenger.vedtak.iverksetting.IverksettingsVedtak
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import no.nav.dagpenger.vedtak.mediator.persistens.PostgresPersonRepository
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
@@ -20,6 +19,7 @@ import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class PostgresIverksettingRepositoryTest {
@@ -33,8 +33,10 @@ class PostgresIverksettingRepositoryTest {
         val idag = LocalDate.now()
         person.håndter(
             DagpengerInnvilgetHendelse(
+                meldingsreferanseId = UUID.randomUUID(),
                 ident = testIdent.identifikator(),
                 behandlingId = UUID.randomUUID(),
+                vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                 virkningsdato = idag,
                 dagpengerettighet = Dagpengerettighet.Ordinær,
                 dagsats = 800.beløp,
@@ -51,16 +53,15 @@ class PostgresIverksettingRepositoryTest {
             val iverksetting = Iverksetting(vedtakId = vedtakId, ident = testIdent.identifikator())
 
             iverksetting.håndter(
-                VedtakFattetHendelse(
-                    testIdent.identifikator(),
-                    IverksettingsVedtak(
-                        vedtakId = vedtakId,
-                        behandlingId = UUID.randomUUID(),
-                        utbetalingsdager = emptyList(),
-                        utfall = IverksettingsVedtak.Utfall.Innvilget,
-                        vedtakstidspunkt = LocalDateTime.now(),
-                        virkningsdato = LocalDate.now(),
-                    ),
+                UtbetalingsvedtakFattetHendelse(
+                    meldingsreferanseId = UUID.randomUUID(),
+                    ident = testIdent.identifikator(),
+                    vedtakId = vedtakId,
+                    behandlingId = UUID.randomUUID(),
+                    utbetalingsdager = emptyList(),
+                    utfall = UtbetalingsvedtakFattetHendelse.Utfall.Innvilget,
+                    vedtakstidspunkt = LocalDateTime.now(),
+                    virkningsdato = LocalDate.now(),
                 ),
             )
 

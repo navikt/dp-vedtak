@@ -4,8 +4,10 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Subaktivitetskontekst
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerAvslått
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerInnvilget
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
@@ -61,9 +63,19 @@ class Iverksetting private constructor(
         )
     }
 
-    fun håndter(vedtakFattetHendelse: VedtakFattetHendelse) {
-        kontekst(vedtakFattetHendelse)
-        tilstand.håndter(vedtakFattetHendelse, this)
+    fun håndter(utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse) {
+        kontekst(utbetalingsvedtakFattetHendelse)
+        tilstand.håndter(utbetalingsvedtakFattetHendelse, this)
+    }
+
+    fun håndter(dagpengerInnvilget: DagpengerInnvilget) {
+        kontekst(dagpengerInnvilget)
+        tilstand.håndter(dagpengerInnvilget, this)
+    }
+
+    fun håndter(dagpengerAvslått: DagpengerAvslått) {
+        kontekst(dagpengerAvslått)
+        tilstand.håndter(dagpengerAvslått, this)
     }
 
     fun håndter(iverksattHendelse: IverksattHendelse) {
@@ -112,18 +124,25 @@ class Iverksetting private constructor(
             Iverksatt,
         }
 
-        fun entering(hendelse: Hendelse, iverksetting: Iverksetting) {}
-        fun leaving(hendelse: Hendelse, iverksetting: Iverksetting) {}
+        open fun entering(hendelse: Hendelse, iverksetting: Iverksetting) {}
+        open fun leaving(hendelse: Hendelse, iverksetting: Iverksetting) {}
 
         override fun toSpesifikkKontekst(): SpesifikkKontekst =
             SpesifikkKontekst("IverksettingTilstand", mapOf("tilstand" to tilstandNavn.name))
 
-        open fun håndter(vedtakFattetHendelse: VedtakFattetHendelse, iverksetting: Iverksetting) {
-            vedtakFattetHendelse.feiltilstand()
+        open fun håndter(utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse, iverksetting: Iverksetting) {
+            utbetalingsvedtakFattetHendelse.feiltilstand()
         }
 
         open fun håndter(iverksattHendelse: IverksattHendelse, iverksetting: Iverksetting) {
             iverksattHendelse.feiltilstand()
+        }
+
+        open fun håndter(dagpengerInnvilget: DagpengerInnvilget, iverksetting: Iverksetting) {
+            dagpengerInnvilget.feiltilstand()
+        }
+        open fun håndter(dagpengerAvslått: DagpengerAvslått, iverksetting: Iverksetting) {
+            dagpengerAvslått.feiltilstand()
         }
 
         private fun Hendelse.feiltilstand(): Nothing =
@@ -131,28 +150,69 @@ class Iverksetting private constructor(
     }
 
     object Mottatt : Tilstand(TilstandNavn.Mottatt) {
-        override fun håndter(vedtakFattetHendelse: VedtakFattetHendelse, iverksetting: Iverksetting) {
-            vedtakFattetHendelse.behov(
+        override fun håndter(utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse, iverksetting: Iverksetting) {
+            utbetalingsvedtakFattetHendelse.behov(
                 type = IverksettingBehov.Iverksett,
-                melding = "Trenger å iverksette vedtak",
+                melding = "Sender behov for å iverksette utbetalingsvedtak",
                 detaljer = mapOf(
-                    "vedtakId" to vedtakFattetHendelse.iverksettingsVedtak.vedtakId,
-                    "behandlingId" to vedtakFattetHendelse.iverksettingsVedtak.behandlingId,
-                    "vedtakstidspunkt" to vedtakFattetHendelse.iverksettingsVedtak.vedtakstidspunkt,
-                    "virkningsdato" to vedtakFattetHendelse.iverksettingsVedtak.virkningsdato,
-                    "utbetalingsdager" to vedtakFattetHendelse.iverksettingsVedtak.utbetalingsdager,
-                    "utfall" to vedtakFattetHendelse.iverksettingsVedtak.utfall,
+                    "vedtakId" to utbetalingsvedtakFattetHendelse.vedtakId,
+                    "behandlingId" to utbetalingsvedtakFattetHendelse.behandlingId,
+                    "vedtakstidspunkt" to utbetalingsvedtakFattetHendelse.vedtakstidspunkt,
+                    "virkningsdato" to utbetalingsvedtakFattetHendelse.virkningsdato,
+                    "utbetalingsdager" to utbetalingsvedtakFattetHendelse.utbetalingsdager,
+                    "utfall" to utbetalingsvedtakFattetHendelse.utfall.name,
                 ),
             )
-            iverksetting.endreTilstand(vedtakFattetHendelse, AvventerIverksetting)
+            iverksetting.endreTilstand(utbetalingsvedtakFattetHendelse, AvventerIverksetting)
+        }
+
+        override fun håndter(
+            dagpengerInnvilget: DagpengerInnvilget,
+            iverksetting: Iverksetting,
+        ) {
+            dagpengerInnvilget.behov(
+                type = IverksettingBehov.Iverksett,
+                melding = "Sender behov for å iverksette vedtak med hovedrettighet",
+                detaljer = mapOf(
+                    "vedtakId" to dagpengerInnvilget.vedtakId,
+                    "behandlingId" to dagpengerInnvilget.behandlingId,
+                    "vedtakstidspunkt" to dagpengerInnvilget.vedtakstidspunkt,
+                    "virkningsdato" to dagpengerInnvilget.virkningsdato,
+                    "utfall" to "Innvilget", // TODO: Endre behov til noe som sier at den er innvilget
+                ),
+            )
+            iverksetting.endreTilstand(dagpengerInnvilget, AvventerIverksetting)
+        }
+
+        override fun håndter(dagpengerAvslått: DagpengerAvslått, iverksetting: Iverksetting) {
+            dagpengerAvslått.behov(
+                type = IverksettingBehov.Iverksett,
+                melding = "Sender behov for å iverksette vedtak med hovedrettighet",
+                detaljer = mapOf(
+                    "vedtakId" to dagpengerAvslått.vedtakId,
+                    "behandlingId" to dagpengerAvslått.behandlingId,
+                    "vedtakstidspunkt" to dagpengerAvslått.vedtakstidspunkt,
+                    "virkningsdato" to dagpengerAvslått.virkningsdato,
+                    "utfall" to "Avslått", // TODO: Endre behov til noe som sier at den er avslått
+                ),
+            )
+            iverksetting.endreTilstand(dagpengerAvslått, AvventerIverksetting)
         }
     }
 
     object AvventerIverksetting : Tilstand(TilstandNavn.AvventerIverksetting) {
+
+        override fun entering(hendelse: Hendelse, iverksetting: Iverksetting) {
+            hendelse.info("Avventer iverksetting")
+        }
         override fun håndter(iverksattHendelse: IverksattHendelse, iverksetting: Iverksetting) {
             iverksetting.endreTilstand(iverksattHendelse, Iverksatt)
         }
     }
 
-    object Iverksatt : Tilstand(TilstandNavn.Iverksatt)
+    object Iverksatt : Tilstand(TilstandNavn.Iverksatt) {
+        override fun entering(hendelse: Hendelse, iverksetting: Iverksetting) {
+            hendelse.info("Vedtak er iverksatt")
+        }
+    }
 }

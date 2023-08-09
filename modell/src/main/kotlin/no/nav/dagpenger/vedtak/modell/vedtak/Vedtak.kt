@@ -5,13 +5,12 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 abstract class Vedtak(
     protected val vedtakId: UUID = UUID.randomUUID(),
     protected val behandlingId: UUID,
-    protected val vedtakstidspunkt: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+    protected val vedtakstidspunkt: LocalDateTime,
     protected val virkningsdato: LocalDate,
     protected val type: VedtakType,
 ) : Comparable<Vedtak>, Aktivitetskontekst {

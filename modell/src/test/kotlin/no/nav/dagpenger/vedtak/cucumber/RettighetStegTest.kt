@@ -29,6 +29,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
@@ -46,8 +47,10 @@ class RettighetStegTest : No {
             person = Person(ident.tilPersonIdentfikator())
             person.håndter(
                 DagpengerInnvilgetHendelse(
+                    meldingsreferanseId = UUID.randomUUID(),
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
+                    vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                     dagsats = søknadHendelse.dagsats.beløp,
@@ -62,8 +65,10 @@ class RettighetStegTest : No {
             assertPersonOpprettet()
             person.håndter(
                 DagpengerInnvilgetHendelse(
+                    meldingsreferanseId = UUID.randomUUID(),
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
+                    vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                     dagsats = søknadHendelse.dagsats.beløp,
@@ -79,8 +84,10 @@ class RettighetStegTest : No {
             person = Person(ident.tilPersonIdentfikator())
             person.håndter(
                 DagpengerAvslåttHendelse(
+                    meldingsreferanseId = UUID.randomUUID(),
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
+                    vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
                     dagpengerettighet = søknadHendelse.dagpengerettighet,
                 ),
@@ -92,8 +99,10 @@ class RettighetStegTest : No {
             assertPersonOpprettet()
             person.håndter(
                 StansHendelse(
+                    meldingsreferanseId = UUID.randomUUID(),
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
+                    vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
                 ),
             )
@@ -181,11 +190,13 @@ class RettighetStegTest : No {
     private fun håndterRapporteringsHendelse(rapporteringsdager: List<Rapporteringsdag>) {
         person.håndter(
             Rapporteringshendelse(
-                ident,
-                UUID.randomUUID(),
-                rapporteringsdager,
+                meldingsreferanseId = UUID.randomUUID(),
+                ident = ident,
+                rapporteringsId = UUID.randomUUID(),
+                rapporteringsdager = rapporteringsdager,
                 fom = rapporteringsdager.minOf { it.dato },
                 tom = rapporteringsdager.maxOf { it.dato },
+
             ),
         )
     }

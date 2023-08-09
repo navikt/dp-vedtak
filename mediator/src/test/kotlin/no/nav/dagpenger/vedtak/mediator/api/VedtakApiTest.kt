@@ -25,6 +25,8 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class VedtakApiTest {
@@ -100,6 +102,7 @@ class VedtakApiTest {
     private fun utbetalingsvedtak() = Utbetalingsvedtak.utbetalingsvedtak(
         behandlingId = UUID.randomUUID(),
         utfall = true,
+        vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
         virkningsdato = LocalDate.MAX,
         forbruk = Stønadsdager(10),
         utbetalingsdager = emptyList(),
@@ -108,6 +111,7 @@ class VedtakApiTest {
 
     private fun rammevedtak() = Rammevedtak.innvilgelse(
         behandlingId = UUID.randomUUID(),
+        vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
         virkningsdato = LocalDate.MAX,
         dagsats = 1000.beløp,
         stønadsdager = Stønadsdager(104 * 5),

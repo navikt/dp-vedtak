@@ -14,6 +14,7 @@ internal class RapporteringBehandletHendelseMessage(private val packet: JsonMess
     override val ident: String get() = packet["ident"].asText()
 
     private val hendelse = Rapporteringshendelse(
+        meldingsreferanseId = id,
         ident = ident,
         rapporteringsId = packet["rapporteringsId"].asUUID(),
         fom = packet["fom"].asLocalDate(),

@@ -1,0 +1,125 @@
+asyncapi: '2.6.0'
+info:
+  title: Vedtak
+  version: 0.0.1
+  description: Eventformat for vedtak fattet
+
+channels:
+  teamdagpenger.rapid.v1:
+    publish:
+      message:
+        oneOf:
+          - $ref: '#/components/messages/dagpenger_innvilget'
+          - $ref: '#/components/messages/dagpenger_avslått'
+          - $ref: '#/components/messages/utbetaling_vedtak_fattet'
+
+components:
+  messages:
+    dagpenger_innvilget:
+      payload:
+        type: object
+        properties:
+          '@event_type':
+            type: string
+            description: Event som forteller om en har rett på dagpenger eller ikke (gitt utfall)
+            enum: [
+              "dagpenger_innvilget"
+            ]
+          ident:
+            type: string
+            description: Ident til mottaker av vedtaket
+          vedtakId:
+            type: string
+            format: uuid
+            description: Vedtakets interne id
+          vedtaktidspunkt:
+            type: string
+            format: date-time
+            description: Tidspunkt for når vedtaket er fattet
+          behandlingId:
+            type: string
+            format: uuid
+            description: Behandling id som førte vedtaket
+          virkningsdato:
+            type: string
+            format: date
+            description: Vedtakets virkningstidspunkt
+    dagpenger_avslått:
+      payload:
+        type: object
+        properties:
+          '@event_type':
+            type: string
+            description: Event som forteller om en har rett på dagpenger eller ikke (gitt utfall)
+            enum: [
+              "dagpenger_innvilget"
+            ]
+          ident:
+            type: string
+            description: Ident til mottaker av vedtaket
+          vedtakId:
+            type: string
+            format: uuid
+            description: Vedtakets interne id
+          vedtaktidspunkt:
+            type: string
+            format: date-time
+            description: Tidspunkt for når vedtaket er fattet
+          behandlingId:
+            type: string
+            format: uuid
+            description: Behandling id som førte vedtaket
+          virkningsdato:
+            type: string
+            format: date
+            description: Vedtakets virkningstidspunkt
+    utbetaling_vedtak_fattet:
+      payload:
+        type: object
+        properties:
+          '@event_type':
+            type: string
+            description: Event som forteller resultatet om utbetalingsvedak
+            enum: [
+              "utbetaling_vedtak_fattet"
+            ]
+          ident:
+            type: string
+            description: Ident til mottaker av vedtaket
+          vedtakId:
+            type: string
+            format: uuid
+            description: Vedtakets interne id
+          vedtaktidspunkt:
+            type: string
+            format: date-time
+            description: Tidspunkt for når vedtaket er fattet
+          behandlingId:
+            type: string
+            format: uuid
+            description: Behandling id som førte vedtaket
+          virkningsdato:
+            type: string
+            format: date
+            description: Vedtakets virkningstidspunkt
+          utbetalingsdager:
+            type: array
+            items:
+              type: object
+              properties:
+                dato:
+                  type: string
+                  format: date
+                  description: Datoen det utbetales
+                beløp:
+                  type: number
+                  format: double
+                  description: Beløp for dagen
+
+          utfall:
+            type: string
+            description: Innvilget eller Avslått
+            enum: [
+              "Innvilget",
+              "Avslått"
+            ]

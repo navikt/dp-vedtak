@@ -12,7 +12,7 @@ class Aktivitetslogg(
     private val kontekster = mutableListOf<Aktivitetskontekst>()
     private val observers = mutableListOf<AktivitetsloggObserver>()
 
-    fun accept(visitor: AktivitetsloggVisitor) {
+    override fun accept(visitor: AktivitetsloggVisitor) {
         visitor.preVisitAktivitetslogg(this)
         aktiviteter.forEach { it.accept(visitor) }
         visitor.postVisitAktivitetslogg(this)

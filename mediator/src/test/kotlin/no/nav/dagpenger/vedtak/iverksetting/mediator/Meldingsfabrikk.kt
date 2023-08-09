@@ -4,27 +4,40 @@ import no.nav.dagpenger.vedtak.juni
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal fun fattetVedtakJsonHendelse(vedtakId: UUID, behandlingId: UUID, ident: String) =
+internal fun dagpengerInnvilgetHendelse(vedtakId: UUID, behandlingId: UUID, ident: String) =
     // language=JSON
     """
     {
-                  "@event_name": "vedtak_fattet",
+                  "@event_name": "dagpenger_innvilget",
                   "@id": "ACC7FDCF-4F21-4960-BE67-6591CFD2731D",
                   "@opprettet": "${LocalDateTime.now()}",
                   "ident": "$ident",
                   "behandlingId": "$behandlingId",
                   "vedtakId": "$vedtakId",
                   "vedtaktidspunkt": "${LocalDateTime.MAX}",
-                  "virkningsdato": "2019-08-24",
-                  "utfall": "Innvilget"
+                  "virkningsdato": "2019-08-24"
     }
     """.trimIndent()
 
-internal fun løpendeVedtakFattet(ident: String, vedtakId: UUID, behandlingId: UUID) =
+internal fun dagpengerAvslåttHendelse(vedtakId: UUID, behandlingId: UUID, ident: String) =
+    // language=JSON
+    """
+    {
+                  "@event_name": "dagpenger_avslått",
+                  "@id": "ACC7FDCF-4F21-4960-BE67-6591CFD2731D",
+                  "@opprettet": "${LocalDateTime.now()}",
+                  "ident": "$ident",
+                  "behandlingId": "$behandlingId",
+                  "vedtakId": "$vedtakId",
+                  "vedtaktidspunkt": "${LocalDateTime.MAX}",
+                  "virkningsdato": "2019-08-24"
+    }
+    """.trimIndent()
+internal fun utbetalingVedtakFattet(ident: String, vedtakId: UUID, behandlingId: UUID) =
     //language=JSON
     """
         {
-          "@event_name": "vedtak_fattet",
+          "@event_name": "utbetaling_vedtak_fattet",
           "ident": "$ident",
           "behandlingId": "$behandlingId",
           "vedtakId": "$vedtakId",

@@ -1,12 +1,18 @@
 package no.nav.dagpenger.vedtak.mediator
 
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerAvslått
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerInnvilget
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
+import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.DagpengerAvslåttMessage
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.DagpengerAvslåttMottak
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.DagpengerInnvilgetMessage
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.DagpengerInnvilgetMottak
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksattHendelseMessage
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksettingLøstMottak
-import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.VedtakFattetHendelseMessage
-import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.VedtakFattetMottak
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.UtbetalingsvedtakFattetHendelseMessage
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.UtbetalingsvedtakFattetMottak
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
 import no.nav.dagpenger.vedtak.mediator.mottak.RapporteringBehandletHendelseMessage
@@ -28,7 +34,9 @@ internal class HendelseMediator(
 
     init {
         SøknadBehandletMottak(rapidsConnection, this)
-        VedtakFattetMottak(rapidsConnection, this)
+        DagpengerInnvilgetMottak(rapidsConnection, this)
+        DagpengerAvslåttMottak(rapidsConnection, this)
+        UtbetalingsvedtakFattetMottak(rapidsConnection, this)
         IverksettingLøstMottak(rapidsConnection, this)
         RapporteringBehandletMottak(rapidsConnection, this)
     }
@@ -40,16 +48,6 @@ internal class HendelseMediator(
     ) {
         behandle(hendelse, message) {
             personMediator.håndter(it)
-        }
-    }
-
-    override fun behandle(
-        hendelse: VedtakFattetHendelse,
-        message: VedtakFattetHendelseMessage,
-        context: MessageContext,
-    ) {
-        behandle(hendelse, message) {
-            iverksettingMediator.håndter(it)
         }
     }
 
@@ -73,7 +71,41 @@ internal class HendelseMediator(
         }
     }
 
-    private fun <HENDELSE : Hendelse> behandle(hendelse: HENDELSE, message: HendelseMessage, håndter: (HENDELSE) -> Unit) {
+    override fun behandle(
+        hendelse: UtbetalingsvedtakFattetHendelse,
+        message: UtbetalingsvedtakFattetHendelseMessage,
+        context: MessageContext,
+    ) {
+        behandle(hendelse, message) {
+            iverksettingMediator.håndter(hendelse)
+        }
+    }
+
+    override fun behandle(
+        hendelse: DagpengerInnvilget,
+        message: DagpengerInnvilgetMessage,
+        context: MessageContext,
+    ) {
+        behandle(hendelse, message) {
+            iverksettingMediator.håndter(hendelse)
+        }
+    }
+
+    override fun behandle(
+        hendelse: DagpengerAvslått,
+        message: DagpengerAvslåttMessage,
+        context: MessageContext,
+    ) {
+        behandle(hendelse, message) {
+            iverksettingMediator.håndter(hendelse)
+        }
+    }
+
+    private fun <HENDELSE : Hendelse> behandle(
+        hendelse: HENDELSE,
+        message: HendelseMessage,
+        håndter: (HENDELSE) -> Unit,
+    ) {
         message.lagreMelding(hendelseRepository)
         håndter(hendelse) // @todo: feilhåndtering
         hendelseRepository.markerSomBehandlet(message.id)
@@ -82,7 +114,24 @@ internal class HendelseMediator(
 
 internal interface IHendelseMediator {
     fun behandle(hendelse: SøknadBehandletHendelse, message: SøknadBehandletHendelseMessage, context: MessageContext)
-    fun behandle(hendelse: VedtakFattetHendelse, message: VedtakFattetHendelseMessage, context: MessageContext)
     fun behandle(hendelse: IverksattHendelse, message: IverksattHendelseMessage, context: MessageContext)
-    fun behandle(hendelse: Rapporteringshendelse, message: RapporteringBehandletHendelseMessage, context: MessageContext)
+    fun behandle(
+        hendelse: Rapporteringshendelse,
+        message: RapporteringBehandletHendelseMessage,
+        context: MessageContext,
+    )
+
+    fun behandle(
+        hendelse: UtbetalingsvedtakFattetHendelse,
+        message: UtbetalingsvedtakFattetHendelseMessage,
+        context: MessageContext,
+    )
+
+    fun behandle(
+        hendelse: DagpengerInnvilget,
+        message: DagpengerInnvilgetMessage,
+        context: MessageContext,
+    )
+
+    fun behandle(hendelse: DagpengerAvslått, message: DagpengerAvslåttMessage, context: MessageContext)
 }
