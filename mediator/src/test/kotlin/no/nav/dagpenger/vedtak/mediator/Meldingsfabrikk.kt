@@ -11,6 +11,7 @@ object Meldingsfabrikk {
     fun dagpengerInnvilgetJson(
         rettighetstype: String = "Ordinær",
         ident: String = "12345123451",
+        sakId: String = "SAK_NUMMER_1",
         virkningsdato: LocalDate = LocalDate.now(),
         dagsats: Double = 500.0,
         fastsattVanligArbeidstid: Int = 8,
@@ -22,6 +23,7 @@ object Meldingsfabrikk {
           "@event_name": "søknad_behandlet_hendelse",
           "@id": "$meldingId",
           "ident" : "$ident",
+          "sakId" : "$sakId",
           "behandlingId": "${UUID.randomUUID()}",
           "Virkningsdato": "$virkningsdato",
           "innvilget": true,
@@ -43,12 +45,14 @@ object Meldingsfabrikk {
     fun dagpengerAvslåttJson(
         rettighetstype: String = "Ordinær",
         ident: String = "12345123451",
+        sakId: String = "SAK_NUMMER_1",
     ) =
         //language=JSON
         """
         {        
           "@event_name": "søknad_behandlet_hendelse",
           "ident" : "$ident",
+          "sakId" : "$sakId",
           "behandlingId": "${UUID.randomUUID()}",
           "Virkningsdato": "${LocalDate.now()}",
           "innvilget": false,

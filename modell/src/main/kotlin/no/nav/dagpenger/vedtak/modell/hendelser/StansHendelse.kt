@@ -9,6 +9,7 @@ import java.util.UUID
 
 class StansHendelse(
     meldingsreferanseId: UUID,
+    internal val sakId: String,
     ident: String,
     internal val behandlingId: UUID,
     private val vedtakstidspunkt: LocalDateTime,
@@ -17,6 +18,7 @@ class StansHendelse(
 ) : Hendelse(meldingsreferanseId, ident, aktivitetslogg) {
     fun tilVedtak(): Vedtak {
         return Stansvedtak(
+            sakId = sakId,
             behandlingId = behandlingId,
             vedtakstidspunkt = vedtakstidspunkt,
             virkningsdato = virkningsdato,

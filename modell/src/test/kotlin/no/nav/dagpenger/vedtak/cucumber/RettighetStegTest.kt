@@ -6,6 +6,7 @@ import io.cucumber.java8.No
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
@@ -48,6 +49,7 @@ class RettighetStegTest : No {
             person.håndter(
                 DagpengerInnvilgetHendelse(
                     meldingsreferanseId = UUID.randomUUID(),
+                    sakId = søknadHendelse.sakId,
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
@@ -67,6 +69,7 @@ class RettighetStegTest : No {
                 DagpengerInnvilgetHendelse(
                     meldingsreferanseId = UUID.randomUUID(),
                     ident = ident,
+                    sakId = søknadHendelse.sakId,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
@@ -85,6 +88,7 @@ class RettighetStegTest : No {
             person.håndter(
                 DagpengerAvslåttHendelse(
                     meldingsreferanseId = UUID.randomUUID(),
+                    sakId = søknadHendelse.sakId,
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
@@ -100,6 +104,7 @@ class RettighetStegTest : No {
             person.håndter(
                 StansHendelse(
                     meldingsreferanseId = UUID.randomUUID(),
+                    sakId = søknadHendelse.sakId,
                     ident = ident,
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
@@ -202,6 +207,7 @@ class RettighetStegTest : No {
     }
 
     private data class SøknadAvslåttHendelseCucumber(
+        val sakId: SakId = "SAK_NUMMER_1",
         val fødselsnummer: String,
         val behandlingId: String,
         val dagpengerettighet: Dagpengerettighet,
@@ -211,6 +217,7 @@ class RettighetStegTest : No {
     )
 
     private data class SøknadInnvilgetHendelseCucumber(
+        val sakId: SakId = "SAK_NUMMER_1",
         val fødselsnummer: String,
         val behandlingId: String,
         val utfall: Boolean,
@@ -229,6 +236,7 @@ class RettighetStegTest : No {
         }
 
         private var vedtakId: UUID? = null
+        lateinit var sakId: SakId
         lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
@@ -242,12 +250,14 @@ class RettighetStegTest : No {
 
         override fun preVisitVedtak(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
             type: Vedtak.VedtakType,
         ) {
             this.vedtakId = vedtakId
+            this.sakId = sakId
             this.virkningsdato = virkningsdato
             this.behandlingId = behandlingId
             antallVedtak++
@@ -283,6 +293,7 @@ class RettighetStegTest : No {
 
         override fun postVisitVedtak(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
@@ -307,6 +318,7 @@ class RettighetStegTest : No {
 
         override fun visitStans(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
@@ -319,6 +331,7 @@ class RettighetStegTest : No {
 
         override fun visitAvslag(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
             utfall: Boolean,

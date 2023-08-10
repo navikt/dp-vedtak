@@ -94,6 +94,7 @@ class VedtakApiTest {
 
     private fun testPersonMed(vararg vedtak: Vedtak) = Person.rehydrer(
         ident = "12345123451".tilPersonIdentfikator(),
+        saker = mutableListOf(),
         vedtak = vedtak.toList(),
         aktivitetslogg = Aktivitetslogg(),
         perioder = emptyList(),
@@ -101,6 +102,7 @@ class VedtakApiTest {
 
     private fun utbetalingsvedtak() = Utbetalingsvedtak.utbetalingsvedtak(
         behandlingId = UUID.randomUUID(),
+        sakId = "SAK_NUMMER_1",
         utfall = true,
         vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
         virkningsdato = LocalDate.MAX,
@@ -111,6 +113,7 @@ class VedtakApiTest {
 
     private fun rammevedtak() = Rammevedtak.innvilgelse(
         behandlingId = UUID.randomUUID(),
+        sakId = "SAK_NUMMER_1",
         vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
         virkningsdato = LocalDate.MAX,
         dagsats = 1000.beløp,

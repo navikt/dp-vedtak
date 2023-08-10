@@ -14,6 +14,7 @@ import java.util.UUID
 
 sealed class SøknadBehandletHendelse(
     meldingsreferanseId: UUID,
+    internal val sakId: String,
     protected val ident: String,
     internal val behandlingId: UUID,
     protected val vedtakstidspunkt: LocalDateTime,
@@ -25,6 +26,7 @@ sealed class SøknadBehandletHendelse(
 
 class DagpengerInnvilgetHendelse(
     meldingsreferanseId: UUID,
+    sakId: String,
     ident: String,
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime,
@@ -35,14 +37,16 @@ class DagpengerInnvilgetHendelse(
     private val vanligArbeidstidPerDag: Timer,
     private val egenandel: Beløp,
 ) : SøknadBehandletHendelse(
-    meldingsreferanseId,
-    ident,
-    behandlingId,
-    vedtakstidspunkt,
-    virkningsdato,
+    meldingsreferanseId = meldingsreferanseId,
+    sakId = sakId,
+    ident = ident,
+    behandlingId = behandlingId,
+    vedtakstidspunkt = vedtakstidspunkt,
+    virkningsdato = virkningsdato,
 ) {
     override fun tilVedtak(): Vedtak = innvilgelse(
         behandlingId = behandlingId,
+        sakId = sakId,
         vedtakstidspunkt = vedtakstidspunkt,
         virkningsdato = virkningsdato,
         dagsats = dagsats,
@@ -57,19 +61,22 @@ class DagpengerInnvilgetHendelse(
 
 class DagpengerAvslåttHendelse(
     meldingsreferanseId: UUID,
+    sakId: String,
     ident: String,
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
     private val dagpengerettighet: Dagpengerettighet,
 ) : SøknadBehandletHendelse(
-    meldingsreferanseId,
-    ident,
-    behandlingId,
-    vedtakstidspunkt,
-    virkningsdato,
+    meldingsreferanseId = meldingsreferanseId,
+    sakId = sakId,
+    ident = ident,
+    behandlingId = behandlingId,
+    vedtakstidspunkt = vedtakstidspunkt,
+    virkningsdato = virkningsdato,
 ) {
     override fun tilVedtak(): Vedtak = avslag(
+        sakId = sakId,
         behandlingId = behandlingId,
         vedtakstidspunkt = vedtakstidspunkt,
         virkningsdato = virkningsdato,

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
+import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
@@ -80,6 +81,7 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
         private fun virkningsdato() = requireNotNull(virkningsdato) { " Forventet at virkninsdato er satt. Har du husket preVisitVedtak?" }
         override fun preVisitVedtak(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
@@ -124,6 +126,7 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
 
         override fun postVisitVedtak(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
@@ -146,6 +149,7 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
 
         override fun visitAvslag(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
             utfall: Boolean,
@@ -155,6 +159,7 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
 
         override fun visitStans(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,

@@ -21,6 +21,7 @@ import java.util.UUID
 
 class Rammevedtak(
     vedtakId: UUID = UUID.randomUUID(),
+    sakId: String,
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
@@ -28,6 +29,7 @@ class Rammevedtak(
     private val rettigheter: List<Rettighet>,
 ) : Vedtak(
     vedtakId = vedtakId,
+    sakId = sakId,
     behandlingId = behandlingId,
     vedtakstidspunkt = vedtakstidspunkt,
     virkningsdato = virkningsdato,
@@ -37,6 +39,7 @@ class Rammevedtak(
     companion object {
         fun innvilgelse(
             behandlingId: UUID,
+            sakId: String,
             vedtakstidspunkt: LocalDateTime,
             virkningsdato: LocalDate,
             dagsats: Beløp,
@@ -53,6 +56,7 @@ class Rammevedtak(
                 Dagpengerettighet.Ingen -> TODO()
             }
             return Rammevedtak(
+                sakId = sakId,
                 behandlingId = behandlingId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
@@ -70,6 +74,7 @@ class Rammevedtak(
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(
             vedtakId = vedtakId,
+            sakId = sakId,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
             vedtakstidspunkt = vedtakstidspunkt,
@@ -83,6 +88,7 @@ class Rammevedtak(
         }
         visitor.postVisitVedtak(
             vedtakId = vedtakId,
+            sakId = sakId,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
             vedtakstidspunkt = vedtakstidspunkt,

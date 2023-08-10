@@ -32,6 +32,7 @@ internal class SøknadBehandletMottak(
                 }
                 it.requireKey(
                     "behandlingId",
+                    "sakId",
                     "Virkningsdato",
                     "innvilget",
                 )

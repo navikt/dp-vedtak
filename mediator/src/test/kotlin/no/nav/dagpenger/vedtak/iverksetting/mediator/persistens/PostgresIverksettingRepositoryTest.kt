@@ -34,6 +34,7 @@ class PostgresIverksettingRepositoryTest {
         person.håndter(
             DagpengerInnvilgetHendelse(
                 meldingsreferanseId = UUID.randomUUID(),
+                sakId = "SAK_NUMMER_1",
                 ident = testIdent.identifikator(),
                 behandlingId = UUID.randomUUID(),
                 vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
