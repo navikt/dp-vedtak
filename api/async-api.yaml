@@ -9,12 +9,13 @@ channels:
     publish:
       message:
         oneOf:
-          - $ref: '#/components/messages/hovedrettighet_vedtak_fattet'
+          - $ref: '#/components/messages/dagpenger_innvilget'
+          - $ref: '#/components/messages/dagpenger_avslaatt'
           - $ref: '#/components/messages/utbetaling_vedtak_fattet'
 
 components:
   messages:
-    hovedrettighet_vedtak_fattet:
+    dagpenger_innvilget:
       payload:
         type: object
         properties:
@@ -22,7 +23,7 @@ components:
             type: string
             description: Event som forteller om en har rett på dagpenger eller ikke (gitt utfall)
             enum: [
-              "hovedrettighet_vedtak_fattet"
+              "dagpenger_innvilget"
             ]
           ident:
             type: string
@@ -43,13 +44,35 @@ components:
             type: string
             format: date
             description: Vedtakets virkningstidspunkt
-          utfall:
+    dagpenger_avslaatt:
+      payload:
+        type: object
+        properties:
+          '@event_type':
             type: string
-            description: Innvilget eller Avslått
+            description: Event som forteller om en har rett på dagpenger eller ikke (gitt utfall)
             enum: [
-              "Innvilget",
-              "Avslått"
+              "dagpenger_avslått"
             ]
+          ident:
+            type: string
+            description: Ident til mottaker av vedtaket
+          vedtakId:
+            type: string
+            format: uuid
+            description: Vedtakets interne id
+          vedtaktidspunkt:
+            type: string
+            format: date-time
+            description: Tidspunkt for når vedtaket er fattet
+          behandlingId:
+            type: string
+            format: uuid
+            description: Behandling id som førte vedtaket
+          virkningsdato:
+            type: string
+            format: date
+            description: Vedtakets virkningstidspunkt
     utbetaling_vedtak_fattet:
       payload:
         type: object
