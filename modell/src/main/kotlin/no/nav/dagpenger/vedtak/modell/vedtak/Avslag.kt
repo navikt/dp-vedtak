@@ -54,6 +54,7 @@ class Avslag(
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(
             vedtakId = vedtakId,
+            sakId = sakId,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
             vedtakstidspunkt = vedtakstidspunkt,
@@ -64,6 +65,7 @@ class Avslag(
         }
         visitor.postVisitVedtak(
             vedtakId = vedtakId,
+            sakId = sakId,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
             vedtakstidspunkt = vedtakstidspunkt,

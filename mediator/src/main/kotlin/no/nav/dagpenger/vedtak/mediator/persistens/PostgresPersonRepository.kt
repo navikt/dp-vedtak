@@ -11,6 +11,8 @@ import no.nav.dagpenger.vedtak.aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.vedtak.modell.Sak
+import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
@@ -42,10 +44,10 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.sql.DataSource
-import no.nav.dagpenger.vedtak.modell.SakId
 
 class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepository {
     override fun hent(ident: PersonIdentifikator): Person? {
+        var personDbId: Long
         return using(sessionOf(dataSource)) { session ->
             session.run(
                 queryOf(
@@ -57,15 +59,20 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
                     """.trimIndent(),
                     paramMap = mapOf("ident" to ident.identifikator()),
                 ).map { row ->
-                    val personId = row.long("id")
+                    personDbId = row.long("id")
                     Person.rehydrer(
                         ident = row.string("ident").tilPersonIdentfikator(),
-                        aktivitetslogg = session.hentAktivitetslogg(personId)?.konverterTilAktivitetslogg() ?: throw RuntimeException("Personen har ikke aktivitetslogg. Mulig feil i lagring."),
-                        vedtak = session.hentVedtak(personId),
-                        perioder = session.hentRapporteringsperioder(personId),
+                        saker = mutableListOf(),
+                        aktivitetslogg = session.hentAktivitetslogg(personDbId)?.konverterTilAktivitetslogg()
+                            ?: throw RuntimeException("Personen har ikke aktivitetslogg. Mulig feil i lagring."),
+                        vedtak = session.hentVedtak(personDbId),
+                        perioder = session.hentRapporteringsperioder(personDbId),
 
-                    )
+                    ).also { person ->
+                        session.hentSaker(person, personDbId)
+                    }
                 }.asSingle,
+
             )
         }
     }
@@ -119,6 +126,7 @@ private class PopulerQueries(
             ),
         )
     }
+
     override fun preVisitRapporteringsperiode(rapporteringsperiodeId: UUID, periode: Rapporteringsperiode) {
         this.rapporteringDbId = session.hentRapportering(rapporteringsperiodeId)
             ?: session.opprettRapportering(dbPersonId, rapporteringsperiodeId, periode)
@@ -136,9 +144,9 @@ private class PopulerQueries(
                 """.trimIndent(),
                 paramMap = mapOf(
                     "id" to sakId,
-                    "person_id" to dbPersonId
-                )
-            )
+                    "person_id" to dbPersonId,
+                ),
+            ),
         )
     }
 
@@ -342,6 +350,7 @@ private class PopulerQueries(
 
     override fun postVisitVedtak(
         vedtakId: UUID,
+        sakId: SakId,
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
@@ -363,6 +372,21 @@ private fun Session.hentPerson(ident: String) = this.run(
     ).map { rad -> rad.longOrNull("id") }.asSingle,
 )
 
+private fun Session.hentSaker(person: Person, personDbId: Long) = this.run(
+    queryOf(
+        //language=PostgreSQL
+        statement = """
+            SELECT id
+            FROM sak 
+            WHERE person_id = :person_id
+        """.trimIndent(),
+        paramMap = mapOf("person_id" to personDbId),
+    ).map { rad ->
+        val sakId = rad.string("id")
+        Sak(sakId, person)
+    }.asList,
+)
+
 private fun Session.hentVedtak(personId: Long) = this.run(
     queryOf(
         //language=PostgreSQL
@@ -378,7 +402,7 @@ private fun Session.hentVedtak(personId: Long) = this.run(
             VedtakTypeDTO.Ramme -> {
                 Rammevedtak(
                     vedtakId = vedtakId,
-                    sakId = TODO(),
+                    sakId = rad.string("sak_id"),
                     behandlingId = rad.uuid("behandling_id"),
                     vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
                     virkningsdato = rad.localDate("virkningsdato"),
@@ -398,7 +422,7 @@ private fun Session.hentVedtak(personId: Long) = this.run(
                     this.hentUtbetaling(vedtakId) ?: throw RuntimeException("Utbetalingsvedtak med manglende felter")
                 Utbetalingsvedtak(
                     vedtakId = vedtakId,
-                    sakId = TODO(),
+                    sakId = rad.string("sak_id"),
                     behandlingId = rad.uuid("behandling_id"),
                     vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
                     virkningsdato = rad.localDate("virkningsdato"),
@@ -412,7 +436,7 @@ private fun Session.hentVedtak(personId: Long) = this.run(
             VedtakTypeDTO.Avslag -> {
                 Avslag(
                     vedtakId = vedtakId,
-                    sakId = TODO(),
+                    sakId = rad.string("sak_id"),
                     behandlingId = rad.uuid("behandling_id"),
                     vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
                     virkningsdato = rad.localDate("virkningsdato"),

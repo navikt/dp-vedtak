@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.visitor
 
+import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
@@ -7,7 +8,6 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
-import no.nav.dagpenger.vedtak.modell.SakId
 
 interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
 
@@ -39,6 +39,7 @@ interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
 
     fun visitAvslag(
         vedtakId: UUID,
+        sakId: SakId,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
         utfall: Boolean,
@@ -47,6 +48,7 @@ interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
 
     fun visitStans(
         vedtakId: UUID,
+        sakId: SakId,
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,

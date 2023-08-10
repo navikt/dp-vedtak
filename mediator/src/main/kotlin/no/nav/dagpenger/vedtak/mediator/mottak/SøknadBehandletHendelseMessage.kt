@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.mediator.mottak
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
+import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
@@ -25,6 +26,9 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
     val behandlingId: UUID
         get() = packet["behandlingId"].asUUID()
 
+    val sakId: SakId
+        get() = packet["sakId"].asText("SAK_NUMMER_1")
+
     private val hendelse
         get() = when (packet["innvilget"].asBoolean()) {
             true -> dagpengerInnvilgetHendelse(packet, behandlingId)
@@ -34,7 +38,7 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
     private fun dagpengerAvslåttHendelse(packet: JsonMessage, behandlingId: UUID) =
         DagpengerAvslåttHendelse(
             meldingsreferanseId = id,
-            sakId = packet["sak_id"].asText("SAK_NUMMER_1"),
+            sakId = sakId,
             ident = ident,
             behandlingId = behandlingId,
             vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),
@@ -47,7 +51,7 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
         behandlingId: UUID,
     ) = DagpengerInnvilgetHendelse(
         meldingsreferanseId = id,
-        sakId = packet["sak_id"].asText("SAK_NUMMER_1"),
+        sakId = sakId,
         ident = ident,
         behandlingId = behandlingId,
         vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),

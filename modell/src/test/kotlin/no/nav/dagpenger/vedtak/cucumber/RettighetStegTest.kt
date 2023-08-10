@@ -236,6 +236,7 @@ class RettighetStegTest : No {
         }
 
         private var vedtakId: UUID? = null
+        lateinit var sakId: SakId
         lateinit var dagpengerettighet: Dagpengerettighet
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
@@ -249,12 +250,14 @@ class RettighetStegTest : No {
 
         override fun preVisitVedtak(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
             type: Vedtak.VedtakType,
         ) {
             this.vedtakId = vedtakId
+            this.sakId = sakId
             this.virkningsdato = virkningsdato
             this.behandlingId = behandlingId
             antallVedtak++
@@ -290,6 +293,7 @@ class RettighetStegTest : No {
 
         override fun postVisitVedtak(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
@@ -314,6 +318,7 @@ class RettighetStegTest : No {
 
         override fun visitStans(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             virkningsdato: LocalDate,
             vedtakstidspunkt: LocalDateTime,
@@ -326,6 +331,7 @@ class RettighetStegTest : No {
 
         override fun visitAvslag(
             vedtakId: UUID,
+            sakId: SakId,
             behandlingId: UUID,
             vedtakstidspunkt: LocalDateTime,
             utfall: Boolean,

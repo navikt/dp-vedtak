@@ -85,6 +85,7 @@ class VedtakApiTest {
 
     private fun testPersonMed(vararg vedtak: Vedtak) = Person.rehydrer(
         ident = "12345123451".tilPersonIdentfikator(),
+        saker = mutableListOf(),
         vedtak = vedtak.toList(),
         aktivitetslogg = Aktivitetslogg(),
         perioder = emptyList(),

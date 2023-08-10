@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
+import no.nav.dagpenger.vedtak.modell.SakId
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -16,6 +17,7 @@ interface VedtakObserver {
 
     data class VedtakFattet(
         val vedtakId: UUID,
+        val sakId: SakId,
         val behandlingId: UUID,
         val vedtakstidspunkt: LocalDateTime,
         val virkningsdato: LocalDate,
@@ -25,6 +27,7 @@ interface VedtakObserver {
 
     data class UtbetalingsvedtakFattet(
         val vedtakId: UUID,
+        val sakId: SakId,
         val behandlingId: UUID,
         val vedtakstidspunkt: LocalDateTime,
         val virkningsdato: LocalDate,

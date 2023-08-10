@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
+import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
@@ -21,6 +22,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
     lateinit var vedtakFattet: VedtakFattet
     lateinit var utbetalingsvedtakFattet: UtbetalingsvedtakFattet
     private var vedtakId: UUID? = null
+    private var sakId: SakId? = null
     private var utfall: Boolean? = null
 
     private var behandlingId: UUID? = null
@@ -32,12 +34,14 @@ internal class VedtakFattetVisitor : VedtakVisitor {
 
     override fun preVisitVedtak(
         vedtakId: UUID,
+        sakId: SakId,
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
         type: Vedtak.VedtakType,
     ) {
         this.vedtakId = vedtakId
+        this.sakId = sakId
         this.behandlingId = behandlingId
         this.virkningsdato = virkningsdato
         this.vedtakstidspunkt = vedtakstidspunkt
@@ -57,6 +61,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
 
     override fun postVisitVedtak(
         vedtakId: UUID,
+        sakId: SakId,
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
@@ -65,6 +70,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         if (!this::utbetalingsvedtakFattet.isInitialized) {
             vedtakFattet = VedtakFattet(
                 vedtakId = vedtakId(),
+                sakId = sakId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 behandlingId = behandlingId,
                 virkningsdato = virkningsdato,
@@ -90,6 +96,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
     ) {
         utbetalingsvedtakFattet = UtbetalingsvedtakFattet(
             vedtakId = this.vedtakId(),
+            sakId = this.sakId!!,
             vedtakstidspunkt = this.vedtakstidspunkt!!,
             behandlingId = this.behandlingId!!,
             virkningsdato = this.virkningsdato!!,
@@ -108,6 +115,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
 
     override fun visitAvslag(
         vedtakId: UUID,
+        sakId: SakId,
         behandlingId: UUID,
         vedtakstidspunkt: LocalDateTime,
         utfall: Boolean,
@@ -115,6 +123,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
     ) {
         vedtakFattet = VedtakFattet(
             vedtakId = vedtakId,
+            sakId = sakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
@@ -127,6 +136,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
 
     override fun visitStans(
         vedtakId: UUID,
+        sakId: SakId,
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,
@@ -134,6 +144,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
     ) {
         vedtakFattet = VedtakFattet(
             vedtakId = vedtakId,
+            sakId = sakId,
             vedtakstidspunkt = vedtakstidspunkt,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,

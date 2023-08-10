@@ -54,6 +54,7 @@ class Utbetalingsvedtak(
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(
             vedtakId = vedtakId,
+            sakId = sakId,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
             vedtakstidspunkt = vedtakstidspunkt,
@@ -71,6 +72,7 @@ class Utbetalingsvedtak(
 
         visitor.postVisitVedtak(
             vedtakId = vedtakId,
+            sakId = sakId,
             behandlingId = behandlingId,
             virkningsdato = virkningsdato,
             vedtakstidspunkt = vedtakstidspunkt,

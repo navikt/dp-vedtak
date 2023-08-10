@@ -22,11 +22,15 @@ class Sak private constructor(
         behandlinger = mutableListOf(),
     )
 
+    init {
+        person.leggTilSak(this)
+    }
+
     override fun toSpesifikkKontekst(): SpesifikkKontekst {
         return SpesifikkKontekst("sak", mapOf("sakId" to sakId))
     }
 
-    fun accept(sakVisitor: SakVisitor){
+    fun accept(sakVisitor: SakVisitor) {
         sakVisitor.visitSak(sakId)
     }
 

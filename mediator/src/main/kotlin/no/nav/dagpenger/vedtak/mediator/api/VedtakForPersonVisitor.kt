@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.mediator.api
 
 import no.nav.dagpenger.vedtak.modell.Person
+import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.time.LocalDate
@@ -18,6 +19,7 @@ class VedtakForPersonVisitor(person: Person) : PersonVisitor {
 
     override fun postVisitVedtak(
         vedtakId: UUID,
+        sakId: SakId,
         behandlingId: UUID,
         virkningsdato: LocalDate,
         vedtakstidspunkt: LocalDateTime,

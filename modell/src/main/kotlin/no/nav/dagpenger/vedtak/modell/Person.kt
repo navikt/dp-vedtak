@@ -45,13 +45,14 @@ class Person internal constructor(
 
         fun rehydrer(
             ident: PersonIdentifikator,
+            saker: MutableList<Sak>,
             aktivitetslogg: Aktivitetslogg,
             vedtak: List<Vedtak>,
             perioder: List<Rapporteringsperiode>,
         ): Person {
             return Person(
                 ident = ident,
-                saker = mutableListOf(),
+                saker = saker,
                 vedtakHistorikk = VedtakHistorikk(vedtak.toMutableList()),
                 rapporteringsperioder = Rapporteringsperioder(perioder),
                 behandlinger = mutableListOf(),
@@ -74,11 +75,7 @@ class Person internal constructor(
         saker.finnSak(søknadBehandletHendelse.sakId) ?: Sak(
             søknadBehandletHendelse.sakId,
             this,
-        ).also { sak ->
-            saker.add(
-                sak,
-            )
-        }
+        )
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         kontekst(rapporteringshendelse)
@@ -123,11 +120,11 @@ class Person internal constructor(
     fun accept(visitor: PersonVisitor) {
         visitor.visitPerson(ident)
         aktivitetslogg.accept(visitor)
-        rapporteringsperioder.accept(visitor)
-        vedtakHistorikk.accept(visitor)
         saker.forEach { sak ->
             sak.accept(visitor)
         }
+        rapporteringsperioder.accept(visitor)
+        vedtakHistorikk.accept(visitor)
     }
 
     private fun kontekst(hendelse: Hendelse) {
@@ -135,4 +132,7 @@ class Person internal constructor(
     }
 
     override fun toSpesifikkKontekst() = SpesifikkKontekst(kontekstType, mapOf("ident" to ident.identifikator()))
+    internal fun leggTilSak(sak: Sak) {
+        saker.add(sak)
+    }
 }

@@ -53,6 +53,7 @@ class VedtakFattetKafkaObserverTest {
         utfall: VedtakObserver.Utfall,
     ) = VedtakObserver.VedtakFattet(
         vedtakId = UUID.randomUUID(),
+        sakId = "SAK_NUMMER_1",
         vedtakstidspunkt = LocalDateTime.now(),
         behandlingId = UUID.randomUUID(),
         virkningsdato = LocalDate.now(),
