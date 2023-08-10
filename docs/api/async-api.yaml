@@ -10,7 +10,7 @@ channels:
       message:
         oneOf:
           - $ref: '#/components/messages/dagpenger_innvilget'
-          - $ref: '#/components/messages/dagpenger_avslått'
+          - $ref: '#/components/messages/dagpenger_avslaatt'
           - $ref: '#/components/messages/utbetaling_vedtak_fattet'
 
 components:
@@ -44,7 +44,7 @@ components:
             type: string
             format: date
             description: Vedtakets virkningstidspunkt
-    dagpenger_avslått:
+    dagpenger_avslaatt:
       payload:
         type: object
         properties:
@@ -52,7 +52,7 @@ components:
             type: string
             description: Event som forteller om en har rett på dagpenger eller ikke (gitt utfall)
             enum: [
-              "dagpenger_innvilget"
+              "dagpenger_avslått"
             ]
           ident:
             type: string
