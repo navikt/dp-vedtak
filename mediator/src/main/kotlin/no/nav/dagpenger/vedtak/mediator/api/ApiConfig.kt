@@ -11,7 +11,9 @@ import io.ktor.server.auth.AuthenticationConfig
 import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.path
 import no.nav.dagpenger.vedtak.mediator.api.auth.AuthFactory.azureAd
+import org.slf4j.event.Level
 
 internal fun Application.konfigurerApi(
     auth: AuthenticationConfig.() -> Unit = {
@@ -27,8 +29,11 @@ internal fun Application.konfigurerApi(
     }
     install(CallLogging) {
         disableDefaultColors()
+        filter {
+            it.request.path() !in setOf("/metrics", "/isalive", "/isready")
+        }
+        level = Level.INFO
     }
-
     install(Authentication) {
         auth()
     }
