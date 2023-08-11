@@ -27,10 +27,10 @@ internal class UtbetalingsvedtakFattetHendelseMessage(private val packet: JsonMe
         )
 
     private fun JsonMessage.utfall(): String = this["utfall"].asText()
-    private fun utbetalingsdager() = packet["utbetalingsdager"].map { løpendeRettighetsdagJson ->
+    private fun utbetalingsdager() = packet["utbetalingsdager"].map { utbetalingsdagJson ->
         UtbetalingsvedtakFattetHendelse.Utbetalingsdag(
-            dato = løpendeRettighetsdagJson["dato"].asLocalDate(),
-            beløp = løpendeRettighetsdagJson["beløp"].asDouble(),
+            dato = utbetalingsdagJson["dato"].asLocalDate(),
+            beløp = utbetalingsdagJson["beløp"].asDouble(),
         )
     }.toList()
 

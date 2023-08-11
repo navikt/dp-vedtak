@@ -19,5 +19,5 @@ class Utbetalingsdag(val dato: LocalDate, val beløp: Beløp) { // TODO: Sett p�
         return result
     }
 
-    override fun toString() = "LøpendeRettighetDag(dato: $dato, beløp: $beløp)"
+    override fun toString() = "Utbetalingsdag(dato: $dato, beløp: $beløp)"
 }

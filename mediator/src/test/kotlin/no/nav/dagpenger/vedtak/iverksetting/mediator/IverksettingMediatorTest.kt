@@ -7,7 +7,7 @@ import io.mockk.mockk
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.mediator.BehovMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.behovOmIverksettingAvLøpendeVedtak
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.behovOmIverksettingAvUtbetalingsvedtak
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -51,7 +51,7 @@ internal class IverksettingMediatorTest {
             rammevedtakJson["@behov"].map { it.asText() } shouldBe listOf("Iverksett")
         }
 
-        testRapid.sendTestMessage(behovOmIverksettingAvLøpendeVedtak(vedtakId))
+        testRapid.sendTestMessage(behovOmIverksettingAvUtbetalingsvedtak(vedtakId))
 
         iverksettingRepository.hent(vedtakId) shouldNotBe null
     }

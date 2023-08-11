@@ -7,8 +7,8 @@ import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.lagRapporteringForMeldeperiodeFørDagpengvedtaket
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringInnsendtHendelse
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringPåPersonUtenRammevetak
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
@@ -48,7 +48,7 @@ internal class PersonMediatorTest {
     }
 
     @Test
-    fun `Innvilgelse av dagpenger hendelse fører til vedtak fattet event`() {
+    fun `Hendelse om innvilgelse av dagpengesøknad fører til dagpenger_innvilget event`() {
         testRapid.sendTestMessage(dagpengerInnvilgetJson(ident = ident))
         testRapid.inspektør.size shouldBe 1
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
@@ -58,7 +58,7 @@ internal class PersonMediatorTest {
     }
 
     @Test
-    fun `Avslag av dagpenger hendelse fører til vedtak fattet event`() {
+    fun `Hendelse om avslag på dagpengesøknad fører til dagpenger_avslått event`() {
         testRapid.sendTestMessage(dagpengerAvslåttJson(ident = ident))
         testRapid.inspektør.size shouldBe 1
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
@@ -68,7 +68,7 @@ internal class PersonMediatorTest {
     }
 
     @Test
-    fun `Rapporteringshendelse fører til et løpende vedtak fattet`() {
+    fun `Rapporteringshendelse fører til at utbetalingsvedtak fattes`() {
         val rettighetFraDato = 29 mai 2023
         testRapid.sendTestMessage(
             dagpengerInnvilgetJson(
@@ -89,35 +89,35 @@ internal class PersonMediatorTest {
         )
 
         testRapid.inspektør.size shouldBe 2
-
         testObservatør.vedtak.size shouldBe 1
+
         val rammevedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 2)
         rammevedtakJson["@event_name"].asText() shouldBe "dagpenger_innvilget"
 
-        testObservatør.løpendeVedtak.size shouldBe 1
-        val utbetalingsvedtak = testRapid.inspektør.message(testRapid.inspektør.size - 1)
-        utbetalingsvedtak["@event_name"].asText() shouldBe "utbetaling_vedtak_fattet"
-        utbetalingsvedtak["utbetalingsdager"].size() shouldBe 10
-        utbetalingsvedtak["utbetalingsdager"].map { utbetalingsdagJson ->
+        testObservatør.utbetalingsvedtak.size shouldBe 1
+        val utbetalingsvedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 1)
+        utbetalingsvedtakJson["@event_name"].asText() shouldBe "utbetaling_vedtak_fattet"
+        utbetalingsvedtakJson["utbetalingsdager"].size() shouldBe 10
+        utbetalingsvedtakJson["utbetalingsdager"].map { utbetalingsdagJson ->
             utbetalingsdagJson["beløp"].asDouble() shouldBe 1000.0
         }
     }
 
     @Test
-    @Disabled("Vi må finne hva vi skal gjøre rapportering som ikke har rammevedtak")
-    fun `Dersom person vi prøver å rapportere for ikke har noe rammevedtak så da lager vi ikke et vedtak`() {
-        val rettighetFraDato = 29 mai 2023
+    @Disabled("Vi må finne hva vi skal gjøre med rapportering hvis bruker ikke har rammevedtak")
+    fun `Dersom person har sendt rapportering for en periode uten dagpengevedtak, lager vi ikke utbetalingsvedtak??? Dette må vi finne ut av`() {
+        val dagpengerFraDato = 29 mai 2023
         testRapid.sendTestMessage(
             dagpengerInnvilgetJson(
                 ident = ident,
-                virkningsdato = rettighetFraDato,
+                virkningsdato = dagpengerFraDato,
                 dagsats = 1000.0,
                 fastsattVanligArbeidstid = 8,
             ),
         )
 
         testRapid.sendTestMessage(
-            rapporteringPåPersonUtenRammevetak(),
+            lagRapporteringForMeldeperiodeFørDagpengvedtaket(ident, dagpengerFraDato),
         )
 
         testObservatør.vedtak.size shouldBe 1
@@ -128,7 +128,7 @@ internal class PersonMediatorTest {
     private class TestObservatør : PersonObserver {
 
         val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
-        val løpendeVedtak = mutableListOf<VedtakObserver.UtbetalingsvedtakFattet>()
+        val utbetalingsvedtak = mutableListOf<VedtakObserver.UtbetalingsvedtakFattet>()
 
         override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
             vedtak.add(vedtakFattet)
@@ -138,7 +138,7 @@ internal class PersonMediatorTest {
             ident: String,
             utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet,
         ) {
-            løpendeVedtak.add(utbetalingsvedtakFattet)
+            utbetalingsvedtak.add(utbetalingsvedtakFattet)
         }
     }
 }

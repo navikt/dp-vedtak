@@ -100,10 +100,10 @@ internal class VedtakFattetVisitor : VedtakVisitor {
             vedtakstidspunkt = this.vedtakstidspunkt!!,
             behandlingId = this.behandlingId!!,
             virkningsdato = this.virkningsdato!!,
-            utbetalingsdager = utbetalingsdager.map { løpendeRettighetDag ->
+            utbetalingsdager = utbetalingsdager.map { utbetalingsdag ->
                 UtbetalingsdagDto(
-                    dato = løpendeRettighetDag.dato,
-                    beløp = løpendeRettighetDag.beløp.reflection { it }.toDouble(),
+                    dato = utbetalingsdag.dato,
+                    beløp = utbetalingsdag.beløp.reflection { it }.toDouble(),
                 )
             },
             utfall = when (utfall == true) {

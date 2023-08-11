@@ -93,14 +93,14 @@ internal class UtbetalingsvedtakFattetMottakTest {
 
         assertSoftly {
             utbetalingVedtakFattetSlot.isCaptured shouldBe true
-            val løpendeVedtakFattet = utbetalingVedtakFattetSlot.captured
-            løpendeVedtakFattet.ident() shouldBe ident
-            løpendeVedtakFattet.vedtakId shouldBe vedtakId
-            løpendeVedtakFattet.behandlingId shouldBe behandlingId
-            løpendeVedtakFattet.virkningsdato shouldBe (11 juni 2023)
-            løpendeVedtakFattet.vedtakstidspunkt shouldBe LocalDateTime.MAX
-            løpendeVedtakFattet.utbetalingsdager.size shouldBe 10
-            løpendeVedtakFattet.utfall shouldBe UtbetalingsvedtakFattetHendelse.Utfall.Innvilget
+            val utbetalingsvedtakFattet = utbetalingVedtakFattetSlot.captured
+            utbetalingsvedtakFattet.ident() shouldBe ident
+            utbetalingsvedtakFattet.vedtakId shouldBe vedtakId
+            utbetalingsvedtakFattet.behandlingId shouldBe behandlingId
+            utbetalingsvedtakFattet.virkningsdato shouldBe (11 juni 2023)
+            utbetalingsvedtakFattet.vedtakstidspunkt shouldBe LocalDateTime.MAX
+            utbetalingsvedtakFattet.utbetalingsdager.size shouldBe 10
+            utbetalingsvedtakFattet.utfall shouldBe UtbetalingsvedtakFattetHendelse.Utfall.Innvilget
         }
     }
 }

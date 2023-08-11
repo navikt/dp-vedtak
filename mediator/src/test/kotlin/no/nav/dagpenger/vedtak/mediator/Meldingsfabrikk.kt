@@ -354,7 +354,7 @@ object Meldingsfabrikk {
             }
         """.trimIndent()
 
-    fun behovOmIverksettingAvLøpendeVedtak(
+    fun behovOmIverksettingAvUtbetalingsvedtak(
         vedtakId: UUID = UUID.fromString("408f11d9-4be8-450a-8b7a-c2f3f9811859"),
         virkningsdato: LocalDate = 11 juni 2023,
     ) =
@@ -403,18 +403,18 @@ object Meldingsfabrikk {
         ]
       }"""
 
-    fun rapporteringPåPersonUtenRammevetak(): String {
+    fun lagRapporteringForMeldeperiodeFørDagpengvedtaket(ident: String, dagpengerFraDato: LocalDate): String {
         // language=json
         return """
             {
               "@event_name": "rapporteringsperiode_innsendt_hendelse",
-              "ident": "00000000000",
+              "ident": "$ident",
               "rapporteringsId": "5e5dc83c-33fd-409d-92f2-513790c72e23",
-              "fom": "2023-05-29",
-              "tom": "2023-06-11",
+              "fom": "${dagpengerFraDato.minusDays(14)}",
+              "tom": "${dagpengerFraDato.minusDays(1)}",
               "dager": [
                 {
-                  "dato": "2023-05-29",
+                  "dato": "${dagpengerFraDato.minusDays(14)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -423,7 +423,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-05-30",
+                  "dato": "${dagpengerFraDato.minusDays(13)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -432,7 +432,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-05-31",
+                  "dato": "${dagpengerFraDato.minusDays(12)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -441,7 +441,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-06-01",
+                  "dato": "${dagpengerFraDato.minusDays(11)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -450,7 +450,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-06-02",
+                  "dato": "${dagpengerFraDato.minusDays(10)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -459,7 +459,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-06-03",
+                  "dato": "${dagpengerFraDato.minusDays(9)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -468,7 +468,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-06-04",
+                  "dato": "${dagpengerFraDato.minusDays(8)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -477,7 +477,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-06-05",
+                  "dato": "${dagpengerFraDato.minusDays(7)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -486,7 +486,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-06-06",
+                  "dato": "${dagpengerFraDato.minusDays(6)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -495,7 +495,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-06-07",
+                  "dato": "${dagpengerFraDato.minusDays(5)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -504,7 +504,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-06-08",
+                  "dato": "${dagpengerFraDato.minusDays(4)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -513,7 +513,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-06-09",
+                  "dato": "${dagpengerFraDato.minusDays(3)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -522,7 +522,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-06-10",
+                  "dato": "${dagpengerFraDato.minusDays(2)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
@@ -531,7 +531,7 @@ object Meldingsfabrikk {
                   ]
                 },
                 {
-                  "dato": "2023-06-11",
+                  "dato": "${dagpengerFraDato.minusDays(1)}",
                   "aktiviteter": [
                     {
                       "type": "Arbeid",
