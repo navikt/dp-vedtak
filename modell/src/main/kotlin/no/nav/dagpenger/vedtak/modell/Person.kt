@@ -10,7 +10,6 @@ import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
-import no.nav.dagpenger.vedtak.modell.rapportering.Behandling
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperioder
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
@@ -24,7 +23,6 @@ class Person internal constructor(
     private val saker: MutableList<Sak>,
     internal val vedtakHistorikk: VedtakHistorikk,
     private val rapporteringsperioder: Rapporteringsperioder,
-    private val behandlinger: MutableList<Behandling>,
     override val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Subaktivitetskontekst, VedtakObserver {
 
@@ -37,7 +35,6 @@ class Person internal constructor(
         saker = mutableListOf(),
         vedtakHistorikk = VedtakHistorikk(),
         rapporteringsperioder = Rapporteringsperioder(),
-        behandlinger = mutableListOf<Behandling>(),
     )
 
     companion object {
@@ -55,7 +52,6 @@ class Person internal constructor(
                 saker = saker,
                 vedtakHistorikk = VedtakHistorikk(vedtak.toMutableList()),
                 rapporteringsperioder = Rapporteringsperioder(perioder),
-                behandlinger = mutableListOf(),
                 aktivitetslogg = aktivitetslogg,
             )
         }
