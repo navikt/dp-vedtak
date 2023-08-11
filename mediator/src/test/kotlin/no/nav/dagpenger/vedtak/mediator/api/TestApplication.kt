@@ -24,15 +24,13 @@ object TestApplication {
         }
     }
 
-    internal val testAzureAdToken: String by lazy {
-        mockOAuth2Server.issueToken(
+    internal fun testAzureAdToken(ADGrupper: List<String>): String {
+        return mockOAuth2Server.issueToken(
             issuerId = AZUREAD_ISSUER_ID,
             audience = CLIENT_ID,
             claims = mapOf(
                 "NAVident" to "123",
-                "groups" to listOf(
-                    Configuration.properties[Configuration.Grupper.saksbehandler],
-                ),
+                "groups" to ADGrupper,
             ),
         ).serialize()
     }
@@ -52,7 +50,9 @@ object TestApplication {
 
     internal suspend fun ApplicationTestBuilder.autentisert(
         endepunkt: String,
-        token: String = testAzureAdToken,
+        token: String = testAzureAdToken(
+            ADGrupper = listOf(Configuration.properties[Configuration.Grupper.saksbehandler]),
+        ),
         httpMethod: HttpMethod = HttpMethod.Post,
         body: String? = null,
     ): HttpResponse {

@@ -13,15 +13,13 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.auth.jwt.JWTAuthenticationProvider
-import io.ktor.server.auth.jwt.JWTPrincipal
 import kotlinx.coroutines.runBlocking
-import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.mediator.Configuration
+import no.nav.dagpenger.vedtak.mediator.api.auth.validering.autoriserADGrupper
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
 object AuthFactory {
-    private val logger = KotlinLogging.logger { }
 
     @Suppress("ClassName")
     private object azure_app : PropertyGroup() {
@@ -47,19 +45,19 @@ object AuthFactory {
     }
 
     fun JWTAuthenticationProvider.Config.azureAd() {
-        val saksbehandlerGruppe = Configuration.properties[Configuration.Grupper.saksbehandler]
-        logger.info { "Trygdeetaten tillater følgende grupper tilgang: $saksbehandlerGruppe" }
-        verifier(JwkProvider(URL(azureAdConfiguration.jwksUri)), azureAdConfiguration.issuer) {
-            withAudience(Configuration.properties[azure_app.client_id])
-        }
         realm = Configuration.appName
-        validate { credentials ->
-            require(
-                credentials.payload.claims["groups"]?.asList(String::class.java)?.contains(saksbehandlerGruppe)
-                    ?: false,
-            )
-            JWTPrincipal(credentials.payload)
-        }
+        verifiserTokenFormatOgSignatur()
+        autoriserADGrupper()
+    }
+
+    private fun JWTAuthenticationProvider.Config.verifiserTokenFormatOgSignatur() {
+        verifier(
+            jwkProvider = JwkProvider(URL(azureAdConfiguration.jwksUri)),
+            issuer = azureAdConfiguration.issuer,
+            configure = {
+                withAudience(Configuration.properties[azure_app.client_id])
+            },
+        )
     }
 
     private fun JwkProvider(url: URL) =

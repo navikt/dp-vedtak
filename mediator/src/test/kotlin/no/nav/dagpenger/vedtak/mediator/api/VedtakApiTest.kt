@@ -11,6 +11,7 @@ import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.mediator.api.TestApplication.autentisert
+import no.nav.dagpenger.vedtak.mediator.api.TestApplication.testAzureAdToken
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
@@ -46,6 +47,20 @@ class VedtakApiTest {
                 contentType(Json)
                 setBody("""{"ident": "$ident"}""")
             }
+            response.status shouldBe HttpStatusCode.Unauthorized
+        }
+    }
+
+    @Test
+    fun `kall uten saksbehandlingsADgruppe i claims returnerer 401`() {
+        medSikretVedtakApi {
+            val tokenUtenSaksbehandlerGruppe = testAzureAdToken(ADGrupper = emptyList())
+
+            val response = autentisert(
+                token = tokenUtenSaksbehandlerGruppe,
+                endepunkt = "/vedtak",
+                body = """{"ident": "$ident"}""",
+            )
             response.status shouldBe HttpStatusCode.Unauthorized
         }
     }
