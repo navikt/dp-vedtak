@@ -90,7 +90,6 @@ internal class VedtakFattetVisitor : VedtakVisitor {
     override fun visitUtbetalingsvedtak(
         utfall: Boolean,
         forbruk: Stønadsdager,
-        trukketEgenandel: Beløp,
         beløpTilUtbetaling: Beløp,
         utbetalingsdager: List<Utbetalingsdag>,
     ) {

@@ -60,10 +60,6 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
         dagsats = packet["Dagsats"].asDouble().beløp,
         stønadsdager = Dagpengeperiode(antallUker = packet["Periode"].asInt()).tilStønadsdager(),
         vanligArbeidstidPerDag = packet["Fastsatt vanlig arbeidstid"].asDouble().timer,
-        egenandel = when (Dagpengerettighet.valueOf(packet["Rettighetstype"].asText())) {
-            Dagpengerettighet.Ordinær, Dagpengerettighet.Permittering -> 3.beløp * packet["Dagsats"].asText().toBigDecimal().beløp
-            else -> 0.beløp
-        }, // @todo: hva/hvem skal sette egenandel?
     )
 
     override fun behandle(mediator: IHendelseMediator, context: MessageContext) {

@@ -2,14 +2,14 @@
 
   Egenskap: VurderTerskelForTaptArbeidstid
 
-    Bakgrunn: Ordinære dagpenger er innvileget fra 1. mai (uten egenandel). Fra 8. mai endres vanligArbeidstidPerDag fra 8 til 4 timer. VA for meldeperioden blir da 60 timer.
+    Bakgrunn: Ordinære dagpenger er innvileget fra 1. mai. Fra 8. mai endres vanligArbeidstidPerDag fra 8 til 4 timer. VA for meldeperioden blir da 60 timer.
       Gitt en ny hendelse om innvilget søknad
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 01.05.2023    | 800     | 104            | 8                      | Ordinær           | 0         |
+        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 01.05.2023    | 800     | 104            | 8                      | Ordinær           |
 
       Gitt et endringsvedtak
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-        | 12345678901   | CA1BD250-8A03-45AA-B9A3-5BC5A49B7076 | true   | 08.05.2023    | 800     | 104            | 4                      | Ordinær           | 0         |
+        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
+        | 12345678901   | CA1BD250-8A03-45AA-B9A3-5BC5A49B7076 | true   | 08.05.2023    | 800     | 104            | 4                      | Ordinær           |
 
       Scenario: Rapporterer arbeidstimer eksakt lik terskel
         Når rapporteringshendelse mottas

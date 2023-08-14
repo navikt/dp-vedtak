@@ -35,7 +35,6 @@ class DagpengerInnvilgetHendelse(
     private val dagsats: Beløp,
     private val stønadsdager: Stønadsdager,
     private val vanligArbeidstidPerDag: Timer,
-    private val egenandel: Beløp,
 ) : SøknadBehandletHendelse(
     meldingsreferanseId = meldingsreferanseId,
     sakId = sakId,
@@ -53,7 +52,6 @@ class DagpengerInnvilgetHendelse(
         stønadsdager = stønadsdager,
         dagpengerettighet = dagpengerettighet,
         vanligArbeidstidPerDag = vanligArbeidstidPerDag,
-        egenandel = egenandel,
     )
 
     override fun kontekstMap(): Map<String, String> = emptyMap()

@@ -2,10 +2,10 @@
 
   Egenskap: Stans av dagpengerettighet
 
-    Bakgrunn: Ordinære dagpenger er innvilget uten egenandel fra 12. desember. Stanses fra 19. desember.
+    Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember. Stanses fra 19. desember.
       Gitt en ny hendelse om innvilget søknad
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 104            | 8                      | Ordinær           | 0         |
+        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 104            | 8                      | Ordinær           |
 
       # @todo: Vurder hvordan stans-hendelse skal se ut og håndteres
       Og en ny hendelse om stans

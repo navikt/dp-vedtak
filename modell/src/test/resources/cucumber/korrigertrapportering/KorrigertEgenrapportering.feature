@@ -4,8 +4,8 @@ Egenskap: Korrigert egenrapportering
 
   Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember
     Gitt en ny hendelse om innvilget søknad
-      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 52             | 8                      | Ordinær           | 2400      |
+      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
+      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 52             | 8                      | Ordinær           |
 
   Scenario: Rapporterer først ingen arbeidstimer. Korrigerer deretter med arbeid = 41 timer, altså over terskel.
     Når rapporteringshendelse mottas
@@ -25,10 +25,9 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal gjenstående egenandel være 0 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
-    Så skal utbetalingen være 5600
-    Så skal beregnet utbetaling være 5600 kr for "25.12.2022"
+    Så skal utbetalingen være 8000
+    Så skal beregnet utbetaling være 8000 kr for "25.12.2022"
     Så skal bruker ha 2 vedtak
 
     # her kommer en korrigering av forrige egenrapportering
@@ -50,7 +49,6 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 0 dager
-    Så skal gjenstående egenandel være 2400 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 260 fra "25.12.2022"
     Så skal utbetalingen være 0
     Så skal beregnet utbetaling være 0 kr for "25.12.2022"
@@ -74,10 +72,9 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal gjenstående egenandel være 0 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
-    Så skal utbetalingen være 5600
-    Så skal beregnet utbetaling være 5600 kr for "25.12.2022"
+    Så skal utbetalingen være 8000
+    Så skal beregnet utbetaling være 8000 kr for "25.12.2022"
     Så skal bruker ha 2 vedtak
 
     # her kommer en korrigering av forrige egenrapportering med en fraværsdag
@@ -98,10 +95,9 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 9 dager
-    Så skal gjenstående egenandel være 0 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 251 fra "25.12.2022"
-    Så skal utbetalingen være 4800
-    Så skal beregnet utbetaling være 4800 kr for "25.12.2022"
+    Så skal utbetalingen være 7200
+    Så skal beregnet utbetaling være 7200 kr for "25.12.2022"
     Så skal bruker ha 3 vedtak
 
   Scenario: Korrigerer meldeperiode nummer 2 med arbeid over terskel
@@ -122,10 +118,9 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal gjenstående egenandel være 0 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
-    Så skal utbetalingen være 5600
-    Så skal beregnet utbetaling være 5600 kr for "25.12.2022"
+    Så skal utbetalingen være 8000
+    Så skal beregnet utbetaling være 8000 kr for "25.12.2022"
     Så skal bruker ha 2 vedtak
 
     Når rapporteringshendelse mottas
@@ -145,7 +140,6 @@ Egenskap: Korrigert egenrapportering
       | 07.01.2023 | false  | 0     |
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal gjenstående egenandel være 0 fra "08.01.2023"
     Så skal gjenstående stønadsdager være 240 fra "08.01.2023"
     Så skal utbetalingen være 8000
     Så skal beregnet utbetaling være 8000 kr for "08.01.2023"
@@ -169,12 +163,10 @@ Egenskap: Korrigert egenrapportering
       | 07.01.2023 | false  | 0     |
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 0 dager
-    Så skal gjenstående egenandel være 0 fra "25.12.2022"
-    Så skal gjenstående egenandel være 0 fra "08.01.2023"
     Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 250 fra "08.01.2023"
     Så skal utbetalingen være 0
-    Så skal beregnet utbetaling være 5600 kr for "25.12.2022"
+    Så skal beregnet utbetaling være 8000 kr for "25.12.2022"
     Så skal beregnet utbetaling være 0 kr for "08.01.2023"
     Så skal bruker ha 4 vedtak
 
@@ -198,10 +190,9 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal gjenstående egenandel være 0 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
-    Så skal utbetalingen være 5600
-    Så skal beregnet utbetaling være 5600 kr for "25.12.2022"
+    Så skal utbetalingen være 8000
+    Så skal beregnet utbetaling være 8000 kr for "25.12.2022"
     Så skal bruker ha 2 vedtak
 
     Når rapporteringshendelse mottas
@@ -221,8 +212,6 @@ Egenskap: Korrigert egenrapportering
       | 07.01.2023 | false  | 0     |
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal gjenstående egenandel være 0 fra "25.12.2022"
-    Så skal gjenstående egenandel være 0 fra "08.01.2023"
     Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 240 fra "08.01.2023"
     Så skal utbetalingen være 8000
@@ -248,7 +237,6 @@ Egenskap: Korrigert egenrapportering
       | 07.01.2023 | false  | 0     |
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 9 dager
-    Så skal gjenstående egenandel være 0 fra "08.01.2023"
     Så skal gjenstående stønadsdager være 241 fra "08.01.2023"
     Så skal utbetalingen være 6400
     Så skal beregnet utbetaling være 6400 kr for "08.01.2023"
@@ -275,7 +263,6 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 2 dager
-    Så skal gjenstående egenandel være 1600 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 258 fra "25.12.2022"
     Så skal utbetalingen være 0
     Så skal beregnet utbetaling være 0 kr for "25.12.2022"
@@ -299,13 +286,12 @@ Egenskap: Korrigert egenrapportering
       | 07.01.2023 | false  | 0     |
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 3 dager
-    Så skal gjenstående egenandel være 200 fra "08.01.2023"
     Så skal gjenstående stønadsdager være 255 fra "08.01.2023"
     Så skal utbetalingen være 0
     Så skal beregnet utbetaling være 0 kr for "08.01.2023"
     Så skal bruker ha 3 vedtak
 
-    # Meldeperiode 3 har full utbetaling minus egenandel
+    # Meldeperiode 3 har full utbetaling
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |
       | 09.01.2023 | false  | 0     |
@@ -323,7 +309,6 @@ Egenskap: Korrigert egenrapportering
       | 21.01.2023 | false  | 0     |
       | 22.01.2023 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal gjenstående egenandel være 0 fra "22.01.2023"
     Så skal gjenstående stønadsdager være 245 fra "22.01.2023"
     Så skal utbetalingen være 7800
     Så skal beregnet utbetaling være 7800 kr for "22.01.2023"
@@ -347,9 +332,6 @@ Egenskap: Korrigert egenrapportering
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 0 dager
-    Så skal gjenstående egenandel være 2400 fra "25.12.2022"
-    Så skal gjenstående egenandel være 1000 fra "08.01.2023"
-    Så skal gjenstående egenandel være 0 fra "22.01.2023"
     Så skal gjenstående stønadsdager være 260 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 257 fra "08.01.2023"
     Så skal gjenstående stønadsdager være 247 fra "22.01.2023"

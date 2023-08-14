@@ -43,7 +43,6 @@ class PostgresIverksettingRepositoryTest {
                 dagsats = 800.beløp,
                 stønadsdager = Dagpengeperiode(52).tilStønadsdager(),
                 vanligArbeidstidPerDag = 8.timer,
-                egenandel = 800.beløp * 3,
             ),
         )
         withMigratedDb {

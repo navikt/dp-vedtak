@@ -4,8 +4,6 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
-import no.nav.dagpenger.vedtak.modell.entitet.Beløp
-import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
@@ -46,8 +44,6 @@ class Behandling(
     private val arbeidedeTimer get() = rettighetsdagerUtenFravær.map { it.arbeidstimer() }.summer()
     private val taptArbeidstid get() = (vanligArbeidstid - arbeidedeTimer)
     private val graderingsProsent get() = taptArbeidstid prosentAv vanligArbeidstid
-
-    private var beregnetBeløpFørTrekkAvEgenandel: Beløp? = null
 
     private val resultatBuilder: Resultat.Builder = Resultat.Builder()
 
@@ -141,29 +137,7 @@ class Behandling(
                     )
                 }
             behandling.resultatBuilder.utbetalingsdager(utbetalingsdager)
-            behandling.beregnetBeløpFørTrekkAvEgenandel = utbetalingsdager.summer()
 
-            behandling.nesteSteg(TrekkEgenandel, rapporteringshendelse)
-        }
-    }
-
-    object TrekkEgenandel : Behandlingssteg() {
-        override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
-            val beregnetBeløpFørTrekkAvEgenandel = requireNotNull(behandling.beregnetBeløpFørTrekkAvEgenandel)
-            val rapporteringsdato = rapporteringshendelse.endInclusive
-            val forrigeRapporteringsdato = rapporteringshendelse.start.minusDays(1)
-            val forrigeTrukketEgenandel =
-                behandling.person.vedtakHistorikk.trukketEgenandelHistorikk.summer(forrigeRapporteringsdato)
-
-            val egenandel = behandling.person.vedtakHistorikk.egenandelHistorikk.get(rapporteringsdato)
-            val gjenståendeEgenandel = egenandel - forrigeTrukketEgenandel
-            val trukketEgenandel =
-                if (gjenståendeEgenandel > 0.beløp && beregnetBeløpFørTrekkAvEgenandel > 0.beløp) {
-                    minOf(gjenståendeEgenandel, beregnetBeløpFørTrekkAvEgenandel)
-                } else {
-                    0.beløp
-                }
-            behandling.resultatBuilder.trukketEgenandel(trukketEgenandel)
             behandling.nesteSteg(Ferdigstill, rapporteringshendelse)
         }
     }
@@ -179,7 +153,6 @@ class Behandling(
                 virkningsdato = rapporteringshendelse.endInclusive,
                 forbruk = Stønadsdager(resultat.forbruksdager.size),
                 utbetalingsdager = resultat.utbetalingsdager,
-                trukketEgenandel = resultat.trukketEgenandel,
             )
             rapporteringshendelse.kontekst(utbetalingsvedtak)
             rapporteringshendelse.info("Fattet utbetalingsvedtak")
@@ -193,14 +166,12 @@ class Behandling(
         val utfall: Boolean,
         val forbruksdager: List<Dag> = emptyList(),
         val utbetalingsdager: List<Utbetalingsdag> = emptyList(),
-        val trukketEgenandel: Beløp,
     ) {
         class Builder {
 
             private var utfall: Boolean? = null
             private var forbruksdager: List<Dag> = emptyList()
             private var utbetalingsdager: List<Utbetalingsdag> = emptyList()
-            private var trukketEgenandel: Beløp = 0.beløp
 
             fun utfall(utfall: Boolean) {
                 this.utfall = utfall
@@ -214,15 +185,10 @@ class Behandling(
                 this.utbetalingsdager = utbetalingsdager.toList()
             }
 
-            fun trukketEgenandel(trukketEgenandel: Beløp) {
-                this.trukketEgenandel = trukketEgenandel
-            }
-
             fun build() = Resultat(
                 utfall = requireNotNull(this.utfall) { "Forventer at utfall er satt på resultat" },
                 forbruksdager = forbruksdager,
                 utbetalingsdager = utbetalingsdager,
-                trukketEgenandel = trukketEgenandel,
             )
         }
     }

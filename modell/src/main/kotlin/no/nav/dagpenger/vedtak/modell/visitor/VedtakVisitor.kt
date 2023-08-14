@@ -32,7 +32,6 @@ interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
     fun visitUtbetalingsvedtak(
         utfall: Boolean,
         forbruk: Stønadsdager,
-        trukketEgenandel: Beløp,
         beløpTilUtbetaling: Beløp,
         utbetalingsdager: List<Utbetalingsdag>,
     ) {}

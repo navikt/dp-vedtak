@@ -65,7 +65,6 @@ class PostgresPersonRepositoryTest {
                 dagsats = 800.beløp,
                 stønadsdager = Dagpengeperiode(52).tilStønadsdager(),
                 vanligArbeidstidPerDag = 8.timer,
-                egenandel = 800.beløp * 3,
             ),
         )
 
@@ -111,7 +110,6 @@ class PostgresPersonRepositoryTest {
             assertAntallRader("stønadsperiode", 1)
             assertAntallRader("vanlig_arbeidstid", 1)
             assertAntallRader("rettighet", 1)
-            assertAntallRader("egenandel", 1)
             assertAntallRader("utbetaling", 1)
             assertAntallRader("utbetalingsdag", 10)
             assertAntallRader("rapporteringsperiode", 1)

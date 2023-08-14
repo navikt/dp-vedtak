@@ -4,13 +4,13 @@
 
     Bakgrunn: Dagpenger under permittering fra fiskeindustrien innvilget fra 12. desember. Endres til ordinære dagpenger 15. desember. Gir ulike terskler i meldeperioden.
       Gitt en ny hendelse om innvilget søknad
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet              | egenandel |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 52             | 8                      | PermitteringFraFiskeindustrien | 0         |
+        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet              |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 52             | 8                      | PermitteringFraFiskeindustrien |
 
 
       Gitt et endringsvedtak
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-        | 12345678901   | CA1BD250-8A03-45AA-B9A3-5BC5A49B7076 | true   | 15.12.2022    | 588     | 52             | 8                      | Ordinær           | 0         |
+        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
+        | 12345678901   | CA1BD250-8A03-45AA-B9A3-5BC5A49B7076 | true   | 15.12.2022    | 588     | 52             | 8                      | Ordinær           |
 
       Scenario: Rapporterer arbeidstimer eksakt lik gjennomsnittsterskel
         Når rapporteringshendelse mottas

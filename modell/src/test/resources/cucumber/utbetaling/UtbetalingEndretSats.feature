@@ -1,14 +1,14 @@
 # language: no
 Egenskap: Utbetaling
 
-  Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember med egenandel på tre dagsatser og dagsats på 800 kroner. Dagsats endres pga. barnetillegg fra søndag i uke 1.
+  Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember med dagsats på 800 kroner. Dagsats endres pga. barnetillegg fra søndag i uke 1.
     Gitt en ny hendelse om innvilget søknad
-      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 52             | 8                      | Ordinær           | 2400      |
+      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
+      | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 52             | 8                      | Ordinær           |
 
     Gitt et endringsvedtak
-      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet | egenandel |
-      | 12345678901   | CA1BD250-8A03-45AA-B9A3-5BC5A49B7076 | true   | 18.12.2022    | 835     | 52             | 8                      | Ordinær           | 2400      |
+      | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
+      | 12345678901   | CA1BD250-8A03-45AA-B9A3-5BC5A49B7076 | true   | 18.12.2022    | 835     | 52             | 8                      | Ordinær           |
 
   Scenario: Rapporterer ingen arbeidstimer
     Når rapporteringshendelse mottas
@@ -28,9 +28,8 @@ Egenskap: Utbetaling
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal gjenstående egenandel være 0 fra "25.12.2022"
-    Så skal utbetalingen være 5775
-    Så skal beregnet utbetaling være 5775 kr for "25.12.2022"
+    Så skal utbetalingen være 8175
+    Så skal beregnet utbetaling være 8175 kr for "25.12.2022"
     Så skal bruker ha 3 vedtak
 
   Scenario: Rapporterer arbeid i helg uke 2 tilsvarende to hele arbeidsdager
@@ -51,9 +50,8 @@ Egenskap: Utbetaling
       | 24.12.2022 | false  | 8     |
       | 25.12.2022 | false  | 8     |
     Så skal forbruket være 10 dager
-    Så skal gjenstående egenandel være 0 fra "25.12.2022"
-    Så skal utbetalingen være 4140
-    Så skal beregnet utbetaling være 4140 kr for "25.12.2022"
+    Så skal utbetalingen være 6540
+    Så skal beregnet utbetaling være 6540 kr for "25.12.2022"
     Så skal bruker ha 3 vedtak
 
   Scenario: Rapporterer arbeid i helg uke 1 tilsvarende to hele arbeidsdager. Gir ulik sats lørdag og søndag.
@@ -74,7 +72,6 @@ Egenskap: Utbetaling
       | 24.12.2022 | false  | 0     |
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 10 dager
-    Så skal gjenstående egenandel være 0 fra "25.12.2022"
-    Så skal utbetalingen være 4140
-    Så skal beregnet utbetaling være 4140 kr for "25.12.2022"
+    Så skal utbetalingen være 6540
+    Så skal beregnet utbetaling være 6540 kr for "25.12.2022"
     Så skal bruker ha 3 vedtak

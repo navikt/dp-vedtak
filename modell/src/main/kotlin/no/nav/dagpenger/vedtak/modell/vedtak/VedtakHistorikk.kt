@@ -29,8 +29,6 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
 
     internal val stønadsdagerHistorikk = TemporalCollection<Stønadsdager>()
     internal val forbrukHistorikk = ForbrukHistorikk()
-    internal val egenandelHistorikk = TemporalCollection<Beløp>()
-    internal val trukketEgenandelHistorikk = TrukketEgenandelHistorikk()
     private val beløpTilUtbetalingHistorikk = TemporalCollection<Beløp>()
 
     init {
@@ -48,9 +46,6 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
 
     fun gjenståendeStønadsdagerFra(dato: LocalDate): Stønadsdager =
         stønadsdagerHistorikk.get(dato) - forbrukHistorikk.summer(dato)
-
-    fun gjenståendeEgenandelFra(dato: LocalDate): Beløp =
-        egenandelHistorikk.get(dato) - trukketEgenandelHistorikk.summer(dato)
 
     fun beløpTilUtbetalingFor(dato: LocalDate): Beløp = beløpTilUtbetalingHistorikk.get(dato)
 
@@ -120,10 +115,6 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
             vedtakHistorikk.dagsatsHistorikk.put(virkningsdato(), beløp)
         }
 
-        override fun visitEgenandel(beløp: Beløp) {
-            vedtakHistorikk.egenandelHistorikk.put(virkningsdato(), beløp)
-        }
-
         override fun postVisitVedtak(
             vedtakId: UUID,
             sakId: SakId,
@@ -138,12 +129,10 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
         override fun visitUtbetalingsvedtak(
             utfall: Boolean,
             forbruk: Stønadsdager,
-            trukketEgenandel: Beløp,
             beløpTilUtbetaling: Beløp,
             utbetalingsdager: List<Utbetalingsdag>,
         ) {
             vedtakHistorikk.forbrukHistorikk.put(this.virkningsdato(), forbruk)
-            vedtakHistorikk.trukketEgenandelHistorikk.put(this.virkningsdato(), trukketEgenandel)
             vedtakHistorikk.beløpTilUtbetalingHistorikk.put(this.virkningsdato(), beløpTilUtbetaling)
         }
 

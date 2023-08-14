@@ -30,10 +30,3 @@ value class AntallStønadsdager(val dager: Stønadsdager) : Faktum<Stønadsdager
         faktumVisitor.visitAntallStønadsdager(dager)
     }
 }
-
-@JvmInline
-value class Egenandel(val beløp: Beløp) : Faktum<Beløp> {
-    override fun accept(faktumVisitor: FaktumVisitor) {
-        faktumVisitor.visitEgenandel(beløp)
-    }
-}

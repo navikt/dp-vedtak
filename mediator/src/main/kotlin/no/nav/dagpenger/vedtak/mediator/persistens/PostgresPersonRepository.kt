@@ -32,7 +32,6 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
-import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Egenandel
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Faktum
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.VanligArbeidstidPerDag
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
@@ -212,7 +211,6 @@ private class PopulerQueries(
     override fun visitUtbetalingsvedtak(
         utfall: Boolean,
         forbruk: Stønadsdager,
-        trukketEgenandel: Beløp,
         beløpTilUtbetaling: Beløp,
         utbetalingsdager: List<Utbetalingsdag>,
     ) {
@@ -221,16 +219,15 @@ private class PopulerQueries(
                 //language=PostgreSQL
                 statement = """
                 INSERT INTO utbetaling
-                    (vedtak_id, utfall, forbruk, trukket_egenandel)
+                    (vedtak_id, utfall, forbruk)
                 VALUES 
-                    (:vedtak_id, :utfall, :forbruk, :trukket_egenandel)
+                    (:vedtak_id, :utfall, :forbruk)
                 ON CONFLICT DO NOTHING 
                 """.trimIndent(),
                 paramMap = mapOf(
                     "vedtak_id" to vedtakId,
                     "utfall" to utfall,
                     "forbruk" to forbruk.stønadsdager(),
-                    "trukket_egenandel" to trukketEgenandel.reflection { it },
                 ),
             ),
         )
@@ -306,24 +303,6 @@ private class PopulerQueries(
                 paramMap = mapOf(
                     "vedtak_id" to vedtakId,
                     "antall_dager" to dager.stønadsdager(),
-                ),
-            ),
-        )
-    }
-
-    override fun visitEgenandel(beløp: Beløp) {
-        queries.add(
-            queryOf(
-                //language=PostgreSQL
-                statement = """
-                    INSERT INTO egenandel
-                           (vedtak_id, beløp)
-                    VALUES (:vedtak_id, :belop)
-                    ON CONFLICT DO NOTHING
-                """.trimIndent(),
-                paramMap = mapOf(
-                    "vedtak_id" to vedtakId,
-                    "belop" to beløp.reflection { it },
                 ),
             ),
         )
@@ -428,7 +407,6 @@ private fun Session.hentVedtak(personId: Long) = this.run(
                     virkningsdato = rad.localDate("virkningsdato"),
                     forbruk = Stønadsdager(utbetaling.forbruk),
                     utfall = utbetaling.utfall,
-                    trukketEgenandel = utbetaling.trukketEgenandel.beløp,
                     utbetalingsdager = this.hentUtbetalingsdager(vedtakId),
                 )
             }
@@ -459,7 +437,7 @@ private fun Session.hentUtbetaling(vedtakId: UUID) = this.run(
     queryOf(
         //language=PostgreSQL
         statement = """
-            SELECT utfall, forbruk, trukket_egenandel
+            SELECT utfall, forbruk
             FROM utbetaling 
             WHERE vedtak_id = :vedtak_id
         """.trimIndent(),
@@ -468,7 +446,6 @@ private fun Session.hentUtbetaling(vedtakId: UUID) = this.run(
         UtbetalingRad(
             utfall = row.boolean("utfall"),
             forbruk = row.int("forbruk"),
-            trukketEgenandel = row.bigDecimal("trukket_egenandel"),
         )
     }.asSingle,
 )
@@ -487,7 +464,7 @@ private fun Session.hentUtbetalingsdager(vedtakId: UUID) = this.run(
     }.asList,
 )
 
-private class UtbetalingRad(val utfall: Boolean, val forbruk: Int, val trukketEgenandel: BigDecimal)
+private class UtbetalingRad(val utfall: Boolean, val forbruk: Int)
 
 private fun Session.hentFakta(vedtakId: UUID) = this.run(
     queryOf(
@@ -495,13 +472,11 @@ private fun Session.hentFakta(vedtakId: UUID) = this.run(
         statement = """
             SELECT dagsats.beløp                          AS dagsats,
                    stønadsperiode.antall_dager            AS stønadsperiode,
-                   vanlig_arbeidstid.antall_timer_per_dag AS vanlig_arbeidstid_per_dag,
-                   egenandel.beløp                        AS egenandel
+                   vanlig_arbeidstid.antall_timer_per_dag AS vanlig_arbeidstid_per_dag
             FROM vedtak
                      LEFT JOIN dagsats ON vedtak.id = dagsats.vedtak_id
                      LEFT JOIN stønadsperiode ON vedtak.id = stønadsperiode.vedtak_id
                      LEFT JOIN vanlig_arbeidstid ON vedtak.id = vanlig_arbeidstid.vedtak_id
-                     LEFT JOIN egenandel ON vedtak.id = egenandel.vedtak_id
             WHERE vedtak.id = :vedtak_id
         """.trimIndent(),
         paramMap = mapOf("vedtak_id" to vedtakId),
@@ -510,7 +485,6 @@ private fun Session.hentFakta(vedtakId: UUID) = this.run(
             dagsats = rad.bigDecimalOrNull("dagsats"),
             stønadsperiode = rad.intOrNull("stønadsperiode"),
             vanligArbeidstidPerDag = rad.bigDecimalOrNull("vanlig_arbeidstid_per_dag"),
-            egenandel = rad.bigDecimalOrNull("egenandel"),
         )
     }.asSingle,
 )
@@ -639,7 +613,6 @@ private data class FaktaRad(
     val dagsats: BigDecimal?,
     val stønadsperiode: Int?,
     val vanligArbeidstidPerDag: BigDecimal?,
-    val egenandel: BigDecimal?,
 ) {
 
     val fakta = mutableListOf<Faktum<*>>()
@@ -654,9 +627,6 @@ private data class FaktaRad(
 
         if (vanligArbeidstidPerDag != null) {
             fakta.add(VanligArbeidstidPerDag(vanligArbeidstidPerDag.timer))
-        }
-        if (egenandel != null) {
-            fakta.add(Egenandel(egenandel.beløp))
         }
     }
 }

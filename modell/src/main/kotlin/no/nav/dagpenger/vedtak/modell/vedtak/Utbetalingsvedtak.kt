@@ -1,6 +1,5 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
-import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag.Companion.summer
@@ -19,7 +18,6 @@ class Utbetalingsvedtak(
     private val utfall: Boolean,
     private val forbruk: Stønadsdager,
     private val utbetalingsdager: List<Utbetalingsdag>,
-    private val trukketEgenandel: Beløp,
 ) : Vedtak(
     vedtakId = vedtakId,
     sakId = sakId,
@@ -38,7 +36,6 @@ class Utbetalingsvedtak(
             virkningsdato: LocalDate,
             forbruk: Stønadsdager,
             utbetalingsdager: List<Utbetalingsdag>,
-            trukketEgenandel: Beløp,
         ) =
             Utbetalingsvedtak(
                 sakId = sakId,
@@ -48,7 +45,6 @@ class Utbetalingsvedtak(
                 virkningsdato = virkningsdato,
                 forbruk = forbruk,
                 utbetalingsdager = utbetalingsdager,
-                trukketEgenandel = trukketEgenandel,
             )
     }
     override fun accept(visitor: VedtakVisitor) {
@@ -61,12 +57,10 @@ class Utbetalingsvedtak(
             type = type,
         )
 
-        val beløpTilUtbetaling = utbetalingsdager.summer() - trukketEgenandel
         visitor.visitUtbetalingsvedtak(
             utfall = utfall,
             forbruk = forbruk,
-            trukketEgenandel = trukketEgenandel,
-            beløpTilUtbetaling = beløpTilUtbetaling,
+            beløpTilUtbetaling = utbetalingsdager.summer(),
             utbetalingsdager = utbetalingsdager,
         )
 

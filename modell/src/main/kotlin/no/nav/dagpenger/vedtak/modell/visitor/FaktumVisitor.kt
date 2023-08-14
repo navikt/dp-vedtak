@@ -11,6 +11,4 @@ interface FaktumVisitor {
     fun visitDagsats(beløp: Beløp) {}
 
     fun visitAntallStønadsdager(dager: Stønadsdager) {}
-
-    fun visitEgenandel(beløp: Beløp) {}
 }

@@ -105,7 +105,7 @@ internal class PersonMediatorTest {
 
     @Test
     @Disabled("Vi må finne hva vi skal gjøre med rapportering hvis bruker ikke har rammevedtak")
-    fun `Dersom person har sendt rapportering for en periode uten dagpengevedtak, lager vi ikke utbetalingsvedtak??? Dette må vi finne ut av`() {
+    fun `Dersom person har sendt rapportering for en periode uten dagpengevedtak, lager vi ikke utbetalingsvedtak Dette må vi finne ut av`() {
         val dagpengerFraDato = 29 mai 2023
         testRapid.sendTestMessage(
             dagpengerInnvilgetJson(

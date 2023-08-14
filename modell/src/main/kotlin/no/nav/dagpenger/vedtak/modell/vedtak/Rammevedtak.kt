@@ -7,7 +7,6 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.VedtakType.Ramme
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
-import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Egenandel
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Faktum
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.VanligArbeidstidPerDag
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
@@ -46,7 +45,6 @@ class Rammevedtak(
             stønadsdager: Stønadsdager,
             dagpengerettighet: Dagpengerettighet,
             vanligArbeidstidPerDag: Timer,
-            egenandel: Beløp,
         ): Rammevedtak {
             val rettighet = when (dagpengerettighet) {
                 Dagpengerettighet.Ordinær -> Ordinær(utfall = true)
@@ -64,7 +62,6 @@ class Rammevedtak(
                     VanligArbeidstidPerDag(vanligArbeidstidPerDag),
                     Dagsats(dagsats),
                     AntallStønadsdager(stønadsdager),
-                    Egenandel(egenandel),
                 ),
                 rettigheter = listOf(rettighet),
             )

@@ -58,7 +58,6 @@ class RettighetStegTest : No {
                     dagsats = søknadHendelse.dagsats.beløp,
                     stønadsdager = Dagpengeperiode(søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
-                    egenandel = søknadHendelse.egenandel.beløp,
                 ),
             )
         }
@@ -77,7 +76,6 @@ class RettighetStegTest : No {
                     dagsats = søknadHendelse.dagsats.beløp,
                     stønadsdager = Dagpengeperiode(antallUker = søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
-                    egenandel = søknadHendelse.egenandel.beløp,
                 ),
             )
         }
@@ -160,11 +158,6 @@ class RettighetStegTest : No {
             assertEquals(Stønadsdager(dager = dager), gjenståendeStønadsdager)
         }
 
-        Så("skal gjenstående egenandel være {bigdecimal} fra {string}") { egenandel: BigDecimal, virkningsdato: String ->
-            val gjenståendeEgenandel = person.gjenståendeEgenandelFra(LocalDate.parse(virkningsdato, datoformatterer))
-            assertEquals(Beløp.fra(egenandel), gjenståendeEgenandel)
-        }
-
         Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
             assertPersonOpprettet()
             val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
@@ -227,7 +220,6 @@ class RettighetStegTest : No {
         val dagsats: Int,
         val stønadsperiode: Int,
         val vanligArbeidstidPerDag: Double,
-        val egenandel: Int,
     )
 
     private class Inspektør(person: Person) : PersonVisitor {
@@ -242,7 +234,6 @@ class RettighetStegTest : No {
         lateinit var vanligArbeidstidPerDag: Timer
         lateinit var stønadsdager: Stønadsdager
         lateinit var dagsats: Beløp
-        lateinit var egenandel: Beløp
         lateinit var virkningsdato: LocalDate
         lateinit var beløpTilUtbetaling: Beløp
         lateinit var forbruk: Stønadsdager
@@ -287,10 +278,6 @@ class RettighetStegTest : No {
             this.dagsats = beløp
         }
 
-        override fun visitEgenandel(beløp: Beløp) {
-            this.egenandel = beløp
-        }
-
         override fun postVisitVedtak(
             vedtakId: UUID,
             sakId: SakId,
@@ -305,7 +292,6 @@ class RettighetStegTest : No {
         override fun visitUtbetalingsvedtak(
             utfall: Boolean,
             forbruk: Stønadsdager,
-            trukketEgenandel: Beløp,
             beløpTilUtbetaling: Beløp,
             utbetalingsdager: List<Utbetalingsdag>,
 

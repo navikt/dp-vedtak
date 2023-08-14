@@ -44,7 +44,6 @@ internal class SøknadBehandletMottak(
                     "Grunnlag",
                     "Periode",
                     "Fastsatt vanlig arbeidstid",
-                    "egenandel",
                     "barnetillegg",
                 )
             }

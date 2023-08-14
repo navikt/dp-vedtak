@@ -123,7 +123,6 @@ class VedtakApiTest {
         virkningsdato = LocalDate.MAX,
         forbruk = Stønadsdager(10),
         utbetalingsdager = emptyList(),
-        trukketEgenandel = 0.beløp,
     )
 
     private fun rammevedtak() = Rammevedtak.innvilgelse(
@@ -135,6 +134,5 @@ class VedtakApiTest {
         stønadsdager = Stønadsdager(104 * 5),
         dagpengerettighet = Dagpengerettighet.Ordinær,
         vanligArbeidstidPerDag = 8.timer,
-        egenandel = 3500.beløp,
     )
 }

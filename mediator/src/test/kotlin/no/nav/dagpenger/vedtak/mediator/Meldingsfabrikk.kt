@@ -32,7 +32,6 @@ object Meldingsfabrikk {
           "Grunnlag": "500000",
           "Periode": "52",
           "Fastsatt vanlig arbeidstid": "$fastsattVanligArbeidstid",
-          "egenandel": "1500",
           "barnetillegg" : [ {
               "fødselsdato" : "2012-03-03"
           }, {
