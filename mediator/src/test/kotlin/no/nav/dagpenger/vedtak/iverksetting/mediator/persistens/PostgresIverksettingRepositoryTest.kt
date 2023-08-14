@@ -58,6 +58,7 @@ class PostgresIverksettingRepositoryTest {
                     ident = testIdent.identifikator(),
                     vedtakId = vedtakId,
                     behandlingId = UUID.randomUUID(),
+                    sakId = "SAK_NUMMER_1",
                     utbetalingsdager = emptyList(),
                     utfall = UtbetalingsvedtakFattetHendelse.Utfall.Innvilget,
                     vedtakstidspunkt = LocalDateTime.now(),

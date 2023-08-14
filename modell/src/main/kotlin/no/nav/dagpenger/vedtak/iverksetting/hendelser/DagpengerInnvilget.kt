@@ -9,8 +9,9 @@ class DagpengerInnvilget(
     ident: String,
     vedtakId: UUID,
     behandlingId: UUID,
+    sakId: String,
     val vedtakstidspunkt: LocalDateTime,
     val virkningsdato: LocalDate,
-) : VedtakFattetHendelse(meldingsreferanseId, ident, vedtakId, behandlingId) {
+) : VedtakFattetHendelse(meldingsreferanseId, ident, vedtakId, behandlingId, sakId) {
     override fun kontekstMap(): Map<String, String> = mapOf("vedtakId" to vedtakId.toString(), "behandlingId" to behandlingId.toString())
 }

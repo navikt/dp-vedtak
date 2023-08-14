@@ -9,6 +9,7 @@ abstract class VedtakFattetHendelse(
     ident: String,
     val vedtakId: UUID,
     val behandlingId: UUID,
+    val sakId: String,
     aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : Hendelse(meldingsreferanseId, ident, aktivitetslogg) {
     override fun kontekstMap(): Map<String, String> = mapOf("vedtakId" to vedtakId.toString(), "behandlingId" to behandlingId.toString())

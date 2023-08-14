@@ -27,6 +27,7 @@ internal class DagpengerInnvilgetMottak(
                 it.requireKey(
                     "ident",
                     "behandlingId",
+                    "sakId",
                     "vedtakId",
                     "vedtaktidspunkt",
                     "virkningsdato",

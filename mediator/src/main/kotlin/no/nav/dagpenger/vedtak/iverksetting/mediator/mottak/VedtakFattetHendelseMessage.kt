@@ -12,6 +12,7 @@ internal abstract class VedtakFattetHendelseMessage(private val packet: JsonMess
 
     protected val vedtakId = packet["vedtakId"].asUUID()
     protected val behandlingId = packet["behandlingId"].asUUID()
+    protected val sakId = packet["sakId"].asText()
     protected val vedtakstidspunkt = packet["vedtaktidspunkt"].asLocalDateTime()
     protected val virkningsdato = packet["virkningsdato"].asLocalDate()
 }

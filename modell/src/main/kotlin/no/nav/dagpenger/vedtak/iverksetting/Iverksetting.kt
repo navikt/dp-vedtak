@@ -157,6 +157,7 @@ class Iverksetting private constructor(
                 detaljer = mapOf(
                     "vedtakId" to utbetalingsvedtakFattetHendelse.vedtakId,
                     "behandlingId" to utbetalingsvedtakFattetHendelse.behandlingId,
+                    "sakId" to utbetalingsvedtakFattetHendelse.sakId,
                     "vedtakstidspunkt" to utbetalingsvedtakFattetHendelse.vedtakstidspunkt,
                     "virkningsdato" to utbetalingsvedtakFattetHendelse.virkningsdato,
                     "utbetalingsdager" to utbetalingsvedtakFattetHendelse.utbetalingsdager,
@@ -176,6 +177,7 @@ class Iverksetting private constructor(
                 detaljer = mapOf(
                     "vedtakId" to dagpengerInnvilget.vedtakId,
                     "behandlingId" to dagpengerInnvilget.behandlingId,
+                    "sakId" to dagpengerInnvilget.sakId,
                     "vedtakstidspunkt" to dagpengerInnvilget.vedtakstidspunkt,
                     "virkningsdato" to dagpengerInnvilget.virkningsdato,
                     "utfall" to "Innvilget", // TODO: Endre behov til noe som sier at den er innvilget
@@ -191,6 +193,7 @@ class Iverksetting private constructor(
                 detaljer = mapOf(
                     "vedtakId" to dagpengerAvslått.vedtakId,
                     "behandlingId" to dagpengerAvslått.behandlingId,
+                    "sakId" to dagpengerAvslått.sakId,
                     "vedtakstidspunkt" to dagpengerAvslått.vedtakstidspunkt,
                     "virkningsdato" to dagpengerAvslått.virkningsdato,
                     "utfall" to "Avslått", // TODO: Endre behov til noe som sier at den er avslått

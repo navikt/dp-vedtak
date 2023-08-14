@@ -9,11 +9,12 @@ class UtbetalingsvedtakFattetHendelse(
     ident: String,
     vedtakId: UUID,
     behandlingId: UUID,
+    sakId: String,
     val vedtakstidspunkt: LocalDateTime,
     val virkningsdato: LocalDate,
     val utbetalingsdager: List<Utbetalingsdag>,
     val utfall: Utfall,
-) : VedtakFattetHendelse(meldingsreferanseId, ident, vedtakId, behandlingId) {
+) : VedtakFattetHendelse(meldingsreferanseId, ident, vedtakId, behandlingId, sakId) {
     data class Utbetalingsdag(val dato: LocalDate, val beløp: Double)
     enum class Utfall {
         Innvilget,

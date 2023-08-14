@@ -22,6 +22,7 @@ internal class IverksettingTest {
     private val testObservatør = IverksettingObservatør()
     private val vedtakId = UUID.randomUUID()
     private val behandlingId = UUID.randomUUID()
+    private val sakId = "SAKSNUMMER_1"
     private val vedtakstidspunkt = LocalDateTime.now()
     private val virkningsdato = LocalDate.now()
 
@@ -43,6 +44,7 @@ internal class IverksettingTest {
                 ident = ident,
                 vedtakId = vedtakId,
                 behandlingId = behandlingId,
+                sakId = sakId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
             ),
@@ -53,6 +55,7 @@ internal class IverksettingTest {
                 "ident" to ident,
                 "vedtakId" to vedtakId.toString(),
                 "behandlingId" to behandlingId,
+                "sakId" to sakId,
                 "vedtakstidspunkt" to vedtakstidspunkt,
                 "virkningsdato" to virkningsdato,
                 "utfall" to "Innvilget",
@@ -85,6 +88,7 @@ internal class IverksettingTest {
                 ident = ident,
                 vedtakId = vedtakId,
                 behandlingId = behandlingId,
+                sakId = sakId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
             ),
@@ -95,6 +99,7 @@ internal class IverksettingTest {
                 "ident" to ident,
                 "vedtakId" to vedtakId.toString(),
                 "behandlingId" to behandlingId,
+                "sakId" to sakId,
                 "vedtakstidspunkt" to vedtakstidspunkt,
                 "virkningsdato" to virkningsdato,
                 "utfall" to "Avslått",
@@ -127,6 +132,7 @@ internal class IverksettingTest {
                 ident = ident,
                 vedtakId = vedtakId,
                 behandlingId = behandlingId,
+                sakId = sakId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
                 utbetalingsdager = utbetalingsdager(),
@@ -140,6 +146,7 @@ internal class IverksettingTest {
                 "ident" to ident,
                 "vedtakId" to vedtakId.toString(),
                 "behandlingId" to behandlingId,
+                "sakId" to sakId,
                 "vedtakstidspunkt" to vedtakstidspunkt,
                 "virkningsdato" to virkningsdato,
                 "utfall" to "Innvilget",

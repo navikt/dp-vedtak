@@ -15,6 +15,7 @@ internal class UtbetalingsvedtakFattetHendelseMessage(private val packet: JsonMe
             ident = ident,
             vedtakId = vedtakId,
             behandlingId = behandlingId,
+            sakId = sakId,
             vedtakstidspunkt = vedtakstidspunkt,
             virkningsdato = virkningsdato,
             utbetalingsdager = utbetalingsdager(),

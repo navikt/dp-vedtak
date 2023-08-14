@@ -28,6 +28,7 @@ internal class UtbetalingsvedtakFattetMottakTest {
     private val iHendelseMediator = mockk<IHendelseMediator>()
     private val vedtakId = UUID.fromString("df5e6587-a3e3-407c-8202-02f9740a09b0")
     private val behandlingId = UUID.fromString("0AAA66B9-35C2-4398-ACA0-D1D0A9465292")
+    private val sakId = "SAK_NUMMER_1"
     private val ident = "12345678910"
 
     init {
@@ -40,7 +41,7 @@ internal class UtbetalingsvedtakFattetMottakTest {
     fun `Skal lese DagpengerInnvilget hendelser`() {
         val vedtakFattetHendelseSlot = slot<DagpengerInnvilget>()
         every { iHendelseMediator.behandle(capture(vedtakFattetHendelseSlot), any(), any()) } just Runs
-        val fattetvedtakJson = dagpengerInnvilgetHendelse(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId)
+        val fattetvedtakJson = dagpengerInnvilgetHendelse(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId, sakId = sakId)
         testRapid.sendTestMessage(fattetvedtakJson)
 
         verify(exactly = 1) {
@@ -53,6 +54,7 @@ internal class UtbetalingsvedtakFattetMottakTest {
             vedtakFattetHendelse.ident() shouldBe ident
             vedtakFattetHendelse.vedtakId shouldBe vedtakId
             vedtakFattetHendelse.behandlingId shouldBe behandlingId
+            vedtakFattetHendelse.sakId shouldBe sakId
             vedtakFattetHendelse.virkningsdato shouldBe (24 august 2019)
             vedtakFattetHendelse.vedtakstidspunkt shouldBe LocalDateTime.MAX
         }
@@ -62,7 +64,7 @@ internal class UtbetalingsvedtakFattetMottakTest {
     fun `Skal lese DagpengerAvslått hendelser`() {
         val dagpengerAvslåttSlot = slot<DagpengerAvslått>()
         every { iHendelseMediator.behandle(capture(dagpengerAvslåttSlot), any(), any()) } just Runs
-        val fattetvedtakJson = dagpengerAvslåttHendelse(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId)
+        val fattetvedtakJson = dagpengerAvslåttHendelse(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId, sakId = sakId)
         testRapid.sendTestMessage(fattetvedtakJson)
 
         verify(exactly = 1) {
@@ -75,6 +77,7 @@ internal class UtbetalingsvedtakFattetMottakTest {
             vedtakFattetHendelse.ident() shouldBe ident
             vedtakFattetHendelse.vedtakId shouldBe vedtakId
             vedtakFattetHendelse.behandlingId shouldBe behandlingId
+            vedtakFattetHendelse.sakId shouldBe sakId
             vedtakFattetHendelse.virkningsdato shouldBe (24 august 2019)
             vedtakFattetHendelse.vedtakstidspunkt shouldBe LocalDateTime.MAX
         }
@@ -84,7 +87,7 @@ internal class UtbetalingsvedtakFattetMottakTest {
     fun `Skal lese UtbetalingsvedtakFattet hendelser`() {
         val utbetalingVedtakFattetSlot = slot<UtbetalingsvedtakFattetHendelse>()
         every { iHendelseMediator.behandle(capture(utbetalingVedtakFattetSlot), any(), any()) } just Runs
-        val utbetalingVedtakJson = utbetalingVedtakFattet(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId)
+        val utbetalingVedtakJson = utbetalingVedtakFattet(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId, sakId = sakId)
         testRapid.sendTestMessage(utbetalingVedtakJson)
 
         verify(exactly = 1) {
@@ -97,6 +100,7 @@ internal class UtbetalingsvedtakFattetMottakTest {
             utbetalingsvedtakFattet.ident() shouldBe ident
             utbetalingsvedtakFattet.vedtakId shouldBe vedtakId
             utbetalingsvedtakFattet.behandlingId shouldBe behandlingId
+            utbetalingsvedtakFattet.sakId shouldBe sakId
             utbetalingsvedtakFattet.virkningsdato shouldBe (11 juni 2023)
             utbetalingsvedtakFattet.vedtakstidspunkt shouldBe LocalDateTime.MAX
             utbetalingsvedtakFattet.utbetalingsdager.size shouldBe 10

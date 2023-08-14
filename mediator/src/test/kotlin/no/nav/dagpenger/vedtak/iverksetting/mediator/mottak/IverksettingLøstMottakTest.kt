@@ -55,11 +55,13 @@ internal class IverksettingLøstMottakTest {
               "Iverksett": {
                 "vedtakId": "408f11d9-4be8-450a-8b7a-c2f3f9811859",
                 "behandlingId": "0aaa66b9-35c2-4398-aca0-d1d0a9465292",
+                "sakId": "SAK_NUMMER_1",
                 "vedtakstidspunkt": "2019-08-24T14:15:22",
                 "virkningsdato": "2019-08-24",
                 "utfall": "Innvilget"
               },
               "behandlingId": "0aaa66b9-35c2-4398-aca0-d1d0a9465292",
+              "sakId": "SAK_NUMMER_1",
               "vedtakstidspunkt": "2019-08-24T14:15:22",
               "virkningsdato": "2019-08-24",
               "utfall": "Innvilget",

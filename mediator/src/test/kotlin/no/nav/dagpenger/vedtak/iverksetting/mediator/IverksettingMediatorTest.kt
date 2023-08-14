@@ -21,6 +21,7 @@ internal class IverksettingMediatorTest {
     private val testRapid = TestRapid()
     private val vedtakId = UUID.fromString("408F11D9-4BE8-450A-8B7A-C2F3F9811859")
     private val ident = "12345123451"
+    private val sakId = "SAK_NUMMER_1"
     private val iverksettingRepository = InMemoryIverksettingRepository()
 
     init {
@@ -43,7 +44,7 @@ internal class IverksettingMediatorTest {
 
     @Test
     fun `Vedtakfattet hendelse fører til en iverksettelse og behov om iverksetting`() {
-        testRapid.sendTestMessage(dagpengerInnvilgetHendelse(vedtakId, behandlingId = randomUUID(), ident))
+        testRapid.sendTestMessage(dagpengerInnvilgetHendelse(vedtakId, behandlingId = randomUUID(), ident, sakId))
         assertSoftly {
             testRapid.inspektør.size shouldBe 1
             val rammevedtakJson = testRapid.inspektør.message(0)

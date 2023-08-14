@@ -27,6 +27,7 @@ internal class UtbetalingsvedtakFattetMottak(
                 it.requireKey(
                     "ident",
                     "behandlingId",
+                    "sakId",
                     "vedtakId",
                     "vedtaktidspunkt",
                     "virkningsdato",

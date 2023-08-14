@@ -12,6 +12,7 @@ internal class DagpengerInnvilgetMessage(packet: JsonMessage) : VedtakFattetHend
         ident = ident,
         vedtakId = vedtakId,
         behandlingId = behandlingId,
+        sakId = sakId,
         vedtakstidspunkt = vedtakstidspunkt,
         virkningsdato = virkningsdato,
     )

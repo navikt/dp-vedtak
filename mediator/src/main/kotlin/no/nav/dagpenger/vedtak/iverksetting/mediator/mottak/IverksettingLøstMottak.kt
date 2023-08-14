@@ -29,6 +29,7 @@ internal class IverksettingLøstMottak(
                     "iverksettingId",
                     "ident",
                     "behandlingId",
+                    "sakId",
                     "vedtakId",
                     "@løsning",
                     "@id",
