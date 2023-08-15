@@ -26,8 +26,8 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
     val behandlingId: UUID
         get() = packet["behandlingId"].asUUID()
 
-    val sakId: SakId
-        get() = packet["sakId"].asText("SAK_NUMMER_1")
+    private val sakId: SakId
+        get() = packet["sakId"].asText(UUID.randomUUID().toString())
 
     private val hendelse
         get() = when (packet["innvilget"].asBoolean()) {

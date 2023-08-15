@@ -32,7 +32,7 @@ internal class SøknadBehandletMottak(
                 }
                 it.requireKey(
                     "behandlingId",
-                    "sakId",
+                    // "sakId", @todo: Mappe sakId når vi får den fra dp-behandling.
                     "Virkningsdato",
                     "innvilget",
                 )
@@ -40,6 +40,7 @@ internal class SøknadBehandletMottak(
                     Dagpengerettighet.valueOf(rettighetstype.asText())
                 }
                 it.interestedIn(
+                    "sakId",
                     "Dagsats",
                     "Grunnlag",
                     "Periode",
