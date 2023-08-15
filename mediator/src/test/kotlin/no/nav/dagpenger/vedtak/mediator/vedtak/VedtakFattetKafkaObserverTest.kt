@@ -45,6 +45,7 @@ class VedtakFattetKafkaObserverTest {
         json["ident"].asText() shouldBe "1234568901"
         json["behandlingId"]?.asText().shouldNotBeBlank()
         json["vedtakId"].asText().shouldNotBeBlank()
+        json["sakId"].asText().shouldNotBeBlank()
         json["vedtaktidspunkt"].asText().shouldNotBeBlank()
         json["virkningsdato"].asText().shouldNotBeBlank()
     }
@@ -53,7 +54,7 @@ class VedtakFattetKafkaObserverTest {
         utfall: VedtakObserver.Utfall,
     ) = VedtakObserver.VedtakFattet(
         vedtakId = UUID.randomUUID(),
-        sakId = "SAK_NUMMER_1",
+        sakId = UUID.randomUUID().toString(),
         vedtakstidspunkt = LocalDateTime.now(),
         behandlingId = UUID.randomUUID(),
         virkningsdato = LocalDate.now(),

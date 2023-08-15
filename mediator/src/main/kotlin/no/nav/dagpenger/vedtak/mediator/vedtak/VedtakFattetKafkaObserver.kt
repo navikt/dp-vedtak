@@ -26,6 +26,7 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
             val vedtakdetaljer = mapOf(
                 "ident" to ident,
                 "behandlingId" to vedtakFattet.behandlingId.toString(),
+                "sakId" to vedtakFattet.sakId,
                 "vedtakId" to vedtakFattet.vedtakId.toString(),
                 "vedtaktidspunkt" to vedtakFattet.vedtakstidspunkt,
                 "virkningsdato" to vedtakFattet.virkningsdato,
@@ -63,6 +64,7 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                 map = mapOf(
                     "ident" to ident,
                     "behandlingId" to utbetalingsvedtakFattet.behandlingId.toString(),
+                    "sakId" to utbetalingsvedtakFattet.sakId,
                     "vedtakId" to utbetalingsvedtakFattet.vedtakId.toString(),
                     "vedtaktidspunkt" to utbetalingsvedtakFattet.vedtakstidspunkt,
                     "virkningsdato" to utbetalingsvedtakFattet.virkningsdato,
