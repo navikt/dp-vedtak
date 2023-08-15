@@ -32,6 +32,9 @@ components:
             type: string
             format: uuid
             description: Vedtakets interne id
+          sakId:
+            type: string
+            description: Sak id vedtaket er fattet i
           vedtaktidspunkt:
             type: string
             format: date-time
@@ -61,6 +64,9 @@ components:
             type: string
             format: uuid
             description: Vedtakets interne id
+          sakId:
+            type: string
+            description: Sak id vedtaket er fattet i
           vedtaktidspunkt:
             type: string
             format: date-time
@@ -90,6 +96,9 @@ components:
             type: string
             format: uuid
             description: Vedtakets interne id
+          sakId:
+            type: string
+            description: Sak id vedtaket er fattet i
           vedtaktidspunkt:
             type: string
             format: date-time
