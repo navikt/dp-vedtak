@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Vedtak API
   version: 1.0.0
-  description: API for vedtaksdata
+  description: API for å hente alle vedtak knyttet til en person.
   contact:
     name: '#team-dagpenger'
 servers:
@@ -23,16 +23,32 @@ paths:
                   $ref: '#/components/schemas/Vedtak'
           description: OK
       summary: Hent alle vedtak for en gitt person
-      description: Noe greier
+      description: Hent alle vedtak for en gitt person
       security:
         - azureAd: [ ]
       requestBody:
         required: true
         content:
           application/json:
+            example:
+              ident: "12312312311"
             schema:
-              $ref: '#/components/schemas/Vedtak'
+              type: object
+              properties:
+                ident:
+                  type: string
 components:
   schemas:
     Vedtak:
       type: object
+      properties:
+        vedtakId:
+          type: string
+          format: uuid
+        vedtakType:
+          type: string
+          enum:
+            - Ramme
+            - Utbetaling
+            - Avslag
+            - Stans
