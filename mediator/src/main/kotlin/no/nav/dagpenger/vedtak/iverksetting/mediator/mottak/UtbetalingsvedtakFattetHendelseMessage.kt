@@ -18,6 +18,7 @@ internal class UtbetalingsvedtakFattetHendelseMessage(private val packet: JsonMe
             sakId = sakId,
             vedtakstidspunkt = vedtakstidspunkt,
             virkningsdato = virkningsdato,
+            forrigeBehandlingId = forrigeUtbetalingsvedtakBehandlingId(),
             utbetalingsdager = utbetalingsdager(),
             utfall = when (packet.utfall()) {
                 "Innvilget" -> UtbetalingsvedtakFattetHendelse.Utfall.Innvilget
@@ -34,6 +35,8 @@ internal class UtbetalingsvedtakFattetHendelseMessage(private val packet: JsonMe
             beløp = utbetalingsdagJson["beløp"].asDouble(),
         )
     }.toList()
+
+    private fun forrigeUtbetalingsvedtakBehandlingId() = packet["forrigeBehandlingId"].asUUID()
 
     override fun behandle(mediator: IHendelseMediator, context: MessageContext) {
         mediator.behandle(hendelse, this, context)

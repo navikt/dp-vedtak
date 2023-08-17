@@ -34,6 +34,7 @@ internal class UtbetalingsvedtakFattetMottak(
                     "utfall",
                 )
             }
+            validate { it.interestedIn("forrigeBehandlingId") }
         }.register(this)
     }
 
