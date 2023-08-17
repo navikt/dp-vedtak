@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation(project(path = ":modell"))
     implementation(project(path = ":aktivitetslogg"))
+    implementation(project(path = ":openapi"))
 
     implementation(libs.jackson.core)
     implementation(libs.jackson.datatype.jsr310)

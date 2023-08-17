@@ -9,7 +9,8 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import no.nav.dagpenger.vedtak.mediator.api.VedtakForPersonVisitor.VedtakDto
+import no.nav.dagpenger.vedtak.api.models.IdentForesporselDTO
+import no.nav.dagpenger.vedtak.api.models.VedtakDTO
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 
@@ -20,9 +21,9 @@ fun Application.vedtakApi(personRepository: PersonRepository) {
         authenticate("azureAd") {
             route("vedtak") {
                 post {
-                    val identForespørsel = call.receive<IdentForespørsel>()
+                    val identForespørsel = call.receive<IdentForesporselDTO>()
                     val person = personRepository.hent(identForespørsel.ident.tilPersonIdentfikator())
-                    val vedtakListe = mutableListOf<VedtakDto>()
+                    val vedtakListe = mutableListOf<VedtakDTO>()
                     if (person != null) {
                         vedtakListe.addAll(VedtakForPersonVisitor(person).vedtakListeDto())
                     }
