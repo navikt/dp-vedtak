@@ -141,7 +141,7 @@ internal class IverksettingTest {
         )
 
         assertBehov(
-            IverksettingBehov.Iverksett,
+            IverksettingBehov.IverksettUtbetaling,
             forventetDetaljer = mapOf(
                 "ident" to ident,
                 "vedtakId" to vedtakId.toString(),

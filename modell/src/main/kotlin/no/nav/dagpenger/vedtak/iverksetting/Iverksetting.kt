@@ -152,7 +152,7 @@ class Iverksetting private constructor(
     object Mottatt : Tilstand(TilstandNavn.Mottatt) {
         override fun håndter(utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse, iverksetting: Iverksetting) {
             utbetalingsvedtakFattetHendelse.behov(
-                type = IverksettingBehov.Iverksett,
+                type = IverksettingBehov.IverksettUtbetaling,
                 melding = "Sender behov for å iverksette utbetalingsvedtak",
                 detaljer = mapOf(
                     "vedtakId" to utbetalingsvedtakFattetHendelse.vedtakId,

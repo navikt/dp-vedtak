@@ -4,4 +4,5 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitet
 
 enum class IverksettingBehov : Aktivitet.Behov.Behovtype {
     Iverksett,
+    IverksettUtbetaling,
 }
