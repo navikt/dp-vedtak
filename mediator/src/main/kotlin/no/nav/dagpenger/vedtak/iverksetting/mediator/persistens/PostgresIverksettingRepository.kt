@@ -82,12 +82,14 @@ internal class PostgresIverksettingRepository(private val dataSource: DataSource
 
         enum class IverksettingBehovDto {
             Iverksett,
+            IverksettUtbetaling,
         }
 
         override fun map(behovNavn: String?): Aktivitet.Behov.Behovtype {
             val behov = requireNotNull(behovNavn) { "Forventer at behov navn er satt" }
             return when (IverksettingBehovDto.valueOf(behov)) {
                 IverksettingBehovDto.Iverksett -> IverksettingBehov.Iverksett
+                IverksettingBehovDto.IverksettUtbetaling -> IverksettingBehov.IverksettUtbetaling
             }
         }
     }
