@@ -4,6 +4,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
+import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.post
@@ -18,6 +19,8 @@ fun Application.vedtakApi(personRepository: PersonRepository) {
     konfigurerApi()
 
     routing {
+        swaggerUI(path = "openapi", swaggerFile = "vedtak-api.yaml")
+
         authenticate("azureAd") {
             route("vedtak") {
                 post {
