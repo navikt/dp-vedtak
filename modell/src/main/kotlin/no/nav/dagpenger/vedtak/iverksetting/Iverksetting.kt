@@ -160,6 +160,7 @@ class Iverksetting private constructor(
                     "sakId" to utbetalingsvedtakFattetHendelse.sakId,
                     "vedtakstidspunkt" to utbetalingsvedtakFattetHendelse.vedtakstidspunkt,
                     "virkningsdato" to utbetalingsvedtakFattetHendelse.virkningsdato,
+                    // TODO: "forrigeBehandlingId" to utbetalingsvedtakFattetHendelse.forrigeBehandlingId,
                     "utbetalingsdager" to utbetalingsvedtakFattetHendelse.utbetalingsdager,
                     "utfall" to utbetalingsvedtakFattetHendelse.utfall.name,
                 ),

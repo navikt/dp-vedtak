@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.iverksetting.mediator.mottak
 
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -14,7 +15,8 @@ import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerInnvilget
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.dagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.dagpengerInnvilgetHendelse
-import no.nav.dagpenger.vedtak.iverksetting.mediator.utbetalingVedtakFattet
+import no.nav.dagpenger.vedtak.iverksetting.mediator.førsteUtbetalingsvedtakFattet
+import no.nav.dagpenger.vedtak.iverksetting.mediator.utbetalingsvedtakFattetNårDetFinnesTidligereUtbetalinger
 import no.nav.dagpenger.vedtak.juni
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -84,10 +86,10 @@ internal class UtbetalingsvedtakFattetMottakTest {
     }
 
     @Test
-    fun `Skal lese UtbetalingsvedtakFattet hendelser`() {
+    fun `Skal lese UtbetalingsvedtakFattet hendelser - førstegangsutbetaling`() {
         val utbetalingVedtakFattetSlot = slot<UtbetalingsvedtakFattetHendelse>()
         every { iHendelseMediator.behandle(capture(utbetalingVedtakFattetSlot), any(), any()) } just Runs
-        val utbetalingVedtakJson = utbetalingVedtakFattet(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId, sakId = sakId)
+        val utbetalingVedtakJson = førsteUtbetalingsvedtakFattet(ident = ident, vedtakId = vedtakId, behandlingId = behandlingId, sakId = sakId)
         testRapid.sendTestMessage(utbetalingVedtakJson)
 
         verify(exactly = 1) {
@@ -105,6 +107,39 @@ internal class UtbetalingsvedtakFattetMottakTest {
             utbetalingsvedtakFattet.vedtakstidspunkt shouldBe LocalDateTime.MAX
             utbetalingsvedtakFattet.utbetalingsdager.size shouldBe 10
             utbetalingsvedtakFattet.utfall shouldBe UtbetalingsvedtakFattetHendelse.Utfall.Innvilget
+            utbetalingsvedtakFattet.forrigeBehandlingId shouldBe null
+        }
+    }
+
+    @Test
+    fun `Skal lese UtbetalingsvedtakFattet hendelser - ikke førstegangsutbetaling`() {
+        val utbetalingVedtakFattetSlot = slot<UtbetalingsvedtakFattetHendelse>()
+        every { iHendelseMediator.behandle(capture(utbetalingVedtakFattetSlot), any(), any()) } just Runs
+        val utbetalingVedtakJson = utbetalingsvedtakFattetNårDetFinnesTidligereUtbetalinger(
+            ident = ident,
+            vedtakId = vedtakId,
+            behandlingId = behandlingId,
+            sakId = sakId,
+            forrigeBehandlingId = UUID.randomUUID(),
+        )
+        testRapid.sendTestMessage(utbetalingVedtakJson)
+
+        verify(exactly = 1) {
+            iHendelseMediator.behandle(any<UtbetalingsvedtakFattetHendelse>(), any(), any())
+        }
+
+        assertSoftly {
+            utbetalingVedtakFattetSlot.isCaptured shouldBe true
+            val utbetalingsvedtakFattet = utbetalingVedtakFattetSlot.captured
+            utbetalingsvedtakFattet.ident() shouldBe ident
+            utbetalingsvedtakFattet.vedtakId shouldBe vedtakId
+            utbetalingsvedtakFattet.behandlingId shouldBe behandlingId
+            utbetalingsvedtakFattet.sakId shouldBe sakId
+            utbetalingsvedtakFattet.virkningsdato shouldBe (11 juni 2023)
+            utbetalingsvedtakFattet.vedtakstidspunkt shouldBe LocalDateTime.MAX
+            utbetalingsvedtakFattet.utbetalingsdager.size shouldBe 10
+            utbetalingsvedtakFattet.utfall shouldBe UtbetalingsvedtakFattetHendelse.Utfall.Innvilget
+            utbetalingsvedtakFattet.forrigeBehandlingId shouldNotBe null
         }
     }
 }

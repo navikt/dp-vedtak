@@ -18,6 +18,7 @@ class Utbetalingsvedtak(
     private val utfall: Boolean,
     private val forbruk: Stønadsdager,
     private val utbetalingsdager: List<Utbetalingsdag>,
+    private val forrigeBehandlingId: UUID?,
 ) : Vedtak(
     vedtakId = vedtakId,
     sakId = sakId,
@@ -34,6 +35,7 @@ class Utbetalingsvedtak(
             utfall: Boolean,
             vedtakstidspunkt: LocalDateTime,
             virkningsdato: LocalDate,
+            forrigeBehandlingId: UUID?,
             forbruk: Stønadsdager,
             utbetalingsdager: List<Utbetalingsdag>,
         ) =
@@ -43,6 +45,7 @@ class Utbetalingsvedtak(
                 utfall = utfall,
                 vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
+                forrigeBehandlingId = forrigeBehandlingId,
                 forbruk = forbruk,
                 utbetalingsdager = utbetalingsdager,
             )
@@ -62,6 +65,7 @@ class Utbetalingsvedtak(
             forbruk = forbruk,
             beløpTilUtbetaling = utbetalingsdager.summer(),
             utbetalingsdager = utbetalingsdager,
+            forrigeBehandlingId = null,
         )
 
         visitor.postVisitVedtak(

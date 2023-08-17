@@ -12,7 +12,6 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
-import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag.Companion.summer
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.time.LocalDateTime
@@ -151,6 +150,7 @@ class Behandling(
                 utfall = resultat.utfall,
                 vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                 virkningsdato = rapporteringshendelse.endInclusive,
+                forrigeBehandlingId = null, // TODO: Må finne behandlingId til det forrige utbetalingsvedtaket i saken
                 forbruk = Stønadsdager(resultat.forbruksdager.size),
                 utbetalingsdager = resultat.utbetalingsdager,
             )
