@@ -5,6 +5,7 @@ import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.asLocalDate
+import java.util.UUID
 
 internal class UtbetalingsvedtakFattetHendelseMessage(private val packet: JsonMessage) :
     VedtakFattetHendelseMessage(packet) {
@@ -36,7 +37,15 @@ internal class UtbetalingsvedtakFattetHendelseMessage(private val packet: JsonMe
         )
     }.toList()
 
-    private fun forrigeUtbetalingsvedtakBehandlingId() = packet["forrigeBehandlingId"].asUUID()
+    private fun forrigeUtbetalingsvedtakBehandlingId(): UUID? {
+        val forrigeBehandlingIdString = packet["forrigeBehandlingId"].asText()
+        val forrigeBehandlingId: UUID? = if (forrigeBehandlingIdString != "") {
+            forrigeBehandlingIdString.let { UUID.fromString(it) }
+        } else {
+            null
+        }
+        return forrigeBehandlingId
+    }
 
     override fun behandle(mediator: IHendelseMediator, context: MessageContext) {
         mediator.behandle(hendelse, this, context)
