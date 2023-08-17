@@ -50,7 +50,7 @@ jackson-core = { group = "com.fasterxml.jackson.core", name = "jackson-core", ve
 jackson-blackbird = { group = "com.fasterxml.jackson.module", name = "jackson-module-blackbird", version.ref = "jackson" }
 
 urnlib = { group = "de.slub-dresden", name = "urnlib", version = "2.0.1" }
-rapids-and-rivers = { group = "com.github.navikt", name = "rapids-and-rivers", version = "2023050308441683096263.f5a276d7bd28" }
+rapids-and-rivers = { group = "com.github.navikt", name = "rapids-and-rivers", version = "2023080113411690890096.310ed8e5ed93" }
 kotlin-logging = { group = "io.github.microutils", name = "kotlin-logging", version = "3.0.5" }
 
 [plugins]

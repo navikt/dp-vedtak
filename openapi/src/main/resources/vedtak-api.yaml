@@ -33,12 +33,16 @@ paths:
             example:
               ident: "12312312311"
             schema:
-              type: object
-              properties:
-                ident:
-                  type: string
+              $ref: '#/components/schemas/IdentForesporsel'
 components:
   schemas:
+    IdentForesporsel:
+      type: object
+      required:
+        - ident
+      properties:
+        ident:
+          type: string
     Vedtak:
       type: object
       properties:

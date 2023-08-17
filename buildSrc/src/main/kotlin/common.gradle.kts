@@ -10,7 +10,9 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven("https://www.jitpack.io")
+    maven {
+        url = uri("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
+    }
 }
 
 dependencies {

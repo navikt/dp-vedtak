@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.mediator.api
 
+import no.nav.dagpenger.vedtak.api.models.VedtakDTO
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
@@ -9,7 +10,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class VedtakForPersonVisitor(person: Person) : PersonVisitor {
-    private val vedtakListeDto = mutableListOf<VedtakDto>()
+    private val vedtakListeDto = mutableListOf<VedtakDTO>()
 
     init {
         person.accept(this)
@@ -26,9 +27,7 @@ class VedtakForPersonVisitor(person: Person) : PersonVisitor {
         type: Vedtak.VedtakType,
     ) {
         this.vedtakListeDto.add(
-            VedtakDto(vedtakId = vedtakId, vedtakType = type), // TODO: Lag dto for vedtakType, ikke bruk vedtaktype eksplisitt
+            VedtakDTO(vedtakId = vedtakId, vedtakType = VedtakDTO.VedtakType.valueOf(type.name)),
         )
     }
-
-    data class VedtakDto(val vedtakId: UUID, val vedtakType: Vedtak.VedtakType)
 }
