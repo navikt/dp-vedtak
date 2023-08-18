@@ -126,7 +126,56 @@ internal class IverksettingTest {
     }
 
     @Test
-    fun `Skal starte iverksetting når utbetalingsvedtak fattes`() {
+    fun `Skal starte iverksetting når utbetalingsvedtak fattes med førstegangsutbetaling`() {
+        iverksetting.håndter(
+            UtbetalingsvedtakFattetHendelse(
+                meldingsreferanseId = UUID.randomUUID(),
+                ident = ident,
+                vedtakId = vedtakId,
+                behandlingId = behandlingId,
+                sakId = sakId,
+                vedtakstidspunkt = vedtakstidspunkt,
+                virkningsdato = virkningsdato,
+                forrigeBehandlingId = null,
+                utbetalingsdager = utbetalingsdager(),
+                utfall = UtbetalingsvedtakFattetHendelse.Utfall.Innvilget,
+            ),
+        )
+
+        assertBehov(
+            IverksettingBehov.IverksettUtbetaling,
+            forventetDetaljer = mapOf(
+                "ident" to ident,
+                "vedtakId" to vedtakId.toString(),
+                "behandlingId" to behandlingId,
+                "sakId" to sakId,
+                "vedtakstidspunkt" to vedtakstidspunkt,
+                "virkningsdato" to virkningsdato,
+                "utfall" to "Innvilget",
+                "utbetalingsdager" to utbetalingsdager(),
+                "iverksettingId" to inspektør.iverksettingId.toString(),
+                "tilstand" to "Mottatt",
+            ),
+        )
+
+        iverksetting.håndter(
+            IverksattHendelse(
+                meldingsreferanseId = UUID.randomUUID(),
+                ident = ident,
+                iverksettingId = inspektør.iverksettingId,
+                vedtakId = inspektør.vedtakId,
+            ),
+        )
+
+        assertTilstander(
+            Mottatt,
+            AvventerIverksetting,
+            Iverksatt,
+        )
+    }
+
+    @Test
+    fun `Skal starte iverksetting når utbetalingsvedtak fattes etter førstegangsutbetaling`() {
         iverksetting.håndter(
             UtbetalingsvedtakFattetHendelse(
                 meldingsreferanseId = UUID.randomUUID(),
@@ -151,6 +200,7 @@ internal class IverksettingTest {
                 "sakId" to sakId,
                 "vedtakstidspunkt" to vedtakstidspunkt,
                 "virkningsdato" to virkningsdato,
+                "forrigeBehandlingId" to forrigeBhandlingId,
                 "utfall" to "Innvilget",
                 "utbetalingsdager" to utbetalingsdager(),
                 "iverksettingId" to inspektør.iverksettingId.toString(),

@@ -50,7 +50,10 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
         }
     }
 
-    override fun utbetalingsvedtakFattet(ident: String, utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet) {
+    override fun utbetalingsvedtakFattet(
+        ident: String,
+        utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet,
+    ) {
         withLoggingContext(
             mapOf(
                 "behandlingId" to utbetalingsvedtakFattet.behandlingId.toString(),
@@ -59,7 +62,37 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
         ) {
             sikkerlogger.info { "Utbetalingsvedtak for $ident fattet. Vedtak: $utbetalingsvedtakFattet" }
 
-            val message = JsonMessage.newMessage(
+            val message = lagJsonMessageForFattetUtbetalingsvedtak(ident, utbetalingsvedtakFattet)
+
+            rapidsConnection.publish(
+                key = ident,
+                message = message.toJson(),
+            )
+            logger.info { "Utbetalingsvedtak fattet publisert." }
+        }
+    }
+
+    private fun lagJsonMessageForFattetUtbetalingsvedtak(
+        ident: String,
+        utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet,
+    ): JsonMessage {
+        return if (utbetalingsvedtakFattet.forrigeBehandlingId != null) {
+            JsonMessage.newMessage(
+                eventName = "utbetaling_vedtak_fattet",
+                map = mapOf(
+                    "ident" to ident,
+                    "behandlingId" to utbetalingsvedtakFattet.behandlingId.toString(),
+                    "sakId" to utbetalingsvedtakFattet.sakId,
+                    "vedtakId" to utbetalingsvedtakFattet.vedtakId.toString(),
+                    "vedtaktidspunkt" to utbetalingsvedtakFattet.vedtakstidspunkt,
+                    "virkningsdato" to utbetalingsvedtakFattet.virkningsdato,
+                    "forrigeBehandlingId" to utbetalingsvedtakFattet.forrigeBehandlingId!!,
+                    "utbetalingsdager" to utbetalingsvedtakFattet.utbetalingsdager,
+                    "utfall" to utbetalingsvedtakFattet.utfall.name,
+                ),
+            )
+        } else {
+            JsonMessage.newMessage(
                 eventName = "utbetaling_vedtak_fattet",
                 map = mapOf(
                     "ident" to ident,
@@ -72,12 +105,6 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
                     "utfall" to utbetalingsvedtakFattet.utfall.name,
                 ),
             )
-
-            rapidsConnection.publish(
-                key = ident,
-                message = message.toJson(),
-            )
-            logger.info { "Utbetalingsvedtak fattet publisert." }
         }
     }
 }

@@ -18,7 +18,7 @@ class VedtakFattetKafkaObserverTest {
     private val vedtakFattetKafkaObserver = VedtakFattetKafkaObserver(testRapid)
 
     @Test
-    fun `Skal sende ut melding om at vedtak er fattet på rapiden`() {
+    fun `Skal sende ut melding på rapiden om at vedtak er fattet`() {
         vedtakFattetKafkaObserver.vedtakFattet(
             ident = "1234568901",
             vedtakFattet(utfall = Innvilget),
@@ -41,23 +41,57 @@ class VedtakFattetKafkaObserverTest {
         }
     }
 
+    @Test
+    fun `Skal sende ut melding på rapiden om at utbetalingsvedtak er fattet`() {
+        vedtakFattetKafkaObserver.utbetalingsvedtakFattet(
+            ident = "1234568901",
+            utbetalingsvedtakFattet(utfall = Innvilget),
+        )
+
+        vedtakFattetKafkaObserver.utbetalingsvedtakFattet(
+            ident = "1234568901",
+            utbetalingsvedtakFattet(utfall = Avslått),
+        )
+
+        testRapid.inspektør.size shouldBe 2
+        val message1 = testRapid.inspektør.message(0)
+        val message2 = testRapid.inspektør.message(1)
+
+        assertSoftly {
+            message1["@event_name"].asText() shouldBe "utbetaling_vedtak_fattet"
+            assertVedtakInformasjon(message1)
+            message2["@event_name"].asText() shouldBe "utbetaling_vedtak_fattet"
+            assertVedtakInformasjon(message2)
+        }
+        message1["forrigeBehandlingId"]?.asText().shouldNotBeBlank()
+    }
+
     private fun assertVedtakInformasjon(json: JsonNode) {
         json["ident"].asText() shouldBe "1234568901"
-        json["behandlingId"]?.asText().shouldNotBeBlank()
+        json["behandlingId"].asText().shouldNotBeBlank()
         json["vedtakId"].asText().shouldNotBeBlank()
         json["sakId"].asText().shouldNotBeBlank()
         json["vedtaktidspunkt"].asText().shouldNotBeBlank()
         json["virkningsdato"].asText().shouldNotBeBlank()
     }
 
-    private fun vedtakFattet(
-        utfall: VedtakObserver.Utfall,
-    ) = VedtakObserver.VedtakFattet(
+    private fun vedtakFattet(utfall: VedtakObserver.Utfall) = VedtakObserver.VedtakFattet(
         vedtakId = UUID.randomUUID(),
         sakId = UUID.randomUUID().toString(),
         vedtakstidspunkt = LocalDateTime.now(),
         behandlingId = UUID.randomUUID(),
         virkningsdato = LocalDate.now(),
+        utfall = utfall,
+    )
+
+    private fun utbetalingsvedtakFattet(utfall: VedtakObserver.Utfall) = VedtakObserver.UtbetalingsvedtakFattet(
+        vedtakId = UUID.randomUUID(),
+        sakId = UUID.randomUUID().toString(),
+        vedtakstidspunkt = LocalDateTime.now(),
+        behandlingId = UUID.randomUUID(),
+        virkningsdato = LocalDate.now(),
+        forrigeBehandlingId = UUID.randomUUID(),
+        utbetalingsdager = emptyList(),
         utfall = utfall,
     )
 }
