@@ -3,7 +3,6 @@ package no.nav.dagpenger.vedtak.cucumber
 import com.fasterxml.jackson.annotation.JsonFormat
 import io.cucumber.datatable.DataTable
 import io.cucumber.java8.No
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.SakId
@@ -23,6 +22,7 @@ import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Rettighet
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -54,7 +54,12 @@ class RettighetStegTest : No {
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
-                    dagpengerettighet = søknadHendelse.dagpengerettighet,
+                    hovedrettighet = when (søknadHendelse.dagpengerettighet) {
+                        "Ordinær" -> Ordinær(true)
+                        "Permittering" -> Permittering(true)
+                        "PermitteringFraFiskeindustrien" -> PermitteringFraFiskeindustrien(true)
+                        else -> throw IllegalArgumentException("Hvilken rettighet skal $this mappes til?")
+                    },
                     dagsats = søknadHendelse.dagsats.beløp,
                     stønadsdager = Dagpengeperiode(søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
@@ -72,7 +77,12 @@ class RettighetStegTest : No {
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
-                    dagpengerettighet = søknadHendelse.dagpengerettighet,
+                    hovedrettighet = when (søknadHendelse.dagpengerettighet) {
+                        "Ordinær" -> Ordinær(true)
+                        "Permittering" -> Permittering(true)
+                        "PermitteringFraFiskeindustrien" -> PermitteringFraFiskeindustrien(true)
+                        else -> throw IllegalArgumentException("Hvilken rettighet skal $this mappes til?")
+                    },
                     dagsats = søknadHendelse.dagsats.beløp,
                     stønadsdager = Dagpengeperiode(antallUker = søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
@@ -91,7 +101,12 @@ class RettighetStegTest : No {
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
-                    dagpengerettighet = søknadHendelse.dagpengerettighet,
+                    hovedrettighet = when (søknadHendelse.dagpengerettighet) {
+                        "Ordinær" -> Ordinær(false)
+                        "Permittering" -> Permittering(false)
+                        "PermitteringFraFiskeindustrien" -> PermitteringFraFiskeindustrien(false)
+                        else -> throw IllegalArgumentException("Hvilken rettighet skal $this mappes til?")
+                    },
                 ),
             )
         }
@@ -116,7 +131,7 @@ class RettighetStegTest : No {
         }
 
         Så("vedtaket har dagpengerettighet {string}") { dagpengerettighet: String ->
-            assertEquals(Dagpengerettighet.valueOf(dagpengerettighet), inspektør.dagpengerettighet)
+            assertEquals(Rettighet.RettighetType.valueOf(dagpengerettighet), inspektør.dagpengerettighet)
         }
 
         Så("vedtaket har virkningsdato {string}") { virkningsdato: String ->
@@ -203,7 +218,7 @@ class RettighetStegTest : No {
         val sakId: SakId = "SAK_NUMMER_1",
         val fødselsnummer: String,
         val behandlingId: String,
-        val dagpengerettighet: Dagpengerettighet,
+        val dagpengerettighet: String,
         val utfall: Boolean,
         @JsonFormat(pattern = "dd.MM.yyyy")
         val virkningsdato: LocalDate,
@@ -216,7 +231,7 @@ class RettighetStegTest : No {
         val utfall: Boolean,
         @JsonFormat(pattern = "dd.MM.yyyy")
         val virkningsdato: LocalDate,
-        val dagpengerettighet: Dagpengerettighet,
+        val dagpengerettighet: String,
         val dagsats: Int,
         val stønadsperiode: Int,
         val vanligArbeidstidPerDag: Double,
@@ -229,7 +244,7 @@ class RettighetStegTest : No {
 
         private var vedtakId: UUID? = null
         lateinit var sakId: SakId
-        lateinit var dagpengerettighet: Dagpengerettighet
+        lateinit var dagpengerettighet: Rettighet.RettighetType
         lateinit var behandlingId: UUID
         lateinit var vanligArbeidstidPerDag: Timer
         lateinit var stønadsdager: Stønadsdager
@@ -255,15 +270,15 @@ class RettighetStegTest : No {
         }
 
         override fun visitOrdinær(ordinær: Ordinær) {
-            this.dagpengerettighet = Dagpengerettighet.Ordinær
+            this.dagpengerettighet = ordinær.type
         }
 
         override fun visitPermitteringFraFiskeindustrien(permitteringFraFiskeindustrien: PermitteringFraFiskeindustrien) {
-            this.dagpengerettighet = Dagpengerettighet.PermitteringFraFiskeindustrien
+            this.dagpengerettighet = permitteringFraFiskeindustrien.type
         }
 
         override fun visitPermittering(permittering: Permittering) {
-            this.dagpengerettighet = Dagpengerettighet.Permittering
+            this.dagpengerettighet = permittering.type
         }
 
         override fun visitAntallStønadsdager(dager: Stønadsdager) {

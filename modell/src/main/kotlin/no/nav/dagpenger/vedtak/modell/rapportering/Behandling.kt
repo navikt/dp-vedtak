@@ -2,7 +2,6 @@ package no.nav.dagpenger.vedtak.modell.rapportering
 
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent.Companion.summer
@@ -13,6 +12,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.IngenRettighet
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -50,12 +50,13 @@ class Behandling(
     private fun fravær(): (Dag) -> Boolean = { it.fravær() }
     private fun dagpengerRettighetsdag(): (Dag) -> Boolean =
         {
-            dagpengerettighet(it) != Dagpengerettighet.Ingen
+            val rettighetsdag = dagpengerettighet(it)
+            rettighetsdag != IngenRettighet && rettighetsdag.utfall
         }
 
     private fun dagpengerettighet(dag: Dag) =
-        kotlin.runCatching { person.vedtakHistorikk.dagpengerettighetHistorikk.get(dag.dato()) }
-            .getOrDefault(Dagpengerettighet.Ingen)
+        kotlin.runCatching { person.vedtakHistorikk.hovedrettighetHistorikk.get(dag.dato()) }
+            .getOrDefault(IngenRettighet)
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         rapporteringshendelse.kontekst(this)
@@ -94,7 +95,7 @@ class Behandling(
             val arbeidedeTimer = behandling.rettighetsdagerUtenFravær.map { it.arbeidstimer() }.summer()
 
             val terskelProsent: Prosent = behandling.tellendeRapporteringsdager.map {
-                TaptArbeidstidTerskel.terskelFor(behandling.dagpengerettighet(it), it.dato())
+                TaptArbeidstidTerskel.terskelFor(behandling.dagpengerettighet(it).type, it.dato())
             }.summer() / behandling.tellendeRapporteringsdager.size.toDouble()
 
             val terskelTimer: Timer = terskelProsent av behandling.vanligArbeidstid

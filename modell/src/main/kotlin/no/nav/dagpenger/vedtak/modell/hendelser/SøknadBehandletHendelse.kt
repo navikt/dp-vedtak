@@ -1,13 +1,13 @@
 package no.nav.dagpenger.vedtak.modell.hendelser
 
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.vedtak.Avslag.Companion.avslag
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak.Companion.innvilgelse
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Hovedrettighet
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -31,7 +31,7 @@ class DagpengerInnvilgetHendelse(
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
-    private val dagpengerettighet: Dagpengerettighet,
+    private val hovedrettighet: Hovedrettighet,
     private val dagsats: Beløp,
     private val stønadsdager: Stønadsdager,
     private val vanligArbeidstidPerDag: Timer,
@@ -50,7 +50,7 @@ class DagpengerInnvilgetHendelse(
         virkningsdato = virkningsdato,
         dagsats = dagsats,
         stønadsdager = stønadsdager,
-        dagpengerettighet = dagpengerettighet,
+        hovedrettighet = hovedrettighet,
         vanligArbeidstidPerDag = vanligArbeidstidPerDag,
     )
 
@@ -64,7 +64,7 @@ class DagpengerAvslåttHendelse(
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
-    private val dagpengerettighet: Dagpengerettighet,
+    private val hovedrettighet: Hovedrettighet,
 ) : SøknadBehandletHendelse(
     meldingsreferanseId = meldingsreferanseId,
     sakId = sakId,
@@ -78,7 +78,7 @@ class DagpengerAvslåttHendelse(
         behandlingId = behandlingId,
         vedtakstidspunkt = vedtakstidspunkt,
         virkningsdato = virkningsdato,
-        dagpengerettighet = dagpengerettighet,
+        dagpengerettighet = hovedrettighet,
     )
     override fun kontekstMap(): Map<String, String> = emptyMap()
 }

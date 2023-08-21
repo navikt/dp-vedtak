@@ -9,7 +9,6 @@ import kotliquery.using
 import no.nav.dagpenger.vedtak.assertDeepEquals
 import no.nav.dagpenger.vedtak.db.Postgres.withMigratedDb
 import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
@@ -20,6 +19,7 @@ import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -61,7 +61,7 @@ class PostgresPersonRepositoryTest {
                 behandlingId = UUID.randomUUID(),
                 vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                 virkningsdato = idag,
-                dagpengerettighet = Dagpengerettighet.Ordinær,
+                hovedrettighet = Ordinær(true),
                 dagsats = 800.beløp,
                 stønadsdager = Dagpengeperiode(52).tilStønadsdager(),
                 vanligArbeidstidPerDag = 8.timer,
@@ -129,7 +129,7 @@ class PostgresPersonRepositoryTest {
                 behandlingId = UUID.randomUUID(),
                 vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                 virkningsdato = idag,
-                dagpengerettighet = Dagpengerettighet.Ordinær,
+                hovedrettighet = Ordinær(false),
             ),
         )
 

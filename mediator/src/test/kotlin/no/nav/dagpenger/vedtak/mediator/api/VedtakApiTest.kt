@@ -14,7 +14,6 @@ import no.nav.dagpenger.vedtak.mediator.api.TestApplication.autentisert
 import no.nav.dagpenger.vedtak.mediator.api.TestApplication.testAzureAdToken
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
@@ -23,6 +22,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -132,7 +132,7 @@ class VedtakApiTest {
         virkningsdato = LocalDate.MAX,
         dagsats = 1000.beløp,
         stønadsdager = Stønadsdager(104 * 5),
-        dagpengerettighet = Dagpengerettighet.Ordinær,
+        hovedrettighet = Ordinær(true),
         vanligArbeidstidPerDag = 8.timer,
     )
 }

@@ -16,12 +16,22 @@ interface Rettighet {
 }
 
 abstract class Hovedrettighet() : Rettighet
+
+internal object IngenRettighet : Hovedrettighet() {
+    override val utfall: Boolean
+        get() = false
+    override val type: Rettighet.RettighetType
+        get() = throw IllegalArgumentException("Ingen rettighet har ingen type")
+
+    override fun accept(visitor: RettighetVisitor) {}
+}
+
 class Ordinær(
     override val utfall: Boolean,
 ) : Hovedrettighet() {
+
     override val type: Rettighet.RettighetType
         get() = Rettighet.RettighetType.Ordinær
-
     override fun accept(visitor: RettighetVisitor) {
         visitor.visitOrdinær(this)
     }

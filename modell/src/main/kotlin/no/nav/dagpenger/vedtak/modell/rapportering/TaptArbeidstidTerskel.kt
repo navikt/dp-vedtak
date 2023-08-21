@@ -1,32 +1,26 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Rettighet
 import java.time.LocalDate
 
 internal object TaptArbeidstidTerskel {
 
-    private val terskler: Map<Dagpengerettighet, TemporalCollection<Prosent>> = mapOf(
-        Dagpengerettighet.Ordinær to TemporalCollection<Prosent>().apply {
+    private val terskler: Map<Rettighet.RettighetType, TemporalCollection<Prosent>> = mapOf(
+        Rettighet.RettighetType.Ordinær to TemporalCollection<Prosent>().apply {
             put(
                 LocalDate.of(2022, 4, 1),
                 Prosent(50),
             )
         },
-        Dagpengerettighet.ForskutterteLønnsgarantimidler to TemporalCollection<Prosent>().apply {
+        Rettighet.RettighetType.Permittering to TemporalCollection<Prosent>().apply {
             put(
                 LocalDate.of(2022, 4, 1),
                 Prosent(50),
             )
         },
-        Dagpengerettighet.Permittering to TemporalCollection<Prosent>().apply {
-            put(
-                LocalDate.of(2022, 4, 1),
-                Prosent(50),
-            )
-        },
-        Dagpengerettighet.PermitteringFraFiskeindustrien to TemporalCollection<Prosent>().apply {
+        Rettighet.RettighetType.PermitteringFraFiskeindustrien to TemporalCollection<Prosent>().apply {
             put(
                 LocalDate.of(2012, 7, 1),
                 Prosent(40),
@@ -35,7 +29,7 @@ internal object TaptArbeidstidTerskel {
 
     )
 
-    fun terskelFor(dagpengerettighet: Dagpengerettighet, dato: LocalDate): Prosent =
+    fun terskelFor(dagpengerettighet: Rettighet.RettighetType, dato: LocalDate): Prosent =
         terskler[dagpengerettighet]?.get(dato)
             ?: throw IllegalArgumentException("Fant ikke terskel for dato $dato og rettighet $dagpengerettighet")
 }

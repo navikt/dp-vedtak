@@ -3,8 +3,8 @@ package no.nav.dagpenger.vedtak.mediator.mottak
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Rettighet
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -37,7 +37,8 @@ internal class SøknadBehandletMottak(
                     "innvilget",
                 )
                 it.interestedIn("Rettighetstype") { rettighetstype ->
-                    Dagpengerettighet.valueOf(rettighetstype.asText())
+                    // todo: Ikke binde seg til enum så langt ute fra modellen
+                    Rettighet.RettighetType.valueOf(rettighetstype.asText())
                 }
                 it.interestedIn(
                     "sakId",

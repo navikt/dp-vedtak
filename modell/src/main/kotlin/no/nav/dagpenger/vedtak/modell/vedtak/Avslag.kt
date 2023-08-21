@@ -1,9 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
-import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
-import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
-import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Hovedrettighet
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Rettighet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.time.LocalDate
@@ -32,21 +29,14 @@ class Avslag(
             sakId: String,
             vedtakstidspunkt: LocalDateTime,
             virkningsdato: LocalDate,
-            dagpengerettighet: Dagpengerettighet,
+            dagpengerettighet: Hovedrettighet,
         ): Avslag {
-            val rettighet = when (dagpengerettighet) {
-                Dagpengerettighet.Ordinær -> Ordinær(utfall = false)
-                Dagpengerettighet.Permittering -> Permittering(utfall = false)
-                Dagpengerettighet.PermitteringFraFiskeindustrien -> PermitteringFraFiskeindustrien(utfall = false)
-                Dagpengerettighet.ForskutterteLønnsgarantimidler -> TODO()
-                Dagpengerettighet.Ingen -> TODO()
-            }
             return Avslag(
                 behandlingId = behandlingId,
                 sakId = sakId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
-                rettigheter = listOf(rettighet),
+                rettigheter = listOf(dagpengerettighet),
             )
         }
     }

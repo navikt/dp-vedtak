@@ -1,6 +1,5 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
@@ -9,9 +8,7 @@ import no.nav.dagpenger.vedtak.modell.vedtak.fakta.AntallStønadsdager
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Dagsats
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Faktum
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.VanligArbeidstidPerDag
-import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
-import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
-import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Hovedrettighet
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Rettighet
 import no.nav.dagpenger.vedtak.modell.visitor.VedtakVisitor
 import java.time.LocalDate
@@ -43,16 +40,9 @@ class Rammevedtak(
             virkningsdato: LocalDate,
             dagsats: Beløp,
             stønadsdager: Stønadsdager,
-            dagpengerettighet: Dagpengerettighet,
+            hovedrettighet: Hovedrettighet,
             vanligArbeidstidPerDag: Timer,
         ): Rammevedtak {
-            val rettighet = when (dagpengerettighet) {
-                Dagpengerettighet.Ordinær -> Ordinær(utfall = true)
-                Dagpengerettighet.Permittering -> Permittering(utfall = true)
-                Dagpengerettighet.PermitteringFraFiskeindustrien -> PermitteringFraFiskeindustrien(utfall = true)
-                Dagpengerettighet.ForskutterteLønnsgarantimidler -> TODO()
-                Dagpengerettighet.Ingen -> TODO()
-            }
             return Rammevedtak(
                 sakId = sakId,
                 behandlingId = behandlingId,
@@ -63,7 +53,7 @@ class Rammevedtak(
                     Dagsats(dagsats),
                     AntallStønadsdager(stønadsdager),
                 ),
-                rettigheter = listOf(rettighet),
+                rettigheter = listOf(hovedrettighet),
             )
         }
     }

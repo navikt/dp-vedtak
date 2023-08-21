@@ -2,13 +2,15 @@ package no.nav.dagpenger.vedtak.mediator.mottak
 
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.asLocalDate
@@ -43,7 +45,14 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
             behandlingId = behandlingId,
             vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),
             virkningsdato = packet["Virkningsdato"].asLocalDate(),
-            dagpengerettighet = Dagpengerettighet.valueOf(packet["Rettighetstype"].asText()),
+            hovedrettighet = when (packet["Rettighetstype"].asText()) {
+                "Ordinær" -> Ordinær(false)
+                "Permittering" -> Permittering(false)
+                "PermitteringFraFiskeindustrien" -> PermitteringFraFiskeindustrien(false)
+                else -> {
+                    throw IllegalArgumentException("Kjenner ikke rettighet $this")
+                }
+            },
         )
 
     private fun dagpengerInnvilgetHendelse(
@@ -56,7 +65,14 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
         behandlingId = behandlingId,
         vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),
         virkningsdato = packet["Virkningsdato"].asLocalDate(),
-        dagpengerettighet = Dagpengerettighet.valueOf(packet["Rettighetstype"].asText()),
+        hovedrettighet = when (packet["Rettighetstype"].asText()) {
+            "Ordinær" -> Ordinær(true)
+            "Permittering" -> Permittering(true)
+            "PermitteringFraFiskeindustrien" -> PermitteringFraFiskeindustrien(true)
+            else -> {
+                throw IllegalArgumentException("Kjenner ikke rettighet $this")
+            }
+        },
         dagsats = packet["Dagsats"].asDouble().beløp,
         stønadsdager = Dagpengeperiode(antallUker = packet["Periode"].asInt()).tilStønadsdager(),
         vanligArbeidstidPerDag = packet["Fastsatt vanlig arbeidstid"].asDouble().timer,

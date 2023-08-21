@@ -1,6 +1,5 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
-import no.nav.dagpenger.vedtak.modell.Dagpengerettighet
 import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
@@ -8,6 +7,7 @@ import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak.Companion.harBehandlet
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Hovedrettighet
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
@@ -25,7 +25,8 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
 
     internal val vanligArbeidstidHistorikk = TemporalCollection<Timer>()
     internal val dagsatsHistorikk = TemporalCollection<Beløp>()
-    internal val dagpengerettighetHistorikk = TemporalCollection<Dagpengerettighet>()
+
+    internal val hovedrettighetHistorikk = TemporalCollection<Hovedrettighet>()
 
     internal val stønadsdagerHistorikk = TemporalCollection<Stønadsdager>()
     internal val forbrukHistorikk = ForbrukHistorikk()
@@ -86,21 +87,15 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
         }
 
         override fun visitOrdinær(ordinær: Ordinær) {
-            when (ordinær.utfall) {
-                true -> vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.Ordinær)
-                false -> vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.Ingen)
-            }
+            vedtakHistorikk.hovedrettighetHistorikk.put(virkningsdato(), ordinær)
         }
 
         override fun visitPermitteringFraFiskeindustrien(permitteringFraFiskeindustrien: PermitteringFraFiskeindustrien) {
-            when (permitteringFraFiskeindustrien.utfall) {
-                true -> vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.PermitteringFraFiskeindustrien)
-                false -> vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.Ingen)
-            }
+            vedtakHistorikk.hovedrettighetHistorikk.put(virkningsdato(), permitteringFraFiskeindustrien)
         }
 
         override fun visitPermittering(permittering: Permittering) {
-            vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato(), Dagpengerettighet.Permittering)
+            vedtakHistorikk.hovedrettighetHistorikk.put(virkningsdato(), permittering)
         }
 
         override fun visitAntallStønadsdager(dager: Stønadsdager) {
@@ -144,6 +139,7 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
             utfall: Boolean,
             virkningsdato: LocalDate,
         ) {
+            // todo: Skal hovedrettigheten være med?
         }
 
         override fun visitStans(
@@ -154,7 +150,8 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
             vedtakstidspunkt: LocalDateTime,
             utfall: Boolean?,
         ) {
-            vedtakHistorikk.dagpengerettighetHistorikk.put(virkningsdato, Dagpengerettighet.Ingen)
+            // todo: Hvilken rettighet stanses?
+            vedtakHistorikk.hovedrettighetHistorikk.put(virkningsdato, Ordinær(false))
         }
     }
 }

@@ -4,6 +4,7 @@ import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
+import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -29,7 +30,7 @@ internal class PersonTest {
             ident = ident,
             vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
             virkningsdato = LocalDate.now(),
-            dagpengerettighet = Dagpengerettighet.Ordinær,
+            hovedrettighet = Ordinær(false),
         )
         person.håndter(
             dagpengerAvslåttHendelse,
