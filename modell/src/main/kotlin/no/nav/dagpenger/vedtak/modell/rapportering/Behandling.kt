@@ -150,7 +150,6 @@ class Behandling(
                 utfall = resultat.utfall,
                 vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                 virkningsdato = rapporteringshendelse.endInclusive,
-                forrigeBehandlingId = null, // TODO: Må finne behandlingId til det forrige utbetalingsvedtaket i saken
                 forbruk = Stønadsdager(resultat.forbruksdager.size),
                 utbetalingsdager = resultat.utbetalingsdager,
             )

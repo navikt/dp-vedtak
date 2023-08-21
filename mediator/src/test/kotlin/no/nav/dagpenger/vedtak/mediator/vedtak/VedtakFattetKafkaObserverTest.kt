@@ -63,7 +63,6 @@ class VedtakFattetKafkaObserverTest {
             message2["@event_name"].asText() shouldBe "utbetaling_vedtak_fattet"
             assertVedtakInformasjon(message2)
         }
-        message1["forrigeBehandlingId"]?.asText().shouldNotBeBlank()
     }
 
     private fun assertVedtakInformasjon(json: JsonNode) {
@@ -90,7 +89,6 @@ class VedtakFattetKafkaObserverTest {
         vedtakstidspunkt = LocalDateTime.now(),
         behandlingId = UUID.randomUUID(),
         virkningsdato = LocalDate.now(),
-        forrigeBehandlingId = UUID.randomUUID(),
         utbetalingsdager = emptyList(),
         utfall = utfall,
     )

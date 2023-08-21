@@ -294,7 +294,6 @@ class RettighetStegTest : No {
             forbruk: Stønadsdager,
             beløpTilUtbetaling: Beløp,
             utbetalingsdager: List<Utbetalingsdag>,
-            forrigeBehandlingId: UUID?,
 
         ) {
             this.forbruk = forbruk

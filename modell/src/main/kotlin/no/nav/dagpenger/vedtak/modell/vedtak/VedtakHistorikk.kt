@@ -131,7 +131,6 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
             forbruk: Stønadsdager,
             beløpTilUtbetaling: Beløp,
             utbetalingsdager: List<Utbetalingsdag>,
-            forrigeBehandlingId: UUID?,
         ) {
             vedtakHistorikk.forbrukHistorikk.put(this.virkningsdato(), forbruk)
             vedtakHistorikk.beløpTilUtbetalingHistorikk.put(this.virkningsdato(), beløpTilUtbetaling)

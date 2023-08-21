@@ -34,7 +34,6 @@ interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
         forbruk: Stønadsdager,
         beløpTilUtbetaling: Beløp,
         utbetalingsdager: List<Utbetalingsdag>,
-        forrigeBehandlingId: UUID?,
     ) {}
 
     fun visitAvslag(

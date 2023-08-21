@@ -76,35 +76,18 @@ internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsCon
         ident: String,
         utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet,
     ): JsonMessage {
-        return if (utbetalingsvedtakFattet.forrigeBehandlingId != null) {
-            JsonMessage.newMessage(
-                eventName = "utbetaling_vedtak_fattet",
-                map = mapOf(
-                    "ident" to ident,
-                    "behandlingId" to utbetalingsvedtakFattet.behandlingId.toString(),
-                    "sakId" to utbetalingsvedtakFattet.sakId,
-                    "vedtakId" to utbetalingsvedtakFattet.vedtakId.toString(),
-                    "vedtaktidspunkt" to utbetalingsvedtakFattet.vedtakstidspunkt,
-                    "virkningsdato" to utbetalingsvedtakFattet.virkningsdato,
-                    "forrigeBehandlingId" to utbetalingsvedtakFattet.forrigeBehandlingId!!,
-                    "utbetalingsdager" to utbetalingsvedtakFattet.utbetalingsdager,
-                    "utfall" to utbetalingsvedtakFattet.utfall.name,
-                ),
-            )
-        } else {
-            JsonMessage.newMessage(
-                eventName = "utbetaling_vedtak_fattet",
-                map = mapOf(
-                    "ident" to ident,
-                    "behandlingId" to utbetalingsvedtakFattet.behandlingId.toString(),
-                    "sakId" to utbetalingsvedtakFattet.sakId,
-                    "vedtakId" to utbetalingsvedtakFattet.vedtakId.toString(),
-                    "vedtaktidspunkt" to utbetalingsvedtakFattet.vedtakstidspunkt,
-                    "virkningsdato" to utbetalingsvedtakFattet.virkningsdato,
-                    "utbetalingsdager" to utbetalingsvedtakFattet.utbetalingsdager,
-                    "utfall" to utbetalingsvedtakFattet.utfall.name,
-                ),
-            )
-        }
+        return JsonMessage.newMessage(
+            eventName = "utbetaling_vedtak_fattet",
+            map = mapOf(
+                "ident" to ident,
+                "behandlingId" to utbetalingsvedtakFattet.behandlingId.toString(),
+                "sakId" to utbetalingsvedtakFattet.sakId,
+                "vedtakId" to utbetalingsvedtakFattet.vedtakId.toString(),
+                "vedtaktidspunkt" to utbetalingsvedtakFattet.vedtakstidspunkt,
+                "virkningsdato" to utbetalingsvedtakFattet.virkningsdato,
+                "utbetalingsdager" to utbetalingsvedtakFattet.utbetalingsdager,
+                "utfall" to utbetalingsvedtakFattet.utfall.name,
+            ),
+        )
     }
 }

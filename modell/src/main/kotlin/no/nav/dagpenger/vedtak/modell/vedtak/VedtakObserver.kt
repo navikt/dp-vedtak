@@ -31,7 +31,6 @@ interface VedtakObserver {
         val behandlingId: UUID,
         val vedtakstidspunkt: LocalDateTime,
         val virkningsdato: LocalDate,
-        val forrigeBehandlingId: UUID?,
         val utbetalingsdager: List<UtbetalingsdagDto> = emptyList(),
         val utfall: Utfall,
         // @todo: Type rettighet? Ordinær, Permittering etc

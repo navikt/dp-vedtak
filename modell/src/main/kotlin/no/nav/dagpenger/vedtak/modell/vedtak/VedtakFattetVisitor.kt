@@ -92,7 +92,6 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         forbruk: Stønadsdager,
         beløpTilUtbetaling: Beløp,
         utbetalingsdager: List<Utbetalingsdag>,
-        forrigeBehandlingId: UUID?,
     ) {
         utbetalingsvedtakFattet = UtbetalingsvedtakFattet(
             vedtakId = this.vedtakId(),
@@ -100,7 +99,6 @@ internal class VedtakFattetVisitor : VedtakVisitor {
             behandlingId = this.behandlingId!!,
             vedtakstidspunkt = this.vedtakstidspunkt!!,
             virkningsdato = this.virkningsdato!!,
-            forrigeBehandlingId = forrigeBehandlingId,
             utbetalingsdager = utbetalingsdager.map { utbetalingsdag ->
                 UtbetalingsdagDto(
                     dato = utbetalingsdag.dato,

@@ -213,7 +213,6 @@ private class PopulerQueries(
         forbruk: Stønadsdager,
         beløpTilUtbetaling: Beløp,
         utbetalingsdager: List<Utbetalingsdag>,
-        forrigeBehandlingId: UUID?,
     ) {
         queries.add(
             queryOf(
@@ -406,7 +405,6 @@ private fun Session.hentVedtak(personId: Long) = this.run(
                     behandlingId = rad.uuid("behandling_id"),
                     vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
                     virkningsdato = rad.localDate("virkningsdato"),
-                    forrigeBehandlingId = null, // TODO: Må finne behandlingId til forrige utbetalingsvedtak i saken. Bør vi lagre dette på vedtaket eller bare lage en funksjon for å hente det?
                     forbruk = Stønadsdager(utbetaling.forbruk),
                     utfall = utbetaling.utfall,
                     utbetalingsdager = this.hentUtbetalingsdager(vedtakId),

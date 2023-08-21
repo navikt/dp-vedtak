@@ -121,7 +121,6 @@ class VedtakApiTest {
         utfall = true,
         vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
         virkningsdato = LocalDate.MAX,
-        forrigeBehandlingId = null,
         forbruk = Stønadsdager(10),
         utbetalingsdager = emptyList(),
     )
