@@ -120,10 +120,6 @@ components:
             type: string
             format: date
             description: Vedtakets virkningstidspunkt
-          forrigeBehandlingId:
-            type: string
-            format: uuid
-            description: Behandling id som førte til forrige utbetalingsvedtak. Ved førstegangs utbetaling i en sak er feltet ikke oppgitt.
           utbetalingsdager:
             type: array
             items:
