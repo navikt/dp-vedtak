@@ -82,6 +82,15 @@ components:
     utbetaling_vedtak_fattet:
       payload:
         type: object
+        required:
+          - '@event_type'
+          - ident
+          - vedtakId
+          - sakId
+          - vedtaktidspunkt
+          - behandlingId
+          - utbetalingsdager
+          - utfall
         properties:
           '@event_type':
             type: string
