@@ -15,7 +15,7 @@ tasks.named("spotlessKotlin").configure {
 sourceSets {
     main {
         java {
-            setSrcDirs(listOf("src/main/kotlin", "$buildDir/generated/src/main/kotlin"))
+            setSrcDirs(listOf("src/main/kotlin", "${layout.buildDirectory}/generated/src/main/kotlin"))
         }
     }
 }
@@ -33,7 +33,7 @@ dependencies {
 openApiGenerate {
     generatorName.set("kotlin-server")
     inputSpec.set("$projectDir/src/main/resources/vedtak-api.yaml")
-    outputDir.set("$buildDir/generated/")
+    outputDir.set("${layout.buildDirectory}/generated/")
     packageName.set("no.nav.dagpenger.vedtak.api")
     globalProperties.set(
         mapOf(
