@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
+import no.nav.dagpenger.vedtak.db.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
@@ -11,7 +12,6 @@ import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.lagRapporteringForMeldep
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringInnsendtHendelse
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryMeldingRepository
-import no.nav.dagpenger.vedtak.mediator.persistens.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
