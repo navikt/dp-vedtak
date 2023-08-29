@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak.mediator.persistens
+package no.nav.dagpenger.vedtak.db
 
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
