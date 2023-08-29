@@ -34,7 +34,7 @@ internal class SøknadBehandletMottak(
                     "behandlingId",
                     // "sakId", @todo: Mappe sakId når vi får den fra dp-behandling.
                     "Virkningsdato",
-                    "innvilget",
+                    "utfall",
                 )
                 it.interestedIn("Rettighetstype") { rettighetstype ->
                     // todo: Ikke binde seg til enum så langt ute fra modellen

@@ -26,7 +26,7 @@ object Meldingsfabrikk {
           "sakId" : "$sakId",
           "behandlingId": "${UUID.randomUUID()}",
           "Virkningsdato": "$virkningsdato",
-          "innvilget": true,
+          "utfall": true,
           "Rettighetstype": "$rettighetstype",
           "Dagsats": "$dagsats",
           "Grunnlag": "500000",
@@ -54,7 +54,7 @@ object Meldingsfabrikk {
           "sakId" : "$sakId",
           "behandlingId": "${UUID.randomUUID()}",
           "Virkningsdato": "${LocalDate.now()}",
-          "innvilget": false,
+          "utfall": false,
           "Rettighetstype": "$rettighetstype"
         } 
         """.trimIndent()

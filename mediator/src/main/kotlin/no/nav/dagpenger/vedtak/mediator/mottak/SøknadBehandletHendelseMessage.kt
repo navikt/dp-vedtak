@@ -32,7 +32,7 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
         get() = packet["sakId"].asText(UUID.randomUUID().toString())
 
     private val hendelse
-        get() = when (packet["innvilget"].asBoolean()) {
+        get() = when (packet["utfall"].asBoolean()) {
             true -> dagpengerInnvilgetHendelse(packet, behandlingId)
             false -> dagpengerAvslåttHendelse(packet, behandlingId)
         }
