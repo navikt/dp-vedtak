@@ -25,13 +25,14 @@ ktor-client-jackson = { group = "io.ktor", name = "ktor-client-jackson", version
 ktor-client-logging-jvm = { group = "io.ktor", name = "ktor-client-logging-jvm", version.ref = "ktor" }
 ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
 ktor-server = { group = "io.ktor", name = "ktor-server", version.ref = "ktor" }
-ktor-server-test-host-jvm = { group = "io.ktor", name = "ktor-server-test-host-jvm", version.ref = "ktor"}
+ktor-server-test-host-jvm = { group = "io.ktor", name = "ktor-server-test-host-jvm", version.ref = "ktor" }
 ktor-server-auth-jvm = { group = "io.ktor", name = "ktor-server-auth-jvm", version.ref = "ktor" }
 ktor-server-auth-jwt = { group = "io.ktor", name = "ktor-server-auth-jwt", version.ref = "ktor" }
 ktor-server-content-negotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-serialization-jackson = { group = "io.ktor", name = "ktor-serialization-jackson", version.ref = "ktor" }
 ktor-server-logging-jvm = { group = "io.ktor", name = "ktor-server-call-logging-jvm", version.ref = "ktor" }
 mock-oauth2-server = { group = "no.nav.security", name = "mock-oauth2-server", version = "1.0.0" }
+aktivitetslogg = { group = "no.nav.dagpenger", name = "aktivitetslogg", version = "20230830.cf9ebc" }
 
 
 # Database

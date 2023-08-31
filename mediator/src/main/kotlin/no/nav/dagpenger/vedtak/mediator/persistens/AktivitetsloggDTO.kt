@@ -75,21 +75,8 @@ data class AktivitetsloggDTO(
                         melding = it.melding,
                         tidsstempel = it.tidsstempel,
                     )
-                    AlvorlighetsgradDTO.WARN -> Aktivitet.FunksjonellFeil.gjennopprett(
-                        id = it.id,
-                        kontekster = kontekster,
-                        melding = it.melding,
-                        kode = TODO("Vi har ikke mappe kode enda. "),
-                        tidsstempel = it.tidsstempel,
-                    )
-                    AlvorlighetsgradDTO.ERROR -> Aktivitet.Varsel.gjennopprett(
-                        id = it.id,
-                        kontekster = kontekster,
-                        kode = TODO("Vi har ikke mappe kode enda. "),
-                        melding = it.melding,
-                        tidsstempel = it.tidsstempel,
-
-                    )
+                    AlvorlighetsgradDTO.WARN -> TODO()
+                    AlvorlighetsgradDTO.ERROR -> TODO()
                 },
             )
         }

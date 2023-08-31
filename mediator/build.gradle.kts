@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     implementation(project(path = ":modell"))
-    implementation(project(path = ":aktivitetslogg"))
     implementation(project(path = ":openapi"))
 
     implementation(libs.jackson.core)
@@ -19,6 +18,8 @@ dependencies {
     implementation(libs.rapids.and.rivers)
     implementation(libs.konfig)
     implementation(libs.kotlin.logging)
+
+    implementation(libs.aktivitetslogg)
 
     implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.ktor.server)
