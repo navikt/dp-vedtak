@@ -4,8 +4,6 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Subaktivitetskontekst
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerAvslått
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerInnvilget
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
@@ -68,16 +66,6 @@ class Iverksetting private constructor(
         tilstand.håndter(utbetalingsvedtakFattetHendelse, this)
     }
 
-    fun håndter(dagpengerInnvilget: DagpengerInnvilget) {
-        kontekst(dagpengerInnvilget)
-        tilstand.håndter(dagpengerInnvilget, this)
-    }
-
-    fun håndter(dagpengerAvslått: DagpengerAvslått) {
-        kontekst(dagpengerAvslått)
-        tilstand.håndter(dagpengerAvslått, this)
-    }
-
     fun håndter(iverksattHendelse: IverksattHendelse) {
         kontekst(iverksattHendelse)
         tilstand.håndter(iverksattHendelse, this)
@@ -138,13 +126,6 @@ class Iverksetting private constructor(
             iverksattHendelse.feiltilstand()
         }
 
-        open fun håndter(dagpengerInnvilget: DagpengerInnvilget, iverksetting: Iverksetting) {
-            dagpengerInnvilget.feiltilstand()
-        }
-        open fun håndter(dagpengerAvslått: DagpengerAvslått, iverksetting: Iverksetting) {
-            dagpengerAvslått.feiltilstand()
-        }
-
         private fun Hendelse.feiltilstand(): Nothing =
             this.logiskFeil("Kan ikke håndtere ${this.javaClass.simpleName} i iverksetting-tilstand $tilstandNavn")
     }
@@ -182,41 +163,6 @@ class Iverksetting private constructor(
                 )
             }
             iverksetting.endreTilstand(utbetalingsvedtakFattetHendelse, AvventerIverksetting)
-        }
-
-        override fun håndter(
-            dagpengerInnvilget: DagpengerInnvilget,
-            iverksetting: Iverksetting,
-        ) {
-            dagpengerInnvilget.behov(
-                type = IverksettingBehov.Iverksett,
-                melding = "Sender behov for å iverksette vedtak med hovedrettighet",
-                detaljer = mapOf(
-                    "vedtakId" to dagpengerInnvilget.vedtakId,
-                    "behandlingId" to dagpengerInnvilget.behandlingId,
-                    "sakId" to dagpengerInnvilget.sakId,
-                    "vedtakstidspunkt" to dagpengerInnvilget.vedtakstidspunkt,
-                    "virkningsdato" to dagpengerInnvilget.virkningsdato,
-                    "utfall" to "Innvilget", // TODO: Endre behov til noe som sier at den er innvilget
-                ),
-            )
-            iverksetting.endreTilstand(dagpengerInnvilget, AvventerIverksetting)
-        }
-
-        override fun håndter(dagpengerAvslått: DagpengerAvslått, iverksetting: Iverksetting) {
-            dagpengerAvslått.behov(
-                type = IverksettingBehov.Iverksett,
-                melding = "Sender behov for å iverksette vedtak med hovedrettighet",
-                detaljer = mapOf(
-                    "vedtakId" to dagpengerAvslått.vedtakId,
-                    "behandlingId" to dagpengerAvslått.behandlingId,
-                    "sakId" to dagpengerAvslått.sakId,
-                    "vedtakstidspunkt" to dagpengerAvslått.vedtakstidspunkt,
-                    "virkningsdato" to dagpengerAvslått.virkningsdato,
-                    "utfall" to "Avslått", // TODO: Endre behov til noe som sier at den er avslått
-                ),
-            )
-            iverksetting.endreTilstand(dagpengerAvslått, AvventerIverksetting)
         }
     }
 

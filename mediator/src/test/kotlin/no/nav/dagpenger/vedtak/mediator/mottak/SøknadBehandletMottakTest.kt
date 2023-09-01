@@ -6,8 +6,8 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.søknadBehandletOgAvslåttJson
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.søknadBehandletOgInnvilgetJson
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,16 +26,16 @@ internal class SøknadBehandletMottakTest {
     }
 
     @Test
-    fun `motta dagpenger innvilget hendelse`() {
-        testRapid.sendTestMessage(dagpengerInnvilgetJson())
+    fun `motta søknad om dagpenger innvilget hendelse`() {
+        testRapid.sendTestMessage(søknadBehandletOgInnvilgetJson())
         verify(exactly = 1) {
             hendelseMediatorMock.behandle(any(), any<SøknadBehandletHendelseMessage>(), any())
         }
     }
 
     @Test
-    fun `motta dagpenger avslått hendelse`() {
-        testRapid.sendTestMessage(dagpengerAvslåttJson())
+    fun `motta søknad om dagpenger avslått hendelse`() {
+        testRapid.sendTestMessage(søknadBehandletOgAvslåttJson())
         verify(exactly = 1) {
             hendelseMediatorMock.behandle(any(), any<SøknadBehandletHendelseMessage>(), any())
         }
@@ -43,7 +43,7 @@ internal class SøknadBehandletMottakTest {
 
     @Test
     fun `avslå meldinger som ikke validerer`() {
-        testRapid.sendTestMessage(dagpengerInnvilgetJson(rettighetstype = "bla bla"))
+        testRapid.sendTestMessage(søknadBehandletOgInnvilgetJson(rettighetstype = "bla bla"))
         verify(exactly = 0) {
             hendelseMediatorMock.behandle(any(), any<SøknadBehandletHendelseMessage>(), any())
         }

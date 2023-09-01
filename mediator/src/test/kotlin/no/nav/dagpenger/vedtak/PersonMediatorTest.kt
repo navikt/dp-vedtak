@@ -7,10 +7,10 @@ import no.nav.dagpenger.vedtak.db.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.db.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerAvslåttJson
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.lagRapporteringForMeldeperiodeFørDagpengvedtaket
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringInnsendtHendelse
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.søknadBehandletOgAvslåttJson
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.søknadBehandletOgInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
 import no.nav.dagpenger.vedtak.modell.PersonObserver
@@ -49,7 +49,7 @@ internal class PersonMediatorTest {
 
     @Test
     fun `Hendelse om innvilgelse av dagpengesøknad fører til dagpenger_innvilget event`() {
-        testRapid.sendTestMessage(dagpengerInnvilgetJson(ident = ident))
+        testRapid.sendTestMessage(søknadBehandletOgInnvilgetJson(ident = ident))
         testRapid.inspektør.size shouldBe 1
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
             it["@event_name"].asText() shouldBe "dagpenger_innvilget"
@@ -59,7 +59,7 @@ internal class PersonMediatorTest {
 
     @Test
     fun `Hendelse om avslag på dagpengesøknad fører til dagpenger_avslått event`() {
-        testRapid.sendTestMessage(dagpengerAvslåttJson(ident = ident))
+        testRapid.sendTestMessage(søknadBehandletOgAvslåttJson(ident = ident))
         testRapid.inspektør.size shouldBe 1
         testRapid.inspektør.message(testRapid.inspektør.size - 1).also {
             it["@event_name"].asText() shouldBe "dagpenger_avslått"
@@ -71,7 +71,7 @@ internal class PersonMediatorTest {
     fun `Rapporteringshendelse fører til at utbetalingsvedtak fattes`() {
         val rettighetFraDato = 29 mai 2023
         testRapid.sendTestMessage(
-            dagpengerInnvilgetJson(
+            søknadBehandletOgInnvilgetJson(
                 ident = ident,
                 virkningsdato = rettighetFraDato,
                 dagsats = 1000.0,
@@ -108,7 +108,7 @@ internal class PersonMediatorTest {
     fun `Dersom person har sendt rapportering for en periode uten dagpengevedtak, lager vi ikke utbetalingsvedtak Dette må vi finne ut av`() {
         val dagpengerFraDato = 29 mai 2023
         testRapid.sendTestMessage(
-            dagpengerInnvilgetJson(
+            søknadBehandletOgInnvilgetJson(
                 ident = ident,
                 virkningsdato = dagpengerFraDato,
                 dagsats = 1000.0,

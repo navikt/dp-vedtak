@@ -2,7 +2,7 @@ package no.nav.dagpenger.vedtak.modell
 
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
-import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
@@ -23,7 +23,7 @@ internal class PersonTest {
 
     @Test
     fun `behandling med samme id skal bare behandles 1 gang og logge en warning aktivitetsloggen`() {
-        val dagpengerAvslåttHendelse = DagpengerAvslåttHendelse(
+        val søknadBehandletOgAvslåttHendelse = SøknadBehandletOgAvslåttHendelse(
             meldingsreferanseId = UUID.randomUUID(),
             behandlingId = UUID.randomUUID(),
             sakId = "SAK_NUMMER_1",
@@ -33,10 +33,10 @@ internal class PersonTest {
             hovedrettighet = Ordinær(false),
         )
         person.håndter(
-            dagpengerAvslåttHendelse,
+            søknadBehandletOgAvslåttHendelse,
         )
         person.håndter(
-            dagpengerAvslåttHendelse,
+            søknadBehandletOgAvslåttHendelse,
         )
 
         testObservatør.vedtak.size shouldBe 1

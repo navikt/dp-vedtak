@@ -3,8 +3,6 @@ package no.nav.dagpenger.vedtak.iverksetting.mediator
 import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerAvslått
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerInnvilget
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.VedtakFattetHendelse
@@ -34,18 +32,6 @@ internal class IverksettingMediator(
     fun håndter(iverksattHendelse: IverksattHendelse) {
         håndter(iverksattHendelse) { iverksetting ->
             iverksetting.håndter(iverksattHendelse)
-        }
-    }
-
-    fun håndter(hendelse: DagpengerInnvilget) {
-        håndter(hendelse) { iverksetting ->
-            iverksetting.håndter(hendelse)
-        }
-    }
-
-    fun håndter(hendelse: DagpengerAvslått) {
-        håndter(hendelse) { iverksetting ->
-            iverksetting.håndter(hendelse)
         }
     }
 

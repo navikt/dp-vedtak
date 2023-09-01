@@ -7,7 +7,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import no.nav.dagpenger.vedtak.db.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.søknadBehandletOgInnvilgetJson
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -33,7 +33,7 @@ internal class HendelseMessageMediatorTest {
     fun `Ta imot melding om innvilgelse, lagre og behandle`() {
         val meldingId = UUID.randomUUID()
         every { personMediatorMock.håndter(capture(meldingSlot)) } just Runs
-        testRapid.sendTestMessage(dagpengerInnvilgetJson(meldingId = meldingId))
+        testRapid.sendTestMessage(søknadBehandletOgInnvilgetJson(meldingId = meldingId))
         assertTrue(meldingSlot.isCaptured)
         assertEquals(true, meldingRepository.erBehandlet(meldingId))
     }
@@ -42,7 +42,7 @@ internal class HendelseMessageMediatorTest {
     fun `Ta i mot melding som feiler under behandling`() {
         val meldingId = UUID.randomUUID()
         every { personMediatorMock.håndter(any<SøknadBehandletHendelse>()) } throws RuntimeException("Feilet behandling")
-        assertThrows<RuntimeException> { testRapid.sendTestMessage(dagpengerInnvilgetJson(meldingId = meldingId)) }
+        assertThrows<RuntimeException> { testRapid.sendTestMessage(søknadBehandletOgInnvilgetJson(meldingId = meldingId)) }
         assertEquals(false, meldingRepository.erBehandlet(meldingId))
     }
 }
