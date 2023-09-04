@@ -1,8 +1,6 @@
 package no.nav.dagpenger.vedtak.modell
 
 import io.kotest.matchers.shouldBe
-import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
-import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
