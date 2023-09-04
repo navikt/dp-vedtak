@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak.modell
 
+import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
+import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.Sak.Companion.finnSak
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
@@ -19,7 +21,7 @@ class Person internal constructor(
     private val saker: MutableList<Sak>,
     internal val vedtakHistorikk: VedtakHistorikk,
     private val rapporteringsperioder: Rapporteringsperioder,
-) : VedtakObserver {
+) : Aktivitetskontekst, VedtakObserver {
 
     init {
         vedtakHistorikk.addObserver(this)
@@ -33,6 +35,7 @@ class Person internal constructor(
     )
 
     companion object {
+        val kontekstType: String = "Person"
         fun rehydrer(
             ident: PersonIdentifikator,
             saker: MutableList<Sak>,
@@ -111,4 +114,7 @@ class Person internal constructor(
     internal fun leggTilSak(sak: Sak) {
         saker.add(sak)
     }
+
+    override fun toSpesifikkKontekst(): SpesifikkKontekst =
+        SpesifikkKontekst(kontekstType, mapOf("ident" to ident.identifikator()))
 }
