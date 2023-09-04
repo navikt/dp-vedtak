@@ -1,12 +1,8 @@
 package no.nav.dagpenger.vedtak.modell
 
-import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
-import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
-import no.nav.dagpenger.aktivitetslogg.Subaktivitetskontekst
 import no.nav.dagpenger.vedtak.modell.Sak.Companion.finnSak
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
-import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
@@ -23,8 +19,7 @@ class Person internal constructor(
     private val saker: MutableList<Sak>,
     internal val vedtakHistorikk: VedtakHistorikk,
     private val rapporteringsperioder: Rapporteringsperioder,
-    override val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
-) : Subaktivitetskontekst, VedtakObserver {
+) : VedtakObserver {
 
     init {
         vedtakHistorikk.addObserver(this)
@@ -38,12 +33,9 @@ class Person internal constructor(
     )
 
     companion object {
-        val kontekstType: String = "Person"
-
         fun rehydrer(
             ident: PersonIdentifikator,
             saker: MutableList<Sak>,
-            aktivitetslogg: Aktivitetslogg,
             vedtak: List<Vedtak>,
             perioder: List<Rapporteringsperiode>,
         ): Person {
@@ -52,7 +44,6 @@ class Person internal constructor(
                 saker = saker,
                 vedtakHistorikk = VedtakHistorikk(vedtak.toMutableList()),
                 rapporteringsperioder = Rapporteringsperioder(perioder),
-                aktivitetslogg = aktivitetslogg,
             )
         }
     }
@@ -62,7 +53,6 @@ class Person internal constructor(
     fun ident() = ident
 
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
-        kontekst(søknadBehandletHendelse)
         val sak = finnEllerOpprettSak(søknadBehandletHendelse)
         sak.håndter(søknadBehandletHendelse)
     }
@@ -74,7 +64,6 @@ class Person internal constructor(
         )
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
-        kontekst(rapporteringshendelse)
         rapporteringshendelse.info("Mottatt rapporteringshendelse")
         rapporteringsperioder.håndter(rapporteringshendelse)
         val sak = saker.firstOrNull() ?: rapporteringshendelse.logiskFeil("Vi har ingen sak!")
@@ -82,7 +71,6 @@ class Person internal constructor(
     }
 
     fun håndter(stansHendelse: StansHendelse) {
-        kontekst(stansHendelse)
         val sak = saker.firstOrNull() ?: stansHendelse.logiskFeil("Vi har ingen sak!")
         sak.håndter(stansHendelse)
     }
@@ -113,7 +101,6 @@ class Person internal constructor(
 
     fun accept(visitor: PersonVisitor) {
         visitor.visitPerson(ident)
-        aktivitetslogg.accept(visitor)
         saker.forEach { sak ->
             sak.accept(visitor)
         }
@@ -121,11 +108,6 @@ class Person internal constructor(
         vedtakHistorikk.accept(visitor)
     }
 
-    private fun kontekst(hendelse: Hendelse) {
-        hendelse.kontekst(this)
-    }
-
-    override fun toSpesifikkKontekst() = SpesifikkKontekst(kontekstType, mapOf("ident" to ident.identifikator()))
     internal fun leggTilSak(sak: Sak) {
         saker.add(sak)
     }

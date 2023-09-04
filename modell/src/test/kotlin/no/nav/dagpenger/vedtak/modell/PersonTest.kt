@@ -1,11 +1,9 @@
 package no.nav.dagpenger.vedtak.modell
 
 import io.kotest.matchers.shouldBe
-import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
-import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -19,7 +17,6 @@ internal class PersonTest {
     private val person = Person(PersonIdentifikator(ident)).also {
         it.addObserver(testObservatør)
     }
-    private val inspektør get() = PersonInspektør(person)
 
     @Test
     fun `behandling med samme id skal bare behandles 1 gang og logge en warning aktivitetsloggen`() {
@@ -40,7 +37,6 @@ internal class PersonTest {
         )
 
         testObservatør.vedtak.size shouldBe 1
-        inspektør.aktivitetslogg.aktivitetsteller() shouldBe 2
     }
 
     private class TestObservatør : PersonObserver {
@@ -48,18 +44,6 @@ internal class PersonTest {
         val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
         override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
             vedtak.add(vedtakFattet)
-        }
-    }
-
-    private class PersonInspektør(private val person: Person) : PersonVisitor {
-
-        lateinit var aktivitetslogg: Aktivitetslogg
-        init {
-            person.accept(this)
-        }
-
-        override fun postVisitAktivitetslogg(aktivitetslogg: Aktivitetslogg) {
-            this.aktivitetslogg = aktivitetslogg
         }
     }
 }
