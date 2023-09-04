@@ -5,6 +5,7 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.Sak.Companion.finnSak
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
+import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
@@ -56,6 +57,7 @@ class Person internal constructor(
     fun ident() = ident
 
     fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
+        kontekst(søknadBehandletHendelse)
         val sak = finnEllerOpprettSak(søknadBehandletHendelse)
         sak.håndter(søknadBehandletHendelse)
     }
@@ -67,6 +69,7 @@ class Person internal constructor(
         )
 
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
+        kontekst(rapporteringshendelse)
         rapporteringshendelse.info("Mottatt rapporteringshendelse")
         rapporteringsperioder.håndter(rapporteringshendelse)
         val sak = saker.firstOrNull() ?: rapporteringshendelse.logiskFeil("Vi har ingen sak!")
@@ -74,6 +77,7 @@ class Person internal constructor(
     }
 
     fun håndter(stansHendelse: StansHendelse) {
+        kontekst(stansHendelse)
         val sak = saker.firstOrNull() ?: stansHendelse.logiskFeil("Vi har ingen sak!")
         sak.håndter(stansHendelse)
     }
@@ -117,4 +121,8 @@ class Person internal constructor(
 
     override fun toSpesifikkKontekst(): SpesifikkKontekst =
         SpesifikkKontekst(kontekstType, mapOf("ident" to ident.identifikator()))
+
+    private fun kontekst(hendelse: Hendelse) {
+        hendelse.kontekst(this)
+    }
 }
