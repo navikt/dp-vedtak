@@ -24,7 +24,7 @@ sealed class SøknadBehandletHendelse(
     abstract fun tilVedtak(): Vedtak
 }
 
-class DagpengerInnvilgetHendelse(
+class SøknadBehandletOgInnvilgetHendelse(
     meldingsreferanseId: UUID,
     sakId: String,
     ident: String,
@@ -57,7 +57,7 @@ class DagpengerInnvilgetHendelse(
     override fun kontekstMap(): Map<String, String> = emptyMap()
 }
 
-class DagpengerAvslåttHendelse(
+class SøknadBehandletOgAvslåttHendelse(
     meldingsreferanseId: UUID,
     sakId: String,
     ident: String,

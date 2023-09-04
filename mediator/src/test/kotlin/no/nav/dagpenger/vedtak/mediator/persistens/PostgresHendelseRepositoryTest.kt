@@ -13,7 +13,7 @@ internal class PostgresHendelseRepositoryTest {
 
     @Test
     fun `lagre og hent hendelse`() {
-        val hendelse = Meldingsfabrikk.dagpengerInnvilgetJson()
+        val hendelse = Meldingsfabrikk.søknadBehandletOgInnvilgetJson()
         val jsonMessage = JsonMessage(hendelse, MessageProblems(hendelse)).also {
             it.interestedIn("@id", "ident")
         }

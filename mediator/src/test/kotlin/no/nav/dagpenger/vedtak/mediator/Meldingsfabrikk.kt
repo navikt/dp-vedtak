@@ -8,7 +8,7 @@ import kotlin.time.Duration
 
 object Meldingsfabrikk {
 
-    fun dagpengerInnvilgetJson(
+    fun søknadBehandletOgInnvilgetJson(
         rettighetstype: String = "Ordinær",
         ident: String = "12345123451",
         sakId: String = "SAK_NUMMER_1",
@@ -41,7 +41,7 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
-    fun dagpengerAvslåttJson(
+    fun søknadBehandletOgAvslåttJson(
         rettighetstype: String = "Ordinær",
         ident: String = "12345123451",
         sakId: String = "SAK_NUMMER_1",

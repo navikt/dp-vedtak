@@ -6,7 +6,7 @@ import io.mockk.mockk
 import no.nav.dagpenger.vedtak.db.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.dagpengerInnvilgetJson
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.søknadBehandletOgInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
@@ -40,7 +40,7 @@ internal class PersonMediatorKonsistensTest {
         val feilendeIdent = "23456789101"
         every { personRepository.hent(feilendeIdent.tilPersonIdentfikator()) } returns null
         every { personRepository.lagre(any()) } throws RuntimeException("blaaaa")
-        assertThrows<RuntimeException> { testRapid.sendTestMessage(dagpengerInnvilgetJson(ident = feilendeIdent)) }
+        assertThrows<RuntimeException> { testRapid.sendTestMessage(søknadBehandletOgInnvilgetJson(ident = feilendeIdent)) }
         testObservatør.vedtak.shouldBeEmpty()
     }
 

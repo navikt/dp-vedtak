@@ -6,8 +6,6 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.AvventerIverksetting
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Iverksatt
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Mottatt
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerAvslått
-import no.nav.dagpenger.vedtak.iverksetting.hendelser.DagpengerInnvilget
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import org.junit.jupiter.api.BeforeEach
@@ -35,94 +33,6 @@ internal class IverksettingTest {
         iverksetting = Iverksetting(vedtakId, ident).also {
             it.addObserver(testObservatør)
         }
-    }
-
-    @Test
-    fun `Skal starte iverksetting når dagpenger innvilges`() {
-        iverksetting.håndter(
-            DagpengerInnvilget(
-                meldingsreferanseId = UUID.randomUUID(),
-                ident = ident,
-                vedtakId = vedtakId,
-                behandlingId = behandlingId,
-                sakId = sakId,
-                vedtakstidspunkt = vedtakstidspunkt,
-                virkningsdato = virkningsdato,
-            ),
-        )
-        assertBehov(
-            IverksettingBehov.Iverksett,
-            forventetDetaljer = mapOf(
-                "ident" to ident,
-                "vedtakId" to vedtakId.toString(),
-                "behandlingId" to behandlingId,
-                "sakId" to sakId,
-                "vedtakstidspunkt" to vedtakstidspunkt,
-                "virkningsdato" to virkningsdato,
-                "utfall" to "Innvilget",
-                "iverksettingId" to inspektør.iverksettingId.toString(),
-                "tilstand" to "Mottatt",
-            ),
-        )
-
-        iverksetting.håndter(
-            IverksattHendelse(
-                meldingsreferanseId = UUID.randomUUID(),
-                ident = ident,
-                iverksettingId = inspektør.iverksettingId,
-                vedtakId = inspektør.vedtakId,
-            ),
-        )
-
-        assertTilstander(
-            Mottatt,
-            AvventerIverksetting,
-            Iverksatt,
-        )
-    }
-
-    @Test
-    fun `Skal starte iverksetting når dagpenger avslås`() {
-        iverksetting.håndter(
-            DagpengerAvslått(
-                meldingsreferanseId = UUID.randomUUID(),
-                ident = ident,
-                vedtakId = vedtakId,
-                behandlingId = behandlingId,
-                sakId = sakId,
-                vedtakstidspunkt = vedtakstidspunkt,
-                virkningsdato = virkningsdato,
-            ),
-        )
-        assertBehov(
-            IverksettingBehov.Iverksett,
-            forventetDetaljer = mapOf(
-                "ident" to ident,
-                "vedtakId" to vedtakId.toString(),
-                "behandlingId" to behandlingId,
-                "sakId" to sakId,
-                "vedtakstidspunkt" to vedtakstidspunkt,
-                "virkningsdato" to virkningsdato,
-                "utfall" to "Avslått",
-                "iverksettingId" to inspektør.iverksettingId.toString(),
-                "tilstand" to "Mottatt",
-            ),
-        )
-
-        iverksetting.håndter(
-            IverksattHendelse(
-                meldingsreferanseId = UUID.randomUUID(),
-                ident = ident,
-                iverksettingId = inspektør.iverksettingId,
-                vedtakId = inspektør.vedtakId,
-            ),
-        )
-
-        assertTilstander(
-            Mottatt,
-            AvventerIverksetting,
-            Iverksatt,
-        )
     }
 
     @Test

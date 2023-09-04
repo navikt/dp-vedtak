@@ -12,11 +12,11 @@ import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
-import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgAvslåttHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
@@ -47,7 +47,7 @@ class RettighetStegTest : No {
             ident = søknadHendelse.fødselsnummer
             person = Person(ident.tilPersonIdentfikator())
             person.håndter(
-                DagpengerInnvilgetHendelse(
+                SøknadBehandletOgInnvilgetHendelse(
                     meldingsreferanseId = UUID.randomUUID(),
                     sakId = søknadHendelse.sakId,
                     ident = ident,
@@ -70,7 +70,7 @@ class RettighetStegTest : No {
         Gitt("et endringsvedtak") { søknadHendelse: SøknadInnvilgetHendelseCucumber ->
             assertPersonOpprettet()
             person.håndter(
-                DagpengerInnvilgetHendelse(
+                SøknadBehandletOgInnvilgetHendelse(
                     meldingsreferanseId = UUID.randomUUID(),
                     ident = ident,
                     sakId = søknadHendelse.sakId,
@@ -94,7 +94,7 @@ class RettighetStegTest : No {
             ident = søknadHendelse.fødselsnummer
             person = Person(ident.tilPersonIdentfikator())
             person.håndter(
-                DagpengerAvslåttHendelse(
+                SøknadBehandletOgAvslåttHendelse(
                     meldingsreferanseId = UUID.randomUUID(),
                     sakId = søknadHendelse.sakId,
                     ident = ident,

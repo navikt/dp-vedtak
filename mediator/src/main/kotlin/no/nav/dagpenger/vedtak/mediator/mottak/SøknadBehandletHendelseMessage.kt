@@ -6,8 +6,8 @@ import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
-import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerAvslåttHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.DagpengerInnvilgetHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgAvslåttHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
@@ -33,12 +33,12 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
 
     private val hendelse
         get() = when (packet["utfall"].asBoolean()) {
-            true -> dagpengerInnvilgetHendelse(packet, behandlingId)
-            false -> dagpengerAvslåttHendelse(packet, behandlingId)
+            true -> søknadBehandletOgInnvilgetHendelse(packet, behandlingId)
+            false -> søknadBehandletOgAvslåttHendelse(packet, behandlingId)
         }
 
-    private fun dagpengerAvslåttHendelse(packet: JsonMessage, behandlingId: UUID) =
-        DagpengerAvslåttHendelse(
+    private fun søknadBehandletOgAvslåttHendelse(packet: JsonMessage, behandlingId: UUID) =
+        SøknadBehandletOgAvslåttHendelse(
             meldingsreferanseId = id,
             sakId = sakId,
             ident = ident,
@@ -55,10 +55,10 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
             },
         )
 
-    private fun dagpengerInnvilgetHendelse(
+    private fun søknadBehandletOgInnvilgetHendelse(
         packet: JsonMessage,
         behandlingId: UUID,
-    ) = DagpengerInnvilgetHendelse(
+    ) = SøknadBehandletOgInnvilgetHendelse(
         meldingsreferanseId = id,
         sakId = sakId,
         ident = ident,
