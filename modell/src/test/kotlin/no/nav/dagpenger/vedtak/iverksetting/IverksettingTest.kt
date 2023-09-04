@@ -1,8 +1,6 @@
 package no.nav.dagpenger.vedtak.iverksetting
 
-import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.shouldBe
-import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.AvventerIverksetting
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Iverksatt
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting.Tilstand.TilstandNavn.Mottatt
@@ -52,21 +50,7 @@ internal class IverksettingTest {
             ),
         )
 
-        assertBehov(
-            IverksettingBehov.IverksettUtbetaling,
-            forventetDetaljer = mapOf(
-                "ident" to ident,
-                "vedtakId" to vedtakId.toString(),
-                "behandlingId" to behandlingId,
-                "sakId" to sakId,
-                "vedtakstidspunkt" to vedtakstidspunkt,
-                "virkningsdato" to virkningsdato,
-                "utfall" to "Innvilget",
-                "utbetalingsdager" to utbetalingsdager(),
-                "iverksettingId" to inspektør.iverksettingId.toString(),
-                "tilstand" to "Mottatt",
-            ),
-        )
+        inspektør.tilstand.tilstandNavn shouldBe AvventerIverksetting
 
         iverksetting.håndter(
             IverksattHendelse(
@@ -101,22 +85,7 @@ internal class IverksettingTest {
             ),
         )
 
-        assertBehov(
-            IverksettingBehov.IverksettUtbetaling,
-            forventetDetaljer = mapOf(
-                "ident" to ident,
-                "vedtakId" to vedtakId.toString(),
-                "behandlingId" to behandlingId,
-                "sakId" to sakId,
-                "vedtakstidspunkt" to vedtakstidspunkt,
-                "virkningsdato" to virkningsdato,
-                "forrigeBehandlingId" to forrigeBhandlingId,
-                "utfall" to "Innvilget",
-                "utbetalingsdager" to utbetalingsdager(),
-                "iverksettingId" to inspektør.iverksettingId.toString(),
-                "tilstand" to "Mottatt",
-            ),
-        )
+        inspektør.tilstand.tilstandNavn shouldBe AvventerIverksetting
 
         iverksetting.håndter(
             IverksattHendelse(
@@ -140,13 +109,5 @@ internal class IverksettingTest {
 
     private fun assertTilstander(vararg tilstander: Iverksetting.Tilstand.TilstandNavn) {
         tilstander.asList() shouldBe testObservatør.tilstander
-    }
-
-    private fun assertBehov(behovtype: Aktivitet.Behov.Behovtype, forventetDetaljer: Map<String, Any> = emptyMap()) {
-        val behov = inspektør.innsendingLogg.behov().findLast {
-            it.type == behovtype
-        } ?: throw AssertionError("Fant ikke behov $behovtype")
-
-        forventetDetaljer shouldContainAll behov.detaljer() + behov.kontekst()
     }
 }

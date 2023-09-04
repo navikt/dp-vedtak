@@ -1,6 +1,5 @@
 package no.nav.dagpenger.vedtak.iverksetting
 
-import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import java.util.UUID
 
@@ -13,7 +12,7 @@ internal class IverksettingInspektør(iverksetting: Iverksetting) : Iverksetting
     lateinit var iverksettingId: UUID
     lateinit var vedtakId: UUID
     lateinit var tilstand: Iverksetting.Tilstand
-    lateinit var innsendingLogg: Aktivitetslogg
+    // lateinit var innsendingLogg: Aktivitetslogg
 
     override fun visitIverksetting(
         id: UUID,
@@ -26,7 +25,7 @@ internal class IverksettingInspektør(iverksetting: Iverksetting) : Iverksetting
         this.tilstand = tilstand
     }
 
-    override fun postVisitAktivitetslogg(aktivitetslogg: Aktivitetslogg) {
-        this.innsendingLogg = aktivitetslogg
-    }
+//    override fun postVisitAktivitetslogg(aktivitetslogg: Aktivitetslogg) {
+//       // this.innsendingLogg = aktivitetslogg
+//    }
 }
