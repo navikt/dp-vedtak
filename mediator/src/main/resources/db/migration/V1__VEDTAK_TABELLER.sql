@@ -5,13 +5,6 @@ CREATE TABLE IF NOT EXISTS person
     opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS person_aktivitetslogg
-(
-    person_id BIGINT PRIMARY KEY REFERENCES person (id),
-    data      JSON                                                              NOT NULL,
-    opprettet TIMESTAMP WITH TIME ZONE DEFAULT (NOW() AT TIME ZONE 'utc'::TEXT) NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS sak
 (
     id        TEXT   PRIMARY KEY,

@@ -6,8 +6,6 @@ import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
-import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
-import no.nav.dagpenger.vedtak.aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
@@ -36,8 +34,6 @@ import no.nav.dagpenger.vedtak.modell.vedtak.fakta.Faktum
 import no.nav.dagpenger.vedtak.modell.vedtak.fakta.VanligArbeidstidPerDag
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
-import no.nav.dagpenger.vedtak.objectMapper
-import org.postgresql.util.PGobject
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -62,8 +58,6 @@ class PostgresPersonRepository(private val dataSource: DataSource) : PersonRepos
                     Person.rehydrer(
                         ident = row.string("ident").tilPersonIdentfikator(),
                         saker = mutableListOf(),
-                        aktivitetslogg = session.hentAktivitetslogg(personDbId)?.konverterTilAktivitetslogg()
-                            ?: throw RuntimeException("Personen har ikke aktivitetslogg. Mulig feil i lagring."),
                         vedtak = session.hentVedtak(personDbId),
                         perioder = session.hentRapporteringsperioder(personDbId),
 
@@ -103,27 +97,6 @@ private class PopulerQueries(
 
     init {
         person.accept(this)
-    }
-
-    override fun preVisitAktivitetslogg(aktivitetslogg: Aktivitetslogg) {
-        this.queries.add(
-            queryOf(
-                //language=PostgreSQL
-                statement = """
-                    INSERT INTO person_aktivitetslogg (person_id, data)
-                    VALUES (:person_id, :data)
-                    ON CONFLICT (person_id) DO UPDATE SET data = :data
-                """.trimIndent(),
-                paramMap = mapOf(
-                    "person_id" to dbPersonId,
-                    "data" to PGobject().apply {
-                        type = "json"
-                        value = objectMapper.writeValueAsString(AktivitetsloggMapper(aktivitetslogg).toMap())
-                    },
-
-                ),
-            ),
-        )
     }
 
     override fun preVisitRapporteringsperiode(rapporteringsperiodeId: UUID, periode: Rapporteringsperiode) {
@@ -593,20 +566,6 @@ private fun Session.hentDager(rapporteringsperiodeId: Long) = this.run(
             aktiviteter = listOf(syk, ferie, arbeid).mapNotNull { it },
         )
     }.asList,
-)
-
-private fun Session.hentAktivitetslogg(personId: Long) = this.run(
-    queryOf(
-        //language=PostgreSQL
-        statement = """
-            SELECT data FROM person_aktivitetslogg WHERE person_id = :person_id
-        """.trimIndent(),
-        paramMap = mapOf(
-            "person_id" to personId,
-        ),
-    ).map { rad ->
-        rad.binaryStream("data").aktivitetslogg()
-    }.asSingle,
 )
 
 private data class FaktaRad(

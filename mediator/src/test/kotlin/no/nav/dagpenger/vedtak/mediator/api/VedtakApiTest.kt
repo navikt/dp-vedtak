@@ -9,7 +9,6 @@ import io.ktor.http.ContentType.Application.Json
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
-import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.db.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.api.TestApplication.autentisert
 import no.nav.dagpenger.vedtak.mediator.api.TestApplication.testAzureAdToken
@@ -111,7 +110,6 @@ class VedtakApiTest {
         ident = "12345123451".tilPersonIdentfikator(),
         saker = mutableListOf(),
         vedtak = vedtak.toList(),
-        aktivitetslogg = Aktivitetslogg(),
         perioder = emptyList(),
     )
 

@@ -45,7 +45,6 @@ class PostgresPersonRepositoryTest {
             person.ident() shouldBe hentetPerson.ident()
 
             assertAntallRader("person", 1)
-            assertAntallRader("person_aktivitetslogg", 1)
         }
     }
 
@@ -104,7 +103,6 @@ class PostgresPersonRepositoryTest {
             )
 
             assertAntallRader("person", 1)
-            assertAntallRader("person_aktivitetslogg", 1)
             assertAntallRader("vedtak", 2)
             assertAntallRader("dagsats", 1)
             assertAntallRader("stønadsperiode", 1)
