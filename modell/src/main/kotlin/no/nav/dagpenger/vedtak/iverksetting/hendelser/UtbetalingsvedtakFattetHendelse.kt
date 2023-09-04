@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.iverksetting.hendelser
 
+import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -15,7 +16,8 @@ class UtbetalingsvedtakFattetHendelse(
     val forrigeBehandlingId: UUID?,
     val utbetalingsdager: List<Utbetalingsdag>,
     val utfall: Utfall,
-) : VedtakFattetHendelse(meldingsreferanseId, ident, vedtakId, behandlingId, sakId) {
+    aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
+) : VedtakFattetHendelse(meldingsreferanseId, ident, vedtakId, behandlingId, sakId, aktivitetslogg) {
     data class Utbetalingsdag(val dato: LocalDate, val beløp: Double)
     enum class Utfall {
         Innvilget,

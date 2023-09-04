@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak.iverksetting
 
+import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
+import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
@@ -12,10 +14,10 @@ class Iverksetting private constructor(
     private val personIdent: PersonIdentifikator,
     val vedtakId: UUID,
     private var tilstand: Tilstand,
-    // override val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
-) { //  : Subaktivitetskontekst
+) : Aktivitetskontekst {
 
     private val observers = mutableSetOf<IverksettingObserver>()
+
     constructor(vedtakId: UUID, ident: String) : this(
         id = UUID.randomUUID(),
         personIdent = ident.tilPersonIdentfikator(),
@@ -29,48 +31,45 @@ class Iverksetting private constructor(
             personIdentifikator: PersonIdentifikator,
             vedtakId: UUID,
             tilstand: Tilstand,
-            // aktivitetslogg: Aktivitetslogg,
         ): Iverksetting {
             return Iverksetting(
                 id = id,
                 personIdent = personIdentifikator,
                 vedtakId = vedtakId,
                 tilstand = tilstand,
-                // aktivitetslogg = aktivitetslogg,
             )
         }
     }
 
     fun accept(iverksettingVisitor: IverksettingVisitor) {
         iverksettingVisitor.visitIverksetting(id, vedtakId, personIdent, tilstand)
-        // aktivitetslogg.accept(iverksettingVisitor)
     }
 
-//    override fun toSpesifikkKontekst(): SpesifikkKontekst {
-//        return SpesifikkKontekst(
-//            "Iverksetting",
-//            mapOf(
-//                "iverksettingId" to id.toString(),
-//                "vedtakId" to vedtakId.toString(),
-//                "ident" to personIdent.identifikator(),
-//            ),
-//        )
-//    }
+    override fun toSpesifikkKontekst(): SpesifikkKontekst {
+        return SpesifikkKontekst(
+            "Iverksetting",
+            mapOf(
+                "iverksettingId" to id.toString(),
+                "vedtakId" to vedtakId.toString(),
+                "ident" to personIdent.identifikator(),
+            ),
+        )
+    }
 
     fun håndter(utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse) {
-        // kontekst(utbetalingsvedtakFattetHendelse)
+        kontekst(utbetalingsvedtakFattetHendelse)
         tilstand.håndter(utbetalingsvedtakFattetHendelse, this)
     }
 
     fun håndter(iverksattHendelse: IverksattHendelse) {
-        // kontekst(iverksattHendelse)
+        kontekst(iverksattHendelse)
         tilstand.håndter(iverksattHendelse, this)
     }
 
-//    private fun kontekst(hendelse: Hendelse) {
-//        //hendelse.kontekst(this)
-//        hendelse.kontekst(tilstand)
-//    }
+    private fun kontekst(hendelse: Hendelse) {
+        hendelse.kontekst(this)
+        hendelse.kontekst(tilstand)
+    }
 
     fun addObserver(iverksettingObserver: IverksettingObserver) {
         observers.add(iverksettingObserver)
@@ -82,7 +81,7 @@ class Iverksetting private constructor(
         }
         val forrigeTilstand = tilstand
         tilstand = nyTilstand
-        // hendelse.kontekst(tilstand)
+        hendelse.kontekst(tilstand)
         tilstand.entering(hendelse, this)
         varsleOmEndretTilstand(forrigeTilstand)
     }
@@ -100,7 +99,7 @@ class Iverksetting private constructor(
         }
     }
 
-    sealed class Tilstand(val tilstandNavn: TilstandNavn) { //  : Aktivitetskontekst
+    sealed class Tilstand(val tilstandNavn: TilstandNavn) : Aktivitetskontekst {
 
         enum class TilstandNavn {
             Mottatt,
@@ -111,8 +110,8 @@ class Iverksetting private constructor(
         open fun entering(hendelse: Hendelse, iverksetting: Iverksetting) {}
         open fun leaving(hendelse: Hendelse, iverksetting: Iverksetting) {}
 
-//        override fun toSpesifikkKontekst(): SpesifikkKontekst =
-//            SpesifikkKontekst("IverksettingTilstand", mapOf("tilstand" to tilstandNavn.name))
+        override fun toSpesifikkKontekst(): SpesifikkKontekst =
+            SpesifikkKontekst("IverksettingTilstand", mapOf("tilstand" to tilstandNavn.name))
 
         open fun håndter(utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse, iverksetting: Iverksetting) {
             utbetalingsvedtakFattetHendelse.feiltilstand()
@@ -127,7 +126,10 @@ class Iverksetting private constructor(
     }
 
     object Mottatt : Tilstand(TilstandNavn.Mottatt) {
-        override fun håndter(utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse, iverksetting: Iverksetting) {
+        override fun håndter(
+            utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse,
+            iverksetting: Iverksetting,
+        ) {
             if (utbetalingsvedtakFattetHendelse.forrigeBehandlingId != null) {
                 utbetalingsvedtakFattetHendelse.behov(
                     type = IverksettingBehov.IverksettUtbetaling,
@@ -167,6 +169,7 @@ class Iverksetting private constructor(
         override fun entering(hendelse: Hendelse, iverksetting: Iverksetting) {
             hendelse.info("Avventer iverksetting")
         }
+
         override fun håndter(iverksattHendelse: IverksattHendelse, iverksetting: Iverksetting) {
             iverksetting.endreTilstand(iverksattHendelse, Iverksatt)
         }
