@@ -28,7 +28,7 @@ class Behandlingdag(
     }
 
     internal companion object {
-        fun Collection<Behandlingdag>.rettighetsdagerUtenFravær() =
+        private fun Collection<Behandlingdag>.rettighetsdagerUtenFravær() =
             this.filter { it.dagpengerRettighetsdag() }.filterNot { it.dag.fravær() }
 
         fun Collection<Behandlingdag>.tellendeRapporteringsdager() =
@@ -40,7 +40,7 @@ class Behandlingdag(
         fun Collection<Behandlingdag>.arbeidedeTimer() =
             this.rettighetsdagerUtenFravær().map { it.dag.arbeidstimer() }.summer()
 
-        fun Collection<Behandlingdag>.taptArbeidstid() = (this.vanligArbeidstid() - this.arbeidedeTimer())
+        private fun Collection<Behandlingdag>.taptArbeidstid() = (this.vanligArbeidstid() - this.arbeidedeTimer())
 
         fun Collection<Behandlingdag>.graderingsProsent() = this.taptArbeidstid() prosentAv this.vanligArbeidstid()
     }
