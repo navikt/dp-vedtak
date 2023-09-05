@@ -13,18 +13,18 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class VedtakFattetKafkaObserverTest {
+class VedtakFattetObserverTest {
     private val testRapid = TestRapid()
-    private val vedtakFattetKafkaObserver = VedtakFattetKafkaObserver(testRapid)
+    private val vedtakFattetObserver = VedtakFattetObserver(testRapid)
 
     @Test
     fun `Skal sende ut melding på rapiden om at vedtak er fattet`() {
-        vedtakFattetKafkaObserver.vedtakFattet(
+        vedtakFattetObserver.vedtakFattet(
             ident = "1234568901",
             vedtakFattet(utfall = Innvilget),
         )
 
-        vedtakFattetKafkaObserver.vedtakFattet(
+        vedtakFattetObserver.vedtakFattet(
             ident = "1234568901",
             vedtakFattet(utfall = Avslått),
         )
@@ -43,12 +43,12 @@ class VedtakFattetKafkaObserverTest {
 
     @Test
     fun `Skal sende ut melding på rapiden om at utbetalingsvedtak er fattet`() {
-        vedtakFattetKafkaObserver.utbetalingsvedtakFattet(
+        vedtakFattetObserver.utbetalingsvedtakFattet(
             ident = "1234568901",
             utbetalingsvedtakFattet(utfall = Innvilget),
         )
 
-        vedtakFattetKafkaObserver.utbetalingsvedtakFattet(
+        vedtakFattetObserver.utbetalingsvedtakFattet(
             ident = "1234568901",
             utbetalingsvedtakFattet(utfall = Avslått),
         )

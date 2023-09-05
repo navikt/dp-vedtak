@@ -12,7 +12,7 @@ import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringInnsendtHend
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.søknadBehandletOgAvslåttJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.søknadBehandletOgInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
-import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
+import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetObserver
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -35,7 +35,7 @@ internal class PersonMediatorTest {
             personMediator = PersonMediator(
                 aktivitetsloggMediator = mockk(relaxed = true),
                 personRepository = personRepository,
-                personObservers = listOf(VedtakFattetKafkaObserver(testRapid), testObservatør),
+                personObservers = listOf(VedtakFattetObserver(testRapid), testObservatør),
             ),
             iverksettingMediator = IverksettingMediator(mockk(), mockk(), mockk()),
         )

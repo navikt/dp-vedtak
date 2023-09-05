@@ -8,7 +8,7 @@ import no.nav.dagpenger.vedtak.iverksetting.mediator.persistens.PostgresIverkset
 import no.nav.dagpenger.vedtak.mediator.api.vedtakApi
 import no.nav.dagpenger.vedtak.mediator.persistens.PostgresHendelseRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.PostgresPersonRepository
-import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
+import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetObserver
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -34,7 +34,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
                 aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
                 personRepository = personRepository,
                 personObservers = listOf(
-                    VedtakFattetKafkaObserver(rapidsConnection),
+                    VedtakFattetObserver(rapidsConnection),
                 ),
             ),
             iverksettingMediator = IverksettingMediator(

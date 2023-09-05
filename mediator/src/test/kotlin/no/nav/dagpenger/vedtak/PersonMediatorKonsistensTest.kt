@@ -9,7 +9,7 @@ import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.søknadBehandletOgInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
-import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetKafkaObserver
+import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetObserver
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
@@ -29,7 +29,7 @@ internal class PersonMediatorKonsistensTest {
             personMediator = PersonMediator(
                 aktivitetsloggMediator = mockk(relaxed = true),
                 personRepository = personRepository,
-                personObservers = listOf(VedtakFattetKafkaObserver(testRapid), testObservatør),
+                personObservers = listOf(VedtakFattetObserver(testRapid), testObservatør),
             ),
             iverksettingMediator = IverksettingMediator(mockk(), mockk(), mockk()),
         )

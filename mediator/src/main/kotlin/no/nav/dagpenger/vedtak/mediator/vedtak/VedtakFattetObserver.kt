@@ -7,7 +7,7 @@ import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 
-internal class VedtakFattetKafkaObserver(private val rapidsConnection: RapidsConnection) : PersonObserver {
+internal class VedtakFattetObserver(private val rapidsConnection: RapidsConnection) : PersonObserver {
 
     companion object {
         val logger = KotlinLogging.logger { }
