@@ -3,13 +3,17 @@ package no.nav.dagpenger.vedtak.modell.rapportering
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.Person
+import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
-import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingdag.Companion.arbeidedeTimer
+import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingdag.Companion.graderingsProsent
+import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingdag.Companion.tellendeRapporteringsdager
+import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingdag.Companion.vanligArbeidstid
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.IngenRettighet
@@ -26,38 +30,8 @@ class Behandling(
 ) : Aktivitetskontekst {
 
     constructor(person: Person, sakId: String) : this(UUID.randomUUID(), sakId, person, FinnBeregningsgrunnlag)
-
-    private val rapporteringsdager = mutableListOf<Dag>()
-    private val rettighetsdagerUtenFravær
-        get() = rapporteringsdager.filter(dagpengerRettighetsdag()).filterNot(fravær())
-    private val tellendeRapporteringsdager get() = rettighetsdagerUtenFravær.filterNot(helgedag())
-    private val vanligArbeidstid
-        get() = tellendeRapporteringsdager.map {
-            vanligArbeidstid(it)
-        }.summer()
-
-    private fun vanligArbeidstid(it: Dag) =
-        kotlin.runCatching { person.vedtakHistorikk.vanligArbeidstidHistorikk.get(it.dato()) }
-            .getOrDefault(0.timer)
-
-    private val arbeidedeTimer get() = rettighetsdagerUtenFravær.map { it.arbeidstimer() }.summer()
-    private val taptArbeidstid get() = (vanligArbeidstid - arbeidedeTimer)
-    private val graderingsProsent get() = taptArbeidstid prosentAv vanligArbeidstid
-
+    private val behandlingsdager = mutableListOf<Behandlingdag>()
     private val resultatBuilder: Resultat.Builder = Resultat.Builder()
-
-    private fun helgedag(): (Dag) -> Boolean = { it.erHelg() }
-    private fun fravær(): (Dag) -> Boolean = { it.fravær() }
-    private fun dagpengerRettighetsdag(): (Dag) -> Boolean =
-        {
-            val rettighetsdag = dagpengerettighet(it)
-            rettighetsdag != IngenRettighet && rettighetsdag.utfall
-        }
-
-    private fun dagpengerettighet(dag: Dag) =
-        kotlin.runCatching { person.vedtakHistorikk.hovedrettighetHistorikk.get(dag.dato()) }
-            .getOrDefault(IngenRettighet)
-
     fun håndter(rapporteringshendelse: Rapporteringshendelse) {
         rapporteringshendelse.kontekst(this)
         behandlingssteg.håndter(rapporteringshendelse, this)
@@ -79,11 +53,11 @@ class Behandling(
 
     object FinnBeregningsgrunnlag : Behandlingssteg() {
         override fun håndter(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
-            behandling.rapporteringsdager.addAll(
-                RapporteringsdagerForPeriode(
+            behandling.behandlingsdager.addAll(
+                BehandlingsdagerForPeriode(
                     rapporteringshendelse,
                     behandling.person,
-                ).dager,
+                ).behandlingsdager,
             )
 
             behandling.nesteSteg(VurderTerskelForTaptArbeidstid, rapporteringshendelse)
@@ -92,15 +66,15 @@ class Behandling(
 
     object VurderTerskelForTaptArbeidstid : Behandlingssteg() {
         override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
-            val arbeidedeTimer = behandling.rettighetsdagerUtenFravær.map { it.arbeidstimer() }.summer()
+            val arbeidedeTimer = behandling.behandlingsdager.arbeidedeTimer()
 
-            val terskelProsent: Prosent = behandling.tellendeRapporteringsdager.map {
-                TaptArbeidstidTerskel.terskelFor(behandling.dagpengerettighet(it).type, it.dato())
-            }.summer() / behandling.tellendeRapporteringsdager.size.toDouble()
+            val terskelProsent: Prosent = behandling.behandlingsdager.tellendeRapporteringsdager().map {
+                it.terskel()
+            }.summer() / behandling.behandlingsdager.tellendeRapporteringsdager().size.toDouble()
 
-            val terskelTimer: Timer = terskelProsent av behandling.vanligArbeidstid
+            val terskelTimer: Timer = terskelProsent av behandling.behandlingsdager.vanligArbeidstid()
 
-            val vilkårOppfylt = arbeidedeTimer <= behandling.vanligArbeidstid - terskelTimer
+            val vilkårOppfylt = arbeidedeTimer <= behandling.behandlingsdager.vanligArbeidstid() - terskelTimer
             behandling.resultatBuilder.utfall(vilkårOppfylt)
             if (vilkårOppfylt) {
                 behandling.nesteSteg(GraderUtbetaling, rapporteringshendelse)
@@ -121,20 +95,17 @@ class Behandling(
             val gjenståendeStønadsperiode = innvilgedeStønadsdager - forrigeAkkumulerteForbruk
 
             val forbruksdager =
-                if (Stønadsdager(dager = behandling.tellendeRapporteringsdager.size) > gjenståendeStønadsperiode) {
-                    behandling.tellendeRapporteringsdager.subList(0, gjenståendeStønadsperiode.stønadsdager())
+                if (Stønadsdager(dager = behandling.behandlingsdager.tellendeRapporteringsdager().size) > gjenståendeStønadsperiode) {
+                    behandling.behandlingsdager.tellendeRapporteringsdager().subList(0, gjenståendeStønadsperiode.stønadsdager())
                 } else {
-                    behandling.tellendeRapporteringsdager
+                    behandling.behandlingsdager.tellendeRapporteringsdager()
                 }
 
-            behandling.resultatBuilder.forbruksdager(forbruksdager)
+            behandling.resultatBuilder.forbruksdager(forbruksdager.map { it.dag })
 
             val utbetalingsdager =
                 forbruksdager.map {
-                    Utbetalingsdag(
-                        it.dato(),
-                        behandling.graderingsProsent * behandling.person.vedtakHistorikk.dagsatsHistorikk.get(it.dato()),
-                    )
+                    it.utbetalingsdag(behandling.behandlingsdager.graderingsProsent())
                 }
             behandling.resultatBuilder.utbetalingsdager(utbetalingsdager)
 
@@ -171,6 +142,7 @@ class Behandling(
 
             private var utfall: Boolean? = null
             private var forbruksdager: List<Dag> = emptyList()
+
             private var utbetalingsdager: List<Utbetalingsdag> = emptyList()
 
             fun utfall(utfall: Boolean) {
@@ -193,17 +165,25 @@ class Behandling(
         }
     }
 
-    private class RapporteringsdagerForPeriode(private val rapporteringshendelse: Rapporteringshendelse, person: Person) : PersonVisitor {
+    private class BehandlingsdagerForPeriode(
+        private val rapporteringshendelse: Rapporteringshendelse,
+        private val person: Person,
+    ) : PersonVisitor {
 
-        val dager = mutableListOf<Dag>()
+        val behandlingsdager = mutableListOf<Behandlingdag>()
 
         init {
             person.accept(this)
         }
 
         override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
-            if (dag.dato() in rapporteringshendelse) {
-                dager.add(dag)
+            if (dag.innenfor(rapporteringshendelse)) {
+                Behandlingdag(
+                    dag = dag,
+                    runCatching { person.vedtakHistorikk.hovedrettighetHistorikk.get(dag.dato()) }.getOrDefault(IngenRettighet),
+                    runCatching { person.vedtakHistorikk.vanligArbeidstidHistorikk.get(dag.dato()) }.getOrDefault(0.timer),
+                    runCatching { person.vedtakHistorikk.dagsatsHistorikk.get(dag.dato()) }.getOrDefault(0.beløp),
+                ).also { behandlingsdager.add(it) }
             }
         }
     }
