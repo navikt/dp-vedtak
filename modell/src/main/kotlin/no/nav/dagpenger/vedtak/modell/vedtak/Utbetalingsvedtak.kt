@@ -58,6 +58,7 @@ class Utbetalingsvedtak(
         )
 
         visitor.visitUtbetalingsvedtak(
+            vedtakId = vedtakId,
             utfall = utfall,
             forbruk = forbruk,
             beløpTilUtbetaling = utbetalingsdager.summer(),

@@ -33,7 +33,7 @@ paths:
             example:
               ident: "12312312311"
             schema:
-              $ref: '#/components/schemas/IdentForesporsel'
+              $ref: '#/components/schemas/Vedtak'
 components:
   schemas:
     IdentForesporsel:
@@ -43,19 +43,52 @@ components:
       properties:
         ident:
           type: string
-    Vedtak:
+    Ramme:
       type: object
       properties:
         vedtakId:
           type: string
           format: uuid
-        vedtakType:
+        virkningsdato:
           type: string
-          enum:
-            - Ramme
-            - Utbetaling
-            - Avslag
-            - Stans
+          format: date
+      required:
+        - vedtakId
+        - virkningsdato
+    Utbetaling:
+      type: object
+      properties:
+        vedtakId:
+          type: string
+          format: uuid
+        fraOgMed:
+          type: string
+          format: date
+        tilOgMed:
+          type: string
+          format: date
+        sumUtbetalt:
+          type: number
+          format: double
+      required:
+        - vedtakId
+        - fraOgMed
+        - tilOgMed
+    Vedtak:
+      type: object
+      required:
+        - rammer
+        - utbetalinger
+      properties:
+        rammer:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ramme'
+        utbetalinger:
+          type: array
+          items:
+            $ref: '#/components/schemas/Utbetaling'
+
   securitySchemes:
     azureAd:
       type: http

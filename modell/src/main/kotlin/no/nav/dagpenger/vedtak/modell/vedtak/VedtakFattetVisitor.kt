@@ -88,6 +88,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
     }
 
     override fun visitUtbetalingsvedtak(
+        vedtakId: UUID,
         utfall: Boolean,
         forbruk: Stønadsdager,
         beløpTilUtbetaling: Beløp,

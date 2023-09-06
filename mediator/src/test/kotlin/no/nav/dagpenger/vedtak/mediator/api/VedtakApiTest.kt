@@ -18,6 +18,7 @@ import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIde
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
+import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Rammevedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
@@ -78,19 +79,75 @@ class VedtakApiTest {
 
             response.status shouldBe HttpStatusCode.OK
             response.contentType().toString() shouldContain "application/json"
-            response.bodyAsText() shouldContain "Ramme"
-            response.bodyAsText() shouldContain "Utbetaling"
+
+            response.bodyAsText() shouldContain "rammer"
+            response.bodyAsText() shouldContain "utbetalinger"
         }
     }
 
     @Test
-    internal fun `200 OK og tom liste hvis person ikke eksisterer i db`() {
+    internal fun `200 OK og tom liste av ramme- og utbetalingsvedtak hvis person ikke eksisterer i db`() {
         medSikretVedtakApi {
             val response = autentisert(endepunkt = "/vedtak", body = """{"ident": "$ident"}""")
 
+            print(response.bodyAsText())
+
             response.status shouldBe HttpStatusCode.OK
             response.contentType().toString() shouldContain "application/json"
-            response.bodyAsText() shouldBe "[]"
+            response.bodyAsText() shouldContain "\"rammer\":[]"
+            response.bodyAsText() shouldContain "\"utbetalinger\":[]"
+        }
+    }
+
+    @Test
+    internal fun `200 OK og liste med alle rammevedtak for en person`() {
+        personRepository.lagre(
+            testPersonMed(
+                rammevedtak(virkningsdato = LocalDate.parse("2019-08-24")),
+            ),
+        )
+
+        medSikretVedtakApi {
+            val response = autentisert(endepunkt = "/vedtak", body = """{"ident": "$ident"}""")
+
+            println("RES: ${response.bodyAsText()}")
+            response.status shouldBe HttpStatusCode.OK
+            response.contentType().toString() shouldContain "application/json"
+            response.bodyAsText() shouldContain "rammer"
+            response.bodyAsText() shouldContain "\"utbetalinger\":[]"
+            response.bodyAsText() shouldContain "\"virkningsdato\":\"2019-08-24\""
+        }
+    }
+
+    @Test
+    internal fun `200 OK og list med utbetalingsvedtak for en person `() {
+        personRepository.lagre(
+            testPersonMed(
+                utbetalingsvedtak(
+                    virkningsdato = LocalDate.parse("2019-08-24"),
+                    utbetalingsdager = listOf(
+                        Utbetalingsdag(LocalDate.parse("2019-08-11"), 1000.00.beløp),
+                        Utbetalingsdag(LocalDate.parse("2019-08-12"), 1000.00.beløp),
+                        Utbetalingsdag(LocalDate.parse("2019-08-13"), 1000.00.beløp),
+                        Utbetalingsdag(LocalDate.parse("2019-08-13"), 0.00.beløp),
+                        Utbetalingsdag(LocalDate.parse("2019-08-13"), 0.00.beløp),
+                    ),
+
+                ),
+            ),
+        )
+
+        medSikretVedtakApi {
+            val response = autentisert(endepunkt = "/vedtak", body = """{"ident": "$ident"}""")
+
+            println("RES: ${response.bodyAsText()}")
+            response.status shouldBe HttpStatusCode.OK
+            response.contentType().toString() shouldContain "application/json"
+            response.bodyAsText() shouldContain "utbetalinger"
+            response.bodyAsText() shouldContain "\"rammer\":[]"
+            response.bodyAsText() shouldContain "\"fraOgMed\":\"2019-08-11\""
+            response.bodyAsText() shouldContain "\"tilOgMed\":\"2019-08-24\""
+            response.bodyAsText() shouldContain "\"sumUtbetalt\":3000.0"
         }
     }
 
@@ -113,21 +170,21 @@ class VedtakApiTest {
         perioder = emptyList(),
     )
 
-    private fun utbetalingsvedtak() = Utbetalingsvedtak.utbetalingsvedtak(
+    private fun utbetalingsvedtak(virkningsdato: LocalDate = LocalDate.MAX, utbetalingsdager: List<Utbetalingsdag> = emptyList()) = Utbetalingsvedtak.utbetalingsvedtak(
         behandlingId = UUID.randomUUID(),
         sakId = "SAK_NUMMER_1",
         utfall = true,
         vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
-        virkningsdato = LocalDate.MAX,
+        virkningsdato = virkningsdato,
         forbruk = Stønadsdager(10),
-        utbetalingsdager = emptyList(),
+        utbetalingsdager = utbetalingsdager,
     )
 
-    private fun rammevedtak() = Rammevedtak.innvilgelse(
+    private fun rammevedtak(virkningsdato: LocalDate = LocalDate.MAX) = Rammevedtak.innvilgelse(
         behandlingId = UUID.randomUUID(),
         sakId = "SAK_NUMMER_1",
         vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
-        virkningsdato = LocalDate.MAX,
+        virkningsdato = virkningsdato,
         dagsats = 1000.beløp,
         stønadsdager = Stønadsdager(104 * 5),
         hovedrettighet = Ordinær(true),

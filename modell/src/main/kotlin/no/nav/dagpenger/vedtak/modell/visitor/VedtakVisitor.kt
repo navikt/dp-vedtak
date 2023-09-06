@@ -30,6 +30,7 @@ interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
     ) {}
 
     fun visitUtbetalingsvedtak(
+        vedtakId: UUID,
         utfall: Boolean,
         forbruk: Stønadsdager,
         beløpTilUtbetaling: Beløp,

@@ -26,11 +26,10 @@ fun Application.vedtakApi(personRepository: PersonRepository) {
                 post {
                     val identForespørsel = call.receive<IdentForesporselDTO>()
                     val person = personRepository.hent(identForespørsel.ident.tilPersonIdentfikator())
-                    val vedtakListe = mutableListOf<VedtakDTO>()
                     if (person != null) {
-                        vedtakListe.addAll(VedtakForPersonVisitor(person).vedtakListeDto())
+                        call.respond(HttpStatusCode.OK, VedtakForPersonVisitor(person).vedtakListeDto())
                     }
-                    call.respond(HttpStatusCode.OK, vedtakListe)
+                    call.respond(HttpStatusCode.OK, VedtakDTO(rammer = emptyList(), utbetalinger = emptyList()))
                 }
             }
         }

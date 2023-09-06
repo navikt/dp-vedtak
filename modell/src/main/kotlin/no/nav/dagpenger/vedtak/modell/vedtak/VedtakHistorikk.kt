@@ -122,6 +122,7 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
         }
 
         override fun visitUtbetalingsvedtak(
+            vedtakId: UUID,
             utfall: Boolean,
             forbruk: Stønadsdager,
             beløpTilUtbetaling: Beløp,
