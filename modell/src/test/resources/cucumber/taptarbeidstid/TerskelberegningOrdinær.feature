@@ -90,6 +90,25 @@
         Så skal forbruket være 5 dager
         Så skal bruker ha 2 vedtak
 
+    Scenario: Rapporterer arbeidstimer på samme dag som fravær. Disse arbeidstimene skal ikke telle med, så bruker har tapt arbeidstid eksakt lik terskel.
+      Når rapporteringshendelse mottas
+        | dato       | fravær | timer |
+        | 12.12.2022 | false  | 4     |
+        | 13.12.2022 | false  | 4     |
+        | 14.12.2022 | false  | 4     |
+        | 15.12.2022 | false  | 4     |
+        | 16.12.2022 | false  | 4     |
+        | 17.12.2022 | false  | 0     |
+        | 18.12.2022 | false  | 0     |
+        | 19.12.2022 | false  | 4     |
+        | 20.12.2022 | false  | 4     |
+        | 21.12.2022 | false  | 4     |
+        | 22.12.2022 | false  | 4     |
+        | 23.12.2022 | true   | 8     |
+        | 24.12.2022 | false  | 0     |
+        | 25.12.2022 | false  | 0     |
+      Så skal forbruket være 9 dager
+      Så skal bruker ha 2 vedtak
 
     Scenario: Rapporterer arbeid i helgedag, som gjør at man kommer over terskel
       Når rapporteringshendelse mottas
