@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.rapportering
 
+import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.Person
@@ -29,6 +30,7 @@ class Behandling(
     private var behandlingssteg: Behandlingssteg,
 ) : Aktivitetskontekst {
 
+    private val sikkerLogger = KotlinLogging.logger("tjenestekall")
     constructor(person: Person, sakId: String) : this(UUID.randomUUID(), sakId, person, FinnBeregningsgrunnlag)
     private val behandlingsdager = mutableListOf<Behandlingdag>()
     private val resultatBuilder: Resultat.Builder = Resultat.Builder()
@@ -59,6 +61,9 @@ class Behandling(
                     behandling.person,
                 ).behandlingsdager,
             )
+            behandling.sikkerLogger.info {
+                behandling.behandlingsdager.joinToString("\n") { it.toString() }
+            }
 
             behandling.nesteSteg(VurderTerskelForTaptArbeidstid, rapporteringshendelse)
         }
@@ -68,9 +73,13 @@ class Behandling(
         override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
             val arbeidedeTimer = behandling.behandlingsdager.arbeidedeTimer()
 
-            val terskelProsent: Prosent = behandling.behandlingsdager.tellendeRapporteringsdager().map {
+            val terskel = behandling.behandlingsdager.tellendeRapporteringsdager().map {
                 it.terskel()
-            }.summer() / behandling.behandlingsdager.tellendeRapporteringsdager().size.toDouble()
+            }.summer()
+            behandling.sikkerLogger.info {
+                "Terskel for tapt arbeidstid: $terskel"
+            }
+            val terskelProsent: Prosent = terskel / behandling.behandlingsdager.tellendeRapporteringsdager().size.toDouble()
 
             val terskelTimer: Timer = terskelProsent av behandling.behandlingsdager.vanligArbeidstid()
 

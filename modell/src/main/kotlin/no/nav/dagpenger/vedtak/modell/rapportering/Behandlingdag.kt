@@ -27,6 +27,10 @@ class Behandlingdag(
         return Utbetalingsdag(dag.dato(), utbetaling)
     }
 
+    override fun toString(): String {
+        return "Behandlingdag(dag=$dag, hovedrettighet=${hovedrettighet.javaClass.simpleName}, vanligArbeidstidPerDag=$vanligArbeidstidPerDag, dagsats=$dagsats, utbetaling=$utbetaling)"
+    }
+
     internal companion object {
         private fun Collection<Behandlingdag>.rettighetsdagerUtenFravær() =
             this.filter { it.dagpengerRettighetsdag() }.filterNot { it.dag.fravær() }
