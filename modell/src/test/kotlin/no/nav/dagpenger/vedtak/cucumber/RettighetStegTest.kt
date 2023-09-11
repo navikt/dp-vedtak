@@ -77,12 +77,7 @@ class RettighetStegTest : No {
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
-                    hovedrettighet = when (søknadHendelse.dagpengerettighet) {
-                        "Ordinær" -> Ordinær(true)
-                        "Permittering" -> Permittering(true)
-                        "PermitteringFraFiskeindustrien" -> PermitteringFraFiskeindustrien(true)
-                        else -> throw IllegalArgumentException("Hvilken rettighet skal $this mappes til?")
-                    },
+                    hovedrettighet = hovedrettighet(hovedrettighet = søknadHendelse.dagpengerettighet, utfall = true),
                     dagsats = søknadHendelse.dagsats.beløp,
                     stønadsdager = Dagpengeperiode(antallUker = søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
@@ -101,12 +96,7 @@ class RettighetStegTest : No {
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
-                    hovedrettighet = when (søknadHendelse.dagpengerettighet) {
-                        "Ordinær" -> Ordinær(false)
-                        "Permittering" -> Permittering(false)
-                        "PermitteringFraFiskeindustrien" -> PermitteringFraFiskeindustrien(false)
-                        else -> throw IllegalArgumentException("Hvilken rettighet skal $this mappes til?")
-                    },
+                    hovedrettighet = hovedrettighet(hovedrettighet = søknadHendelse.dagpengerettighet, utfall = false),
                 ),
             )
         }
@@ -187,6 +177,12 @@ class RettighetStegTest : No {
             håndterRapporteringsHendelse(rapporteringsdager)
         }
     }
+
+    private fun hovedrettighet(hovedrettighet: String, utfall: Boolean) =
+        when (hovedrettighet) {
+            "Ordinær" -> Ordinær(utfall)
+            else -> throw IllegalArgumentException("Kjenner ikke rettighet $hovedrettighet")
+        }
 
     private fun lagAktivitet(data: MutableList<String>) = when (data[1].toBooleanStrict()) {
         true -> Rapporteringsdag.Aktivitet(Rapporteringsdag.Aktivitet.Type.Syk, 1.days)
