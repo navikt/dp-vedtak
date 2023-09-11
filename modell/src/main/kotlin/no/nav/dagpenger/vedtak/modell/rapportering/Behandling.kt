@@ -62,6 +62,9 @@ class Behandling(
                 ).behandlingsdager,
             )
             behandling.sikkerLogger.info {
+                behandling.person.vedtakHistorikk.hovedrettighetHistorikk
+            }
+            behandling.sikkerLogger.info {
                 behandling.behandlingsdager.joinToString("\n") { it.toString() }
             }
 

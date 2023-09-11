@@ -29,4 +29,7 @@ internal open class TemporalCollection<R> {
     }
 
     fun harHistorikk() = contents.isNotEmpty()
+    override fun toString(): String {
+        return "TemporalCollection(contents=$contents)"
+    }
 }
