@@ -1,5 +1,6 @@
 package no.nav.dagpenger.vedtak.mediator.mottak
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -38,6 +39,17 @@ internal class RettighetBehandletMottakTest {
         testRapid.sendTestMessage(rettighetBehandletOgAvslåttJson())
         verify(exactly = 1) {
             hendelseMediatorMock.behandle(any(), any<RettighetBehandletHendelseMessage>(), any())
+        }
+    }
+
+    @Test
+    fun `Kan kun håndtere rettighetstype Ordinær`() {
+        shouldThrow<IllegalArgumentException> {
+            testRapid.sendTestMessage(
+                rettighetBehandletOgInnvilgetJson(
+                    rettighetstype = "Permittering",
+                ),
+            )
         }
     }
 

@@ -9,8 +9,6 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
-import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
-import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.asLocalDate
@@ -47,14 +45,7 @@ internal class RettighetBehandletHendelseMessage(private val packet: JsonMessage
             behandlingId = behandlingId,
             vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),
             virkningsdato = packet["Virkningsdato"].asLocalDate(),
-            hovedrettighet = when (packet["Rettighetstype"].asText()) {
-                "Ordinær" -> Ordinær(false)
-                "Permittering" -> Permittering(false)
-                "PermitteringFraFiskeindustrien" -> PermitteringFraFiskeindustrien(false)
-                else -> {
-                    throw IllegalArgumentException("Kjenner ikke rettighet $this")
-                }
-            },
+            hovedrettighet = hovedrettighet(packet, false),
         )
 
     private fun rettighetBehandletOgInnvilgetHendelse(
@@ -67,18 +58,18 @@ internal class RettighetBehandletHendelseMessage(private val packet: JsonMessage
         behandlingId = behandlingId,
         vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),
         virkningsdato = packet["Virkningsdato"].asLocalDate(),
-        hovedrettighet = when (packet["Rettighetstype"].asText()) {
-            "Ordinær" -> Ordinær(true)
-            "Permittering" -> Permittering(true)
-            "PermitteringFraFiskeindustrien" -> PermitteringFraFiskeindustrien(true)
-            else -> {
-                throw IllegalArgumentException("Kjenner ikke rettighet $this")
-            }
-        },
+        hovedrettighet = hovedrettighet(packet, true),
         dagsats = packet["Dagsats"].asDouble().beløp,
         stønadsdager = Dagpengeperiode(antallUker = packet["Periode"].asInt()).tilStønadsdager(),
         vanligArbeidstidPerDag = packet["Fastsatt vanlig arbeidstid"].asDouble().timer,
     )
+
+    private fun hovedrettighet(packet: JsonMessage, utfall: Boolean) = when (packet["Rettighetstype"].asText()) {
+        "Ordinær" -> Ordinær(utfall)
+        else -> {
+            throw IllegalArgumentException("Kjenner ikke rettighet '${packet["Rettighetstype"].asText()}'")
+        }
+    }
 
     override fun behandle(mediator: IHendelseMediator, context: MessageContext) {
         mediator.behandle(hendelse, this, context)
