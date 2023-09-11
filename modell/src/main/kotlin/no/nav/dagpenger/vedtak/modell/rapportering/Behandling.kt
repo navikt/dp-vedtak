@@ -77,7 +77,8 @@ class Behandling(
                 it.terskel()
             }.summer()
             behandling.sikkerLogger.info {
-                "Terskel for tapt arbeidstid: $terskel"
+                "Terskel for tapt arbeidstid: $terskel\n" +
+                    "Tellende rapporederingsdagert : ${behandling.behandlingsdager.tellendeRapporteringsdager().joinToString("\n") { it.toString() }}"
             }
             val terskelProsent: Prosent = terskel / behandling.behandlingsdager.tellendeRapporteringsdager().size.toDouble()
 
