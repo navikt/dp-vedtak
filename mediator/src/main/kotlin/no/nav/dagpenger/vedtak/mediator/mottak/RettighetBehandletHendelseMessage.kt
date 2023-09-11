@@ -6,8 +6,8 @@ import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgAvslåttHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgInnvilgetHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgAvslåttHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Permittering
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.PermitteringFraFiskeindustrien
@@ -18,7 +18,7 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
-internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) : HendelseMessage(packet) {
+internal class RettighetBehandletHendelseMessage(private val packet: JsonMessage) : HendelseMessage(packet) {
 
     override val ident: String
         get() = packet["ident"].asText()
@@ -32,13 +32,15 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
         get() = packet["sakId"].asText(UUID.randomUUID().toString())
 
     private val hendelse
-        get() = when (packet["utfall"].asBoolean()) {
-            true -> søknadBehandletOgInnvilgetHendelse(packet, behandlingId)
-            false -> søknadBehandletOgAvslåttHendelse(packet, behandlingId)
+        get() = when (packet["utfall"].asText()) {
+            "Innvilgelse" -> rettighetBehandletOgInnvilgetHendelse(packet, behandlingId)
+            "Avslag" -> rettighetBehandletOgAvslåttHendelse(packet, behandlingId)
+            "Stans" -> TODO()
+            else -> throw IllegalArgumentException("Kjenner ikke utfall $this")
         }
 
-    private fun søknadBehandletOgAvslåttHendelse(packet: JsonMessage, behandlingId: UUID) =
-        SøknadBehandletOgAvslåttHendelse(
+    private fun rettighetBehandletOgAvslåttHendelse(packet: JsonMessage, behandlingId: UUID) =
+        RettighetBehandletOgAvslåttHendelse(
             meldingsreferanseId = id,
             sakId = sakId,
             ident = ident,
@@ -55,10 +57,10 @@ internal class SøknadBehandletHendelseMessage(private val packet: JsonMessage) 
             },
         )
 
-    private fun søknadBehandletOgInnvilgetHendelse(
+    private fun rettighetBehandletOgInnvilgetHendelse(
         packet: JsonMessage,
         behandlingId: UUID,
-    ) = SøknadBehandletOgInnvilgetHendelse(
+    ) = RettighetBehandletOgInnvilgetHendelse(
         meldingsreferanseId = id,
         sakId = sakId,
         ident = ident,

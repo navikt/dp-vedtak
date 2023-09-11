@@ -4,13 +4,13 @@
 
     Bakgrunn: Ordinære dagpenger er innvilget fra 12. desember. Stanses fra 19. desember.
       Gitt en ny hendelse om innvilget søknad
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 104            | 8                      | Ordinær           |
+        | fødselsnummer | behandlingId                         | utfall      | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | Innvilgelse | 12.12.2022    | 800     | 104            | 8                      | Ordinær           |
 
       # @todo: Vurder hvordan stans-hendelse skal se ut og håndteres
       Og en ny hendelse om stans
         | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagpengerettighet |
-        | 12345678901   | 2D085CE8-F5E3-47B5-8C3B-873FE99E4EF4 | false  | 19.12.2022    | Ordinær           |
+        | 12345678901   | 2D085CE8-F5E3-47B5-8C3B-873FE99E4EF4 | Avslag | 19.12.2022    | Ordinær           |
 
       Scenario: Har ikke vedtak hele perioden fordi dagpengevedtaket er stanset fra og med uke 2. Rapporterer arbeidstimer eksakt lik terskel i uke 1, over terskel i uke 2.
       Når rapporteringshendelse mottas

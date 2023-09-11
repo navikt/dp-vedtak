@@ -9,7 +9,7 @@ import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIde
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.withMDC
 
@@ -23,9 +23,9 @@ internal class PersonMediator(
         val sikkerLogger = KotlinLogging.logger("tjenestekall")
     }
 
-    fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
-        behandle(søknadBehandletHendelse) { person ->
-            person.håndter(søknadBehandletHendelse)
+    fun håndter(rettighetBehandletHendelse: RettighetBehandletHendelse) {
+        behandle(rettighetBehandletHendelse) { person ->
+            person.håndter(rettighetBehandletHendelse)
         }
     }
 
@@ -63,7 +63,7 @@ internal class PersonMediator(
     private fun hentEllerOpprettPerson(hendelse: Hendelse): Person {
         val person = personRepository.hent(hendelse.ident().tilPersonIdentfikator())
         return when (hendelse) {
-            is SøknadBehandletHendelse -> person ?: Person(hendelse.ident().tilPersonIdentfikator())
+            is RettighetBehandletHendelse -> person ?: Person(hendelse.ident().tilPersonIdentfikator())
             else -> person ?: Person(PersonIdentifikator("12345123451"))
                 .also { logger.error { "Oppretter default person 👨🏽" } } // TODO: Fjern når vi har database
         }

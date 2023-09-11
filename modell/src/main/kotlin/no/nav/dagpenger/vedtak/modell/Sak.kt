@@ -4,8 +4,8 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.rapportering.Behandling
 import no.nav.dagpenger.vedtak.modell.visitor.SakVisitor
 
@@ -34,15 +34,15 @@ class Sak private constructor(
         sakVisitor.visitSak(sakId)
     }
 
-    fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
-        kontekst(søknadBehandletHendelse)
-        if (person.vedtakHistorikk.harBehandlet(søknadBehandletHendelse.behandlingId)) {
-            søknadBehandletHendelse.info("Har allerede behandlet SøknadBehandletHendelse")
+    fun håndter(rettighetBehandletHendelse: RettighetBehandletHendelse) {
+        kontekst(rettighetBehandletHendelse)
+        if (person.vedtakHistorikk.harBehandlet(rettighetBehandletHendelse.behandlingId)) {
+            rettighetBehandletHendelse.info("Har allerede behandlet RettighetBehandletHendelse")
             return
         }
-        val vedtak = søknadBehandletHendelse.tilVedtak()
-        søknadBehandletHendelse.kontekst(vedtak)
-        søknadBehandletHendelse.info("Mottatt hendelse om behandlet søknad og opprettet vedtak.")
+        val vedtak = rettighetBehandletHendelse.tilVedtak()
+        rettighetBehandletHendelse.kontekst(vedtak)
+        rettighetBehandletHendelse.info("Mottatt hendelse om behandlet søknad og opprettet vedtak.")
         person.leggTilVedtak(vedtak)
     }
 

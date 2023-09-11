@@ -8,7 +8,7 @@ import kotlin.time.Duration
 
 object Meldingsfabrikk {
 
-    fun søknadBehandletOgInnvilgetJson(
+    fun rettighetBehandletOgInnvilgetJson(
         rettighetstype: String = "Ordinær",
         ident: String = "12345123451",
         sakId: String = "SAK_NUMMER_1",
@@ -20,13 +20,13 @@ object Meldingsfabrikk {
         //language=JSON
         """
         {        
-          "@event_name": "søknad_behandlet_hendelse",
+          "@event_name": "rettighet_behandlet_hendelse",
           "@id": "$meldingId",
           "ident" : "$ident",
           "sakId" : "$sakId",
           "behandlingId": "${UUID.randomUUID()}",
           "Virkningsdato": "$virkningsdato",
-          "utfall": true,
+          "utfall": "Innvilgelse",
           "Rettighetstype": "$rettighetstype",
           "Dagsats": "$dagsats",
           "Grunnlag": "500000",
@@ -41,7 +41,7 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
-    fun søknadBehandletOgAvslåttJson(
+    fun rettighetBehandletOgAvslåttJson(
         rettighetstype: String = "Ordinær",
         ident: String = "12345123451",
         sakId: String = "SAK_NUMMER_1",
@@ -49,12 +49,12 @@ object Meldingsfabrikk {
         //language=JSON
         """
         {        
-          "@event_name": "søknad_behandlet_hendelse",
+          "@event_name": "rettighet_behandlet_hendelse",
           "ident" : "$ident",
           "sakId" : "$sakId",
           "behandlingId": "${UUID.randomUUID()}",
           "Virkningsdato": "${LocalDate.now()}",
-          "utfall": false,
+          "utfall": "Avslag",
           "Rettighetstype": "$rettighetstype"
         } 
         """.trimIndent()

@@ -17,8 +17,8 @@ import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgAvslåttHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgInnvilgetHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgAvslåttHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -53,7 +53,7 @@ class PostgresPersonRepositoryTest {
         val person = Person(ident = ident)
         val idag = LocalDate.now()
         person.håndter(
-            SøknadBehandletOgInnvilgetHendelse(
+            RettighetBehandletOgInnvilgetHendelse(
                 meldingsreferanseId = UUID.randomUUID(),
                 sakId = "SAK_NUMMER_1",
                 ident = ident.identifikator(),
@@ -120,7 +120,7 @@ class PostgresPersonRepositoryTest {
         val person = Person(ident = ident)
         val idag = LocalDate.now()
         person.håndter(
-            SøknadBehandletOgAvslåttHendelse(
+            RettighetBehandletOgAvslåttHendelse(
                 meldingsreferanseId = UUID.randomUUID(),
                 sakId = "SAK_NUMMER_1",
                 ident = ident.identifikator(),

@@ -4,8 +4,8 @@
 
     Bakgrunn: Ordinære dagpenger er innvileget fra 12. desember
       Gitt en ny hendelse om innvilget søknad
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 800     | 104            | 8                      | Ordinær           |
+        | fødselsnummer | behandlingId                         | utfall      | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | Innvilgelse | 12.12.2022    | 800     | 104            | 8                      | Ordinær           |
 
       Scenario: Rapporterer arbeidstimer eksakt lik terskel
         Når rapporteringshendelse mottas

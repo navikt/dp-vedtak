@@ -14,9 +14,9 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgAvslåttHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgAvslåttHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
@@ -43,11 +43,11 @@ class RettighetStegTest : No {
     private val inspektør get() = Inspektør(person)
 
     init {
-        Gitt("en ny hendelse om innvilget søknad") { søknadHendelse: SøknadInnvilgetHendelseCucumber ->
+        Gitt("en ny hendelse om innvilget søknad") { søknadHendelse: RettighetInnvilgetHendelseCucumber ->
             ident = søknadHendelse.fødselsnummer
             person = Person(ident.tilPersonIdentfikator())
             person.håndter(
-                SøknadBehandletOgInnvilgetHendelse(
+                RettighetBehandletOgInnvilgetHendelse(
                     meldingsreferanseId = UUID.randomUUID(),
                     sakId = søknadHendelse.sakId,
                     ident = ident,
@@ -67,10 +67,10 @@ class RettighetStegTest : No {
             )
         }
         // TODO: endre type hendelse
-        Gitt("et endringsvedtak") { søknadHendelse: SøknadInnvilgetHendelseCucumber ->
+        Gitt("et endringsvedtak") { søknadHendelse: RettighetInnvilgetHendelseCucumber ->
             assertPersonOpprettet()
             person.håndter(
-                SøknadBehandletOgInnvilgetHendelse(
+                RettighetBehandletOgInnvilgetHendelse(
                     meldingsreferanseId = UUID.randomUUID(),
                     ident = ident,
                     sakId = søknadHendelse.sakId,
@@ -90,11 +90,11 @@ class RettighetStegTest : No {
             )
         }
 
-        Gitt("en ny hendelse om avslått søknad") { søknadHendelse: SøknadAvslåttHendelseCucumber ->
+        Gitt("en ny hendelse om avslått søknad") { søknadHendelse: RettighetAvslåttHendelseCucumber ->
             ident = søknadHendelse.fødselsnummer
             person = Person(ident.tilPersonIdentfikator())
             person.håndter(
-                SøknadBehandletOgAvslåttHendelse(
+                RettighetBehandletOgAvslåttHendelse(
                     meldingsreferanseId = UUID.randomUUID(),
                     sakId = søknadHendelse.sakId,
                     ident = ident,
@@ -112,7 +112,7 @@ class RettighetStegTest : No {
         }
 
         // TODO gjør om til stansHendelse
-        Gitt("en ny hendelse om stans") { søknadHendelse: SøknadAvslåttHendelseCucumber ->
+        Gitt("en ny hendelse om stans") { søknadHendelse: RettighetAvslåttHendelseCucumber ->
             assertPersonOpprettet()
             person.håndter(
                 StansHendelse(
@@ -214,21 +214,21 @@ class RettighetStegTest : No {
         )
     }
 
-    private data class SøknadAvslåttHendelseCucumber(
+    private data class RettighetAvslåttHendelseCucumber(
         val sakId: SakId = "SAK_NUMMER_1",
         val fødselsnummer: String,
         val behandlingId: String,
         val dagpengerettighet: String,
-        val utfall: Boolean,
+        val utfall: String,
         @JsonFormat(pattern = "dd.MM.yyyy")
         val virkningsdato: LocalDate,
     )
 
-    private data class SøknadInnvilgetHendelseCucumber(
+    private data class RettighetInnvilgetHendelseCucumber(
         val sakId: SakId = "SAK_NUMMER_1",
         val fødselsnummer: String,
         val behandlingId: String,
-        val utfall: Boolean,
+        val utfall: String,
         @JsonFormat(pattern = "dd.MM.yyyy")
         val virkningsdato: LocalDate,
         val dagpengerettighet: String,

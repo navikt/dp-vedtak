@@ -1,7 +1,7 @@
 package no.nav.dagpenger.vedtak.modell
 
 import io.kotest.matchers.shouldBe
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgAvslåttHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import org.junit.jupiter.api.Test
@@ -20,7 +20,7 @@ internal class PersonTest {
 
     @Test
     fun `behandling med samme id skal bare behandles 1 gang og logge en warning aktivitetsloggen`() {
-        val søknadBehandletOgAvslåttHendelse = SøknadBehandletOgAvslåttHendelse(
+        val rettighetBehandletOgAvslåttHendelse = RettighetBehandletOgAvslåttHendelse(
             meldingsreferanseId = UUID.randomUUID(),
             behandlingId = UUID.randomUUID(),
             sakId = "SAK_NUMMER_1",
@@ -30,10 +30,10 @@ internal class PersonTest {
             hovedrettighet = Ordinær(false),
         )
         person.håndter(
-            søknadBehandletOgAvslåttHendelse,
+            rettighetBehandletOgAvslåttHendelse,
         )
         person.håndter(
-            søknadBehandletOgAvslåttHendelse,
+            rettighetBehandletOgAvslåttHendelse,
         )
 
         testObservatør.vedtak.size shouldBe 1

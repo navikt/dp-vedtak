@@ -7,8 +7,8 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperioder
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
@@ -56,15 +56,15 @@ class Person internal constructor(
 
     fun ident() = ident
 
-    fun håndter(søknadBehandletHendelse: SøknadBehandletHendelse) {
-        kontekst(søknadBehandletHendelse)
-        val sak = finnEllerOpprettSak(søknadBehandletHendelse)
-        sak.håndter(søknadBehandletHendelse)
+    fun håndter(rettighetBehandletHendelse: RettighetBehandletHendelse) {
+        kontekst(rettighetBehandletHendelse)
+        val sak = finnEllerOpprettSak(rettighetBehandletHendelse)
+        sak.håndter(rettighetBehandletHendelse)
     }
 
-    private fun finnEllerOpprettSak(søknadBehandletHendelse: SøknadBehandletHendelse) =
-        saker.finnSak(søknadBehandletHendelse.sakId) ?: Sak(
-            søknadBehandletHendelse.sakId,
+    private fun finnEllerOpprettSak(rettighetBehandletHendelse: RettighetBehandletHendelse) =
+        saker.finnSak(rettighetBehandletHendelse.sakId) ?: Sak(
+            rettighetBehandletHendelse.sakId,
             this,
         )
 

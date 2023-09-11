@@ -13,7 +13,7 @@ import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletOgInnvilgetHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
 import org.junit.jupiter.api.Test
@@ -32,7 +32,7 @@ class PostgresIverksettingRepositoryTest {
         val person = Person(ident = testIdent).also { it.addObserver(observatør) }
         val idag = LocalDate.now()
         person.håndter(
-            SøknadBehandletOgInnvilgetHendelse(
+            RettighetBehandletOgInnvilgetHendelse(
                 meldingsreferanseId = UUID.randomUUID(),
                 sakId = "SAK_NUMMER_1",
                 ident = testIdent.identifikator(),

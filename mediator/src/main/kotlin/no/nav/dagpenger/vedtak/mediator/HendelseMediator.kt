@@ -11,11 +11,11 @@ import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
 import no.nav.dagpenger.vedtak.mediator.mottak.RapporteringBehandletHendelseMessage
 import no.nav.dagpenger.vedtak.mediator.mottak.RapporteringBehandletMottak
-import no.nav.dagpenger.vedtak.mediator.mottak.SøknadBehandletHendelseMessage
-import no.nav.dagpenger.vedtak.mediator.mottak.SøknadBehandletMottak
+import no.nav.dagpenger.vedtak.mediator.mottak.RettighetBehandletHendelseMessage
+import no.nav.dagpenger.vedtak.mediator.mottak.RettighetBehandletMottak
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.SøknadBehandletHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletHendelse
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -27,15 +27,15 @@ internal class HendelseMediator(
 ) : IHendelseMediator {
 
     init {
-        SøknadBehandletMottak(rapidsConnection, this)
+        RettighetBehandletMottak(rapidsConnection, this)
         UtbetalingsvedtakFattetMottak(rapidsConnection, this)
         IverksettingLøstMottak(rapidsConnection, this)
         RapporteringBehandletMottak(rapidsConnection, this)
     }
 
     override fun behandle(
-        hendelse: SøknadBehandletHendelse,
-        message: SøknadBehandletHendelseMessage,
+        hendelse: RettighetBehandletHendelse,
+        message: RettighetBehandletHendelseMessage,
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
@@ -85,7 +85,7 @@ internal class HendelseMediator(
 }
 
 internal interface IHendelseMediator {
-    fun behandle(hendelse: SøknadBehandletHendelse, message: SøknadBehandletHendelseMessage, context: MessageContext)
+    fun behandle(hendelse: RettighetBehandletHendelse, message: RettighetBehandletHendelseMessage, context: MessageContext)
     fun behandle(hendelse: IverksattHendelse, message: IverksattHendelseMessage, context: MessageContext)
     fun behandle(
         hendelse: Rapporteringshendelse,

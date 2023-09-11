@@ -12,7 +12,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.util.UUID
 
-internal class SøknadBehandletMottak(
+internal class RettighetBehandletMottak(
     rapidsConnection: RapidsConnection,
     private val hendelseMediator: IHendelseMediator,
 ) :
@@ -24,7 +24,7 @@ internal class SøknadBehandletMottak(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "søknad_behandlet_hendelse") }
+            validate { it.demandValue("@event_name", "rettighet_behandlet_hendelse") }
             validate {
                 it.requireKey("@id", "@opprettet")
                 it.require("ident") { ident ->
@@ -55,15 +55,15 @@ internal class SøknadBehandletMottak(
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val behandlingId = UUID.fromString(packet["behandlingId"].asText())
         withLoggingContext("behandlingId" to behandlingId.toString()) {
-            val søknadBehandletMelding = SøknadBehandletHendelseMessage(packet)
+            val rettighetBehandletMelding = RettighetBehandletHendelseMessage(packet)
             logger.info { "Fått behandlingshendelse" }
-            søknadBehandletMelding.behandle(hendelseMediator, context)
+            rettighetBehandletMelding.behandle(hendelseMediator, context)
         }
     }
 
     override fun onError(problems: MessageProblems, context: MessageContext) {
         logger.warn {
-            "Kunne ikke lese 'søknad_behandlet_hendelse', problemer:\n${problems.toExtendedReport()}"
+            "Kunne ikke lese 'rettighet_behandlet_hendelse', problemer:\n${problems.toExtendedReport()}"
         }
     }
 }

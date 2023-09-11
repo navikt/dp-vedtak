@@ -10,7 +10,7 @@ import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.UtbetalingsvedtakFat
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
 import no.nav.dagpenger.vedtak.mediator.mottak.RapporteringBehandletHendelseMessage
-import no.nav.dagpenger.vedtak.mediator.mottak.SøknadBehandletHendelseMessage
+import no.nav.dagpenger.vedtak.mediator.mottak.RettighetBehandletHendelseMessage
 import org.postgresql.util.PGobject
 import java.util.UUID
 import javax.sql.DataSource
@@ -76,7 +76,7 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
 
     private fun hendelseType(hendelseMessage: HendelseMessage): HendelseTypeDTO? {
         return when (hendelseMessage) {
-            is SøknadBehandletHendelseMessage -> HendelseTypeDTO.SØKNAD_BEHANDLET
+            is RettighetBehandletHendelseMessage -> HendelseTypeDTO.RETTIGHET_BEHANDLET
             is RapporteringBehandletHendelseMessage -> HendelseTypeDTO.RAPPORTERING_BEHANDLET
             is IverksattHendelseMessage -> HendelseTypeDTO.IVERKSATT
             is UtbetalingsvedtakFattetHendelseMessage -> HendelseTypeDTO.UTBETALING_VEDTAK_FATTET
@@ -93,7 +93,7 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
 }
 
 enum class HendelseTypeDTO {
-    SØKNAD_BEHANDLET,
+    RETTIGHET_BEHANDLET,
     RAPPORTERING_BEHANDLET,
     IVERKSATT,
     UTBETALING_VEDTAK_FATTET,
@@ -103,4 +103,7 @@ enum class HendelseTypeDTO {
 
     @Deprecated("Er ikke i bruk lenger - men det finnes instanser i databasen")
     VEDTAK_FATTET,
+
+    @Deprecated("Er ikke i bruk lenger - men det finnes instanser i databasen")
+    SØKNAD_BEHANDLET,
 }

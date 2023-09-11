@@ -4,8 +4,8 @@
 
     Bakgrunn: Dagpenger under permittering fra fiskeindustrien innvilges fra 12. desember
       Gitt en ny hendelse om innvilget søknad
-        | fødselsnummer | behandlingId                         | utfall | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet              |
-        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | true   | 12.12.2022    | 588     | 52             | 8                      | PermitteringFraFiskeindustrien |
+        | fødselsnummer | behandlingId                         | utfall      | virkningsdato | dagsats | stønadsperiode | vanligArbeidstidPerDag | dagpengerettighet              |
+        | 12345678901   | 7E7A891C-E8E2-4641-A213-83E3A7841A57 | Innvilgelse | 12.12.2022    | 588     | 52             | 8                      | PermitteringFraFiskeindustrien |
 
       Scenario: Rapporterer arbeidstimer (48 t) eksakt lik terskel, som er 40% for fiskeindustrien
         Når rapporteringshendelse mottas

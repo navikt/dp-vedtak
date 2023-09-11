@@ -12,7 +12,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-sealed class SøknadBehandletHendelse(
+sealed class RettighetBehandletHendelse(
     meldingsreferanseId: UUID,
     internal val sakId: String,
     protected val ident: String,
@@ -24,7 +24,7 @@ sealed class SøknadBehandletHendelse(
     abstract fun tilVedtak(): Vedtak
 }
 
-class SøknadBehandletOgInnvilgetHendelse(
+class RettighetBehandletOgInnvilgetHendelse(
     meldingsreferanseId: UUID,
     sakId: String,
     ident: String,
@@ -35,7 +35,7 @@ class SøknadBehandletOgInnvilgetHendelse(
     private val dagsats: Beløp,
     private val stønadsdager: Stønadsdager,
     private val vanligArbeidstidPerDag: Timer,
-) : SøknadBehandletHendelse(
+) : RettighetBehandletHendelse(
     meldingsreferanseId = meldingsreferanseId,
     sakId = sakId,
     ident = ident,
@@ -57,7 +57,7 @@ class SøknadBehandletOgInnvilgetHendelse(
     override fun kontekstMap(): Map<String, String> = emptyMap()
 }
 
-class SøknadBehandletOgAvslåttHendelse(
+class RettighetBehandletOgAvslåttHendelse(
     meldingsreferanseId: UUID,
     sakId: String,
     ident: String,
@@ -65,7 +65,7 @@ class SøknadBehandletOgAvslåttHendelse(
     vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,
     private val hovedrettighet: Hovedrettighet,
-) : SøknadBehandletHendelse(
+) : RettighetBehandletHendelse(
     meldingsreferanseId = meldingsreferanseId,
     sakId = sakId,
     ident = ident,
