@@ -32,7 +32,7 @@ internal class RettighetBehandletMottak(
                 }
                 it.requireKey(
                     "behandlingId",
-                    // "sakId", @todo: Mappe sakId når vi får den fra dp-behandling.
+                    "sakId",
                     "Virkningsdato",
                     "utfall",
                 )
@@ -41,7 +41,6 @@ internal class RettighetBehandletMottak(
                     Rettighet.RettighetType.valueOf(rettighetstype.asText())
                 }
                 it.interestedIn(
-                    "sakId",
                     "Dagsats",
                     "Grunnlag",
                     "Periode",

@@ -27,7 +27,7 @@ internal class RettighetBehandletHendelseMessage(private val packet: JsonMessage
         get() = packet["behandlingId"].asUUID()
 
     private val sakId: SakId
-        get() = packet["sakId"].asText(UUID.randomUUID().toString())
+        get() = packet["sakId"].asText()
 
     private val hendelse
         get() = when (packet["utfall"].asText()) {
