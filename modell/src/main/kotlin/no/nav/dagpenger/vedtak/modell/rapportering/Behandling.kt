@@ -10,11 +10,11 @@ import no.nav.dagpenger.vedtak.modell.entitet.Prosent.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
-import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingdag.Companion.arbeidedeTimer
-import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingdag.Companion.graderingsProsent
-import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingdag.Companion.tellendeRapporteringsdager
-import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingdag.Companion.vanligArbeidstid
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
+import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingsdag.Companion.arbeidedeTimer
+import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingsdag.Companion.graderingsProsent
+import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingsdag.Companion.tellendeRapporteringsdager
+import no.nav.dagpenger.vedtak.modell.rapportering.Behandlingsdag.Companion.vanligArbeidstid
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Utbetalingsvedtak
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.IngenRettighet
@@ -32,32 +32,32 @@ class Behandling(
 
     private val sikkerLogger = KotlinLogging.logger("tjenestekall")
     constructor(person: Person, sakId: String) : this(UUID.randomUUID(), sakId, person, FinnBeregningsgrunnlag)
-    private val behandlingsdager = mutableListOf<Behandlingdag>()
+    private val behandlingsdager = mutableListOf<Behandlingsdag>()
     private val resultatBuilder: Resultat.Builder = Resultat.Builder()
-    fun håndter(rapporteringshendelse: Rapporteringshendelse) {
-        rapporteringshendelse.kontekst(this)
-        behandlingssteg.håndter(rapporteringshendelse, this)
+    fun håndter(rapporteringHendelse: RapporteringHendelse) {
+        rapporteringHendelse.kontekst(this)
+        behandlingssteg.håndter(rapporteringHendelse, this)
     }
 
-    private fun nesteSteg(behandlingssteg: Behandlingssteg, rapporteringshendelse: Rapporteringshendelse) {
+    private fun nesteSteg(behandlingssteg: Behandlingssteg, rapporteringHendelse: RapporteringHendelse) {
         this.behandlingssteg = behandlingssteg
-        this.behandlingssteg.entering(rapporteringshendelse, this)
+        this.behandlingssteg.entering(rapporteringHendelse, this)
     }
 
     sealed class Behandlingssteg {
         // peke til hvilken paragraf eller forskrift
-        open fun håndter(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
-            rapporteringshendelse.logiskFeil("Forventet ikke ${rapporteringshendelse.javaClass.simpleName} i ${this.javaClass.simpleName}")
+        open fun håndter(rapporteringHendelse: RapporteringHendelse, behandling: Behandling) {
+            rapporteringHendelse.logiskFeil("Forventet ikke ${rapporteringHendelse.javaClass.simpleName} i ${this.javaClass.simpleName}")
         }
 
-        open fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {}
+        open fun entering(rapporteringHendelse: RapporteringHendelse, behandling: Behandling) {}
     }
 
     object FinnBeregningsgrunnlag : Behandlingssteg() {
-        override fun håndter(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
+        override fun håndter(rapporteringHendelse: RapporteringHendelse, behandling: Behandling) {
             behandling.behandlingsdager.addAll(
                 BehandlingsdagerForPeriode(
-                    rapporteringshendelse,
+                    rapporteringHendelse,
                     behandling.person,
                 ).behandlingsdager,
             )
@@ -68,12 +68,12 @@ class Behandling(
                 behandling.behandlingsdager.joinToString("\n") { it.toString() }
             }
 
-            behandling.nesteSteg(VurderTerskelForTaptArbeidstid, rapporteringshendelse)
+            behandling.nesteSteg(VurderTerskelForTaptArbeidstid, rapporteringHendelse)
         }
     }
 
     object VurderTerskelForTaptArbeidstid : Behandlingssteg() {
-        override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
+        override fun entering(rapporteringHendelse: RapporteringHendelse, behandling: Behandling) {
             val arbeidedeTimer = behandling.behandlingsdager.arbeidedeTimer()
 
             val terskel = behandling.behandlingsdager.tellendeRapporteringsdager().map {
@@ -90,17 +90,17 @@ class Behandling(
             val vilkårOppfylt = arbeidedeTimer <= behandling.behandlingsdager.vanligArbeidstid() - terskelTimer
             behandling.resultatBuilder.utfall(vilkårOppfylt)
             if (vilkårOppfylt) {
-                behandling.nesteSteg(GraderUtbetaling, rapporteringshendelse)
+                behandling.nesteSteg(GraderUtbetaling, rapporteringHendelse)
             } else {
-                behandling.nesteSteg(Ferdigstill, rapporteringshendelse)
+                behandling.nesteSteg(Ferdigstill, rapporteringHendelse)
             }
         }
     }
 
     object GraderUtbetaling : Behandlingssteg() {
-        override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
-            val rapporteringsdato = rapporteringshendelse.endInclusive
-            val forrigeRapporteringsdato = rapporteringshendelse.start.minusDays(1)
+        override fun entering(rapporteringHendelse: RapporteringHendelse, behandling: Behandling) {
+            val rapporteringsdato = rapporteringHendelse.endInclusive
+            val forrigeRapporteringsdato = rapporteringHendelse.start.minusDays(1)
             val forrigeAkkumulerteForbruk =
                 behandling.person.vedtakHistorikk.forbrukHistorikk.summer(forrigeRapporteringsdato)
             val innvilgedeStønadsdager = behandling.person.vedtakHistorikk.stønadsdagerHistorikk.get(rapporteringsdato)
@@ -114,7 +114,7 @@ class Behandling(
                     behandling.behandlingsdager.tellendeRapporteringsdager()
                 }
 
-            behandling.resultatBuilder.forbruksdager(forbruksdager.map { it.dag })
+            behandling.resultatBuilder.forbruksdager(forbruksdager.map { it.rapporteringsdag })
 
             val utbetalingsdager =
                 forbruksdager.map {
@@ -122,24 +122,24 @@ class Behandling(
                 }
             behandling.resultatBuilder.utbetalingsdager(utbetalingsdager)
 
-            behandling.nesteSteg(Ferdigstill, rapporteringshendelse)
+            behandling.nesteSteg(Ferdigstill, rapporteringHendelse)
         }
     }
 
     object Ferdigstill : Behandlingssteg() {
-        override fun entering(rapporteringshendelse: Rapporteringshendelse, behandling: Behandling) {
+        override fun entering(rapporteringHendelse: RapporteringHendelse, behandling: Behandling) {
             val resultat = behandling.resultatBuilder.build()
             val utbetalingsvedtak = Utbetalingsvedtak.utbetalingsvedtak(
                 behandlingId = behandling.behandlingId,
                 sakId = behandling.sakId,
                 utfall = resultat.utfall,
                 vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
-                virkningsdato = rapporteringshendelse.endInclusive,
+                virkningsdato = rapporteringHendelse.endInclusive,
                 forbruk = Stønadsdager(resultat.forbruksdager.size),
                 utbetalingsdager = resultat.utbetalingsdager,
             )
-            rapporteringshendelse.kontekst(utbetalingsvedtak)
-            rapporteringshendelse.info("Fattet utbetalingsvedtak")
+            rapporteringHendelse.kontekst(utbetalingsvedtak)
+            rapporteringHendelse.info("Fattet utbetalingsvedtak")
             behandling.person.leggTilVedtak(
                 utbetalingsvedtak,
             )
@@ -148,13 +148,13 @@ class Behandling(
 
     private class Resultat(
         val utfall: Boolean,
-        val forbruksdager: List<Dag> = emptyList(),
+        val forbruksdager: List<Rapporteringsdag> = emptyList(),
         val utbetalingsdager: List<Utbetalingsdag> = emptyList(),
     ) {
         class Builder {
 
             private var utfall: Boolean? = null
-            private var forbruksdager: List<Dag> = emptyList()
+            private var forbruksdager: List<Rapporteringsdag> = emptyList()
 
             private var utbetalingsdager: List<Utbetalingsdag> = emptyList()
 
@@ -162,7 +162,7 @@ class Behandling(
                 this.utfall = utfall
             }
 
-            fun forbruksdager(forbruksdager: Collection<Dag>) {
+            fun forbruksdager(forbruksdager: Collection<Rapporteringsdag>) {
                 this.forbruksdager = forbruksdager.toList()
             }
 
@@ -179,23 +179,23 @@ class Behandling(
     }
 
     private class BehandlingsdagerForPeriode(
-        private val rapporteringshendelse: Rapporteringshendelse,
+        private val rapporteringHendelse: RapporteringHendelse,
         private val person: Person,
     ) : PersonVisitor {
 
-        val behandlingsdager = mutableListOf<Behandlingdag>()
+        val behandlingsdager = mutableListOf<Behandlingsdag>()
 
         init {
             person.accept(this)
         }
 
-        override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
-            if (dag.innenfor(rapporteringshendelse)) {
-                Behandlingdag(
-                    dag = dag,
-                    runCatching { person.vedtakHistorikk.hovedrettighetHistorikk.get(dag.dato()) }.getOrDefault(IngenRettighet),
-                    runCatching { person.vedtakHistorikk.vanligArbeidstidHistorikk.get(dag.dato()) }.getOrDefault(0.timer),
-                    runCatching { person.vedtakHistorikk.dagsatsHistorikk.get(dag.dato()) }.getOrDefault(0.beløp),
+        override fun visitRapporteringsdag(rapporteringsdag: Rapporteringsdag, aktiviteter: List<Aktivitet>) {
+            if (rapporteringsdag.innenfor(rapporteringHendelse)) {
+                Behandlingsdag(
+                    rapporteringsdag = rapporteringsdag,
+                    runCatching { person.vedtakHistorikk.hovedrettighetHistorikk.get(rapporteringsdag.dato()) }.getOrDefault(IngenRettighet),
+                    runCatching { person.vedtakHistorikk.vanligArbeidstidHistorikk.get(rapporteringsdag.dato()) }.getOrDefault(0.timer),
+                    runCatching { person.vedtakHistorikk.dagsatsHistorikk.get(rapporteringsdag.dato()) }.getOrDefault(0.beløp),
                 ).also { behandlingsdager.add(it) }
             }
         }

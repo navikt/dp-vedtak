@@ -4,8 +4,8 @@ import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.vedtak.hjelpere.februar
 import no.nav.dagpenger.vedtak.hjelpere.mai
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringshendelseDag
 import no.nav.dagpenger.vedtak.modell.visitor.PersonVisitor
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,8 +24,8 @@ internal class RapporteringsperioderTest {
         rapporteringsperioder = Rapporteringsperioder().also {
             it.håndter(
                 rapporteringshendelse(
-                    Rapporteringsdag(1.februar(2023), listOf(arbeid(3.hours))),
-                    Rapporteringsdag(2.februar(2023), listOf(arbeid(0.hours))),
+                    RapporteringshendelseDag(1.februar(2023), listOf(arbeid(3.hours))),
+                    RapporteringshendelseDag(2.februar(2023), listOf(arbeid(0.hours))),
                 ),
             )
         }
@@ -35,8 +35,8 @@ internal class RapporteringsperioderTest {
     fun `kan merge to rapporteringsperioder`() {
         rapporteringsperioder.håndter(
             rapporteringshendelse(
-                Rapporteringsdag(1.februar(2023), listOf(arbeid(6.hours))),
-                Rapporteringsdag(2.februar(2023), listOf(arbeid(0.hours))),
+                RapporteringshendelseDag(1.februar(2023), listOf(arbeid(6.hours))),
+                RapporteringshendelseDag(2.februar(2023), listOf(arbeid(0.hours))),
             ),
         )
 
@@ -53,8 +53,8 @@ internal class RapporteringsperioderTest {
     fun `kan legge til rapportering`() {
         rapporteringsperioder.håndter(
             rapporteringshendelse(
-                Rapporteringsdag(3.februar(2023), listOf(arbeid(6.hours))),
-                Rapporteringsdag(4.februar(2023), listOf(arbeid(0.hours))),
+                RapporteringshendelseDag(3.februar(2023), listOf(arbeid(6.hours))),
+                RapporteringshendelseDag(4.februar(2023), listOf(arbeid(0.hours))),
             ),
         )
         val dager = inspektør.dager
@@ -69,9 +69,9 @@ internal class RapporteringsperioderTest {
         val mai = (1 until 32).map { dag -> dag.mai(2023) }
         val maiTilRapporteringsperioder = mai.partition { it < 14.mai(2023) }
         val førsteRapporteringsHendelse =
-            maiTilRapporteringsperioder.first.map { Rapporteringsdag(it, listOf(arbeid(Random.nextInt(0, 8).hours))) }
+            maiTilRapporteringsperioder.first.map { RapporteringshendelseDag(it, listOf(arbeid(Random.nextInt(0, 8).hours))) }
         val andreRapporteringsHendelse =
-            maiTilRapporteringsperioder.second.map { Rapporteringsdag(it, listOf(arbeid(Random.nextInt(0, 8).hours))) }
+            maiTilRapporteringsperioder.second.map { RapporteringshendelseDag(it, listOf(arbeid(Random.nextInt(0, 8).hours))) }
         rapporteringsperioder.håndter(
             rapporteringshendelse(*førsteRapporteringsHendelse.toTypedArray()),
         )
@@ -86,7 +86,7 @@ internal class RapporteringsperioderTest {
         inspektør.antallRapporteringsperioder shouldBe 3
     }
 
-    private fun rapporteringshendelse(vararg rapporteringsdager: Rapporteringsdag) = Rapporteringshendelse(
+    private fun rapporteringshendelse(vararg rapporteringsdager: RapporteringshendelseDag) = RapporteringHendelse(
         meldingsreferanseId = UUID.randomUUID(),
         ident = "123",
         rapporteringsId = UUID.randomUUID(),
@@ -95,11 +95,11 @@ internal class RapporteringsperioderTest {
         tom = rapporteringsdager.maxOf { it.dato },
     )
 
-    private fun arbeid(tid: Duration) = Rapporteringsdag.Aktivitet(Rapporteringsdag.Aktivitet.Type.Arbeid, tid)
+    private fun arbeid(tid: Duration) = RapporteringshendelseDag.Aktivitet(RapporteringshendelseDag.Aktivitet.Type.Arbeid, tid)
 
     private class RapporteringsdagerVisitor(rapporteringsperioder: Rapporteringsperioder) : PersonVisitor {
 
-        val dager = mutableListOf<Dag>()
+        val dager = mutableListOf<Rapporteringsdag>()
         var antallRapporteringsperioder = 0
 
         init {
@@ -110,8 +110,8 @@ internal class RapporteringsperioderTest {
             antallRapporteringsperioder++
         }
 
-        override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
-            dager.add(dag)
+        override fun visitRapporteringsdag(rapporteringsdag: Rapporteringsdag, aktiviteter: List<Aktivitet>) {
+            dager.add(rapporteringsdag)
         }
     }
 }

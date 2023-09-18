@@ -12,8 +12,8 @@ import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringshendelseDag
 import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
@@ -163,10 +163,10 @@ class RettighetStegTest : No {
             assertEquals(Stønadsdager(dager = dager), gjenståendeStønadsdager)
         }
 
-        Når("rapporteringshendelse mottas") { rapporteringsHendelse: DataTable ->
+        Når("rapporteringshendelse mottas") { rapporteringHendelse: DataTable ->
             assertPersonOpprettet()
-            val rapporteringsdager = rapporteringsHendelse.rows(1).asLists(String::class.java).map {
-                Rapporteringsdag(
+            val rapporteringsdager = rapporteringHendelse.rows(1).asLists(String::class.java).map {
+                RapporteringshendelseDag(
                     dato = LocalDate.parse(it[0], datoformatterer),
                     aktiviteter = listOf(
                         lagAktivitet(it),
@@ -174,7 +174,7 @@ class RettighetStegTest : No {
 
                 )
             }
-            håndterRapporteringsHendelse(rapporteringsdager)
+            håndterRapporteringHendelse(rapporteringsdager)
         }
     }
 
@@ -185,9 +185,9 @@ class RettighetStegTest : No {
         }
 
     private fun lagAktivitet(data: MutableList<String>) = when (data[1].toBooleanStrict()) {
-        true -> Rapporteringsdag.Aktivitet(Rapporteringsdag.Aktivitet.Type.Syk, 1.days)
-        false -> Rapporteringsdag.Aktivitet(
-            Rapporteringsdag.Aktivitet.Type.Arbeid,
+        true -> RapporteringshendelseDag.Aktivitet(RapporteringshendelseDag.Aktivitet.Type.Syk, 1.days)
+        false -> RapporteringshendelseDag.Aktivitet(
+            RapporteringshendelseDag.Aktivitet.Type.Arbeid,
             data[2].toDouble().hours,
         )
     }
@@ -196,9 +196,9 @@ class RettighetStegTest : No {
         assertTrue(this::person.isInitialized) { "Forventer at person er opprettet her" }
     }
 
-    private fun håndterRapporteringsHendelse(rapporteringsdager: List<Rapporteringsdag>) {
+    private fun håndterRapporteringHendelse(rapporteringsdager: List<RapporteringshendelseDag>) {
         person.håndter(
-            Rapporteringshendelse(
+            RapporteringHendelse(
                 meldingsreferanseId = UUID.randomUUID(),
                 ident = ident,
                 rapporteringsId = UUID.randomUUID(),

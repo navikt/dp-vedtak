@@ -3,7 +3,7 @@ package no.nav.dagpenger.vedtak.modell
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.rapportering.Behandling
@@ -46,11 +46,11 @@ class Sak private constructor(
         person.leggTilVedtak(vedtak)
     }
 
-    fun håndter(rapporteringshendelse: Rapporteringshendelse) {
-        kontekst(rapporteringshendelse)
+    fun håndter(rapporteringHendelse: RapporteringHendelse) {
+        kontekst(rapporteringHendelse)
         val behandling = Behandling(person, this.sakId)
         behandlinger.add(behandling)
-        behandling.håndter(rapporteringshendelse)
+        behandling.håndter(rapporteringHendelse)
     }
     fun håndter(stansHendelse: StansHendelse) {
         kontekst(stansHendelse)

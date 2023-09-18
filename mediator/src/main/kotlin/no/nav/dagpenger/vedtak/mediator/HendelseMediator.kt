@@ -14,7 +14,7 @@ import no.nav.dagpenger.vedtak.mediator.mottak.RapporteringBehandletMottak
 import no.nav.dagpenger.vedtak.mediator.mottak.RettighetBehandletHendelseMessage
 import no.nav.dagpenger.vedtak.mediator.mottak.RettighetBehandletMottak
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletHendelse
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -54,7 +54,7 @@ internal class HendelseMediator(
     }
 
     override fun behandle(
-        hendelse: Rapporteringshendelse,
+        hendelse: RapporteringHendelse,
         message: RapporteringBehandletHendelseMessage,
         context: MessageContext,
     ) {
@@ -88,7 +88,7 @@ internal interface IHendelseMediator {
     fun behandle(hendelse: RettighetBehandletHendelse, message: RettighetBehandletHendelseMessage, context: MessageContext)
     fun behandle(hendelse: IverksattHendelse, message: IverksattHendelseMessage, context: MessageContext)
     fun behandle(
-        hendelse: Rapporteringshendelse,
+        hendelse: RapporteringHendelse,
         message: RapporteringBehandletHendelseMessage,
         context: MessageContext,
     )

@@ -1,6 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.entitet
 
-import no.nav.dagpenger.vedtak.modell.rapportering.Dag
+import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsdag
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -25,7 +25,7 @@ class Periode(private val fomDato: LocalDate, private val tomDato: LocalDate) : 
             currentDate.also { currentDate = it.plusDays(1) }
     }
 
-    operator fun contains(dag: Dag): Boolean = dag.innenfor(this)
+    operator fun contains(rapporteringsdag: Rapporteringsdag): Boolean = rapporteringsdag.innenfor(this)
 
     infix operator fun plus(annen: Periode): Periode {
         return Periode(minOf(this.start, annen.start), maxOf(this.endInclusive, annen.endInclusive))

@@ -3,20 +3,20 @@ package no.nav.dagpenger.vedtak.modell.hendelser
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag.Aktivitet.Type.Arbeid
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag.Aktivitet.Type.Ferie
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag.Aktivitet.Type.Syk
-import no.nav.dagpenger.vedtak.modell.rapportering.Dag
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringshendelseDag.Aktivitet.Type.Arbeid
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringshendelseDag.Aktivitet.Type.Ferie
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringshendelseDag.Aktivitet.Type.Syk
+import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.time.Duration
 
-class Rapporteringshendelse(
+class RapporteringHendelse(
     meldingsreferanseId: UUID,
     ident: String,
     internal val rapporteringsId: UUID,
-    rapporteringsdager: List<Rapporteringsdag>,
+    rapporteringsdager: List<RapporteringshendelseDag>,
     aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
     private val fom: LocalDate,
     private val tom: LocalDate,
@@ -35,7 +35,7 @@ class Rapporteringshendelse(
                         Ferie -> no.nav.dagpenger.vedtak.modell.rapportering.Ferie(it.varighet.timer)
                     }
                 }
-                val dag = Dag.opprett(rapporteringdag.dato, aktiviteter)
+                val dag = Rapporteringsdag.opprett(rapporteringdag.dato, aktiviteter)
                 periode.leggTilDag(dag)
             }
         }
@@ -43,8 +43,8 @@ class Rapporteringshendelse(
     override fun kontekstMap(): Map<String, String> = mapOf("rapporteringsId" to rapporteringsId.toString())
 }
 
-class Rapporteringsdag(val dato: LocalDate, val aktiviteter: List<Aktivitet>) : Comparable<Rapporteringsdag> {
-    override fun compareTo(other: Rapporteringsdag) = this.dato.compareTo(other.dato)
+class RapporteringshendelseDag(val dato: LocalDate, val aktiviteter: List<Aktivitet>) : Comparable<RapporteringshendelseDag> {
+    override fun compareTo(other: RapporteringshendelseDag) = this.dato.compareTo(other.dato)
 
     class Aktivitet(val type: Type, val varighet: Duration) {
 

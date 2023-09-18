@@ -19,8 +19,8 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.rapportering.Aktivitet
 import no.nav.dagpenger.vedtak.modell.rapportering.Arbeid
-import no.nav.dagpenger.vedtak.modell.rapportering.Dag
 import no.nav.dagpenger.vedtak.modell.rapportering.Ferie
+import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsdag
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
 import no.nav.dagpenger.vedtak.modell.rapportering.Syk
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
@@ -122,7 +122,7 @@ private class PopulerQueries(
         )
     }
 
-    override fun visitDag(dag: Dag, aktiviteter: List<Aktivitet>) {
+    override fun visitRapporteringsdag(rapporteringsdag: Rapporteringsdag, aktiviteter: List<Aktivitet>) {
         val arbeidTimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Arbeid }?.timer
         val ferieTimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Ferie }?.timer
         val sykTimer = aktiviteter.firstOrNull { it.type == Aktivitet.AktivitetType.Syk }?.timer
@@ -136,7 +136,7 @@ private class PopulerQueries(
                 """.trimIndent(),
                 paramMap = mapOf(
                     "rapporteringsperiode_id" to rapporteringDbId,
-                    "dato" to dag.dato(),
+                    "dato" to rapporteringsdag.dato(),
                     "syk" to sykTimer?.let { timer -> timer.reflection { it } },
                     "arbeid" to arbeidTimer?.let { timer -> timer.reflection { it } },
                     "ferie" to ferieTimer?.let { timer -> timer.reflection { it } },
@@ -562,7 +562,7 @@ private fun Session.hentDager(rapporteringsperiodeId: Long) = this.run(
         val ferie = rad.doubleOrNull("ferie_timer")?.let { Ferie(it.timer) }
         val arbeid = rad.doubleOrNull("arbeid_timer")?.let { Arbeid(it.timer) }
 
-        Dag.opprett(
+        Rapporteringsdag.opprett(
             dato = rad.localDate("dato"),
             aktiviteter = listOf(syk, ferie, arbeid).mapNotNull { it },
         )

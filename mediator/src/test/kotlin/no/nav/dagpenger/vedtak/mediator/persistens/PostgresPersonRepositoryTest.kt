@@ -15,8 +15,8 @@ import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
 import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringsdag
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringshendelseDag
 import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgAvslåttHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletOgInnvilgetHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.rettighet.Ordinær
@@ -73,14 +73,14 @@ class PostgresPersonRepositoryTest {
         )
 
         val rapporteringdager = periode.map {
-            Rapporteringsdag(
+            RapporteringshendelseDag(
                 dato = it,
                 aktiviteter = emptyList(),
             )
         }
 
         person.håndter(
-            Rapporteringshendelse(
+            RapporteringHendelse(
                 meldingsreferanseId = UUID.randomUUID(),
                 ident = ident.identifikator(),
                 rapporteringsId = UUID.randomUUID(),

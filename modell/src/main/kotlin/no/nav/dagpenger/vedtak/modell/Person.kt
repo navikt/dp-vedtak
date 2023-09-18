@@ -6,7 +6,7 @@ import no.nav.dagpenger.vedtak.modell.Sak.Companion.finnSak
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.StansHendelse
 import no.nav.dagpenger.vedtak.modell.rapportering.Rapporteringsperiode
@@ -68,12 +68,12 @@ class Person internal constructor(
             this,
         )
 
-    fun håndter(rapporteringshendelse: Rapporteringshendelse) {
-        kontekst(rapporteringshendelse)
-        rapporteringshendelse.info("Mottatt rapporteringshendelse")
-        rapporteringsperioder.håndter(rapporteringshendelse)
-        val sak = saker.firstOrNull() ?: rapporteringshendelse.logiskFeil("Vi har ingen sak!")
-        sak.håndter(rapporteringshendelse)
+    fun håndter(rapporteringHendelse: RapporteringHendelse) {
+        kontekst(rapporteringHendelse)
+        rapporteringHendelse.info("Mottatt rapporteringshendelse")
+        rapporteringsperioder.håndter(rapporteringHendelse)
+        val sak = saker.firstOrNull() ?: rapporteringHendelse.logiskFeil("Vi har ingen sak!")
+        sak.håndter(rapporteringHendelse)
     }
 
     fun håndter(stansHendelse: StansHendelse) {

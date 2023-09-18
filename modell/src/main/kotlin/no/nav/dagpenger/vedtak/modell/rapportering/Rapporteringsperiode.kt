@@ -6,13 +6,13 @@ import java.time.LocalDate
 import java.util.SortedSet
 import java.util.UUID
 
-class Rapporteringsperiode(private val rapporteringsId: UUID, private val periode: Periode, dager: List<Dag>) : ClosedRange<LocalDate> by periode {
+class Rapporteringsperiode(private val rapporteringsId: UUID, private val periode: Periode, dager: List<Rapporteringsdag>) : ClosedRange<LocalDate> by periode {
     constructor(rapporteringsId: UUID, periode: Periode) : this(rapporteringsId, periode, emptyList())
 
-    private val dager: SortedSet<Dag> = dager.toSortedSet()
+    private val dager: SortedSet<Rapporteringsdag> = dager.toSortedSet()
 
-    fun leggTilDag(dag: Dag) {
-        dager.add(dag)
+    fun leggTilDag(rapporteringsdag: Rapporteringsdag) {
+        dager.add(rapporteringsdag)
     }
 
     fun accept(visitor: RapporteringsperiodeVisitor) {

@@ -8,7 +8,7 @@ import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
-import no.nav.dagpenger.vedtak.modell.hendelser.Rapporteringshendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.RapporteringHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletHendelse
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.helse.rapids_rivers.withMDC
@@ -29,9 +29,9 @@ internal class PersonMediator(
         }
     }
 
-    fun håndter(rapporteringshendelse: Rapporteringshendelse) {
-        behandle(rapporteringshendelse) { person ->
-            person.håndter(rapporteringshendelse)
+    fun håndter(rapporteringHendelse: RapporteringHendelse) {
+        behandle(rapporteringHendelse) { person ->
+            person.håndter(rapporteringHendelse)
         }
     }
 
