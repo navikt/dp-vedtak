@@ -130,36 +130,19 @@ class Iverksetting private constructor(
             utbetalingsvedtakFattetHendelse: UtbetalingsvedtakFattetHendelse,
             iverksetting: Iverksetting,
         ) {
-            if (utbetalingsvedtakFattetHendelse.forrigeBehandlingId != null) {
-                utbetalingsvedtakFattetHendelse.behov(
-                    type = IverksettingBehov.IverksettUtbetaling,
-                    melding = "Sender behov for å iverksette utbetalingsvedtak",
-                    detaljer = mapOf(
-                        "vedtakId" to utbetalingsvedtakFattetHendelse.vedtakId,
-                        "behandlingId" to utbetalingsvedtakFattetHendelse.behandlingId,
-                        "sakId" to utbetalingsvedtakFattetHendelse.sakId,
-                        "vedtakstidspunkt" to utbetalingsvedtakFattetHendelse.vedtakstidspunkt,
-                        "virkningsdato" to utbetalingsvedtakFattetHendelse.virkningsdato,
-                        "forrigeBehandlingId" to utbetalingsvedtakFattetHendelse.forrigeBehandlingId,
-                        "utbetalingsdager" to utbetalingsvedtakFattetHendelse.utbetalingsdager,
-                        "utfall" to utbetalingsvedtakFattetHendelse.utfall.name,
-                    ),
-                )
-            } else {
-                utbetalingsvedtakFattetHendelse.behov(
-                    type = IverksettingBehov.IverksettUtbetaling,
-                    melding = "Sender behov for å iverksette utbetalingsvedtak",
-                    detaljer = mapOf(
-                        "vedtakId" to utbetalingsvedtakFattetHendelse.vedtakId,
-                        "behandlingId" to utbetalingsvedtakFattetHendelse.behandlingId,
-                        "sakId" to utbetalingsvedtakFattetHendelse.sakId,
-                        "vedtakstidspunkt" to utbetalingsvedtakFattetHendelse.vedtakstidspunkt,
-                        "virkningsdato" to utbetalingsvedtakFattetHendelse.virkningsdato,
-                        "utbetalingsdager" to utbetalingsvedtakFattetHendelse.utbetalingsdager,
-                        "utfall" to utbetalingsvedtakFattetHendelse.utfall.name,
-                    ),
-                )
-            }
+            utbetalingsvedtakFattetHendelse.behov(
+                type = IverksettingBehov.IverksettUtbetaling,
+                melding = "Sender behov for å iverksette utbetalingsvedtak",
+                detaljer = mapOf(
+                    "vedtakId" to utbetalingsvedtakFattetHendelse.vedtakId,
+                    "behandlingId" to utbetalingsvedtakFattetHendelse.behandlingId,
+                    "sakId" to utbetalingsvedtakFattetHendelse.sakId,
+                    "vedtakstidspunkt" to utbetalingsvedtakFattetHendelse.vedtakstidspunkt,
+                    "virkningsdato" to utbetalingsvedtakFattetHendelse.virkningsdato,
+                    "utbetalingsdager" to utbetalingsvedtakFattetHendelse.utbetalingsdager,
+                    "utfall" to utbetalingsvedtakFattetHendelse.utfall.name,
+                ),
+            )
             iverksetting.endreTilstand(utbetalingsvedtakFattetHendelse, AvventerIverksetting)
         }
     }

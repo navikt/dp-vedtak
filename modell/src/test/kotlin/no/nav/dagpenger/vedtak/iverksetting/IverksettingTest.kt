@@ -24,7 +24,6 @@ internal class IverksettingTest {
     private val sakId = "SAKSNUMMER_1"
     private val vedtakstidspunkt = LocalDateTime.now()
     private val virkningsdato = LocalDate.now()
-    private val forrigeBhandlingId = UUID.randomUUID()
 
     private lateinit var iverksetting: Iverksetting
     private val inspektør get() = IverksettingInspektør(iverksetting)
@@ -49,7 +48,6 @@ internal class IverksettingTest {
                 sakId = sakId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
-                forrigeBehandlingId = null,
                 utbetalingsdager = utbetalingsdager(),
                 utfall = UtbetalingsvedtakFattetHendelse.Utfall.Innvilget,
                 aktivitetslogg = aktivitetslogg,
@@ -100,7 +98,6 @@ internal class IverksettingTest {
                 sakId = sakId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
-                forrigeBehandlingId = forrigeBhandlingId,
                 utbetalingsdager = utbetalingsdager(),
                 utfall = UtbetalingsvedtakFattetHendelse.Utfall.Innvilget,
                 aktivitetslogg,
@@ -116,7 +113,6 @@ internal class IverksettingTest {
                 "sakId" to sakId,
                 "vedtakstidspunkt" to vedtakstidspunkt,
                 "virkningsdato" to virkningsdato,
-                "forrigeBehandlingId" to forrigeBhandlingId,
                 "utfall" to "Innvilget",
                 "utbetalingsdager" to utbetalingsdager(),
                 "iverksettingId" to inspektør.iverksettingId.toString(),
