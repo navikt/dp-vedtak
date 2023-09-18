@@ -47,7 +47,7 @@ internal class BehovMediatorTest {
         hendelse.kontekst(Testkontekst("Testkontekst"))
 
         hendelse.behov(
-            IverksettingBehov.Iverksett,
+            IverksettingBehov.IverksettUtbetaling,
             "Behøver iverksetting",
             mapOf(
                 "parameter1" to "verdi1",
@@ -63,13 +63,13 @@ internal class BehovMediatorTest {
         assertEquals(testIdent, inspektør.key(0), "Forventer at partisjonsnøkker er ident ($testIdent)")
         inspektør.message(0).also { json ->
             assertStandardBehovFelter(json)
-            assertEquals(listOf("Iverksett"), json["@behov"].map(JsonNode::asText))
+            assertEquals(listOf("IverksettUtbetaling"), json["@behov"].map(JsonNode::asText))
             assertEquals(testIdent, json["ident"].asText())
             assertEquals("Testkontekst", json["Testkontekst"].asText())
             assertEquals("verdi1", json["parameter1"].asText())
             assertEquals("verdi2", json["parameter2"].asText())
-            assertEquals("verdi1", json["Iverksett"]["parameter1"].asText())
-            assertEquals("verdi2", json["Iverksett"]["parameter2"].asText())
+            assertEquals("verdi1", json["IverksettUtbetaling"]["parameter1"].asText())
+            assertEquals("verdi2", json["IverksettUtbetaling"]["parameter2"].asText())
         }
     }
 
@@ -93,7 +93,7 @@ internal class BehovMediatorTest {
         )
 
         hendelse.behov(
-            IverksettingBehov.Iverksett,
+            IverksettingBehov.IverksettUtbetaling,
             "Behøver iverksetting",
             mapOf(
                 "parameter3" to "verdi3",
@@ -109,7 +109,7 @@ internal class BehovMediatorTest {
         inspektør.message(0).also { json ->
             println(json)
             assertStandardBehovFelter(json)
-            assertEquals(listOf("Test", "Iverksett"), json["@behov"].map(JsonNode::asText))
+            assertEquals(listOf("Test", "IverksettUtbetaling"), json["@behov"].map(JsonNode::asText))
             // assertEquals(testIdent, json["ident"].asText())
             assertEquals("Testkontekst", json["Testkontekst"].asText())
             assertEquals("verdi1", json["parameter1"].asText())
@@ -118,8 +118,8 @@ internal class BehovMediatorTest {
             assertEquals("verdi4", json["parameter4"].asText())
             assertEquals("verdi1", json["Test"]["parameter1"].asText())
             assertEquals("verdi2", json["Test"]["parameter2"].asText())
-            assertEquals("verdi3", json["Iverksett"]["parameter3"].asText())
-            assertEquals("verdi4", json["Iverksett"]["parameter4"].asText())
+            assertEquals("verdi3", json["IverksettUtbetaling"]["parameter3"].asText())
+            assertEquals("verdi4", json["IverksettUtbetaling"]["parameter4"].asText())
         }
     }
 
@@ -128,14 +128,14 @@ internal class BehovMediatorTest {
         val hendelse = TestHendelse(aktivitetslogg.barn())
         hendelse.kontekst(iverksattKontekst)
         hendelse.behov(
-            IverksettingBehov.Iverksett,
+            IverksettingBehov.IverksettUtbetaling,
             "Behøver iverksetting",
             mapOf(
                 "ident" to testIdent,
             ),
         )
         hendelse.behov(
-            IverksettingBehov.Iverksett,
+            IverksettingBehov.IverksettUtbetaling,
             "Behøver iverksetting",
             mapOf(
                 "ident" to testIdent,
@@ -149,8 +149,8 @@ internal class BehovMediatorTest {
     internal fun `kan ikke produsere samme behov`() {
         val hendelse = TestHendelse(aktivitetslogg.barn())
         hendelse.kontekst(iverksattKontekst)
-        hendelse.behov(IverksettingBehov.Iverksett, "Behøver iverksetting")
-        hendelse.behov(IverksettingBehov.Iverksett, "Behøver iverksetting")
+        hendelse.behov(IverksettingBehov.IverksettUtbetaling, "Behøver iverksetting")
+        hendelse.behov(IverksettingBehov.IverksettUtbetaling, "Behøver iverksetting")
 
         assertThrows<IllegalArgumentException> { behovMediator.håndter(hendelse) }
     }

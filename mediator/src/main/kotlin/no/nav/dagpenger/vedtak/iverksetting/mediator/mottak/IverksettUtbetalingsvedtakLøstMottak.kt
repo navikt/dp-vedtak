@@ -8,7 +8,7 @@ import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
-internal class IverksettingLøstMottak(
+internal class IverksettUtbetalingsvedtakLøstMottak(
     rapidsConnection: RapidsConnection,
     private val iHendelseMediator: IHendelseMediator,
 ) : River.PacketListener {
@@ -16,7 +16,7 @@ internal class IverksettingLøstMottak(
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerLogger = KotlinLogging.logger("tjenestekall.IverksettingLøstMottak")
-        val iverksettBehov = "Iverksett"
+        val iverksettBehov = "IverksettUtbetalingsvedtak"
     }
 
     init {
@@ -36,6 +36,7 @@ internal class IverksettingLøstMottak(
                     "@opprettet",
                 )
             }
+            // require utbetalingsdager
             validate {
                 it.require("@løsning") { løsning ->
                     løsning.required(iverksettBehov)

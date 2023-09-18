@@ -4,7 +4,7 @@ import no.nav.dagpenger.vedtak.iverksetting.hendelser.IverksattHendelse
 import no.nav.dagpenger.vedtak.iverksetting.hendelser.UtbetalingsvedtakFattetHendelse
 import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksattHendelseMessage
-import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksettingLøstMottak
+import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksettUtbetalingsvedtakLøstMottak
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.UtbetalingsvedtakFattetHendelseMessage
 import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.UtbetalingsvedtakFattetMottak
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
@@ -29,7 +29,7 @@ internal class HendelseMediator(
     init {
         RettighetBehandletMottak(rapidsConnection, this)
         UtbetalingsvedtakFattetMottak(rapidsConnection, this)
-        IverksettingLøstMottak(rapidsConnection, this)
+        IverksettUtbetalingsvedtakLøstMottak(rapidsConnection, this)
         RapporteringBehandletMottak(rapidsConnection, this)
     }
 

@@ -14,12 +14,15 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-internal class IverksettingLøstMottakTest {
+internal class IverksettUtbetalingsvedtakLøstMottakTest {
 
     private val testRapid = TestRapid()
     private val iHendelseMediator = mockk<IHendelseMediator>()
-    private val iverksettingLøstMottak = IverksettingLøstMottak(testRapid, iHendelseMediator)
     private val testIdent = "12345678910"
+
+    init {
+        IverksettUtbetalingsvedtakLøstMottak(testRapid, iHendelseMediator)
+    }
 
     @Test
     fun `Tar imot løste iverksettingsbehov`() {
@@ -46,7 +49,7 @@ internal class IverksettingLøstMottakTest {
               "@event_name": "behov",
               "@behovId": "fe6fb8ee-cbc7-46bf-a5d7-fb9b57b279c4",
               "@behov": [
-                "Iverksett"
+                "IverksettUtbetalingsvedtak"
               ],
               "ident": "$testIdent",
               "iverksettingId": "0b853210-cc2b-45d8-9c35-72b39fa1d7f3",
@@ -79,7 +82,7 @@ internal class IverksettingLøstMottakTest {
                 }
               ],
               "@løsning": {
-                "Iverksett": true
+                "IverksettUtbetalingsvedtak": true
               }
             }
         """.trimIndent()

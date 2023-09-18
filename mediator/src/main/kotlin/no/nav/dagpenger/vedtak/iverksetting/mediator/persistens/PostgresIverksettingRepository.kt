@@ -3,11 +3,8 @@ package no.nav.dagpenger.vedtak.iverksetting.mediator.persistens
 import kotliquery.Query
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.vedtak.iverksetting.Iverksetting
-import no.nav.dagpenger.vedtak.iverksetting.IverksettingBehov
 import no.nav.dagpenger.vedtak.iverksetting.IverksettingVisitor
-import no.nav.dagpenger.vedtak.mediator.persistens.BehovTypeMapper
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import java.time.LocalDateTime
@@ -38,9 +35,6 @@ internal class PostgresIverksettingRepository(private val dataSource: DataSource
                             TilstandDTO.AvventerIverksetting -> Iverksetting.AvventerIverksetting
                             TilstandDTO.Iverksatt -> Iverksetting.Iverksatt
                         },
-//                        aktivitetslogg = session.hentAktivitetslogg(iverksettingId)
-//                            ?.konverterTilAktivitetslogg(IverksettingBehovTypeMapper)
-//                            ?: throw RuntimeException("Iverksetting uten aktivitetslogg!"),
                     )
                 }.asSingle,
             )
@@ -71,22 +65,6 @@ internal class PostgresIverksettingRepository(private val dataSource: DataSource
 //            rad.binaryStream("data").aktivitetslogg()
 //        }.asSingle,
 //    )
-
-    private object IverksettingBehovTypeMapper : BehovTypeMapper {
-
-        enum class IverksettingBehovDto {
-            Iverksett,
-            IverksettUtbetaling,
-        }
-
-        override fun map(behovNavn: String?): Aktivitet.Behov.Behovtype {
-            val behov = requireNotNull(behovNavn) { "Forventer at behov navn er satt" }
-            return when (IverksettingBehovDto.valueOf(behov)) {
-                IverksettingBehovDto.Iverksett -> IverksettingBehov.Iverksett
-                IverksettingBehovDto.IverksettUtbetaling -> IverksettingBehov.IverksettUtbetaling
-            }
-        }
-    }
 
     private class PopulerQueries(iverksetting: Iverksetting) : IverksettingVisitor {
         var iverksettingId: UUID? = null
