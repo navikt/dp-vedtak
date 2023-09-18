@@ -49,22 +49,63 @@ internal class IverksettUtbetalingsvedtakLøstMottakTest {
               "@event_name": "behov",
               "@behovId": "fe6fb8ee-cbc7-46bf-a5d7-fb9b57b279c4",
               "@behov": [
-                "IverksettUtbetalingsvedtak"
+                "IverksettUtbetaling"
               ],
-              "ident": "$testIdent",
+              "ident": "12345678911",
               "iverksettingId": "0b853210-cc2b-45d8-9c35-72b39fa1d7f3",
               "vedtakId": "408f11d9-4be8-450a-8b7a-c2f3f9811859",
               "tilstand": "Mottatt",
-              "Iverksett": {
+              "IverksettUtbetaling": {
                 "vedtakId": "408f11d9-4be8-450a-8b7a-c2f3f9811859",
+                "sakId": "1d19427a-f6bd-4f59-a6c3-9dc2a89c2322",
                 "behandlingId": "0aaa66b9-35c2-4398-aca0-d1d0a9465292",
-                "sakId": "SAK_NUMMER_1",
                 "vedtakstidspunkt": "2019-08-24T14:15:22",
-                "virkningsdato": "2019-08-24",
+                "virkningsdato": "2023-06-11",
+                "utbetalingsdager": [
+                  {
+                    "dato": "2023-05-29",
+                    "beløp": "800"
+                  },
+                  {
+                    "dato": "2023-05-30",
+                    "beløp": "800"
+                  },
+                  {
+                    "dato": "2023-05-31",
+                    "beløp": "800"
+                  },
+                  {
+                    "dato": "2023-06-01",
+                    "beløp": "800"
+                  },
+                  {
+                    "dato": "2023-06-02",
+                    "beløp": "800"
+                  },
+                  {
+                    "dato": "2023-06-05",
+                    "beløp": "800"
+                  },
+                  {
+                    "dato": "2023-06-06",
+                    "beløp": "800"
+                  },
+                  {
+                    "dato": "2023-06-07",
+                    "beløp": "800"
+                  },
+                  {
+                    "dato": "2023-06-08",
+                    "beløp": "800"
+                  },
+                  {
+                    "dato": "2023-06-09",
+                    "beløp": "800"
+                  }
+                ],
                 "utfall": "Innvilget"
               },
               "behandlingId": "0aaa66b9-35c2-4398-aca0-d1d0a9465292",
-              "sakId": "SAK_NUMMER_1",
               "vedtakstidspunkt": "2019-08-24T14:15:22",
               "virkningsdato": "2019-08-24",
               "utfall": "Innvilget",
@@ -78,12 +119,12 @@ internal class IverksettUtbetalingsvedtakLøstMottakTest {
                 },
                 {
                   "id": "2a49bcc2-2101-435d-83cc-2cc7905041b9",
-                  "time": "2023-05-12T09:42:16.481322"
+                  "time": "2023-09-18T13:31:51.329831"
                 }
               ],
               "@løsning": {
-                "IverksettUtbetalingsvedtak": true
+                "IverksettUtbetaling": true
               }
-            }
+}
         """.trimIndent()
 }

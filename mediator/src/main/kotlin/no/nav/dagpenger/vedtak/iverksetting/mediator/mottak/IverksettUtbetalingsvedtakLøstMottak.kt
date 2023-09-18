@@ -5,6 +5,7 @@ import mu.withLoggingContext
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
+import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
@@ -16,7 +17,7 @@ internal class IverksettUtbetalingsvedtakLøstMottak(
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerLogger = KotlinLogging.logger("tjenestekall.IverksettingLøstMottak")
-        val iverksettBehov = "IverksettUtbetalingsvedtak"
+        val iverksettBehov = "IverksettUtbetaling"
     }
 
     init {
@@ -31,18 +32,26 @@ internal class IverksettUtbetalingsvedtakLøstMottak(
                     "behandlingId",
                     "sakId",
                     "vedtakId",
+                    "utbetalingsdager",
                     "@løsning",
                     "@id",
                     "@opprettet",
                 )
             }
-            // require utbetalingsdager
             validate {
                 it.require("@løsning") { løsning ->
                     løsning.required(iverksettBehov)
                 }
             }
         }.register(this)
+    }
+
+    override fun onError(problems: MessageProblems, context: MessageContext) {
+        println(problems.toExtendedReport())
+    }
+
+    override fun onSevere(error: MessageProblems.MessageException, context: MessageContext) {
+        println(error.message)
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
