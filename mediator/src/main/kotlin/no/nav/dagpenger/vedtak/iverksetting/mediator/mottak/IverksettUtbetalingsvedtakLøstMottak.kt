@@ -5,7 +5,6 @@ import mu.withLoggingContext
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
@@ -44,14 +43,6 @@ internal class IverksettUtbetalingsvedtakLøstMottak(
                 }
             }
         }.register(this)
-    }
-
-    override fun onError(problems: MessageProblems, context: MessageContext) {
-        println(problems.toExtendedReport())
-    }
-
-    override fun onSevere(error: MessageProblems.MessageException, context: MessageContext) {
-        println(error.message)
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
