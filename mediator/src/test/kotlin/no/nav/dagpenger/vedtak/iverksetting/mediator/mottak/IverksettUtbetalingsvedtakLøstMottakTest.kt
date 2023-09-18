@@ -51,7 +51,7 @@ internal class IverksettUtbetalingsvedtakLøstMottakTest {
               "@behov": [
                 "IverksettUtbetaling"
               ],
-              "ident": "12345678911",
+              "ident": "12345678910",
               "iverksettingId": "0b853210-cc2b-45d8-9c35-72b39fa1d7f3",
               "vedtakId": "408f11d9-4be8-450a-8b7a-c2f3f9811859",
               "tilstand": "Mottatt",

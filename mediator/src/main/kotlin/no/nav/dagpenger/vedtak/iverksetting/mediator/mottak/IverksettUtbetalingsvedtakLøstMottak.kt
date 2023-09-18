@@ -29,10 +29,10 @@ internal class IverksettUtbetalingsvedtakLøstMottak(
                 it.requireKey(
                     "iverksettingId",
                     "ident",
-                    "behandlingId",
-                    "sakId",
                     "vedtakId",
-                    "utbetalingsdager",
+                    "$iverksettBehov.behandlingId",
+                    "$iverksettBehov.sakId",
+                    "$iverksettBehov.utbetalingsdager",
                     "@løsning",
                     "@id",
                     "@opprettet",
