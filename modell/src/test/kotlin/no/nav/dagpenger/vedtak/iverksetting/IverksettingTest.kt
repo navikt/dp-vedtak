@@ -36,7 +36,7 @@ internal class IverksettingTest {
     }
 
     @Test
-    fun `Skal starte iverksetting når utbetalingsvedtak fattes med førstegangsutbetaling`() {
+    fun `Skal starte iverksetting når utbetalingsvedtak fattes`() {
         val aktivitetslogg = Aktivitetslogg()
 
         iverksetting.håndter(
@@ -51,56 +51,6 @@ internal class IverksettingTest {
                 utbetalingsdager = utbetalingsdager(),
                 utfall = UtbetalingsvedtakFattetHendelse.Utfall.Innvilget,
                 aktivitetslogg = aktivitetslogg,
-            ),
-        )
-
-        aktivitetslogg.assertBehov(
-            IverksettingBehov.IverksettUtbetaling,
-            forventetDetaljer = mapOf(
-                "ident" to ident,
-                "vedtakId" to vedtakId.toString(),
-                "behandlingId" to behandlingId,
-                "sakId" to sakId,
-                "vedtakstidspunkt" to vedtakstidspunkt,
-                "virkningsdato" to virkningsdato,
-                "utfall" to "Innvilget",
-                "utbetalingsdager" to utbetalingsdager(),
-                "iverksettingId" to inspektør.iverksettingId.toString(),
-                "tilstand" to "Mottatt",
-            ),
-        )
-
-        iverksetting.håndter(
-            IverksattHendelse(
-                meldingsreferanseId = UUID.randomUUID(),
-                ident = ident,
-                iverksettingId = inspektør.iverksettingId,
-                vedtakId = inspektør.vedtakId,
-            ),
-        )
-
-        assertTilstander(
-            Mottatt,
-            AvventerIverksetting,
-            Iverksatt,
-        )
-    }
-
-    @Test
-    fun `Skal starte iverksetting når utbetalingsvedtak fattes etter førstegangsutbetaling`() {
-        val aktivitetslogg = Aktivitetslogg()
-        iverksetting.håndter(
-            UtbetalingsvedtakFattetHendelse(
-                meldingsreferanseId = UUID.randomUUID(),
-                ident = ident,
-                vedtakId = vedtakId,
-                behandlingId = behandlingId,
-                sakId = sakId,
-                vedtakstidspunkt = vedtakstidspunkt,
-                virkningsdato = virkningsdato,
-                utbetalingsdager = utbetalingsdager(),
-                utfall = UtbetalingsvedtakFattetHendelse.Utfall.Innvilget,
-                aktivitetslogg,
             ),
         )
 
