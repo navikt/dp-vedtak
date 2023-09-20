@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.aktivitetslogg)
+    api(libs.aktivitetslogg)
     implementation(libs.kotlin.logging)
     testImplementation("io.cucumber:cucumber-java8:${libs.versions.cucumber.get()}")
     testImplementation("io.cucumber:cucumber-junit-platform-engine:${libs.versions.cucumber.get()}")

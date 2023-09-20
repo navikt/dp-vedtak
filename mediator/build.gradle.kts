@@ -19,8 +19,6 @@ dependencies {
     implementation(libs.konfig)
     implementation(libs.kotlin.logging)
 
-    implementation(libs.aktivitetslogg)
-
     implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.ktor.server)
     implementation("io.ktor:ktor-server-core-jvm:${libs.versions.ktor.get()}")

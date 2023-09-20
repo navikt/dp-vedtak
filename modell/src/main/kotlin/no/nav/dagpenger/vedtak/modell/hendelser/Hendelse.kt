@@ -20,6 +20,6 @@ abstract class Hendelse(
 
     fun toLogString(): String = aktivitetslogg.toString()
 
-    override fun meldingsreferanseId() = meldingsreferanseId.toString()
+    override fun meldingsreferanseId() = meldingsreferanseId
     abstract fun kontekstMap(): Map<String, String>
 }
