@@ -7,13 +7,12 @@ dependencies {
     implementation(project(path = ":modell"))
     implementation(project(path = ":openapi"))
 
-    implementation(libs.jackson.core)
-    implementation(libs.jackson.datatype.jsr310)
-    implementation(libs.jackson.blackbird)
+    implementation(libs.bundles.jackson)
+    implementation("com.fasterxml.jackson.module:jackson-module-blackbird:${libs.versions.jackson.get()}")
 
     implementation(libs.bundles.postgres)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:${libs.versions.kotlinx.coroutines.slf4j.get()}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.1")
 
     implementation(libs.rapids.and.rivers)
     implementation(libs.konfig)
@@ -24,13 +23,12 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:${libs.versions.ktor.get()}")
     implementation("io.ktor:ktor-server-swagger:${libs.versions.ktor.get()}")
 
-    testImplementation(libs.ktor.client.mock)
     testImplementation("io.kotest:kotest-assertions-core-jvm:${libs.versions.kotest.get()}")
 
-    testImplementation("io.mockk:mockk:${libs.versions.mockk.get()}")
+    testImplementation(libs.mockk)
     testImplementation(libs.mock.oauth2.server)
     testImplementation(libs.bundles.postgres.test)
-    testImplementation(libs.ktor.server.test.host.jvm)
+    testImplementation("io.ktor:ktor-server-test-host-jvm:${libs.versions.ktor.get()}")
 }
 
 application {

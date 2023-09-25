@@ -3,13 +3,13 @@ plugins {
     `java-library`
 }
 
+val cucumberVersion = "7.12.0"
 dependencies {
-    api(libs.aktivitetslogg)
+    api(libs.dp.aktivitetslogg)
     implementation(libs.kotlin.logging)
-    testImplementation("io.cucumber:cucumber-java8:${libs.versions.cucumber.get()}")
-    testImplementation("io.cucumber:cucumber-junit-platform-engine:${libs.versions.cucumber.get()}")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:${libs.versions.kotest.get()}")
-    testImplementation("org.junit.platform:junit-platform-suite:${libs.versions.junit.platform.suite.get()}")
-    testImplementation(libs.jackson.datatype.jsr310)
-    testImplementation(libs.jackson.module.kotlin)
+    testImplementation("io.cucumber:cucumber-java8:$cucumberVersion")
+    testImplementation("io.cucumber:cucumber-junit-platform-engine:$cucumberVersion")
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation("org.junit.platform:junit-platform-suite:1.10.0")
+    testImplementation(libs.bundles.jackson)
 }
