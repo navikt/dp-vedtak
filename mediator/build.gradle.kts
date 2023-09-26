@@ -12,7 +12,7 @@ dependencies {
 
     implementation(libs.bundles.postgres)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.3")
 
     implementation(libs.rapids.and.rivers)
     implementation(libs.konfig)
