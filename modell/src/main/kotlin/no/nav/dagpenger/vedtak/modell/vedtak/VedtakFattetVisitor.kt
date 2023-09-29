@@ -100,15 +100,15 @@ internal class VedtakFattetVisitor : VedtakVisitor {
             behandlingId = this.behandlingId!!,
             vedtakstidspunkt = this.vedtakstidspunkt!!,
             virkningsdato = this.virkningsdato!!,
+            utfall = when (utfall == true) {
+                true -> Innvilget
+                false -> Avslått
+            },
             utbetalingsdager = utbetalingsdager.map { utbetalingsdag ->
                 UtbetalingsdagDto(
                     dato = utbetalingsdag.dato,
                     beløp = utbetalingsdag.beløp.reflection { it }.toDouble(),
                 )
-            },
-            utfall = when (utfall == true) {
-                true -> Innvilget
-                false -> Avslått
             },
         )
     }

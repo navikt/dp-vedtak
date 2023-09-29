@@ -85,8 +85,8 @@ internal class VedtakFattetObserver(private val rapidsConnection: RapidsConnecti
                 "vedtakId" to utbetalingsvedtakFattet.vedtakId.toString(),
                 "vedtaktidspunkt" to utbetalingsvedtakFattet.vedtakstidspunkt,
                 "virkningsdato" to utbetalingsvedtakFattet.virkningsdato,
-                "utbetalingsdager" to utbetalingsvedtakFattet.utbetalingsdager,
                 "utfall" to utbetalingsvedtakFattet.utfall.name,
+                "utbetalingsdager" to utbetalingsvedtakFattet.utbetalingsdager,
             ),
         )
     }

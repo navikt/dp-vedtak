@@ -86,10 +86,10 @@ class VedtakFattetObserverTest {
     private fun utbetalingsvedtakFattet(utfall: VedtakObserver.Utfall) = VedtakObserver.UtbetalingsvedtakFattet(
         vedtakId = UUID.randomUUID(),
         sakId = UUID.randomUUID().toString(),
-        vedtakstidspunkt = LocalDateTime.now(),
         behandlingId = UUID.randomUUID(),
+        vedtakstidspunkt = LocalDateTime.now(),
         virkningsdato = LocalDate.now(),
-        utbetalingsdager = emptyList(),
         utfall = utfall,
+        utbetalingsdager = emptyList(),
     )
 }

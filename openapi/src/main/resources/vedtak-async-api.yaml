@@ -89,8 +89,8 @@ components:
           - sakId
           - vedtaktidspunkt
           - behandlingId
-          - utbetalingsdager
           - utfall
+          - utbetalingsdager
         properties:
           '@event_type':
             type: string
