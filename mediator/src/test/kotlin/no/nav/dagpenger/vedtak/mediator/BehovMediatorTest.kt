@@ -6,7 +6,6 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
-import no.nav.dagpenger.vedtak.iverksetting.IverksettingBehov
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
@@ -188,4 +187,8 @@ internal class BehovMediatorTest {
         override fun toSpesifikkKontekst() =
             SpesifikkKontekst(kontekstType = "Iverksett", mapOf("iverksettId" to iverksettId.toString(), "ident" to ident))
     }
+}
+
+enum class IverksettingBehov : Aktivitet.Behov.Behovtype {
+    IverksettUtbetaling,
 }
