@@ -3,8 +3,6 @@ package no.nav.dagpenger.vedtak.mediator
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder.runMigration
-import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
-import no.nav.dagpenger.vedtak.iverksetting.mediator.persistens.PostgresIverksettingRepository
 import no.nav.dagpenger.vedtak.mediator.api.vedtakApi
 import no.nav.dagpenger.vedtak.mediator.persistens.PostgresHendelseRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.PostgresPersonRepository
@@ -29,7 +27,6 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     init {
         HendelseMediator(
             rapidsConnection = rapidsConnection,
-            hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),
             personMediator = PersonMediator(
                 aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
                 personRepository = personRepository,
@@ -37,11 +34,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
                     VedtakFattetObserver(rapidsConnection),
                 ),
             ),
-            iverksettingMediator = IverksettingMediator(
-                aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
-                iverksettingRepository = PostgresIverksettingRepository(PostgresDataSourceBuilder.dataSource),
-                behovMediator = BehovMediator(rapidsConnection, KotlinLogging.logger("tjenestekall.BehovMediator")),
-            ),
+            hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),
         )
 
         rapidsConnection.register(this)

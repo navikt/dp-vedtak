@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import no.nav.dagpenger.vedtak.db.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.db.InMemoryPersonRepository
-import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.lagRapporteringForMeldeperiodeFørDagpengvedtaket
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringInnsendtHendelse
@@ -31,13 +30,12 @@ internal class PersonMediatorTest {
     init {
         HendelseMediator(
             rapidsConnection = testRapid,
-            hendelseRepository = InMemoryMeldingRepository(),
             personMediator = PersonMediator(
                 aktivitetsloggMediator = mockk(relaxed = true),
                 personRepository = personRepository,
                 personObservers = listOf(VedtakFattetObserver(testRapid), testObservatør),
             ),
-            iverksettingMediator = IverksettingMediator(mockk(), mockk(), mockk()),
+            hendelseRepository = InMemoryMeldingRepository(),
         )
     }
 

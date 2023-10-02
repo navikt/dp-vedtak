@@ -6,7 +6,6 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import no.nav.dagpenger.vedtak.db.InMemoryMeldingRepository
-import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rettighetBehandletOgInnvilgetJson
 import no.nav.dagpenger.vedtak.modell.hendelser.RettighetBehandletHendelse
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -24,9 +23,8 @@ internal class HendelseMessageMediatorTest {
     private val meldingRepository = InMemoryMeldingRepository()
     private val hendelseMediator = HendelseMediator(
         rapidsConnection = testRapid,
-        hendelseRepository = meldingRepository,
         personMediator = personMediatorMock,
-        iverksettingMediator = IverksettingMediator(mockk(), mockk(), mockk()),
+        hendelseRepository = meldingRepository,
     )
 
     @Test

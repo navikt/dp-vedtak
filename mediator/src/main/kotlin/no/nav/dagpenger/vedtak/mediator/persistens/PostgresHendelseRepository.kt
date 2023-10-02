@@ -5,8 +5,6 @@ import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import mu.KotlinLogging
-import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.IverksattHendelseMessage
-import no.nav.dagpenger.vedtak.iverksetting.mediator.mottak.UtbetalingsvedtakFattetHendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
 import no.nav.dagpenger.vedtak.mediator.mottak.RapporteringBehandletHendelseMessage
@@ -78,9 +76,6 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
         return when (hendelseMessage) {
             is RettighetBehandletHendelseMessage -> HendelseTypeDTO.RETTIGHET_BEHANDLET
             is RapporteringBehandletHendelseMessage -> HendelseTypeDTO.RAPPORTERING_BEHANDLET
-            is IverksattHendelseMessage -> HendelseTypeDTO.IVERKSATT
-            is UtbetalingsvedtakFattetHendelseMessage -> HendelseTypeDTO.UTBETALING_VEDTAK_FATTET
-//            is DagpengerInnvilgetMessage -> HendelseTypeDTO.HOVEDRETTIGHET_VEDTAK_FATTET
             else -> null.also {
                 logger.warn { "ukjent meldingstype ${hendelseMessage::class.simpleName}: melding lagres ikke" }
             }
@@ -95,7 +90,11 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
 enum class HendelseTypeDTO {
     RETTIGHET_BEHANDLET,
     RAPPORTERING_BEHANDLET,
+
+    @Deprecated("Er ikke i bruk lenger - men det finnes instanser i databasen")
     IVERKSATT,
+
+    @Deprecated("Er ikke i bruk lenger - men det finnes instanser i databasen")
     UTBETALING_VEDTAK_FATTET,
 
     @Deprecated("Er ikke i bruk lenger - men det finnes instanser i databasen")

@@ -4,7 +4,6 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.dagpenger.vedtak.db.InMemoryMeldingRepository
-import no.nav.dagpenger.vedtak.iverksetting.mediator.IverksettingMediator
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rettighetBehandletOgInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
@@ -25,13 +24,12 @@ internal class PersonMediatorKonsistensTest {
     init {
         HendelseMediator(
             rapidsConnection = testRapid,
-            hendelseRepository = InMemoryMeldingRepository(),
             personMediator = PersonMediator(
                 aktivitetsloggMediator = mockk(relaxed = true),
                 personRepository = personRepository,
                 personObservers = listOf(VedtakFattetObserver(testRapid), testObservatør),
             ),
-            iverksettingMediator = IverksettingMediator(mockk(), mockk(), mockk()),
+            hendelseRepository = InMemoryMeldingRepository(),
         )
     }
 
