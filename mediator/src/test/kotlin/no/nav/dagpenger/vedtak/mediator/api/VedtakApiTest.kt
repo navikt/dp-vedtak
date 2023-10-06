@@ -16,6 +16,7 @@ import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
@@ -176,6 +177,10 @@ class VedtakApiTest {
         utfall = true,
         vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
         virkningsdato = virkningsdato,
+        periode = Periode(
+            fomDato = virkningsdato.minusDays(13),
+            tomDato = virkningsdato,
+        ),
         forbruk = Stønadsdager(10),
         utbetalingsdager = utbetalingsdager,
     )

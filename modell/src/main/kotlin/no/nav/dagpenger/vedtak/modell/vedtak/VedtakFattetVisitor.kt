@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.modell.vedtak
 
 import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.UtbetalingsdagDto
@@ -24,7 +25,6 @@ internal class VedtakFattetVisitor : VedtakVisitor {
     private var vedtakId: UUID? = null
     private var sakId: SakId? = null
     private var utfall: Boolean? = null
-
     private var behandlingId: UUID? = null
     private var virkningsdato: LocalDate? = null
     private var vedtakstidspunkt: LocalDateTime? = null
@@ -89,6 +89,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
 
     override fun visitUtbetalingsvedtak(
         vedtakId: UUID,
+        periode: Periode,
         utfall: Boolean,
         forbruk: Stønadsdager,
         beløpTilUtbetaling: Beløp,
@@ -98,18 +99,14 @@ internal class VedtakFattetVisitor : VedtakVisitor {
             vedtakId = this.vedtakId(),
             sakId = this.sakId!!,
             behandlingId = this.behandlingId!!,
+            periode = periode,
             vedtakstidspunkt = this.vedtakstidspunkt!!,
             virkningsdato = this.virkningsdato!!,
             utfall = when (utfall == true) {
                 true -> Innvilget
                 false -> Avslått
             },
-            utbetalingsdager = utbetalingsdager.map { utbetalingsdag ->
-                UtbetalingsdagDto(
-                    dato = utbetalingsdag.dato,
-                    beløp = utbetalingsdag.beløp.reflection { it }.toDouble(),
-                )
-            },
+            utbetalingsdager = populerAlleRapporteringsdager(utbetalingsdager = utbetalingsdager, periode = periode),
         )
     }
 
@@ -153,5 +150,28 @@ internal class VedtakFattetVisitor : VedtakVisitor {
                 false -> Avslått
             },
         )
+    }
+
+    private fun populerAlleRapporteringsdager(utbetalingsdager: List<Utbetalingsdag>, periode: Periode): List<UtbetalingsdagDto> {
+        val utbetalingsdagDtoListe: MutableList<UtbetalingsdagDto> = mutableListOf()
+        val utbetalingsdatoer: MutableList<LocalDate> = mutableListOf()
+        utbetalingsdager.forEach { utbetalingsdag ->
+            utbetalingsdatoer.add(utbetalingsdag.dato)
+        }
+
+        periode.iterator().forEach { dato ->
+            println("Dato= $dato")
+            if (utbetalingsdatoer.contains(dato)) {
+                utbetalingsdager.forEach { utbetalingsdag ->
+                    if (utbetalingsdag.dato == dato) {
+                        utbetalingsdagDtoListe.add(UtbetalingsdagDto(dato = dato, beløp = utbetalingsdag.beløp.reflection { it }.toDouble()))
+                    }
+                }
+            } else {
+                utbetalingsdagDtoListe.add(UtbetalingsdagDto(dato = dato, beløp = 0.0))
+            }
+        }
+
+        return utbetalingsdagDtoListe
     }
 }

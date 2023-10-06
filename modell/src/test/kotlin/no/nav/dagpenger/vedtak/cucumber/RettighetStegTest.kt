@@ -9,6 +9,7 @@ import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
 import no.nav.dagpenger.vedtak.modell.entitet.Dagpengeperiode
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.entitet.Timer.Companion.timer
@@ -302,6 +303,7 @@ class RettighetStegTest : No {
 
         override fun visitUtbetalingsvedtak(
             vedtakId: UUID,
+            periode: Periode,
             utfall: Boolean,
             forbruk: Stønadsdager,
             beløpTilUtbetaling: Beløp,

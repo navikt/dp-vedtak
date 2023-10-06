@@ -6,8 +6,8 @@ import io.mockk.mockk
 import no.nav.dagpenger.vedtak.db.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.db.InMemoryPersonRepository
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
+import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.lagRapporteringForMeldeperiodeFørDagpengvedtaket
-import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rapporteringInnsendtHendelse
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rettighetBehandletOgAvslåttJson
 import no.nav.dagpenger.vedtak.mediator.Meldingsfabrikk.rettighetBehandletOgInnvilgetJson
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
@@ -18,6 +18,7 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 import kotlin.time.Duration
 
 internal class PersonMediatorTest {
@@ -67,21 +68,14 @@ internal class PersonMediatorTest {
 
     @Test
     fun `Rapporteringshendelse fører til at utbetalingsvedtak fattes`() {
-        val rettighetFraDato = 29 mai 2023
-        testRapid.sendTestMessage(
-            rettighetBehandletOgInnvilgetJson(
-                ident = ident,
-                virkningsdato = rettighetFraDato,
-                dagsats = 1000.0,
-                fastsattVanligArbeidstid = 8,
-            ),
-        )
+        val virkningsdatoDagpenger = 29 mai 2023
+        innvilgDagpengerFom(virkningsdatoDagpenger)
 
         testRapid.sendTestMessage(
-            rapporteringInnsendtHendelse(
+            Meldingsfabrikk.rapporteringInnsendtJson(
                 ident = ident,
-                fom = rettighetFraDato,
-                tom = rettighetFraDato.plusDays(13),
+                fom = virkningsdatoDagpenger,
+                tom = virkningsdatoDagpenger.plusDays(13),
                 tidArbeidetPerArbeidsdag = Duration.parseIsoString("PT0S"),
             ),
         )
@@ -95,32 +89,56 @@ internal class PersonMediatorTest {
         testObservatør.utbetalingsvedtak.size shouldBe 1
         val utbetalingsvedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 1)
         utbetalingsvedtakJson["@event_name"].asText() shouldBe "utbetaling_vedtak_fattet"
-        utbetalingsvedtakJson["utbetalingsdager"].size() shouldBe 10
+        utbetalingsvedtakJson["utbetalingsdager"].size() shouldBe 14
         utbetalingsvedtakJson["utbetalingsdager"].map { utbetalingsdagJson ->
-            utbetalingsdagJson["beløp"].asDouble() shouldBe 1000.0
+            if (utbetalingsdagJson["beløp"].asDouble() != 0.0) {
+                utbetalingsdagJson["beløp"].asDouble() shouldBe 1000.0
+            }
         }
+    }
+
+    @Test
+    fun `Hendelse om utbetalingsvedtak fattet skal ha alle rapporteringsdager`() {
+        val virkningsdatoDagpenger = 29 mai 2023
+        innvilgDagpengerFom(virkningsdatoDagpenger)
+
+        testRapid.sendTestMessage(
+            Meldingsfabrikk.rapporteringInnsendtJson(
+                ident = ident,
+                fom = virkningsdatoDagpenger,
+            ),
+        )
+
+        testObservatør.utbetalingsvedtak.size shouldBe 1
+        val utbetalingsvedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 1)
+        utbetalingsvedtakJson["@event_name"].asText() shouldBe "utbetaling_vedtak_fattet"
+        utbetalingsvedtakJson["utbetalingsdager"].size() shouldBe 14
     }
 
     @Test
     @Disabled("Vi må finne hva vi skal gjøre med rapportering hvis bruker ikke har rammevedtak")
     fun `Dersom person har sendt rapportering for en periode uten dagpengevedtak, lager vi ikke utbetalingsvedtak Dette må vi finne ut av`() {
-        val dagpengerFraDato = 29 mai 2023
-        testRapid.sendTestMessage(
-            rettighetBehandletOgInnvilgetJson(
-                ident = ident,
-                virkningsdato = dagpengerFraDato,
-                dagsats = 1000.0,
-                fastsattVanligArbeidstid = 8,
-            ),
-        )
+        val virkningsdatoDagpenger = 29 mai 2023
+        innvilgDagpengerFom(virkningsdatoDagpenger)
 
         testRapid.sendTestMessage(
-            lagRapporteringForMeldeperiodeFørDagpengvedtaket(ident, dagpengerFraDato),
+            lagRapporteringForMeldeperiodeFørDagpengvedtaket(ident, virkningsdatoDagpenger),
         )
 
         testObservatør.vedtak.size shouldBe 1
         val rammevedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 1)
         rammevedtakJson["@event_name"].asText() shouldBe "vedtak_fattet"
+    }
+
+    private fun innvilgDagpengerFom(virkningsdato: LocalDate) {
+        testRapid.sendTestMessage(
+            rettighetBehandletOgInnvilgetJson(
+                ident = ident,
+                virkningsdato = virkningsdato,
+                dagsats = 1000.0,
+                fastsattVanligArbeidstid = 8,
+            ),
+        )
     }
 
     private class TestObservatør : PersonObserver {

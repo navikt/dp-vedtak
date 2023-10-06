@@ -5,6 +5,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp.Companion.beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent
 import no.nav.dagpenger.vedtak.modell.entitet.Prosent.Companion.summer
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
@@ -135,6 +136,7 @@ class Behandling(
                 utfall = resultat.utfall,
                 vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                 virkningsdato = rapporteringHendelse.endInclusive,
+                periode = Periode(fomDato = rapporteringHendelse.start, tomDato = rapporteringHendelse.endInclusive),
                 forbruk = Stønadsdager(resultat.forbruksdager.size),
                 utbetalingsdager = resultat.utbetalingsdager,
             )
