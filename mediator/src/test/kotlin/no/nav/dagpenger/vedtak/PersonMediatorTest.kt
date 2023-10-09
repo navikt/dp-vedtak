@@ -118,6 +118,30 @@ internal class PersonMediatorTest {
     }
 
     @Test
+    fun `Hendelse om utbetalingsvedtak fattet skal ha alle rapporteringsdager, selv om utfall er avslått`() {
+        val virkningsdatoDagpenger = 29 mai 2023
+        innvilgDagpengerFom(virkningsdatoDagpenger)
+
+        testRapid.sendTestMessage(
+            Meldingsfabrikk.rapporteringInnsendtJson(
+                ident = ident,
+                fom = virkningsdatoDagpenger,
+                tom = virkningsdatoDagpenger.plusDays(13),
+                tidArbeidetPerArbeidsdag = Duration.parseIsoString("PT5H"),
+            ),
+        )
+
+        testObservatør.utbetalingsvedtak.size shouldBe 1
+        val utbetalingsvedtakJson = testRapid.inspektør.message(testRapid.inspektør.size - 1)
+        utbetalingsvedtakJson["@event_name"].asText() shouldBe "utbetaling_vedtak_fattet"
+        utbetalingsvedtakJson["utfall"].asText() shouldBe "Avslått"
+        utbetalingsvedtakJson["utbetalingsdager"].size() shouldBe 14
+        utbetalingsvedtakJson["utbetalingsdager"].map { utbetalingsdagJson ->
+            utbetalingsdagJson["beløp"].asDouble() shouldBe 0.0
+        }
+    }
+
+    @Test
     @Disabled("Vi må finne hva vi skal gjøre med rapportering hvis bruker ikke har rammevedtak")
     fun `Dersom person har sendt rapportering for en periode uten dagpengevedtak, lager vi ikke utbetalingsvedtak Dette må vi finne ut av`() {
         val virkningsdatoDagpenger = 29 mai 2023
