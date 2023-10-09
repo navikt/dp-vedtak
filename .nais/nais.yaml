@@ -57,6 +57,7 @@ spec:
     inbound:
       rules:
         - application: dp-saksbehandling-frontend
+        - application: dp-saksbehandling-graphql
        # - application: dp-rapportering-frontend
         {{#if wonderwalled}}
         - application: wonderwalled-idporten
