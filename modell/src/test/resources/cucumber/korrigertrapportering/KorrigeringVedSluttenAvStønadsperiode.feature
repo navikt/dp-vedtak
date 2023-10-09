@@ -78,10 +78,13 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
     Så skal gjenstående stønadsdager være 0 fra "08.01.2023"
     Så skal bruker ha 4 vedtak
 
+
+  @wip
+    # @todo: Etterfølgende rapporteringer må reberegnes dersom forbruk endres
   Scenario: Rapporterer først fravær en dag, slik at 1 dag gjenstår av dagpengeperioden. Rapporterer påfølgende uke, slik at dagpengeperioden er oppbrukt.
   Korrigerer deretter første rapportering, slik at dagpengeperioden brukes opp tidligere.
 
-    # Leverer egenrapportering som medfører at dagpengeperioden brukes opp.
+    # Leverer egenrapportering som medfører at 1 dag gjenstår av dagpengeperioden.
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |
       | 12.12.2022 | false  | 0     |
@@ -123,6 +126,8 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 1 dager
     Så skal utbetalingen være 800
+    Så skal beregnet utbetaling være 7200 kr for "25.12.2022"
+    Så skal gjenstående stønadsdager være 1 fra "25.12.2022"
     Så skal beregnet utbetaling være 800 kr for "08.01.2023"
     Så skal gjenstående stønadsdager være 0 fra "08.01.2023"
     Så skal bruker ha 3 vedtak
@@ -148,4 +153,6 @@ Egenskap: Korrigert egenrapportering på slutten av stønadsperioden
     Så skal utbetalingen være 8000
     Så skal beregnet utbetaling være 8000 kr for "25.12.2022"
     Så skal gjenstående stønadsdager være 0 fra "25.12.2022"
+    Så skal beregnet utbetaling være 0 kr for "08.01.2023"
+    Så skal gjenstående stønadsdager være 0 fra "08.01.2023"
     Så skal bruker ha 4 vedtak
