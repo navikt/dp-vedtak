@@ -215,7 +215,7 @@ Egenskap: Korrigert egenrapportering
     Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 240 fra "08.01.2023"
     Så skal utbetalingen være 8000
-    Så skal beregnet utbetaling være 5600 kr for "25.12.2022"
+    Så skal beregnet utbetaling være 8000 kr for "25.12.2022"
     Så skal beregnet utbetaling være 8000 kr for "08.01.2023"
     Så skal bruker ha 3 vedtak
 
@@ -237,15 +237,15 @@ Egenskap: Korrigert egenrapportering
       | 07.01.2023 | false  | 0     |
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 9 dager
+    Så skal gjenstående stønadsdager være 250 fra "25.12.2022"
     Så skal gjenstående stønadsdager være 241 fra "08.01.2023"
     Så skal utbetalingen være 6400
+    Så skal beregnet utbetaling være 8000 kr for "25.12.2022"
     Så skal beregnet utbetaling være 6400 kr for "08.01.2023"
     Så skal bruker ha 4 vedtak
 
-  @wip
-  # @todo: reberegning av etterfølgende meldeperioder
-  Scenario: Leverer tre meldeperioder der egenandel trekkes på alle tre periodene. Korrigerer deretter første periode,
-  med arbeid over terskel. Etterfølgende perioder reberegnes.
+  Scenario: Leverer tre meldeperioder. Korrigerer deretter første periode, med arbeid over terskel.
+  Etterfølgende perioder reberegnes.
     Når rapporteringshendelse mottas
       | dato       | fravær | timer |
       | 12.12.2022 | true   | 0     |
@@ -264,8 +264,8 @@ Egenskap: Korrigert egenrapportering
       | 25.12.2022 | false  | 0     |
     Så skal forbruket være 2 dager
     Så skal gjenstående stønadsdager være 258 fra "25.12.2022"
-    Så skal utbetalingen være 0
-    Så skal beregnet utbetaling være 0 kr for "25.12.2022"
+    Så skal utbetalingen være 800
+    Så skal beregnet utbetaling være 800 kr for "25.12.2022"
     Så skal bruker ha 2 vedtak
 
     # Meldeperiode 2 har forbruk på 3 dager, men arbeid som avkorter
@@ -281,14 +281,14 @@ Egenskap: Korrigert egenrapportering
       | 02.01.2023 | true   | 0     |
       | 03.01.2023 | true   | 0     |
       | 04.01.2023 | false  | 8     |
-      | 05.01.2023 | false  | 2     |
+      | 05.01.2023 | false  | 4     |
       | 06.01.2023 | false  | 0     |
       | 07.01.2023 | false  | 0     |
       | 08.01.2023 | false  | 0     |
     Så skal forbruket være 3 dager
     Så skal gjenstående stønadsdager være 255 fra "08.01.2023"
-    Så skal utbetalingen være 0
-    Så skal beregnet utbetaling være 0 kr for "08.01.2023"
+    Så skal utbetalingen være 1200
+    Så skal beregnet utbetaling være 1200 kr for "08.01.2023"
     Så skal bruker ha 3 vedtak
 
     # Meldeperiode 3 har full utbetaling
@@ -310,8 +310,8 @@ Egenskap: Korrigert egenrapportering
       | 22.01.2023 | false  | 0     |
     Så skal forbruket være 10 dager
     Så skal gjenstående stønadsdager være 245 fra "22.01.2023"
-    Så skal utbetalingen være 7800
-    Så skal beregnet utbetaling være 7800 kr for "22.01.2023"
+    Så skal utbetalingen være 8000
+    Så skal beregnet utbetaling være 8000 kr for "22.01.2023"
     Så skal bruker ha 4 vedtak
 
     ## Korrigerer første meldeperiode, slik at arbeid er over terskel.
@@ -337,6 +337,6 @@ Egenskap: Korrigert egenrapportering
     Så skal gjenstående stønadsdager være 247 fra "22.01.2023"
     Så skal utbetalingen være 0
     Så skal beregnet utbetaling være 0 kr for "25.12.2022"
-    Så skal beregnet utbetaling være 0 kr for "08.01.2023"
-    Så skal beregnet utbetaling være 7000 kr for "22.01.2023"
+    Så skal beregnet utbetaling være 1200 kr for "08.01.2023"
+    Så skal beregnet utbetaling være 8000 kr for "22.01.2023"
     Så skal bruker ha 5 vedtak
