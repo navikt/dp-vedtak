@@ -183,6 +183,7 @@ private class PopulerQueries(
 
     override fun visitUtbetalingsvedtak(
         vedtakId: UUID,
+        periode: Periode,
         utfall: Boolean,
         forbruk: Stønadsdager,
         beløpTilUtbetaling: Beløp,
@@ -193,15 +194,17 @@ private class PopulerQueries(
                 //language=PostgreSQL
                 statement = """
                 INSERT INTO utbetaling
-                    (vedtak_id, utfall, forbruk)
+                    (vedtak_id, utfall, forbruk, fom, tom)
                 VALUES 
-                    (:vedtak_id, :utfall, :forbruk)
+                    (:vedtak_id, :utfall, :forbruk, :fom, :tom)
                 ON CONFLICT DO NOTHING 
                 """.trimIndent(),
                 paramMap = mapOf(
                     "vedtak_id" to vedtakId,
                     "utfall" to utfall,
                     "forbruk" to forbruk.stønadsdager(),
+                    "fom" to periode.start,
+                    "tom" to periode.endInclusive,
                 ),
             ),
         )
@@ -379,6 +382,7 @@ private fun Session.hentVedtak(personId: Long) = this.run(
                     behandlingId = rad.uuid("behandling_id"),
                     vedtakstidspunkt = rad.localDateTime("vedtakstidspunkt"),
                     virkningsdato = rad.localDate("virkningsdato"),
+                    periode = Periode(fomDato = utbetaling.fom, tomDato = utbetaling.tom),
                     forbruk = Stønadsdager(utbetaling.forbruk),
                     utfall = utbetaling.utfall,
                     utbetalingsdager = this.hentUtbetalingsdager(vedtakId),
@@ -411,15 +415,21 @@ private fun Session.hentUtbetaling(vedtakId: UUID) = this.run(
     queryOf(
         //language=PostgreSQL
         statement = """
-            SELECT utfall, forbruk
-            FROM utbetaling 
-            WHERE vedtak_id = :vedtak_id
+            SELECT u.utfall
+                 , u.forbruk
+                 , coalesce(u.fom, v.virkningsdato-13) AS fom
+                 , coalesce(u.tom, v.virkningsdato)    AS tom
+            FROM   utbetaling u
+            JOIN   vedtak v ON v.id = u.vedtak_id
+            WHERE  u.vedtak_id = :vedtak_id
         """.trimIndent(),
         paramMap = mapOf("vedtak_id" to vedtakId),
     ).map { row ->
         UtbetalingRad(
             utfall = row.boolean("utfall"),
             forbruk = row.int("forbruk"),
+            fom = row.localDate("fom"),
+            tom = row.localDate("tom"),
         )
     }.asSingle,
 )
@@ -438,7 +448,7 @@ private fun Session.hentUtbetalingsdager(vedtakId: UUID) = this.run(
     }.asList,
 )
 
-private class UtbetalingRad(val utfall: Boolean, val forbruk: Int)
+private class UtbetalingRad(val utfall: Boolean, val forbruk: Int, val fom: LocalDate, val tom: LocalDate)
 
 private fun Session.hentFakta(vedtakId: UUID) = this.run(
     queryOf(

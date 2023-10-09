@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.modell.vedtak
 
 import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.UtbetalingsdagDto
@@ -24,12 +25,13 @@ internal class VedtakFattetVisitor : VedtakVisitor {
     private var vedtakId: UUID? = null
     private var sakId: SakId? = null
     private var utfall: Boolean? = null
-
     private var behandlingId: UUID? = null
     private var virkningsdato: LocalDate? = null
     private var vedtakstidspunkt: LocalDateTime? = null
 
-    private fun vedtakId() = requireNotNull(vedtakId) { " Forventet at vedtakId er satt. Har du husket preVisitVedtak?" }
+    private fun vedtakId() =
+        requireNotNull(vedtakId) { " Forventet at vedtakId er satt. Har du husket preVisitVedtak?" }
+
     private fun utfall() = requireNotNull(utfall) { " Forventet at utfall er satt. Har du husket preVisitVedtak?" }
 
     override fun preVisitVedtak(
@@ -89,6 +91,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
 
     override fun visitUtbetalingsvedtak(
         vedtakId: UUID,
+        periode: Periode,
         utfall: Boolean,
         forbruk: Stønadsdager,
         beløpTilUtbetaling: Beløp,
@@ -98,18 +101,14 @@ internal class VedtakFattetVisitor : VedtakVisitor {
             vedtakId = this.vedtakId(),
             sakId = this.sakId!!,
             behandlingId = this.behandlingId!!,
+            periode = periode,
             vedtakstidspunkt = this.vedtakstidspunkt!!,
             virkningsdato = this.virkningsdato!!,
             utfall = when (utfall == true) {
                 true -> Innvilget
                 false -> Avslått
             },
-            utbetalingsdager = utbetalingsdager.map { utbetalingsdag ->
-                UtbetalingsdagDto(
-                    dato = utbetalingsdag.dato,
-                    beløp = utbetalingsdag.beløp.reflection { it }.toDouble(),
-                )
-            },
+            utbetalingsdager = populerAlleRapporteringsdager(utbetalingsdager = utbetalingsdager, periode = periode),
         )
     }
 
@@ -154,4 +153,22 @@ internal class VedtakFattetVisitor : VedtakVisitor {
             },
         )
     }
+
+    private fun populerAlleRapporteringsdager(
+        utbetalingsdager: List<Utbetalingsdag>,
+        periode: Periode,
+    ): List<UtbetalingsdagDto> {
+        val utbetalingsdagerMap = utbetalingsdager.associateBy { utbetalingsdag -> utbetalingsdag.dato }
+        return periode.map { dato ->
+            UtbetalingsdagDto(
+                dato = dato,
+                beløp = finnBeløp(utbetalingsdagerMap, dato),
+            )
+        }
+    }
+
+    private fun finnBeløp(
+        utbetalingsdagerMap: Map<LocalDate, Utbetalingsdag>,
+        dato: LocalDate,
+    ) = utbetalingsdagerMap[dato]?.beløp?.reflection { it }?.toDouble() ?: 0.0
 }

@@ -59,7 +59,7 @@ object Meldingsfabrikk {
         } 
         """.trimIndent()
 
-    fun rapporteringInnsendtHendelse(
+    fun rapporteringInnsendtJson(
         ident: String = "12345123451",
         fom: LocalDate = 29 mai 2023,
         tom: LocalDate = 11 juni 2023,

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.modell.vedtak
 
 import no.nav.dagpenger.vedtak.modell.SakId
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -29,6 +30,7 @@ interface VedtakObserver {
         val vedtakId: UUID,
         val sakId: SakId,
         val behandlingId: UUID,
+        val periode: Periode,
         val vedtakstidspunkt: LocalDateTime,
         val virkningsdato: LocalDate,
         val utfall: Utfall,

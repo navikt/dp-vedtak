@@ -2,6 +2,7 @@ package no.nav.dagpenger.vedtak.modell.visitor
 
 import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
@@ -31,6 +32,7 @@ interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
 
     fun visitUtbetalingsvedtak(
         vedtakId: UUID,
+        periode: Periode,
         utfall: Boolean,
         forbruk: Stønadsdager,
         beløpTilUtbetaling: Beløp,

@@ -6,6 +6,7 @@ import no.nav.dagpenger.vedtak.api.models.VedtakDTO
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
 import no.nav.dagpenger.vedtak.modell.vedtak.Vedtak
@@ -56,6 +57,7 @@ class VedtakForPersonVisitor(person: Person) : PersonVisitor {
 
     override fun visitUtbetalingsvedtak(
         vedtakId: UUID,
+        periode: Periode,
         utfall: Boolean,
         forbruk: Stønadsdager,
         beløpTilUtbetaling: Beløp,

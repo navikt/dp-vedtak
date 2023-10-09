@@ -3,6 +3,7 @@ package no.nav.dagpenger.vedtak.modell.vedtak
 import no.nav.dagpenger.vedtak.modell.SakId
 import no.nav.dagpenger.vedtak.modell.TemporalCollection
 import no.nav.dagpenger.vedtak.modell.entitet.Beløp
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.entitet.Stønadsdager
 import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.utbetaling.Utbetalingsdag
@@ -123,6 +124,7 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
 
         override fun visitUtbetalingsvedtak(
             vedtakId: UUID,
+            periode: Periode,
             utfall: Boolean,
             forbruk: Stønadsdager,
             beløpTilUtbetaling: Beløp,

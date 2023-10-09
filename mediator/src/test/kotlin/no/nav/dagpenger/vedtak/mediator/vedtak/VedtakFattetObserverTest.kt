@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeBlank
+import no.nav.dagpenger.vedtak.modell.entitet.Periode
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Avslått
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver.Utfall.Innvilget
@@ -87,6 +88,10 @@ class VedtakFattetObserverTest {
         vedtakId = UUID.randomUUID(),
         sakId = UUID.randomUUID().toString(),
         behandlingId = UUID.randomUUID(),
+        periode = Periode(
+            fomDato = LocalDate.now().minusDays(13),
+            tomDato = LocalDate.now(),
+        ),
         vedtakstidspunkt = LocalDateTime.now(),
         virkningsdato = LocalDate.now(),
         utfall = utfall,
