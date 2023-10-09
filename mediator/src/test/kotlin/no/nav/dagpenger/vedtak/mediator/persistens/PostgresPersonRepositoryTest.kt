@@ -72,7 +72,7 @@ class PostgresPersonRepositoryTest {
             idag.plusDays(13),
         )
 
-        val rapporteringdager = periode.map {
+        val rapporteringsdager = periode.map {
             RapporteringshendelseDag(
                 dato = it,
                 aktiviteter = emptyList(),
@@ -84,7 +84,7 @@ class PostgresPersonRepositoryTest {
                 meldingsreferanseId = UUID.randomUUID(),
                 ident = ident.identifikator(),
                 rapporteringsId = UUID.randomUUID(),
-                rapporteringsdager = rapporteringdager,
+                rapporteringsdager = rapporteringsdager,
                 fom = periode.start,
                 tom = periode.endInclusive,
 
