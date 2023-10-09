@@ -29,7 +29,9 @@ internal class VedtakFattetVisitor : VedtakVisitor {
     private var virkningsdato: LocalDate? = null
     private var vedtakstidspunkt: LocalDateTime? = null
 
-    private fun vedtakId() = requireNotNull(vedtakId) { " Forventet at vedtakId er satt. Har du husket preVisitVedtak?" }
+    private fun vedtakId() =
+        requireNotNull(vedtakId) { " Forventet at vedtakId er satt. Har du husket preVisitVedtak?" }
+
     private fun utfall() = requireNotNull(utfall) { " Forventet at utfall er satt. Har du husket preVisitVedtak?" }
 
     override fun preVisitVedtak(
@@ -152,26 +154,21 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         )
     }
 
-    private fun populerAlleRapporteringsdager(utbetalingsdager: List<Utbetalingsdag>, periode: Periode): List<UtbetalingsdagDto> {
-        val utbetalingsdagDtoListe: MutableList<UtbetalingsdagDto> = mutableListOf()
-        val utbetalingsdatoer: MutableList<LocalDate> = mutableListOf()
-        utbetalingsdager.forEach { utbetalingsdag ->
-            utbetalingsdatoer.add(utbetalingsdag.dato)
+    private fun populerAlleRapporteringsdager(
+        utbetalingsdager: List<Utbetalingsdag>,
+        periode: Periode,
+    ): List<UtbetalingsdagDto> {
+        val utbetalingsdagerMap = utbetalingsdager.associateBy { utbetalingsdag -> utbetalingsdag.dato }
+        return periode.map { dato ->
+            UtbetalingsdagDto(
+                dato = dato,
+                beløp = finnBeløp(utbetalingsdagerMap, dato),
+            )
         }
-
-        periode.iterator().forEach { dato ->
-            println("Dato= $dato")
-            if (utbetalingsdatoer.contains(dato)) {
-                utbetalingsdager.forEach { utbetalingsdag ->
-                    if (utbetalingsdag.dato == dato) {
-                        utbetalingsdagDtoListe.add(UtbetalingsdagDto(dato = dato, beløp = utbetalingsdag.beløp.reflection { it }.toDouble()))
-                    }
-                }
-            } else {
-                utbetalingsdagDtoListe.add(UtbetalingsdagDto(dato = dato, beløp = 0.0))
-            }
-        }
-
-        return utbetalingsdagDtoListe
     }
+
+    private fun finnBeløp(
+        utbetalingsdagerMap: Map<LocalDate, Utbetalingsdag>,
+        dato: LocalDate,
+    ) = utbetalingsdagerMap[dato]?.beløp?.reflection { it }?.toDouble() ?: 0.0
 }

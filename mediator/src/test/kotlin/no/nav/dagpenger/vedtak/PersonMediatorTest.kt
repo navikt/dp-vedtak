@@ -14,10 +14,12 @@ import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.dagpenger.vedtak.mediator.vedtak.VedtakFattetObserver
 import no.nav.dagpenger.vedtak.modell.PersonObserver
 import no.nav.dagpenger.vedtak.modell.vedtak.VedtakObserver
+import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import java.time.DayOfWeek
 import java.time.LocalDate
 import kotlin.time.Duration
 
@@ -91,7 +93,7 @@ internal class PersonMediatorTest {
         utbetalingsvedtakJson["@event_name"].asText() shouldBe "utbetaling_vedtak_fattet"
         utbetalingsvedtakJson["utbetalingsdager"].size() shouldBe 14
         utbetalingsvedtakJson["utbetalingsdager"].map { utbetalingsdagJson ->
-            if (utbetalingsdagJson["beløp"].asDouble() != 0.0) {
+            if (utbetalingsdagJson["dato"].asLocalDate().dayOfWeek !in setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)) {
                 utbetalingsdagJson["beløp"].asDouble() shouldBe 1000.0
             }
         }
