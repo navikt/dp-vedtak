@@ -26,7 +26,7 @@ abstract class Vedtak(
         internal fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean =
             this.any { it.behandlingId == behandlingId }
 
-        private val etterVedtakstidspunkt = Comparator<Vedtak> { a, b -> a.vedtakstidspunkt.compareTo(b.vedtakstidspunkt) }
+        internal val etterVedtakstidspunkt = Comparator<Vedtak> { a, b -> a.vedtakstidspunkt.compareTo(b.vedtakstidspunkt) }
     }
 
     abstract fun accept(visitor: VedtakVisitor)

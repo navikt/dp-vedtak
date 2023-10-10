@@ -34,7 +34,7 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
     private val beløpTilUtbetalingHistorikk = TemporalCollection<Beløp>()
 
     init {
-        vedtak.forEach { HistorikkOppdaterer(this).apply(it::accept) }
+        HistorikkOppdaterer(this, vedtak)
     }
     fun addObserver(vedtakObserver: VedtakObserver) {
         this.observers.add(vedtakObserver)
@@ -53,10 +53,9 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
 
     internal fun leggTilVedtak(vedtak: Vedtak) {
         this.vedtak.add(
-            vedtak.also {
-                HistorikkOppdaterer(this).apply(it::accept)
-            },
+            vedtak,
         )
+        HistorikkOppdaterer(this, this.vedtak)
         this.observers.forEach { vedtakObserver ->
             when (vedtak) {
                 is Utbetalingsvedtak -> {
@@ -71,7 +70,11 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
 
     internal fun harBehandlet(behandlingId: UUID) = this.vedtak.harBehandlet(behandlingId)
 
-    private class HistorikkOppdaterer(private val vedtakHistorikk: VedtakHistorikk) : VedtakVisitor {
+    private class HistorikkOppdaterer(private val vedtakHistorikk: VedtakHistorikk, vedtak: List<Vedtak>) : VedtakVisitor {
+
+        init {
+            vedtak.sortedWith(Vedtak.etterVedtakstidspunkt).forEach { it.accept(this) }
+        }
 
         private var virkningsdato: LocalDate? = null
 
