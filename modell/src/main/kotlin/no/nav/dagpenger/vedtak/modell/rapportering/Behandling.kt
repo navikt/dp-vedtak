@@ -69,7 +69,13 @@ class Behandling(
                 behandling.behandlingsdager.joinToString("\n") { it.toString() }
             }
 
-            behandling.nesteSteg(VurderTerskelForTaptArbeidstid, rapporteringHendelse)
+            // TODO: Vi må legge på begrunnelse for avslag
+            if (behandling.behandlingsdager.tellendeRapporteringsdager().isEmpty()) {
+                behandling.resultatBuilder.utfall(false)
+                behandling.nesteSteg(Ferdigstill, rapporteringHendelse)
+            } else {
+                behandling.nesteSteg(VurderTerskelForTaptArbeidstid, rapporteringHendelse)
+            }
         }
     }
 
@@ -90,6 +96,8 @@ class Behandling(
 
             val vilkårOppfylt = arbeidedeTimer <= behandling.behandlingsdager.vanligArbeidstid() - terskelTimer
             behandling.resultatBuilder.utfall(vilkårOppfylt)
+
+            // TODO: Vi må legge på begrunnelse for avslag
             if (vilkårOppfylt) {
                 behandling.nesteSteg(GraderUtbetaling, rapporteringHendelse)
             } else {

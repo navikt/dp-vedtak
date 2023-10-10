@@ -145,6 +145,10 @@ class RettighetStegTest : No {
             assertEquals(UUID.fromString(behandlingId), inspektør.behandlingId)
         }
 
+        Så("skal utfall være {string}") { utfall: String ->
+            assertEquals(utfall, inspektør.utfall.toString())
+        }
+
         Så("skal forbruket være {int} dager") { forbruk: Int ->
             assertEquals(Stønadsdager(dager = forbruk), inspektør.forbruk)
         }
@@ -249,6 +253,7 @@ class RettighetStegTest : No {
         lateinit var virkningsdato: LocalDate
         lateinit var beløpTilUtbetaling: Beløp
         lateinit var forbruk: Stønadsdager
+        var utfall = false
         var antallVedtak = 0
 
         override fun preVisitVedtak(
@@ -310,6 +315,7 @@ class RettighetStegTest : No {
             utbetalingsdager: List<Utbetalingsdag>,
 
         ) {
+            this.utfall = utfall
             this.forbruk = forbruk
             this.beløpTilUtbetaling = beløpTilUtbetaling
             this.virkningsdato = virkningsdato
