@@ -6,7 +6,6 @@ import no.nav.dagpenger.vedtak.modell.entitet.Timer
 import no.nav.dagpenger.vedtak.modell.visitor.FaktumVisitor
 
 interface Faktum<T> {
-
     fun accept(faktumVisitor: FaktumVisitor)
 }
 

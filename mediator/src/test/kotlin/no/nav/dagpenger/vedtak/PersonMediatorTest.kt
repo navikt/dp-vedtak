@@ -24,7 +24,6 @@ import java.time.LocalDate
 import kotlin.time.Duration
 
 internal class PersonMediatorTest {
-
     private val testRapid = TestRapid()
     private val ident = "11109233444"
     private val testObservatør = TestObservatør()
@@ -33,11 +32,12 @@ internal class PersonMediatorTest {
     init {
         HendelseMediator(
             rapidsConnection = testRapid,
-            personMediator = PersonMediator(
-                aktivitetsloggMediator = mockk(relaxed = true),
-                personRepository = personRepository,
-                personObservers = listOf(VedtakFattetObserver(testRapid), testObservatør),
-            ),
+            personMediator =
+                PersonMediator(
+                    aktivitetsloggMediator = mockk(relaxed = true),
+                    personRepository = personRepository,
+                    personObservers = listOf(VedtakFattetObserver(testRapid), testObservatør),
+                ),
             hendelseRepository = InMemoryMeldingRepository(),
         )
     }
@@ -143,7 +143,7 @@ internal class PersonMediatorTest {
 
     @Test
     @Disabled("Vi må finne hva vi skal gjøre med rapportering hvis bruker ikke har rammevedtak")
-    fun `Dersom person har sendt rapportering for en periode uten dagpengevedtak, lager vi ikke utbetalingsvedtak Dette må vi finne ut av`() {
+    fun `Dersom person har sendt rapportering for en periode uten dagpengevedtak, lager vi ikke utbetalingsvedtak`() {
         val virkningsdatoDagpenger = 29 mai 2023
         innvilgDagpengerFom(virkningsdatoDagpenger)
 
@@ -168,11 +168,13 @@ internal class PersonMediatorTest {
     }
 
     private class TestObservatør : PersonObserver {
-
         val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
         val utbetalingsvedtak = mutableListOf<VedtakObserver.UtbetalingsvedtakFattet>()
 
-        override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
+        override fun vedtakFattet(
+            ident: String,
+            vedtakFattet: VedtakObserver.VedtakFattet,
+        ) {
             vedtak.add(vedtakFattet)
         }
 

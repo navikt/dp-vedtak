@@ -20,7 +20,6 @@ import java.net.URL
 import java.util.concurrent.TimeUnit
 
 object AuthFactory {
-
     @Suppress("ClassName")
     private object azure_app : PropertyGroup() {
         val well_known_url by stringType
@@ -37,22 +36,23 @@ object AuthFactory {
         AzureAD,
     }
 
-    fun issuerFromString(issuer: String?) = when (issuer) {
-        azureAdConfiguration.issuer -> Issuer.AzureAD
-        else -> {
-            throw IllegalArgumentException("Ikke støttet issuer: $issuer")
+    fun issuerFromString(issuer: String?) =
+        when (issuer) {
+            azureAdConfiguration.issuer -> Issuer.AzureAD
+            else -> {
+                throw IllegalArgumentException("Ikke støttet issuer: $issuer")
+            }
         }
-    }
 
     fun JWTAuthenticationProvider.Config.azureAd() {
-        realm = Configuration.appName
+        realm = Configuration.APP_NAME
         verifiserTokenFormatOgSignatur()
         autoriserADGrupper()
     }
 
     private fun JWTAuthenticationProvider.Config.verifiserTokenFormatOgSignatur() {
         verifier(
-            jwkProvider = JwkProvider(URL(azureAdConfiguration.jwksUri)),
+            jwkProvider = jwkProvider(URL(azureAdConfiguration.jwksUri)),
             issuer = azureAdConfiguration.issuer,
             configure = {
                 withAudience(Configuration.properties[azure_app.client_id])
@@ -60,7 +60,7 @@ object AuthFactory {
         )
     }
 
-    private fun JwkProvider(url: URL) =
+    private fun jwkProvider(url: URL) =
         JwkProviderBuilder(url).cached(10, 24, TimeUnit.HOURS) // cache up to 10 JWKs for 24 hours
             .rateLimited(
                 10,
@@ -77,10 +77,11 @@ private data class OpenIdConfiguration(
     @JsonProperty("authorization_endpoint") val authorizationEndpoint: String,
 )
 
-private val httpClient = HttpClient(CIO) {
-    install(ContentNegotiation) {
-        jackson {
-            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+private val httpClient =
+    HttpClient(CIO) {
+        install(ContentNegotiation) {
+            jackson {
+                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            }
         }
     }
-}

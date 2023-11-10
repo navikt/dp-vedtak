@@ -8,7 +8,7 @@ import java.util.UUID
 
 class Stansvedtak(
     vedtakId: UUID = UUID.randomUUID(),
-    sakId: SakId, // TODO var String
+    sakId: SakId,
     behandlingId: UUID,
     vedtakstidspunkt: LocalDateTime,
     virkningsdato: LocalDate,

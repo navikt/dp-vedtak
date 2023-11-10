@@ -14,12 +14,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class RettighetBehandletMottakTest {
-    private val hendelseMediatorMock = mockk<IHendelseMediator>().also {
-        every { it.behandle(any(), any<RettighetBehandletHendelseMessage>(), any()) } just Runs
-    }
-    private val testRapid = TestRapid().also {
-        RettighetBehandletMottak(it, hendelseMediatorMock)
-    }
+    private val hendelseMediatorMock =
+        mockk<IHendelseMediator>().also {
+            every { it.behandle(any(), any<RettighetBehandletHendelseMessage>(), any()) } just Runs
+        }
+    private val testRapid =
+        TestRapid().also {
+            RettighetBehandletMottak(it, hendelseMediatorMock)
+        }
 
     @BeforeEach
     fun setUp() {

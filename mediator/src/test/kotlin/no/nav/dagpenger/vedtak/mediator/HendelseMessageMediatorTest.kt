@@ -16,16 +16,16 @@ import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 
 internal class HendelseMessageMediatorTest {
-
     private val meldingSlot = slot<RettighetBehandletHendelse>()
     private val testRapid = TestRapid()
     private val personMediatorMock = mockk<PersonMediator>(relaxed = false)
     private val meldingRepository = InMemoryMeldingRepository()
-    private val hendelseMediator = HendelseMediator(
-        rapidsConnection = testRapid,
-        personMediator = personMediatorMock,
-        hendelseRepository = meldingRepository,
-    )
+    private val hendelseMediator =
+        HendelseMediator(
+            rapidsConnection = testRapid,
+            personMediator = personMediatorMock,
+            hendelseRepository = meldingRepository,
+        )
 
     @Test
     fun `Ta imot melding om innvilgelse, lagre og behandle`() {

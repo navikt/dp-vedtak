@@ -32,7 +32,6 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class VedtakApiTest {
-
     private val ident = "12345123451"
     private val personRepository = InMemoryPersonRepository()
 
@@ -44,10 +43,11 @@ class VedtakApiTest {
     @Test
     fun `ikke autentiserte kall returnerer 401`() {
         medSikretVedtakApi {
-            val response = client.post("/vedtak") {
-                contentType(Json)
-                setBody("""{"ident": "$ident"}""")
-            }
+            val response =
+                client.post("/vedtak") {
+                    contentType(Json)
+                    setBody("""{"ident": "$ident"}""")
+                }
             response.status shouldBe HttpStatusCode.Unauthorized
         }
     }
@@ -57,11 +57,12 @@ class VedtakApiTest {
         medSikretVedtakApi {
             val tokenUtenSaksbehandlerGruppe = testAzureAdToken(ADGrupper = emptyList())
 
-            val response = autentisert(
-                token = tokenUtenSaksbehandlerGruppe,
-                endepunkt = "/vedtak",
-                body = """{"ident": "$ident"}""",
-            )
+            val response =
+                autentisert(
+                    token = tokenUtenSaksbehandlerGruppe,
+                    endepunkt = "/vedtak",
+                    body = """{"ident": "$ident"}""",
+                )
             response.status shouldBe HttpStatusCode.Unauthorized
         }
     }
@@ -126,14 +127,14 @@ class VedtakApiTest {
             testPersonMed(
                 utbetalingsvedtak(
                     virkningsdato = LocalDate.parse("2019-08-24"),
-                    utbetalingsdager = listOf(
-                        Utbetalingsdag(LocalDate.parse("2019-08-11"), 1000.00.beløp),
-                        Utbetalingsdag(LocalDate.parse("2019-08-12"), 1000.00.beløp),
-                        Utbetalingsdag(LocalDate.parse("2019-08-13"), 1000.00.beløp),
-                        Utbetalingsdag(LocalDate.parse("2019-08-13"), 0.00.beløp),
-                        Utbetalingsdag(LocalDate.parse("2019-08-13"), 0.00.beløp),
-                    ),
-
+                    utbetalingsdager =
+                        listOf(
+                            Utbetalingsdag(LocalDate.parse("2019-08-11"), 1000.00.beløp),
+                            Utbetalingsdag(LocalDate.parse("2019-08-12"), 1000.00.beløp),
+                            Utbetalingsdag(LocalDate.parse("2019-08-13"), 1000.00.beløp),
+                            Utbetalingsdag(LocalDate.parse("2019-08-13"), 0.00.beløp),
+                            Utbetalingsdag(LocalDate.parse("2019-08-13"), 0.00.beløp),
+                        ),
                 ),
             ),
         )
@@ -164,35 +165,41 @@ class VedtakApiTest {
         )
     }
 
-    private fun testPersonMed(vararg vedtak: Vedtak) = Person.rehydrer(
-        ident = "12345123451".tilPersonIdentfikator(),
-        saker = mutableListOf(),
-        vedtak = vedtak.toList(),
-        perioder = emptyList(),
-    )
+    private fun testPersonMed(vararg vedtak: Vedtak) =
+        Person.rehydrer(
+            ident = "12345123451".tilPersonIdentfikator(),
+            saker = mutableListOf(),
+            vedtak = vedtak.toList(),
+            perioder = emptyList(),
+        )
 
-    private fun utbetalingsvedtak(virkningsdato: LocalDate = LocalDate.MAX, utbetalingsdager: List<Utbetalingsdag> = emptyList()) = Utbetalingsvedtak.utbetalingsvedtak(
+    private fun utbetalingsvedtak(
+        virkningsdato: LocalDate = LocalDate.MAX,
+        utbetalingsdager: List<Utbetalingsdag> = emptyList(),
+    ) = Utbetalingsvedtak.utbetalingsvedtak(
         behandlingId = UUID.randomUUID(),
         sakId = "SAK_NUMMER_1",
         utfall = true,
         vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
         virkningsdato = virkningsdato,
-        periode = Periode(
-            fomDato = virkningsdato.minusDays(13),
-            tomDato = virkningsdato,
-        ),
+        periode =
+            Periode(
+                fomDato = virkningsdato.minusDays(13),
+                tomDato = virkningsdato,
+            ),
         forbruk = Stønadsdager(10),
         utbetalingsdager = utbetalingsdager,
     )
 
-    private fun rammevedtak(virkningsdato: LocalDate = LocalDate.MAX) = Rammevedtak.innvilgelse(
-        behandlingId = UUID.randomUUID(),
-        sakId = "SAK_NUMMER_1",
-        vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
-        virkningsdato = virkningsdato,
-        dagsats = 1000.beløp,
-        stønadsdager = Stønadsdager(104 * 5),
-        hovedrettighet = Ordinær(true),
-        vanligArbeidstidPerDag = 8.timer,
-    )
+    private fun rammevedtak(virkningsdato: LocalDate = LocalDate.MAX) =
+        Rammevedtak.innvilgelse(
+            behandlingId = UUID.randomUUID(),
+            sakId = "SAK_NUMMER_1",
+            vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+            virkningsdato = virkningsdato,
+            dagsats = 1000.beløp,
+            stønadsdager = Stønadsdager(104 * 5),
+            hovedrettighet = Ordinær(true),
+            vanligArbeidstidPerDag = 8.timer,
+        )
 }

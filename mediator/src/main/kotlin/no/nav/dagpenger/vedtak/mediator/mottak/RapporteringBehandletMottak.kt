@@ -15,7 +15,6 @@ internal class RapporteringBehandletMottak(
     private val hendelseMediator: IHendelseMediator,
 ) :
     River.PacketListener {
-
     companion object {
         private val logger = KotlinLogging.logger { }
         private val sikkerLogger = KotlinLogging.logger("tjenestekall.RapporteringBehandletMottak")
@@ -39,7 +38,10 @@ internal class RapporteringBehandletMottak(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         val rapporteringsId = UUID.fromString(packet["rapporteringsId"].asText())
         withLoggingContext("rapporteringsId" to rapporteringsId.toString()) {
             val rapporteringBehandletHendelseMessage = RapporteringBehandletHendelseMessage(packet)

@@ -17,7 +17,6 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 internal class RettighetBehandletHendelseMessage(private val packet: JsonMessage) : HendelseMessage(packet) {
-
     override val ident: String
         get() = packet["ident"].asText()
 
@@ -30,23 +29,26 @@ internal class RettighetBehandletHendelseMessage(private val packet: JsonMessage
         get() = packet["sakId"].asText()
 
     private val hendelse
-        get() = when (packet["utfall"].asText()) {
-            "Innvilgelse" -> rettighetBehandletOgInnvilgetHendelse(packet, behandlingId)
-            "Avslag" -> rettighetBehandletOgAvslåttHendelse(packet, behandlingId)
-            "Stans" -> TODO()
-            else -> throw IllegalArgumentException("Kjenner ikke utfall $this")
-        }
+        get() =
+            when (packet["utfall"].asText()) {
+                "Innvilgelse" -> rettighetBehandletOgInnvilgetHendelse(packet, behandlingId)
+                "Avslag" -> rettighetBehandletOgAvslåttHendelse(packet, behandlingId)
+                "Stans" -> TODO()
+                else -> throw IllegalArgumentException("Kjenner ikke utfall $this")
+            }
 
-    private fun rettighetBehandletOgAvslåttHendelse(packet: JsonMessage, behandlingId: UUID) =
-        RettighetBehandletOgAvslåttHendelse(
-            meldingsreferanseId = id,
-            sakId = sakId,
-            ident = ident,
-            behandlingId = behandlingId,
-            vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),
-            virkningsdato = packet["Virkningsdato"].asLocalDate(),
-            hovedrettighet = hovedrettighet(packet, false),
-        )
+    private fun rettighetBehandletOgAvslåttHendelse(
+        packet: JsonMessage,
+        behandlingId: UUID,
+    ) = RettighetBehandletOgAvslåttHendelse(
+        meldingsreferanseId = id,
+        sakId = sakId,
+        ident = ident,
+        behandlingId = behandlingId,
+        vedtakstidspunkt = packet["@opprettet"].asLocalDateTime().truncatedTo(ChronoUnit.MILLIS),
+        virkningsdato = packet["Virkningsdato"].asLocalDate(),
+        hovedrettighet = hovedrettighet(packet, false),
+    )
 
     private fun rettighetBehandletOgInnvilgetHendelse(
         packet: JsonMessage,
@@ -64,14 +66,20 @@ internal class RettighetBehandletHendelseMessage(private val packet: JsonMessage
         vanligArbeidstidPerDag = packet["Fastsatt vanlig arbeidstid"].asDouble().timer,
     )
 
-    private fun hovedrettighet(packet: JsonMessage, utfall: Boolean) = when (packet["Rettighetstype"].asText()) {
+    private fun hovedrettighet(
+        packet: JsonMessage,
+        utfall: Boolean,
+    ) = when (packet["Rettighetstype"].asText()) {
         "Ordinær" -> Ordinær(utfall)
         else -> {
             throw IllegalArgumentException("Kjenner ikke rettighet '${packet["Rettighetstype"].asText()}'")
         }
     }
 
-    override fun behandle(mediator: IHendelseMediator, context: MessageContext) {
+    override fun behandle(
+        mediator: IHendelseMediator,
+        context: MessageContext,
+    ) {
         mediator.behandle(hendelse, this, context)
     }
 }

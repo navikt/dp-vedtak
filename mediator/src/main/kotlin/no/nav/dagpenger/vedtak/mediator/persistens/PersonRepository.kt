@@ -5,5 +5,6 @@ import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 
 interface PersonRepository {
     fun hent(ident: PersonIdentifikator): Person?
+
     fun lagre(person: Person)
 }

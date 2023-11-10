@@ -23,8 +23,7 @@ abstract class Vedtak(
     }
 
     companion object {
-        internal fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean =
-            this.any { it.behandlingId == behandlingId }
+        internal fun Collection<Vedtak>.harBehandlet(behandlingId: UUID): Boolean = this.any { it.behandlingId == behandlingId }
 
         internal val etterVedtakstidspunkt = Comparator<Vedtak> { a, b -> a.vedtakstidspunkt.compareTo(b.vedtakstidspunkt) }
     }
@@ -33,10 +32,12 @@ abstract class Vedtak(
 
     override fun compareTo(other: Vedtak) = etterVedtakstidspunkt.compare(this, other)
 
-    override fun toSpesifikkKontekst(): SpesifikkKontekst = SpesifikkKontekst(
-        kontekstType = this.javaClass.simpleName,
-        kontekstMap = mapOf(
-            "vedtakId" to vedtakId.toString(),
-        ),
-    )
+    override fun toSpesifikkKontekst(): SpesifikkKontekst =
+        SpesifikkKontekst(
+            kontekstType = this.javaClass.simpleName,
+            kontekstMap =
+                mapOf(
+                    "vedtakId" to vedtakId.toString(),
+                ),
+        )
 }

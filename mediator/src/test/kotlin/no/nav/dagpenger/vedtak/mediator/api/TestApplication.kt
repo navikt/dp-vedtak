@@ -28,10 +28,11 @@ object TestApplication {
         return mockOAuth2Server.issueToken(
             issuerId = AZUREAD_ISSUER_ID,
             audience = CLIENT_ID,
-            claims = mapOf(
-                "NAVident" to "123",
-                "groups" to ADGrupper,
-            ),
+            claims =
+                mapOf(
+                    "NAVident" to "123",
+                    "groups" to ADGrupper,
+                ),
         ).serialize()
     }
 
@@ -50,9 +51,10 @@ object TestApplication {
 
     internal suspend fun ApplicationTestBuilder.autentisert(
         endepunkt: String,
-        token: String = testAzureAdToken(
-            ADGrupper = listOf(Configuration.properties[Configuration.Grupper.saksbehandler]),
-        ),
+        token: String =
+            testAzureAdToken(
+                ADGrupper = listOf(Configuration.properties[Configuration.Grupper.saksbehandler]),
+            ),
         httpMethod: HttpMethod = HttpMethod.Post,
         body: String? = null,
     ): HttpResponse {

@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldNotBe
 import org.junit.jupiter.api.Test
 
 class StønadsdagerTest {
-
     @Test
     fun likhet() {
         Stønadsdager(dager = 10) shouldBe Stønadsdager(dager = 10)

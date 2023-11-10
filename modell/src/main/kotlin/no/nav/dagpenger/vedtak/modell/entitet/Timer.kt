@@ -9,9 +9,11 @@ class Timer(timer: Number) : Comparable<Timer> {
         // require(this.timer >= 0) { "Timer må være større enn eller lik 0, er ${this.timer}" }
     }
 
-    internal infix fun prosentAv(nevner: Timer): Prosent = Prosent(
-        this.timer / nevner.timer * 100,
-    )
+    internal infix fun prosentAv(nevner: Timer): Prosent =
+        Prosent(
+            this.timer / nevner.timer * 100,
+        )
+
     operator fun div(number: Int): Timer = Timer(this.timer / number)
 
     operator fun minus(other: Timer) = Timer(this.timer - other.timer)
@@ -27,6 +29,7 @@ class Timer(timer: Number) : Comparable<Timer> {
     companion object {
         val Number.timer get() = Timer(this)
         val Duration.timer: Timer get() = (this.inWholeMinutes.toDouble() / 60).timer
+
         fun List<Timer>.summer() = this.sumOf { it.timer }.timer
     }
 

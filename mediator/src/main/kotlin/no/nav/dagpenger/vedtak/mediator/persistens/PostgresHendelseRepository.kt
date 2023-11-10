@@ -14,8 +14,12 @@ import java.util.UUID
 import javax.sql.DataSource
 
 internal class PostgresHendelseRepository(private val dataSource: DataSource) : HendelseRepository {
-
-    override fun lagreMelding(hendelseMessage: HendelseMessage, ident: String, id: UUID, toJson: String) {
+    override fun lagreMelding(
+        hendelseMessage: HendelseMessage,
+        ident: String,
+        id: UUID,
+        toJson: String,
+    ) {
         val hendelseType = hendelseType(hendelseMessage) ?: return
 
         sessionOf(dataSource).use { session ->
@@ -23,62 +27,70 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
                 transactionalSession.run(
                     queryOf(
                         //language=PostgreSQL
-                        statement = """
+                        statement =
+                            """
                             INSERT INTO hendelse
                                 (hendelse_id, hendelse_type, ident, melding, endret)
                             VALUES
                                 (:hendelse_id, :hendelse_type, :ident, :melding, now())
                             ON CONFLICT DO NOTHING
-                        """.trimIndent(),
-                        paramMap = mapOf(
-                            "hendelse_id" to id,
-                            "hendelse_type" to hendelseType.name,
-                            "ident" to ident,
-                            "melding" to PGobject().apply {
-                                type = "json"
-                                value = toJson
-                            },
-                        ),
+                            """.trimIndent(),
+                        paramMap =
+                            mapOf(
+                                "hendelse_id" to id,
+                                "hendelse_type" to hendelseType.name,
+                                "ident" to ident,
+                                "melding" to
+                                    PGobject().apply {
+                                        type = "json"
+                                        value = toJson
+                                    },
+                            ),
                     ).asUpdate,
                 )
             }
         }
     }
 
-    override fun markerSomBehandlet(hendelseId: UUID) = sessionOf(dataSource).use { session ->
-        session.run(
-            queryOf(
-                //language=PostgreSQL
-                statement = """
-                    UPDATE hendelse
-                    SET behandlet_tidspunkt=now()
-                    WHERE hendelse_id = :hendelse_id
-                      AND behandlet_tidspunkt IS NULL
-                """.trimIndent(),
-                paramMap = mapOf("hendelse_id" to hendelseId),
-            ).asUpdate,
-        )
-    }
+    override fun markerSomBehandlet(hendelseId: UUID) =
+        sessionOf(dataSource).use { session ->
+            session.run(
+                queryOf(
+                    //language=PostgreSQL
+                    statement =
+                        """
+                        UPDATE hendelse
+                        SET behandlet_tidspunkt=now()
+                        WHERE hendelse_id = :hendelse_id
+                          AND behandlet_tidspunkt IS NULL
+                        """.trimIndent(),
+                    paramMap = mapOf("hendelse_id" to hendelseId),
+                ).asUpdate,
+            )
+        }
 
-    override fun erBehandlet(hendelseId: UUID): Boolean = sessionOf(dataSource).use { session ->
-        session.run(
-            queryOf(
-                //language=PostgreSQL
-                statement = """
-                    SELECT behandlet_tidspunkt FROM hendelse WHERE hendelse_id = :hendelse_id
-                """.trimIndent(),
-                paramMap = mapOf("hendelse_id" to hendelseId),
-            ).map { rad -> rad.localDateTimeOrNull("behandlet_tidspunkt") }.asSingle,
-        ) != null
-    }
+    override fun erBehandlet(hendelseId: UUID): Boolean =
+        sessionOf(dataSource).use { session ->
+            session.run(
+                queryOf(
+                    //language=PostgreSQL
+                    statement =
+                        """
+                        SELECT behandlet_tidspunkt FROM hendelse WHERE hendelse_id = :hendelse_id
+                        """.trimIndent(),
+                    paramMap = mapOf("hendelse_id" to hendelseId),
+                ).map { rad -> rad.localDateTimeOrNull("behandlet_tidspunkt") }.asSingle,
+            ) != null
+        }
 
     private fun hendelseType(hendelseMessage: HendelseMessage): HendelseTypeDTO? {
         return when (hendelseMessage) {
             is RettighetBehandletHendelseMessage -> HendelseTypeDTO.RETTIGHET_BEHANDLET
             is RapporteringBehandletHendelseMessage -> HendelseTypeDTO.RAPPORTERING_BEHANDLET
-            else -> null.also {
-                logger.warn { "ukjent meldingstype ${hendelseMessage::class.simpleName}: melding lagres ikke" }
-            }
+            else ->
+                null.also {
+                    logger.warn { "ukjent meldingstype ${hendelseMessage::class.simpleName}: melding lagres ikke" }
+                }
         }
     }
 

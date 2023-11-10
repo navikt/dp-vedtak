@@ -10,13 +10,13 @@ import no.nav.helse.rapids_rivers.MessageProblems
 import org.junit.jupiter.api.Test
 
 internal class PostgresHendelseRepositoryTest {
-
     @Test
     fun `lagre og hent hendelse`() {
         val hendelse = Meldingsfabrikk.rettighetBehandletOgInnvilgetJson()
-        val jsonMessage = JsonMessage(hendelse, MessageProblems(hendelse)).also {
-            it.interestedIn("@id", "ident")
-        }
+        val jsonMessage =
+            JsonMessage(hendelse, MessageProblems(hendelse)).also {
+                it.interestedIn("@id", "ident")
+            }
         val rettighetBehandletHendelseMessage = RettighetBehandletHendelseMessage(jsonMessage)
 
         Postgres.withMigratedDb {

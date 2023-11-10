@@ -1,7 +1,6 @@
 package no.nav.dagpenger.vedtak.modell.entitet
 
 class Stønadsdager(private val dager: Int) : Comparable<Stønadsdager> {
-
     fun stønadsdager() = this.dager
 
     override fun compareTo(other: Stønadsdager) = this.dager.compareTo(other.dager)

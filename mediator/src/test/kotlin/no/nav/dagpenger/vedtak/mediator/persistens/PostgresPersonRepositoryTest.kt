@@ -28,7 +28,6 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class PostgresPersonRepositoryTest {
-
     val ident = PersonIdentifikator("12345678901")
 
     @Test
@@ -67,17 +66,19 @@ class PostgresPersonRepositoryTest {
             ),
         )
 
-        val periode = Periode(
-            idag,
-            idag.plusDays(13),
-        )
-
-        val rapporteringsdager = periode.map {
-            RapporteringshendelseDag(
-                dato = it,
-                aktiviteter = emptyList(),
+        val periode =
+            Periode(
+                idag,
+                idag.plusDays(13),
             )
-        }
+
+        val rapporteringsdager =
+            periode.map {
+                RapporteringshendelseDag(
+                    dato = it,
+                    aktiviteter = emptyList(),
+                )
+            }
 
         person.håndter(
             RapporteringHendelse(
@@ -87,7 +88,6 @@ class PostgresPersonRepositoryTest {
                 rapporteringsdager = rapporteringsdager,
                 fom = periode.start,
                 tom = periode.endInclusive,
-
             ),
         )
 
@@ -144,14 +144,18 @@ class PostgresPersonRepositoryTest {
         }
     }
 
-    private fun assertAntallRader(tabell: String, antallRader: Int) {
-        val faktiskeRader = using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
-            session.run(
-                queryOf("select count(1) from $tabell").map { row ->
-                    row.int(1)
-                }.asSingle,
-            )
-        }
+    private fun assertAntallRader(
+        tabell: String,
+        antallRader: Int,
+    ) {
+        val faktiskeRader =
+            using(sessionOf(PostgresDataSourceBuilder.dataSource)) { session ->
+                session.run(
+                    queryOf("select count(1) from $tabell").map { row ->
+                        row.int(1)
+                    }.asSingle,
+                )
+            }
         Assertions.assertEquals(antallRader, faktiskeRader, "Feil antall rader for tabell: $tabell")
     }
 }

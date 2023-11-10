@@ -11,29 +11,31 @@ import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
 internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnection.StatusListener {
-
     companion object {
         private val logger = KotlinLogging.logger { }
     }
 
     private val personRepository = PostgresPersonRepository(PostgresDataSourceBuilder.dataSource)
 
-    private val rapidsConnection = RapidApplication.Builder(
-        RapidApplication.RapidApplicationConfig.fromEnv(config),
-    )
-        .withKtorModule { vedtakApi(personRepository = personRepository) }
-        .build()
+    private val rapidsConnection =
+        RapidApplication.Builder(
+            RapidApplication.RapidApplicationConfig.fromEnv(config),
+        )
+            .withKtorModule { vedtakApi(personRepository = personRepository) }
+            .build()
 
     init {
         HendelseMediator(
             rapidsConnection = rapidsConnection,
-            personMediator = PersonMediator(
-                aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
-                personRepository = personRepository,
-                personObservers = listOf(
-                    VedtakFattetObserver(rapidsConnection),
+            personMediator =
+                PersonMediator(
+                    aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
+                    personRepository = personRepository,
+                    personObservers =
+                        listOf(
+                            VedtakFattetObserver(rapidsConnection),
+                        ),
                 ),
-            ),
             hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),
         )
 
@@ -41,6 +43,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     }
 
     fun start() = rapidsConnection.start()
+
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {

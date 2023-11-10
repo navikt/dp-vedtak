@@ -7,8 +7,8 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 interface VedtakObserver {
-
     fun vedtakFattet(vedtakFattet: VedtakFattet) {}
+
     fun utbetalingsvedtakFattet(utbetalingsvedtakFattet: UtbetalingsvedtakFattet) {}
 
     enum class Utfall {
@@ -38,5 +38,7 @@ interface VedtakObserver {
         // @todo: Type rettighet? Ordinær, Permittering etc
     )
 
-    data class UtbetalingsdagDto(val dato: LocalDate, val beløp: Double) // TODO: Avventer avrundsregler: https://favro.com/organization/98c34fb974ce445eac854de0/696529a0ddfa866861cfa6b6?card=NAV-13898
+    // TODO: Avventer avrundsregler:
+    // https://favro.com/organization/98c34fb974ce445eac854de0/696529a0ddfa866861cfa6b6?card=NAV-13898
+    data class UtbetalingsdagDto(val dato: LocalDate, val beløp: Double)
 }

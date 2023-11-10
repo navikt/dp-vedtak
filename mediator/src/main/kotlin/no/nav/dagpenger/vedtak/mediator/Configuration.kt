@@ -9,18 +9,18 @@ import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 
 internal object Configuration {
+    const val APP_NAME = "dp-vedtak"
 
-    const val appName = "dp-vedtak"
-
-    private val defaultProperties = ConfigurationMap(
-        mapOf(
-            "RAPID_APP_NAME" to "dp-vedtak",
-            "KAFKA_CONSUMER_GROUP_ID" to "dp-vedtak-v1",
-            "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
-            "KAFKA_RESET_POLICY" to "latest",
-            "Grupper.saksbehandler" to "123",
-        ),
-    )
+    private val defaultProperties =
+        ConfigurationMap(
+            mapOf(
+                "RAPID_APP_NAME" to "dp-vedtak",
+                "KAFKA_CONSUMER_GROUP_ID" to "dp-vedtak-v1",
+                "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
+                "KAFKA_RESET_POLICY" to "latest",
+                "Grupper.saksbehandler" to "123",
+            ),
+        )
 
     object Grupper : PropertyGroup() {
         val saksbehandler by stringType
@@ -29,7 +29,8 @@ internal object Configuration {
     val properties =
         ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding defaultProperties
 
-    val config: Map<String, String> = properties.list().reversed().fold(emptyMap()) { map, pair ->
-        map + pair.second
-    }
+    val config: Map<String, String> =
+        properties.list().reversed().fold(emptyMap()) { map, pair ->
+            map + pair.second
+        }
 }

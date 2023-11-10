@@ -55,12 +55,13 @@ class RettighetStegTest : No {
                     behandlingId = UUID.fromString(søknadHendelse.behandlingId),
                     vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
                     virkningsdato = søknadHendelse.virkningsdato,
-                    hovedrettighet = when (søknadHendelse.dagpengerettighet) {
-                        "Ordinær" -> Ordinær(true)
-                        "Permittering" -> Permittering(true)
-                        "PermitteringFraFiskeindustrien" -> PermitteringFraFiskeindustrien(true)
-                        else -> throw IllegalArgumentException("Hvilken rettighet skal $this mappes til?")
-                    },
+                    hovedrettighet =
+                        when (søknadHendelse.dagpengerettighet) {
+                            "Ordinær" -> Ordinær(true)
+                            "Permittering" -> Permittering(true)
+                            "PermitteringFraFiskeindustrien" -> PermitteringFraFiskeindustrien(true)
+                            else -> throw IllegalArgumentException("Hvilken rettighet skal $this mappes til?")
+                        },
                     dagsats = søknadHendelse.dagsats.beløp,
                     stønadsdager = Dagpengeperiode(søknadHendelse.stønadsperiode).tilStønadsdager(),
                     vanligArbeidstidPerDag = søknadHendelse.vanligArbeidstidPerDag.timer,
@@ -170,32 +171,37 @@ class RettighetStegTest : No {
 
         Når("rapporteringshendelse mottas") { rapporteringHendelse: DataTable ->
             assertPersonOpprettet()
-            val rapporteringsdager = rapporteringHendelse.rows(1).asLists(String::class.java).map {
-                RapporteringshendelseDag(
-                    dato = LocalDate.parse(it[0], datoformatterer),
-                    aktiviteter = listOf(
-                        lagAktivitet(it),
-                    ),
-
-                )
-            }
+            val rapporteringsdager =
+                rapporteringHendelse.rows(1).asLists(String::class.java).map {
+                    RapporteringshendelseDag(
+                        dato = LocalDate.parse(it[0], datoformatterer),
+                        aktiviteter =
+                            listOf(
+                                lagAktivitet(it),
+                            ),
+                    )
+                }
             håndterRapporteringHendelse(rapporteringsdager)
         }
     }
 
-    private fun hovedrettighet(hovedrettighet: String, utfall: Boolean) =
-        when (hovedrettighet) {
-            "Ordinær" -> Ordinær(utfall)
-            else -> throw IllegalArgumentException("Kjenner ikke rettighet $hovedrettighet")
-        }
-
-    private fun lagAktivitet(data: MutableList<String>) = when (data[1].toBooleanStrict()) {
-        true -> RapporteringshendelseDag.Aktivitet(RapporteringshendelseDag.Aktivitet.Type.Syk, 1.days)
-        false -> RapporteringshendelseDag.Aktivitet(
-            RapporteringshendelseDag.Aktivitet.Type.Arbeid,
-            data[2].toDouble().hours,
-        )
+    private fun hovedrettighet(
+        hovedrettighet: String,
+        utfall: Boolean,
+    ) = when (hovedrettighet) {
+        "Ordinær" -> Ordinær(utfall)
+        else -> throw IllegalArgumentException("Kjenner ikke rettighet $hovedrettighet")
     }
+
+    private fun lagAktivitet(data: MutableList<String>) =
+        when (data[1].toBooleanStrict()) {
+            true -> RapporteringshendelseDag.Aktivitet(RapporteringshendelseDag.Aktivitet.Type.Syk, 1.days)
+            false ->
+                RapporteringshendelseDag.Aktivitet(
+                    RapporteringshendelseDag.Aktivitet.Type.Arbeid,
+                    data[2].toDouble().hours,
+                )
+        }
 
     private fun assertPersonOpprettet() {
         assertTrue(this::person.isInitialized) { "Forventer at person er opprettet her" }
@@ -210,7 +216,6 @@ class RettighetStegTest : No {
                 rapporteringsdager = rapporteringsdager,
                 fom = rapporteringsdager.minOf { it.dato },
                 tom = rapporteringsdager.maxOf { it.dato },
-
             ),
         )
     }
@@ -313,7 +318,6 @@ class RettighetStegTest : No {
             forbruk: Stønadsdager,
             beløpTilUtbetaling: Beløp,
             utbetalingsdager: List<Utbetalingsdag>,
-
         ) {
             this.utfall = utfall
             this.forbruk = forbruk

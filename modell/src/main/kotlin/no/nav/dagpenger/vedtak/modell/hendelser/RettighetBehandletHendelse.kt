@@ -36,23 +36,24 @@ class RettighetBehandletOgInnvilgetHendelse(
     private val stønadsdager: Stønadsdager,
     private val vanligArbeidstidPerDag: Timer,
 ) : RettighetBehandletHendelse(
-    meldingsreferanseId = meldingsreferanseId,
-    sakId = sakId,
-    ident = ident,
-    behandlingId = behandlingId,
-    vedtakstidspunkt = vedtakstidspunkt,
-    virkningsdato = virkningsdato,
-) {
-    override fun tilVedtak(): Vedtak = innvilgelse(
-        behandlingId = behandlingId,
+        meldingsreferanseId = meldingsreferanseId,
         sakId = sakId,
+        ident = ident,
+        behandlingId = behandlingId,
         vedtakstidspunkt = vedtakstidspunkt,
         virkningsdato = virkningsdato,
-        dagsats = dagsats,
-        stønadsdager = stønadsdager,
-        hovedrettighet = hovedrettighet,
-        vanligArbeidstidPerDag = vanligArbeidstidPerDag,
-    )
+    ) {
+    override fun tilVedtak(): Vedtak =
+        innvilgelse(
+            behandlingId = behandlingId,
+            sakId = sakId,
+            vedtakstidspunkt = vedtakstidspunkt,
+            virkningsdato = virkningsdato,
+            dagsats = dagsats,
+            stønadsdager = stønadsdager,
+            hovedrettighet = hovedrettighet,
+            vanligArbeidstidPerDag = vanligArbeidstidPerDag,
+        )
 
     override fun kontekstMap(): Map<String, String> = emptyMap()
 }
@@ -66,19 +67,21 @@ class RettighetBehandletOgAvslåttHendelse(
     virkningsdato: LocalDate,
     private val hovedrettighet: Hovedrettighet,
 ) : RettighetBehandletHendelse(
-    meldingsreferanseId = meldingsreferanseId,
-    sakId = sakId,
-    ident = ident,
-    behandlingId = behandlingId,
-    vedtakstidspunkt = vedtakstidspunkt,
-    virkningsdato = virkningsdato,
-) {
-    override fun tilVedtak(): Vedtak = avslag(
+        meldingsreferanseId = meldingsreferanseId,
         sakId = sakId,
+        ident = ident,
         behandlingId = behandlingId,
         vedtakstidspunkt = vedtakstidspunkt,
         virkningsdato = virkningsdato,
-        dagpengerettighet = hovedrettighet,
-    )
+    ) {
+    override fun tilVedtak(): Vedtak =
+        avslag(
+            sakId = sakId,
+            behandlingId = behandlingId,
+            vedtakstidspunkt = vedtakstidspunkt,
+            virkningsdato = virkningsdato,
+            dagpengerettighet = hovedrettighet,
+        )
+
     override fun kontekstMap(): Map<String, String> = emptyMap()
 }

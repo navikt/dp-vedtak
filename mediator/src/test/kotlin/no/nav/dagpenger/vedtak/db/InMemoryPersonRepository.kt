@@ -6,6 +6,7 @@ import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 
 class InMemoryPersonRepository : PersonRepository {
     private val persondb = mutableMapOf<PersonIdentifikator, Person>()
+
     override fun hent(ident: PersonIdentifikator): Person? = persondb[ident]
 
     override fun lagre(person: Person) {

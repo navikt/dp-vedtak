@@ -11,7 +11,6 @@ abstract class Hendelse(
     private val ident: String,
     internal val aktivitetslogg: Aktivitetslogg,
 ) : AktivitetsloggHendelse, IAktivitetslogg by aktivitetslogg {
-
     override fun ident() = ident
 
     override fun toSpesifikkKontekst(): SpesifikkKontekst {
@@ -21,5 +20,6 @@ abstract class Hendelse(
     fun toLogString(): String = aktivitetslogg.toString()
 
     override fun meldingsreferanseId() = meldingsreferanseId
+
     abstract fun kontekstMap(): Map<String, String>
 }

@@ -24,11 +24,12 @@ internal class PersonMediatorKonsistensTest {
     init {
         HendelseMediator(
             rapidsConnection = testRapid,
-            personMediator = PersonMediator(
-                aktivitetsloggMediator = mockk(relaxed = true),
-                personRepository = personRepository,
-                personObservers = listOf(VedtakFattetObserver(testRapid), testObservatør),
-            ),
+            personMediator =
+                PersonMediator(
+                    aktivitetsloggMediator = mockk(relaxed = true),
+                    personRepository = personRepository,
+                    personObservers = listOf(VedtakFattetObserver(testRapid), testObservatør),
+                ),
             hendelseRepository = InMemoryMeldingRepository(),
         )
     }
@@ -43,9 +44,12 @@ internal class PersonMediatorKonsistensTest {
     }
 
     private class TestObservatør : PersonObserver {
-
         val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
-        override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
+
+        override fun vedtakFattet(
+            ident: String,
+            vedtakFattet: VedtakObserver.VedtakFattet,
+        ) {
             vedtak.add(vedtakFattet)
         }
     }

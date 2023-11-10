@@ -52,6 +52,7 @@ class Sak private constructor(
         behandlinger.add(behandling)
         behandling.håndter(rapporteringHendelse)
     }
+
     fun håndter(stansHendelse: StansHendelse) {
         kontekst(stansHendelse)
         if (person.vedtakHistorikk.harBehandlet(stansHendelse.behandlingId)) {

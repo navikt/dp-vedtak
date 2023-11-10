@@ -6,7 +6,11 @@ import java.time.LocalDate
 import java.util.SortedSet
 import java.util.UUID
 
-class Rapporteringsperiode(private val rapporteringsId: UUID, private val periode: Periode, dager: List<Rapporteringsdag>) : ClosedRange<LocalDate> by periode {
+class Rapporteringsperiode(
+    private val rapporteringsId: UUID,
+    private val periode: Periode,
+    dager: List<Rapporteringsdag>,
+) : ClosedRange<LocalDate> by periode {
     constructor(rapporteringsId: UUID, periode: Periode) : this(rapporteringsId, periode, emptyList())
 
     private val dager: SortedSet<Rapporteringsdag> = dager.toSortedSet()
@@ -29,6 +33,5 @@ class Rapporteringsperiode(private val rapporteringsId: UUID, private val period
         }
     }
 
-    private fun sammenfallerMed(other: Rapporteringsperiode): Boolean =
-        this.dager.first().sammenfallerMed(other.dager.first())
+    private fun sammenfallerMed(other: Rapporteringsperiode): Boolean = this.dager.first().sammenfallerMed(other.dager.first())
 }

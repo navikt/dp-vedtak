@@ -13,21 +13,26 @@ import kotlin.time.Duration
 internal class RapporteringBehandletHendelseMessage(private val packet: JsonMessage) : HendelseMessage(packet) {
     override val ident: String get() = packet["ident"].asText()
 
-    private val hendelse = RapporteringHendelse(
-        meldingsreferanseId = id,
-        ident = ident,
-        rapporteringsId = packet["rapporteringsId"].asUUID(),
-        fom = packet["fom"].asLocalDate(),
-        tom = packet["tom"].asLocalDate(),
-        rapporteringsdager = packet["dager"].map { dag ->
-            RapporteringshendelseDag(
-                dato = dag["dato"].asLocalDate(),
-                aktiviteter = aktiviteter(dag["aktiviteter"]),
-            )
-        },
-    )
+    private val hendelse =
+        RapporteringHendelse(
+            meldingsreferanseId = id,
+            ident = ident,
+            rapporteringsId = packet["rapporteringsId"].asUUID(),
+            fom = packet["fom"].asLocalDate(),
+            tom = packet["tom"].asLocalDate(),
+            rapporteringsdager =
+                packet["dager"].map { dag ->
+                    RapporteringshendelseDag(
+                        dato = dag["dato"].asLocalDate(),
+                        aktiviteter = aktiviteter(dag["aktiviteter"]),
+                    )
+                },
+        )
 
-    override fun behandle(mediator: IHendelseMediator, context: MessageContext) {
+    override fun behandle(
+        mediator: IHendelseMediator,
+        context: MessageContext,
+    ) {
         mediator.behandle(hendelse, this, context)
     }
 

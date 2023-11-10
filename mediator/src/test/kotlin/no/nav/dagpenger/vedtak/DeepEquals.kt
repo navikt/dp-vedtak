@@ -7,13 +7,21 @@ import java.math.BigDecimal
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
 
-fun assertDeepEquals(one: Any?, other: Any?) {
+fun assertDeepEquals(
+    one: Any?,
+    other: Any?,
+) {
     ModelDeepEquals().assertDeepEquals(one, other, "ROOT")
 }
 
 private class ModelDeepEquals {
     val checkLog = mutableListOf<Pair<Any, Any>>()
-    fun assertDeepEquals(one: Any?, other: Any?, fieldName: String) {
+
+    fun assertDeepEquals(
+        one: Any?,
+        other: Any?,
+        fieldName: String,
+    ) {
         if (fieldName == "behandlinger") { // @todo: Vi er usikre på hvordan Behandling skal se ut.
             // aaalll goood!
             return
@@ -37,7 +45,11 @@ private class ModelDeepEquals {
         }
     }
 
-    private fun assertObjectEquals(one: Any, other: Any, fieldName: String) {
+    private fun assertObjectEquals(
+        one: Any,
+        other: Any,
+        fieldName: String,
+    ) {
         assertEquals(
             one::class,
             other::class,
@@ -55,7 +67,10 @@ private class ModelDeepEquals {
         }
     }
 
-    private fun assertDagpengerObjectEquals(one: Any, other: Any) {
+    private fun assertDagpengerObjectEquals(
+        one: Any,
+        other: Any,
+    ) {
         one::class.memberProperties
             .filterNot { it.isLateinit }
             .map { it.apply { isAccessible = true } }
@@ -64,7 +79,11 @@ private class ModelDeepEquals {
             }
     }
 
-    private fun assertMapEquals(one: Map<*, *>, other: Map<*, *>, fieldName: String) {
+    private fun assertMapEquals(
+        one: Map<*, *>,
+        other: Map<*, *>,
+        fieldName: String,
+    ) {
         assertEquals(one.size, other.size)
         if (fieldName != "detaljer") {
             one.keys.forEach {
@@ -73,7 +92,11 @@ private class ModelDeepEquals {
         }
     }
 
-    private fun assertCollectionEquals(one: Collection<*>, other: Collection<*>, fieldName: String) {
+    private fun assertCollectionEquals(
+        one: Collection<*>,
+        other: Collection<*>,
+        fieldName: String,
+    ) {
         assertEquals(one.size, other.size, "Failure for size of field: $fieldName")
         if (fieldName == "fakta") {
             one.shouldContainAll(other)

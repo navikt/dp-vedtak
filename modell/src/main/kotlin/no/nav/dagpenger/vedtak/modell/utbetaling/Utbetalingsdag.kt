@@ -10,8 +10,7 @@ class Utbetalingsdag(val dato: LocalDate, val beløp: Beløp) { // TODO: Sett p�
         fun Collection<Utbetalingsdag>.summer(): Beløp = this.map { it.beløp }.summerBeløp()
     }
 
-    override fun equals(other: Any?) =
-        other is Utbetalingsdag && this.dato == other.dato && this.beløp == other.beløp
+    override fun equals(other: Any?) = other is Utbetalingsdag && this.dato == other.dato && this.beløp == other.beløp
 
     override fun hashCode(): Int {
         var result = dato.hashCode()

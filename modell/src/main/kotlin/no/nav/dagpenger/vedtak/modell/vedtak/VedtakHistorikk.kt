@@ -19,7 +19,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedtak>) {
-
     internal constructor() : this(mutableListOf<Vedtak>())
 
     private val observers = mutableSetOf<VedtakObserver>()
@@ -36,6 +35,7 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
     init {
         HistorikkOppdaterer(this, vedtak)
     }
+
     fun addObserver(vedtakObserver: VedtakObserver) {
         this.observers.add(vedtakObserver)
     }
@@ -46,8 +46,7 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
         visitor.postVisitVedtak()
     }
 
-    fun gjenståendeStønadsdagerFra(dato: LocalDate): Stønadsdager =
-        stønadsdagerHistorikk.get(dato) - forbrukHistorikk.summer(dato)
+    fun gjenståendeStønadsdagerFra(dato: LocalDate): Stønadsdager = stønadsdagerHistorikk.get(dato) - forbrukHistorikk.summer(dato)
 
     fun beløpTilUtbetalingFor(dato: LocalDate): Beløp = beløpTilUtbetalingHistorikk.get(dato)
 
@@ -71,7 +70,6 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
     internal fun harBehandlet(behandlingId: UUID) = this.vedtak.harBehandlet(behandlingId)
 
     private class HistorikkOppdaterer(private val vedtakHistorikk: VedtakHistorikk, vedtak: List<Vedtak>) : VedtakVisitor {
-
         init {
             vedtak.sortedWith(Vedtak.etterVedtakstidspunkt).forEach { it.accept(this) }
         }
@@ -79,6 +77,7 @@ class VedtakHistorikk internal constructor(private val vedtak: MutableList<Vedta
         private var virkningsdato: LocalDate? = null
 
         private fun virkningsdato() = requireNotNull(virkningsdato) { " Forventet at virkninsdato er satt. Har du husket preVisitVedtak?" }
+
         override fun preVisitVedtak(
             vedtakId: UUID,
             sakId: SakId,

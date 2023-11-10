@@ -11,7 +11,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 interface VedtakVisitor : FaktumVisitor, RettighetVisitor {
-
     fun preVisitVedtak(
         vedtakId: UUID,
         sakId: SakId,

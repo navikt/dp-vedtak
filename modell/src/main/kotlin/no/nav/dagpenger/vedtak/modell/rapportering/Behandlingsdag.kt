@@ -14,12 +14,11 @@ class Behandlingsdag(
     internal val hovedrettighet: Hovedrettighet,
     private val vanligArbeidstidPerDag: Timer,
     private val dagsats: Beløp,
-
 ) {
-
     private var utbetaling: Beløp = 0.beløp
 
     internal fun terskel() = TaptArbeidstidTerskel.terskelFor(hovedrettighet.type, rapporteringsdag.dato())
+
     private fun dagpengerRettighetsdag(): Boolean = hovedrettighet != IngenRettighet && hovedrettighet.utfall
 
     internal fun utbetalingsdag(prosentFaktor: Prosent): Utbetalingsdag {
@@ -28,7 +27,10 @@ class Behandlingsdag(
     }
 
     override fun toString(): String {
-        return "Behandlingdag(rapporteringsdag=$rapporteringsdag, hovedrettighet=${hovedrettighet.javaClass.simpleName}, vanligArbeidstidPerDag=$vanligArbeidstidPerDag, dagsats=$dagsats, utbetaling=$utbetaling)"
+        return "Behandlingdag(rapporteringsdag=$rapporteringsdag, " +
+            "hovedrettighet=${hovedrettighet.javaClass.simpleName}, " +
+            "vanligArbeidstidPerDag=$vanligArbeidstidPerDag, " +
+            "dagsats=$dagsats, utbetaling=$utbetaling)"
     }
 
     internal companion object {
@@ -38,8 +40,7 @@ class Behandlingsdag(
         fun Collection<Behandlingsdag>.tellendeRapporteringsdager() =
             this.rettighetsdagerUtenFravær().filterNot { it.rapporteringsdag.erHelg() }
 
-        fun Collection<Behandlingsdag>.vanligArbeidstid() =
-            this.tellendeRapporteringsdager().map { it.vanligArbeidstidPerDag }.summer()
+        fun Collection<Behandlingsdag>.vanligArbeidstid() = this.tellendeRapporteringsdager().map { it.vanligArbeidstidPerDag }.summer()
 
         fun Collection<Behandlingsdag>.arbeidedeTimer() =
             this.rettighetsdagerUtenFravær().map { it.rapporteringsdag.arbeidstimer() }.summer()

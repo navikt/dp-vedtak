@@ -24,14 +24,13 @@ class Rammevedtak(
     private val fakta: List<Faktum<*>>,
     private val rettigheter: List<Rettighet>,
 ) : Vedtak(
-    vedtakId = vedtakId,
-    sakId = sakId,
-    behandlingId = behandlingId,
-    vedtakstidspunkt = vedtakstidspunkt,
-    virkningsdato = virkningsdato,
-    type = Ramme,
-) {
-
+        vedtakId = vedtakId,
+        sakId = sakId,
+        behandlingId = behandlingId,
+        vedtakstidspunkt = vedtakstidspunkt,
+        virkningsdato = virkningsdato,
+        type = Ramme,
+    ) {
     companion object {
         fun innvilgelse(
             behandlingId: UUID,
@@ -48,11 +47,12 @@ class Rammevedtak(
                 behandlingId = behandlingId,
                 vedtakstidspunkt = vedtakstidspunkt,
                 virkningsdato = virkningsdato,
-                fakta = listOf(
-                    VanligArbeidstidPerDag(vanligArbeidstidPerDag),
-                    Dagsats(dagsats),
-                    AntallStønadsdager(stønadsdager),
-                ),
+                fakta =
+                    listOf(
+                        VanligArbeidstidPerDag(vanligArbeidstidPerDag),
+                        Dagsats(dagsats),
+                        AntallStønadsdager(stønadsdager),
+                    ),
                 rettigheter = listOf(hovedrettighet),
             )
         }

@@ -24,14 +24,15 @@ class VedtakForPersonVisitor(person: Person) : PersonVisitor {
     }
 
     fun vedtakListeDto(): VedtakDTO {
-        val utbetalinger: List<UtbetalingDTO> = mutableUtbetalinger.map {
-            UtbetalingDTO(
-                vedtakId = it.key,
-                fraOgMed = it.value["fraOgMed"] as LocalDate,
-                tilOgMed = it.value["tilOgMed"] as LocalDate,
-                sumUtbetalt = it.value["sumUtbetalt"] as Double,
-            )
-        }
+        val utbetalinger: List<UtbetalingDTO> =
+            mutableUtbetalinger.map {
+                UtbetalingDTO(
+                    vedtakId = it.key,
+                    fraOgMed = it.value["fraOgMed"] as LocalDate,
+                    tilOgMed = it.value["tilOgMed"] as LocalDate,
+                    sumUtbetalt = it.value["sumUtbetalt"] as Double,
+                )
+            }
         return VedtakDTO(rammer = rammer, utbetalinger = utbetalinger)
     }
 

@@ -35,7 +35,10 @@ internal class PersonMediator(
         }
     }
 
-    private fun behandle(hendelse: Hendelse, håndter: (Person) -> Unit) = try {
+    private fun behandle(
+        hendelse: Hendelse,
+        håndter: (Person) -> Unit,
+    ) = try {
         val person = hentEllerOpprettPerson(hendelse)
         val delegatedObserver = DelegatedObserver(personObservers)
         person.addObserver(delegatedObserver)
@@ -64,8 +67,9 @@ internal class PersonMediator(
         val person = personRepository.hent(hendelse.ident().tilPersonIdentfikator())
         return when (hendelse) {
             is RettighetBehandletHendelse -> person ?: Person(hendelse.ident().tilPersonIdentfikator())
-            else -> person ?: Person(PersonIdentifikator("12345123451"))
-                .also { logger.error { "Oppretter default person 👨🏽" } } // TODO: Fjern når vi har database
+            else ->
+                person ?: Person(PersonIdentifikator("12345123451"))
+                    .also { logger.error { "Oppretter default person 👨🏽" } } // TODO: Fjern når vi har database
         }
     }
 
@@ -81,22 +85,31 @@ internal class PersonMediator(
         aktivitetsloggMediator.håndter(hendelse)
     }
 
-    private fun errorHandler(err: Exception, message: String, context: Map<String, String> = emptyMap()) {
+    private fun errorHandler(
+        err: Exception,
+        message: String,
+        context: Map<String, String> = emptyMap(),
+    ) {
         logger.error("alvorlig feil: ${err.message} (se sikkerlogg for melding)", err)
         withMDC(context) { sikkerLogger.error("alvorlig feil: ${err.message}\n\t$message", err) }
     }
 }
 
 private class DelegatedObserver(private val observers: List<PersonObserver>) : PersonObserver {
-
     private val vedtakDelegate = mutableListOf<Pair<String, VedtakObserver.VedtakFattet>>()
     private val utbetalingsvedtakDelegate = mutableListOf<Pair<String, VedtakObserver.UtbetalingsvedtakFattet>>()
 
-    override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
+    override fun vedtakFattet(
+        ident: String,
+        vedtakFattet: VedtakObserver.VedtakFattet,
+    ) {
         vedtakDelegate.add(Pair(ident, vedtakFattet))
     }
 
-    override fun utbetalingsvedtakFattet(ident: String, utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet) {
+    override fun utbetalingsvedtakFattet(
+        ident: String,
+        utbetalingsvedtakFattet: VedtakObserver.UtbetalingsvedtakFattet,
+    ) {
         utbetalingsvedtakDelegate.add(Pair(ident, utbetalingsvedtakFattet))
     }
 

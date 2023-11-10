@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class ProsentTest {
-
     @Test
     fun `gyldige prosenter`() {
         val prosent = Prosent(50)

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 internal class PersonIdentifikatorTest {
-
     @Test
     fun `personidentifikator består av 11 siffer`() {
         Assertions.assertDoesNotThrow { "12345678901".tilPersonIdentfikator() }

@@ -21,14 +21,15 @@ internal class RapporteringsperioderTest {
 
     @BeforeEach
     fun setup() {
-        rapporteringsperioder = Rapporteringsperioder().also {
-            it.håndter(
-                rapporteringshendelse(
-                    RapporteringshendelseDag(1.februar(2023), listOf(arbeid(3.hours))),
-                    RapporteringshendelseDag(2.februar(2023), listOf(arbeid(0.hours))),
-                ),
-            )
-        }
+        rapporteringsperioder =
+            Rapporteringsperioder().also {
+                it.håndter(
+                    rapporteringshendelse(
+                        RapporteringshendelseDag(1.februar(2023), listOf(arbeid(3.hours))),
+                        RapporteringshendelseDag(2.februar(2023), listOf(arbeid(0.hours))),
+                    ),
+                )
+            }
     }
 
     @Test
@@ -86,19 +87,19 @@ internal class RapporteringsperioderTest {
         inspektør.antallRapporteringsperioder shouldBe 3
     }
 
-    private fun rapporteringshendelse(vararg rapporteringsdager: RapporteringshendelseDag) = RapporteringHendelse(
-        meldingsreferanseId = UUID.randomUUID(),
-        ident = "123",
-        rapporteringsId = UUID.randomUUID(),
-        rapporteringsdager = rapporteringsdager.toList(),
-        fom = rapporteringsdager.minOf { it.dato },
-        tom = rapporteringsdager.maxOf { it.dato },
-    )
+    private fun rapporteringshendelse(vararg rapporteringsdager: RapporteringshendelseDag) =
+        RapporteringHendelse(
+            meldingsreferanseId = UUID.randomUUID(),
+            ident = "123",
+            rapporteringsId = UUID.randomUUID(),
+            rapporteringsdager = rapporteringsdager.toList(),
+            fom = rapporteringsdager.minOf { it.dato },
+            tom = rapporteringsdager.maxOf { it.dato },
+        )
 
     private fun arbeid(tid: Duration) = RapporteringshendelseDag.Aktivitet(RapporteringshendelseDag.Aktivitet.Type.Arbeid, tid)
 
     private class RapporteringsdagerVisitor(rapporteringsperioder: Rapporteringsperioder) : PersonVisitor {
-
         val dager = mutableListOf<Rapporteringsdag>()
         var antallRapporteringsperioder = 0
 
@@ -106,11 +107,17 @@ internal class RapporteringsperioderTest {
             rapporteringsperioder.accept(this)
         }
 
-        override fun preVisitRapporteringsperiode(rapporteringsperiodeId: UUID, periode: Rapporteringsperiode) {
+        override fun preVisitRapporteringsperiode(
+            rapporteringsperiodeId: UUID,
+            periode: Rapporteringsperiode,
+        ) {
             antallRapporteringsperioder++
         }
 
-        override fun visitRapporteringsdag(rapporteringsdag: Rapporteringsdag, aktiviteter: List<Aktivitet>) {
+        override fun visitRapporteringsdag(
+            rapporteringsdag: Rapporteringsdag,
+            aktiviteter: List<Aktivitet>,
+        ) {
             dager.add(rapporteringsdag)
         }
     }

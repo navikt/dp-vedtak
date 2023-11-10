@@ -21,14 +21,13 @@ class Utbetalingsvedtak(
     private val forbruk: Stønadsdager,
     private val utbetalingsdager: List<Utbetalingsdag>,
 ) : Vedtak(
-    vedtakId = vedtakId,
-    sakId = sakId,
-    behandlingId = behandlingId,
-    vedtakstidspunkt = vedtakstidspunkt,
-    virkningsdato = virkningsdato,
-    type = Utbetaling,
-) {
-
+        vedtakId = vedtakId,
+        sakId = sakId,
+        behandlingId = behandlingId,
+        vedtakstidspunkt = vedtakstidspunkt,
+        virkningsdato = virkningsdato,
+        type = Utbetaling,
+    ) {
     companion object {
         fun utbetalingsvedtak(
             behandlingId: UUID,
@@ -39,18 +38,18 @@ class Utbetalingsvedtak(
             periode: Periode,
             forbruk: Stønadsdager,
             utbetalingsdager: List<Utbetalingsdag>,
-        ) =
-            Utbetalingsvedtak(
-                sakId = sakId,
-                behandlingId = behandlingId,
-                utfall = utfall,
-                vedtakstidspunkt = vedtakstidspunkt,
-                virkningsdato = virkningsdato,
-                periode = periode,
-                forbruk = forbruk,
-                utbetalingsdager = utbetalingsdager,
-            )
+        ) = Utbetalingsvedtak(
+            sakId = sakId,
+            behandlingId = behandlingId,
+            utfall = utfall,
+            vedtakstidspunkt = vedtakstidspunkt,
+            virkningsdato = virkningsdato,
+            periode = periode,
+            forbruk = forbruk,
+            utbetalingsdager = utbetalingsdager,
+        )
     }
+
     override fun accept(visitor: VedtakVisitor) {
         visitor.preVisitVedtak(
             vedtakId = vedtakId,

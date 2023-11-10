@@ -23,7 +23,6 @@ class Person internal constructor(
     internal val vedtakHistorikk: VedtakHistorikk,
     private val rapporteringsperioder: Rapporteringsperioder,
 ) : Aktivitetskontekst, VedtakObserver {
-
     init {
         vedtakHistorikk.addObserver(this)
     }
@@ -37,6 +36,7 @@ class Person internal constructor(
 
     companion object {
         val kontekstType: String = "Person"
+
         fun rehydrer(
             ident: PersonIdentifikator,
             saker: MutableList<Sak>,
@@ -119,8 +119,7 @@ class Person internal constructor(
         saker.add(sak)
     }
 
-    override fun toSpesifikkKontekst(): SpesifikkKontekst =
-        SpesifikkKontekst(kontekstType, mapOf("ident" to ident.identifikator()))
+    override fun toSpesifikkKontekst(): SpesifikkKontekst = SpesifikkKontekst(kontekstType, mapOf("ident" to ident.identifikator()))
 
     private fun kontekst(hendelse: Hendelse) {
         hendelse.kontekst(this)

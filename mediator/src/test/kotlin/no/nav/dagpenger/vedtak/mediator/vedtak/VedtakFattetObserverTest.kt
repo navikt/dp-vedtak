@@ -75,26 +75,29 @@ class VedtakFattetObserverTest {
         json["virkningsdato"].asText().shouldNotBeBlank()
     }
 
-    private fun vedtakFattet(utfall: VedtakObserver.Utfall) = VedtakObserver.VedtakFattet(
-        vedtakId = UUID.randomUUID(),
-        sakId = UUID.randomUUID().toString(),
-        vedtakstidspunkt = LocalDateTime.now(),
-        behandlingId = UUID.randomUUID(),
-        virkningsdato = LocalDate.now(),
-        utfall = utfall,
-    )
+    private fun vedtakFattet(utfall: VedtakObserver.Utfall) =
+        VedtakObserver.VedtakFattet(
+            vedtakId = UUID.randomUUID(),
+            sakId = UUID.randomUUID().toString(),
+            vedtakstidspunkt = LocalDateTime.now(),
+            behandlingId = UUID.randomUUID(),
+            virkningsdato = LocalDate.now(),
+            utfall = utfall,
+        )
 
-    private fun utbetalingsvedtakFattet(utfall: VedtakObserver.Utfall) = VedtakObserver.UtbetalingsvedtakFattet(
-        vedtakId = UUID.randomUUID(),
-        sakId = UUID.randomUUID().toString(),
-        behandlingId = UUID.randomUUID(),
-        periode = Periode(
-            fomDato = LocalDate.now().minusDays(13),
-            tomDato = LocalDate.now(),
-        ),
-        vedtakstidspunkt = LocalDateTime.now(),
-        virkningsdato = LocalDate.now(),
-        utfall = utfall,
-        utbetalingsdager = emptyList(),
-    )
+    private fun utbetalingsvedtakFattet(utfall: VedtakObserver.Utfall) =
+        VedtakObserver.UtbetalingsvedtakFattet(
+            vedtakId = UUID.randomUUID(),
+            sakId = UUID.randomUUID().toString(),
+            behandlingId = UUID.randomUUID(),
+            periode =
+                Periode(
+                    fomDato = LocalDate.now().minusDays(13),
+                    tomDato = LocalDate.now(),
+                ),
+            vedtakstidspunkt = LocalDateTime.now(),
+            virkningsdato = LocalDate.now(),
+            utfall = utfall,
+            utbetalingsdager = emptyList(),
+        )
 }

@@ -16,14 +16,14 @@ class Periode(private val fomDato: LocalDate, private val tomDato: LocalDate) : 
         }
     }
 
-    override fun iterator(): Iterator<LocalDate> = object : Iterator<LocalDate> {
-        private var currentDate: LocalDate = start
+    override fun iterator(): Iterator<LocalDate> =
+        object : Iterator<LocalDate> {
+            private var currentDate: LocalDate = start
 
-        override fun hasNext() = endInclusive >= currentDate
+            override fun hasNext() = endInclusive >= currentDate
 
-        override fun next() =
-            currentDate.also { currentDate = it.plusDays(1) }
-    }
+            override fun next() = currentDate.also { currentDate = it.plusDays(1) }
+        }
 
     operator fun contains(rapporteringsdag: Rapporteringsdag): Boolean = rapporteringsdag.innenfor(this)
 
@@ -37,6 +37,7 @@ class Periode(private val fomDato: LocalDate, private val tomDato: LocalDate) : 
 
     companion object {
         private val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+
         internal infix fun LocalDate.til(tom: LocalDate) = Periode(this, tom)
     }
 }

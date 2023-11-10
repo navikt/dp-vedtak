@@ -15,14 +15,13 @@ class Avslag(
     virkningsdato: LocalDate,
     private val rettigheter: List<Rettighet>,
 ) : Vedtak(
-    vedtakId = vedtakId,
-    sakId = sakId,
-    behandlingId = behandlingId,
-    vedtakstidspunkt = vedtakstidspunkt,
-    virkningsdato = virkningsdato,
-    type = VedtakType.Avslag,
-) {
-
+        vedtakId = vedtakId,
+        sakId = sakId,
+        behandlingId = behandlingId,
+        vedtakstidspunkt = vedtakstidspunkt,
+        virkningsdato = virkningsdato,
+        type = VedtakType.Avslag,
+    ) {
     companion object {
         fun avslag(
             behandlingId: UUID,

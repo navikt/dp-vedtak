@@ -17,7 +17,6 @@ internal class HendelseMediator(
     private val personMediator: PersonMediator,
     private val hendelseRepository: HendelseRepository,
 ) : IHendelseMediator {
-
     init {
         RettighetBehandletMottak(rapidsConnection, this)
         RapporteringBehandletMottak(rapidsConnection, this)
@@ -55,7 +54,12 @@ internal class HendelseMediator(
 }
 
 internal interface IHendelseMediator {
-    fun behandle(hendelse: RettighetBehandletHendelse, message: RettighetBehandletHendelseMessage, context: MessageContext)
+    fun behandle(
+        hendelse: RettighetBehandletHendelse,
+        message: RettighetBehandletHendelseMessage,
+        context: MessageContext,
+    )
+
     fun behandle(
         hendelse: RapporteringHendelse,
         message: RapporteringBehandletHendelseMessage,

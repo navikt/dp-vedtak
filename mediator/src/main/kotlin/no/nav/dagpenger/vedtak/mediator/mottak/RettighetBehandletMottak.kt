@@ -17,7 +17,6 @@ internal class RettighetBehandletMottak(
     private val hendelseMediator: IHendelseMediator,
 ) :
     River.PacketListener {
-
     companion object {
         private val logger = KotlinLogging.logger { }
     }
@@ -51,7 +50,10 @@ internal class RettighetBehandletMottak(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         val behandlingId = UUID.fromString(packet["behandlingId"].asText())
         withLoggingContext("behandlingId" to behandlingId.toString()) {
             val rettighetBehandletMelding = RettighetBehandletHendelseMessage(packet)
@@ -60,7 +62,10 @@ internal class RettighetBehandletMottak(
         }
     }
 
-    override fun onError(problems: MessageProblems, context: MessageContext) {
+    override fun onError(
+        problems: MessageProblems,
+        context: MessageContext,
+    ) {
         logger.warn {
             "Kunne ikke lese 'rettighet_behandlet_hendelse', problemer:\n${problems.toExtendedReport()}"
         }

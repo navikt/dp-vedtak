@@ -9,7 +9,6 @@ import no.nav.dagpenger.vedtak.hjelpere.mars
 import org.junit.jupiter.api.Test
 
 class PeriodeTest {
-
     @Test
     fun `konsistens test`() {
         shouldThrow<IllegalArgumentException> { Periode(1.februar, 1.januar) }

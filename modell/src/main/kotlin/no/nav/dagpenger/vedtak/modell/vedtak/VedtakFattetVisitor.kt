@@ -19,7 +19,6 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class VedtakFattetVisitor : VedtakVisitor {
-
     lateinit var vedtakFattet: VedtakFattet
     lateinit var utbetalingsvedtakFattet: UtbetalingsvedtakFattet
     private var vedtakId: UUID? = null
@@ -29,8 +28,7 @@ internal class VedtakFattetVisitor : VedtakVisitor {
     private var virkningsdato: LocalDate? = null
     private var vedtakstidspunkt: LocalDateTime? = null
 
-    private fun vedtakId() =
-        requireNotNull(vedtakId) { " Forventet at vedtakId er satt. Har du husket preVisitVedtak?" }
+    private fun vedtakId() = requireNotNull(vedtakId) { " Forventet at vedtakId er satt. Har du husket preVisitVedtak?" }
 
     private fun utfall() = requireNotNull(utfall) { " Forventet at utfall er satt. Har du husket preVisitVedtak?" }
 
@@ -70,17 +68,19 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         type: Vedtak.VedtakType,
     ) {
         if (!this::utbetalingsvedtakFattet.isInitialized) {
-            vedtakFattet = VedtakFattet(
-                vedtakId = vedtakId(),
-                sakId = sakId,
-                vedtakstidspunkt = vedtakstidspunkt,
-                behandlingId = behandlingId,
-                virkningsdato = virkningsdato,
-                utfall = when (utfall()) {
-                    true -> Innvilget
-                    false -> Avslått
-                },
-            )
+            vedtakFattet =
+                VedtakFattet(
+                    vedtakId = vedtakId(),
+                    sakId = sakId,
+                    vedtakstidspunkt = vedtakstidspunkt,
+                    behandlingId = behandlingId,
+                    virkningsdato = virkningsdato,
+                    utfall =
+                        when (utfall()) {
+                            true -> Innvilget
+                            false -> Avslått
+                        },
+                )
         }
         this.vedtakId = null
         this.utfall = null
@@ -97,19 +97,21 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         beløpTilUtbetaling: Beløp,
         utbetalingsdager: List<Utbetalingsdag>,
     ) {
-        utbetalingsvedtakFattet = UtbetalingsvedtakFattet(
-            vedtakId = this.vedtakId(),
-            sakId = this.sakId!!,
-            behandlingId = this.behandlingId!!,
-            periode = periode,
-            vedtakstidspunkt = this.vedtakstidspunkt!!,
-            virkningsdato = this.virkningsdato!!,
-            utfall = when (utfall == true) {
-                true -> Innvilget
-                false -> Avslått
-            },
-            utbetalingsdager = populerAlleRapporteringsdager(utbetalingsdager = utbetalingsdager, periode = periode),
-        )
+        utbetalingsvedtakFattet =
+            UtbetalingsvedtakFattet(
+                vedtakId = this.vedtakId(),
+                sakId = this.sakId!!,
+                behandlingId = this.behandlingId!!,
+                periode = periode,
+                vedtakstidspunkt = this.vedtakstidspunkt!!,
+                virkningsdato = this.virkningsdato!!,
+                utfall =
+                    when (utfall == true) {
+                        true -> Innvilget
+                        false -> Avslått
+                    },
+                utbetalingsdager = populerAlleRapporteringsdager(utbetalingsdager = utbetalingsdager, periode = periode),
+            )
     }
 
     override fun visitAvslag(
@@ -120,17 +122,19 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         utfall: Boolean,
         virkningsdato: LocalDate,
     ) {
-        vedtakFattet = VedtakFattet(
-            vedtakId = vedtakId,
-            sakId = sakId,
-            vedtakstidspunkt = vedtakstidspunkt,
-            behandlingId = behandlingId,
-            virkningsdato = virkningsdato,
-            utfall = when (utfall == true) {
-                true -> Innvilget
-                false -> Avslått
-            },
-        )
+        vedtakFattet =
+            VedtakFattet(
+                vedtakId = vedtakId,
+                sakId = sakId,
+                vedtakstidspunkt = vedtakstidspunkt,
+                behandlingId = behandlingId,
+                virkningsdato = virkningsdato,
+                utfall =
+                    when (utfall == true) {
+                        true -> Innvilget
+                        false -> Avslått
+                    },
+            )
     }
 
     override fun visitStans(
@@ -141,17 +145,19 @@ internal class VedtakFattetVisitor : VedtakVisitor {
         vedtakstidspunkt: LocalDateTime,
         utfall: Boolean?,
     ) {
-        vedtakFattet = VedtakFattet(
-            vedtakId = vedtakId,
-            sakId = sakId,
-            vedtakstidspunkt = vedtakstidspunkt,
-            behandlingId = behandlingId,
-            virkningsdato = virkningsdato,
-            utfall = when (utfall == true) {
-                true -> Innvilget
-                false -> Avslått
-            },
-        )
+        vedtakFattet =
+            VedtakFattet(
+                vedtakId = vedtakId,
+                sakId = sakId,
+                vedtakstidspunkt = vedtakstidspunkt,
+                behandlingId = behandlingId,
+                virkningsdato = virkningsdato,
+                utfall =
+                    when (utfall == true) {
+                        true -> Innvilget
+                        false -> Avslått
+                    },
+            )
     }
 
     private fun populerAlleRapporteringsdager(

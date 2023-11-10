@@ -25,21 +25,24 @@ class RapporteringHendelse(
 
     override val endInclusive: LocalDate = tom
     override val start: LocalDate = fom
+
     internal fun populerRapporteringsperiode(): Rapporteringsperiode {
         return Rapporteringsperiode(rapporteringsId, Periode(fom, tom)).also { periode ->
             rapporteringsdager.forEach { rapporteringdag ->
-                val aktiviteter = rapporteringdag.aktiviteter.map {
-                    when (it.type) {
-                        Arbeid -> no.nav.dagpenger.vedtak.modell.rapportering.Arbeid(it.varighet.timer)
-                        Syk -> no.nav.dagpenger.vedtak.modell.rapportering.Syk(it.varighet.timer)
-                        Ferie -> no.nav.dagpenger.vedtak.modell.rapportering.Ferie(it.varighet.timer)
+                val aktiviteter =
+                    rapporteringdag.aktiviteter.map {
+                        when (it.type) {
+                            Arbeid -> no.nav.dagpenger.vedtak.modell.rapportering.Arbeid(it.varighet.timer)
+                            Syk -> no.nav.dagpenger.vedtak.modell.rapportering.Syk(it.varighet.timer)
+                            Ferie -> no.nav.dagpenger.vedtak.modell.rapportering.Ferie(it.varighet.timer)
+                        }
                     }
-                }
                 val dag = Rapporteringsdag.opprett(rapporteringdag.dato, aktiviteter)
                 periode.leggTilDag(dag)
             }
         }
     }
+
     override fun kontekstMap(): Map<String, String> = mapOf("rapporteringsId" to rapporteringsId.toString())
 }
 
@@ -47,9 +50,10 @@ class RapporteringshendelseDag(val dato: LocalDate, val aktiviteter: List<Aktivi
     override fun compareTo(other: RapporteringshendelseDag) = this.dato.compareTo(other.dato)
 
     class Aktivitet(val type: Type, val varighet: Duration) {
-
         enum class Type {
-            Arbeid, Syk, Ferie
+            Arbeid,
+            Syk,
+            Ferie,
         }
     }
 }

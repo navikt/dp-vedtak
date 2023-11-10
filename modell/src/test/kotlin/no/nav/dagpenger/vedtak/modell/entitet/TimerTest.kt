@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import kotlin.time.Duration.Companion.minutes
 
 class TimerTest {
-
     @Test
     fun `likhet`() {
         val timer = Timer(2.5)

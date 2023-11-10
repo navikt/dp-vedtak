@@ -11,24 +11,25 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 internal class PersonTest {
-
     private val ident = "12345678910"
     private val testObservatør = TestObservatør()
-    private val person = Person(PersonIdentifikator(ident)).also {
-        it.addObserver(testObservatør)
-    }
+    private val person =
+        Person(PersonIdentifikator(ident)).also {
+            it.addObserver(testObservatør)
+        }
 
     @Test
     fun `behandling med samme id skal bare behandles 1 gang og logge en warning aktivitetsloggen`() {
-        val rettighetBehandletOgAvslåttHendelse = RettighetBehandletOgAvslåttHendelse(
-            meldingsreferanseId = UUID.randomUUID(),
-            behandlingId = UUID.randomUUID(),
-            sakId = "SAK_NUMMER_1",
-            ident = ident,
-            vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
-            virkningsdato = LocalDate.now(),
-            hovedrettighet = Ordinær(false),
-        )
+        val rettighetBehandletOgAvslåttHendelse =
+            RettighetBehandletOgAvslåttHendelse(
+                meldingsreferanseId = UUID.randomUUID(),
+                behandlingId = UUID.randomUUID(),
+                sakId = "SAK_NUMMER_1",
+                ident = ident,
+                vedtakstidspunkt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS),
+                virkningsdato = LocalDate.now(),
+                hovedrettighet = Ordinær(false),
+            )
         person.håndter(
             rettighetBehandletOgAvslåttHendelse,
         )
@@ -40,9 +41,12 @@ internal class PersonTest {
     }
 
     private class TestObservatør : PersonObserver {
-
         val vedtak = mutableListOf<VedtakObserver.VedtakFattet>()
-        override fun vedtakFattet(ident: String, vedtakFattet: VedtakObserver.VedtakFattet) {
+
+        override fun vedtakFattet(
+            ident: String,
+            vedtakFattet: VedtakObserver.VedtakFattet,
+        ) {
             vedtak.add(vedtakFattet)
         }
     }
