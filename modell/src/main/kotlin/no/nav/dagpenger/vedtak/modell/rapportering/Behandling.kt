@@ -92,7 +92,7 @@ class Behandling(
         }
     }
 
-    object VurderTerskelForTaptArbeidstid : Behandlingssteg() {
+    data object VurderTerskelForTaptArbeidstid : Behandlingssteg() {
         override fun entering(
             rapporteringHendelse: RapporteringHendelse,
             behandling: Behandling,
@@ -127,7 +127,7 @@ class Behandling(
         }
     }
 
-    object GraderUtbetaling : Behandlingssteg() {
+    data object GraderUtbetaling : Behandlingssteg() {
         override fun entering(
             rapporteringHendelse: RapporteringHendelse,
             behandling: Behandling,
@@ -159,7 +159,7 @@ class Behandling(
         }
     }
 
-    object Ferdigstill : Behandlingssteg() {
+    data object Ferdigstill : Behandlingssteg() {
         override fun entering(
             rapporteringHendelse: RapporteringHendelse,
             behandling: Behandling,
