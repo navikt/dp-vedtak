@@ -3,7 +3,7 @@ plugins {
     `java-library`
 }
 
-val cucumberVersion = "7.14.0"
+val cucumberVersion = "7.14.1"
 dependencies {
     api(libs.dp.aktivitetslogg)
     implementation(libs.kotlin.logging)
