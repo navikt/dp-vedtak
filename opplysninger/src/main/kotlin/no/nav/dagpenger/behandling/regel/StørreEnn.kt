@@ -3,6 +3,7 @@ package no.nav.dagpenger.behandling.regel
 import no.nav.dagpenger.behandling.LesbarOpplysninger
 import no.nav.dagpenger.behandling.Opplysningstype
 import no.nav.dagpenger.behandling.Regelsett
+import java.time.LocalDate
 
 internal class StørreEnn(
     produserer: Opplysningstype<Boolean>,
@@ -21,9 +22,16 @@ internal class StørreEnn(
 }
 
 fun Regelsett.størreEnn(
+    gjelderFra: LocalDate,
     produserer: Opplysningstype<Boolean>,
     er: Opplysningstype<Double>,
     størreEnn: Opplysningstype<Double>,
 ): Regel<Boolean> {
-    return StørreEnn(produserer, er, størreEnn).also { leggTil(it) }
+    return StørreEnn(produserer, er, størreEnn).also { leggTil(gjelderFra, produserer, it) }
 }
+
+fun Regelsett.størreEnn(
+    produserer: Opplysningstype<Boolean>,
+    er: Opplysningstype<Double>,
+    størreEnn: Opplysningstype<Double>,
+) = størreEnn(LocalDate.MIN, produserer, er, størreEnn)

@@ -73,7 +73,8 @@ class OpplysningerTest {
         regelsett.multiplikasjon(nedreTerskel, nedreTerskelFaktor, grunnbeløp)
 
         val øvreTerskel = Opplysningstype<Double>("Inntektskrav for øvre terskel (3G)")
-        regelsett.multiplikasjon(øvreTerskel, øvreTerskelFaktor, grunnbeløp)
+        regelsett.multiplikasjon(øvreTerskel, nedreTerskelFaktor, grunnbeløp)
+        regelsett.multiplikasjon(gjelderFra = 1.februar, øvreTerskel, øvreTerskelFaktor, grunnbeløp)
 
         val overNedreTerskel = Opplysningstype<Boolean>("Inntekt er over nedre terskel (1.5G)")
         regelsett.størreEnn(overNedreTerskel, inntekt, nedreTerskel)
@@ -127,7 +128,3 @@ class OpplysningerTest {
         println(MermaidPrinter(dataDAG, retning = "LR").toPrint())
     }
 }
-
-/*
-1. Gyldighetsperiode for regler
- */

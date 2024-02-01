@@ -11,12 +11,13 @@ class Regelkjøring(
     vararg regelsett: Regelsett,
 ) {
     constructor(
-        fraDato: LocalDate,
+        forDato: LocalDate,
         opplysninger: Opplysninger,
         vararg regelsett: Regelsett,
-    ) : this(fraDato.atStartOfDay(), opplysninger, *regelsett)
+    ) : this(forDato.atStartOfDay(), opplysninger, *regelsett)
 
-    private val muligeRegler: MutableList<Regel<*>> = regelsett.flatMap { it.regler() }.toMutableList()
+    private val muligeRegler: MutableList<Regel<*>> =
+        regelsett.flatMap { it.regler(forDato.toLocalDate()) }.toMutableList()
     private val plan: MutableList<Regel<*>> = mutableListOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
 
@@ -60,21 +61,12 @@ class Regelkjøring(
     }
 
     fun trenger(opplysningstype: Opplysningstype<*>): Set<Opplysningstype<*>> {
+        if (opplysninger.har(opplysningstype)) return emptySet()
         val dag = RegeltreBygger(muligeRegler).dag()
         return dag
             .subgraph { it.er(opplysningstype) }
             .findLeafNodes()
             .map { it.data }
             .filterNot { opplysninger.har(it) }.toSet()
-    }
-}
-
-class Regelsett {
-    private val regler: MutableList<Regel<*>> = mutableListOf()
-
-    fun regler() = regler.toList()
-
-    fun leggTil(regel: Regel<*>) {
-        regler.add(regel)
     }
 }

@@ -19,10 +19,7 @@ abstract class Regel<T : Comparable<T>>(
 
     fun lagProdukt(opplysninger: LesbarOpplysninger): Opplysning<T> {
         val basertPå = opplysninger.finnAlle(avhengerAv)
-        val erAlleFaktum =
-            basertPå.all {
-                it is Faktum<*>
-            }
+        val erAlleFaktum = basertPå.all { it is Faktum<*> }
         return when (erAlleFaktum) {
             true -> return Faktum(produserer, kjør(opplysninger), utledetAv = Utledning(this, basertPå))
             false -> Hypotese(produserer, kjør(opplysninger), utledetAv = Utledning(this, basertPå))

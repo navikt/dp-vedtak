@@ -26,6 +26,4 @@ fun <T : Comparable<T>> Regelsett.oppslag(
     produserer: Opplysningstype<T>,
     dato: Opplysningstype<LocalDate>,
     block: (LocalDate) -> T,
-): Regel<T> {
-    return Oppslag(produserer, dato, block).also { leggTil(it) }
-}
+): Regel<T> = Oppslag(produserer, dato, block).also { leggTil(LocalDate.MIN, produserer, it) }
