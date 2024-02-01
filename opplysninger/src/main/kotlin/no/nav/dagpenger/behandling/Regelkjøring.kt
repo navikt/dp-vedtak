@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling
 
+import no.nav.dagpenger.behandling.dag.RegeltreBygger
 import no.nav.dagpenger.behandling.regel.Regel
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -58,28 +59,13 @@ class Regelkjøring(
         }
     }
 
-    fun trenger(opplysningstype: Opplysningstype<*>) = trenger(opplysningstype, forDato)
-
-    // @todo: Lage graf representasjon av denne? Som kan traverseres, spørres om hvilke noder som er tilgjengelige fra en node, etc.
-    fun trenger(
-        opplysningstype: Opplysningstype<*>,
-        fraDato: LocalDateTime,
-    ): Set<Opplysningstype<*>> {
-        return when (val regel = finnRegel(opplysningstype)) {
-            null -> return emptySet()
-            else ->
-                regel.avhengerAv.map {
-                    if (finnRegel(it) != null) {
-                        trenger(it, fraDato)
-                    } else {
-                        setOf(it)
-                    }
-                }.flatten().filterNot { opplysninger.har(it) }.toSet()
-        }
-    }
-
-    private fun finnRegel(opplysningstype: Opplysningstype<*>): Regel<*>? {
-        return muligeRegler.find { it.produserer(opplysningstype) }
+    fun trenger(opplysningstype: Opplysningstype<*>): Set<Opplysningstype<*>> {
+        val dag = RegeltreBygger(muligeRegler).dag()
+        return dag
+            .subgraph { it.er(opplysningstype) }
+            .findLeafNodes()
+            .map { it.data }
+            .filterNot { opplysninger.har(it) }.toSet()
     }
 }
 
