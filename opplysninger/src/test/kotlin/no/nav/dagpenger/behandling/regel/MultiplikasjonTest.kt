@@ -17,18 +17,18 @@ class MultiplikasjonTest {
     private val b =
         Opplysningstype<Double>("B")
 
-    private val opplysninger =
-        Opplysninger(
-            Regelkjøring(
-                1.mai,
-                Regelsett().also {
-                    it.multiplikasjon(
-                        sum,
-                        a,
-                        b,
-                    )
-                },
-            ),
+    private val opplysninger = Opplysninger()
+    private val regelkjøring =
+        Regelkjøring(
+            1.mai,
+            opplysninger,
+            Regelsett().also {
+                it.multiplikasjon(
+                    sum,
+                    a,
+                    b,
+                )
+            },
         )
 
     @Test

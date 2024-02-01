@@ -10,22 +10,22 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class StørreEnnTest {
-    val vilkår = Opplysningstype<Boolean>("Vilkår")
-    val a = Opplysningstype<Double>("A")
-    val b = Opplysningstype<Double>("B")
+    private val vilkår = Opplysningstype<Boolean>("Vilkår")
+    private val a = Opplysningstype<Double>("A")
+    private val b = Opplysningstype<Double>("B")
 
-    val opplysninger =
-        Opplysninger(
-            Regelkjøring(
-                1.mai,
-                Regelsett().also {
-                    it.størreEnn(
-                        vilkår,
-                        a,
-                        b,
-                    )
-                },
-            ),
+    private val opplysninger = Opplysninger()
+    private val regelkjøring =
+        Regelkjøring(
+            1.mai,
+            opplysninger,
+            Regelsett().also {
+                it.størreEnn(
+                    vilkår,
+                    a,
+                    b,
+                )
+            },
         )
 
     @Test

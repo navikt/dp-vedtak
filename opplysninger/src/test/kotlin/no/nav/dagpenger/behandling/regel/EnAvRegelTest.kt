@@ -13,19 +13,18 @@ internal class EnAvRegelTest {
     private val opplysningB = Opplysningstype<Boolean>("B")
     private val opplysningC = Opplysningstype<Boolean>("C")
     private val produserer = Opplysningstype<Boolean>("A")
-    private val opplysninger =
-        Opplysninger(
-            Regelkjøring(
-                1.mai,
-                Regelsett().also {
-
-                    it.enAvRegel(
-                        produserer,
-                        opplysningB,
-                        opplysningC,
-                    )
-                },
-            ),
+    private val opplysninger = Opplysninger()
+    private val regelkjøring =
+        Regelkjøring(
+            1.mai,
+            opplysninger,
+            Regelsett().also {
+                it.enAvRegel(
+                    produserer,
+                    opplysningB,
+                    opplysningC,
+                )
+            },
         )
     private val regel =
         EnAvRegel(Opplysningstype("A"), opplysningB, opplysningC)

@@ -14,7 +14,7 @@ class RegelkjøringTest {
             }
 
         assertThrows<IllegalArgumentException> {
-            Regelkjøring(1.mai, regelsett)
+            Regelkjøring(1.mai, Opplysninger(), regelsett)
         }
     }
 }

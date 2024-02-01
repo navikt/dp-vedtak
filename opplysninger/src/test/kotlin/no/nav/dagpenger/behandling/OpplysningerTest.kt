@@ -20,7 +20,8 @@ class OpplysningerTest {
         val minsteinntekt = Opplysningstype("Minsteinntekt", vilkår)
         val alder = Opplysningstype("Alder", vilkår)
 
-        val opplysninger = Opplysninger(Regelkjøring(1.mai.atStartOfDay()))
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(1.mai, opplysninger)
 
         opplysninger.leggTil(Faktum(minsteinntekt, true))
         opplysninger.leggTil(Faktum(alder, true))
@@ -34,7 +35,8 @@ class OpplysningerTest {
     @Test
     fun `tillater ikke overlappende opplysninger av samme type`() {
         val opplysningstype = Opplysningstype<Double>("Type")
-        val opplysninger = Opplysninger(Regelkjøring(1.mai))
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(1.mai, opplysninger)
 
         opplysninger.leggTil(Faktum(opplysningstype, 0.5, Gyldighetsperiode(1.mai, 10.mai)))
         assertThrows<IllegalArgumentException> {
@@ -85,36 +87,33 @@ class OpplysningerTest {
         val fraDato = 10.mai.atStartOfDay()
         val opplysninger =
             Opplysninger(
-                Regelkjøring(
-                    fraDato,
-                    regelsett,
-                ),
                 listOf(
                     // Setter opp opplysninger med ting som er kjent fra før
                     // Har er ikke lengre gyldig og må hentes på nytt
                     Faktum(inntekt, 221221.0, Gyldighetsperiode(1.januar, 1.mai)),
                 ),
             )
+        val regelkjøring = Regelkjøring(fraDato, opplysninger, regelsett)
 
         // Sett virkningsdato som en opplysning
         opplysninger.leggTil(Faktum(virkningsdato, fraDato.toLocalDate()))
 
         // Flyt for å innhente manglende opplysninger
-        val actual = opplysninger.trenger(minsteinntekt)
+        val actual = regelkjøring.trenger(minsteinntekt)
         assertEquals(3, actual.size)
         assertEquals(setOf(inntekt, nedreTerskelFaktor, øvreTerskelFaktor), actual)
 
         assertEquals(Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(grunnbeløp).verdi)
 
         opplysninger.leggTil(Faktum(nedreTerskelFaktor, 1.5))
-        assertEquals(2, opplysninger.trenger(minsteinntekt).size)
+        assertEquals(2, regelkjøring.trenger(minsteinntekt).size)
 
         opplysninger.leggTil(Faktum(øvreTerskelFaktor, 3.0))
-        assertEquals(1, opplysninger.trenger(minsteinntekt).size)
+        assertEquals(1, regelkjøring.trenger(minsteinntekt).size)
 
         // Har er ikke lengre gyldig inntekt og må hentes på nytt
         opplysninger.leggTil(Hypotese(inntekt, 321321.0, Gyldighetsperiode(9.mai)))
-        assertEquals(0, opplysninger.trenger(minsteinntekt).size)
+        assertEquals(0, regelkjøring.trenger(minsteinntekt).size)
 
         assertTrue(opplysninger.har(minsteinntekt))
         assertTrue(opplysninger.finnOpplysning(minsteinntekt).verdi)

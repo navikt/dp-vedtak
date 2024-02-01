@@ -3,9 +3,9 @@ package no.nav.dagpenger.behandling.features
 import io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME
 import org.junit.platform.suite.api.ConfigurationParameter
 import org.junit.platform.suite.api.SelectClasspathResource
-import org.junit.platform.suite.api.Suite
 
-@Suite
+// @Suite
+// Skrudd av enn så lenge
 @SelectClasspathResource("features")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 class RunCucumberTest

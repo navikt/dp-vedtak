@@ -6,23 +6,24 @@ import java.time.LocalDateTime
 
 class Regelkjøring(
     val forDato: LocalDateTime,
+    private val opplysninger: Opplysninger,
     vararg regelsett: Regelsett,
 ) {
-    constructor(fraDato: LocalDate, vararg regelsett: Regelsett) : this(fraDato.atStartOfDay(), *regelsett)
+    constructor(
+        fraDato: LocalDate,
+        opplysninger: Opplysninger,
+        vararg regelsett: Regelsett,
+    ) : this(fraDato.atStartOfDay(), opplysninger, *regelsett)
 
     private val muligeRegler: MutableList<Regel<*>> = regelsett.flatMap { it.regler() }.toMutableList()
     private val plan: MutableList<Regel<*>> = mutableListOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
-    private lateinit var opplysninger: Opplysninger
 
     init {
         require(muligeRegler.groupBy { it.produserer }.all { it.value.size == 1 }) {
             "Regelsett inneholder flere regler som produserer samme opplysningstype."
         }
-    }
-
-    fun registrer(opplysninger: Opplysninger) {
-        this.opplysninger = opplysninger
+        opplysninger.registrer(this)
     }
 
     fun evaluer() {
@@ -56,6 +57,8 @@ class Regelkjøring(
             muligeRegler.remove(it)
         }
     }
+
+    fun trenger(opplysningstype: Opplysningstype<*>) = trenger(opplysningstype, forDato)
 
     // @todo: Lage graf representasjon av denne? Som kan traverseres, spørres om hvilke noder som er tilgjengelige fra en node, etc.
     fun trenger(

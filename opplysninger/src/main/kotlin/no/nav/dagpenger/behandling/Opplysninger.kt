@@ -5,23 +5,21 @@ interface LesbarOpplysninger {
 
     fun har(opplysningstype: Opplysningstype<*>): Boolean
 
-    fun trenger(opplysningstype: Opplysningstype<*>): Set<Opplysningstype<*>>
-
     fun finnAlle(opplysningstyper: List<Opplysningstype<*>>): List<Opplysning<*>>
 
     fun finnAlle(): List<Opplysning<*>>
 }
 
 class Opplysninger(
-    private val regelkjøring: Regelkjøring,
     opplysninger: List<Opplysning<*>> = emptyList(),
 ) : LesbarOpplysninger {
+    private lateinit var regelkjøring: Regelkjøring
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
 
-    constructor(regelkjøring: Regelkjøring) : this(regelkjøring, mutableListOf())
+    constructor() : this(mutableListOf())
 
-    init {
-        regelkjøring.registrer(this)
+    fun registrer(regelkjøring: Regelkjøring) {
+        this.regelkjøring = regelkjøring
     }
 
     override fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T> {
@@ -41,8 +39,6 @@ class Opplysninger(
         opplysninger.firstOrNull { it.er(opplysningstype) && it.gyldighetsperiode.inneholder(regelkjøring.forDato) } as Opplysning<T>?
 
     override fun har(opplysningstype: Opplysningstype<*>) = finnNullableOpplysning(opplysningstype) != null
-
-    override fun trenger(opplysningstype: Opplysningstype<*>) = regelkjøring.trenger(opplysningstype, regelkjøring.forDato)
 
     override fun finnAlle(opplysningstyper: List<Opplysningstype<*>>) = opplysningstyper.mapNotNull { finnNullableOpplysning(it) }
 
