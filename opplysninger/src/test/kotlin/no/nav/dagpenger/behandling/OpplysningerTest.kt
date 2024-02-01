@@ -131,5 +131,4 @@ class OpplysningerTest {
 
 /*
 1. Gyldighetsperiode for regler
-2. Sporing av utledning
  */
