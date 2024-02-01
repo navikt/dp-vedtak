@@ -5,6 +5,7 @@ import java.math.RoundingMode
 
 class Beløp private constructor(verdi: BigDecimal) : Comparable<Beløp> {
     private val verdi = verdi.setScale(antallDesimaler, RoundingMode.HALF_UP) // @todo: Setter avrunding som test.
+
     companion object {
         private val antallDesimaler = 2
 

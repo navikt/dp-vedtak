@@ -1,7 +1,9 @@
 package no.nav.dagpenger.behandling.dag.printer
 
-import no.nav.dagpenger.behandling.Opplysningstype
+import no.nav.dagpenger.behandling.dag.Node
+
+typealias RootNodeFinner = (Node<*>) -> Boolean
 
 interface DAGPrinter {
-    fun toPrint(root: Opplysningstype<Boolean>? = null): String
+    fun toPrint(block: RootNodeFinner? = null): String
 }

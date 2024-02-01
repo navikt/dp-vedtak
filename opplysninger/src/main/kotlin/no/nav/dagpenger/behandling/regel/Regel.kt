@@ -5,6 +5,7 @@ import no.nav.dagpenger.behandling.Hypotese
 import no.nav.dagpenger.behandling.LesbarOpplysninger
 import no.nav.dagpenger.behandling.Opplysning
 import no.nav.dagpenger.behandling.Opplysningstype
+import no.nav.dagpenger.behandling.Utledning
 
 abstract class Regel<T : Comparable<T>>(
     internal val produserer: Opplysningstype<T>,
@@ -17,13 +18,14 @@ abstract class Regel<T : Comparable<T>>(
     fun produserer(opplysningstype: Opplysningstype<*>) = produserer.er(opplysningstype)
 
     fun lagProdukt(opplysninger: LesbarOpplysninger): Opplysning<T> {
-        val basertPåFaktum =
-            opplysninger.finnAlle(avhengerAv).all {
+        val basertPå = opplysninger.finnAlle(avhengerAv)
+        val erAlleFaktum =
+            basertPå.all {
                 it is Faktum<*>
             }
-        return when (basertPåFaktum) {
-            true -> return Faktum(produserer, kjør(opplysninger))
-            false -> Hypotese(produserer, kjør(opplysninger))
+        return when (erAlleFaktum) {
+            true -> return Faktum(produserer, kjør(opplysninger), utledetAv = Utledning(this, basertPå))
+            false -> Hypotese(produserer, kjør(opplysninger), utledetAv = Utledning(this, basertPå))
         }
     }
 }

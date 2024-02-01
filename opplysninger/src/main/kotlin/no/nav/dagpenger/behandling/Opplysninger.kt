@@ -8,6 +8,8 @@ interface LesbarOpplysninger {
     fun trenger(opplysningstype: Opplysningstype<*>): Set<Opplysningstype<*>>
 
     fun finnAlle(opplysningstyper: List<Opplysningstype<*>>): List<Opplysning<*>>
+
+    fun finnAlle(): List<Opplysning<*>>
 }
 
 class Opplysninger(
@@ -43,4 +45,6 @@ class Opplysninger(
     override fun trenger(opplysningstype: Opplysningstype<*>) = regelkjøring.trenger(opplysningstype, regelkjøring.forDato)
 
     override fun finnAlle(opplysningstyper: List<Opplysningstype<*>>) = opplysningstyper.mapNotNull { finnNullableOpplysning(it) }
+
+    override fun finnAlle() = opplysninger.toList()
 }

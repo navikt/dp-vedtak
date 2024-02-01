@@ -1,11 +1,10 @@
 package no.nav.dagpenger.behandling.dag.printer
 
-import no.nav.dagpenger.behandling.Opplysningstype
 import no.nav.dagpenger.behandling.dag.DAG
 import no.nav.dagpenger.behandling.dag.Node
 
 class PrettyPrinter(private val dag: DAG<*>) : DAGPrinter {
-    override fun toPrint(root: Opplysningstype<Boolean>?): String {
+    override fun toPrint(block: RootNodeFinner?): String {
         val adjacencyList = dag.edges.groupBy { it.from }
         val visitedNodes = mutableSetOf<Node<*>>()
 
@@ -29,8 +28,8 @@ class PrettyPrinter(private val dag: DAG<*>) : DAGPrinter {
         }
 
         val startNode =
-            when (root) {
-                is Opplysningstype -> dag.nodes.first { it.data == root }
+            when (block != null) {
+                true -> dag.nodes.first { block(it) }
                 else -> dag.nodes.first()
             }
         printNode(startNode, 0)

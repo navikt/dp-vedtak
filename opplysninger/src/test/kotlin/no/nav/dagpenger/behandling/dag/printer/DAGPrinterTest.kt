@@ -31,7 +31,7 @@ class DAGPrinterTest {
               | Multiplikasjon
               B: Opplysningstype(navn='B', parent=null, child=0)
             """.trimIndent(),
-            prettyPrinter.toPrint(),
+            prettyPrinter.toPrint { it.data == c },
         )
     }
 

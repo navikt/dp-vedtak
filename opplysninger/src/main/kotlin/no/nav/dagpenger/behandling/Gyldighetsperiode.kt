@@ -18,4 +18,13 @@ data class Gyldighetsperiode(
     fun overlapp(gyldighetsperiode: Gyldighetsperiode) =
         this.contains(gyldighetsperiode.fom) || this.contains(gyldighetsperiode.fom) ||
             gyldighetsperiode.contains(this.fom) || gyldighetsperiode.contains(this.fom)
+
+    override fun toString(): String {
+        return when {
+            fom == LocalDateTime.MIN && tom == LocalDateTime.MAX -> "gyldig for alltid"
+            fom == LocalDateTime.MIN -> "gyldig til ${tom.toLocalDate()}"
+            tom == LocalDateTime.MAX -> "gyldig fra ${fom.toLocalDate()}"
+            else -> "gyldig fra ${fom.toLocalDate()} til ${tom.toLocalDate()}"
+        }
+    }
 }
