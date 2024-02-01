@@ -34,3 +34,10 @@ dependencies {
 application {
     mainClass.set("no.nav.dagpenger.vedtak.mediator.AppKt")
 }
+
+tasks.withType<Jar>().configureEach {
+    dependsOn(":modell:jar", ":openapi:jar")
+    manifest { attributes["Main-Class"] = application.mainClass }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+}

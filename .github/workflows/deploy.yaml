@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
       - uses: gradle/wrapper-validation-action@v1.1.0
       - uses: gradle/gradle-build-action@v2.6.1
         env:
@@ -28,7 +28,7 @@ jobs:
         with:
           gradle-version: wrapper
           dependency-graph: generate-and-submit
-          arguments: --configuration-cache build installDist
+          arguments: --configuration-cache build
 
       - name: Publish results (unit test)
         uses: EnricoMi/publish-unit-test-result-action@v2
