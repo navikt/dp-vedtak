@@ -12,7 +12,7 @@ Alle opplysninger har en gyldighetsperiode. Fra og med er obligatorisk, men til 
 
 Vi kan identifisere ulike opplysninger via en type. Typene kan struktureres i et hierarki. På den måten kan vi vite om en opplysning er et vilkår eller ei.
 
-![](opplysningstyper.png "Opplysningstyper")
+![](https://raw.githubusercontent.com/navikt/dp-vedtak/c7fa5bbebe3af0b70650c32f1aa19c6eb4849fc7/opplysninger/oppysningstyper.png "Opplysningstyper")
 
 ## Tilstand
 
