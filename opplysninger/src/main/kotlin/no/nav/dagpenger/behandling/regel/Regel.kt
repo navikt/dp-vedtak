@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling.regel
 
 import no.nav.dagpenger.behandling.Faktum
+import no.nav.dagpenger.behandling.Gyldighetsperiode
 import no.nav.dagpenger.behandling.Hypotese
 import no.nav.dagpenger.behandling.LesbarOpplysninger
 import no.nav.dagpenger.behandling.Opplysning
@@ -20,9 +21,15 @@ abstract class Regel<T : Comparable<T>>(
     fun lagProdukt(opplysninger: LesbarOpplysninger): Opplysning<T> {
         val basertPå = opplysninger.finnAlle(avhengerAv)
         val erAlleFaktum = basertPå.all { it is Faktum<*> }
+        val utledetAv = Utledning(this, basertPå)
+        val gyldig =
+            Gyldighetsperiode(
+                fom = basertPå.maxOf { it.gyldighetsperiode.fom },
+                tom = basertPå.minOf { it.gyldighetsperiode.tom },
+            )
         return when (erAlleFaktum) {
-            true -> return Faktum(produserer, kjør(opplysninger), utledetAv = Utledning(this, basertPå))
-            false -> Hypotese(produserer, kjør(opplysninger), utledetAv = Utledning(this, basertPå))
+            true -> Faktum(produserer, kjør(opplysninger), utledetAv = utledetAv, gyldighetsperiode = gyldig)
+            false -> Hypotese(produserer, kjør(opplysninger), utledetAv = utledetAv, gyldighetsperiode = gyldig)
         }
     }
 }

@@ -3,7 +3,6 @@ package no.nav.dagpenger.behandling
 import no.nav.dagpenger.behandling.dag.DatatreBygger
 import no.nav.dagpenger.behandling.dag.RegeltreBygger
 import no.nav.dagpenger.behandling.dag.printer.MermaidPrinter
-import no.nav.dagpenger.behandling.dsl.DSL.Companion.regelsett
 import no.nav.dagpenger.behandling.regel.enAvRegel
 import no.nav.dagpenger.behandling.regel.multiplikasjon
 import no.nav.dagpenger.behandling.regel.oppslag
@@ -116,7 +115,7 @@ class OpplysningerTest {
 
         // Har er ikke lengre gyldig inntekt og må hentes på nytt
         opplysninger.leggTil(Hypotese(inntekt12, 321321.0, Gyldighetsperiode(9.mai)))
-        opplysninger.leggTil(Hypotese(inntekt36, 321321.0, Gyldighetsperiode(9.mai)))
+        opplysninger.leggTil(Hypotese(inntekt36, 321321.0, Gyldighetsperiode(9.mai, 12.mai)))
         assertEquals(0, regelkjøring.trenger(minsteinntekt).size)
 
         assertTrue(opplysninger.har(minsteinntekt))
