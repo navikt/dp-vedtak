@@ -63,7 +63,7 @@ class OpplysningerTest {
         val regelsett = Regelsett()
 
         val nedreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 12 mnd inntekt")
-        val øvreTerskelFaktor = Opplysningstype<Double>("Antall G for krav 36 mnd inntekt")
+        val øvreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 36 mnd inntekt")
         val inntekt12 = Opplysningstype<Double>("Inntekt siste 12 mnd")
         val inntekt36 = Opplysningstype<Double>("Inntekt siste 36 mnd")
         val grunnbeløp = Opplysningstype<Double>("Grunnbeløp")
