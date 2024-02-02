@@ -3,6 +3,7 @@ package no.nav.dagpenger.behandling
 import no.nav.dagpenger.behandling.dag.DatatreBygger
 import no.nav.dagpenger.behandling.dag.RegeltreBygger
 import no.nav.dagpenger.behandling.dag.printer.MermaidPrinter
+import no.nav.dagpenger.behandling.dsl.DSL.Companion.regelsett
 import no.nav.dagpenger.behandling.regel.enAvRegel
 import no.nav.dagpenger.behandling.regel.multiplikasjon
 import no.nav.dagpenger.behandling.regel.oppslag
@@ -46,8 +47,8 @@ class OpplysningerTest {
 
         assertEquals(0.5, opplysninger.finnOpplysning(opplysningstype).verdi)
         assertEquals(0.5, opplysninger.finnOpplysning(opplysningstype).verdi)
-        // TODO: Denne testen er ikk elengre mulig nå som regelkjøring eier fraDato
-        // assertEquals(1.5, opplysninger.finnOpplysning(opplysningstype).verdi)
+        Regelkjøring(15.mai, opplysninger) // Bytt til 15. mai for regelkjøringen
+        assertEquals(1.5, opplysninger.finnOpplysning(opplysningstype).verdi)
     }
 
     private object Grunnbeløp {
@@ -61,26 +62,26 @@ class OpplysningerTest {
         val vilkår = Opplysningstype<Boolean>("Vilkår")
         val regelsett = Regelsett()
 
-        val nedreTerskelFaktor = Opplysningstype<Double>("Nedre terskel (1.5G)")
-        val øvreTerskelFaktor = Opplysningstype<Double>("Øvre terskel (3G)")
-        val inntekt = Opplysningstype<Double>("Inntekt")
+        val nedreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 12 mnd inntekt")
+        val øvreTerskelFaktor = Opplysningstype<Double>("Antall G for krav 36 mnd inntekt")
+        val inntekt12 = Opplysningstype<Double>("Inntekt siste 12 mnd")
+        val inntekt36 = Opplysningstype<Double>("Inntekt siste 36 mnd")
         val grunnbeløp = Opplysningstype<Double>("Grunnbeløp")
         val virkningsdato = Opplysningstype<LocalDate>("Virkningsdato")
 
         regelsett.oppslag(grunnbeløp, virkningsdato) { Grunnbeløp.finnFor(it) }
 
-        val nedreTerskel = Opplysningstype<Double>("Inntektskrav for nedre terskel (1.5G)")
+        val nedreTerskel = Opplysningstype<Double>("Inntektskrav for siste 12 mnd")
         regelsett.multiplikasjon(nedreTerskel, nedreTerskelFaktor, grunnbeløp)
 
-        val øvreTerskel = Opplysningstype<Double>("Inntektskrav for øvre terskel (3G)")
-        regelsett.multiplikasjon(øvreTerskel, nedreTerskelFaktor, grunnbeløp)
-        regelsett.multiplikasjon(gjelderFra = 1.februar, øvreTerskel, øvreTerskelFaktor, grunnbeløp)
+        val øvreTerskel = Opplysningstype<Double>("Inntektskrav for siste 36 mnd")
+        regelsett.multiplikasjon(øvreTerskel, øvreTerskelFaktor, grunnbeløp)
 
-        val overNedreTerskel = Opplysningstype<Boolean>("Inntekt er over nedre terskel (1.5G)")
-        regelsett.størreEnn(overNedreTerskel, inntekt, nedreTerskel)
+        val overNedreTerskel = Opplysningstype<Boolean>("Inntekt er over kravet for siste 12 mnd")
+        regelsett.størreEnn(overNedreTerskel, inntekt12, nedreTerskel)
 
-        val overØvreTerskel = Opplysningstype<Boolean>("Inntekt er over øvre terskel (3G)")
-        regelsett.størreEnn(overØvreTerskel, inntekt, øvreTerskel)
+        val overØvreTerskel = Opplysningstype<Boolean>("Inntekt er over kravet for siste 36 mnd")
+        regelsett.størreEnn(overØvreTerskel, inntekt36, øvreTerskel)
 
         val minsteinntekt = Opplysningstype("Minsteinntekt", vilkår)
         regelsett.enAvRegel(minsteinntekt, overNedreTerskel, overØvreTerskel)
@@ -91,7 +92,7 @@ class OpplysningerTest {
                 listOf(
                     // Setter opp opplysninger med ting som er kjent fra før
                     // Har er ikke lengre gyldig og må hentes på nytt
-                    Faktum(inntekt, 221221.0, Gyldighetsperiode(1.januar, 1.mai)),
+                    Faktum(inntekt12, 221221.0, Gyldighetsperiode(1.januar, 1.mai)),
                 ),
             )
         val regelkjøring = Regelkjøring(fraDato, opplysninger, regelsett)
@@ -101,19 +102,21 @@ class OpplysningerTest {
 
         // Flyt for å innhente manglende opplysninger
         val actual = regelkjøring.trenger(minsteinntekt)
-        assertEquals(3, actual.size)
-        assertEquals(setOf(inntekt, nedreTerskelFaktor, øvreTerskelFaktor), actual)
+
+        assertEquals(4, actual.size)
+        assertEquals(setOf(inntekt12, inntekt36, nedreTerskelFaktor, øvreTerskelFaktor), actual)
 
         assertEquals(Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(grunnbeløp).verdi)
 
         opplysninger.leggTil(Faktum(nedreTerskelFaktor, 1.5))
-        assertEquals(2, regelkjøring.trenger(minsteinntekt).size)
+        assertEquals(3, regelkjøring.trenger(minsteinntekt).size)
 
         opplysninger.leggTil(Faktum(øvreTerskelFaktor, 3.0))
-        assertEquals(1, regelkjøring.trenger(minsteinntekt).size)
+        assertEquals(2, regelkjøring.trenger(minsteinntekt).size)
 
         // Har er ikke lengre gyldig inntekt og må hentes på nytt
-        opplysninger.leggTil(Hypotese(inntekt, 321321.0, Gyldighetsperiode(9.mai)))
+        opplysninger.leggTil(Hypotese(inntekt12, 321321.0, Gyldighetsperiode(9.mai)))
+        opplysninger.leggTil(Hypotese(inntekt36, 321321.0, Gyldighetsperiode(9.mai)))
         assertEquals(0, regelkjøring.trenger(minsteinntekt).size)
 
         assertTrue(opplysninger.har(minsteinntekt))

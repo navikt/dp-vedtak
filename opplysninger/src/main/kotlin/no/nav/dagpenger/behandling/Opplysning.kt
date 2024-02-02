@@ -21,8 +21,7 @@ sealed class Opplysning<T : Comparable<T>>(
 ) : Klassifiserbart by opplysningstype {
     abstract fun bekreft(): Faktum<T>
 
-    override fun toString() =
-        "${javaClass.simpleName} om ${opplysningstype.navn} har verdi: $verdi som er $gyldighetsperiode"
+    override fun toString() = "${javaClass.simpleName} om ${opplysningstype.navn} har verdi: $verdi som er $gyldighetsperiode"
 
     fun sammeSom(opplysning: Opplysning<*>): Boolean {
         return opplysningstype == opplysning.opplysningstype && gyldighetsperiode.overlapp(opplysning.gyldighetsperiode)
@@ -36,7 +35,6 @@ class Hypotese<T : Comparable<T>>(
     utledetAv: Utledning? = null,
     kilde: Kilde? = null,
 ) : Opplysning<T>(opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde) {
-
     override fun bekreft() = Faktum(super.opplysningstype, verdi, gyldighetsperiode, utledetAv)
 }
 
@@ -47,6 +45,5 @@ class Faktum<T : Comparable<T>>(
     utledetAv: Utledning? = null,
     kilde: Kilde? = null,
 ) : Opplysning<T>(opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde) {
-
     override fun bekreft() = this
 }
