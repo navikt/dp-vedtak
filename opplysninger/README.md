@@ -12,7 +12,7 @@ Alle opplysninger har en gyldighetsperiode. Fra og med er obligatorisk, men til 
 
 Vi kan identifisere ulike opplysninger via en type. Typene kan struktureres i et hierarki. På den måten kan vi vite om en opplysning er et vilkår eller ei.
 
-![](./opplysningstyper.png "Opplysningstyper")
+![](opplysningstyper.png "Opplysningstyper")
 
 ## Tilstand
 
