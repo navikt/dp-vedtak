@@ -1,5 +1,8 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("common")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     application
 }
 
@@ -35,9 +38,6 @@ application {
     mainClass.set("no.nav.dagpenger.vedtak.mediator.AppKt")
 }
 
-tasks.withType<Jar>().configureEach {
-    dependsOn(":modell:jar", ":openapi:jar")
-    manifest { attributes["Main-Class"] = application.mainClass }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+tasks.withType<ShadowJar> {
+    mergeServiceFiles()
 }
