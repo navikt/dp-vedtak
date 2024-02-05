@@ -11,6 +11,139 @@ servers:
   - url: https://dp-vedtak.intern.nav.no
     description: prod
 paths:
+  /behandling:
+    get:
+      summary: Hent alle behandlinger for en gitt person
+      security:
+        - azureAd: [ ]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Behandling'
+          description: OK
+  /behandling/{behandlingId}:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+    get:
+      summary: Hent en spesifikk behandling
+      security:
+        - azureAd: [ ]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Behandling'
+          description: OK
+  /behandling/{behandlingId}/opplysning/{opplysningId}:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+      - name: opplysningId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Opplysningens id
+    put:
+      summary: Overskriv en opplysning
+      operationId: oppdaterOpplysning
+      security:
+        - azureAd: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - verdi
+                - begrunnelse
+              properties:
+                verdi:
+                  type: string
+                begrunnelse:
+                  type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Behandling'
+          description: OK
+  /behandling/{behandlingId}/opplysning/bekreftelse:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+    post:
+      summary: Bekrefter en eller flere opplysninger
+      security:
+        - azureAd: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/OpplysningsId'
+      responses:
+        201:
+          headers:
+            Location:
+              schema:
+                type: string
+                description: URL til bekreftelsen
+          description: OK
+  /behandling/{behandlingId}/opplysning/bekreftelse/{bekreftelseId}:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+      - name: bekreftelseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Bekreftelsens id
+    get:
+      summary: Hent en bekreftelse
+      security:
+        - azureAd: [ ]
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bekreftelse'
+          description: OK
+
   /vedtak:
     post:
       responses:
@@ -88,6 +221,152 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Utbetaling'
+
+    Behandling:
+      type: object
+      required:
+        - behandlingId
+        - opplysning
+        - utbetalinger
+      properties:
+        behandlingId:
+          type: string
+          format: uuid
+        opplysning:
+          type: array
+          items:
+            $ref: '#/components/schemas/Opplysning'
+
+    OpplysningsId:
+      type: string
+      format: uuid
+
+    Opplysning:
+      type: object
+      required:
+        - id
+        - opplysningstype
+        - verdi
+        - datatype
+        - status
+        - gyldigFraOgMed
+        - gyldigTilOgMed
+        - kilde
+      properties:
+        id:
+          $ref: '#/components/schemas/OpplysningsId'
+        opplysningstype:
+          type: string
+        verdi:
+          type: string
+        status:
+          type: string
+          enum: [ "Hypotese", "Faktum" ]
+        gyldigFraOgMed:
+          type: string
+          format: date-time
+        gyldigTilOgMed:
+          type: string
+          format: date-time
+        datatype:
+          type: string
+          description: |
+            Hvilken datatype opplysningen har, f.eks.: "string", "number", "date"
+        kilde:
+          oneOf:
+            - $ref: '#/components/schemas/Systemkilde'
+            - $ref: '#/components/schemas/Saksbehandlerkilde'
+          discriminator:
+            propertyName: type
+        utledetAv:
+          $ref: '#/components/schemas/Utledning'
+
+    Opplysningskilde:
+      description: |
+        Kilde for opplysningen
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+
+    Saksbehandlerkilde:
+      allOf:
+        - $ref: "#/components/schemas/Opplysningskilde"
+        - $ref: '#/components/schemas/Saksbehandler'
+        - type: object
+          properties:
+            blurp:
+              type: string
+            blarp:
+              type: string
+            fjong:
+              type: string
+
+    Systemkilde:
+      allOf:
+        - $ref: "#/components/schemas/Opplysningskilde"
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+          example:
+            id: "dp-inntekt"
+
+    Utledning:
+      type: object
+      required:
+        - produserer
+        - regel
+        - opplysninger
+      properties:
+        opplysningstype:
+          type: string
+        regel:
+          $ref: '#/components/schemas/Regel'
+        opplysninger:
+          type: array
+          items:
+            $ref: '#/components/schemas/Opplysning'
+
+    Regel:
+      type: object
+      required:
+        - navn
+      properties:
+        navn:
+          type: string
+
+    Bekreftelse:
+      type: object
+      required:
+        - bekreftelseId
+        - bekreftet
+      properties:
+        bekreftelseId:
+          type: string
+          format: uuid
+        utført:
+          type: string
+          format: date-time
+        saksbehandler:
+          $ref: "#/components/schemas/Saksbehandler"
+        bekreftet:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpplysningsId'
+
+    Saksbehandler:
+      type: object
+      required:
+        - ident
+      properties:
+        ident:
+          type: string
 
   securitySchemes:
     azureAd:
