@@ -23,7 +23,7 @@ spec:
     - name: GRUPPER_SAKSBEHANDLER
       value: {{azure.grupper.saksbehandler}}
     - name: flyway.cleanDisabled
-      value: {{flyway.cleanDisabled}}
+      value: '{{flyway.cleanDisabled}}'
 
   {{#if ingresses}}
   ingresses:
