@@ -85,7 +85,7 @@ class OpplysningerTest {
         val minsteinntekt = Opplysningstype("Minsteinntekt", vilkår)
         regelsett.enAvRegel(minsteinntekt, overNedreTerskel, overØvreTerskel)
 
-        val fraDato = 10.mai.atStartOfDay()
+        val regelverksdato = 10.mai.atStartOfDay()
         val opplysninger =
             Opplysninger(
                 listOf(
@@ -94,10 +94,10 @@ class OpplysningerTest {
                     Faktum(inntekt12, 221221.0, Gyldighetsperiode(1.januar, 1.mai)),
                 ),
             )
-        val regelkjøring = Regelkjøring(fraDato, opplysninger, regelsett)
+        val regelkjøring = Regelkjøring(regelverksdato, opplysninger, regelsett)
 
         // Sett virkningsdato som en opplysning
-        opplysninger.leggTil(Faktum(virkningsdato, fraDato.toLocalDate()))
+        opplysninger.leggTil(Faktum(virkningsdato, regelverksdato.toLocalDate()))
 
         // Flyt for å innhente manglende opplysninger
         val actual = regelkjøring.trenger(minsteinntekt)
