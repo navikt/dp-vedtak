@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class DAGPrinterTest {
-    private val regelsett = Regelsett()
+    private val regelsett = Regelsett("regelsett")
     private val a = Opplysningstype<Double>("A")
     private val b = Opplysningstype<Double>("B")
     private val c =

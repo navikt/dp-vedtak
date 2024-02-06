@@ -10,7 +10,7 @@ import kotlin.test.assertContains
 class RegeltreByggerTest {
     @Test
     fun `bygg regeltre`() {
-        val regelsett = Regelsett()
+        val regelsett = Regelsett("regelsett")
         val a = Opplysningstype<Double>("A")
         val b = Opplysningstype<Double>("B")
         val c = Opplysningstype<Double>("A * B")

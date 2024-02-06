@@ -3,7 +3,7 @@ package no.nav.dagpenger.behandling
 import no.nav.dagpenger.behandling.regel.Regel
 import java.time.LocalDate
 
-class Regelsett {
+class Regelsett(val navn: String) {
     private val regler: MutableMap<Opplysningstype<*>, TemporalCollection<Regel<*>>> = mutableMapOf()
 
     fun regler(forDato: LocalDate = LocalDate.MIN) =

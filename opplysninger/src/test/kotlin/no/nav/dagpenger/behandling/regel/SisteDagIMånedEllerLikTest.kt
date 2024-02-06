@@ -9,7 +9,7 @@ import no.nav.dagpenger.behandling.mai
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class StørreEnnEllerLikTest {
+class SisteDagIMånedEllerLikTest {
     private val vilkår = Opplysningstype<Boolean>("Vilkår")
     private val a = Opplysningstype<Double>("A")
     private val b = Opplysningstype<Double>("B")
@@ -19,7 +19,7 @@ class StørreEnnEllerLikTest {
         Regelkjøring(
             1.mai,
             opplysninger,
-            Regelsett().also {
+            Regelsett("regelsett").also {
                 it.størreEnnEllerLik(
                     vilkår,
                     a,

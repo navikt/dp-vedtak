@@ -14,7 +14,7 @@ class DatatreBygger(private val opplysninger: Opplysninger) {
             opplysning.utledetAv?.opplysninger?.forEach { utledning ->
                 val utledningNode = Node("${utledning.opplysningstype.navn}: ${utledning.verdi}", utledning)
                 nodes.add(utledningNode)
-                edges.add(Edge(from = utledningNode, to = element, edgeName = "Brukes av"))
+                edges.add(Edge(from = utledningNode, to = element, edgeName = "brukes til"))
             }
         }
         return DAG(nodes = nodes, edges = edges)

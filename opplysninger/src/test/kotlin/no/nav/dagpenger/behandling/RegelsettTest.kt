@@ -12,7 +12,7 @@ class RegelsettTest {
     private val produserer = Opplysningstype<Double>("Output")
     private val regelsett
         get() =
-            Regelsett().apply {
+            Regelsett("regelsett").apply {
                 multiplikasjon(1.januar, produserer, grunntall, faktorA)
                 multiplikasjon(1.juni, produserer, grunntall, faktorB)
             }

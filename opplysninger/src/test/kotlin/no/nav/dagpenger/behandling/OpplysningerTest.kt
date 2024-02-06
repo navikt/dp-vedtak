@@ -4,8 +4,11 @@ import no.nav.dagpenger.behandling.dag.DatatreBygger
 import no.nav.dagpenger.behandling.dag.RegeltreBygger
 import no.nav.dagpenger.behandling.dag.printer.MermaidPrinter
 import no.nav.dagpenger.behandling.regel.enAvRegel
+import no.nav.dagpenger.behandling.regel.førEllerLik
+import no.nav.dagpenger.behandling.regel.leggTilÅr
 import no.nav.dagpenger.behandling.regel.multiplikasjon
 import no.nav.dagpenger.behandling.regel.oppslag
+import no.nav.dagpenger.behandling.regel.sisteDagIMåned
 import no.nav.dagpenger.behandling.regel.størreEnnEllerLik
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -59,7 +62,7 @@ class OpplysningerTest {
     @Test
     fun `finn alle løvnoder som mangler`() {
         val vilkår = Opplysningstype<Boolean>("Vilkår")
-        val regelsett = Regelsett()
+        val regelsett = Regelsett("regelsett")
 
         val nedreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 12 mnd inntekt")
         val øvreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 36 mnd inntekt")
@@ -120,6 +123,51 @@ class OpplysningerTest {
 
         assertTrue(opplysninger.har(minsteinntekt))
         assertTrue(opplysninger.finnOpplysning(minsteinntekt).verdi)
+
+        val regelDAG = RegeltreBygger(regelsett).dag()
+        val mermaidDiagram = MermaidPrinter(regelDAG).toPrint()
+        println(mermaidDiagram)
+        println(opplysninger.toString())
+
+        val dataDAG = DatatreBygger(opplysninger).dag()
+        println(MermaidPrinter(dataDAG, retning = "LR").toPrint())
+    }
+
+    @Test
+    fun `test av datoer ved å sjekke kravet til alder`() {
+        val regelsett = Regelsett("alder")
+
+        val fødselsdato = Opplysningstype<LocalDate>("Fødselsdato")
+        val aldersgrense = Opplysningstype<Int>("Aldersgrense")
+        val virkningsdato = Opplysningstype<LocalDate>("Virkningsdato")
+
+        regelsett.oppslag(aldersgrense, virkningsdato) { 67 }
+
+        val sisteMåned = Opplysningstype<LocalDate>("Dato søker når maks alder")
+        regelsett.leggTilÅr(sisteMåned, fødselsdato, aldersgrense)
+
+        val sisteDagIMåned = Opplysningstype<LocalDate>("Siste mulige dag bruker kan oppfylle alderskrav")
+        regelsett.sisteDagIMåned(sisteDagIMåned, sisteMåned)
+
+        val alderskrav = Opplysningstype<Boolean>("Er bruker under alderskravet?")
+        regelsett.førEllerLik(alderskrav, virkningsdato, sisteDagIMåned)
+
+        val fraDato = 10.mai.atStartOfDay()
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(fraDato, opplysninger, regelsett)
+
+        // Flyt for å innhente manglende opplysninger
+        val trenger = regelkjøring.trenger(alderskrav)
+        // TODO: Aldersgrense burde ikke dukke opp her, vi har jo en regel
+        assertEquals(setOf(fødselsdato, virkningsdato, aldersgrense), trenger)
+
+        opplysninger.leggTil(Faktum(virkningsdato, LocalDate.of(2020, 2, 29)))
+        assertEquals(setOf(fødselsdato), regelkjøring.trenger(alderskrav))
+
+        opplysninger.leggTil(Faktum(fødselsdato, LocalDate.of(1953, 2, 10)))
+
+        assertTrue(opplysninger.har(alderskrav))
+        assertTrue(opplysninger.finnOpplysning(alderskrav).verdi)
 
         val regelDAG = RegeltreBygger(regelsett).dag()
         val mermaidDiagram = MermaidPrinter(regelDAG).toPrint()

@@ -18,7 +18,7 @@ internal class EnAvRegelTest {
         Regelkjøring(
             1.mai,
             opplysninger,
-            Regelsett().also {
+            Regelsett("regelsett").also {
                 it.enAvRegel(
                     produserer,
                     opplysningB,
