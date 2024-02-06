@@ -6,7 +6,7 @@ import no.nav.dagpenger.behandling.dag.printer.MermaidPrinter
 import no.nav.dagpenger.behandling.regel.enAvRegel
 import no.nav.dagpenger.behandling.regel.multiplikasjon
 import no.nav.dagpenger.behandling.regel.oppslag
-import no.nav.dagpenger.behandling.regel.størreEnn
+import no.nav.dagpenger.behandling.regel.størreEnnEllerLik
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -77,10 +77,10 @@ class OpplysningerTest {
         regelsett.multiplikasjon(øvreTerskel, øvreTerskelFaktor, grunnbeløp)
 
         val overNedreTerskel = Opplysningstype<Boolean>("Inntekt er over kravet for siste 12 mnd")
-        regelsett.størreEnn(overNedreTerskel, inntekt12, nedreTerskel)
+        regelsett.størreEnnEllerLik(overNedreTerskel, inntekt12, nedreTerskel)
 
         val overØvreTerskel = Opplysningstype<Boolean>("Inntekt er over kravet for siste 36 mnd")
-        regelsett.størreEnn(overØvreTerskel, inntekt36, øvreTerskel)
+        regelsett.størreEnnEllerLik(overØvreTerskel, inntekt36, øvreTerskel)
 
         val minsteinntekt = Opplysningstype("Minsteinntekt", vilkår)
         regelsett.enAvRegel(minsteinntekt, overNedreTerskel, overØvreTerskel)
