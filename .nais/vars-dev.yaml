@@ -13,3 +13,5 @@ azure:
 
 wonderwalled: true
 
+flyway:
+  cleanDisabled: false

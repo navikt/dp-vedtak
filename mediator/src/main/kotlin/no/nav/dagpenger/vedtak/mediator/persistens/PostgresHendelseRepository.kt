@@ -7,8 +7,6 @@ import kotliquery.sessionOf
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
-import no.nav.dagpenger.vedtak.mediator.mottak.RapporteringBehandletHendelseMessage
-import no.nav.dagpenger.vedtak.mediator.mottak.RettighetBehandletHendelseMessage
 import org.postgresql.util.PGobject
 import java.util.UUID
 import javax.sql.DataSource
@@ -85,8 +83,6 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
 
     private fun hendelseType(hendelseMessage: HendelseMessage): HendelseTypeDTO? {
         return when (hendelseMessage) {
-            is RettighetBehandletHendelseMessage -> HendelseTypeDTO.RETTIGHET_BEHANDLET
-            is RapporteringBehandletHendelseMessage -> HendelseTypeDTO.RAPPORTERING_BEHANDLET
             else ->
                 null.also {
                     logger.warn { "ukjent meldingstype ${hendelseMessage::class.simpleName}: melding lagres ikke" }
@@ -99,22 +95,4 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
     }
 }
 
-enum class HendelseTypeDTO {
-    RETTIGHET_BEHANDLET,
-    RAPPORTERING_BEHANDLET,
-
-    @Deprecated("Er ikke i bruk lenger - men det finnes instanser i databasen")
-    IVERKSATT,
-
-    @Deprecated("Er ikke i bruk lenger - men det finnes instanser i databasen")
-    UTBETALING_VEDTAK_FATTET,
-
-    @Deprecated("Er ikke i bruk lenger - men det finnes instanser i databasen")
-    HOVEDRETTIGHET_VEDTAK_FATTET,
-
-    @Deprecated("Er ikke i bruk lenger - men det finnes instanser i databasen")
-    VEDTAK_FATTET,
-
-    @Deprecated("Er ikke i bruk lenger - men det finnes instanser i databasen")
-    SØKNAD_BEHANDLET,
-}
+enum class HendelseTypeDTO

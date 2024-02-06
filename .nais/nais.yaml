@@ -22,6 +22,9 @@ spec:
   env:
     - name: GRUPPER_SAKSBEHANDLER
       value: {{azure.grupper.saksbehandler}}
+    - name: flyway.cleanDisabled
+      value: {{flyway.cleanDisabled}}
+
   {{#if ingresses}}
   ingresses:
     {{#each ingresses as |url|}}

@@ -26,9 +26,6 @@ fun Application.vedtakApi(personRepository: PersonRepository) {
                 post {
                     val identForespørsel = call.receive<IdentForesporselDTO>()
                     val person = personRepository.hent(identForespørsel.ident.tilPersonIdentfikator())
-                    if (person != null) {
-                        call.respond(HttpStatusCode.OK, VedtakForPersonVisitor(person).vedtakListeDto())
-                    }
                     call.respond(HttpStatusCode.OK, VedtakDTO(rammer = emptyList(), utbetalinger = emptyList()))
                 }
             }
