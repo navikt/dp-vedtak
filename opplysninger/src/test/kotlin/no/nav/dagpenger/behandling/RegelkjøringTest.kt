@@ -1,6 +1,6 @@
 package no.nav.dagpenger.behandling
 
-import no.nav.dagpenger.behandling.regel.enAvRegel
+import no.nav.dagpenger.behandling.regel.enAv
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -9,11 +9,11 @@ class RegelkjøringTest {
     fun `Regelsett kan ikke inneholder flere regler som produserer samme opplysningstype`() {
         val regelsett1 =
             Regelsett("regelsett").apply {
-                enAvRegel(Opplysningstype("A"), Opplysningstype("B"))
+                enAv(Opplysningstype("A"), Opplysningstype("B"))
             }
         val regelsett2 =
             Regelsett("regelsett").apply {
-                enAvRegel(Opplysningstype("A"), Opplysningstype("C"))
+                enAv(Opplysningstype("A"), Opplysningstype("C"))
             }
 
         assertThrows<IllegalArgumentException> {

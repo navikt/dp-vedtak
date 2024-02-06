@@ -9,7 +9,7 @@ import no.nav.dagpenger.behandling.Regelsett
 import no.nav.dagpenger.behandling.mai
 import org.junit.jupiter.api.Test
 
-internal class EnAvRegelTest {
+internal class EnAvTest {
     private val opplysningB = Opplysningstype<Boolean>("B")
     private val opplysningC = Opplysningstype<Boolean>("C")
     private val produserer = Opplysningstype<Boolean>("A")
@@ -19,7 +19,7 @@ internal class EnAvRegelTest {
             1.mai,
             opplysninger,
             Regelsett("regelsett").also {
-                it.enAvRegel(
+                it.enAv(
                     produserer,
                     opplysningB,
                     opplysningC,
@@ -27,7 +27,7 @@ internal class EnAvRegelTest {
             },
         )
     private val regel =
-        EnAvRegel(Opplysningstype("A"), opplysningB, opplysningC)
+        EnAv(Opplysningstype("A"), opplysningB, opplysningC)
 
     @Test
     fun `hvis en av opplysningene er sanne så er utledningen sann`() {

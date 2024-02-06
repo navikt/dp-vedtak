@@ -6,6 +6,7 @@ import no.nav.dagpenger.behandling.regel.Regel
 
 class RegeltreBygger(private val regler: List<Regel<*>>) {
     constructor(regelsett: Regelsett) : this(regelsett.regler())
+    constructor(vararg regelsett: Regelsett) : this(regelsett.flatMap { it.regler() })
 
     private val nodes = mutableMapOf<Opplysningstype<*>, Node<Opplysningstype<*>>>()
     private val edges = mutableListOf<Edge<Opplysningstype<*>>>()

@@ -16,7 +16,7 @@ object Alderskrav {
     private val sisteMåned = Opplysningstype<LocalDate>("Dato søker når maks alder")
     private val sisteDagIMåned = Opplysningstype<LocalDate>("Siste mulige dag bruker kan oppfylle alderskrav")
 
-    val vilkår = Opplysningstype<Boolean>("(ikke) Bortfall på grunn av alder")
+    val vilkår = Opplysningstype<Boolean>("Oppfyller kravet til alder")
 
     val regelsett =
         Regelsett("alder").apply {

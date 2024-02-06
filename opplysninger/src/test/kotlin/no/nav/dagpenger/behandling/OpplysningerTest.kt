@@ -3,7 +3,8 @@ package no.nav.dagpenger.behandling
 import no.nav.dagpenger.behandling.dag.DatatreBygger
 import no.nav.dagpenger.behandling.dag.RegeltreBygger
 import no.nav.dagpenger.behandling.dag.printer.MermaidPrinter
-import no.nav.dagpenger.behandling.regel.enAvRegel
+import no.nav.dagpenger.behandling.regel.alle
+import no.nav.dagpenger.behandling.regel.enAv
 import no.nav.dagpenger.behandling.regel.multiplikasjon
 import no.nav.dagpenger.behandling.regel.oppslag
 import no.nav.dagpenger.behandling.regel.størreEnnEllerLik
@@ -62,7 +63,7 @@ class OpplysningerTest {
     }
 
     @Test
-    fun `finn alle løvnoder som mangler`() {
+    fun `test som sjekker minsteinntekt og kravet til alder`() {
         val vilkår = Opplysningstype<Boolean>("Vilkår")
         val regelsett = Regelsett("regelsett")
 
@@ -88,7 +89,10 @@ class OpplysningerTest {
         regelsett.størreEnnEllerLik(overØvreTerskel, inntekt36, øvreTerskel)
 
         val minsteinntekt = Opplysningstype("Minsteinntekt", vilkår)
-        regelsett.enAvRegel(minsteinntekt, overNedreTerskel, overØvreTerskel)
+        regelsett.enAv(minsteinntekt, overNedreTerskel, overØvreTerskel)
+
+        val alleVilkår = Opplysningstype<Boolean>("Alle vilkår")
+        regelsett.alle(alleVilkår, minsteinntekt, Alderskrav.vilkår)
 
         val regelverksdato = 10.mai.atStartOfDay()
         val opplysninger =
@@ -99,14 +103,16 @@ class OpplysningerTest {
                     Faktum(inntekt12, 221221.0, Gyldighetsperiode(1.januar, 1.mai)),
                 ),
             )
-        val regelkjøring = Regelkjøring(regelverksdato, opplysninger, regelsett)
+        val regelkjøring = Regelkjøring(regelverksdato, opplysninger, regelsett, Alderskrav.regelsett)
 
         // Sett virkningsdato som en opplysning
         opplysninger.leggTil(Faktum(virkningsdato, regelverksdato.toLocalDate()))
 
         // Flyt for å innhente manglende opplysninger
         val actual = regelkjøring.trenger(minsteinntekt)
+        val actual2 = regelkjøring.trenger(Alderskrav.vilkår)
 
+        assertEquals(1, actual2.size)
         assertEquals(4, actual.size)
         assertEquals(setOf(inntekt12, inntekt36, nedreTerskelFaktor, øvreTerskelFaktor), actual)
 
@@ -126,7 +132,11 @@ class OpplysningerTest {
         assertTrue(opplysninger.har(minsteinntekt))
         assertTrue(opplysninger.finnOpplysning(minsteinntekt).verdi)
 
-        val regelDAG = RegeltreBygger(regelsett).dag()
+        // opplysninger.leggTil(Faktum(Alderskrav.virkningsdato, LocalDate.of(2020, 2, 29)))
+        opplysninger.leggTil(Faktum(fødselsdato, LocalDate.of(1953, 2, 10)))
+        assertTrue(opplysninger.har(alleVilkår))
+
+        val regelDAG = RegeltreBygger(regelsett, Alderskrav.regelsett).dag()
         val mermaidDiagram = MermaidPrinter(regelDAG).toPrint()
         println(mermaidDiagram)
         println(opplysninger.toString())
