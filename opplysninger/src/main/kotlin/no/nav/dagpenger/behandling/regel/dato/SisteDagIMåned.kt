@@ -1,8 +1,9 @@
-package no.nav.dagpenger.behandling.regel
+package no.nav.dagpenger.behandling.regel.dato
 
 import no.nav.dagpenger.behandling.LesbarOpplysninger
 import no.nav.dagpenger.behandling.Opplysningstype
 import no.nav.dagpenger.behandling.Regelsett
+import no.nav.dagpenger.behandling.regel.Regel
 import java.time.LocalDate
 
 internal class SisteDagIMåned(

@@ -6,6 +6,7 @@ import no.nav.dagpenger.behandling.Opplysninger
 import no.nav.dagpenger.behandling.Regelkjøring
 import no.nav.dagpenger.behandling.mai
 import no.nav.dagpenger.behandling.regelsett.Alderskrav
+import no.nav.dagpenger.behandling.regelsett.Virkningsdato
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.time.LocalDate
@@ -21,7 +22,7 @@ class AlderskravSteps : No {
             opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, fødselsdato.somLocalDate()))
         }
         Gitt("at virkningstidspunktet er {string}") { virkningsdato: String ->
-            opplysninger.leggTil(Faktum(Alderskrav.virkningsdato, virkningsdato.somLocalDate()))
+            opplysninger.leggTil(Faktum(Virkningsdato.virkningsdato, virkningsdato.somLocalDate()))
         }
         Så("skal utfallet være {string}") { utfall: String ->
             val verdi =

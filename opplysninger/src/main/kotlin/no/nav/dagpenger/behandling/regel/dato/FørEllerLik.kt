@@ -1,11 +1,12 @@
-package no.nav.dagpenger.behandling.regel
+package no.nav.dagpenger.behandling.regel.dato
 
 import no.nav.dagpenger.behandling.LesbarOpplysninger
 import no.nav.dagpenger.behandling.Opplysningstype
 import no.nav.dagpenger.behandling.Regelsett
+import no.nav.dagpenger.behandling.regel.Regel
 import java.time.LocalDate
 
-internal class DatoFørEllerLik(
+internal class FørEllerLik(
     produserer: Opplysningstype<Boolean>,
     private val dato: Opplysningstype<LocalDate>,
     private val tom: Opplysningstype<LocalDate>,
@@ -25,7 +26,7 @@ fun Regelsett.førEllerLik(
     dato: Opplysningstype<LocalDate>,
     tom: Opplysningstype<LocalDate>,
 ): Regel<Boolean> {
-    return DatoFørEllerLik(produserer, dato, tom).also { leggTil(gjelderFra, produserer, it) }
+    return FørEllerLik(produserer, dato, tom).also { leggTil(gjelderFra, produserer, it) }
 }
 
 fun Regelsett.førEllerLik(

@@ -6,6 +6,7 @@ import no.nav.dagpenger.behandling.regel.enAv
 import no.nav.dagpenger.behandling.regel.multiplikasjon
 import no.nav.dagpenger.behandling.regel.oppslag
 import no.nav.dagpenger.behandling.regel.størreEnnEllerLik
+import no.nav.dagpenger.behandling.regelsett.Virkningsdato.virkningsdato
 import java.time.LocalDate
 
 object Minsteinntekt {
@@ -14,7 +15,7 @@ object Minsteinntekt {
     val inntekt12 = Opplysningstype<Double>("Inntekt siste 12 mnd")
     val inntekt36 = Opplysningstype<Double>("Inntekt siste 36 mnd")
     val grunnbeløp = Opplysningstype<Double>("Grunnbeløp")
-    val virkningsdato = Opplysningstype<LocalDate>("Virkningsdato")
+    // val virkningsdato = Opplysningstype<LocalDate>("Virkningsdato")
 
     val nedreTerskel = Opplysningstype<Double>("Inntektskrav for siste 12 mnd")
     val øvreTerskel = Opplysningstype<Double>("Inntektskrav for siste 36 mnd")

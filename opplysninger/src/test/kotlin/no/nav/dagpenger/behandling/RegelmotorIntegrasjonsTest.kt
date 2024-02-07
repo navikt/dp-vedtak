@@ -6,6 +6,8 @@ import no.nav.dagpenger.behandling.dag.printer.MermaidPrinter
 import no.nav.dagpenger.behandling.regel.alle
 import no.nav.dagpenger.behandling.regelsett.Alderskrav
 import no.nav.dagpenger.behandling.regelsett.Minsteinntekt
+import no.nav.dagpenger.behandling.regelsett.Virkningsdato
+import no.nav.dagpenger.behandling.regelsett.Virkningsdato.virkningsdato
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -28,30 +30,47 @@ class RegelmotorIntegrasjonsTest {
             Regelsett("Krav til Dagpenger").apply {
                 alle(alleVilkår, Minsteinntekt.minsteinntekt, Alderskrav.vilkår)
             }
-        val regelkjøring = Regelkjøring(regelverksdato, opplysninger, regelsett, Alderskrav.regelsett, Minsteinntekt.regelsett)
+        val regelkjøring =
+            Regelkjøring(
+                regelverksdato,
+                opplysninger,
+                regelsett,
+                Virkningsdato.regelsett,
+                Alderskrav.regelsett,
+                Minsteinntekt.regelsett,
+            )
 
         // TODO: subgraph i regelkjøringen gjør noe galt. Denne asserten skal gå gjennom:
         // assertFalse(regelkjøring.trenger(Alderskrav.vilkår).contains(Alderskrav.aldersgrense))
 
         // Sett virkningsdato som en opplysning
-        opplysninger.leggTil(Faktum(Minsteinntekt.virkningsdato, regelverksdato.toLocalDate()))
+        opplysninger.leggTil(Faktum(Virkningsdato.søknadsdato, regelverksdato.toLocalDate()))
+        opplysninger.leggTil(Faktum(Virkningsdato.sisteDagMedArbeidsplikt, regelverksdato.toLocalDate()))
+        opplysninger.leggTil(Faktum(Virkningsdato.sisteDagMedLønn, regelverksdato.toLocalDate()))
 
         // Flyt for å innhente manglende opplysninger
         val avhengigheterTilalleVilkår = regelkjøring.trenger(alleVilkår)
         val avhengigheterTilMinsteinntekt = regelkjøring.trenger(Minsteinntekt.minsteinntekt)
         val avhengigheterTilAlder = regelkjøring.trenger(Alderskrav.vilkår)
 
-        assertEquals(5, avhengigheterTilalleVilkår.size)
-        assertEquals(1, avhengigheterTilAlder.size)
+        assertEquals(6, avhengigheterTilalleVilkår.size)
+        assertEquals(2, avhengigheterTilAlder.size)
         assertEquals(
-            setOf(Alderskrav.fødselsdato),
+            setOf(Alderskrav.fødselsdato, Alderskrav.aldersgrense),
             avhengigheterTilAlder,
         )
-        assertEquals(4, avhengigheterTilMinsteinntekt.size)
+        assertEquals(5, avhengigheterTilMinsteinntekt.size)
         assertEquals(
-            setOf(Minsteinntekt.inntekt12, Minsteinntekt.inntekt36, Minsteinntekt.nedreTerskelFaktor, Minsteinntekt.øvreTerskelFaktor),
+            setOf(
+                Minsteinntekt.inntekt12,
+                Minsteinntekt.inntekt36,
+                Minsteinntekt.nedreTerskelFaktor,
+                Minsteinntekt.øvreTerskelFaktor,
+                Alderskrav.fødselsdato,
+            ),
             avhengigheterTilMinsteinntekt,
         )
+        opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
 
         assertEquals(Minsteinntekt.Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(Minsteinntekt.grunnbeløp).verdi)
 
@@ -69,11 +88,9 @@ class RegelmotorIntegrasjonsTest {
         Assertions.assertTrue(opplysninger.har(Minsteinntekt.minsteinntekt))
         Assertions.assertTrue(opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi)
 
-        // opplysninger.leggTil(Faktum(Alderskrav.virkningsdato, LocalDate.of(2020, 2, 29)))
-        opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
         Assertions.assertTrue(opplysninger.har(alleVilkår))
 
-        val regelDAG = RegeltreBygger(regelsett, Alderskrav.regelsett).dag()
+        val regelDAG = RegeltreBygger(regelsett, Minsteinntekt.regelsett, Virkningsdato.regelsett, Alderskrav.regelsett).dag()
         val mermaidDiagram = MermaidPrinter(regelDAG).toPrint()
         println(mermaidDiagram)
         println(opplysninger.toString())
@@ -91,9 +108,9 @@ class RegelmotorIntegrasjonsTest {
         // Flyt for å innhente manglende opplysninger
         val trenger = regelkjøring.trenger(Alderskrav.vilkår)
         // TODO: Aldersgrense burde ikke dukke opp her, vi har jo en regel
-        assertEquals(setOf(Alderskrav.fødselsdato, Alderskrav.virkningsdato, Alderskrav.aldersgrense), trenger)
+        assertEquals(setOf(Alderskrav.fødselsdato, virkningsdato, Alderskrav.aldersgrense), trenger)
 
-        opplysninger.leggTil(Faktum(Alderskrav.virkningsdato, LocalDate.of(2020, 2, 29)))
+        opplysninger.leggTil(Faktum(virkningsdato, LocalDate.of(2020, 2, 29)))
         assertEquals(setOf(Alderskrav.fødselsdato), regelkjøring.trenger(Alderskrav.vilkår))
 
         opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
