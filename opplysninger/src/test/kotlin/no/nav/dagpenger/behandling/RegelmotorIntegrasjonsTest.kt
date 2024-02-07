@@ -29,6 +29,10 @@ class RegelmotorIntegrasjonsTest {
                 alle(alleVilkår, Minsteinntekt.minsteinntekt, Alderskrav.vilkår)
             }
         val regelkjøring = Regelkjøring(regelverksdato, opplysninger, regelsett, Alderskrav.regelsett, Minsteinntekt.regelsett)
+
+        // TODO: subgraph i regelkjøringen gjør noe galt. Denne asserten skal gå gjennom:
+        // assertFalse(regelkjøring.trenger(Alderskrav.vilkår).contains(Alderskrav.aldersgrense))
+
         // Sett virkningsdato som en opplysning
         opplysninger.leggTil(Faktum(Minsteinntekt.virkningsdato, regelverksdato.toLocalDate()))
 

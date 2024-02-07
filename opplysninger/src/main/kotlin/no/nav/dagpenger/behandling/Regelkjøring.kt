@@ -64,6 +64,7 @@ class Regelkjøring(
         if (opplysninger.har(opplysningstype)) return emptySet()
         val dag = RegeltreBygger(muligeRegler).dag()
         return dag
+            // TODO: Subgraph lager noe feil som gjør at Aldersgrense blir med i resultatet for vilkåret om alder
             .subgraph { it.er(opplysningstype) }
             .findLeafNodes()
             .map { it.data }
