@@ -33,9 +33,11 @@ class RegelmotorIntegrasjonsTest {
         opplysninger.leggTil(Faktum(Minsteinntekt.virkningsdato, regelverksdato.toLocalDate()))
 
         // Flyt for å innhente manglende opplysninger
+        val avhengigheterTilalleVilkår = regelkjøring.trenger(alleVilkår)
         val avhengigheterTilMinsteinntekt = regelkjøring.trenger(Minsteinntekt.minsteinntekt)
         val avhengigheterTilAlder = regelkjøring.trenger(Alderskrav.vilkår)
 
+        assertEquals(5, avhengigheterTilalleVilkår.size)
         assertEquals(1, avhengigheterTilAlder.size)
         assertEquals(
             setOf(Alderskrav.fødselsdato),

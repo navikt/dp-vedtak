@@ -1,22 +1,8 @@
 package no.nav.dagpenger.behandling
 
-import no.nav.dagpenger.behandling.dag.DatatreBygger
-import no.nav.dagpenger.behandling.dag.RegeltreBygger
-import no.nav.dagpenger.behandling.dag.printer.MermaidPrinter
-import no.nav.dagpenger.behandling.regel.alle
-import no.nav.dagpenger.behandling.regel.enAv
-import no.nav.dagpenger.behandling.regel.multiplikasjon
-import no.nav.dagpenger.behandling.regel.oppslag
-import no.nav.dagpenger.behandling.regel.størreEnnEllerLik
-import no.nav.dagpenger.behandling.regelsett.Alderskrav
-import no.nav.dagpenger.behandling.regelsett.Alderskrav.aldersgrense
-import no.nav.dagpenger.behandling.regelsett.Alderskrav.fødselsdato
-import no.nav.dagpenger.behandling.regelsett.Alderskrav.regelsett
-import no.nav.dagpenger.behandling.regelsett.Alderskrav.virkningsdato
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.time.LocalDate
 import kotlin.test.assertEquals
 
 class OpplysningerTest {
