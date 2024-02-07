@@ -1,0 +1,20 @@
+package no.nav.dagpenger.vedtak.modell
+
+import no.nav.dagpenger.aktivitetslogg.Aktivitet
+import no.nav.dagpenger.behandling.Opplysninger
+import no.nav.dagpenger.behandling.Regelkjøring
+import no.nav.dagpenger.behandling.Regelsett
+import no.nav.dagpenger.vedtak.modell.RettTilDagpenger.rettTilDagpenger
+import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
+
+class Behandling(
+    private val behandler: Hendelse,
+    private val opplysninger: Opplysninger,
+    private val regelsett: Regelsett,
+) {
+    private val regelkjøring = Regelkjøring(behandler.gjelderDato, opplysninger, regelsett)
+
+    fun trenger() = regelkjøring.trenger(rettTilDagpenger)
+}
+
+data class OpplysningBehov(override val name: String) : Aktivitet.Behov.Behovtype

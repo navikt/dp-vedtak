@@ -29,19 +29,17 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
         }
 
     private val rapidsConnection =
-        RapidApplication.Builder(
-            RapidApplication.RapidApplicationConfig.fromEnv(config),
-        )
-            .withKtorModule { vedtakApi(personRepository = personRepository) }
-            .build()
+        RapidApplication.Builder(RapidApplication.RapidApplicationConfig.fromEnv(config))
+            .withKtorModule { vedtakApi(personRepository = personRepository) }.build()
 
     init {
         HendelseMediator(
             rapidsConnection = rapidsConnection,
             personMediator =
                 PersonMediator(
-                    aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
                     personRepository = personRepository,
+                    aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
+                    behovMediator = BehovMediator(rapidsConnection),
                 ),
             hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),
         )

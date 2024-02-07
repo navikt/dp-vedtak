@@ -4,17 +4,26 @@ import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Person
+import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.helse.rapids_rivers.withMDC
 
 internal class PersonMediator(
     private val personRepository: PersonRepository,
     private val aktivitetsloggMediator: AktivitetsloggMediator,
+    private val behovMediator: BehovMediator,
 ) {
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerLogger = KotlinLogging.logger("tjenestekall")
+    }
+
+    fun håndter(søknadInnsendtHendelse: SøknadInnsendtHendelse) {
+        behandle(søknadInnsendtHendelse) { person ->
+            person.håndter(søknadInnsendtHendelse)
+        }
     }
 
     private fun behandle(
@@ -44,7 +53,8 @@ internal class PersonMediator(
 
     private fun hentEllerOpprettPerson(hendelse: Hendelse): Person {
         val person = personRepository.hent(hendelse.ident().tilPersonIdentfikator())
-        TODO()
+        return person ?: Person(PersonIdentifikator("12345123451"))
+            .also { logger.error { "Oppretter default person 👨🏽" } } // TODO: Fjern når vi har database
     }
 
     private fun ferdigstill(hendelse: Hendelse) {
@@ -56,6 +66,7 @@ internal class PersonMediator(
             sikkerLogger.info("aktivitetslogg inneholder meldinger:\n${hendelse.toLogString()}")
         }
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
+        behovMediator.håndter(hendelse)
         aktivitetsloggMediator.håndter(hendelse)
     }
 

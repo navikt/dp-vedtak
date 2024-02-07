@@ -4,6 +4,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.AktivitetsloggHendelse
 import no.nav.dagpenger.aktivitetslogg.IAktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
+import java.time.LocalDate
 import java.util.UUID
 
 abstract class Hendelse(
@@ -11,6 +12,8 @@ abstract class Hendelse(
     private val ident: String,
     internal val aktivitetslogg: Aktivitetslogg,
 ) : AktivitetsloggHendelse, IAktivitetslogg by aktivitetslogg {
+    abstract val gjelderDato: LocalDate
+
     override fun ident() = ident
 
     override fun toSpesifikkKontekst(): SpesifikkKontekst {
