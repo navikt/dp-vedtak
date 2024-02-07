@@ -144,29 +144,6 @@ paths:
                 $ref: '#/components/schemas/Bekreftelse'
           description: OK
 
-  /vedtak:
-    post:
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Vedtak'
-          description: OK
-      summary: Hent alle vedtak for en gitt person
-      description: Hent alle vedtak for en gitt person
-      security:
-        - azureAd: [ ]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            example:
-              ident: "12312312311"
-            schema:
-              $ref: '#/components/schemas/Vedtak'
 components:
   schemas:
     IdentForesporsel:
