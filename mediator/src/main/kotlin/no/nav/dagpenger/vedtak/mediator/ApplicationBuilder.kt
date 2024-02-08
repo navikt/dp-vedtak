@@ -2,8 +2,6 @@ package no.nav.dagpenger.vedtak.mediator
 
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder
-import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder.clean
-import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.vedtak.mediator.api.vedtakApi
 import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.mediator.persistens.PostgresHendelseRepository
@@ -52,8 +50,6 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
-        clean()
-        runMigration()
         logger.info { "Starter opp dp-vedtak" }
     }
 }

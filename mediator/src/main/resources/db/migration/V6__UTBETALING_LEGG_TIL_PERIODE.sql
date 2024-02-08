@@ -1,5 +1,0 @@
-ALTER TABLE utbetaling
-ADD COLUMN fom DATE NULL;
-
-ALTER TABLE utbetaling
-ADD COLUMN tom DATE NULL;
