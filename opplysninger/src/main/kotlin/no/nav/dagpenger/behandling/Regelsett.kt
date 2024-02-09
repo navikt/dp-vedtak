@@ -10,17 +10,12 @@ class Regelsett(val navn: String, block: Regelsett.() -> Unit = {}) {
         block()
     }
 
-    fun regler(forDato: LocalDate = LocalDate.MIN) =
-        regler
-            .map { it.value.get(forDato) }
-            .toList()
+    fun regler(forDato: LocalDate = LocalDate.MIN) = regler.map { it.value.get(forDato) }.toList()
 
     fun leggTil(
         gjelderFra: LocalDate,
         regel: Regel<*>,
-    ) {
-        regler.computeIfAbsent(regel.produserer) { TemporalCollection() }.put(gjelderFra, regel)
-    }
+    ) = regler.computeIfAbsent(regel.produserer) { TemporalCollection() }.put(gjelderFra, regel)
 
     fun leggTil(regel: Regel<*>) = leggTil(LocalDate.MIN, regel)
 
