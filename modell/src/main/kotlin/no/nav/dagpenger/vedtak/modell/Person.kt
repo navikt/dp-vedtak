@@ -2,10 +2,10 @@ package no.nav.dagpenger.vedtak.modell
 
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
-import no.nav.dagpenger.behandling.Opplysninger
-import no.nav.dagpenger.behandling.Opplysningstype
-import no.nav.dagpenger.behandling.Regelsett
-import no.nav.dagpenger.behandling.regel.alle
+import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnsendtHendelse
 
 object RettTilDagpenger {
