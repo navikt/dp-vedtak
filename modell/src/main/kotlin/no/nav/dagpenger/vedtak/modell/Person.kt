@@ -5,11 +5,12 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnsendtHendelse
 
 object RettTilDagpenger {
-    val saksbehandlerSierJa = Opplysningstype<Boolean>("Saksbehandler sier ja")
+    val saksbehandlerSierJa = Opplysningstype<Boolean>("Saksbehandler sier ja".id("saksbehandlerSierJa"))
     val rettTilDagpenger = Opplysningstype<Boolean>("Rett til dagpenger")
     val regelsett =
         Regelsett("Krav på dagpenger").apply {
@@ -28,7 +29,7 @@ class Person(
         val trenger = behandling.trenger()
         trenger.map {
             hendelse.behov(
-                OpplysningBehov(it.navn),
+                OpplysningBehov(it.id),
                 "Trenger en opplysning",
             )
         }

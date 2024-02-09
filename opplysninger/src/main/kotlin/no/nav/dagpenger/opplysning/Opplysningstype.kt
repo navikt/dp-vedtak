@@ -4,17 +4,26 @@ interface Klassifiserbart {
     fun er(type: Opplysningstype<*>): Boolean
 }
 
+fun String.id(id: String) = OpplysningId(id, this)
+
+data class OpplysningId(val id: String, val beskrivelse: String)
+
 class Opplysningstype<T : Comparable<T>>(
-    val navn: String,
+    private val opplysningId: OpplysningId,
     private val parent: Opplysningstype<T>? = null,
     private val child: MutableSet<Opplysningstype<*>> = mutableSetOf(),
 ) : Klassifiserbart {
+    constructor(navn: String, parent: Opplysningstype<T>? = null) : this(OpplysningId(navn, navn), parent)
+
+    val id = opplysningId.id
+    val navn = opplysningId.beskrivelse
+
     init {
         parent?.child?.add(this)
     }
 
     override infix fun er(type: Opplysningstype<*>): Boolean {
-        return navn == type.navn || parent?.er(type) ?: false
+        return opplysningId == type.opplysningId || parent?.er(type) ?: false
     }
 
     override fun toString(): String {
@@ -22,7 +31,7 @@ class Opplysningstype<T : Comparable<T>>(
         return "Opplysningstype(navn='$navn', parent=${parent?.navn}, child=${child.size})"
     }
 
-    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.navn == this.navn
+    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningId == this.opplysningId
 
     override fun hashCode() = navn.hashCode() * 31
 }

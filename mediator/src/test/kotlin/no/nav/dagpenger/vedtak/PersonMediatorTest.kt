@@ -43,6 +43,7 @@ internal class PersonMediatorTest {
 
         with(testRapid.inspektør) {
             assertEquals(1, size)
+            assertEquals(listOf("saksbehandlerSierJa"), field(0, "@behov").map { it.asText() })
         }
     }
 

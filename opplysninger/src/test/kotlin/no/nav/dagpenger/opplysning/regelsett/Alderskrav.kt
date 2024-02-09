@@ -12,10 +12,7 @@ object Alderskrav {
     val fødselsdato = Opplysningstype<LocalDate>("Fødselsdato")
     val aldersgrense = Opplysningstype<Int>("Aldersgrense")
 
-    // TODO: Bør vi aliase slik? Da er det veldig tydelig hvor opplysningene kommer fra
-    // val virkningsdato = Opplysningstype<LocalDate>("Virkningsdato")
-    val virkningsdato = Virkningsdato.virkningsdato
-
+    private val virkningsdato = Virkningsdato.virkningsdato
     private val sisteMåned = Opplysningstype<LocalDate>("Dato søker når maks alder")
     private val sisteDagIMåned = Opplysningstype<LocalDate>("Siste mulige dag bruker kan oppfylle alderskrav")
 
