@@ -1,8 +1,8 @@
 # Implementasjonsmodell for behandling
 
-# Opplysninger
+# Opplysning
 
-Representerer ting vi tror eller vet. Må ha en verdi.
+Representerer en ting vi tror (hypotese) eller vet (faktun). Må ha en verdi. Verdien kan være dato, tall, boolske osv. 
 
 ## Gyldighetsperiode
 
@@ -24,13 +24,18 @@ Saksbehandlers rolle vil typisk være å ta stilling til et utkast til vedtak, h
 
 Alle opplysninger bør oppstå i kontekst av en behandling og ha en relasjon tilbake til behandlingen som laget den.
 
-Om en opplysning er utledet så har vi sporing som sier med hvilken funksjon på andre opplysninger som har utledet denne opplysningen.
+### Utledning
+Om en opplysning er utledet så har vi sporing som sier med hvilken funksjon på andre opplysninger som har utledet denne opplysningen. 
+
+
+### Kilde
 
 Om den ikke er utledet så er den satt av en ekstern melding. Da sporer vi hvilken melding som førte til hvilken verdi.  
 Vi har to ulike meldinger:
 
-- System
+- System (PDL, AAReg, osv)
 - Manuell overstyring (saksbehandler, superbruker)
+
 
 # Regel/vurdering/utledning
 
