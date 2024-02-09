@@ -14,7 +14,7 @@ class DAGPrinterTest {
     private val b = Opplysningstype<Double>("B")
     private val c =
         Opplysningstype<Double>("A * B").also {
-            regelsett.multiplikasjon(it, a, b)
+            regelsett.leggTil(it.multiplikasjon(a, b))
         }
 
     private val regeltre = RegeltreBygger(regelsett.regler()).dag()

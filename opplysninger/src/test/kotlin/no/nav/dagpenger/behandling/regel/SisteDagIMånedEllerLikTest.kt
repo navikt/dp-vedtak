@@ -19,12 +19,8 @@ class SisteDagIMånedEllerLikTest {
         Regelkjøring(
             1.mai,
             opplysninger,
-            Regelsett("regelsett").also {
-                it.størreEnnEllerLik(
-                    vilkår,
-                    a,
-                    b,
-                )
+            Regelsett("regelsett") {
+                regel { vilkår.størreEnnEllerLik(a, b) }
             },
         )
 

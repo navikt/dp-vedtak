@@ -2,10 +2,8 @@ package no.nav.dagpenger.behandling.regel
 
 import no.nav.dagpenger.behandling.LesbarOpplysninger
 import no.nav.dagpenger.behandling.Opplysningstype
-import no.nav.dagpenger.behandling.Regelsett
-import java.time.LocalDate
 
-internal class Multiplikasjon(
+class Multiplikasjon internal constructor(
     produserer: Opplysningstype<Double>,
     private vararg val opplysningstyper: Opplysningstype<Double>,
 ) : Regel<Double>(produserer, opplysningstyper.toList()) {
@@ -19,15 +17,4 @@ internal class Multiplikasjon(
     }
 }
 
-fun Regelsett.multiplikasjon(
-    gjelderFra: LocalDate,
-    produserer: Opplysningstype<Double>,
-    vararg opplysningstype: Opplysningstype<Double>,
-): Regel<Double> {
-    return Multiplikasjon(produserer, *opplysningstype).also { leggTil(gjelderFra, produserer, it) }
-}
-
-fun Regelsett.multiplikasjon(
-    produserer: Opplysningstype<Double>,
-    vararg opplysningstype: Opplysningstype<Double>,
-) = multiplikasjon(LocalDate.MIN, produserer, *opplysningstype)
+fun Opplysningstype<Double>.multiplikasjon(vararg opplysningstype: Opplysningstype<Double>) = Multiplikasjon(this, *opplysningstype)

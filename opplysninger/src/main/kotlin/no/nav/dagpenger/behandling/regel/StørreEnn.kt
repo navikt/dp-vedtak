@@ -2,10 +2,8 @@ package no.nav.dagpenger.behandling.regel
 
 import no.nav.dagpenger.behandling.LesbarOpplysninger
 import no.nav.dagpenger.behandling.Opplysningstype
-import no.nav.dagpenger.behandling.Regelsett
-import java.time.LocalDate
 
-internal class StørreEnn(
+class StørreEnn internal constructor(
     produserer: Opplysningstype<Boolean>,
     private val a: Opplysningstype<Double>,
     private val b: Opplysningstype<Double>,
@@ -19,17 +17,7 @@ internal class StørreEnn(
     override fun toString() = "Større enn $a > $b"
 }
 
-fun Regelsett.størreEnn(
-    gjelderFra: LocalDate,
-    produserer: Opplysningstype<Boolean>,
+fun Opplysningstype<Boolean>.størreEnn(
     er: Opplysningstype<Double>,
     størreEnn: Opplysningstype<Double>,
-): Regel<Boolean> {
-    return StørreEnn(produserer, er, størreEnn).also { leggTil(gjelderFra, produserer, it) }
-}
-
-fun Regelsett.størreEnn(
-    produserer: Opplysningstype<Boolean>,
-    er: Opplysningstype<Double>,
-    størreEnn: Opplysningstype<Double>,
-) = størreEnn(LocalDate.MIN, produserer, er, størreEnn)
+) = StørreEnn(this, er, størreEnn)

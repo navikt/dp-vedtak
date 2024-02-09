@@ -7,13 +7,14 @@ import org.junit.jupiter.api.assertThrows
 class RegelkjøringTest {
     @Test
     fun `Regelsett kan ikke inneholder flere regler som produserer samme opplysningstype`() {
+        val a = Opplysningstype<Boolean>("A")
         val regelsett1 =
-            Regelsett("regelsett").apply {
-                enAv(Opplysningstype("A"), Opplysningstype("B"))
+            Regelsett("regelsett") {
+                regel { a.enAv(Opplysningstype("B")) }
             }
         val regelsett2 =
-            Regelsett("regelsett").apply {
-                enAv(Opplysningstype("A"), Opplysningstype("C"))
+            Regelsett("regelsett") {
+                regel { a.enAv(Opplysningstype("C")) }
             }
 
         assertThrows<IllegalArgumentException> {

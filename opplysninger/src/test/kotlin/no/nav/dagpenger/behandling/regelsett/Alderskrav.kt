@@ -6,7 +6,6 @@ import no.nav.dagpenger.behandling.regel.dato.førEllerLik
 import no.nav.dagpenger.behandling.regel.dato.leggTilÅr
 import no.nav.dagpenger.behandling.regel.dato.sisteDagIMåned
 import no.nav.dagpenger.behandling.regel.oppslag
-import no.nav.dagpenger.behandling.regelsett.Virkningsdato.virkningsdato
 import java.time.LocalDate
 
 object Alderskrav {
@@ -24,9 +23,9 @@ object Alderskrav {
 
     val regelsett =
         Regelsett("alder").apply {
-            oppslag(aldersgrense, virkningsdato) { 67 }
-            leggTilÅr(sisteMåned, fødselsdato, aldersgrense)
-            sisteDagIMåned(sisteDagIMåned, sisteMåned)
-            førEllerLik(vilkår, virkningsdato, sisteDagIMåned)
+            regel { aldersgrense.oppslag(virkningsdato) { 67 } }
+            regel { sisteMåned.leggTilÅr(fødselsdato, aldersgrense) }
+            regel { sisteDagIMåned.sisteDagIMåned(sisteMåned) }
+            regel { vilkår.førEllerLik(virkningsdato, sisteDagIMåned) }
         }
 }

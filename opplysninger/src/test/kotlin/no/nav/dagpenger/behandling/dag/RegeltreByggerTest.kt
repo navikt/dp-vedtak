@@ -14,7 +14,7 @@ class RegeltreByggerTest {
         val a = Opplysningstype<Double>("A")
         val b = Opplysningstype<Double>("B")
         val c = Opplysningstype<Double>("A * B")
-        regelsett.multiplikasjon(c, a, b)
+        regelsett.leggTil(c.multiplikasjon(a, b))
 
         val regeltre = RegeltreBygger(regelsett.regler()).dag()
         assertEquals(3, regeltre.nodes.size, "Har en node for hver opplysningstype")

@@ -6,7 +6,6 @@ import no.nav.dagpenger.behandling.Opplysninger
 import no.nav.dagpenger.behandling.Opplysningstype
 import no.nav.dagpenger.behandling.Regelsett
 import no.nav.dagpenger.behandling.regel.alle
-import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnsendtHendelse
 
 object RettTilDagpenger {
@@ -14,7 +13,7 @@ object RettTilDagpenger {
     val rettTilDagpenger = Opplysningstype<Boolean>("Rett til dagpenger")
     val regelsett =
         Regelsett("Krav på dagpenger").apply {
-            alle(rettTilDagpenger, saksbehandlerSierJa)
+            regel { rettTilDagpenger.alle(saksbehandlerSierJa) }
         }
 }
 
@@ -24,7 +23,7 @@ class Person(
     fun ident() = ident
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
-        kontekst(hendelse)
+        hendelse.kontekst(this)
         val behandling = Behandling(hendelse, Opplysninger(), RettTilDagpenger.regelsett)
         val trenger = behandling.trenger()
         trenger.map {
@@ -36,8 +35,4 @@ class Person(
     }
 
     override fun toSpesifikkKontekst(): SpesifikkKontekst = SpesifikkKontekst("Person", mapOf("ident" to ident.identifikator()))
-
-    private fun kontekst(hendelse: Hendelse) {
-        hendelse.kontekst(this)
-    }
 }

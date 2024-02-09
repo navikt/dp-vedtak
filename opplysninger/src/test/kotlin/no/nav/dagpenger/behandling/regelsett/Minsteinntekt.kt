@@ -26,13 +26,13 @@ object Minsteinntekt {
     val minsteinntekt = Opplysningstype<Boolean>("Minsteinntekt")
 
     val regelsett =
-        Regelsett("Minsteinntekt").apply {
-            oppslag(grunnbeløp, virkningsdato) { Grunnbeløp.finnFor(it) }
-            multiplikasjon(nedreTerskel, nedreTerskelFaktor, grunnbeløp)
-            multiplikasjon(øvreTerskel, øvreTerskelFaktor, grunnbeløp)
-            størreEnnEllerLik(overNedreTerskel, inntekt12, nedreTerskel)
-            størreEnnEllerLik(overØvreTerskel, inntekt36, øvreTerskel)
-            enAv(minsteinntekt, overNedreTerskel, overØvreTerskel)
+        Regelsett("Minsteinntekt") {
+            regel { grunnbeløp.oppslag(virkningsdato) { Grunnbeløp.finnFor(it) } }
+            regel { nedreTerskel.multiplikasjon(nedreTerskelFaktor, grunnbeløp) }
+            regel { øvreTerskel.multiplikasjon(øvreTerskelFaktor, grunnbeløp) }
+            regel { overNedreTerskel.størreEnnEllerLik(inntekt12, nedreTerskel) }
+            regel { overØvreTerskel.størreEnnEllerLik(inntekt36, øvreTerskel) }
+            regel { minsteinntekt.enAv(overNedreTerskel, overØvreTerskel) }
         }
 
     internal object Grunnbeløp {

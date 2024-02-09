@@ -22,12 +22,8 @@ class MultiplikasjonTest {
         Regelkjøring(
             1.mai,
             opplysninger,
-            Regelsett("regelsett").also {
-                it.multiplikasjon(
-                    sum,
-                    a,
-                    b,
-                )
+            Regelsett("regelsett") {
+                regel { sum.multiplikasjon(a, b) }
             },
         )
 

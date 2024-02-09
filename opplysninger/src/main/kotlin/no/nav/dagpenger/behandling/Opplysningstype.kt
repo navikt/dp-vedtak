@@ -13,7 +13,7 @@ class Opplysningstype<T : Comparable<T>>(
         parent?.child?.add(this)
     }
 
-    override fun er(type: Opplysningstype<*>): Boolean {
+    override infix fun er(type: Opplysningstype<*>): Boolean {
         return navn == type.navn || parent?.er(type) ?: false
     }
 

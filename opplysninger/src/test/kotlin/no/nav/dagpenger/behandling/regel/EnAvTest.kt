@@ -18,16 +18,15 @@ internal class EnAvTest {
         Regelkjøring(
             1.mai,
             opplysninger,
-            Regelsett("regelsett").also {
-                it.enAv(
-                    produserer,
-                    opplysningB,
-                    opplysningC,
-                )
+            Regelsett("regelsett") {
+                regel {
+                    produserer.enAv(
+                        opplysningB,
+                        opplysningC,
+                    )
+                }
             },
         )
-    private val regel =
-        EnAv(Opplysningstype("A"), opplysningB, opplysningC)
 
     @Test
     fun `hvis en av opplysningene er sanne så er utledningen sann`() {

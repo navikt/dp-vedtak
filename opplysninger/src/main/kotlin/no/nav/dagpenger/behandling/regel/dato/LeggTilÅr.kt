@@ -2,11 +2,10 @@ package no.nav.dagpenger.behandling.regel.dato
 
 import no.nav.dagpenger.behandling.LesbarOpplysninger
 import no.nav.dagpenger.behandling.Opplysningstype
-import no.nav.dagpenger.behandling.Regelsett
 import no.nav.dagpenger.behandling.regel.Regel
 import java.time.LocalDate
 
-internal class LeggTilÅr(
+class LeggTilÅr internal constructor(
     produserer: Opplysningstype<LocalDate>,
     private val dato: Opplysningstype<LocalDate>,
     private val antallÅr: Opplysningstype<Int>,
@@ -19,15 +18,7 @@ internal class LeggTilÅr(
     override fun toString() = "Legg til $antallÅr på $dato"
 }
 
-fun Regelsett.leggTilÅr(
-    gjelderFra: LocalDate,
-    produserer: Opplysningstype<LocalDate>,
+fun Opplysningstype<LocalDate>.leggTilÅr(
     dato: Opplysningstype<LocalDate>,
     antallÅr: Opplysningstype<Int>,
-): Regel<LocalDate> = LeggTilÅr(produserer, dato, antallÅr).also { leggTil(gjelderFra, produserer, it) }
-
-fun Regelsett.leggTilÅr(
-    produserer: Opplysningstype<LocalDate>,
-    dato: Opplysningstype<LocalDate>,
-    antallÅr: Opplysningstype<Int>,
-) = leggTilÅr(LocalDate.MIN, produserer, dato, antallÅr)
+) = LeggTilÅr(this, dato, antallÅr)

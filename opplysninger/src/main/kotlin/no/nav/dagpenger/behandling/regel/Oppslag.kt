@@ -2,10 +2,9 @@ package no.nav.dagpenger.behandling.regel
 
 import no.nav.dagpenger.behandling.LesbarOpplysninger
 import no.nav.dagpenger.behandling.Opplysningstype
-import no.nav.dagpenger.behandling.Regelsett
 import java.time.LocalDate
 
-internal class Oppslag<T : Comparable<T>>(
+class Oppslag<T : Comparable<T>> internal constructor(
     produserer: Opplysningstype<T>,
     private val dato: Opplysningstype<LocalDate>,
     private val block: (LocalDate) -> T,
@@ -22,8 +21,7 @@ internal class Oppslag<T : Comparable<T>>(
     }
 }
 
-fun <T : Comparable<T>> Regelsett.oppslag(
-    produserer: Opplysningstype<T>,
+fun <T : Comparable<T>> Opplysningstype<T>.oppslag(
     dato: Opplysningstype<LocalDate>,
     block: (LocalDate) -> T,
-): Regel<T> = Oppslag(produserer, dato, block).also { leggTil(LocalDate.MIN, produserer, it) }
+) = Oppslag(this, dato, block)
