@@ -7,6 +7,9 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.alle
+import no.nav.dagpenger.regel.Alderskrav
+import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.Virkningsdato
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnsendtHendelse
 
 object RettTilDagpenger {
@@ -25,8 +28,10 @@ class Person(
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
-        val behandling = Behandling(hendelse, Opplysninger(), Alderskrav.regelsett)
-        val trenger = behandling.trenger()
+        val krav = Opplysningstype<Boolean>("Krav på dagpenger")
+        val blurp = Regelsett("Krav på dagpenger") { regel(krav) { alle(Alderskrav.vilkår, Minsteinntekt.minsteinntekt) } }
+        val behandling = Behandling(hendelse, Opplysninger(), blurp, Alderskrav.regelsett, Minsteinntekt.regelsett, Virkningsdato.regelsett)
+        val trenger = behandling.trenger(krav)
         trenger.map {
             hendelse.behov(
                 OpplysningBehov(it.id),

@@ -6,6 +6,7 @@ plugins {
 val cucumberVersion = "7.15.0"
 dependencies {
     implementation(project(":opplysninger"))
+    implementation(project(":dagpenger"))
     api(libs.dp.aktivitetslogg)
     implementation(libs.kotlin.logging)
     testImplementation("io.cucumber:cucumber-java8:$cucumberVersion")

@@ -1,8 +1,6 @@
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
 }
-rootProject.name = "dp-vedtak"
-
 dependencyResolutionManagement {
     repositories {
         maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
@@ -13,6 +11,8 @@ dependencyResolutionManagement {
         }
     }
 }
+
+rootProject.name = "dp-vedtak"
 
 include("modell")
 include("openapi")

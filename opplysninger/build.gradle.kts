@@ -2,6 +2,7 @@ plugins {
     id("common")
     `java-library`
 }
+
 val cucumberVersion = "7.15.0"
 dependencies {
     testImplementation("io.cucumber:cucumber-java8:$cucumberVersion")

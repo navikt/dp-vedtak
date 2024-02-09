@@ -1,20 +1,14 @@
 plugins {
-    kotlin("jvm")
+    id("common")
     `java-library`
 }
 
 repositories {
-    mavenCentral()
+    maven("https://jitpack.io")
 }
 
 dependencies {
-    implementation(project(":opplysninger"))
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-}
+    implementation(project(path = ":opplysninger"))
 
-tasks.test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(17)
+    // implementation("com.github.navikt:dp-grunnbelop:2023.05.24-15.26.f42064d9fdc8")
 }
