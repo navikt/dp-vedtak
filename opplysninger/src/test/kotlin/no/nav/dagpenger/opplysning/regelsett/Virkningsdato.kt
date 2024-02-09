@@ -15,6 +15,6 @@ object Virkningsdato {
     val virkningsdato = Opplysningstype<LocalDate>("Virkningsdato")
     val regelsett =
         Regelsett("alder").apply {
-            regel { virkningsdato.sisteAv(fødselsdato, søknadsdato, sisteDagMedArbeidsplikt, sisteDagMedLønn) }
+            regel(virkningsdato) { sisteAv(fødselsdato, søknadsdato, sisteDagMedArbeidsplikt, sisteDagMedLønn) }
         }
 }

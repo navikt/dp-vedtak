@@ -28,7 +28,7 @@ class RegelmotorIntegrasjonsTest {
         val alleVilkår = Opplysningstype<Boolean>("Vilkår")
         val regelsett =
             Regelsett("Krav til Dagpenger").apply {
-                regel { alleVilkår.alle(Minsteinntekt.minsteinntekt, Alderskrav.vilkår) }
+                regel(alleVilkår) { alle(Minsteinntekt.minsteinntekt, Alderskrav.vilkår) }
             }
         val regelkjøring =
             Regelkjøring(

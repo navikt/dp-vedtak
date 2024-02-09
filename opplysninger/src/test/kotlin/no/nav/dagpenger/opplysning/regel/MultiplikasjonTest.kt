@@ -23,7 +23,7 @@ class MultiplikasjonTest {
             1.mai,
             opplysninger,
             Regelsett("regelsett") {
-                regel { sum.multiplikasjon(a, b) }
+                regel(sum) { multiplikasjon(a, b) }
             },
         )
 

@@ -19,8 +19,9 @@ class Regelsett(val navn: String, block: Regelsett.() -> Unit = {}) {
 
     fun leggTil(regel: Regel<*>) = leggTil(LocalDate.MIN, regel)
 
-    fun regel(
-        gjelderFra: LocalDate = LocalDate.MIN,
-        block: () -> Regel<*>,
-    ) = leggTil(gjelderFra, block())
+    fun <T : Comparable<T>> regel(
+        produserer: Opplysningstype<T>,
+        gjelderFraOgMed: LocalDate = LocalDate.MIN,
+        block: Opplysningstype<T>.() -> Regel<*>,
+    ) = leggTil(gjelderFraOgMed, produserer.block())
 }

@@ -20,7 +20,7 @@ class SisteDagIMånedEllerLikTest {
             1.mai,
             opplysninger,
             Regelsett("regelsett") {
-                regel { vilkår.størreEnnEllerLik(a, b) }
+                regel(vilkår) { størreEnnEllerLik(a, b) }
             },
         )
 

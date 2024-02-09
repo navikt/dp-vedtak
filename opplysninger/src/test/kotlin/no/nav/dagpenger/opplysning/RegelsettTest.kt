@@ -13,8 +13,8 @@ class RegelsettTest {
     private val regelsett
         get() =
             Regelsett("regelsett") {
-                regel(1.januar) { produserer.multiplikasjon(grunntall, faktorA) }
-                regel(1.juni) { produserer.multiplikasjon(grunntall, faktorB) }
+                regel(produserer, 1.januar) { multiplikasjon(grunntall, faktorA) }
+                regel(produserer, 1.juni) { multiplikasjon(grunntall, faktorB) }
             }
 
     @Test

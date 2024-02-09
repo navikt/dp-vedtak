@@ -13,7 +13,7 @@ object RettTilDagpenger {
     val rettTilDagpenger = Opplysningstype<Boolean>("Rett til dagpenger")
     val regelsett =
         Regelsett("Krav på dagpenger").apply {
-            regel { rettTilDagpenger.alle(saksbehandlerSierJa) }
+            regel(rettTilDagpenger) { alle(saksbehandlerSierJa) }
         }
 }
 

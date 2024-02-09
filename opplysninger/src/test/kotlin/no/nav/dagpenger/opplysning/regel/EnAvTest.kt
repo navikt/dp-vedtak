@@ -19,12 +19,7 @@ internal class EnAvTest {
             1.mai,
             opplysninger,
             Regelsett("regelsett") {
-                regel {
-                    produserer.enAv(
-                        opplysningB,
-                        opplysningC,
-                    )
-                }
+                regel(produserer) { enAv(opplysningB, opplysningC) }
             },
         )
 

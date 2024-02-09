@@ -10,11 +10,11 @@ class RegelkjøringTest {
         val a = Opplysningstype<Boolean>("A")
         val regelsett1 =
             Regelsett("regelsett") {
-                regel { a.enAv(Opplysningstype("B")) }
+                regel(a) { enAv(Opplysningstype("B")) }
             }
         val regelsett2 =
             Regelsett("regelsett") {
-                regel { a.enAv(Opplysningstype("C")) }
+                regel(a) { enAv(Opplysningstype("C")) }
             }
 
         assertThrows<IllegalArgumentException> {
