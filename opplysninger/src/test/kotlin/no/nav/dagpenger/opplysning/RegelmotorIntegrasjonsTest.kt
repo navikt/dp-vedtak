@@ -5,6 +5,7 @@ import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import no.nav.dagpenger.opplysning.dag.printer.MermaidPrinter
 import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regelsett.Alderskrav
+import no.nav.dagpenger.opplysning.regelsett.Grunnbeløp
 import no.nav.dagpenger.opplysning.regelsett.Minsteinntekt
 import no.nav.dagpenger.opplysning.regelsett.Virkningsdato
 import no.nav.dagpenger.opplysning.regelsett.Virkningsdato.virkningsdato
@@ -72,7 +73,7 @@ class RegelmotorIntegrasjonsTest {
         )
         opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
 
-        assertEquals(Minsteinntekt.Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(Minsteinntekt.grunnbeløp).verdi)
+        assertEquals(Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(Minsteinntekt.grunnbeløp).verdi)
 
         opplysninger.leggTil(Faktum(Minsteinntekt.nedreTerskelFaktor, 1.5))
         assertEquals(3, regelkjøring.trenger(Minsteinntekt.minsteinntekt).size)

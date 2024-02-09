@@ -17,32 +17,34 @@ object Minsteinntekt {
     val grunnbeløp = Opplysningstype<Double>("Grunnbeløp")
 
     private val virkningsdato = Virkningsdato.virkningsdato
-
-    val nedreTerskel = Opplysningstype<Double>("Inntektskrav for siste 12 mnd")
-    val øvreTerskel = Opplysningstype<Double>("Inntektskrav for siste 36 mnd")
-
-    val overNedreTerskel = Opplysningstype<Boolean>("Inntekt er over kravet for siste 12 mnd")
-    val overØvreTerskel = Opplysningstype<Boolean>("Inntekt er over kravet for siste 36 mnd")
+    private val nedreTerskel = Opplysningstype<Double>("Inntektskrav for siste 12 mnd")
+    private val øvreTerskel = Opplysningstype<Double>("Inntektskrav for siste 36 mnd")
+    private val overNedreTerskel = Opplysningstype<Boolean>("Inntekt er over kravet for siste 12 mnd")
+    private val overØvreTerskel = Opplysningstype<Boolean>("Inntekt er over kravet for siste 36 mnd")
 
     val minsteinntekt = Opplysningstype<Boolean>("Minsteinntekt")
 
     val regelsett =
         Regelsett("Minsteinntekt") {
             regel(grunnbeløp) { oppslag(virkningsdato) { Grunnbeløp.finnFor(it) } }
-            // regel(nedreTerskelFaktor) { oppslag(virkningsdato) { 1.5 } }
-            // regel(øvreTerskelFaktor) { oppslag(virkningsdato) { 3.5 } }
             regel(nedreTerskel) { multiplikasjon(nedreTerskelFaktor, grunnbeløp) }
             regel(øvreTerskel) { multiplikasjon(øvreTerskelFaktor, grunnbeløp) }
             regel(overNedreTerskel) { størreEnnEllerLik(inntekt12, nedreTerskel) }
             regel(overØvreTerskel) { størreEnnEllerLik(inntekt36, øvreTerskel) }
-            regel(overØvreTerskel) { størreEnnEllerLik(inntekt36, øvreTerskel) }
-            regel(overØvreTerskel) { størreEnnEllerLik(inntekt36, øvreTerskel) }
             regel(minsteinntekt) { enAv(overNedreTerskel, overØvreTerskel) }
         }
+}
 
-    internal object Grunnbeløp {
-        const val TEST_GRUNNBELØP = 118620.0
+internal object Grunnbeløp {
+    const val TEST_GRUNNBELØP = 118620.0
+    private val grunnbeløp =
+        mapOf(
+            LocalDate.of(2020, 5, 1) to 99858.0,
+            LocalDate.of(2021, 5, 1) to 105144.0,
+            LocalDate.of(2022, 5, 1) to TEST_GRUNNBELØP,
+        )
 
-        fun finnFor(dato: LocalDate) = TEST_GRUNNBELØP
-    }
+    fun finnFor(dato: LocalDate) =
+        grunnbeløp.filterKeys { it <= dato }.maxByOrNull { it.key }?.value
+            ?: throw IllegalArgumentException("Fant ikke grunnbeløp for $dato")
 }
