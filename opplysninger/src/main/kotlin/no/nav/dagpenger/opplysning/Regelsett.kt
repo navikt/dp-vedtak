@@ -12,12 +12,10 @@ class Regelsett(val navn: String, block: Regelsett.() -> Unit = {}) {
 
     fun regler(forDato: LocalDate = LocalDate.MIN) = regler.map { it.value.get(forDato) }.toList()
 
-    fun leggTil(
+    private fun leggTil(
         gjelderFra: LocalDate,
         regel: Regel<*>,
     ) = regler.computeIfAbsent(regel.produserer) { TemporalCollection() }.put(gjelderFra, regel)
-
-    fun leggTil(regel: Regel<*>) = leggTil(LocalDate.MIN, regel)
 
     fun <T : Comparable<T>> regel(
         produserer: Opplysningstype<T>,
