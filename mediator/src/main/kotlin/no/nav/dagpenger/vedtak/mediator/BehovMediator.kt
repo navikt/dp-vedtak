@@ -2,7 +2,7 @@ package no.nav.dagpenger.vedtak.mediator
 
 import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitet
-import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.PersonHendelse
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -12,12 +12,12 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
         val sikkerlogg = KotlinLogging.logger("tjenestekall.BehovMediator")
     }
 
-    internal fun håndter(hendelse: Hendelse) {
+    internal fun håndter(hendelse: PersonHendelse) {
         hendelse.kontekster().forEach { if (!it.harFunksjonelleFeilEllerVerre()) håndter(hendelse, it.behov()) }
     }
 
     private fun håndter(
-        hendelse: Hendelse,
+        hendelse: PersonHendelse,
         behov: List<Aktivitet.Behov>,
     ) {
         behov

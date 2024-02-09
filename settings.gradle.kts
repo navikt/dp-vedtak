@@ -1,8 +1,7 @@
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+}
 rootProject.name = "dp-vedtak"
-include("modell")
-include("mediator")
-include("openapi")
-include("opplysninger")
 
 dependencyResolutionManagement {
     repositories {
@@ -14,3 +13,9 @@ dependencyResolutionManagement {
         }
     }
 }
+
+include("modell")
+include("openapi")
+include("opplysninger")
+include("dagpenger")
+include("mediator")

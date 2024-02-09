@@ -5,10 +5,10 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.vedtak.modell.RettTilDagpenger.rettTilDagpenger
-import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.SøkerHendelse
 
 class Behandling(
-    private val behandler: Hendelse,
+    private val behandler: SøkerHendelse,
     private val opplysninger: Opplysninger,
     private val regelsett: Regelsett,
 ) {

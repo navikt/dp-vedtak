@@ -1,4 +1,4 @@
-package no.nav.dagpenger.opplysning.regelsett
+package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
@@ -8,7 +8,7 @@ import no.nav.dagpenger.opplysning.regel.dato.sisteDagIMåned
 import no.nav.dagpenger.opplysning.regel.oppslag
 import java.time.LocalDate
 
-internal object Alderskrav {
+object Alderskrav {
     val fødselsdato = Opplysningstype<LocalDate>("Fødselsdato")
     val aldersgrense = Opplysningstype<Int>("Aldersgrense")
 

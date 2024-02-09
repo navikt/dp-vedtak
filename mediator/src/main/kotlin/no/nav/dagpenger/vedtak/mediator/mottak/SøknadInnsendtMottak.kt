@@ -56,8 +56,8 @@ internal class SøknadInnsendtMessage(private val packet: JsonMessage) : Hendels
             SøknadInnsendtHendelse(
                 id,
                 ident,
-                gjelderDato = java.time.LocalDate.now(),
                 søknadId = packet["søknadsData"]["søknad_uuid"].asUUID(),
+                gjelderDato = java.time.LocalDate.now(),
             )
     override val ident get() = packet["fødselsnummer"].asText()
 

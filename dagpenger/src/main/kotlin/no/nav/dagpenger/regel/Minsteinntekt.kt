@@ -1,4 +1,4 @@
-package no.nav.dagpenger.opplysning.regelsett
+package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
@@ -9,7 +9,7 @@ import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import java.time.LocalDate
 
-internal object Minsteinntekt {
+object Minsteinntekt {
     val nedreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 12 mnd inntekt")
     val øvreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 36 mnd inntekt")
     val inntekt12 = Opplysningstype<Double>("Inntekt siste 12 mnd".id("inntekt12mnd"))

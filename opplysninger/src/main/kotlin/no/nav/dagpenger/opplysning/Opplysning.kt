@@ -15,7 +15,7 @@ data class Kilde(
 sealed class Opplysning<T : Comparable<T>>(
     val opplysningstype: Opplysningstype<T>,
     val verdi: T,
-    val gyldighetsperiode: no.nav.dagpenger.opplysning.Gyldighetsperiode,
+    val gyldighetsperiode: Gyldighetsperiode,
     val utledetAv: Utledning?,
     val kilde: Kilde?,
 ) : Klassifiserbart by opplysningstype {
@@ -31,7 +31,7 @@ sealed class Opplysning<T : Comparable<T>>(
 class Hypotese<T : Comparable<T>>(
     opplysningstype: Opplysningstype<T>,
     verdi: T,
-    gyldighetsperiode: no.nav.dagpenger.opplysning.Gyldighetsperiode = no.nav.dagpenger.opplysning.Gyldighetsperiode(),
+    gyldighetsperiode: Gyldighetsperiode = Gyldighetsperiode(),
     utledetAv: Utledning? = null,
     kilde: Kilde? = null,
 ) : Opplysning<T>(opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde) {
@@ -41,7 +41,7 @@ class Hypotese<T : Comparable<T>>(
 class Faktum<T : Comparable<T>>(
     opplysningstype: Opplysningstype<T>,
     verdi: T,
-    gyldighetsperiode: no.nav.dagpenger.opplysning.Gyldighetsperiode = no.nav.dagpenger.opplysning.Gyldighetsperiode(),
+    gyldighetsperiode: Gyldighetsperiode = Gyldighetsperiode(),
     utledetAv: Utledning? = null,
     kilde: Kilde? = null,
 ) : Opplysning<T>(opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde) {

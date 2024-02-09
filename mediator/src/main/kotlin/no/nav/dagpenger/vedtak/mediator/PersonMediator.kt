@@ -6,7 +6,7 @@ import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
-import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.helse.rapids_rivers.withMDC
 
@@ -27,7 +27,7 @@ internal class PersonMediator(
     }
 
     private fun behandle(
-        hendelse: Hendelse,
+        hendelse: PersonHendelse,
         håndter: (Person) -> Unit,
     ) = try {
         val person = hentEllerOpprettPerson(hendelse)
@@ -51,13 +51,13 @@ internal class PersonMediator(
         personRepository.lagre(person)
     }
 
-    private fun hentEllerOpprettPerson(hendelse: Hendelse): Person {
+    private fun hentEllerOpprettPerson(hendelse: PersonHendelse): Person {
         val person = personRepository.hent(hendelse.ident().tilPersonIdentfikator())
         return person ?: Person(PersonIdentifikator("12345123451"))
             .also { logger.error { "Oppretter default person 👨🏽" } } // TODO: Fjern når vi har database
     }
 
-    private fun ferdigstill(hendelse: Hendelse) {
+    private fun ferdigstill(hendelse: PersonHendelse) {
         if (!hendelse.harAktiviteter()) return
         if (hendelse.harFunksjonelleFeilEllerVerre()) {
             logger.info("aktivitetslogg inneholder feil (se sikkerlogg)")

@@ -25,7 +25,7 @@ class Person(
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
-        val behandling = Behandling(hendelse, Opplysninger(), RettTilDagpenger.regelsett)
+        val behandling = Behandling(hendelse, Opplysninger(), Alderskrav.regelsett)
         val trenger = behandling.trenger()
         trenger.map {
             hendelse.behov(

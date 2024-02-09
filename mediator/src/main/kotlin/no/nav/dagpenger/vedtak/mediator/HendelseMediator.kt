@@ -5,7 +5,7 @@ import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
 import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
 import no.nav.dagpenger.vedtak.mediator.mottak.SøknadInnsendtMessage
 import no.nav.dagpenger.vedtak.mediator.mottak.SøknadInnsendtMottak
-import no.nav.dagpenger.vedtak.modell.hendelser.Hendelse
+import no.nav.dagpenger.vedtak.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -30,7 +30,7 @@ internal class HendelseMediator(
         }
     }
 
-    private fun <HENDELSE : Hendelse> behandle(
+    private fun <HENDELSE : PersonHendelse> behandle(
         hendelse: HENDELSE,
         message: HendelseMessage,
         håndter: (HENDELSE) -> Unit,

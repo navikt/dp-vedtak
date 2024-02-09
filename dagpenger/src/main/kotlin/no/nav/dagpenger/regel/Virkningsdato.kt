@@ -1,12 +1,12 @@
-package no.nav.dagpenger.opplysning.regelsett
+package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.dato.sisteAv
-import no.nav.dagpenger.opplysning.regelsett.Alderskrav.fødselsdato
+import no.nav.dagpenger.regel.Alderskrav.fødselsdato
 import java.time.LocalDate
 
-internal object Virkningsdato {
+object Virkningsdato {
     // val fødselsdato = Opplysningstype<LocalDate>("Fødselsdato")
     val søknadsdato = Opplysningstype<LocalDate>("Søknadsdato")
     val sisteDagMedArbeidsplikt = Opplysningstype<LocalDate>("Siste dag med arbeidsplikt")

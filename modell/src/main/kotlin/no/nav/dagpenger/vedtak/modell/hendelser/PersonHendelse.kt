@@ -4,15 +4,16 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.AktivitetsloggHendelse
 import no.nav.dagpenger.aktivitetslogg.IAktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
-import java.time.LocalDate
 import java.util.UUID
 
-abstract class Hendelse(
+abstract class PersonHendelse(
     private val meldingsreferanseId: UUID,
     private val ident: String,
-    internal val aktivitetslogg: Aktivitetslogg,
+    private val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : AktivitetsloggHendelse, IAktivitetslogg by aktivitetslogg {
-    abstract val gjelderDato: LocalDate
+    init {
+        // aktivitetslogg.kontekst(this)
+    }
 
     override fun ident() = ident
 
@@ -24,5 +25,5 @@ abstract class Hendelse(
 
     override fun meldingsreferanseId() = meldingsreferanseId
 
-    abstract fun kontekstMap(): Map<String, String>
+    open fun kontekstMap(): Map<String, String> = emptyMap()
 }
