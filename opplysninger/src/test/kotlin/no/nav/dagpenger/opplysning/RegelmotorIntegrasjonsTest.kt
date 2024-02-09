@@ -41,9 +41,6 @@ class RegelmotorIntegrasjonsTest {
                 Minsteinntekt.regelsett,
             )
 
-        // TODO: subgraph i regelkjøringen gjør noe galt. Denne asserten skal gå gjennom:
-        // assertFalse(regelkjøring.trenger(Alderskrav.vilkår).contains(Alderskrav.aldersgrense))
-
         // Sett virkningsdato som en opplysning
         opplysninger.leggTil(Faktum(Virkningsdato.søknadsdato, regelverksdato.toLocalDate()))
         opplysninger.leggTil(Faktum(Virkningsdato.sisteDagMedArbeidsplikt, regelverksdato.toLocalDate()))
@@ -54,10 +51,10 @@ class RegelmotorIntegrasjonsTest {
         val avhengigheterTilMinsteinntekt = regelkjøring.trenger(Minsteinntekt.minsteinntekt)
         val avhengigheterTilAlder = regelkjøring.trenger(Alderskrav.vilkår)
 
-        assertEquals(6, avhengigheterTilalleVilkår.size)
-        assertEquals(2, avhengigheterTilAlder.size)
+        assertEquals(5, avhengigheterTilalleVilkår.size)
+        assertEquals(1, avhengigheterTilAlder.size)
         assertEquals(
-            setOf(Alderskrav.fødselsdato, Alderskrav.aldersgrense),
+            setOf(Alderskrav.fødselsdato),
             avhengigheterTilAlder,
         )
         assertEquals(5, avhengigheterTilMinsteinntekt.size)
@@ -94,7 +91,6 @@ class RegelmotorIntegrasjonsTest {
         val regelDAG = RegeltreBygger(regelsett, Minsteinntekt.regelsett, Virkningsdato.regelsett, Alderskrav.regelsett).dag()
         val mermaidDiagram = MermaidPrinter(regelDAG).toPrint()
         println(mermaidDiagram)
-        println(opplysninger.toString())
 
         val dataDAG = DatatreBygger(opplysninger).dag()
         println(MermaidPrinter(dataDAG, retning = "LR").toPrint())
@@ -108,8 +104,7 @@ class RegelmotorIntegrasjonsTest {
 
         // Flyt for å innhente manglende opplysninger
         val trenger = regelkjøring.trenger(Alderskrav.vilkår)
-        // TODO: Aldersgrense burde ikke dukke opp her, vi har jo en regel
-        assertEquals(setOf(Alderskrav.fødselsdato, virkningsdato, Alderskrav.aldersgrense), trenger)
+        assertEquals(setOf(Alderskrav.fødselsdato, virkningsdato), trenger)
 
         opplysninger.leggTil(Faktum(virkningsdato, LocalDate.of(2020, 2, 29)))
         assertEquals(setOf(Alderskrav.fødselsdato), regelkjøring.trenger(Alderskrav.vilkår))

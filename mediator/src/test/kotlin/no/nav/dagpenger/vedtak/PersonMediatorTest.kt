@@ -49,12 +49,8 @@ internal class PersonMediatorTest {
                     "Søknadsdato",
                     "Siste dag med arbeidsplikt",
                     "Siste dag med lønn",
-                    "Aldersgrense",
                     "inntekt12mnd",
-                    "Antall G for krav til 12 mnd inntekt",
-                    "Grunnbeløp",
                     "inntekt36mnd",
-                    "Antall G for krav til 36 mnd inntekt",
                 ),
                 field(0, "@behov").map { it.asText() },
             )

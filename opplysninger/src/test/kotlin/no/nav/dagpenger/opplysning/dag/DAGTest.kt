@@ -1,31 +1,31 @@
 package no.nav.dagpenger.opplysning.dag
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class DAGTest {
     private val nodeA = Node("A", "A")
     private val nodeB = Node("B", "B")
+    private val nodeC = Node("C", "C")
     private val dag =
         DAG(
-            listOf(nodeA, nodeB),
-            listOf(Edge(nodeA, nodeB, "AB")),
+            listOf(
+                Edge(nodeC, nodeA, "A to C"),
+                Edge(nodeC, nodeB, "B to C"),
+            ),
         )
 
     @Test
     fun findLeafNodes() {
         val leafNodes = dag.findLeafNodes()
-        assertTrue(leafNodes.size == 1)
-        assertEquals(nodeB, leafNodes.first())
+        assertEquals(2, leafNodes.size)
+        assertEquals(listOf(nodeA, nodeB), leafNodes)
     }
 
     @Test
-    @Disabled
     fun subgraph() {
-        val subgraph = dag.subgraph { it == "A" }
-        assertEquals(1, subgraph.nodes.size)
-        assertEquals(0, subgraph.edges.size)
+        val subgraph = dag.subgraph { it == "C" }
+        assertEquals(3, subgraph.nodes.size)
+        assertEquals(2, subgraph.edges.size)
     }
 }
