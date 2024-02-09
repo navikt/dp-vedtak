@@ -2,17 +2,23 @@
 
 # Opplysning
 
-Representerer en ting vi tror (hypotese) eller vet (faktun). Må ha en verdi. Verdien kan være dato, tall, boolske osv. 
+Representerer en ting vi tror (hypotese) eller vet (faktum). Må ha en verdi. Verdien kan være dato, tall, boolske osv. 
 
 ## Gyldighetsperiode
 
-Alle opplysninger har en gyldighetsperiode. Fra og med er obligatorisk, men til og med er åpen. FOM og TOM kan settes til samme dag for å si at en opplysning gjelder **en** dag.
+Alle opplysninger har en gyldighetsperiode. Fra og med er obligatorisk, men til og med er åpen. Fra-og-med og til-og-med kan settes til samme dag for å si at en opplysning gjelder **en** dag.
+
+### Erstatning av opplysning 
+
+> **_MERKNAD:_** Erstatning er ikke implementert.[Skisser om erstatning og splitting](https://whimsical.com/erstatning-og-splitting-AnGM4QKHzDUyq7DT3zW1E7)
+
+En opplysning kan erstatte en annen opplysning. Opplysning som blir ikke erstattet vil ikke bli slettet men en ny opplysning vil over ta med en ny gyldighetsperiode. 
 
 ## Opplysningstype
 
 Vi kan identifisere ulike opplysninger via en type. Typene kan struktureres i et hierarki. På den måten kan vi vite om en opplysning er et vilkår eller ei.
 
-![](https://raw.githubusercontent.com/navikt/dp-vedtak/c7fa5bbebe3af0b70650c32f1aa19c6eb4849fc7/opplysninger/oppysningstyper.png "Opplysningstyper")
+![](.oppysningstyper.png "Opplysningstyper")
 
 ## Tilstand
 
@@ -36,8 +42,9 @@ Vi har to ulike meldinger:
 - System (PDL, AAReg, osv)
 - Manuell overstyring (saksbehandler, superbruker)
 
+# Regel
 
-# Regel/vurdering/utledning
+> **_MERKNAD:_**  Må dokumenteres bedre, feks regelverksdato og versjonering av regler.
 
 Representerer logikk om hvordan vi utleder opplysninger fra andre opplysninger.
 
@@ -62,6 +69,14 @@ Feks
 - Mindre enn (eller lik)
 - Lik
 - Før/etter dato
+
+## Regler og opplysning 
+
+![](juridiskmetode.png "Juridisk metode mot implementasjonsmodell")
+
+![](regelverk.png "Regelverk")
+
+![](regel-er-fraktale.png "Regel er fraktale")
 
 # Faktainnhenting/behov/actions/plan
 
