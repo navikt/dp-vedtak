@@ -12,8 +12,8 @@ import java.time.LocalDate
 object Minsteinntekt {
     val nedreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 12 mnd inntekt")
     val øvreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 36 mnd inntekt")
-    val inntekt12 = Opplysningstype<Double>("Inntekt siste 12 mnd".id("inntekt12mnd"))
-    val inntekt36 = Opplysningstype<Double>("Inntekt siste 36 mnd".id("inntekt36mnd"))
+    val inntekt12 = Opplysningstype<Double>("Inntekt siste 12 mnd".id("InntektSiste3År"))
+    val inntekt36 = Opplysningstype<Double>("Inntekt siste 36 mnd".id("InntektSiste12Mnd"))
     val grunnbeløp = Opplysningstype<Double>("Grunnbeløp")
 
     private val virkningsdato = Virkningsdato.virkningsdato

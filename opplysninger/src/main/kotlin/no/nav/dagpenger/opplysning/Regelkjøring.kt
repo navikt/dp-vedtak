@@ -60,14 +60,14 @@ class Regelkjøring(
         }
     }
 
-    fun trenger(opplysningstype: Opplysningstype<*>): Set<Opplysningstype<*>> {
-        if (opplysninger.har(opplysningstype)) return emptySet()
+    fun trenger(opplysningstype: Opplysningstype<*>? = null): Set<Opplysningstype<*>> {
+        if (opplysningstype?.let { opplysninger.har(it) } == true) return emptySet()
         val dag = RegeltreBygger(muligeRegler).dag()
-        return dag
-            // TODO: Subgraph lager noe feil som gjør at Aldersgrense blir med i resultatet for vilkåret om alder
-            .subgraph { it.er(opplysningstype) }
-            .findLeafNodes()
-            .map { it.data }
-            .filterNot { opplysninger.har(it) }.toSet()
+        val graph =
+            when (opplysningstype) {
+                null -> dag
+                else -> dag.subgraph { it.er(opplysningstype) }
+            }
+        return graph.findLeafNodes().map { it.data }.filterNot { opplysninger.har(it) }.toSet()
     }
 }

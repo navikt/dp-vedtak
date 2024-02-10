@@ -1,5 +1,7 @@
 package no.nav.dagpenger.vedtak
 
+import io.kotest.matchers.collections.shouldContainOnly
+import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import no.nav.dagpenger.vedtak.db.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.db.InMemoryPersonRepository
@@ -8,7 +10,6 @@ import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.PersonMediator
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -42,17 +43,13 @@ internal class PersonMediatorTest {
         testRapid.sendTestMessage(søknadInnsendtMessage(ident))
 
         with(testRapid.inspektør) {
-            assertEquals(1, size)
-            assertEquals(
-                listOf(
-                    "Fødselsdato",
-                    "Søknadsdato",
-                    "Siste dag med arbeidsplikt",
-                    "Siste dag med lønn",
-                    "inntekt12mnd",
-                    "inntekt36mnd",
-                ),
-                field(0, "@behov").map { it.asText() },
+            size shouldBe 1
+            field(0, "@event_name").asText() shouldBe "behov"
+            field(0, "@behov").map { it.asText() }.shouldContainOnly(
+                "Fødselsdato",
+                "Søknadstidspunkt",
+                "InntektSiste3År",
+                "InntektSiste12Mnd",
             )
         }
     }
