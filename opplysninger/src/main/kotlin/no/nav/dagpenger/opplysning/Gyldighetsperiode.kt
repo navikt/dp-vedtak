@@ -15,7 +15,7 @@ data class Gyldighetsperiode(
 
     fun inneholder(dato: LocalDate) = inneholder(dato.atStartOfDay())
 
-    fun overlapp(gyldighetsperiode: no.nav.dagpenger.opplysning.Gyldighetsperiode) =
+    fun overlapp(gyldighetsperiode: Gyldighetsperiode) =
         this.contains(gyldighetsperiode.fom) || this.contains(gyldighetsperiode.fom) ||
             gyldighetsperiode.contains(this.fom) || gyldighetsperiode.contains(this.fom)
 

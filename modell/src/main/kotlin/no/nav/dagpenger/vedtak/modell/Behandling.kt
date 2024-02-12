@@ -7,6 +7,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.regel.RettTilDagpenger
 import no.nav.dagpenger.vedtak.modell.hendelser.SøkerHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnsendtHendelse
 import java.util.UUID
@@ -21,7 +22,7 @@ class Behandling private constructor(
         behandler: SøkerHendelse,
         opplysninger: Opplysninger,
         vararg regelsett: Regelsett,
-    ) : this(UUID.randomUUID(), behandler, opplysninger, *regelsett)
+    ) : this(UUIDv7.ny(), behandler, opplysninger, *regelsett)
 
     private val regelkjøring = Regelkjøring(behandler.gjelderDato, opplysninger, *regelsett)
 
@@ -29,7 +30,7 @@ class Behandling private constructor(
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
-        val trenger = regelkjøring.trenger()
+        val trenger = trenger(RettTilDagpenger.kravPåDagpenger)
         trenger.forEach {
             hendelse.behov(
                 OpplysningBehov(it.id),
