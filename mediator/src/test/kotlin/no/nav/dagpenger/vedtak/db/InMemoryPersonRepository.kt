@@ -1,6 +1,6 @@
 package no.nav.dagpenger.vedtak.db
 
-import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
+import no.nav.dagpenger.vedtak.mediator.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 

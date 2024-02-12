@@ -3,8 +3,8 @@ package no.nav.dagpenger.vedtak.mediator
 import mu.KotlinLogging
 import no.nav.dagpenger.vedtak.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.vedtak.mediator.api.vedtakApi
-import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
-import no.nav.dagpenger.vedtak.mediator.persistens.PostgresHendelseRepository
+import no.nav.dagpenger.vedtak.mediator.melding.InMemoryMeldingRepository
+import no.nav.dagpenger.vedtak.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.helse.rapids_rivers.RapidApplication
@@ -19,10 +19,13 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
         object : PersonRepository {
             private val personer = mutableMapOf<PersonIdentifikator, Person>()
 
-            override fun hent(ident: PersonIdentifikator): Person? = personer[ident]
+            override fun hent(ident: PersonIdentifikator): Person? = personer[ident].apply {
+                logger.info { "Henter person" }
+            }
 
             override fun lagre(person: Person) {
                 personer[person.ident()] = person
+                logger.info { "Lagrer person" }
             }
         }
 
@@ -39,7 +42,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
                     aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
                     behovMediator = BehovMediator(rapidsConnection),
                 ),
-            hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),
+            hendelseRepository = InMemoryMeldingRepository(),
         )
 
         rapidsConnection.register(this)

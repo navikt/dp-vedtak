@@ -1,12 +1,10 @@
-package no.nav.dagpenger.vedtak.mediator.persistens
+package no.nav.dagpenger.vedtak.mediator.melding
 
 import io.ktor.utils.io.core.use
 import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import mu.KotlinLogging
-import no.nav.dagpenger.vedtak.mediator.melding.HendelseMessage
-import no.nav.dagpenger.vedtak.mediator.melding.HendelseRepository
 import org.postgresql.util.PGobject
 import java.util.UUID
 import javax.sql.DataSource

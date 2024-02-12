@@ -12,7 +12,7 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import no.nav.dagpenger.vedtak.api.models.IdentForesporselDTO
 import no.nav.dagpenger.vedtak.api.models.VedtakDTO
-import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
+import no.nav.dagpenger.vedtak.mediator.PersonRepository
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 
 fun Application.vedtakApi(personRepository: PersonRepository) {

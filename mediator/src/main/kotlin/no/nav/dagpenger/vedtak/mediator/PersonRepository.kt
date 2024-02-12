@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak.mediator.persistens
+package no.nav.dagpenger.vedtak.mediator
 
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator

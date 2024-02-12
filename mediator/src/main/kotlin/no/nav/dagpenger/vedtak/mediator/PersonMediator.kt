@@ -2,7 +2,6 @@ package no.nav.dagpenger.vedtak.mediator
 
 import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
-import no.nav.dagpenger.vedtak.mediator.persistens.PersonRepository
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
