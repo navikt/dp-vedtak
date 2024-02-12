@@ -1,7 +1,7 @@
 package no.nav.dagpenger.opplysning
 
 import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.shouldBe
+import io.kotest.matchers.maps.shouldContainAll
 import no.nav.dagpenger.opplysning.dag.DatatreBygger
 import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import no.nav.dagpenger.opplysning.dag.printer.MermaidPrinter
@@ -9,7 +9,6 @@ import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regelsett.Alderskrav
 import no.nav.dagpenger.opplysning.regelsett.Grunnbeløp
 import no.nav.dagpenger.opplysning.regelsett.Minsteinntekt
-import no.nav.dagpenger.opplysning.regelsett.Minsteinntekt.inntekt12
 import no.nav.dagpenger.opplysning.regelsett.Virkningsdato
 import no.nav.dagpenger.opplysning.regelsett.Virkningsdato.virkningsdato
 import org.junit.jupiter.api.Assertions
@@ -67,15 +66,20 @@ class RegelmotorIntegrasjonsTest {
         avhengigheterTilMinsteinntekt shouldContainExactly forventetMinsteinntektOpplysninger
         avhengigheterTilalleVilkår shouldContainExactly (forventetAlderskravOpplysninger + forventetMinsteinntektOpplysninger)
 
-        // TODO: Nei, altså, det funker jo. Men hvorfor? Hvorfor blir det ikke flere ting her?
-        // Dette kan vi gjemme bak en funksjon et sted.
-        avhengigheterTilalleVilkår
-            .mapNotNull { regelkjøring.produserer(it) }
-            .map {
-                mapOf(it.produserer to it.avhengerAv)
-            } shouldBe listOf(mapOf(inntekt12 to listOf(virkningsdato)))
+        regelkjøring.informasjonsbehov(alleVilkår) shouldContainAll
+            mapOf(
+                Alderskrav.fødselsdato to listOf(),
+            )
 
         opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
+        val faktiskVirkningsdato = opplysninger.finnOpplysning(virkningsdato)
+        regelkjøring.informasjonsbehov(alleVilkår) shouldContainAll
+            mapOf(
+                Minsteinntekt.inntekt12 to listOf(faktiskVirkningsdato),
+                Minsteinntekt.inntekt36 to listOf(faktiskVirkningsdato),
+                Minsteinntekt.nedreTerskelFaktor to listOf(faktiskVirkningsdato),
+                Minsteinntekt.øvreTerskelFaktor to listOf(faktiskVirkningsdato),
+            )
         assertEquals(Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(Minsteinntekt.grunnbeløp).verdi)
 
         opplysninger.leggTil(Faktum(Minsteinntekt.nedreTerskelFaktor, 1.5))

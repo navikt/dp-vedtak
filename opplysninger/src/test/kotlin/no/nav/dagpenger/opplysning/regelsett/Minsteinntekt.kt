@@ -27,7 +27,10 @@ internal object Minsteinntekt {
 
     val regelsett =
         Regelsett("Minsteinntekt") {
+            regel(nedreTerskelFaktor) { ekstern(virkningsdato) }
+            regel(øvreTerskelFaktor) { ekstern(virkningsdato) }
             regel(inntekt12) { ekstern(virkningsdato) }
+            regel(inntekt36) { ekstern(virkningsdato) }
             regel(grunnbeløp) { oppslag(virkningsdato) { Grunnbeløp.finnFor(it) } }
             regel(nedreTerskel) { multiplikasjon(nedreTerskelFaktor, grunnbeløp) }
             regel(øvreTerskel) { multiplikasjon(øvreTerskelFaktor, grunnbeløp) }

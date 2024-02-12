@@ -16,8 +16,7 @@ class Regelkjøring(
         vararg regelsett: Regelsett,
     ) : this(forDato.atStartOfDay(), opplysninger, *regelsett)
 
-    private val muligeRegler: MutableList<Regel<*>> =
-        regelsett.flatMap { it.regler(forDato.toLocalDate()) }.toMutableList()
+    private val muligeRegler: MutableList<Regel<*>> = regelsett.flatMap { it.regler(forDato.toLocalDate()) }.toMutableList()
     private val plan: MutableList<Regel<*>> = mutableListOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
 
@@ -68,10 +67,21 @@ class Regelkjøring(
                 null -> dag
                 else -> dag.subgraph { it.er(opplysningstype) }
             }
-        return graph.findLeafNodes().map { it.data }.filterNot { opplysninger.har(it) }.toSet()
+        val withEdge = graph.findNodesWithEdgeNamed("Ekstern")
+        return withEdge.map { it.data }.filterNot { opplysninger.har(it) }.toSet()
     }
 
-    fun produserer(inntekt12: Opplysningstype<*>): Regel<*>? {
-        return muligeRegler.find { it.produserer(inntekt12) }
+    fun informasjonsbehov(opplysningstype: Opplysningstype<*>): Map<Opplysningstype<*>, List<Opplysning<*>>> {
+        return trenger(opplysningstype).associateWith {
+            // Finn regel som produserer opplysningstype og hent ut avhengigheter
+            val regel = muligeRegler.find { regel -> regel.produserer(it) }
+            regel?.avhengerAv ?: emptyList()
+        }.filter { (_, avhengigheter) ->
+            // Finn bare opplysninger hvor alle avhengigheter er tilfredsstilt
+            avhengigheter.all { opplysninger.har(it) }
+        }.mapValues { (_, avhengigheter) ->
+            // Finn verdien av avhengighetene
+            avhengigheter.map { opplysninger.finnOpplysning(it) }
+        }
     }
 }

@@ -8,9 +8,9 @@ class MermaidPrinter(private val dag: DAG<*>, private val retning: String = "RL"
 
         val diagram = StringBuilder()
         diagram.appendLine("graph $retning")
-        dag.edges.forEach { edge ->
+        dag.edges.filterNot { it.to == null }.forEach { edge ->
             val fromNodeName = "${edge.from.hashCode()}[\"${edge.from.name}\"]"
-            val toNodeName = "${edge.to.hashCode()}[\"${edge.to.name}\"]"
+            val toNodeName = "${edge.to.hashCode()}[\"${edge.to!!.name}\"]"
             diagram.appendLine("  $fromNodeName -->|${edge.edgeName}| $toNodeName")
         }
 

@@ -2,7 +2,6 @@ package no.nav.dagpenger.opplysning.dag
 
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.regel.Ekstern
 import no.nav.dagpenger.opplysning.regel.Regel
 
 class RegeltreBygger(private val regler: List<Regel<*>>) {
@@ -10,15 +9,13 @@ class RegeltreBygger(private val regler: List<Regel<*>>) {
     constructor(vararg regelsett: Regelsett) : this(regelsett.flatMap { it.regler() })
 
     fun dag(): DAG<Opplysningstype<*>> {
-        val edges =
-            regler.map { it }
-                .filterNot { it is Ekstern<*> }
-                .flatMap { edge(it) }
+        val edges = regler.flatMap { edge(it) }
         return DAG(edges.toList())
     }
 
     private fun edge(regel: Regel<*>): List<Edge<Opplysningstype<*>>> {
         val currentNode = node(regel.produserer)
+        if (regel.avhengerAv.isEmpty()) return listOf(Edge(currentNode, null, regel.javaClass.simpleName))
 
         return regel.avhengerAv.map { dependency ->
             val dependencyNode = node(dependency)

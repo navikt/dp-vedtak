@@ -3,12 +3,16 @@ package no.nav.dagpenger.vedtak.modell
 import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
+import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.regel.Alderskrav.fødselsdato
 import no.nav.dagpenger.regel.RettTilDagpenger
+import no.nav.dagpenger.regel.Virkningsdato.søknadsdato
 import no.nav.dagpenger.vedtak.modell.hendelser.SøkerHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnsendtHendelse
+import java.time.LocalDate
 import java.util.UUID
 
 class Behandling private constructor(
@@ -25,14 +29,19 @@ class Behandling private constructor(
 
     private val regelkjøring = Regelkjøring(behandler.gjelderDato, opplysninger, *regelsett)
 
-    private fun informasjonsbehov() = regelkjøring.trenger(RettTilDagpenger.kravPåDagpenger)
+    private fun informasjonsbehov() = regelkjøring.informasjonsbehov(RettTilDagpenger.kravPåDagpenger)
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
-        informasjonsbehov().forEach {
+        opplysninger.apply {
+            leggTil(Faktum(fødselsdato, LocalDate.of(1990, 1, 1)))
+            leggTil(Faktum(søknadsdato, LocalDate.now()))
+        }
+        informasjonsbehov().forEach { (behov, avhengigheter) ->
             hendelse.behov(
-                OpplysningBehov(it.id),
+                OpplysningBehov(behov.id),
                 "Trenger en opplysning",
+                avhengigheter.associate { av -> av.opplysningstype.id to av.verdi },
             )
         }
     }

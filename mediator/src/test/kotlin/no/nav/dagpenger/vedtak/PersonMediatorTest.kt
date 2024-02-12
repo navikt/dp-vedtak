@@ -12,6 +12,7 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 internal class PersonMediatorTest {
     private val testRapid = TestRapid()
@@ -45,12 +46,17 @@ internal class PersonMediatorTest {
         with(testRapid.inspektør) {
             size shouldBe 1
             field(0, "@event_name").asText() shouldBe "behov"
+            /* TODO: Disse skal komme først
             field(0, "@behov").map { it.asText() }.shouldContainOnly(
                 "Fødselsdato",
                 "Søknadstidspunkt",
-                "InntektSiste3År",
+            )*/
+            field(0, "@behov").map { it.asText() }.shouldContainOnly(
                 "InntektSiste12Mnd",
+                "InntektSiste3År",
             )
+            field(0, "InntektSiste12Mnd").get("Virkningsdato").asText() shouldBe LocalDate.now().toString()
+            field(0, "InntektSiste3År").get("Virkningsdato").asText() shouldBe LocalDate.now().toString()
         }
     }
 
