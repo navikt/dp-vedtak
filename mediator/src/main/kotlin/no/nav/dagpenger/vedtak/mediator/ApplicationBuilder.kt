@@ -5,8 +5,12 @@ import no.nav.dagpenger.vedtak.mediator.api.vedtakApi
 import no.nav.dagpenger.vedtak.mediator.melding.InMemoryMeldingRepository
 import no.nav.dagpenger.vedtak.modell.Person
 import no.nav.dagpenger.vedtak.modell.PersonIdentifikator
+import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.helse.rapids_rivers.River
+import kotlin.math.log
 
 internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnection.StatusListener {
     companion object {
@@ -53,5 +57,24 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         logger.info { "Starter opp dp-vedtak" }
+        Elveslurper(rapidsConnection)
+    }
+
+    private class Elveslurper(rapidsConnection: RapidsConnection): River.PacketListener {
+
+        init {
+            River(rapidsConnection).apply {
+                validate {it.requireKey("@id")}
+            }.register(this)
+        }
+        override fun onPacket(packet: JsonMessage, context: MessageContext) {
+            logger.info { "Mottok pakke med id ${packet["@id"].asText()}" }
+        }
+
+
+        private companion object {
+            val logger = KotlinLogging.logger {  }
+        }
+
     }
 }
