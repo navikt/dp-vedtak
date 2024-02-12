@@ -12,7 +12,7 @@ abstract class SøkerHendelse(
 ) : PersonHendelse(meldingsreferanseId, ident) {
     override fun kontekstMap() =
         mapOf(
-            "søknadId" to søknadId.toString(),
+            "søknad_uuid" to søknadId.toString(),
             "gjelderDato" to gjelderDato.toString(),
         )
 }
