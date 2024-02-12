@@ -1,6 +1,7 @@
 package no.nav.dagpenger.vedtak.mediator.mottak
 
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.dagpenger.vedtak.mediator.HendelseMediator
 import no.nav.dagpenger.vedtak.mediator.IHendelseMediator
 import no.nav.dagpenger.vedtak.mediator.asUUID
@@ -30,10 +31,13 @@ internal class SøknadInnsendtMottak(
         }.register(this)
     }
 
+    private val logger = KotlinLogging.logger {}
+
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
     ) {
+        logger.info { "Mottok søknad innsendt hendelse" }
         val message = SøknadInnsendtMessage(packet)
         message.behandle(hendelsemediator, context)
     }
@@ -61,10 +65,15 @@ internal class SøknadInnsendtMessage(private val packet: JsonMessage) : Hendels
             )
     override val ident get() = packet["fødselsnummer"].asText()
 
+    private val logger = KotlinLogging.logger {}
+
     override fun behandle(
         mediator: IHendelseMediator,
         context: MessageContext,
     ) {
-        mediator.behandle(hendelse, this, context)
+        withLoggingContext(hendelse.kontekstMap()) {
+            logger.info { "Behandler søknad innsendt hendelse" }
+            mediator.behandle(hendelse, this, context)
+        }
     }
 }
