@@ -1,4 +1,4 @@
-package no.nav.dagpenger.vedtak.mediator.persistens
+package no.nav.dagpenger.vedtak.mediator.melding
 
 internal class PostgresHendelseRepositoryTest {
 //    @Test
