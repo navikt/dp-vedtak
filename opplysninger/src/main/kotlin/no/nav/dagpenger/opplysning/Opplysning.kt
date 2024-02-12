@@ -3,7 +3,7 @@ package no.nav.dagpenger.opplysning
 import no.nav.dagpenger.opplysning.regel.Regel
 import java.util.UUID
 
-data class Utledning(
+data class Utledning internal constructor(
     val regel: Regel<*>,
     val opplysninger: List<Opplysning<*>>,
 )

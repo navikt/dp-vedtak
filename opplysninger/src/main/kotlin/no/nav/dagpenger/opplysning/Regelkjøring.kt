@@ -28,7 +28,7 @@ class Regelkjøring(
         opplysninger.registrer(this)
     }
 
-    fun evaluer() {
+    internal fun evaluer() {
         aktiverRegler()
         while (plan.size > 0) {
             kjørRegelPlan()

@@ -4,8 +4,8 @@ data class Node<T>(val name: String, val data: T)
 
 data class Edge<T>(val from: Node<T>, val to: Node<T>, val edgeName: String)
 
-data class DAG<T>(val edges: List<Edge<T>>, val løseNoder: List<Node<T>> = emptyList()) {
-    val nodes: Set<Node<T>> = edges.flatMap { listOf(it.from, it.to) }.toSet() + løseNoder
+data class DAG<T>(internal val edges: List<Edge<T>>, private val løseNoder: List<Node<T>> = emptyList()) {
+    internal val nodes: Set<Node<T>> = edges.flatMap { listOf(it.from, it.to) }.toSet() + løseNoder
 
     fun findLeafNodes(): List<Node<T>> {
         val outgoingNodes = edges.map { it.from }

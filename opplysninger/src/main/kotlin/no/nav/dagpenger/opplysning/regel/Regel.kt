@@ -7,17 +7,17 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Utledning
 
-abstract class Regel<T : Comparable<T>>(
+abstract class Regel<T : Comparable<T>> internal constructor(
     internal val produserer: Opplysningstype<T>,
-    val avhengerAv: List<Opplysningstype<*>> = emptyList(),
+    internal val avhengerAv: List<Opplysningstype<*>> = emptyList(),
 ) {
-    fun kanKjøre(opplysninger: LesbarOpplysninger): Boolean = opplysninger.finnAlle(avhengerAv).size == avhengerAv.size
+    internal fun kanKjøre(opplysninger: LesbarOpplysninger): Boolean = opplysninger.finnAlle(avhengerAv).size == avhengerAv.size
 
     protected abstract fun kjør(opplysninger: LesbarOpplysninger): T
 
     fun produserer(opplysningstype: Opplysningstype<*>) = produserer.er(opplysningstype)
 
-    fun lagProdukt(opplysninger: LesbarOpplysninger): Opplysning<T> {
+    internal fun lagProdukt(opplysninger: LesbarOpplysninger): Opplysning<T> {
         val basertPå = opplysninger.finnAlle(avhengerAv)
         val erAlleFaktum = basertPå.all { it is Faktum<*> }
         val utledetAv = Utledning(this, basertPå)
