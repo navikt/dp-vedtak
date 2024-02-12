@@ -62,6 +62,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     private class Elveslurper(rapidsConnection: RapidsConnection) : River.PacketListener {
         init {
             River(rapidsConnection).apply {
+                validate { it.requireValue("@event_name", "innsending_ferdigstilt") }
                 validate { it.requireKey("@id") }
             }.register(this)
         }
