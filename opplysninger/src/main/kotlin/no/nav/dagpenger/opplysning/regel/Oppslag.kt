@@ -16,9 +16,7 @@ class Oppslag<T : Comparable<T>> internal constructor(
         return block(oppslagsdato)
     }
 
-    override fun toString(): String {
-        return "Oppslag av $produserer for $dato"
-    }
+    override fun toString() = "Oppslag av $produserer for $dato"
 }
 
 fun <T : Comparable<T>> Opplysningstype<T>.oppslag(

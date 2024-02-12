@@ -1,5 +1,7 @@
 package no.nav.dagpenger.opplysning
 
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.opplysning.dag.DatatreBygger
 import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import no.nav.dagpenger.opplysning.dag.printer.MermaidPrinter
@@ -7,6 +9,7 @@ import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regelsett.Alderskrav
 import no.nav.dagpenger.opplysning.regelsett.Grunnbeløp
 import no.nav.dagpenger.opplysning.regelsett.Minsteinntekt
+import no.nav.dagpenger.opplysning.regelsett.Minsteinntekt.inntekt12
 import no.nav.dagpenger.opplysning.regelsett.Virkningsdato
 import no.nav.dagpenger.opplysning.regelsett.Virkningsdato.virkningsdato
 import org.junit.jupiter.api.Assertions
@@ -51,25 +54,28 @@ class RegelmotorIntegrasjonsTest {
         val avhengigheterTilMinsteinntekt = regelkjøring.trenger(Minsteinntekt.minsteinntekt)
         val avhengigheterTilAlder = regelkjøring.trenger(Alderskrav.vilkår)
 
-        assertEquals(5, avhengigheterTilalleVilkår.size)
-        assertEquals(1, avhengigheterTilAlder.size)
-        assertEquals(
-            setOf(Alderskrav.fødselsdato),
-            avhengigheterTilAlder,
-        )
-        assertEquals(5, avhengigheterTilMinsteinntekt.size)
-        assertEquals(
+        val forventetAlderskravOpplysninger = setOf(Alderskrav.fødselsdato)
+        val forventetMinsteinntektOpplysninger =
             setOf(
                 Minsteinntekt.inntekt12,
                 Minsteinntekt.inntekt36,
                 Minsteinntekt.nedreTerskelFaktor,
                 Minsteinntekt.øvreTerskelFaktor,
                 Alderskrav.fødselsdato,
-            ),
-            avhengigheterTilMinsteinntekt,
-        )
-        opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
+            )
+        avhengigheterTilAlder shouldContainExactly forventetAlderskravOpplysninger
+        avhengigheterTilMinsteinntekt shouldContainExactly forventetMinsteinntektOpplysninger
+        avhengigheterTilalleVilkår shouldContainExactly (forventetAlderskravOpplysninger + forventetMinsteinntektOpplysninger)
 
+        // TODO: Nei, altså, det funker jo. Men hvorfor? Hvorfor blir det ikke flere ting her?
+        // Dette kan vi gjemme bak en funksjon et sted.
+        avhengigheterTilalleVilkår
+            .mapNotNull { regelkjøring.produserer(it) }
+            .map {
+                mapOf(it.produserer to it.avhengerAv)
+            } shouldBe listOf(mapOf(inntekt12 to listOf(virkningsdato)))
+
+        opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
         assertEquals(Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(Minsteinntekt.grunnbeløp).verdi)
 
         opplysninger.leggTil(Faktum(Minsteinntekt.nedreTerskelFaktor, 1.5))

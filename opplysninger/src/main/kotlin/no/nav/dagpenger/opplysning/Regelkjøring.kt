@@ -70,4 +70,8 @@ class Regelkjøring(
             }
         return graph.findLeafNodes().map { it.data }.filterNot { opplysninger.har(it) }.toSet()
     }
+
+    fun produserer(inntekt12: Opplysningstype<*>): Regel<*>? {
+        return muligeRegler.find { it.produserer(inntekt12) }
+    }
 }
