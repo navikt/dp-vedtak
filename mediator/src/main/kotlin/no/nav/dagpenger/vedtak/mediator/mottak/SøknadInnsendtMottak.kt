@@ -31,8 +31,6 @@ internal class SøknadInnsendtMottak(
         }.register(this)
     }
 
-    private val logger = KotlinLogging.logger {}
-
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
