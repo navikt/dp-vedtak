@@ -2,7 +2,6 @@ package no.nav.dagpenger.vedtak.mediator.melding
 
 import java.util.UUID
 
-
 // @todo: Imidlertidig løsning før vi får på plass en ordentlig databasetabell
 internal class InMemoryMeldingRepository : HendelseRepository {
     private val meldingDb = mutableMapOf<UUID, MeldingDto>()
@@ -29,9 +28,9 @@ internal class InMemoryMeldingRepository : HendelseRepository {
 
     private fun hentMelding(id: UUID) =
         (
-                meldingDb[id]
-                    ?: throw IllegalArgumentException("Melding med id $id finnes ikke")
-                )
+            meldingDb[id]
+                ?: throw IllegalArgumentException("Melding med id $id finnes ikke")
+        )
 
     private data class MeldingDto(val hendelseMessage: HendelseMessage, var status: MeldingStatus)
 

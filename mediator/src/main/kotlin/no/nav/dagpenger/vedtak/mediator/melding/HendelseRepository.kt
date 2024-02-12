@@ -14,5 +14,3 @@ internal interface HendelseRepository {
 
     fun erBehandlet(hendelseId: UUID): Boolean
 }
-
-
