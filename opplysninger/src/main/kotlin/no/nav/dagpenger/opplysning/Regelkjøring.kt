@@ -1,6 +1,7 @@
 package no.nav.dagpenger.opplysning
 
 import no.nav.dagpenger.opplysning.dag.RegeltreBygger
+import no.nav.dagpenger.opplysning.regel.Ekstern
 import no.nav.dagpenger.opplysning.regel.Regel
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -67,15 +68,16 @@ class Regelkjøring(
                 null -> dag
                 else -> dag.subgraph { it.er(opplysningstype) }
             }
-        val withEdge = graph.findNodesWithEdgeNamed("Ekstern")
-        return withEdge.map { it.data }.filterNot { opplysninger.har(it) }.toSet()
+        val opplysningerUtenRegel = graph.findLeafNodes()
+        val opplysningerMedEksternRegel = graph.findNodesWithEdgeNamed(Ekstern::class.java.simpleName)
+        return (opplysningerUtenRegel + opplysningerMedEksternRegel)
+            .map { it.data }.filterNot { opplysninger.har(it) }.toSet()
     }
 
     fun informasjonsbehov(opplysningstype: Opplysningstype<*>): Map<Opplysningstype<*>, List<Opplysning<*>>> {
         return trenger(opplysningstype).associateWith {
             // Finn regel som produserer opplysningstype og hent ut avhengigheter
-            val regel = muligeRegler.find { regel -> regel.produserer(it) }
-            regel?.avhengerAv ?: emptyList()
+            muligeRegler.find { regel -> regel.produserer(it) }?.avhengerAv ?: emptyList()
         }.filter { (_, avhengigheter) ->
             // Finn bare opplysninger hvor alle avhengigheter er tilfredsstilt
             avhengigheter.all { opplysninger.har(it) }
