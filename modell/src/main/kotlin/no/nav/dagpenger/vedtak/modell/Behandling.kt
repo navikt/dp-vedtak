@@ -33,6 +33,7 @@ class Behandling private constructor(
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
+        // TODO: flytt dette ut i løste behov
         opplysninger.apply {
             leggTil(Faktum(fødselsdato, LocalDate.of(1990, 1, 1)))
             leggTil(Faktum(søknadsdato, LocalDate.now()))
