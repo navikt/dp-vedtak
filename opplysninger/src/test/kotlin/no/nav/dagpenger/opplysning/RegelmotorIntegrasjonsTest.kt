@@ -64,35 +64,25 @@ class RegelmotorIntegrasjonsTest {
             setOf(
                 Minsteinntekt.inntekt12,
                 Minsteinntekt.inntekt36,
-                Minsteinntekt.nedreTerskelFaktor,
-                Minsteinntekt.øvreTerskelFaktor,
                 Alderskrav.fødselsdato,
             )
         avhengigheterTilAlder shouldContainExactly forventetAlderskravOpplysninger
         avhengigheterTilMinsteinntekt shouldContainExactly forventetMinsteinntektOpplysninger
         avhengigheterTilalleVilkår shouldContainExactly (forventetAlderskravOpplysninger + forventetMinsteinntektOpplysninger)
 
-        regelkjøring.informasjonsbehov(alleVilkår) shouldContainAll
-            mapOf(
-                Alderskrav.fødselsdato to listOf(),
-            )
-
+        regelkjøring.informasjonsbehov(alleVilkår) shouldContainAll mapOf(Alderskrav.fødselsdato to listOf())
         opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
-        val faktiskVirkningsdato = opplysninger.finnOpplysning(virkningsdato)
-        regelkjøring.informasjonsbehov(alleVilkår) shouldContainAll
-            mapOf(
-                Minsteinntekt.inntekt12 to listOf(faktiskVirkningsdato),
-                Minsteinntekt.inntekt36 to listOf(faktiskVirkningsdato),
-                Minsteinntekt.nedreTerskelFaktor to listOf(faktiskVirkningsdato),
-                Minsteinntekt.øvreTerskelFaktor to listOf(faktiskVirkningsdato),
+
+        with(regelkjøring.informasjonsbehov(alleVilkår)) {
+            val faktiskVirkningsdato = opplysninger.finnOpplysning(virkningsdato)
+            shouldContainAll(
+                mapOf(
+                    Minsteinntekt.inntekt12 to listOf(faktiskVirkningsdato),
+                    Minsteinntekt.inntekt36 to listOf(faktiskVirkningsdato),
+                ),
             )
+        }
         assertEquals(Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(Minsteinntekt.grunnbeløp).verdi)
-
-        opplysninger.leggTil(Faktum(Minsteinntekt.nedreTerskelFaktor, 1.5))
-        assertEquals(3, regelkjøring.trenger(Minsteinntekt.minsteinntekt).size)
-
-        opplysninger.leggTil(Faktum(Minsteinntekt.øvreTerskelFaktor, 3.0))
-        assertEquals(2, regelkjøring.trenger(Minsteinntekt.minsteinntekt).size)
 
         // Har er ikke lengre gyldig inntekt og må hentes på nytt
         opplysninger.leggTil(Hypotese(Minsteinntekt.inntekt12, 321321.0, Gyldighetsperiode(9.mai)))

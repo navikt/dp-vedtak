@@ -11,8 +11,8 @@ import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import java.time.LocalDate
 
 internal object Minsteinntekt {
-    val nedreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 12 mnd inntekt")
-    val øvreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 36 mnd inntekt")
+    val antallG12mndInntekt = Opplysningstype<Double>("Antall G for krav til 12 mnd inntekt")
+    val antallG36mndInntekt = Opplysningstype<Double>("Antall G for krav til 36 mnd inntekt")
     val inntekt12 = Opplysningstype<Double>("Inntekt siste 12 mnd".id("inntekt12mnd"))
     val inntekt36 = Opplysningstype<Double>("Inntekt siste 36 mnd".id("inntekt36mnd"))
     val grunnbeløp = Opplysningstype<Double>("Grunnbeløp")
@@ -27,13 +27,13 @@ internal object Minsteinntekt {
 
     val regelsett =
         Regelsett("Minsteinntekt") {
-            regel(nedreTerskelFaktor) { innhentMed(virkningsdato) }
-            regel(øvreTerskelFaktor) { innhentMed(virkningsdato) }
+            regel(antallG12mndInntekt) { oppslag(virkningsdato) { 1.5 } }
+            regel(antallG36mndInntekt) { oppslag(virkningsdato) { 3.0 } }
             regel(inntekt12) { innhentMed(virkningsdato) }
             regel(inntekt36) { innhentMed(virkningsdato) }
             regel(grunnbeløp) { oppslag(virkningsdato) { Grunnbeløp.finnFor(it) } }
-            regel(nedreTerskel) { multiplikasjon(nedreTerskelFaktor, grunnbeløp) }
-            regel(øvreTerskel) { multiplikasjon(øvreTerskelFaktor, grunnbeløp) }
+            regel(nedreTerskel) { multiplikasjon(antallG12mndInntekt, grunnbeløp) }
+            regel(øvreTerskel) { multiplikasjon(antallG36mndInntekt, grunnbeløp) }
             regel(overNedreTerskel) { størreEnnEllerLik(inntekt12, nedreTerskel) }
             regel(overØvreTerskel) { størreEnnEllerLik(inntekt36, øvreTerskel) }
             regel(minsteinntekt) { enAv(overNedreTerskel, overØvreTerskel) }
