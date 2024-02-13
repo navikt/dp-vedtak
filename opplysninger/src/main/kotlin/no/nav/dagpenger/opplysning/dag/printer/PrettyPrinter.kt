@@ -21,9 +21,7 @@ class PrettyPrinter(private val dag: DAG<*>) : DAGPrinter {
                 if (node in adjacencyList.keys) {
                     for (edge in adjacencyList[node]!!) {
                         prettyPrint.appendLine("  ".repeat(indent + 1) + "| ${edge.edgeName}")
-                        edge.to?.let {
-                            printNode(edge.to, indent + 1)
-                        }
+                        printNode(edge.to, indent + 1)
                     }
                 }
             }

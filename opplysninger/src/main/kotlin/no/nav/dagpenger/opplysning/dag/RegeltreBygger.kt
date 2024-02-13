@@ -15,7 +15,6 @@ class RegeltreBygger(private val regler: List<Regel<*>>) {
 
     private fun edge(regel: Regel<*>): List<Edge<Opplysningstype<*>>> {
         val currentNode = node(regel.produserer)
-        if (regel.avhengerAv.isEmpty()) return listOf(Edge(currentNode, null, regel.javaClass.simpleName))
 
         return regel.avhengerAv.map { dependency ->
             val dependencyNode = node(dependency)

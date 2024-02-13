@@ -2,10 +2,10 @@ package no.nav.dagpenger.opplysning.dag
 
 data class Node<T>(val name: String, val data: T)
 
-data class Edge<T>(val from: Node<T>, val to: Node<T>?, val edgeName: String)
+data class Edge<T>(val from: Node<T>, val to: Node<T>, val edgeName: String)
 
 data class DAG<T>(internal val edges: List<Edge<T>>, private val løseNoder: List<Node<T>> = emptyList()) {
-    internal val nodes: Set<Node<T>> = edges.flatMap { listOf(it.from, it.to) }.filterNotNull().toSet() + løseNoder
+    internal val nodes: Set<Node<T>> = edges.flatMap { listOf(it.from, it.to) }.toSet() + løseNoder
 
     fun findLeafNodes(): List<Node<T>> {
         val outgoingNodes = edges.map { it.from }
@@ -29,7 +29,7 @@ data class DAG<T>(internal val edges: List<Edge<T>>, private val løseNoder: Lis
             outgoingEdges.forEach { edge ->
                 if (edge in subgraphEdges) return@forEach
                 subgraphEdges.add(edge)
-                edge.to?.let { traverse(it) }
+                traverse(edge.to)
             }
         }
 
