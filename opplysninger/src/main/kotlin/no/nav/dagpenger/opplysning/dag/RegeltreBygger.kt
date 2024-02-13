@@ -8,17 +8,17 @@ class RegeltreBygger(private val regler: List<Regel<*>>) {
     constructor(regelsett: Regelsett) : this(regelsett.regler())
     constructor(vararg regelsett: Regelsett) : this(regelsett.flatMap { it.regler() })
 
-    fun dag(): DAG<Opplysningstype<*>> {
+    fun dag(): DAG<Opplysningstype<*>, Any?> {
         val edges = regler.flatMap { edge(it) }
         return DAG(edges.toList())
     }
 
-    private fun edge(regel: Regel<*>): List<Edge<Opplysningstype<*>>> {
+    private fun edge(regel: Regel<*>): List<Edge<Opplysningstype<*>, Any?>> {
         val currentNode = node(regel.produserer)
 
         return regel.avhengerAv.map { dependency ->
             val dependencyNode = node(dependency)
-            Edge(from = currentNode, to = dependencyNode, edgeName = regel.javaClass.simpleName)
+            Edge(from = currentNode, to = dependencyNode, edgeName = regel.javaClass.simpleName, data = regel)
         }
     }
 

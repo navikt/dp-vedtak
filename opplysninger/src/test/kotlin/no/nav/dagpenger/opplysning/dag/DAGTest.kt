@@ -8,7 +8,7 @@ class DAGTest {
     private val nodeB = Node("B", "B")
     private val nodeC = Node("C", "C")
     private val dag =
-        DAG(
+        DAG<String, Any?>(
             listOf(
                 Edge(nodeC, nodeA, "A to C"),
                 Edge(nodeC, nodeB, "B to C"),

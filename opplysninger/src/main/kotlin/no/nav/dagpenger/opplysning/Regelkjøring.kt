@@ -70,7 +70,7 @@ class Regelkjøring(
                 else -> dag.subgraph { it.er(opplysningstype) }
             }
         val opplysningerUtenRegel = graph.findLeafNodes()
-        val opplysningerMedEksternRegel = graph.findNodesWithEdgeNamed(Ekstern::class.java.simpleName)
+        val opplysningerMedEksternRegel = graph.findNodesWithEdge { it.data is Ekstern<*> }
         return (opplysningerUtenRegel + opplysningerMedEksternRegel)
             .map { it.data }.filterNot { opplysninger.har(it) }.toSet()
     }

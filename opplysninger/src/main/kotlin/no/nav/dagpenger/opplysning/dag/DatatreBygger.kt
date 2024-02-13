@@ -4,9 +4,9 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 
 class DatatreBygger(private val opplysninger: Opplysninger) {
-    private val edges = mutableListOf<Edge<Opplysning<*>>>()
+    private val edges = mutableListOf<Edge<Opplysning<*>, Any?>>()
 
-    fun dag(): DAG<Opplysning<*>> {
+    fun dag(): DAG<Opplysning<*>, Any?> {
         opplysninger.finnAlle().forEach { opplysning ->
             val element = Node("${opplysning.opplysningstype.navn}: ${opplysning.verdi}", opplysning)
             opplysning.utledetAv?.opplysninger?.forEach { utledning ->
