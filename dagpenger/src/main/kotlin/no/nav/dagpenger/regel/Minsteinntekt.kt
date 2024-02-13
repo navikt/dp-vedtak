@@ -3,8 +3,8 @@ package no.nav.dagpenger.regel
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
-import no.nav.dagpenger.opplysning.regel.ekstern
 import no.nav.dagpenger.opplysning.regel.enAv
+import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
@@ -13,8 +13,8 @@ import java.time.LocalDate
 object Minsteinntekt {
     val nedreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 12 mnd inntekt")
     val øvreTerskelFaktor = Opplysningstype<Double>("Antall G for krav til 36 mnd inntekt")
-    val inntekt12 = Opplysningstype<Double>("Inntekt siste 12 mnd".id("InntektSiste3År"))
-    val inntekt36 = Opplysningstype<Double>("Inntekt siste 36 mnd".id("InntektSiste12Mnd"))
+    val inntekt12 = Opplysningstype<Double>("Inntekt siste 12 mnd".id("InntektSiste12Mnd"))
+    val inntekt36 = Opplysningstype<Double>("Inntekt siste 36 mnd".id("InntektSiste3År"))
     val grunnbeløp = Opplysningstype<Double>("Grunnbeløp")
 
     private val virkningsdato = Virkningsdato.virkningsdato
@@ -27,8 +27,8 @@ object Minsteinntekt {
 
     val regelsett =
         Regelsett("Minsteinntekt") {
-            regel(inntekt12) { ekstern(virkningsdato) }
-            regel(inntekt36) { ekstern(virkningsdato) }
+            regel(inntekt12) { innhentMed(virkningsdato) }
+            regel(inntekt36) { innhentMed(virkningsdato) }
             regel(grunnbeløp) { oppslag(virkningsdato) { Grunnbeløp.finnFor(it) } }
             regel(nedreTerskelFaktor) { oppslag(virkningsdato) { 1.5 } }
             regel(øvreTerskelFaktor) { oppslag(virkningsdato) { 3.0 } }

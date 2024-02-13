@@ -55,8 +55,14 @@ internal class PersonMediatorTest {
                 "InntektSiste12Mnd",
                 "InntektSiste3År",
             )
-            field(0, "InntektSiste12Mnd").get("Virkningsdato").asText() shouldBe LocalDate.now().toString()
-            field(0, "InntektSiste3År").get("Virkningsdato").asText() shouldBe LocalDate.now().toString()
+            with(field(0, "InntektSiste12Mnd")) {
+                size shouldBe 1
+                get("Virkningsdato").asText() shouldBe LocalDate.now().toString()
+            }
+            with(field(0, "InntektSiste3År")) {
+                size shouldBe 1
+                get("Virkningsdato").asText() shouldBe LocalDate.now().toString()
+            }
         }
     }
 

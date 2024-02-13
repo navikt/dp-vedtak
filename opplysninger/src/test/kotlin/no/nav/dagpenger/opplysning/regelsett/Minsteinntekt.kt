@@ -3,8 +3,8 @@ package no.nav.dagpenger.opplysning.regelsett
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
-import no.nav.dagpenger.opplysning.regel.ekstern
 import no.nav.dagpenger.opplysning.regel.enAv
+import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
@@ -27,10 +27,10 @@ internal object Minsteinntekt {
 
     val regelsett =
         Regelsett("Minsteinntekt") {
-            regel(nedreTerskelFaktor) { ekstern(virkningsdato) }
-            regel(øvreTerskelFaktor) { ekstern(virkningsdato) }
-            regel(inntekt12) { ekstern(virkningsdato) }
-            regel(inntekt36) { ekstern(virkningsdato) }
+            regel(nedreTerskelFaktor) { innhentMed(virkningsdato) }
+            regel(øvreTerskelFaktor) { innhentMed(virkningsdato) }
+            regel(inntekt12) { innhentMed(virkningsdato) }
+            regel(inntekt36) { innhentMed(virkningsdato) }
             regel(grunnbeløp) { oppslag(virkningsdato) { Grunnbeløp.finnFor(it) } }
             regel(nedreTerskel) { multiplikasjon(nedreTerskelFaktor, grunnbeløp) }
             regel(øvreTerskel) { multiplikasjon(øvreTerskelFaktor, grunnbeløp) }

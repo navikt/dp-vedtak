@@ -14,4 +14,4 @@ class Ekstern<T : Comparable<T>> internal constructor(
     override fun toString() = "Ekstern innhenting for $produserer"
 }
 
-fun <T : Comparable<T>> Opplysningstype<T>.ekstern(vararg opplysninger: Opplysningstype<*>) = Ekstern(this, opplysninger.toList())
+fun <T : Comparable<T>> Opplysningstype<T>.innhentMed(vararg opplysninger: Opplysningstype<*>) = Ekstern(this, opplysninger.toList())
