@@ -12,6 +12,7 @@ abstract class PersonHendelse(
     private val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : AktivitetsloggHendelse, IAktivitetslogg by aktivitetslogg {
     init {
+        // TODO: Fjern denne når vi har fikset oppsett av aktivitetslogg
         // aktivitetslogg.kontekst(this)
     }
 

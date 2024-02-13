@@ -17,7 +17,8 @@ class Regelkjøring(
         vararg regelsett: Regelsett,
     ) : this(forDato.atStartOfDay(), opplysninger, *regelsett)
 
-    private val muligeRegler: MutableList<Regel<*>> = regelsett.flatMap { it.regler(forDato.toLocalDate()) }.toMutableList()
+    private val alleRegler: List<Regel<*>> = regelsett.flatMap { it.regler(forDato.toLocalDate()) }
+    private val muligeRegler: MutableList<Regel<*>> = alleRegler.toMutableList()
     private val plan: MutableList<Regel<*>> = mutableListOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
 
@@ -60,7 +61,7 @@ class Regelkjøring(
         }
     }
 
-    fun trenger(opplysningstype: Opplysningstype<*>? = null): Set<Opplysningstype<*>> {
+    internal fun trenger(opplysningstype: Opplysningstype<*>? = null): Set<Opplysningstype<*>> {
         if (opplysningstype?.let { opplysninger.har(it) } == true) return emptySet()
         val dag = RegeltreBygger(muligeRegler).dag()
         val graph =

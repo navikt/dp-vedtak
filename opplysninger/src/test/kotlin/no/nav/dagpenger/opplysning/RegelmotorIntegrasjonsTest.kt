@@ -25,7 +25,7 @@ class RegelmotorIntegrasjonsTest {
                 listOf(
                     // Setter opp opplysninger med ting som er kjent fra før
                     // Har er ikke lengre gyldig og må hentes på nytt
-                    Faktum(Minsteinntekt.inntekt12, 221221.0, no.nav.dagpenger.opplysning.Gyldighetsperiode(1.januar, 1.mai)),
+                    Faktum(Minsteinntekt.inntekt12, 221221.0, Gyldighetsperiode(1.januar, 1.mai)),
                 ),
             )
         val alleVilkår = Opplysningstype<Boolean>("Vilkår")
@@ -44,7 +44,13 @@ class RegelmotorIntegrasjonsTest {
             )
 
         // Sett virkningsdato som en opplysning
-        opplysninger.leggTil(Faktum(Virkningsdato.søknadsdato, regelverksdato.toLocalDate()))
+        opplysninger.leggTil(
+            Faktum(
+                Virkningsdato.søknadsdato,
+                regelverksdato.toLocalDate(),
+                Gyldighetsperiode(regelverksdato.toLocalDate()),
+            ),
+        )
         opplysninger.leggTil(Faktum(Virkningsdato.sisteDagMedArbeidsplikt, regelverksdato.toLocalDate()))
         opplysninger.leggTil(Faktum(Virkningsdato.sisteDagMedLønn, regelverksdato.toLocalDate()))
 
@@ -89,8 +95,8 @@ class RegelmotorIntegrasjonsTest {
         assertEquals(2, regelkjøring.trenger(Minsteinntekt.minsteinntekt).size)
 
         // Har er ikke lengre gyldig inntekt og må hentes på nytt
-        opplysninger.leggTil(Hypotese(Minsteinntekt.inntekt12, 321321.0, no.nav.dagpenger.opplysning.Gyldighetsperiode(9.mai)))
-        opplysninger.leggTil(Hypotese(Minsteinntekt.inntekt36, 321321.0, no.nav.dagpenger.opplysning.Gyldighetsperiode(9.mai, 12.mai)))
+        opplysninger.leggTil(Hypotese(Minsteinntekt.inntekt12, 321321.0, Gyldighetsperiode(9.mai)))
+        opplysninger.leggTil(Hypotese(Minsteinntekt.inntekt36, 321321.0, Gyldighetsperiode(9.mai, 12.mai)))
         assertEquals(0, regelkjøring.trenger(Minsteinntekt.minsteinntekt).size)
 
         Assertions.assertTrue(opplysninger.har(Minsteinntekt.minsteinntekt))

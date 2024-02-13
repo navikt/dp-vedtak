@@ -9,7 +9,7 @@ data class Gyldighetsperiode(
     private val range: ClosedRange<LocalDateTime> = fom..tom,
 ) : ClosedRange<LocalDateTime> by range {
     constructor(fom: LocalDate, tom: LocalDate) : this(fom.atStartOfDay(), tom.atStartOfDay())
-    constructor(fom: LocalDate) : this(fom.atStartOfDay(), LocalDateTime.now())
+    constructor(fom: LocalDate) : this(fom.atStartOfDay())
 
     fun inneholder(dato: LocalDateTime) = dato in range
 

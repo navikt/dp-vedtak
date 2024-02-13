@@ -7,6 +7,7 @@ import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.RettTilDagpenger
 import no.nav.dagpenger.regel.Virkningsdato
+import no.nav.dagpenger.vedtak.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.vedtak.modell.hendelser.SøknadInnsendtHendelse
 
 class Person(
@@ -15,9 +16,7 @@ class Person(
     fun ident() = ident
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
-        // TODO: Dette bør skje i hendelse-land
-        hendelse.kontekst(hendelse)
-        hendelse.kontekst(this)
+        hendelse.leggTilKontekst(this)
         val behandling =
             Behandling(
                 hendelse,
@@ -28,6 +27,11 @@ class Person(
                 Virkningsdato.regelsett,
             )
         behandling.håndter(hendelse)
+    }
+
+    private fun PersonHendelse.leggTilKontekst(kontekst: Aktivitetskontekst) {
+        kontekst(this)
+        kontekst(kontekst)
     }
 
     override fun toSpesifikkKontekst(): SpesifikkKontekst = SpesifikkKontekst("Person", mapOf("ident" to ident.identifikator()))

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.opplysning.regel
 
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
@@ -22,7 +23,7 @@ abstract class Regel<T : Comparable<T>> internal constructor(
         val erAlleFaktum = basertPå.all { it is Faktum<*> }
         val utledetAv = Utledning(this, basertPå)
         val gyldig =
-            no.nav.dagpenger.opplysning.Gyldighetsperiode(
+            Gyldighetsperiode(
                 fom = basertPå.maxOf { it.gyldighetsperiode.fom },
                 tom = basertPå.minOf { it.gyldighetsperiode.tom },
             )
