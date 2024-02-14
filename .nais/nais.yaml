@@ -1,7 +1,7 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: dp-vedtak
+  name: dp-behandling
   namespace: teamdagpenger
   labels:
     team: teamdagpenger
@@ -59,9 +59,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: dp-saksbehandling-frontend
-        - application: dp-saksbehandling-graphql
-       # - application: dp-rapportering-frontend
         {{#if wonderwalled}}
         - application: wonderwalled-idporten
           namespace: aura

@@ -6,9 +6,9 @@ info:
   contact:
     name: '#team-dagpenger'
 servers:
-  - url: https://dp-vedtak.intern.dev.nav.no
+  - url: https://dp-behandling.intern.dev.nav.no
     description: dev
-  - url: https://dp-vedtak.intern.nav.no
+  - url: https://dp-behandling.intern.nav.no
     description: prod
 paths:
   /behandling:

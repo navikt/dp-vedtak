@@ -1,4 +1,4 @@
-# dp-vedtak
+# dp-behandling
 
 Vedtakmodell for Dagpenger
 

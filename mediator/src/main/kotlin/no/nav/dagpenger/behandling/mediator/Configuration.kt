@@ -9,13 +9,13 @@ import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 
 internal object Configuration {
-    const val APP_NAME = "dp-vedtak"
+    const val APP_NAME = "dp-behandling"
 
     private val defaultProperties =
         ConfigurationMap(
             mapOf(
-                "RAPID_APP_NAME" to "dp-vedtak",
-                "KAFKA_CONSUMER_GROUP_ID" to "dp-vedtak-v1",
+                "RAPID_APP_NAME" to "dp-behandling",
+                "KAFKA_CONSUMER_GROUP_ID" to "dp-behandling-v2",
                 "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
                 "KAFKA_RESET_POLICY" to "latest",
                 "Grupper.saksbehandler" to "123",
