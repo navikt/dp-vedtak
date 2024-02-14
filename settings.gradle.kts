@@ -14,6 +14,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "dp-vedtak"
 
+include("dato")
 include("modell")
 include("openapi")
 include("opplysninger")
