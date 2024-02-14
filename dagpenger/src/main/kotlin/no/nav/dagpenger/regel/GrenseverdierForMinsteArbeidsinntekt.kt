@@ -41,24 +41,16 @@ object GrenseverdierForMinsteArbeidsinntekt {
             // https://lovdata.no/lov/1997-02-28-19/§4-4
         )
 
-    fun finnFaktor(virkningsdato: LocalDate): Faktor {
+    fun finnTerskel(virkningsdato: LocalDate): Faktor {
         return terskler.first { virkningsdato in it }.faktor
     }
 
     private class MinstearbeidsinntektTerskel(
-        private val fom: LocalDate,
-        private val tom: LocalDate,
+        fom: LocalDate,
+        tom: LocalDate,
         val faktor: Faktor,
-    ) : ClosedRange<LocalDate> {
-        init {
-            require(fom.isBefore(tom)) { "Til og med '$fom' må være før Fra-og-med '$tom'" }
-        }
-
-        override val endInclusive: LocalDate
-            get() = tom
-        override val start: LocalDate
-            get() = fom
-    }
+        private val range: ClosedRange<LocalDate> = fom..tom,
+    ) : ClosedRange<LocalDate> by range
 
     data class Faktor(
         val nedre: Double,

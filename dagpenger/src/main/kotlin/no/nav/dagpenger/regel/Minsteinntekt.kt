@@ -11,6 +11,7 @@ import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
+import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
 
 object Minsteinntekt {
     val nedreTerskelFaktor = Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd inntekt")
@@ -38,8 +39,8 @@ object Minsteinntekt {
                         .toDouble()
                 }
             }
-            regel(nedreTerskelFaktor) { oppslag(virkningsdato) { GrenseverdierForMinsteArbeidsinntekt.finnFaktor(it).nedre } }
-            regel(øvreTerskelFaktor) { oppslag(virkningsdato) { GrenseverdierForMinsteArbeidsinntekt.finnFaktor(it).øvre } }
+            regel(nedreTerskelFaktor) { oppslag(virkningsdato) { finnTerskel(it).nedre } }
+            regel(øvreTerskelFaktor) { oppslag(virkningsdato) { finnTerskel(it).øvre } }
             regel(nedreTerskel) { multiplikasjon(nedreTerskelFaktor, grunnbeløp) }
             regel(øvreTerskel) { multiplikasjon(øvreTerskelFaktor, grunnbeløp) }
             regel(overNedreTerskel) { størreEnnEllerLik(inntekt12, nedreTerskel) }
