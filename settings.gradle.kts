@@ -12,7 +12,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "dp-vedtak"
+rootProject.name = "dp-behandling"
 
 include("dato")
 include("modell")

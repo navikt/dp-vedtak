@@ -32,9 +32,9 @@ dependencies {
 
 openApiGenerate {
     generatorName.set("kotlin-server")
-    inputSpec.set("$projectDir/src/main/resources/vedtak-api.yaml")
+    inputSpec.set("$projectDir/src/main/resources/behandling-api.yaml")
     outputDir.set("${layout.buildDirectory.get()}/generated/")
-    packageName.set("no.nav.dagpenger.vedtak.api")
+    packageName.set("no.nav.dagpenger.behandling.api")
     globalProperties.set(
         mapOf(
             "apis" to "none",
