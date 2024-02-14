@@ -15,7 +15,7 @@ import no.nav.dagpenger.behandling.api.models.VedtakDTO
 import no.nav.dagpenger.behandling.mediator.PersonRepository
 import no.nav.dagpenger.behandling.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 
-fun Application.vedtakApi(personRepository: PersonRepository) {
+fun Application.behandlingApi(personRepository: PersonRepository) {
     konfigurerApi()
 
     routing {

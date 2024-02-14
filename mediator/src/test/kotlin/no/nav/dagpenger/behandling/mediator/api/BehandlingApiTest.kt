@@ -16,7 +16,7 @@ import no.nav.dagpenger.behandling.mediator.api.TestApplication.testAzureAdToken
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
-class VedtakApiTest {
+class BehandlingApiTest {
     private val ident = "12345123451"
     private val personRepository = InMemoryPersonRepository()
 
@@ -27,7 +27,7 @@ class VedtakApiTest {
 
     @Test
     fun `ikke autentiserte kall returnerer 401`() {
-        medSikretVedtakApi {
+        medSikretBehandlingApi {
             val response =
                 client.post("/vedtak") {
                     contentType(Json)
@@ -39,7 +39,7 @@ class VedtakApiTest {
 
     @Test
     fun `kall uten saksbehandlingsADgruppe i claims returnerer 401`() {
-        medSikretVedtakApi {
+        medSikretBehandlingApi {
             val tokenUtenSaksbehandlerGruppe = testAzureAdToken(ADGrupper = emptyList())
 
             val response =
@@ -54,7 +54,7 @@ class VedtakApiTest {
 
     @Test
     internal fun `200 OK og tom liste av ramme- og utbetalingsvedtak hvis person ikke eksisterer i db`() {
-        medSikretVedtakApi {
+        medSikretBehandlingApi {
             val response = autentisert(endepunkt = "/vedtak", body = """{"ident": "$ident"}""")
 
             print(response.bodyAsText())
@@ -66,13 +66,13 @@ class VedtakApiTest {
         }
     }
 
-    private fun medSikretVedtakApi(
+    private fun medSikretBehandlingApi(
         personRepository: PersonRepository = this.personRepository,
         test: suspend ApplicationTestBuilder.() -> Unit,
     ) {
         TestApplication.withMockAuthServerAndTestApplication(
             moduleFunction = {
-                vedtakApi(personRepository)
+                behandlingApi(personRepository)
             },
             test,
         )
