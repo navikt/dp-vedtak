@@ -1,7 +1,7 @@
 package no.nav.dagpenger.behandling.mediator
 
 import mu.KotlinLogging
-import no.nav.dagpenger.behandling.mediator.api.vedtakApi
+import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.melding.InMemoryMeldingRepository
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonIdentifikator
@@ -30,7 +30,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
 
     private val rapidsConnection =
         RapidApplication.Builder(RapidApplication.RapidApplicationConfig.fromEnv(config))
-            .withKtorModule { vedtakApi(personRepository = personRepository) }.build()
+            .withKtorModule { behandlingApi(personRepository = personRepository) }.build()
 
     init {
         HendelseMediator(
