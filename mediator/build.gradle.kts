@@ -37,7 +37,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("no.nav.dagpenger.vedtak.mediator.AppKt")
+    mainClass.set("no.nav.dagpenger.behandling.mediator.AppKt")
 }
 
 tasks.withType<ShadowJar> {
