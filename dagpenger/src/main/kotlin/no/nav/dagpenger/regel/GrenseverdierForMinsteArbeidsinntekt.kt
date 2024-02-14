@@ -1,12 +1,17 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.dato.desember
+import no.nav.dagpenger.dato.februar
+import no.nav.dagpenger.dato.mars
+import no.nav.dagpenger.dato.oktober
+import no.nav.dagpenger.dato.september
 import java.time.LocalDate
 
 // Forstår terskelverdier for minste arbeidsinntekt
 object GrenseverdierForMinsteArbeidsinntekt {
     private val terskler =
-        listOf<MinstearbeidsinntektTerskel>(
-            /*MinstearbeidsinntektTerskel(
+        listOf(
+            MinstearbeidsinntektTerskel(
                 20.mars(2020),
                 30.oktober(2020),
                 Faktor(0.75, 2.25),
@@ -34,7 +39,6 @@ object GrenseverdierForMinsteArbeidsinntekt {
                 Faktor(1.5, 3.0),
             ),
             // https://lovdata.no/lov/1997-02-28-19/§4-4
-             */
         )
 
     fun finnFaktor(virkningsdato: LocalDate): Faktor {

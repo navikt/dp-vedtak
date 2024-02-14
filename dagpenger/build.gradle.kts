@@ -3,10 +3,6 @@ plugins {
     `java-library`
 }
 
-repositories {
-    maven("https://jitpack.io")
-}
-
 dependencies {
     implementation(project(path = ":opplysninger"))
     implementation(project(path = ":dato"))
