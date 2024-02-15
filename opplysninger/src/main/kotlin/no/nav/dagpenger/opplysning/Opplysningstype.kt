@@ -6,25 +6,29 @@ interface Klassifiserbart {
     fun er(type: Opplysningstype<*>): Boolean
 }
 
-fun String.id(id: String) = OpplysningId(id, this)
+fun String.id(id: String) = OpplysningTypeId(id, this)
 
-data class OpplysningId(val id: String, val beskrivelse: String)
+data class OpplysningTypeId(val id: String, val beskrivelse: String)
 
 class Opplysningstype<T : Comparable<T>> private constructor(
-    private val opplysningId: OpplysningId,
+    private val opplysningTypeId: OpplysningTypeId,
     val datatype: Datatype<T>,
     private val parent: Opplysningstype<T>? = null,
     private val child: MutableSet<Opplysningstype<*>> = mutableSetOf(),
 ) : Klassifiserbart {
-    constructor(navn: String, datatype: Datatype<T>, parent: Opplysningstype<T>? = null) : this(OpplysningId(navn, navn), datatype, parent)
+    constructor(
+        navn: String,
+        datatype: Datatype<T>,
+        parent: Opplysningstype<T>? = null,
+    ) : this(OpplysningTypeId(navn, navn), datatype, parent)
 
     companion object {
         val typer = mutableListOf<Opplysningstype<*>>()
 
         fun somHeltall(
-            opplysningId: OpplysningId,
+            opplysningTypeId: OpplysningTypeId,
             parent: Opplysningstype<Int>? = null,
-        ) = Opplysningstype(opplysningId, Heltall, parent)
+        ) = Opplysningstype(opplysningTypeId, Heltall, parent)
 
         fun somHeltall(
             navn: String,
@@ -32,9 +36,9 @@ class Opplysningstype<T : Comparable<T>> private constructor(
         ) = somHeltall(navn.id(navn), parent)
 
         fun somDesimaltall(
-            opplysningId: OpplysningId,
+            opplysningTypeId: OpplysningTypeId,
             parent: Opplysningstype<Double>? = null,
-        ) = Opplysningstype(opplysningId, Desimaltall, parent)
+        ) = Opplysningstype(opplysningTypeId, Desimaltall, parent)
 
         fun somDesimaltall(
             navn: String,
@@ -42,9 +46,9 @@ class Opplysningstype<T : Comparable<T>> private constructor(
         ) = somDesimaltall(navn.id(navn), parent)
 
         fun somDato(
-            opplysningId: OpplysningId,
+            opplysningTypeId: OpplysningTypeId,
             parent: Opplysningstype<LocalDate>? = null,
-        ) = Opplysningstype(opplysningId, Dato, parent)
+        ) = Opplysningstype(opplysningTypeId, Dato, parent)
 
         fun somDato(
             navn: String,
@@ -52,9 +56,9 @@ class Opplysningstype<T : Comparable<T>> private constructor(
         ) = somDato(navn.id(navn), parent)
 
         fun somBoolsk(
-            opplysningId: OpplysningId,
+            opplysningTypeId: OpplysningTypeId,
             parent: Opplysningstype<Boolean>? = null,
-        ) = Opplysningstype(opplysningId, Boolsk, parent)
+        ) = Opplysningstype(opplysningTypeId, Boolsk, parent)
 
         fun somBoolsk(
             navn: String,
@@ -66,15 +70,15 @@ class Opplysningstype<T : Comparable<T>> private constructor(
         typer.add(this)
     }
 
-    val id = opplysningId.id
-    val navn = opplysningId.beskrivelse
+    val id = opplysningTypeId.id
+    val navn = opplysningTypeId.beskrivelse
 
     init {
         parent?.child?.add(this)
     }
 
     override infix fun er(type: Opplysningstype<*>): Boolean {
-        return opplysningId == type.opplysningId || parent?.er(type) ?: false
+        return opplysningTypeId == type.opplysningTypeId || parent?.er(type) ?: false
     }
 
     override fun toString(): String {
@@ -82,7 +86,7 @@ class Opplysningstype<T : Comparable<T>> private constructor(
         return "Opplysningstype(navn='$navn', parent=${parent?.navn}, child=${child.size})"
     }
 
-    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningId == this.opplysningId
+    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningTypeId == this.opplysningTypeId
 
     override fun hashCode() = navn.hashCode() * 31
 }

@@ -28,8 +28,8 @@ abstract class Regel<T : Comparable<T>> internal constructor(
                 tom = basertPå.minOf { it.gyldighetsperiode.tom },
             )
         return when (erAlleFaktum) {
-            true -> Faktum(produserer, kjør(opplysninger), utledetAv = utledetAv, gyldighetsperiode = gyldig)
-            false -> Hypotese(produserer, kjør(opplysninger), utledetAv = utledetAv, gyldighetsperiode = gyldig)
+            true -> Faktum(opplysningstype = produserer, verdi = kjør(opplysninger), utledetAv = utledetAv, gyldighetsperiode = gyldig)
+            false -> Hypotese(opplysningstype = produserer, verdi = kjør(opplysninger), utledetAv = utledetAv, gyldighetsperiode = gyldig)
         }
     }
 }

@@ -13,6 +13,7 @@ data class Kilde(
 )
 
 sealed class Opplysning<T : Comparable<T>>(
+    val id: UUID,
     val opplysningstype: Opplysningstype<T>,
     val verdi: T,
     val gyldighetsperiode: Gyldighetsperiode,
@@ -28,22 +29,40 @@ sealed class Opplysning<T : Comparable<T>>(
     }
 }
 
-class Hypotese<T : Comparable<T>>(
+class Hypotese<T : Comparable<T>> internal constructor(
+    id: UUID,
     opplysningstype: Opplysningstype<T>,
     verdi: T,
     gyldighetsperiode: Gyldighetsperiode = Gyldighetsperiode(),
     utledetAv: Utledning? = null,
     kilde: Kilde? = null,
-) : Opplysning<T>(opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde) {
-    override fun bekreft() = Faktum(super.opplysningstype, verdi, gyldighetsperiode, utledetAv)
+) : Opplysning<T>(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde) {
+    constructor(
+        opplysningstype: Opplysningstype<T>,
+        verdi: T,
+        gyldighetsperiode: Gyldighetsperiode = Gyldighetsperiode(),
+        utledetAv: Utledning? = null,
+        kilde: Kilde? = null,
+    ) : this(UUIDv7.ny(), opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde)
+
+    override fun bekreft() = Faktum(id, super.opplysningstype, verdi, gyldighetsperiode, utledetAv)
 }
 
-class Faktum<T : Comparable<T>>(
+class Faktum<T : Comparable<T>> internal constructor(
+    id: UUID,
     opplysningstype: Opplysningstype<T>,
     verdi: T,
     gyldighetsperiode: Gyldighetsperiode = Gyldighetsperiode(),
     utledetAv: Utledning? = null,
     kilde: Kilde? = null,
-) : Opplysning<T>(opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde) {
+) : Opplysning<T>(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde) {
+    constructor(
+        opplysningstype: Opplysningstype<T>,
+        verdi: T,
+        gyldighetsperiode: Gyldighetsperiode = Gyldighetsperiode(),
+        utledetAv: Utledning? = null,
+        kilde: Kilde? = null,
+    ) : this(UUIDv7.ny(), opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde)
+
     override fun bekreft() = this
 }

@@ -5,6 +5,7 @@ plugins {
 
 val cucumberVersion = "7.15.0"
 dependencies {
+    api("com.fasterxml.uuid:java-uuid-generator:4.3.0")
     testImplementation("io.cucumber:cucumber-java8:$cucumberVersion")
     testImplementation("io.cucumber:cucumber-junit-platform-engine:$cucumberVersion")
     testImplementation("org.junit.platform:junit-platform-suite:1.10.2")
