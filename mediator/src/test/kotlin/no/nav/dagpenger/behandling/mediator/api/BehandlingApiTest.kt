@@ -1,24 +1,43 @@
 package no.nav.dagpenger.behandling.mediator.api
 
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotBeEmpty
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType.Application.Json
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
 import io.ktor.server.testing.ApplicationTestBuilder
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.mediator.PersonRepository
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.autentisert
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.testAzureAdToken
+import no.nav.dagpenger.behandling.modell.Person
+import no.nav.dagpenger.behandling.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.opplysning.UUIDv7
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
-class BehandlingApiTest {
+internal class BehandlingApiTest {
     private val ident = "12345123451"
-    private val personRepository = InMemoryPersonRepository()
+    val person =
+        Person(ident.tilPersonIdentfikator()).also {
+            it.håndter(
+                SøknadInnsendtHendelse(
+                    meldingsreferanseId = UUIDv7.ny(),
+                    ident = ident,
+                    søknadId = UUIDv7.ny(),
+                    gjelderDato = LocalDate.now(),
+                ),
+            )
+        }
+    private val personRepository =
+        InMemoryPersonRepository().also {
+            it.lagre(person)
+        }
 
     @AfterEach
     fun tearDown() {
@@ -29,9 +48,8 @@ class BehandlingApiTest {
     fun `ikke autentiserte kall returnerer 401`() {
         medSikretBehandlingApi {
             val response =
-                client.post("/vedtak") {
-                    contentType(Json)
-                    setBody("""{"ident": "$ident"}""")
+                client.post("/behandling") {
+                    setBody("""{"ident":"$ident"}""")
                 }
             response.status shouldBe HttpStatusCode.Unauthorized
         }
@@ -45,24 +63,27 @@ class BehandlingApiTest {
             val response =
                 autentisert(
                     token = tokenUtenSaksbehandlerGruppe,
-                    endepunkt = "/vedtak",
-                    body = """{"ident": "$ident"}""",
+                    endepunkt = "/behandling",
+                    body = """{"ident":"$ident"}""",
                 )
             response.status shouldBe HttpStatusCode.Unauthorized
         }
     }
 
     @Test
-    internal fun `200 OK og tom liste av ramme- og utbetalingsvedtak hvis person ikke eksisterer i db`() {
+    fun `hent behandlinger gitt person`() {
         medSikretBehandlingApi {
-            val response = autentisert(endepunkt = "/vedtak", body = """{"ident": "$ident"}""")
-
-            print(response.bodyAsText())
-
+            val response = autentisert("/behandling", body = """{"ident":"$ident"}""")
             response.status shouldBe HttpStatusCode.OK
-            response.contentType().toString() shouldContain "application/json"
-            response.bodyAsText() shouldContain "\"rammer\":[]"
-            response.bodyAsText() shouldContain "\"utbetalinger\":[]"
+            response.bodyAsText().shouldNotBeEmpty()
+        }
+    }
+
+    @Test
+    fun `gir 404 hvis person ikke eksisterer`() {
+        medSikretBehandlingApi {
+            val response = autentisert("/behandling", body = """{"ident":"09876543311"}""")
+            response.status shouldBe HttpStatusCode.NotFound
         }
     }
 

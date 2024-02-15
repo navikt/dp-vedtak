@@ -14,7 +14,7 @@ import no.nav.dagpenger.regel.RettTilDagpenger
 import java.util.UUID
 
 class Behandling private constructor(
-    internal val behandlingId: UUID,
+    val behandlingId: UUID,
     private val behandler: SøkerHendelse,
     private val opplysninger: Opplysninger,
     vararg regelsett: Regelsett,
@@ -27,11 +27,13 @@ class Behandling private constructor(
 
     private val regelkjøring = Regelkjøring(behandler.gjelderDato, opplysninger, *regelsett)
 
+    // @todo: Vi trenger noe tilsvarende visitor pattern for å hente opplysninger fra utsiden
+    fun opplysninger() = opplysninger.opplysninger()
+
     private fun informasjonsbehov() = regelkjøring.informasjonsbehov(RettTilDagpenger.kravPåDagpenger)
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
-
         hvaTrengerViNå(hendelse)
     }
 

@@ -42,5 +42,8 @@ class Person(
         kontekst(kontekst)
     }
 
+    // todo: vi trenger en metode for å hente behandlinger fra utsiden.
+    fun behandlinger() = behandlinger.toList()
+
     override fun toSpesifikkKontekst(): SpesifikkKontekst = SpesifikkKontekst("Person", mapOf("ident" to ident.identifikator()))
 }

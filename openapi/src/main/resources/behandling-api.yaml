@@ -12,6 +12,25 @@ servers:
     description: prod
 paths:
   /behandling:
+    post:
+      description: Hent alle behandlinger for en gitt person
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentForesporsel'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Behandling'
+
+
     get:
       summary: Hent alle behandlinger for en gitt person
       security:
@@ -228,7 +247,6 @@ components:
         - status
         - gyldigFraOgMed
         - gyldigTilOgMed
-        - kilde
       properties:
         id:
           $ref: '#/components/schemas/OpplysningsId'

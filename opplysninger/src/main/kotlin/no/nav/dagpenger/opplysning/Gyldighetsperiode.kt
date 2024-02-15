@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 data class Gyldighetsperiode(
     val fom: LocalDateTime = LocalDateTime.MIN,
-    internal val tom: LocalDateTime = LocalDateTime.MAX,
+    val tom: LocalDateTime = LocalDateTime.MAX,
     private val range: ClosedRange<LocalDateTime> = fom..tom,
 ) : ClosedRange<LocalDateTime> by range {
     constructor(fom: LocalDate, tom: LocalDate) : this(fom.atStartOfDay(), tom.atStartOfDay())

@@ -16,6 +16,8 @@ class Opplysninger(
     private lateinit var regelkjøring: Regelkjøring
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
 
+    fun opplysninger(): List<Opplysning<*>> = opplysninger.toList()
+
     constructor() : this(mutableListOf())
 
     fun registrer(regelkjøring: Regelkjøring) {
