@@ -60,11 +60,11 @@ internal class PersonMediatorTest {
                 "InntektSiste3År",
             )
             with(field(1, "InntektSiste12Mnd")) {
-                this.size() shouldBe 1
+                this.size() shouldBe 2
                 get("Virkningsdato").asText() shouldBe LocalDate.now().toString()
             }
             with(field(1, "InntektSiste3År")) {
-                this.size() shouldBe 1
+                this.size() shouldBe 2
                 get("Virkningsdato").asText() shouldBe LocalDate.now().toString()
             }
         }

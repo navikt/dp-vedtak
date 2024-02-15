@@ -7,7 +7,7 @@ import java.util.UUID
 abstract class SøkerHendelse(
     meldingsreferanseId: UUID,
     val ident: String,
-    private val søknadId: UUID,
+    internal val søknadId: UUID,
     internal val gjelderDato: LocalDate,
 ) : PersonHendelse(meldingsreferanseId, ident) {
     override fun kontekstMap() =

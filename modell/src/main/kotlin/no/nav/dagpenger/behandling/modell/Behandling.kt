@@ -17,7 +17,7 @@ class Behandling private constructor(
     internal val behandlingId: UUID,
     private val behandler: SøkerHendelse,
     private val opplysninger: Opplysninger,
-    private vararg val regelsett: Regelsett,
+    vararg regelsett: Regelsett,
 ) : Aktivitetskontekst {
     constructor(
         behandler: SøkerHendelse,
@@ -46,9 +46,14 @@ class Behandling private constructor(
     private fun hvaTrengerViNå(hendelse: PersonHendelse) {
         informasjonsbehov().forEach { (behov, avhengigheter) ->
             hendelse.behov(
-                OpplysningBehov(behov.id),
-                "Trenger en opplysning",
-                avhengigheter.associate { av -> av.opplysningstype.id to av.verdi },
+                type = OpplysningBehov(behov.id),
+                melding = "Trenger en opplysning",
+                detaljer =
+                    avhengigheter.associate {
+                            av ->
+                        av.opplysningstype.id to av.verdi
+                        // @todo: Denne skal bort så fort vi har en behovløser vi kan være enige med innbyggerflate om. Tilpasset 'SøknadInnsendtTidspunktTjeneste' for å kunne teste
+                    } + mapOf("Søknadstidspunkt" to mapOf("søknad_uuid" to behandler.søknadId.toString())),
             )
         }
     }
