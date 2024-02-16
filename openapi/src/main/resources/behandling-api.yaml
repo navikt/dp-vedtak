@@ -291,14 +291,6 @@ components:
       allOf:
         - $ref: "#/components/schemas/Opplysningskilde"
         - $ref: '#/components/schemas/Saksbehandler'
-        - type: object
-          properties:
-            blurp:
-              type: string
-            blarp:
-              type: string
-            fjong:
-              type: string
 
     Systemkilde:
       allOf:
