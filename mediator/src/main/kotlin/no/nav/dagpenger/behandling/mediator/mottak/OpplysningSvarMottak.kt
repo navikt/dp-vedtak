@@ -72,6 +72,11 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
     private val opplysning =
         mutableListOf<OpplysningSvar<*>>().apply {
             packet["@løsning"].fields().forEach { (typeNavn, verdi) ->
+
+                if(Opplysningstype.typer.find { it.id == typeNavn } == null) {
+                    logger.error { "Ukjent opplysningstype: $typeNavn" }
+                    return@forEach
+                }
                 val type = Opplysningstype.typer.single { sadf -> sadf.id == typeNavn }
                 val opplysning =
                     @Suppress("UNCHECKED_CAST")
