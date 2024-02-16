@@ -73,7 +73,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
         mutableListOf<OpplysningSvar<*>>().apply {
             packet["@løsning"].fields().forEach { (typeNavn, verdi) ->
 
-                if(Opplysningstype.typer.find { it.id == typeNavn } == null) {
+                if (Opplysningstype.typer.find { it.id == typeNavn } == null) {
                     logger.error { "Ukjent opplysningstype: $typeNavn" }
                     return@forEach
                 }
