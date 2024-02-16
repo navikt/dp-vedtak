@@ -41,7 +41,14 @@ class Behandling private constructor(
     fun håndter(hendelse: OpplysningSvarHendelse) {
         hendelse.kontekst(this)
         hendelse.opplysninger.forEach { opplysning ->
-            opplysninger.leggTil(opplysning.opplysning())
+            val nyOpplysning = opplysning.opplysning()
+            if (!opplysninger.har(
+                    nyOpplysning.opplysningstype,
+                )
+            ) { // @todo: Håndtere at-least-once :) Hvordan skal vi skille nye opplysinger fra gamle?
+                opplysninger.leggTil(nyOpplysning)
+                hendelse.info("Mottatt opplysning ${opplysning.opplysningstype}")
+            }
         }
         hvaTrengerViNå(hendelse)
     }
@@ -50,7 +57,7 @@ class Behandling private constructor(
         informasjonsbehov().forEach { (behov, avhengigheter) ->
             hendelse.behov(
                 type = OpplysningBehov(behov.id),
-                melding = "Trenger en opplysning",
+                melding = "Trenger en opplysning (${behov.id})",
                 detaljer =
                     avhengigheter.associate {
                             av ->
