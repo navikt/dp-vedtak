@@ -3,10 +3,12 @@ package no.nav.dagpenger.behandling.mediator
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.melding.InMemoryMeldingRepository
+import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonIdentifikator
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
+import java.util.UUID
 
 internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnection.StatusListener {
     companion object {
@@ -14,13 +16,17 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     }
 
     private val personRepository =
-        object : PersonRepository {
+        object : PersonRepository, BehandlingRepository {
             private val personer = mutableMapOf<PersonIdentifikator, Person>()
 
             override fun hent(ident: PersonIdentifikator): Person? = personer[ident]
 
             override fun lagre(person: Person) {
                 personer[person.ident()] = person
+            }
+
+            override fun hent(behandlingId: UUID): Behandling? {
+                return personer.values.flatMap { it.behandlinger() }.find { it.behandlingId == behandlingId }
             }
         }
 

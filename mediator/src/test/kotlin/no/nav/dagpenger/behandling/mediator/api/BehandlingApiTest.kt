@@ -7,6 +7,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.ApplicationTestBuilder
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
@@ -84,6 +85,16 @@ internal class BehandlingApiTest {
         medSikretBehandlingApi {
             val response = autentisert("/behandling", body = """{"ident":"09876543311"}""")
             response.status shouldBe HttpStatusCode.NotFound
+        }
+    }
+
+    @Test
+    fun `hent behandling gitt behandlingId`() {
+        medSikretBehandlingApi {
+            val behandlingId = person.behandlinger().first().behandlingId
+            val response = autentisert(httpMethod = HttpMethod.Get, endepunkt = "/behandling/$behandlingId")
+            response.status shouldBe HttpStatusCode.OK
+            response.bodyAsText().shouldNotBeEmpty()
         }
     }
 
