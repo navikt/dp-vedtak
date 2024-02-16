@@ -57,13 +57,13 @@ internal class PersonMediatorTest {
             size shouldBe 2
             field(1, "@behov").map { it.asText() }.shouldContainOnly(
                 "InntektSiste12Mnd",
-                "InntektSiste3År",
+                "InntektSiste36Mnd",
             )
             with(field(1, "InntektSiste12Mnd")) {
                 this.size() shouldBe 2
                 get("Virkningsdato").asText() shouldBe LocalDate.now().toString()
             }
-            with(field(1, "InntektSiste3År")) {
+            with(field(1, "InntektSiste36Mnd")) {
                 this.size() shouldBe 2
                 get("Virkningsdato").asText() shouldBe LocalDate.now().toString()
             }
@@ -108,7 +108,7 @@ internal class PersonMediatorTest {
                 "@løsning" to
                     mapOf(
                         "InntektSiste12Mnd" to 1234,
-                        "InntektSiste3År" to 1234,
+                        "InntektSiste36Mnd" to 1234,
                     ),
             ),
         ).toJson()

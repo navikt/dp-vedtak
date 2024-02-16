@@ -17,7 +17,7 @@ object Minsteinntekt {
     val nedreTerskelFaktor = Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd inntekt")
     val øvreTerskelFaktor = Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd inntekt")
     val inntekt12 = Opplysningstype.somDesimaltall("Inntekt siste 12 mnd".id("InntektSiste12Mnd"))
-    val inntekt36 = Opplysningstype.somDesimaltall("Inntekt siste 36 mnd".id("InntektSiste3År"))
+    val inntekt36 = Opplysningstype.somDesimaltall("Inntekt siste 36 mnd".id("InntektSiste36Mnd"))
     val grunnbeløp = Opplysningstype.somDesimaltall("Grunnbeløp")
 
     private val virkningsdato = Virkningsdato.virkningsdato
