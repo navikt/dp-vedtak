@@ -17,8 +17,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
         object : PersonRepository {
             private val personer = mutableMapOf<PersonIdentifikator, Person>()
 
-            override fun hent(ident: PersonIdentifikator): Person? =
-                personer[ident]
+            override fun hent(ident: PersonIdentifikator): Person? = personer[ident]
 
             override fun lagre(person: Person) {
                 personer[person.ident()] = person
