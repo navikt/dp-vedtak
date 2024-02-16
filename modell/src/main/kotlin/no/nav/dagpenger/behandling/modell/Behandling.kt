@@ -34,6 +34,7 @@ class Behandling private constructor(
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
+        hendelse.info("Mottatt søknad og startet behandling")
         hvaTrengerViNå(hendelse)
     }
 
