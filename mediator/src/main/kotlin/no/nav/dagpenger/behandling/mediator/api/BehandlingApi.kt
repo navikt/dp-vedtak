@@ -43,25 +43,28 @@ fun Application.behandlingApi(personRepository: PersonRepository) {
     }
 }
 
-private fun Behandling.tilBehandlingDTO() =
-    BehandlingDTO(
+private val oslo = ZoneOffset.of("Europe/Oslo")
+private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
+
+    return BehandlingDTO(
         behandlingId = this.behandlingId,
         opplysning =
-            this.opplysninger().map { opplysning ->
-                OpplysningDTO(
-                    id = opplysning.id,
-                    opplysningstype = opplysning.opplysningstype.id,
-                    verdi = opplysning.verdi.toString(),
-                    status =
-                        when (opplysning) {
-                            is Faktum -> OpplysningDTO.Status.Faktum
-                            is Hypotese -> OpplysningDTO.Status.Hypotese
-                        },
-                    gyldigFraOgMed = opplysning.gyldighetsperiode.fom.atOffset(ZoneOffset.of("+01:00")),
-                    gyldigTilOgMed = opplysning.gyldighetsperiode.tom.atOffset(ZoneOffset.of("+01:00")),
-                    datatype = opplysning.opplysningstype.datatype.klasse.simpleName,
-                    kilde = null,
-                    utledetAv = null,
-                )
-            },
+        this.opplysninger().map { opplysning ->
+            OpplysningDTO(
+                id = opplysning.id,
+                opplysningstype = opplysning.opplysningstype.id,
+                verdi = opplysning.verdi.toString(),
+                status =
+                when (opplysning) {
+                    is Faktum -> OpplysningDTO.Status.Faktum
+                    is Hypotese -> OpplysningDTO.Status.Hypotese
+                },
+                gyldigFraOgMed = opplysning.gyldighetsperiode.fom.atOffset(oslo),
+                gyldigTilOgMed = opplysning.gyldighetsperiode.tom.atOffset(oslo),
+                datatype = opplysning.opplysningstype.datatype.klasse.simpleName,
+                kilde = null,
+                utledetAv = null,
+            )
+        },
     )
+}
