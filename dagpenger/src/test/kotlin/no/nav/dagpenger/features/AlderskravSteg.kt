@@ -1,20 +1,22 @@
 package no.nav.dagpenger.features
 
-import io.cucumber.java8.No
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.dag.RegeltreBygger
+import no.nav.dagpenger.opplysning.dag.printer.MermaidPrinter
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Virkningsdato
 import org.junit.jupiter.api.Assertions
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class AlderskravSteg : No {
+class AlderskravSteg : RegelTest {
     private val fraDato = 10.mai(2022).atStartOfDay()
-    private val opplysninger = Opplysninger()
-    val regelkjøring = Regelkjøring(fraDato, opplysninger, Alderskrav.regelsett, Virkningsdato.regelsett)
+    val regelsett = listOf(Alderskrav.regelsett, Virkningsdato.regelsett)
+    override val opplysninger = Opplysninger()
+    override val regelkjøring = Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
 
     init {
         Gitt("at fødselsdatoen til søkeren er {string}") { fødselsdato: String ->
@@ -45,6 +47,16 @@ class AlderskravSteg : No {
                 verdi,
                 opplysninger.finnOpplysning(Alderskrav.vilkår).verdi,
             )
+            val regeltre = RegeltreBygger(*regelsett.toTypedArray())
+            val printer = MermaidPrinter(regeltre.dag())
+            val dokumentasjon =
+                """
+                |## Alderskrav - §4-23 Bortfall på grunn av alder
+                |```mermaid
+                |${printer.toPrint()}
+                |```
+                """.trimMargin()
+            // skriv(tittel = "Alderskrav", dokumentasjon)
         }
     }
 }
