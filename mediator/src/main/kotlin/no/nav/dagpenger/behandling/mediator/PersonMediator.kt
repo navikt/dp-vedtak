@@ -5,6 +5,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonIdentifikator
 import no.nav.dagpenger.behandling.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
@@ -14,6 +15,7 @@ internal class PersonMediator(
     private val personRepository: PersonRepository,
     private val aktivitetsloggMediator: AktivitetsloggMediator,
     private val behovMediator: BehovMediator,
+    private val personobservatører: List<PersonObservatør> = emptyList(),
 ) {
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -37,7 +39,7 @@ internal class PersonMediator(
         håndter: (Person) -> Unit,
     ) = try {
         val person = hentEllerOpprettPerson(hendelse)
-
+        personobservatører.forEach { person.leggTilObservatør(it) }
         håndter(person)
         lagre(person)
         ferdigstill(hendelse)

@@ -15,7 +15,13 @@ class Person(
     private val ident: PersonIdentifikator,
     private val behandlinger: MutableList<Behandling> = mutableListOf(),
 ) : Aktivitetskontekst {
+    private val personobservatører = mutableListOf<PersonObservatør>()
+
     fun ident() = ident
+
+    fun leggTilObservatør(observatør: PersonObservatør) {
+        personobservatører.add(observatør)
+    }
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.leggTilKontekst(this)
@@ -27,7 +33,10 @@ class Person(
                 Alderskrav.regelsett,
                 Minsteinntekt.regelsett,
                 Virkningsdato.regelsett,
-            ).also { behandlinger.add(it) }
+            ).also { behandling ->
+                personobservatører.forEach { behandling.leggTilObservatør(it) }
+                behandlinger.add(behandling)
+            }
         behandling.håndter(hendelse)
     }
 

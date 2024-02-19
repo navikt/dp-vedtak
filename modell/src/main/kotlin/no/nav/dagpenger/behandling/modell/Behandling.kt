@@ -26,6 +26,11 @@ class Behandling private constructor(
     ) : this(UUIDv7.ny(), behandler, opplysninger, *regelsett)
 
     private val regelkjøring = Regelkjøring(behandler.gjelderDato, opplysninger, *regelsett)
+    private val observatører = mutableListOf<BehandlingObservatør>()
+
+    internal fun leggTilObservatør(observatør: BehandlingObservatør) {
+        observatører.add(observatør)
+    }
 
     // @todo: Vi trenger noe tilsvarende visitor pattern for å hente opplysninger fra utsiden
     fun opplysninger() = opplysninger.opplysninger()
@@ -35,6 +40,11 @@ class Behandling private constructor(
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
         hendelse.info("Mottatt søknad og startet behandling")
+        observatører.forEach {
+            it.behandlingOpprettet(
+                BehandlingObservatør.BehandlingOpprettet(hendelse.ident, behandlingId, hendelse.søknadId),
+            )
+        }
         hvaTrengerViNå(hendelse)
     }
 
