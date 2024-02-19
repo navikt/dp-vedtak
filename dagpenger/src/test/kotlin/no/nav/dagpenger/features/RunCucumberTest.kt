@@ -1,4 +1,4 @@
-package no.nav.dagpenger.opplysning.features
+package no.nav.dagpenger.features
 
 import io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME
 import io.cucumber.core.options.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME

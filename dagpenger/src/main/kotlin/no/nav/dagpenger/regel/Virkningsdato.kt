@@ -4,7 +4,6 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.sisteAv
-import no.nav.dagpenger.regel.Alderskrav.fødselsdato
 
 object Virkningsdato {
     // val fødselsdato = Opplysningstype<LocalDate>("Fødselsdato")
@@ -16,6 +15,6 @@ object Virkningsdato {
 
     val regelsett =
         Regelsett("alder").apply {
-            regel(virkningsdato) { sisteAv(fødselsdato, søknadsdato) }
+            regel(virkningsdato) { sisteAv(søknadsdato) }
         }
 }
