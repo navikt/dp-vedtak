@@ -41,13 +41,11 @@ class Behandling private constructor(
     fun håndter(hendelse: OpplysningSvarHendelse) {
         hendelse.kontekst(this)
         hendelse.opplysninger.forEach { opplysning ->
-            val nyOpplysning = opplysning.opplysning()
-            if (!opplysninger.har(
-                    nyOpplysning.opplysningstype,
-                )
-            ) { // @todo: Håndtere at-least-once :) Hvordan skal vi skille nye opplysinger fra gamle?
-                opplysninger.leggTil(nyOpplysning)
-                hendelse.info("Mottatt opplysning ${opplysning.opplysningstype}")
+            kotlin.runCatching {
+                opplysninger.leggTil(opplysning.opplysning())
+            }.onFailure {
+                // @todo: Håndtere at-least-once :) Hvordan skal vi skille nye opplysinger fra gamle?
+                hendelse.varsel("Kunne ikke legge til opplysning ${opplysning.opplysningstype} fordi ${it.message}")
             }
         }
         hvaTrengerViNå(hendelse)

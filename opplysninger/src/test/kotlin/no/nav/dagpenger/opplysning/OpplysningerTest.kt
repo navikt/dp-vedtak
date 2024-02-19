@@ -30,11 +30,11 @@ class OpplysningerTest {
         val opplysninger = Opplysninger()
         val regelkjøring = Regelkjøring(1.mai, opplysninger)
 
-        opplysninger.leggTil(Faktum(opplysningstype, 0.5, no.nav.dagpenger.opplysning.Gyldighetsperiode(1.mai, 10.mai)))
+        opplysninger.leggTil(Faktum(opplysningstype, 0.5, Gyldighetsperiode(1.mai, 10.mai)))
         assertThrows<IllegalArgumentException> {
             opplysninger.leggTil(Faktum(opplysningstype, 0.5))
         }
-        opplysninger.leggTil(Faktum(opplysningstype, 1.5, no.nav.dagpenger.opplysning.Gyldighetsperiode(11.mai)))
+        opplysninger.leggTil(Faktum(opplysningstype, 1.5, Gyldighetsperiode(11.mai)))
 
         assertEquals(0.5, opplysninger.finnOpplysning(opplysningstype).verdi)
         assertEquals(0.5, opplysninger.finnOpplysning(opplysningstype).verdi)
