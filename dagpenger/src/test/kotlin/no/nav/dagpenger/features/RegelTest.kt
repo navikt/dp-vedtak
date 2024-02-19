@@ -1,43 +1,17 @@
 package no.nav.dagpenger.features
 
-import io.cucumber.java8.HookBody
 import io.cucumber.java8.No
 import no.nav.dagpenger.opplysning.Opplysninger
-import no.nav.dagpenger.opplysning.Regelkjøring
-import org.approvaltests.Approvals
-import org.approvaltests.core.Options
-import org.approvaltests.namer.NamerWrapper
-import java.nio.file.Paths
+import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.dag.RegeltreBygger
+import no.nav.dagpenger.opplysning.dag.printer.MermaidPrinter
 
 interface RegelTest : No {
     val opplysninger: Opplysninger
-    val regelkjøring: Regelkjøring
+    val regelsett: List<Regelsett>
 
-    private companion object {
-        val path = "${
-            Paths.get("").toAbsolutePath().toString().substringBeforeLast("/")
-        }/docs/"
-        val options =
-            Options()
-                .forFile()
-                .withExtension(".md")
-    }
-
-    fun skriv(
-        tittel: String,
-        dokumentasjon: String,
-    ) {
-        Approvals.namerCreater = com.spun.util.persistence.Loader { NamerWrapper({ "regler/$tittel" }, { path }) }
-        Approvals
-            .verify(
-                dokumentasjon,
-                options,
-            )
-    }
-
-    override fun AfterStep(body: HookBody?) {
-        if (body != null) {
-            val dokumentasjon = body.toString()
-        }
+    fun skrivRegeltre(): String {
+        val regeltre = RegeltreBygger(*regelsett.toTypedArray())
+        return MermaidPrinter(regeltre.dag()).toPrint()
     }
 }
