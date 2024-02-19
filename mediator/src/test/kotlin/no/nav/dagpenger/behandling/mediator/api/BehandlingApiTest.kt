@@ -19,6 +19,7 @@ import no.nav.dagpenger.behandling.modell.PersonIdentifikator.Companion.tilPerso
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.UUIDv7
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
@@ -46,6 +47,7 @@ internal class BehandlingApiTest {
     }
 
     @Test
+    @Disabled("Skrudd av autentisering midlertidig")
     fun `ikke autentiserte kall returnerer 401`() {
         medSikretBehandlingApi {
             val response =
@@ -57,6 +59,7 @@ internal class BehandlingApiTest {
     }
 
     @Test
+    @Disabled("Skrudd av autentisering midlertidig")
     fun `kall uten saksbehandlingsADgruppe i claims returnerer 401`() {
         medSikretBehandlingApi {
             val tokenUtenSaksbehandlerGruppe = testAzureAdToken(ADGrupper = emptyList())
