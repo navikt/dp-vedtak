@@ -8,6 +8,9 @@ import org.junit.platform.suite.api.Suite
 
 @Suite
 @SelectClasspathResource("features")
-@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, html:build/reports/cucumber.html")
+@ConfigurationParameter(
+    key = PLUGIN_PROPERTY_NAME,
+    value = "pretty, html:build/reports/cucumber.html, no.nav.dagpenger.features.RegeltreDokumentasjonPlugin",
+)
 @ConfigurationParameter(key = PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, value = "false")
 class RunCucumberTest

@@ -1,6 +1,6 @@
 package no.nav.dagpenger.features
 
-import io.cucumber.java8.No
+import io.cucumber.java8.Scenario
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
@@ -11,10 +11,11 @@ import org.junit.jupiter.api.Assertions
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class AlderskravSteg : No {
+class AlderskravSteg : RegelTest {
     private val fraDato = 10.mai(2022).atStartOfDay()
-    private val opplysninger = Opplysninger()
-    val regelkjøring = Regelkjøring(fraDato, opplysninger, Alderskrav.regelsett, Virkningsdato.regelsett)
+    override val regelsett = listOf(Alderskrav.regelsett, Virkningsdato.regelsett)
+    override val opplysninger = Opplysninger()
+    private val regelkjøring = Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
 
     init {
         Gitt("at fødselsdatoen til søkeren er {string}") { fødselsdato: String ->
@@ -45,6 +46,10 @@ class AlderskravSteg : No {
                 verdi,
                 opplysninger.finnOpplysning(Alderskrav.vilkår).verdi,
             )
+        }
+
+        After { scenario: Scenario ->
+            scenario.attach(skrivRegeltre(), "text/markdown", "regeltre.md")
         }
     }
 }
