@@ -59,6 +59,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
+        - application: dp-saksbehandling
         {{#if wonderwalled}}
         - application: wonderwalled-idporten
           namespace: aura
