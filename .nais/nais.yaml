@@ -36,13 +36,14 @@ spec:
   azure:
     application:
       enabled: true
-      tenant: {{azure.tenant}}
-      claims:
-        extra:
-          - NAVident
-        groups:
-          - id: {{azure.grupper.saksbehandler}}
-          - id: {{azure.grupper.beslutter}}
+      allowAllUsers: true
+#      tenant: {{azure.tenant}}
+#      claims:
+#        extra:
+#          - NAVident
+#        groups:
+#          - id: {{azure.grupper.saksbehandler}}
+#          - id: {{azure.grupper.beslutter}}
 
   gcp:
     sqlInstances:
