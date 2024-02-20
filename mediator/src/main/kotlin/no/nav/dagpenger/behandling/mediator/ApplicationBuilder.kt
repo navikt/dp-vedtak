@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling.mediator
 
 import mu.KotlinLogging
+import no.nav.dagpenger.behandling.KafkaBehandlingObservatør
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.melding.InMemoryMeldingRepository
 import no.nav.dagpenger.behandling.modell.Behandling
@@ -42,6 +43,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
                     personRepository = personRepository,
                     aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
                     behovMediator = BehovMediator(rapidsConnection),
+                    personobservatører = listOf(KafkaBehandlingObservatør(rapidsConnection)),
                 ),
             hendelseRepository = InMemoryMeldingRepository(),
         )
