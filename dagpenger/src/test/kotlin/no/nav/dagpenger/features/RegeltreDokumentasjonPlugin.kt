@@ -21,17 +21,17 @@ class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
                 val markdown =
                     """
                     |# $navn
-                    |
-                    | ## Bakgrunn
-                    |
-                    |```gherkin
-                    |$gherkinSource
-                    |```
                     | 
-                    | # Regletre
+                    | ## Regletre
                     |
                     |```mermaid
                     |$regeltreDiagram
+                    |```
+                    |
+                    | ## Akseptansetester
+                    |
+                    |```gherkin
+                    |$gherkinSource
                     |```
                     """.trimMargin()
                 skriv(
