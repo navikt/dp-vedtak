@@ -59,7 +59,6 @@ class MinsteArbeidsinntektSteg : RegelTest {
 
         After { scenario: Scenario ->
             scenario.attach(skrivRegeltre(), "text/markdown", "regeltre.md")
-            scenario.attach(skrivOpplysningsTre(), "text/markdown", "opplysningstre.md")
         }
     }
 
