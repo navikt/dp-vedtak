@@ -16,7 +16,39 @@ En opplysning kan erstatte en annen opplysning. Opplysning som blir ikke erstatt
 
 ## Opplysningstype
 
-Vi kan identifisere ulike opplysninger via en type. Typene kan struktureres i et hierarki. På den måten kan vi vite om en opplysning er et vilkår eller ei.
+Vi kan identifisere ulike opplysninger via en type. Opplysningstype er navn på en opplysning. 
+
+Eksempler
+- personnavn
+- fødselsdato
+- diagnose
+- inntekt
+- vilkår *(feks om søker har rett til dagpenger)*
+
+Opplysningstype er definert i  begrepskatalogen: [Opplysningstype (BEGREP-2062)](https://navno.sharepoint.com/sites/begreper/SitePages/Begrep.aspx?bid=BEGREP-2062)
+
+> **_MERKNAD:_** Opplysningshierarki er ikke implementert.
+
+Typene kan også struktureres i et hierarki. På den måten kan vi vite om en opplysning er et vilkår eller ei.
+
+Tanken med hierarki på opplysningstype var vel egentlig å kunne gjøre det via opplysningstyper.
+"Resultat" er jo ganske godt definert i jussen som utfallet av en subsumsjon. Så da er det på en måte reservert til vilkår. Mens vi har også en masse opplysninger som ikke er resultatet av et vilkår, f.eks. fødselsdato.
+Tanken med hierarkiet på opplysningstype og en er()-funksjon som traverer opp hierarkiet er at man kan lage et hierarki over vilkår og delvilkår og så si noe sånt som:
+
+
+````kotlin
+val vilkår = Opplysningstype<Boolean>("Rett til dagpenger")
+val minsteinntekt = Opplysningstype<Boolean>("§4-4 Minste arbeidsinntekt", vilkår)
+
+val fødselsdato = Opplysningstype<LocalDate>("fødselsdato")
+
+val resultat: List<Opplysning<*>> = opplysninger.find { it.er(vilkår) }
+
+assertEquals(2, resultat.size)
+
+````
+
+
 
 ![](.oppysningstyper.png "Opplysningstyper")
 
