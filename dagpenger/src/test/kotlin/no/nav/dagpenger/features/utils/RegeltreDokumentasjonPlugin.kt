@@ -1,4 +1,4 @@
-package no.nav.dagpenger.features
+package no.nav.dagpenger.features.utils
 
 import com.spun.util.persistence.Loader
 import io.cucumber.messages.types.Envelope
@@ -22,7 +22,7 @@ class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
                     """
                     |# $navn
                     | 
-                    | ## Regletre
+                    | ## Regeltre
                     |
                     |```mermaid
                     |$regeltreDiagram

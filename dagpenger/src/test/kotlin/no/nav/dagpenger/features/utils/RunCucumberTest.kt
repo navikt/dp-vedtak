@@ -1,4 +1,4 @@
-package no.nav.dagpenger.features
+package no.nav.dagpenger.features.utils
 
 import io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME
 import io.cucumber.core.options.Constants.PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME
@@ -10,7 +10,7 @@ import org.junit.platform.suite.api.Suite
 @SelectClasspathResource("features")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
-    value = "pretty, html:build/reports/cucumber.html, no.nav.dagpenger.features.RegeltreDokumentasjonPlugin",
+    value = "pretty, html:build/reports/cucumber.html, no.nav.dagpenger.features.utils.RegeltreDokumentasjonPlugin",
 )
 @ConfigurationParameter(key = PLUGIN_PUBLISH_ENABLED_PROPERTY_NAME, value = "false")
 class RunCucumberTest

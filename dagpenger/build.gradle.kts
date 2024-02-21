@@ -13,4 +13,5 @@ dependencies {
     testImplementation("io.cucumber:cucumber-junit-platform-engine:$cucumberVersion")
     testImplementation("org.junit.platform:junit-platform-suite:1.10.2")
     testImplementation("com.approvaltests:approvaltests:22.3.3")
+    testImplementation(libs.bundles.jackson)
 }
