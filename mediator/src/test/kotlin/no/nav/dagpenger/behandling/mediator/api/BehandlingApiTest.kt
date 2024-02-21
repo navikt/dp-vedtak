@@ -1,5 +1,10 @@
 package no.nav.dagpenger.behandling.mediator.api
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeEmpty
 import io.ktor.client.call.body
@@ -10,16 +15,20 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.ApplicationTestBuilder
+import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.mediator.PersonRepository
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.autentisert
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.testAzureAdToken
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
+import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.UUIDv7
+import no.nav.dagpenger.regel.Virkningsdato
+import no.nav.security.mock.oauth2.http.objectMapper
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
@@ -35,6 +44,21 @@ internal class BehandlingApiTest {
                     gjelderDato = LocalDate.now(),
                 ),
             )
+            it.håndter(
+                OpplysningSvarHendelse(
+                    meldingsreferanseId = UUIDv7.ny(),
+                    ident = ident,
+                    behandlingId = it.behandlinger().first().behandlingId,
+                    opplysninger =
+                        listOf(
+                            OpplysningSvar(
+                                opplysningstype = Virkningsdato.søknadsdato,
+                                verdi = LocalDate.now(),
+                                tilstand = OpplysningSvar.Tilstand.Faktum,
+                            ),
+                        ),
+                ),
+            )
         }
     private val personRepository =
         InMemoryPersonRepository().also {
@@ -47,7 +71,6 @@ internal class BehandlingApiTest {
     }
 
     @Test
-    @Disabled("Skrudd av autentisering midlertidig")
     fun `ikke autentiserte kall returnerer 401`() {
         medSikretBehandlingApi {
             val response =
@@ -59,7 +82,6 @@ internal class BehandlingApiTest {
     }
 
     @Test
-    @Disabled("Skrudd av autentisering midlertidig")
     fun `kall uten saksbehandlingsADgruppe i claims returnerer 401`() {
         medSikretBehandlingApi {
             val tokenUtenSaksbehandlerGruppe = testAzureAdToken(ADGrupper = emptyList())
@@ -98,6 +120,9 @@ internal class BehandlingApiTest {
             val response = autentisert(httpMethod = HttpMethod.Get, endepunkt = "/behandling/$behandlingId")
             response.status shouldBe HttpStatusCode.OK
             response.bodyAsText().shouldNotBeEmpty()
+            val behandling = shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), BehandlingDTO::class.java) }
+            behandling.behandlingId shouldBe behandlingId
+            behandling.opplysning.size shouldBe 8
         }
     }
 
@@ -111,5 +136,11 @@ internal class BehandlingApiTest {
             },
             test,
         )
+    }
+
+    private companion object {
+        private val objectMapper =
+            jacksonObjectMapper().registerModule(JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 }
