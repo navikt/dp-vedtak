@@ -20,7 +20,7 @@ object Minsteinntekt {
     val inntekt36 = Opplysningstype.somDesimaltall("Arbeidsinntekt siste 36 mnd".id("InntektSiste36Mnd"))
     private val grunnbeløp = Opplysningstype.somDesimaltall("Grunnbeløp")
 
-    private val virkningsdato = Virkningsdato.virkningsdato
+    private val virkningsdato = Søknadstidspunkt.søknadstidspunkt
     private val `12mndTerskel` = Opplysningstype.somDesimaltall("Inntektskrav for siste 12 mnd")
     private val `36mndTerskel` = Opplysningstype.somDesimaltall("Inntektskrav for siste 36 mnd")
     private val over12mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 12 mnd")

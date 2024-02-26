@@ -7,12 +7,12 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Alderskrav
-import no.nav.dagpenger.regel.Virkningsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.Assertions
 
 class AlderskravSteg : RegelTest {
     private val fraDato = 10.mai(2022).atStartOfDay()
-    override val regelsett = listOf(Alderskrav.regelsett, Virkningsdato.regelsett)
+    override val regelsett = listOf(Alderskrav.regelsett, Søknadstidspunkt.regelsett)
     override val opplysninger = Opplysninger()
 
     init {
@@ -29,7 +29,13 @@ class AlderskravSteg : RegelTest {
         Gitt("at virkningstidspunktet er {string}") { virkningsdato: String ->
             opplysninger.leggTil(
                 Faktum(
-                    Virkningsdato.søknadsdato,
+                    Søknadstidspunkt.søknadsdato,
+                    virkningsdato.somLocalDate(),
+                ),
+            )
+            opplysninger.leggTil(
+                Faktum(
+                    Søknadstidspunkt.ønsketdato,
                     virkningsdato.somLocalDate(),
                 ),
             )

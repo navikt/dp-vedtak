@@ -49,6 +49,7 @@ internal class PersonMediatorTest {
             field(0, "@behov").map { it.asText() }.shouldContainOnly(
                 "Fødselsdato",
                 "Søknadstidspunkt",
+                "ØnskerDagpengerFraDato",
             )
         }
         testRapid.sendTestMessage(opplysningSvar1Message(ident))
@@ -95,6 +96,7 @@ internal class PersonMediatorTest {
                     mapOf(
                         "Fødselsdato" to LocalDate.of(1990, 1, 1),
                         "Søknadstidspunkt" to LocalDate.now(),
+                        "ØnskerDagpengerFraDato" to LocalDate.now(),
                     ),
             ),
         ).toJson()

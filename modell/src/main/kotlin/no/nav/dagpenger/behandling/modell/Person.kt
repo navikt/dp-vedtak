@@ -9,7 +9,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.RettTilDagpenger
-import no.nav.dagpenger.regel.Virkningsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt
 
 class Person(
     private val ident: PersonIdentifikator,
@@ -32,7 +32,7 @@ class Person(
                 RettTilDagpenger.regelsett,
                 Alderskrav.regelsett,
                 Minsteinntekt.regelsett,
-                Virkningsdato.regelsett,
+                Søknadstidspunkt.regelsett,
             ).also { behandling ->
                 personobservatører.forEach { behandling.leggTilObservatør(it) }
                 behandlinger.add(behandling)

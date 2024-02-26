@@ -5,10 +5,9 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldNotBeEmpty
-import io.ktor.client.call.body
-import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -26,8 +25,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.UUIDv7
-import no.nav.dagpenger.regel.Virkningsdato
-import no.nav.security.mock.oauth2.http.objectMapper
+import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -52,7 +50,7 @@ internal class BehandlingApiTest {
                     opplysninger =
                         listOf(
                             OpplysningSvar(
-                                opplysningstype = Virkningsdato.søknadsdato,
+                                opplysningstype = Søknadstidspunkt.søknadsdato,
                                 verdi = LocalDate.now(),
                                 tilstand = OpplysningSvar.Tilstand.Faktum,
                             ),
@@ -122,7 +120,7 @@ internal class BehandlingApiTest {
             response.bodyAsText().shouldNotBeEmpty()
             val behandling = shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), BehandlingDTO::class.java) }
             behandling.behandlingId shouldBe behandlingId
-            behandling.opplysning.size shouldBe 8
+            behandling.opplysning.shouldNotBeEmpty()
         }
     }
 

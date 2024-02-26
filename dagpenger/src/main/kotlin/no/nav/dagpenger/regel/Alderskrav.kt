@@ -12,7 +12,7 @@ object Alderskrav {
     val fødselsdato = Opplysningstype.somDato("Fødselsdato".id("Fødselsdato"))
 
     private val aldersgrense = Opplysningstype.somHeltall("Aldersgrense")
-    private val virkningsdato = Virkningsdato.virkningsdato
+    private val virkningsdato = Søknadstidspunkt.søknadstidspunkt
     private val sisteMåned = Opplysningstype.somDato("Dato søker når maks alder")
     private val sisteDagIMåned = Opplysningstype.somDato("Siste mulige dag bruker kan oppfylle alderskrav")
 

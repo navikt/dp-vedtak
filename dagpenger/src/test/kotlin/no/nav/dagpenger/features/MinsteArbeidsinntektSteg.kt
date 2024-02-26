@@ -8,12 +8,12 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Minsteinntekt
-import no.nav.dagpenger.regel.Virkningsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.Assertions
 
 class MinsteArbeidsinntektSteg : RegelTest {
     private val fraDato = 10.mai(2022).atStartOfDay()
-    override val regelsett = listOf(Minsteinntekt.regelsett, Virkningsdato.regelsett)
+    override val regelsett = listOf(Minsteinntekt.regelsett, Søknadstidspunkt.regelsett)
     override val opplysninger: Opplysninger = Opplysninger()
 
     init {
@@ -22,7 +22,13 @@ class MinsteArbeidsinntektSteg : RegelTest {
         Gitt("at søknadsdato er {string}") { søknadsdato: String ->
             opplysninger.leggTil(
                 Faktum(
-                    Virkningsdato.søknadsdato,
+                    Søknadstidspunkt.søknadsdato,
+                    søknadsdato.somLocalDate(),
+                ),
+            )
+            opplysninger.leggTil(
+                Faktum(
+                    Søknadstidspunkt.ønsketdato,
                     søknadsdato.somLocalDate(),
                 ),
             )
