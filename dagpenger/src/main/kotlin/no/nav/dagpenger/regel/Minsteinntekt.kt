@@ -14,19 +14,19 @@ import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
 
 object Minsteinntekt {
-    val nedreTerskelFaktor = Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd inntekt")
-    val øvreTerskelFaktor = Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd inntekt")
-    val inntekt12 = Opplysningstype.somDesimaltall("Inntekt siste 12 mnd".id("InntektSiste12Mnd"))
-    val inntekt36 = Opplysningstype.somDesimaltall("Inntekt siste 36 mnd".id("InntektSiste36Mnd"))
-    val grunnbeløp = Opplysningstype.somDesimaltall("Grunnbeløp")
+    private val `12mndTerskelFaktor` = Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd arbeidsinntekt")
+    private val `36mndTerskelFaktor` = Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd arbeidsinntekt")
+    val inntekt12 = Opplysningstype.somDesimaltall("Arbeidsinntekt siste 12 mnd".id("InntektSiste12Mnd"))
+    val inntekt36 = Opplysningstype.somDesimaltall("Arbeidsinntekt siste 36 mnd".id("InntektSiste36Mnd"))
+    private val grunnbeløp = Opplysningstype.somDesimaltall("Grunnbeløp")
 
     private val virkningsdato = Virkningsdato.virkningsdato
-    private val nedreTerskel = Opplysningstype.somDesimaltall("Inntektskrav for siste 12 mnd")
-    private val øvreTerskel = Opplysningstype.somDesimaltall("Inntektskrav for siste 36 mnd")
-    private val overNedreTerskel = Opplysningstype.somBoolsk("Inntekt er over kravet for siste 12 mnd")
-    private val overØvreTerskel = Opplysningstype.somBoolsk("Inntekt er over kravet for siste 36 mnd")
+    private val `12mndTerskel` = Opplysningstype.somDesimaltall("Inntektskrav for siste 12 mnd")
+    private val `36mndTerskel` = Opplysningstype.somDesimaltall("Inntektskrav for siste 36 mnd")
+    private val over12mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 12 mnd")
+    private val over36mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 36 mnd")
 
-    val minsteinntekt = Opplysningstype.somBoolsk("Minsteinntekt")
+    val minsteinntekt = Opplysningstype.somBoolsk("Krav til minsteinntekt")
 
     val regelsett =
         Regelsett("Minsteinntekt") {
@@ -39,12 +39,12 @@ object Minsteinntekt {
                         .toDouble()
                 }
             }
-            regel(nedreTerskelFaktor) { oppslag(virkningsdato) { finnTerskel(it).nedre } }
-            regel(øvreTerskelFaktor) { oppslag(virkningsdato) { finnTerskel(it).øvre } }
-            regel(nedreTerskel) { multiplikasjon(nedreTerskelFaktor, grunnbeløp) }
-            regel(øvreTerskel) { multiplikasjon(øvreTerskelFaktor, grunnbeløp) }
-            regel(overNedreTerskel) { størreEnnEllerLik(inntekt12, nedreTerskel) }
-            regel(overØvreTerskel) { størreEnnEllerLik(inntekt36, øvreTerskel) }
-            regel(minsteinntekt) { enAv(overNedreTerskel, overØvreTerskel) }
+            regel(`12mndTerskelFaktor`) { oppslag(virkningsdato) { finnTerskel(it).nedre } }
+            regel(`36mndTerskelFaktor`) { oppslag(virkningsdato) { finnTerskel(it).øvre } }
+            regel(`12mndTerskel`) { multiplikasjon(`12mndTerskelFaktor`, grunnbeløp) }
+            regel(`36mndTerskel`) { multiplikasjon(`36mndTerskelFaktor`, grunnbeløp) }
+            regel(over12mndTerskel) { størreEnnEllerLik(inntekt12, `12mndTerskel`) }
+            regel(over36mndTerskel) { størreEnnEllerLik(inntekt36, `36mndTerskel`) }
+            regel(minsteinntekt) { enAv(over12mndTerskel, over36mndTerskel) }
         }
 }
