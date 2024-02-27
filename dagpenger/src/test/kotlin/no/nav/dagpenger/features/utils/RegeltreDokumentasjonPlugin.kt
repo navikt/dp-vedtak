@@ -41,14 +41,12 @@ class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
             }
         }
         publisher.registerHandlerFor(Envelope::class.java) { event ->
-
             if (event.gherkinDocument.isPresent) {
                 navn = event.gherkinDocument.get().feature.get().name
             }
             if (event.source.isPresent) {
                 gherkinSource = event.source.get().data
             }
-
             if (event.attachment.isPresent) {
                 val attachment = event.attachment.get()
                 regeltreDiagram = attachment.body

@@ -11,7 +11,7 @@ import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.Assertions
 
-class MinsteArbeidsinntektSteg : RegelTest {
+class MinsteinntektSteg : RegelTest {
     private val fraDato = 10.mai(2022).atStartOfDay()
     override val regelsett = listOf(Minsteinntekt.regelsett, Søknadstidspunkt.regelsett)
     override val opplysninger: Opplysninger = Opplysninger()
