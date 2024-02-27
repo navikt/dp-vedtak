@@ -36,6 +36,7 @@ internal class SøknadInnsendtMottak(
         context: MessageContext,
     ) {
         logger.info { "Mottok søknad innsendt hendelse" }
+        sikkerlogg.info { "Mottok søknad innsendt hendelse: ${packet.toJson()}" }
         val message = SøknadInnsendtMessage(packet)
         message.behandle(hendelseMediator, context)
     }
@@ -49,6 +50,7 @@ internal class SøknadInnsendtMottak(
 
     private companion object {
         private val logger = KotlinLogging.logger {}
+        private val sikkerlogg = KotlinLogging.logger("tjenestekall.SøknadInnsendtMottak")
     }
 }
 
