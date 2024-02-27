@@ -1,10 +1,10 @@
 #language: no
-Egenskap: §4-4.Krav til minsteinntekt
+Egenskap: § 4-4. Krav til minsteinntekt
 
   Bakgrunn:
     Gitt at søknadsdato er "01.04.2022"
 
-  Scenariomal: Søker oppfyller § 4-4.Krav til minsteinntekt
+  Scenariomal: Søker oppfyller § 4-4. Krav til minsteinntekt
     Gitt at inntekt er
       | Siste 12 måneder | <Siste12> |
       | Siste 36 måneder | <Siste36> |

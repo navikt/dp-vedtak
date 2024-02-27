@@ -1,10 +1,10 @@
 #language: no
-Egenskap: §4-23 Bortfall på grunn av alder
+Egenskap: § 4-23. Bortfall på grunn av alder
 
   Bakgrunn:
     Gitt at fødselsdatoen til søkeren er "10.02.1953"
 
-  Scenariomal: Søker oppfyller alderskravet for §4-23 ut februar 2020
+  Scenariomal: Søker oppfyller alderskravet for § 4-23 ut februar 2020
     Gitt at virkningstidspunktet er "<virkningstidspunkt>"
     Så skal utfallet være "<utfall>"
 

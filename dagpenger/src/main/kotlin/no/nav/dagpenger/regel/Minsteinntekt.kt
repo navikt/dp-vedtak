@@ -30,8 +30,6 @@ object Minsteinntekt {
 
     val regelsett =
         Regelsett("Minsteinntekt") {
-            regel(inntekt12) { innhentMed(virkningsdato) }
-            regel(inntekt36) { innhentMed(virkningsdato) }
             regel(grunnbeløp) {
                 oppslag(virkningsdato) {
                     getGrunnbeløpForRegel(Regel.Minsteinntekt).forDato(it).verdi
@@ -39,12 +37,17 @@ object Minsteinntekt {
                         .toDouble()
                 }
             }
+
+            regel(inntekt12) { innhentMed(virkningsdato) }
             regel(`12mndTerskelFaktor`) { oppslag(virkningsdato) { finnTerskel(it).nedre } }
-            regel(`36mndTerskelFaktor`) { oppslag(virkningsdato) { finnTerskel(it).øvre } }
             regel(`12mndTerskel`) { multiplikasjon(`12mndTerskelFaktor`, grunnbeløp) }
-            regel(`36mndTerskel`) { multiplikasjon(`36mndTerskelFaktor`, grunnbeløp) }
             regel(over12mndTerskel) { størreEnnEllerLik(inntekt12, `12mndTerskel`) }
+
+            regel(inntekt36) { innhentMed(virkningsdato) }
+            regel(`36mndTerskelFaktor`) { oppslag(virkningsdato) { finnTerskel(it).øvre } }
+            regel(`36mndTerskel`) { multiplikasjon(`36mndTerskelFaktor`, grunnbeløp) }
             regel(over36mndTerskel) { størreEnnEllerLik(inntekt36, `36mndTerskel`) }
+
             regel(minsteinntekt) { enAv(over12mndTerskel, over36mndTerskel) }
         }
 }

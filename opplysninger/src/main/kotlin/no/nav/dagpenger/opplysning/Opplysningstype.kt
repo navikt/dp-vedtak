@@ -67,6 +67,8 @@ class Opplysningstype<T : Comparable<T>> private constructor(
     }
 
     init {
+        // TODO: Vi bør gjøre noe slikt, men det brekker mye tester
+        // require(typer.none { it.opplysningTypeId == this.opplysningTypeId }) { "Opplysningstype finnes allerede" }
         typer.add(this)
     }
 

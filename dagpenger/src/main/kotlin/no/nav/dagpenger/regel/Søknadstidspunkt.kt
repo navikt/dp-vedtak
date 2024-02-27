@@ -9,7 +9,7 @@ object Søknadstidspunkt {
     val søknadsdato = Opplysningstype.somDato("Søknadsdato".id("Søknadstidspunkt"))
     val ønsketdato = Opplysningstype.somDato("Ønsker dagpenger fra dato".id("ØnskerDagpengerFraDato"))
 
-    // TODO: vi må rydde i begrepsbruk
+    // TODO: vi må rydde i begrepsbruk, behovsløsere forventer at dette kalles virkningsdato
     val søknadstidspunkt = Opplysningstype.somDato("Søknadstidspunkt".id("Virkningsdato"))
 
     val regelsett =
