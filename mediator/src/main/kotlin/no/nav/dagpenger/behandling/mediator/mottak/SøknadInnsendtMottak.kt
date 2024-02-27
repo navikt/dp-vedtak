@@ -9,7 +9,6 @@ import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
@@ -39,13 +38,6 @@ internal class SøknadInnsendtMottak(
         sikkerlogg.info { "Mottok søknad innsendt hendelse: ${packet.toJson()}" }
         val message = SøknadInnsendtMessage(packet)
         message.behandle(hendelseMediator, context)
-    }
-
-    override fun onError(
-        problems: MessageProblems,
-        context: MessageContext,
-    ) {
-        logger.error { problems }
     }
 
     private companion object {
