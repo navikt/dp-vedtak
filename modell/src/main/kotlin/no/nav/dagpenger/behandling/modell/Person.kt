@@ -42,10 +42,6 @@ class Person(
 
     fun håndter(hendelse: OpplysningSvarHendelse) {
         hendelse.leggTilKontekst(this)
-        if (behandlinger.isEmpty()) {
-            hendelse.varsel("Fikk opplysning på behandling som ikke finnes. Ignorerer.")
-            return
-        }
         val behandling = behandlinger.first() // .first { it.behandlingId == hendelse.behandlingId }
         behandling.håndter(hendelse)
     }
