@@ -1,5 +1,7 @@
 package no.nav.dagpenger.opplysning.regelsett
 
+import no.nav.dagpenger.opplysning.Datatype
+import no.nav.dagpenger.opplysning.ID
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
@@ -18,6 +20,13 @@ internal object Minsteinntekt {
     val grunnbeløp = Opplysningstype.somDesimaltall("Grunnbeløp")
 
     private val virkningsdato = Virkningsdato.virkningsdato
+    private val antattRapporteringsFrist = Opplysningstype.somDato("Antatt rapporteringsfrist")
+    private val reellRapporteringsFrist = Opplysningstype.somDato("Reell rapporteringsfrist")
+    private val sisteAvsluttendeKalenderMåned = Opplysningstype.somDato("Siste avsluttendende kalendermåned")
+    private val førsteAvsluttendeKalenderMåned = Opplysningstype.somDato("Første kalendermåned")
+    private val inntektId = Opplysningstype.somId("InntektId")
+
+
     private val nedreTerskel = Opplysningstype.somDesimaltall("Inntektskrav for siste 12 mnd")
     private val øvreTerskel = Opplysningstype.somDesimaltall("Inntektskrav for siste 36 mnd")
     private val overNedreTerskel = Opplysningstype.somBoolsk("Inntekt er over kravet for siste 12 mnd")

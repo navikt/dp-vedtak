@@ -55,6 +55,17 @@ class Opplysningstype<T : Comparable<T>> private constructor(
             parent: Opplysningstype<LocalDate>? = null,
         ) = somDato(navn.id(navn), parent)
 
+        fun somId(
+            navn: String,
+            parent: Opplysningstype<String>? = null
+        ) = somId(navn.id(navn), parent)
+
+        fun somId(
+            opplysningTypeId: OpplysningTypeId,
+            parent: Opplysningstype<String>?
+        )
+           = Opplysningstype(opplysningTypeId, ID)
+
         fun somBoolsk(
             opplysningTypeId: OpplysningTypeId,
             parent: Opplysningstype<Boolean>? = null,

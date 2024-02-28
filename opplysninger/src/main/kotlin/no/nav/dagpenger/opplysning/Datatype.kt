@@ -11,3 +11,4 @@ data object Desimaltall : Datatype<Double>(Double::class.java)
 data object Heltall : Datatype<Int>(Int::class.java)
 
 data object Boolsk : Datatype<Boolean>(Boolean::class.java)
+data object ID : Datatype<String>(String::class.java)
