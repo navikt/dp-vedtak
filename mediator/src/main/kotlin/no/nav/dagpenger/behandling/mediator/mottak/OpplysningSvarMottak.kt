@@ -28,6 +28,7 @@ internal class OpplysningSvarMottak(
     init {
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "behov") }
+            validate { it.demandValue("@final", true) }
             validate { it.requireKey("ident") }
             validate { it.requireKey("@løsning") }
             validate { it.requireKey("behandlingId") }

@@ -92,6 +92,7 @@ internal class PersonMediatorTest {
             mapOf(
                 "ident" to ident,
                 "behandlingId" to "e2e9e3e0-8e3e-4e3e-8e3e-0e3e8e3e9e3e",
+                "@final" to true,
                 "@løsning" to
                     mapOf(
                         "Fødselsdato" to LocalDate.of(1990, 1, 1),
@@ -107,6 +108,7 @@ internal class PersonMediatorTest {
             mapOf(
                 "ident" to ident,
                 "behandlingId" to "e2e9e3e0-8e3e-4e3e-8e3e-0e3e8e3e9e3e",
+                "@final" to true,
                 "@løsning" to
                     mapOf(
                         "InntektSiste12Mnd" to 1234,
