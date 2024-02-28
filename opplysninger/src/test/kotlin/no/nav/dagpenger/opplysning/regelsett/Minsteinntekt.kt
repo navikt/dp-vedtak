@@ -3,6 +3,7 @@ package no.nav.dagpenger.opplysning.regelsett
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
+import no.nav.dagpenger.opplysning.regel.dato.førsteVirkedag
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
@@ -33,6 +34,8 @@ internal object Minsteinntekt {
 
     val regelsett =
         Regelsett("Minsteinntekt") {
+            regel(antattRapporteringsFrist) { oppslag(virkningsdato) { LocalDate.of(it.year, it.month, 5) } }
+            regel(reellRapporteringsFrist) { førsteVirkedag(antattRapporteringsFrist) }
             regel(antallG12mndInntekt) { oppslag(virkningsdato) { 1.5 } }
             regel(antallG36mndInntekt) { oppslag(virkningsdato) { 3.0 } }
             regel(inntekt12) { innhentMed(virkningsdato) }
