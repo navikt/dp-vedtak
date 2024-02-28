@@ -6,7 +6,7 @@ import io.kotest.matchers.equals.shouldNotBeEqual
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
-class UlidTest {
+class ULIDTest {
     @Test
     fun `likhet test`() {
         val id1 = "01HQQWF1TYEWQ3ASZ8H9YYZVQ2"

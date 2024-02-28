@@ -13,6 +13,8 @@ import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.ULID
+import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -86,6 +88,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
                         Heltall -> opplysningSvar(type as Opplysningstype<Int>, verdi.asInt())
                         Desimaltall -> opplysningSvar(type as Opplysningstype<Double>, verdi.asDouble())
                         Boolsk -> opplysningSvar(type as Opplysningstype<Boolean>, verdi.asBoolean())
+                        ULID -> opplysningSvar(type as Opplysningstype<Ulid>, Ulid(verdi.asText()))
                     }
                 add(opplysning)
             }

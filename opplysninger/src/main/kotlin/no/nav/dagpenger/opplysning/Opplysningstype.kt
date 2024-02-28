@@ -63,7 +63,7 @@ class Opplysningstype<T : Comparable<T>> private constructor(
         fun somUlid(
             opplysningTypeId: OpplysningTypeId,
             parent: Opplysningstype<String>?,
-        ) = Opplysningstype(opplysningTypeId, Ulid)
+        ) = Opplysningstype(opplysningTypeId, ULID)
 
         fun somBoolsk(
             opplysningTypeId: OpplysningTypeId,
