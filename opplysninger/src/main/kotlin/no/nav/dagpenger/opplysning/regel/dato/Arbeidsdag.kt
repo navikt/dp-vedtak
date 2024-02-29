@@ -8,29 +8,38 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
 
-class FørsteVirkedag internal constructor(
+/**
+ *  Regel som finner første *arbeidsdag* for en dato
+ *
+ *  En arbeidsdag er en dag som ikke er helg (lørdag eller søndag) eller en helligdag for Norge
+ *
+ *  - Hvis datoen er en arbeidsdag returneres datoen
+ *  - Hvis datoen er en helg eller helligdag returneres den første arbeidsdagen etter datoen
+ *
+ */
+class Arbeidsdag internal constructor(
     produserer: Opplysningstype<LocalDate>,
     private val dato: Opplysningstype<LocalDate>,
 ) : Regel<LocalDate>(produserer, listOf(dato)) {
     override fun kjør(opplysninger: LesbarOpplysninger): LocalDate {
         val virkedag = opplysninger.finnOpplysning(dato).verdi
-        return finnFørsteVirkedag(virkedag)
+        return finnFørsteArbeidsdag(virkedag)
     }
 
     override fun toString() = "Finn første virkedag etter $dato"
 
-    private tailrec fun finnFørsteVirkedag(dato: LocalDate): LocalDate {
-        return if (dato.virkedag()) {
+    private tailrec fun finnFørsteArbeidsdag(dato: LocalDate): LocalDate {
+        return if (dato.arbeidsdag()) {
             dato
         } else {
-            finnFørsteVirkedag(
+            finnFørsteArbeidsdag(
                 dato.plusDays(1),
             )
         }
     }
 
-    private fun LocalDate.virkedag(): Boolean =
+    private fun LocalDate.arbeidsdag(): Boolean =
         NorwegianDateUtil.isWorkingDay(Date.from(this.atStartOfDay(ZoneId.systemDefault()).toInstant()))
 }
 
-fun Opplysningstype<LocalDate>.førsteVirkedag(dato: Opplysningstype<LocalDate>) = FørsteVirkedag(this, dato)
+fun Opplysningstype<LocalDate>.førsteArbeidsdag(dato: Opplysningstype<LocalDate>) = Arbeidsdag(this, dato)

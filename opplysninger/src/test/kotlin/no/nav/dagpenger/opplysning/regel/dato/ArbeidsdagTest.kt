@@ -10,33 +10,33 @@ import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class FørsteVirkedagTest {
+class ArbeidsdagTest {
     private val dato =
         Opplysningstype.somDato("dato")
-    private val virkedag =
-        Opplysningstype.somDato("virkedag")
+    private val arbeidsdag =
+        Opplysningstype.somDato("arbeidsdag")
 
     private val opplysninger = Opplysninger()
     private val regelkjøring =
         Regelkjøring(
             1.mai,
             opplysninger,
-            Regelsett("regelsett") {
-                regel(virkedag) { førsteVirkedag(dato) }
+            Regelsett("finn første arbeidsdag for en dato") {
+                regel(arbeidsdag) { førsteArbeidsdag(dato) }
             },
         )
 
     @Test
     fun `Fredag 7 juli  2019 er en virkedag`() {
         opplysninger.leggTil(Hypotese(dato, LocalDate.of(2019, 7, 5)))
-        val utledet = opplysninger.finnOpplysning(virkedag)
+        val utledet = opplysninger.finnOpplysning(arbeidsdag)
         assertEquals(LocalDate.of(2019, 7, 5), utledet.verdi)
     }
 
     @Test
-    fun `Første virkedag etter 5 oktober 2019 er mandag 7 oktober 2019`() {
-        opplysninger.leggTil(Hypotese(dato, LocalDate.of(2019, 10, 5)))
-        val utledet = opplysninger.finnOpplysning(virkedag)
-        assertEquals(LocalDate.of(2019, 10, 7), utledet.verdi)
+    fun `Første arbeidsdag etter 5 oktober 2024 er mandag 7 oktober 2024`() {
+        opplysninger.leggTil(Hypotese(dato, LocalDate.of(2024, 10, 5)))
+        val utledet = opplysninger.finnOpplysning(arbeidsdag)
+        assertEquals(LocalDate.of(2024, 10, 7), utledet.verdi)
     }
 }
