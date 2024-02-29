@@ -23,7 +23,7 @@ object Minsteinntekt {
     private val grunnbeløp = Opplysningstype.somDesimaltall("Grunnbeløp")
 
     private val sisteAvsluttendendeKalenderMåned = Opptjeningstid.sisteAvsluttendendeKalenderMåned
-    private val inntektId = Opplysningstype.somUlid("InntektId")
+    private val inntektId = Opplysningstype.somUlid("Inntekt".id("InntektId"))
     private val maksPeriodeLengde = Opplysningstype.somHeltall("Maks lengde på opptjeningsperiode")
     private val opptjeningsperiode = Opplysningstype.somDato("Opptjeningsperiode")
 

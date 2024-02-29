@@ -1,5 +1,6 @@
 package no.nav.dagpenger.opplysning
 
+import no.nav.dagpenger.opplysning.verdier.Ulid
 import java.time.LocalDate
 
 interface Klassifiserbart {
@@ -56,14 +57,14 @@ class Opplysningstype<T : Comparable<T>> private constructor(
         ) = somDato(navn.id(navn), parent)
 
         fun somUlid(
-            navn: String,
-            parent: Opplysningstype<String>? = null,
-        ) = somUlid(navn.id(navn), parent)
+            opplysningTypeId: OpplysningTypeId,
+            parent: Opplysningstype<Ulid>? = null,
+        ) = Opplysningstype(opplysningTypeId, ULID, parent)
 
         fun somUlid(
-            opplysningTypeId: OpplysningTypeId,
-            parent: Opplysningstype<String>?,
-        ) = Opplysningstype(opplysningTypeId, ULID)
+            navn: String,
+            parent: Opplysningstype<Ulid>? = null,
+        ) = somUlid(navn.id(navn), parent)
 
         fun somBoolsk(
             opplysningTypeId: OpplysningTypeId,

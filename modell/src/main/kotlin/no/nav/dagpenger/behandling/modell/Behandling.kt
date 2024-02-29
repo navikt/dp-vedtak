@@ -54,11 +54,15 @@ class Behandling private constructor(
         hendelse.opplysninger.forEach { opplysning ->
             opplysninger.leggTil(opplysning.opplysning())
         }
-        hvaTrengerViNå(hendelse)
+        val trenger = hvaTrengerViNå(hendelse)
+
+        if (trenger.isEmpty()) {
+            hendelse.info("Alle opplysninger mottatt")
+        }
     }
 
-    private fun hvaTrengerViNå(hendelse: PersonHendelse) {
-        informasjonsbehov().forEach { (behov, avhengigheter) ->
+    private fun hvaTrengerViNå(hendelse: PersonHendelse) =
+        informasjonsbehov().onEach { (behov, avhengigheter) ->
             hendelse.behov(
                 type = OpplysningBehov(behov.id),
                 melding = "Trenger en opplysning (${behov.id})",
@@ -75,7 +79,6 @@ class Behandling private constructor(
                         mapOf("søknad_uuid" to behandler.søknadId.toString()),
             )
         }
-    }
 
     override fun toSpesifikkKontekst() = SpesifikkKontekst("Behandling", mapOf("behandlingId" to behandlingId.toString()))
 }
