@@ -1,6 +1,6 @@
 package no.nav.dagpenger.features
 
-import io.cucumber.java8.Scenario
+import io.cucumber.java8.No
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.features.utils.somLocalDate
 import no.nav.dagpenger.opplysning.Faktum
@@ -10,10 +10,10 @@ import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.Assertions
 
-class AlderskravSteg : RegelTest {
+class AlderskravSteg : No {
     private val fraDato = 10.mai(2022).atStartOfDay()
-    override val regelsett = listOf(Alderskrav.regelsett, Søknadstidspunkt.regelsett)
-    override val opplysninger = Opplysninger()
+    private val regelsett = listOf(Alderskrav.regelsett, Søknadstidspunkt.regelsett)
+    private val opplysninger = Opplysninger()
 
     init {
         Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
@@ -52,10 +52,6 @@ class AlderskravSteg : RegelTest {
                 verdi,
                 opplysninger.finnOpplysning(Alderskrav.vilkår).verdi,
             )
-        }
-
-        After { scenario: Scenario ->
-            scenario.attach(skrivRegeltre(), "text/markdown", "regeltre.md")
         }
     }
 }

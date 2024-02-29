@@ -1,4 +1,5 @@
 #language: no
+@dokumentasjon @regel-minsteinntekt
 Egenskap: § 4-4. Krav til minsteinntekt
 
   Bakgrunn:

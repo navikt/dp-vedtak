@@ -1,65 +1,92 @@
 package no.nav.dagpenger.features.utils
 
 import com.spun.util.persistence.Loader
+import io.cucumber.java.After
+import io.cucumber.java.Scenario
 import io.cucumber.plugin.ConcurrentEventListener
+import io.cucumber.plugin.event.EmbedEvent
 import io.cucumber.plugin.event.EventPublisher
+import io.cucumber.plugin.event.TestRunFinished
+import io.cucumber.plugin.event.TestSourceParsed
+import io.cucumber.plugin.event.TestSourceRead
+import no.nav.dagpenger.opplysning.dag.RegeltreBygger
+import no.nav.dagpenger.opplysning.dag.printer.MermaidPrinter
+import no.nav.dagpenger.regel.Alderskrav
+import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.Opptjeningstid
 import org.approvaltests.Approvals
 import org.approvaltests.core.Options
 import org.approvaltests.namer.NamerWrapper
+import org.intellij.lang.annotations.Language
 import java.nio.file.Paths
 
+@After("@dokumentasjon")
+fun dokumentasjon(scenario: Scenario) {
+    val test = scenario.sourceTagNames.first { it.startsWith("@regel") }
+    val regler =
+        mapOf(
+            "@regel-alder" to Alderskrav.regelsett,
+            "@regel-minsteinntekt" to Minsteinntekt.regelsett,
+            "@regel-opptjeningstid" to Opptjeningstid.regelsett,
+        )
+    println("Lager dokumentasjon for $test")
+    val regeltre = RegeltreBygger(regler[test]!!)
+    val tre = MermaidPrinter(regeltre.dag()).toPrint()
+    scenario.attach(tre, "text/markdown", "regeltre.md")
+}
+
 class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
-    private lateinit var gherkinSource: String
-    private lateinit var regeltreDiagram: String
-    private lateinit var navn: String
+    private val regeltrær = mutableMapOf<String, String>()
+    private val tester = mutableMapOf<String, String>()
+    private val dokumenter = mutableMapOf<String, String>()
 
     override fun setEventPublisher(publisher: EventPublisher) {
-//        publisher.registerHandlerFor(TestRunFinished::class.java) { _ ->
-//            if (this::regeltreDiagram.isInitialized) {
-//                val markdown =
-//                    """
-//                    |# $navn
-//                    |
-//                    | ## Regeltre
-//                    |
-//                    |```mermaid
-//                    |$regeltreDiagram
-//                    |```
-//                    |
-//                    | ## Akseptansetester
-//                    |
-//                    |```gherkin
-//                    |$gherkinSource
-//                    |```
-//                    """.trimMargin()
-//                skriv(
-//                    navn,
-//                    markdown,
-//                )
-//            }
-//        }
-//        publisher.registerHandlerFor(Envelope::class.java) { event ->
-//            if (event.gherkinDocument.isPresent) {
-//                navn = event.gherkinDocument.get().feature.get().name
-//            }
-//            if (event.source.isPresent) {
-//                gherkinSource = event.source.get().data
-//            }
-//            if (event.attachment.isPresent) {
-//                val attachment = event.attachment.get()
-//                regeltreDiagram = attachment.body
-//            }
-//        }
+        publisher.registerHandlerFor(TestRunFinished::class.java) { _ ->
+            regeltrær.map { (uri, regeltre) ->
+                val navn = tester[uri]
+                val gherkinSource = dokumenter[uri]
+                Regeldokumentasjon(navn!!, regeltre, gherkinSource)
+            }.forEach { (navn, regeltreDiagram, gherkinSource) ->
+                @Language("Markdown")
+                val markdown =
+                    """
+                    # $navn
+                    
+                    ## Regeltre
+                    
+                    ```mermaid
+                    ${regeltreDiagram?.prependIndent("                    ")}
+                    ```
+                    
+                    ## Akseptansetester
+                    
+                    ```gherkin
+                    ${gherkinSource?.prependIndent("                    ")}
+                    ``` 
+                    """.trimIndent()
+                skriv(
+                    navn!!,
+                    markdown,
+                )
+            }
+        }
+
+        publisher.registerHandlerFor(TestSourceRead::class.java) { event ->
+            dokumenter[event.uri.toString()] = event.source
+        }
+        publisher.registerHandlerFor(TestSourceParsed::class.java) { event ->
+            tester[event.uri.toString()] = event.nodes.first().name.get()
+        }
+        publisher.registerHandlerFor(EmbedEvent::class.java) { event ->
+            regeltrær[event.testCase.uri.toString()] = String(event.data)
+        }
     }
 
     private companion object {
         val path = "${
             Paths.get("").toAbsolutePath().toString().substringBeforeLast("/")
         }/docs/"
-        val options =
-            Options()
-                .forFile()
-                .withExtension(".md")
+        val options = Options().forFile().withExtension(".md")
     }
 
     fun skriv(
@@ -73,4 +100,10 @@ class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
                 options,
             )
     }
+
+    private data class Regeldokumentasjon(
+        var navn: String,
+        var regeltreDiagram: String? = null,
+        var gherkinSource: String? = null,
+    )
 }

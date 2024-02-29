@@ -1,6 +1,8 @@
 package no.nav.dagpenger.features
 
 import io.cucumber.datatable.DataTable
+import io.cucumber.java.no.Gitt
+import io.cucumber.java8.No
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.features.utils.somLocalDate
 import no.nav.dagpenger.opplysning.Faktum
@@ -10,10 +12,10 @@ import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.Assertions
 
-class MinsteinntektSteg : RegelTest {
+class MinsteinntektSteg : No {
     private val fraDato = 10.mai(2022).atStartOfDay()
-    override val regelsett = listOf(Minsteinntekt.regelsett, Søknadstidspunkt.regelsett)
-    override val opplysninger: Opplysninger = Opplysninger()
+    private val regelsett = listOf(Minsteinntekt.regelsett, Søknadstidspunkt.regelsett)
+    private val opplysninger: Opplysninger = Opplysninger()
 
     init {
         Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())

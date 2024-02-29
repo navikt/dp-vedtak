@@ -1,4 +1,18 @@
-#language: no
+# Dagpengeforskriften § 3A-2. Siste avsluttede kalendermåned
+
+## Regeltre
+
+```mermaid
+                    graph RL
+  A["Arbeidsgivers rapporteringsfrist"] -->|Oppslag| B["Søknadstidspunkt"]
+  C["Arbeidsgivers rapporteringsfrist justert for helg og helligdager"] -->|Arbeidsdag| A["Arbeidsgivers rapporteringsfrist"]
+  D["Siste avsluttende kalendermåned"] -->|SisteDagForrigeMåned| C["Arbeidsgivers rapporteringsfrist justert for helg og helligdager"]
+```
+
+## Akseptansetester
+
+```gherkin
+                    #language: no
 @dokumentasjon @regel-opptjeningstid
 # Kapittel 3A. Søknadstidspunkt, opptjeningstid mv. - https://lovdata.no/dokument/SF/forskrift/1998-09-16-890/KAPITTEL_4#%C2%A73a-2
 Egenskap: Dagpengeforskriften § 3A-2. Siste avsluttede kalendermåned
@@ -24,3 +38,5 @@ Egenskap: Dagpengeforskriften § 3A-2. Siste avsluttede kalendermåned
       | 05.11.2024         | 05.11.2024         | 31.10.2024       |
       | 05.12.2024         | 05.12.2024         | 30.11.2024       |
       | 05.01.2025         | 06.01.2025         | 31.12.2024       |
+
+``` 

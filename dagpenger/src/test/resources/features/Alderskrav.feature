@@ -1,4 +1,5 @@
 #language: no
+@dokumentasjon @regel-alder
 Egenskap: § 4-23. Bortfall på grunn av alder
 
   Bakgrunn:

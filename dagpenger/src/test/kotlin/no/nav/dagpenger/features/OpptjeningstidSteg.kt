@@ -1,5 +1,6 @@
 package no.nav.dagpenger.features
 
+import io.cucumber.java8.No
 import io.kotest.matchers.equals.shouldBeEqual
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.opplysning.Faktum
@@ -9,10 +10,10 @@ import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import java.time.LocalDate
 
-class OpptjeningstidSteg : RegelTest {
+class OpptjeningstidSteg : No {
     private val fraDato = 10.mai(2022).atStartOfDay()
-    override val regelsett = listOf(Opptjeningstid.regelsett, Søknadstidspunkt.regelsett)
-    override val opplysninger = Opplysninger()
+    private val regelsett = listOf(Opptjeningstid.regelsett, Søknadstidspunkt.regelsett)
+    private val opplysninger = Opplysninger()
 
     init {
 
