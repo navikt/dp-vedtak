@@ -5,7 +5,7 @@
 ```mermaid
                     graph RL
   A["Lovpålagt rapporteringsfrist for A-ordningen"] -->|Oppslag| B["Søknadstidspunkt"]
-  C["Arbeidsgivers rapporteringsfrist"] -->|Arbeidsdag| A["Lovpålagt rapporteringsfrist for A-ordningen"]
+  C["Arbeidsgivers rapporteringsfrist"] -->|FørsteArbeidsdag| A["Lovpålagt rapporteringsfrist for A-ordningen"]
   D["Siste avsluttende kalendermåned"] -->|SisteDagForrigeMåned| C["Arbeidsgivers rapporteringsfrist"]
 ```
 

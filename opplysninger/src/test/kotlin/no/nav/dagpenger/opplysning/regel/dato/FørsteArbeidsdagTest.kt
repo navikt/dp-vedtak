@@ -10,7 +10,7 @@ import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ArbeidsdagTest {
+class FørsteArbeidsdagTest {
     private val dato =
         Opplysningstype.somDato("dato")
     private val arbeidsdag =

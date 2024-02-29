@@ -17,13 +17,13 @@ import java.util.Date
  *  - Hvis datoen er en helg eller helligdag returneres den første arbeidsdagen etter datoen
  *
  */
-class Arbeidsdag internal constructor(
+class FørsteArbeidsdag internal constructor(
     produserer: Opplysningstype<LocalDate>,
     private val dato: Opplysningstype<LocalDate>,
 ) : Regel<LocalDate>(produserer, listOf(dato)) {
     override fun kjør(opplysninger: LesbarOpplysninger): LocalDate {
-        val virkedag = opplysninger.finnOpplysning(dato).verdi
-        return finnFørsteArbeidsdag(virkedag)
+        val arbeidsdag = opplysninger.finnOpplysning(dato).verdi
+        return finnFørsteArbeidsdag(arbeidsdag)
     }
 
     override fun toString() = "Finn første virkedag etter $dato"
@@ -42,4 +42,4 @@ class Arbeidsdag internal constructor(
         NorwegianDateUtil.isWorkingDay(Date.from(this.atStartOfDay(ZoneId.systemDefault()).toInstant()))
 }
 
-fun Opplysningstype<LocalDate>.førsteArbeidsdag(dato: Opplysningstype<LocalDate>) = Arbeidsdag(this, dato)
+fun Opplysningstype<LocalDate>.førsteArbeidsdag(dato: Opplysningstype<LocalDate>) = FørsteArbeidsdag(this, dato)
