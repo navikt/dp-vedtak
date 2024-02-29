@@ -50,20 +50,20 @@ class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
                 @Language("Markdown")
                 val markdown =
                     """
-                    # $navn
-                    
-                    ## Regeltre
-                    
-                    ```mermaid
-                    ${regeltreDiagram.prependIndent("                    ")}
-                    ```
-                    
-                    ## Akseptansetester
-                    
-                    ```gherkin
-                    ${gherkinSource.prependIndent("                    ")}
-                    ``` 
-                    """.trimIndent()
+                    ># $navn
+                    >
+                    >## Regeltre
+                    >
+                    >```mermaid
+                    >${regeltreDiagram.trim()}
+                    >```
+                    >
+                    >## Akseptansetester
+                    >
+                    >```gherkin
+                    >${gherkinSource.trim()}
+                    >``` 
+                    """.trimMargin(">")
                 skriv(
                     navn!!,
                     markdown,
