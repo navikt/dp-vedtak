@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: Vedtak API
+  title: Behandling API
   version: 1.0.0
-  description: API for å hente alle vedtak knyttet til en person.
+  description: API for å hente alle behandlinger.
   contact:
     name: '#team-dagpenger'
 servers:

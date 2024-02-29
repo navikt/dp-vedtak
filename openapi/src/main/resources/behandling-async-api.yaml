@@ -19,7 +19,7 @@ components:
         properties:
           '@event_type':
             type: string
-            description: Event som forteller om en har rett på dagpenger eller ikke (gitt utfall)
+            description: Event som forteller om at en behandling er opprettet
             enum: [
               "behandling_opprettet"
             ]
