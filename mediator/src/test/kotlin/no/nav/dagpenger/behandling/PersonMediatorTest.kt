@@ -43,22 +43,22 @@ internal class PersonMediatorTest {
 
     @Test
     fun `e2e av søknad innsendt`() {
-        val testCase = TestCase(ident, rapid)
-        testCase.sendSøknad()
+        val testPerson = TestPerson(ident, rapid)
+        testPerson.sendSøknad()
 
         rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
-        testCase.løsBehov("Fødseldato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
+        testPerson.løsBehov("Fødseldato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
         rapid.harBehov("InntektId") {
             dato("Siste avsluttende kalendermåned") shouldBe LocalDate.of(2021, 4, 30)
             dato("Opptjeningsperiode") shouldBe LocalDate.of(2018, 4, 1)
         }
-        testCase.løsBehov("InntektId")
+        testPerson.løsBehov("InntektId")
 
-        rapid.harBehov("InntektSiste12Mnd") { tekst("InntektId") shouldBe testCase.inntektId }
-        rapid.harBehov("InntektSiste36Mnd") { tekst("InntektId") shouldBe testCase.inntektId }
+        rapid.harBehov("InntektSiste12Mnd") { tekst("InntektId") shouldBe testPerson.inntektId }
+        rapid.harBehov("InntektSiste36Mnd") { tekst("InntektId") shouldBe testPerson.inntektId }
 
-        testCase.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
+        testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
     }
 }
 

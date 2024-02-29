@@ -4,7 +4,7 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import java.time.LocalDate
 
-class TestCase(
+class TestPerson(
     private val ident: String,
     private val rapid: TestRapid,
     private val søknadstidspunkt: LocalDate = LocalDate.of(2021, 5, 5),
