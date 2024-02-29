@@ -17,7 +17,7 @@ class MermaidPrinter(private val dag: DAG<*, Any?>, private val retning: String 
             val fromNodeName = "$fromId[\"${edge.from.name}\"]"
             val toNodeName = "$toId[\"${edge.to.name}\"]"
 
-            diagram.appendLine("  $fromNodeName -->|${edge.edgeName}| $toNodeName")
+            diagram.appendLine("  $fromNodeName -->|\"${edge.edgeName}\"| $toNodeName")
         }
 
         return diagram.trim().toString()

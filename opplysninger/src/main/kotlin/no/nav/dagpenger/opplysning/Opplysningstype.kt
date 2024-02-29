@@ -93,10 +93,7 @@ class Opplysningstype<T : Comparable<T>> private constructor(
         return opplysningTypeId == type.opplysningTypeId || parent?.er(type) ?: false
     }
 
-    override fun toString(): String {
-        // TODO: Det er noe muffens med hierarki og data class
-        return "Opplysningstype(navn='$navn', parent=${parent?.navn}, child=${child.size})"
-    }
+    override fun toString() = "opplysning om $navn"
 
     override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningTypeId == this.opplysningTypeId
 

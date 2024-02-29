@@ -4,9 +4,9 @@
 
 ```mermaid
                     graph RL
-  A["Lovpålagt rapporteringsfrist for A-ordningen"] -->|Oppslag| B["Søknadstidspunkt"]
-  C["Arbeidsgivers rapporteringsfrist"] -->|FørsteArbeidsdag| A["Lovpålagt rapporteringsfrist for A-ordningen"]
-  D["Siste avsluttende kalendermåned"] -->|SisteDagIForrigeMåned| C["Arbeidsgivers rapporteringsfrist"]
+  A["Lovpålagt rapporteringsfrist for A-ordningen"] -->|"Oppslag"| B["Søknadstidspunkt"]
+  C["Arbeidsgivers rapporteringsfrist"] -->|"FørsteArbeidsdag"| A["Lovpålagt rapporteringsfrist for A-ordningen"]
+  D["Siste avsluttende kalendermåned"] -->|"SisteDagIForrigeMåned"| C["Arbeidsgivers rapporteringsfrist"]
 ```
 
 ## Akseptansetester

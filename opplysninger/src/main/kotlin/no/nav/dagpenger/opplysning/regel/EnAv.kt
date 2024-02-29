@@ -11,9 +11,7 @@ class EnAv internal constructor(
         return opplysninger.finnAlle(opplysningstyper.toList()).any { it.verdi as Boolean }
     }
 
-    override fun toString(): String {
-        return "En av ${opplysningstyper.joinToString(", ")} er sanne"
-    }
+    override fun toString() = "En av ${opplysningstyper.joinToString(", ")} er sanne"
 }
 
 fun Opplysningstype<Boolean>.enAv(vararg opplysningstype: Opplysningstype<Boolean>) = EnAv(this, *opplysningstype)

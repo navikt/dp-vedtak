@@ -21,14 +21,15 @@ class DAGPrinterTest {
         val prettyPrinter = PrettyPrinter(regeltre)
         //language=text
         assertEquals(
-            """
-            A * B: Opplysningstype(navn='A * B', parent=null, child=0)
-              | Multiplikasjon
-              A: Opplysningstype(navn='A', parent=null, child=0)
-              | Multiplikasjon
-              B: Opplysningstype(navn='B', parent=null, child=0)
-            """.trimIndent(),
-            prettyPrinter.toPrint { it.data == c },
+            expected =
+                """
+                A * B: opplysning om A * B
+                  | Multiplikasjon
+                  A: opplysning om A
+                  | Multiplikasjon
+                  B: opplysning om B
+                """.trimIndent(),
+            actual = prettyPrinter.toPrint { it.data == c },
         )
     }
 
