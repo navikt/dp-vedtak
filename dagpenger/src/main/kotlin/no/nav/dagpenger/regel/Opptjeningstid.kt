@@ -15,22 +15,20 @@ import java.time.LocalDate
 
 object Opptjeningstid {
     val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
-    private val pliktigRapporteringsfrist = Opplysningstype.somDato("Arbeidsgivers rapporteringsfrist")
-    internal val justertRapporteringsfrist = Opplysningstype.somDato("Arbeidsgivers rapporteringsfrist justert for helg og helligdager")
+
+    // https://lovdata.no/dokument/NL/lov/2012-06-22-43/%C2%A74#%C2%A74
+    private val pliktigRapporteringsfrist = Opplysningstype.somDato("Lovpålagt rapporteringsfrist for A-ordningen")
+    internal val justertRapporteringsfrist = Opplysningstype.somDato("Arbeidsgivers rapporteringsfrist")
     val sisteAvsluttendendeKalenderMåned = Opplysningstype.somDato("Siste avsluttende kalendermåned")
 
     val regelsett =
         Regelsett("Opptjeningsperiode") {
-            regel(pliktigRapporteringsfrist) {
-                oppslag(søknadstidspunkt) { søknadstidspunkt ->
-                    LocalDate.of(
-                        søknadstidspunkt.year,
-                        søknadstidspunkt.month,
-                        5,
-                    )
-                }
-            }
+            regel(pliktigRapporteringsfrist) { oppslag(søknadstidspunkt) { Aordningen.rapporteringsfrist(it) } }
             regel(justertRapporteringsfrist) { førsteArbeidsdag(pliktigRapporteringsfrist) }
             regel(sisteAvsluttendendeKalenderMåned) { sisteDagIForrigeMåned(justertRapporteringsfrist) }
         }
+}
+
+private object Aordningen {
+    fun rapporteringsfrist(søknadstidspunkt: LocalDate): LocalDate = LocalDate.of(søknadstidspunkt.year, søknadstidspunkt.month, 5)
 }
