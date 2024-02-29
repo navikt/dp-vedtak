@@ -1,7 +1,6 @@
 package no.nav.dagpenger.features
 
 import io.cucumber.datatable.DataTable
-import io.cucumber.java8.Scenario
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.features.utils.somLocalDate
 import no.nav.dagpenger.opplysning.Faktum
@@ -61,10 +60,6 @@ class MinsteinntektSteg : RegelTest {
                 verdi,
                 opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi,
             )
-        }
-
-        After { scenario: Scenario ->
-            scenario.attach(skrivRegeltre(), "text/markdown", "regeltre.md")
         }
     }
 

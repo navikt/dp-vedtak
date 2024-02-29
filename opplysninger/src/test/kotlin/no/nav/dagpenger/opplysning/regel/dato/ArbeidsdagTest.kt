@@ -27,10 +27,17 @@ class ArbeidsdagTest {
         )
 
     @Test
-    fun `Fredag 7 juli  2019 er en virkedag`() {
+    fun `Fredag 5 juli  2019 er en arbeidsag`() {
         opplysninger.leggTil(Hypotese(dato, LocalDate.of(2019, 7, 5)))
         val utledet = opplysninger.finnOpplysning(arbeidsdag)
         assertEquals(LocalDate.of(2019, 7, 5), utledet.verdi)
+    }
+
+    @Test
+    fun `Fredag 5 mai  2019 er en søndag og dermed blir første arbeidsdag 6 mai`() {
+        opplysninger.leggTil(Hypotese(dato, LocalDate.of(2019, 5, 5)))
+        val utledet = opplysninger.finnOpplysning(arbeidsdag)
+        assertEquals(LocalDate.of(2019, 5, 6), utledet.verdi)
     }
 
     @Test
