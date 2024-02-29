@@ -6,12 +6,14 @@ import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
+import no.nav.dagpenger.opplysning.regel.dato.trekkFraMånedTilFørste
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
+import java.time.LocalDate
 
 object Minsteinntekt {
     private val `12mndTerskelFaktor` = Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd arbeidsinntekt")
@@ -19,6 +21,11 @@ object Minsteinntekt {
     val inntekt12 = Opplysningstype.somDesimaltall("Arbeidsinntekt siste 12 mnd".id("InntektSiste12Mnd"))
     val inntekt36 = Opplysningstype.somDesimaltall("Arbeidsinntekt siste 36 mnd".id("InntektSiste36Mnd"))
     private val grunnbeløp = Opplysningstype.somDesimaltall("Grunnbeløp")
+
+    private val sisteAvsluttendendeKalenderMåned = Opptjeningstid.sisteAvsluttendendeKalenderMåned
+    private val inntektId = Opplysningstype.somUlid("InntektId")
+    private val maksPeriodeLengde = Opplysningstype.somHeltall("Maks lengde på opptjeningsperiode")
+    private val opptjeningsperiode = Opplysningstype.somDato("Opptjeningsperiode")
 
     private val virkningsdato = Søknadstidspunkt.søknadstidspunkt
     private val `12mndTerskel` = Opplysningstype.somDesimaltall("Inntektskrav for siste 12 mnd")
@@ -30,24 +37,27 @@ object Minsteinntekt {
 
     val regelsett =
         Regelsett("Minsteinntekt") {
-            regel(grunnbeløp) {
-                oppslag(virkningsdato) {
-                    getGrunnbeløpForRegel(Regel.Minsteinntekt).forDato(it).verdi
-                        // TODO: Bli enige med oss selv hva som er Double og BigDecimal
-                        .toDouble()
-                }
-            }
+            regel(maksPeriodeLengde) { oppslag(virkningsdato) { 36 } }
+            regel(opptjeningsperiode) { trekkFraMånedTilFørste(sisteAvsluttendendeKalenderMåned, maksPeriodeLengde) }
+            regel(inntektId) { innhentMed(sisteAvsluttendendeKalenderMåned, opptjeningsperiode) }
 
-            regel(inntekt12) { innhentMed(virkningsdato) }
+            regel(grunnbeløp) { oppslag(virkningsdato) { grunnbeløpFor(it) } }
+
+            regel(inntekt12) { innhentMed(inntektId) }
             regel(`12mndTerskelFaktor`) { oppslag(virkningsdato) { finnTerskel(it).nedre } }
             regel(`12mndTerskel`) { multiplikasjon(`12mndTerskelFaktor`, grunnbeløp) }
             regel(over12mndTerskel) { størreEnnEllerLik(inntekt12, `12mndTerskel`) }
 
-            regel(inntekt36) { innhentMed(virkningsdato) }
+            regel(inntekt36) { innhentMed(inntektId) }
             regel(`36mndTerskelFaktor`) { oppslag(virkningsdato) { finnTerskel(it).øvre } }
             regel(`36mndTerskel`) { multiplikasjon(`36mndTerskelFaktor`, grunnbeløp) }
             regel(over36mndTerskel) { størreEnnEllerLik(inntekt36, `36mndTerskel`) }
 
             regel(minsteinntekt) { enAv(over12mndTerskel, over36mndTerskel) }
         }
+
+    private fun grunnbeløpFor(it: LocalDate) =
+        getGrunnbeløpForRegel(Regel.Minsteinntekt).forDato(it).verdi
+            // TODO: Bli enige med oss selv hva som er Double og BigDecimal
+            .toDouble()
 }

@@ -10,6 +10,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.RettTilDagpenger
 import java.util.UUID
 
@@ -62,11 +63,16 @@ class Behandling private constructor(
                 type = OpplysningBehov(behov.id),
                 melding = "Trenger en opplysning (${behov.id})",
                 detaljer =
-                    avhengigheter.associate {
-                            av ->
-                        av.opplysningstype.id to av.verdi
+                    avhengigheter.associate { avhengighet ->
+                        val verdi =
+                            when (avhengighet.verdi) {
+                                is Ulid -> (avhengighet.verdi as Ulid).verdi
+                                else -> avhengighet.verdi
+                            }
+                        avhengighet.opplysningstype.id to verdi
+                    } +
                         // @todo: Denne skal bort så fort vi har en behovløser vi kan være enige med innbyggerflate om. Tilpasset 'SøknadInnsendtTidspunktTjeneste' for å kunne teste
-                    } + mapOf("søknad_uuid" to behandler.søknadId.toString()),
+                        mapOf("søknad_uuid" to behandler.søknadId.toString()),
             )
         }
     }

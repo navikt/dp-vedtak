@@ -24,6 +24,6 @@ class ULIDTest {
             shouldThrow<IllegalArgumentException> {
                 Ulid("")
             }
-        exception.message shouldBe "Ulid krever en 26 tegn lang streng."
+        exception.message shouldBe "ULID krever en 26 tegn lang streng."
     }
 }
