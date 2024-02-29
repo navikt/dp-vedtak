@@ -45,7 +45,7 @@ class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
             regeltrær.map { (uri, regeltre) ->
                 val navn = tester[uri]
                 val gherkinSource = dokumenter[uri]
-                Regeldokumentasjon(navn!!, regeltre, gherkinSource)
+                Regeldokumentasjon(navn!!, regeltre, gherkinSource!!)
             }.forEach { (navn, regeltreDiagram, gherkinSource) ->
                 @Language("Markdown")
                 val markdown =
@@ -55,13 +55,13 @@ class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
                     ## Regeltre
                     
                     ```mermaid
-                    ${regeltreDiagram?.prependIndent("                    ")}
+                    ${regeltreDiagram.prependIndent("                    ")}
                     ```
                     
                     ## Akseptansetester
                     
                     ```gherkin
-                    ${gherkinSource?.prependIndent("                    ")}
+                    ${gherkinSource.prependIndent("                    ")}
                     ``` 
                     """.trimIndent()
                 skriv(
@@ -103,7 +103,7 @@ class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
 
     private data class Regeldokumentasjon(
         var navn: String,
-        var regeltreDiagram: String? = null,
-        var gherkinSource: String? = null,
+        var regeltreDiagram: String,
+        var gherkinSource: String,
     )
 }
