@@ -47,18 +47,18 @@ internal class PersonMediatorTest {
         testCase.sendSøknad()
 
         rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
-        testCase.løsOpplysningsbehov("Fødseldato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
+        testCase.løsBehov("Fødseldato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
         rapid.harBehov("InntektId") {
             dato("Siste avsluttende kalendermåned") shouldBe LocalDate.of(2021, 4, 30)
             dato("Opptjeningsperiode") shouldBe LocalDate.of(2018, 4, 1)
         }
-        testCase.løsOpplysningsbehov("InntektId")
+        testCase.løsBehov("InntektId")
 
         rapid.harBehov("InntektSiste12Mnd") { tekst("InntektId") shouldBe testCase.inntektId }
         rapid.harBehov("InntektSiste36Mnd") { tekst("InntektId") shouldBe testCase.inntektId }
 
-        testCase.løsOpplysningsbehov("InntektSiste12Mnd", "InntektSiste36Mnd")
+        testCase.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
     }
 }
 

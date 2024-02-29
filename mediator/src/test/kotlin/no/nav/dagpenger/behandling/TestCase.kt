@@ -23,18 +23,18 @@ class TestCase(
                 "type" to "NySøknad",
                 "fødselsnummer" to ident,
                 "søknadsData" to
-                    mapOf(
-                        "søknad_uuid" to søknadId,
-                    ),
+                        mapOf(
+                            "søknad_uuid" to søknadId,
+                        ),
             ),
         ).toJson()
 
-    fun løsOpplysningsbehov(vararg behov: String) {
+    fun løsBehov(vararg behov: String) {
         val behovSomLøses = løsninger.filterKeys { it in behov }
-        rapid.sendTestMessage(løstOpplysningsbehov(behovSomLøses))
+        rapid.sendTestMessage(løstBehov(behovSomLøses))
     }
 
-    private fun løstOpplysningsbehov(løsninger: Map<String, Any>) =
+    private fun løstBehov(løsninger: Map<String, Any>) =
         JsonMessage.newMessage(
             "behov",
             mapOf(
