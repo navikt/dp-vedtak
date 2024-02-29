@@ -5,7 +5,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.regel.Regel
 import java.time.LocalDate
 
-class SisteDagForrigeMåned internal constructor(
+class SisteDagIForrigeMåned internal constructor(
     produserer: Opplysningstype<LocalDate>,
     private val dato: Opplysningstype<LocalDate>,
 ) : Regel<LocalDate>(produserer, listOf(dato)) {
@@ -17,4 +17,4 @@ class SisteDagForrigeMåned internal constructor(
     override fun toString() = "Siste dag i forrige måneden for $dato"
 }
 
-fun Opplysningstype<LocalDate>.sisteDagIForrigeMåned(dato: Opplysningstype<LocalDate>) = SisteDagForrigeMåned(this, dato)
+fun Opplysningstype<LocalDate>.sisteDagIForrigeMåned(dato: Opplysningstype<LocalDate>) = SisteDagIForrigeMåned(this, dato)
