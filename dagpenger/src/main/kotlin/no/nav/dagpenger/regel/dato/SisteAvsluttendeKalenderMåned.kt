@@ -13,14 +13,14 @@ class SisteAvsluttendeKalenderMåned internal constructor(
     override fun kjør(opplysninger: LesbarOpplysninger): LocalDate {
         val a = opplysninger.finnOpplysning(søknadstidspunkt).verdi
         val b = opplysninger.finnOpplysning(rapporteringsfrist).verdi
-        val antallMåneder =
+        val månederTilbake =
             if (a.isBefore(b) || a.isEqual(b)) {
                 2
             } else {
                 1
             }
 
-        val avsluttendeKalenderMåned = b.minusMonths(antallMåneder.toLong())
+        val avsluttendeKalenderMåned = b.minusMonths(månederTilbake.toLong())
         return avsluttendeKalenderMåned.withDayOfMonth(avsluttendeKalenderMåned.lengthOfMonth())
     }
 
