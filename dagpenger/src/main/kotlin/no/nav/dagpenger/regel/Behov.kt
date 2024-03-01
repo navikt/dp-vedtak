@@ -5,6 +5,7 @@ import kotlin.reflect.KProperty
 object Behov {
     val OpptjeningsperiodeFraOgMed by NamedValueDelegate()
     val InntektId by NamedValueDelegate()
+    val SisteAvsluttendeKalenderMåned by NamedValueDelegate()
 }
 
 class NamedValueDelegate {

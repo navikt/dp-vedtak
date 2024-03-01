@@ -6,6 +6,7 @@ import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.førsteArbeidsdag
 import no.nav.dagpenger.opplysning.regel.dato.sisteDagIForrigeMåned
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
 import java.time.LocalDate
 
 /**
@@ -20,7 +21,7 @@ object Opptjeningstid {
     // https://lovdata.no/dokument/NL/lov/2012-06-22-43/%C2%A74#%C2%A74
     private val pliktigRapporteringsfrist = Opplysningstype.somDato("Lovpålagt rapporteringsfrist for A-ordningen")
     internal val justertRapporteringsfrist = Opplysningstype.somDato("Arbeidsgivers rapporteringsfrist")
-    val sisteAvsluttendendeKalenderMåned = Opplysningstype.somDato("Siste avsluttende kalendermåned".id("SisteAvsluttendeKalenderMåned"))
+    val sisteAvsluttendendeKalenderMåned = Opplysningstype.somDato("Siste avsluttende kalendermåned".id(SisteAvsluttendeKalenderMåned))
 
     val regelsett =
         Regelsett("Opptjeningsperiode") {
