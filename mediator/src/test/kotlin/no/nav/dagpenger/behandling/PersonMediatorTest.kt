@@ -14,7 +14,7 @@ import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
+import java.time.Period
 
 internal class PersonMediatorTest {
     private val rapid = TestRapid()
@@ -44,15 +44,26 @@ internal class PersonMediatorTest {
 
     @Test
     fun `e2e av søknad innsendt`() {
-        val testPerson = TestPerson(ident, rapid)
+        val testPerson =
+            TestPerson(
+                ident,
+                rapid,
+                søknadstidspunkt = 5.mai(2021),
+            )
         testPerson.sendSøknad()
 
         rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
         testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
         rapid.harBehov("InntektId") {
-            medDato("Siste avsluttende kalendermåned") shouldBe LocalDate.of(2021, 4, 30)
-            medDato("Opptjeningsperiode") shouldBe LocalDate.of(2018, 4, 1)
+            medDato("Siste avsluttende kalendermåned") shouldBe 30.april(2021)
+            medDato("Opptjeningsperiode") shouldBe 1.april(2018)
+
+            val periode = Period.between(medDato("Opptjeningsperiode"), medDato("Siste avsluttende kalendermåned"))
+            withClue("Opptjeningsperiode skal være 3 år") {
+                periode.years shouldBe 3
+                periode.toTotalMonths() shouldBe 36
+            }
         }
         testPerson.løsBehov("InntektId")
 

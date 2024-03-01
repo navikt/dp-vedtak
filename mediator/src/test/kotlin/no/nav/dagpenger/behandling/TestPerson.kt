@@ -7,7 +7,7 @@ import java.time.LocalDate
 class TestPerson(
     private val ident: String,
     private val rapid: TestRapid,
-    private val søknadstidspunkt: LocalDate = LocalDate.of(2021, 5, 5),
+    private val søknadstidspunkt: LocalDate = 5.mai(2021),
     private val alder: Int = 30,
 ) {
     val inntektId = "01HQTE3GBWCSVYH6S436DYFREN"
