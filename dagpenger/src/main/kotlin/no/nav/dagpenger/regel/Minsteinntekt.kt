@@ -25,7 +25,8 @@ object Minsteinntekt {
     private val sisteAvsluttendendeKalenderMåned = Opptjeningstid.sisteAvsluttendendeKalenderMåned
     private val inntektId = Opplysningstype.somUlid("Inntekt".id("InntektId"))
     private val maksPeriodeLengde = Opplysningstype.somHeltall("Maks lengde på opptjeningsperiode")
-    private val opptjeningsperiode = Opplysningstype.somDato("Opptjeningsperiode")
+    private val førsteMånedAvOpptjeningsperiode =
+        Opplysningstype.somDato("Første måned av opptjeningsperiode".id("OpptjeningsperiodeFraOgMed"))
 
     private val virkningsdato = Søknadstidspunkt.søknadstidspunkt
     private val `12mndTerskel` = Opplysningstype.somDesimaltall("Inntektskrav for siste 12 mnd")
@@ -38,8 +39,8 @@ object Minsteinntekt {
     val regelsett =
         Regelsett("Minsteinntekt") {
             regel(maksPeriodeLengde) { oppslag(virkningsdato) { 36 } }
-            regel(opptjeningsperiode) { trekkFraMånedTilFørste(sisteAvsluttendendeKalenderMåned, maksPeriodeLengde) }
-            regel(inntektId) { innhentMed(sisteAvsluttendendeKalenderMåned, opptjeningsperiode) }
+            regel(førsteMånedAvOpptjeningsperiode) { trekkFraMånedTilFørste(sisteAvsluttendendeKalenderMåned, maksPeriodeLengde) }
+            regel(inntektId) { innhentMed(sisteAvsluttendendeKalenderMåned, førsteMånedAvOpptjeningsperiode) }
 
             regel(grunnbeløp) { oppslag(virkningsdato) { grunnbeløpFor(it) } }
 
