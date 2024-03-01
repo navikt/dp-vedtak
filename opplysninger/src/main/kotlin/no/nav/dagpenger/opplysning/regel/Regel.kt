@@ -8,7 +8,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Utledning
 
-abstract class Regel<T : Comparable<T>> internal constructor(
+abstract class Regel<T : Comparable<T>>(
     internal val produserer: Opplysningstype<T>,
     internal val avhengerAv: List<Opplysningstype<*>> = emptyList(),
 ) {

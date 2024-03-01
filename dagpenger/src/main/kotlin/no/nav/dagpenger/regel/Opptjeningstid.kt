@@ -4,9 +4,9 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.førsteArbeidsdag
-import no.nav.dagpenger.opplysning.regel.dato.sisteDagIForrigeMåned
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
+import no.nav.dagpenger.regel.dato.sisteAvsluttendeKalenderMåned
 import java.time.LocalDate
 
 /**
@@ -27,7 +27,7 @@ object Opptjeningstid {
         Regelsett("Opptjeningsperiode") {
             regel(pliktigRapporteringsfrist) { oppslag(søknadstidspunkt) { Aordningen.rapporteringsfrist(it) } }
             regel(justertRapporteringsfrist) { førsteArbeidsdag(pliktigRapporteringsfrist) }
-            regel(sisteAvsluttendendeKalenderMåned) { sisteDagIForrigeMåned(justertRapporteringsfrist) }
+            regel(sisteAvsluttendendeKalenderMåned) { sisteAvsluttendeKalenderMåned(søknadstidspunkt, justertRapporteringsfrist) }
         }
 }
 

@@ -59,9 +59,8 @@ internal class PersonMediatorTest {
         testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
         rapid.harBehov(InntektId) {
-            medDato(SisteAvsluttendeKalenderMåned) shouldBe 30.april(2021)
-            medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
-
+            medDato(SisteAvsluttendeKalenderMåned) shouldBe 31.mars(2021)
+            medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.mars(2018)
             opptjeningsperiodeEr(måneder = 36)
         }
         testPerson.løsBehov(InntektId)
