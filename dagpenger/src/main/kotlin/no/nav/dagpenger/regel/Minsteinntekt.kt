@@ -12,6 +12,8 @@ import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
+import no.nav.dagpenger.regel.Behov.InntektId
+import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
 import java.time.LocalDate
 
@@ -23,10 +25,10 @@ object Minsteinntekt {
     private val grunnbeløp = Opplysningstype.somDesimaltall("Grunnbeløp")
 
     private val sisteAvsluttendendeKalenderMåned = Opptjeningstid.sisteAvsluttendendeKalenderMåned
-    private val inntektId = Opplysningstype.somUlid("Inntekt".id("InntektId"))
+    private val inntektId = Opplysningstype.somUlid("Inntekt".id(InntektId))
     private val maksPeriodeLengde = Opplysningstype.somHeltall("Maks lengde på opptjeningsperiode")
     private val førsteMånedAvOpptjeningsperiode =
-        Opplysningstype.somDato("Første måned av opptjeningsperiode".id("OpptjeningsperiodeFraOgMed"))
+        Opplysningstype.somDato("Første måned av opptjeningsperiode".id(OpptjeningsperiodeFraOgMed))
 
     private val virkningsdato = Søknadstidspunkt.søknadstidspunkt
     private val `12mndTerskel` = Opplysningstype.somDesimaltall("Inntektskrav for siste 12 mnd")

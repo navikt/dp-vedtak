@@ -10,6 +10,8 @@ import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.mediator.BehovMediator
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
+import no.nav.dagpenger.regel.Behov.InntektId
+import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
@@ -55,13 +57,13 @@ internal class PersonMediatorTest {
         rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
         testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
-        rapid.harBehov("InntektId") {
+        rapid.harBehov(InntektId) {
             medDato("SisteAvsluttendeKalenderMåned") shouldBe 30.april(2021)
-            medDato("OpptjeningsperiodeFraOgMed") shouldBe 1.april(2018)
+            medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
 
             opptjeningsperiodeEr(måneder = 36)
         }
-        testPerson.løsBehov("InntektId")
+        testPerson.løsBehov(InntektId)
 
         rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
         rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
@@ -72,7 +74,7 @@ internal class PersonMediatorTest {
     }
 
     private fun BehovHelper.opptjeningsperiodeEr(måneder: Int) {
-        val periode = Period.between(medDato("OpptjeningsperiodeFraOgMed"), medDato("SisteAvsluttendeKalenderMåned"))
+        val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato("SisteAvsluttendeKalenderMåned"))
         withClue("Opptjeningsperiode skal være 3 år") { periode.toTotalMonths() shouldBe måneder }
     }
 }
