@@ -42,4 +42,6 @@ private class TestObservatør : BehandlingObservatør {
     override fun behandlingOpprettet(behandlingOpprettet: BehandlingObservatør.BehandlingOpprettet) {
         this.behandlingOpprettet = behandlingOpprettet
     }
+
+    override fun behandlingAvsluttet(behandlingAvsluttet: BehandlingObservatør.BehandlingAvsluttet) {}
 }
