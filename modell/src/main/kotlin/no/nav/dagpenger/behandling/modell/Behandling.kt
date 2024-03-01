@@ -3,6 +3,7 @@ package no.nav.dagpenger.behandling.modell
 import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
+import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingAvsluttet
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøkerHendelse
@@ -57,7 +58,11 @@ class Behandling private constructor(
         val trenger = hvaTrengerViNå(hendelse)
 
         if (trenger.isEmpty()) {
+            // TODO: Tilstand?
             hendelse.info("Alle opplysninger mottatt")
+            observatører.forEach {
+                it.behandlingAvsluttet(BehandlingAvsluttet(behandler.ident, behandlingId, behandler.søknadId))
+            }
         }
     }
 

@@ -18,4 +18,17 @@ internal class KafkaBehandlingObservatør(private val messageContext: MessageCon
             )
         messageContext.publish(behandlingOpprettet.ident, event.toJson())
     }
+
+    override fun behandlingAvsluttet(behandlingAvsluttet: BehandlingObservatør.BehandlingAvsluttet) {
+        val event =
+            JsonMessage.newMessage(
+                "behandling_avsluttet",
+                mapOf(
+                    "ident" to behandlingAvsluttet.ident,
+                    "behandlingId" to behandlingAvsluttet.behandlingId,
+                    "søknadId" to behandlingAvsluttet.søknadId,
+                ),
+            )
+        messageContext.publish(behandlingAvsluttet.ident, event.toJson())
+    }
 }

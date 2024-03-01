@@ -31,6 +31,7 @@ class TestPerson(
 
     fun løsBehov(vararg behov: String) {
         val behovSomLøses = løsninger.filterKeys { it in behov }
+        require(behovSomLøses.size == behov.size) { "Fant ikke løsning for alle behov: $behov" }
         rapid.sendTestMessage(løstBehov(behovSomLøses))
     }
 

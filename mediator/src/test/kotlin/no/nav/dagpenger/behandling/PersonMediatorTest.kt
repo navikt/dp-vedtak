@@ -30,6 +30,7 @@ internal class PersonMediatorTest {
                     personRepository = personRepository,
                     aktivitetsloggMediator = mockk(relaxed = true),
                     behovMediator = BehovMediator(rapid),
+                    personobservatører = listOf(KafkaBehandlingObservatør(rapid)),
                 ),
             hendelseRepository = InMemoryMeldingRepository(),
         )
@@ -47,7 +48,7 @@ internal class PersonMediatorTest {
         testPerson.sendSøknad()
 
         rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
-        testPerson.løsBehov("Fødseldato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
+        testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
         rapid.harBehov("InntektId") {
             dato("Siste avsluttende kalendermåned") shouldBe LocalDate.of(2021, 4, 30)
@@ -59,12 +60,20 @@ internal class PersonMediatorTest {
         rapid.harBehov("InntektSiste36Mnd") { tekst("InntektId") shouldBe testPerson.inntektId }
 
         testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
+
+        rapid.harHendelse("behandling_avsluttet")
     }
 }
 
 private fun TestRapid.harBehov(vararg behov: String) {
     withClue("Siste melding på rapiden skal inneholde behov: ${behov.toList()}") {
         inspektør.message(inspektør.size - 1)["@behov"].map { it.asText() } shouldContainAll behov.toList()
+    }
+}
+
+private fun TestRapid.harHendelse(navn: String) {
+    withClue("Siste melding på rapiden skal inneholde hendelse: $navn") {
+        inspektør.message(inspektør.size - 1)["@event_name"].asText() shouldBe navn
     }
 }
 
