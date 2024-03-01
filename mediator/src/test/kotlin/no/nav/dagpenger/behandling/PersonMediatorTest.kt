@@ -51,13 +51,13 @@ internal class PersonMediatorTest {
         testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
         rapid.harBehov("InntektId") {
-            dato("Siste avsluttende kalendermåned") shouldBe LocalDate.of(2021, 4, 30)
-            dato("Opptjeningsperiode") shouldBe LocalDate.of(2018, 4, 1)
+            medDato("Siste avsluttende kalendermåned") shouldBe LocalDate.of(2021, 4, 30)
+            medDato("Opptjeningsperiode") shouldBe LocalDate.of(2018, 4, 1)
         }
         testPerson.løsBehov("InntektId")
 
-        rapid.harBehov("InntektSiste12Mnd") { tekst("InntektId") shouldBe testPerson.inntektId }
-        rapid.harBehov("InntektSiste36Mnd") { tekst("InntektId") shouldBe testPerson.inntektId }
+        rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+        rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
 
         testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
 
@@ -86,7 +86,7 @@ private fun TestRapid.harBehov(
 }
 
 private class BehovHelper(private val message: JsonNode) {
-    fun tekst(navn: String) = message.get(navn)?.asText()
+    fun medTekst(navn: String) = message.get(navn)?.asText()
 
-    fun dato(navn: String) = message.get(navn)?.asLocalDate()
+    fun medDato(navn: String) = message.get(navn)?.asLocalDate()
 }
