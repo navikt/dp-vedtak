@@ -1,8 +1,11 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
+import no.nav.dagpenger.opplysning.regel.Regel
+import no.nav.dagpenger.opplysning.regel.dato.førEllerLik
 import no.nav.dagpenger.opplysning.regel.dato.førsteArbeidsdag
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
