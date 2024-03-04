@@ -8,6 +8,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøkerHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
@@ -19,18 +20,19 @@ import java.util.UUID
 class Behandling private constructor(
     val behandlingId: UUID,
     private val behandler: SøkerHendelse,
-    lburp: List<Opplysning<*>> = emptyList(),
-    private val basertPå: List<Behandling> = emptyList(),
+    aktiveOpplysninger: List<Opplysning<*>> = emptyList(),
+    basertPå: List<Behandling> = emptyList(),
     vararg regelsett: Regelsett,
 ) : Aktivitetskontekst {
     constructor(
         behandler: SøkerHendelse,
         opplysninger: List<Opplysning<*>>,
         vararg regelsett: Regelsett,
-    ) : this(UUIDv7.ny(), behandler, opplysninger, emptyList(), *regelsett)
+        basertPå: List<Behandling> = emptyList(),
+    ) : this(UUIDv7.ny(), behandler, opplysninger, basertPå, *regelsett)
 
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
-    private val opplysninger = Opplysninger(lburp, tidligereOpplysninger)
+    private val opplysninger = Opplysninger(aktiveOpplysninger, tidligereOpplysninger)
 
     private val regelkjøring = Regelkjøring(behandler.gjelderDato, opplysninger, *regelsett)
     private val observatører = mutableListOf<BehandlingObservatør>()
@@ -40,7 +42,7 @@ class Behandling private constructor(
     }
 
     // @todo: Vi trenger noe tilsvarende visitor pattern for å hente opplysninger fra utsiden
-    fun opplysninger() = opplysninger.opplysninger()
+    fun opplysninger(): LesbarOpplysninger = opplysninger
 
     private fun informasjonsbehov() = regelkjøring.informasjonsbehov(RettTilDagpenger.kravPåDagpenger)
 

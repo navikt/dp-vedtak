@@ -16,10 +16,8 @@ class Opplysninger(
 ) : LesbarOpplysninger {
     private lateinit var regelkjøring: Regelkjøring
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
-    private val basertPåOpplysninger: List<Opplysning<*>> = basertPå.flatMap { it.opplysninger() }.toList()
+    private val basertPåOpplysninger: List<Opplysning<*>> = basertPå.flatMap { it.opplysninger }.toList()
     private val alleOpplysninger: List<Opplysning<*>> get() = basertPåOpplysninger + opplysninger
-
-    fun opplysninger(): List<Opplysning<*>> = opplysninger.toList()
 
     constructor() : this(mutableListOf(), emptyList())
     constructor(vararg basertPå: Opplysninger) : this(emptyList(), basertPå.toList())

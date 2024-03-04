@@ -64,7 +64,7 @@ private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
     return BehandlingDTO(
         behandlingId = this.behandlingId,
         opplysning =
-            this.opplysninger().map { opplysning ->
+            this.opplysninger().finnAlle().map { opplysning ->
                 opplysning.tilOpplysningDTO()
             },
     )

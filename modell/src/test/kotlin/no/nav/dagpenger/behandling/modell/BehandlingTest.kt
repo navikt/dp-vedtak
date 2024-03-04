@@ -3,6 +3,8 @@ package no.nav.dagpenger.behandling.modell
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Opplysningstype
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
@@ -16,10 +18,35 @@ internal class BehandlingTest {
             meldingsreferanseId = søknadId,
             gjelderDato = LocalDate.now(),
         )
+    val tidligerOpplysning = Opplysningstype.somDesimaltall("opplysning-fra-tidliger-behandling")
+    private val tidligerBehandling =
+        Behandling(
+            behandler = søknadInnsendtHendelse,
+            opplysninger =
+                listOf(
+                    Faktum(
+                        tidligerOpplysning,
+                        0.5,
+                    ),
+                ),
+        )
+
+    private val testObservatør = TestObservatør()
+
+    @Test
+    fun `Behandling basert på tidligere behandlinger`() {
+        val behandling =
+            Behandling(
+                behandler = søknadInnsendtHendelse,
+                opplysninger = emptyList(),
+                basertPå = listOf(tidligerBehandling),
+            )
+
+        behandling.opplysninger().har(tidligerOpplysning) shouldBe true
+    }
 
     @Test
     fun `behandling sender ut behandling opprettet eventer `() {
-        val testObservatør = TestObservatør()
         val behandling =
             Behandling(
                 behandler = søknadInnsendtHendelse,
