@@ -8,6 +8,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøkerHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
@@ -18,14 +19,18 @@ import java.util.UUID
 class Behandling private constructor(
     val behandlingId: UUID,
     private val behandler: SøkerHendelse,
-    private val opplysninger: Opplysninger,
+    lburp: List<Opplysning<*>> = emptyList(),
+    private val basertPå: List<Behandling> = emptyList(),
     vararg regelsett: Regelsett,
 ) : Aktivitetskontekst {
     constructor(
         behandler: SøkerHendelse,
-        opplysninger: Opplysninger,
+        opplysninger: List<Opplysning<*>>,
         vararg regelsett: Regelsett,
-    ) : this(UUIDv7.ny(), behandler, opplysninger, *regelsett)
+    ) : this(UUIDv7.ny(), behandler, opplysninger, emptyList(), *regelsett)
+
+    private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
+    private val opplysninger = Opplysninger(lburp, tidligereOpplysninger)
 
     private val regelkjøring = Regelkjøring(behandler.gjelderDato, opplysninger, *regelsett)
     private val observatører = mutableListOf<BehandlingObservatør>()
@@ -72,14 +77,14 @@ class Behandling private constructor(
                 type = OpplysningBehov(behov.id),
                 melding = "Trenger en opplysning (${behov.id})",
                 detaljer =
-                    avhengigheter.associate { avhengighet ->
-                        val verdi =
-                            when (avhengighet.verdi) {
-                                is Ulid -> (avhengighet.verdi as Ulid).verdi
-                                else -> avhengighet.verdi
-                            }
-                        avhengighet.opplysningstype.id to verdi
-                    } +
+                avhengigheter.associate { avhengighet ->
+                    val verdi =
+                        when (avhengighet.verdi) {
+                            is Ulid -> (avhengighet.verdi as Ulid).verdi
+                            else -> avhengighet.verdi
+                        }
+                    avhengighet.opplysningstype.id to verdi
+                } +
                         // @todo: Denne skal bort så fort vi har en behovløser vi kan være enige med innbyggerflate om. Tilpasset 'SøknadInnsendtTidspunktTjeneste' for å kunne teste
                         mapOf("søknad_uuid" to behandler.søknadId.toString()),
             )
