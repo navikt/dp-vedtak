@@ -41,4 +41,21 @@ class OpplysningerTest {
         Regelkjøring(15.mai, opplysninger) // Bytt til 15. mai for regelkjøringen
         assertEquals(1.5, opplysninger.finnOpplysning(opplysningstype).verdi)
     }
+
+    @Test
+    fun `opplysninger kan arve tidligere opplysninger`() {
+        val opplysningstype = Opplysningstype.somDesimaltall("Type")
+        val tidligereOpplysninger = Opplysninger(listOf(Faktum(opplysningstype, 0.5, Gyldighetsperiode(1.mai, 20.mai))))
+        val opplysninger = Opplysninger(tidligereOpplysninger)
+        val regelkjøring = Regelkjøring(15.mai, opplysninger)
+
+        // Vi får hentet ut opplysning fra tidligere behandlinger
+        assertEquals(0.5, opplysninger.finnOpplysning(opplysningstype).verdi)
+
+        assertThrows<IllegalArgumentException> {
+            opplysninger.leggTil(Faktum(opplysningstype, 1.5, Gyldighetsperiode(15.mai)))
+        }
+
+        opplysninger.leggTil(Faktum(opplysningstype, 1.5, Gyldighetsperiode(21.mai)))
+    }
 }
