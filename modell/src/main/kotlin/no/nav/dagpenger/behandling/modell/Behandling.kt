@@ -78,14 +78,14 @@ class Behandling private constructor(
                 type = OpplysningBehov(behov.id),
                 melding = "Trenger en opplysning (${behov.id})",
                 detaljer =
-                avhengigheter.associate { avhengighet ->
-                    val verdi =
-                        when (avhengighet.verdi) {
-                            is Ulid -> (avhengighet.verdi as Ulid).verdi
-                            else -> avhengighet.verdi
-                        }
-                    avhengighet.opplysningstype.id to verdi
-                } +
+                    avhengigheter.associate { avhengighet ->
+                        val verdi =
+                            when (avhengighet.verdi) {
+                                is Ulid -> (avhengighet.verdi as Ulid).verdi
+                                else -> avhengighet.verdi
+                            }
+                        avhengighet.opplysningstype.id to verdi
+                    } +
                         // @todo: Denne skal bort så fort vi har en behovløser vi kan være enige med innbyggerflate om. Tilpasset 'SøknadInnsendtTidspunktTjeneste' for å kunne teste
                         mapOf("søknad_uuid" to behandler.søknadId.toString()),
             )

@@ -12,12 +12,11 @@ interface LesbarOpplysninger {
 
 class Opplysninger(
     opplysninger: List<Opplysning<*>> = emptyList(),
-    basertPå: List<Opplysninger> = emptyList(),
+    private val basertPå: List<Opplysninger> = emptyList(),
 ) : LesbarOpplysninger {
     private lateinit var regelkjøring: Regelkjøring
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
-    private val basertPåOpplysninger: List<Opplysning<*>> = basertPå.flatMap { it.opplysninger }.toList()
-    private val alleOpplysninger: List<Opplysning<*>> get() = basertPåOpplysninger + opplysninger
+    private val alleOpplysninger: List<Opplysning<*>> by lazy { basertPå.flatMap { it.alleOpplysninger } + opplysninger }
 
     constructor() : this(mutableListOf(), emptyList())
     constructor(vararg basertPå: Opplysninger) : this(emptyList(), basertPå.toList())
