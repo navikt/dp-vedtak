@@ -18,7 +18,7 @@ internal class BehandlingTest {
             meldingsreferanseId = søknadId,
             gjelderDato = LocalDate.now(),
         )
-    val tidligerOpplysning = Opplysningstype.somDesimaltall("opplysning-fra-tidliger-behandling")
+    val tidligerOpplysning = Opplysningstype.somDesimaltall("opplysning-fra-tidligere-behandling")
     private val tidligerBehandling =
         Behandling(
             behandler = søknadInnsendtHendelse,
