@@ -40,8 +40,6 @@ class Behandling private constructor(
     internal fun leggTilObservatør(observatør: BehandlingObservatør) {
         observatører.add(observatør)
     }
-
-    // @todo: Vi trenger noe tilsvarende visitor pattern for å hente opplysninger fra utsiden
     fun opplysninger(): LesbarOpplysninger = opplysninger
 
     private fun informasjonsbehov() = regelkjøring.informasjonsbehov(RettTilDagpenger.kravPåDagpenger)
