@@ -5,7 +5,6 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
-import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Opptjeningstid
@@ -29,7 +28,7 @@ class Person(
         val behandling =
             Behandling(
                 hendelse,
-                Opplysninger(),
+                emptyList(),
                 // TODO: Må flyttes ut til et noe mer passende sted. En dings som skjønner hvordan vi behandler en gitt hendelse
                 RettTilDagpenger.regelsett,
                 Alderskrav.regelsett,

@@ -3,7 +3,6 @@ package no.nav.dagpenger.behandling.modell
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
-import no.nav.dagpenger.opplysning.Opplysninger
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
@@ -24,7 +23,7 @@ internal class BehandlingTest {
         val behandling =
             Behandling(
                 behandler = søknadInnsendtHendelse,
-                opplysninger = Opplysninger(opplysninger = listOf()),
+                opplysninger = emptyList(),
             ).also {
                 it.leggTilObservatør(testObservatør)
             }
