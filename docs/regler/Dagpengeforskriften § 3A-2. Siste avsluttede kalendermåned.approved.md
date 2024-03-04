@@ -6,8 +6,8 @@
 graph RL
   A["Lovpålagt rapporteringsfrist for A-ordningen"] -->|"Oppslag"| B["Søknadstidspunkt"]
   C["Arbeidsgivers rapporteringsfrist"] -->|"FørsteArbeidsdag"| A["Lovpålagt rapporteringsfrist for A-ordningen"]
-  D["Siste avsluttende kalendermåned"] -->|"SisteAvsluttendeKalenderMåned"| B["Søknadstidspunkt"]
-  D["Siste avsluttende kalendermåned"] -->|"SisteAvsluttendeKalenderMåned"| C["Arbeidsgivers rapporteringsfrist"]
+  D["Siste avsluttende kalendermåned"] -->|"SisteavsluttendeKalenderMåned"| B["Søknadstidspunkt"]
+  D["Siste avsluttende kalendermåned"] -->|"SisteavsluttendeKalenderMåned"| C["Arbeidsgivers rapporteringsfrist"]
 ```
 
 ## Akseptansetester
@@ -45,5 +45,5 @@ Egenskap: Dagpengeforskriften § 3A-2. Siste avsluttede kalendermåned
       | 05.11.2024         | 05.11.2024         | 30.09.2024       |
       | 05.12.2024         | 05.12.2024         | 31.10.2024       |
       | 05.01.2025         | 06.01.2025         | 30.11.2024       |
-      | 07.01.2025         | 06.01.2025         | 30.11.2024       |
+      | 07.01.2025         | 06.01.2025         | 31.12.2024       |
 ``` 
