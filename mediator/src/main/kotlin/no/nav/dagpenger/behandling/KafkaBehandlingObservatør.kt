@@ -5,22 +5,18 @@ import no.nav.dagpenger.behandling.modell.BehandlingObservatør
 import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.withMDC
-import kotlin.math.log
 
 internal class KafkaBehandlingObservatør(private val messageContext: MessageContext) : PersonObservatør {
-
     private companion object {
         val logger = mu.KotlinLogging.logger {}
     }
 
     override fun behandlingOpprettet(behandlingOpprettet: BehandlingObservatør.BehandlingOpprettet) {
-
         withLoggingContext(
             mapOf(
                 "behandlingId" to behandlingOpprettet.behandlingId.toString(),
-                "søknadId" to behandlingOpprettet.søknadId.toString()
-            )
+                "søknadId" to behandlingOpprettet.søknadId.toString(),
+            ),
         ) {
             val event =
                 JsonMessage.newMessage(
@@ -40,8 +36,8 @@ internal class KafkaBehandlingObservatør(private val messageContext: MessageCon
         withLoggingContext(
             mapOf(
                 "behandlingId" to behandlingAvsluttet.behandlingId.toString(),
-                "søknadId" to behandlingAvsluttet.søknadId.toString()
-            )
+                "søknadId" to behandlingAvsluttet.søknadId.toString(),
+            ),
         ) {
             val event =
                 JsonMessage.newMessage(
