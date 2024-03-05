@@ -16,7 +16,8 @@ class Opplysninger(
 ) : LesbarOpplysninger {
     private lateinit var regelkjøring: Regelkjøring
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
-    private val alleOpplysninger: List<Opplysning<*>> by lazy { basertPå.flatMap { it.alleOpplysninger } + opplysninger }
+    private val basertPåOpplysninger: List<Opplysning<*>> = basertPå.flatMap { it.basertPåOpplysninger + it.opplysninger }.toList()
+    private val alleOpplysninger: List<Opplysning<*>> get() = basertPåOpplysninger + opplysninger
 
     constructor() : this(mutableListOf(), emptyList())
     constructor(vararg basertPå: Opplysninger) : this(emptyList(), basertPå.toList())
@@ -45,6 +46,7 @@ class Opplysninger(
 
     override fun finnAlle() = alleOpplysninger.toList()
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? =
         alleOpplysninger.firstOrNull { it.er(opplysningstype) && it.gyldighetsperiode.inneholder(regelkjøring.forDato) } as Opplysning<T>?
 }
