@@ -49,6 +49,7 @@ internal class SøknadInnsendtMottak(
 }
 
 internal class SøknadInnsendtMessage(private val packet: JsonMessage) : HendelseMessage(packet) {
+    override val ident get() = packet["fødselsnummer"].asText()
     private val hendelse
         get() =
             SøknadInnsendtHendelse(
@@ -57,9 +58,6 @@ internal class SøknadInnsendtMessage(private val packet: JsonMessage) : Hendels
                 søknadId = packet["søknadsData"]["søknad_uuid"].asUUID(),
                 gjelderDato = java.time.LocalDate.now(),
             )
-    override val ident get() = packet["fødselsnummer"].asText()
-
-    private val logger = KotlinLogging.logger {}
 
     override fun behandle(
         mediator: IHendelseMediator,
@@ -69,5 +67,9 @@ internal class SøknadInnsendtMessage(private val packet: JsonMessage) : Hendels
             logger.info { "Behandler søknad innsendt hendelse" }
             mediator.behandle(hendelse, this, context)
         }
+    }
+
+    private companion object {
+        private val logger = KotlinLogging.logger {}
     }
 }

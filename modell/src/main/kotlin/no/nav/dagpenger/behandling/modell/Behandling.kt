@@ -3,6 +3,7 @@ package no.nav.dagpenger.behandling.modell
 import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
+import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingAvsluttet
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
@@ -48,6 +49,8 @@ class Behandling private constructor(
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
         hendelse.info("Mottatt søknad og startet behandling")
+        hendelse.varsel(Behandlingsvarsler.SØKNAD_MOTTATT)
+
         observatører.forEach {
             it.behandlingOpprettet(
                 BehandlingObservatør.BehandlingOpprettet(hendelse.ident, behandlingId, hendelse.søknadId),
@@ -95,3 +98,13 @@ class Behandling private constructor(
 }
 
 data class OpplysningBehov(override val name: String) : Aktivitet.Behov.Behovtype
+
+object Behandlingsvarsler {
+    @Suppress("ClassName")
+    data object SØKNAD_MOTTATT : Varselkode2("Søknad mottatt - midlertidlig test av varsel")
+}
+
+// TODO: Midlertidlig bridge til vi får fikset aktivitetsloggen
+abstract class Varselkode2(override val varseltekst: String) : Varselkode() {
+    override fun toString() = "${this::class.java.simpleName}: $varseltekst"
+}
