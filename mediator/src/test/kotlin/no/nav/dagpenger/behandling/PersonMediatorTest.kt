@@ -70,7 +70,7 @@ internal class PersonMediatorTest {
 
         testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
 
-        rapid.harHendelse("behandling_avsluttet")
+        rapid.harHendelse("forslag_til_vedtak")
     }
 
     private fun BehovHelper.opptjeningsperiodeEr(måneder: Int) {
