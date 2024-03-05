@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.modell
 
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -29,7 +30,7 @@ internal class BehandlingTest {
         behandlingskjede.opplysninger().finnAlle() shouldHaveSize 5
         behandlingskjede.opplysninger().finnAlle().map {
             it.verdi
-        } shouldBe listOf(1.0, 2.0, 3.0, 4.0, 5.0)
+        } shouldContainExactly listOf(1.0, 2.0, 3.0, 4.0, 5.0)
     }
 
     private fun behandlingskjede(
