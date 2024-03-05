@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.mottak
 
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
@@ -30,6 +31,7 @@ internal class SøknadInnsendtMottak(
         }.register(this)
     }
 
+    @WithSpan
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
