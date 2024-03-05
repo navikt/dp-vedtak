@@ -4,7 +4,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
-import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingAvsluttet
+import no.nav.dagpenger.behandling.modell.BehandlingObservatør.ForslagTilVedtak
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøkerHendelse
@@ -70,7 +70,7 @@ class Behandling private constructor(
             // TODO: Tilstand?
             hendelse.info("Alle opplysninger mottatt")
             observatører.forEach {
-                it.behandlingAvsluttet(BehandlingAvsluttet(behandler.ident, behandlingId, behandler.søknadId))
+                it.forslagTilVedtak(ForslagTilVedtak(behandler.ident, behandlingId, behandler.søknadId))
             }
         }
     }

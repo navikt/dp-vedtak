@@ -5,7 +5,7 @@ import java.util.UUID
 interface BehandlingObservatør {
     fun behandlingOpprettet(behandlingOpprettet: BehandlingOpprettet) {}
 
-    fun behandlingAvsluttet(behandlingAvsluttet: BehandlingAvsluttet)
+    fun forslagTilVedtak(forslagTilVedtak: ForslagTilVedtak)
 
     data class BehandlingOpprettet(
         val ident: String,
@@ -13,7 +13,7 @@ interface BehandlingObservatør {
         val søknadId: UUID,
     )
 
-    data class BehandlingAvsluttet(
+    data class ForslagTilVedtak(
         val ident: String,
         val behandlingId: UUID,
         val søknadId: UUID,

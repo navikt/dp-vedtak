@@ -32,23 +32,23 @@ internal class KafkaBehandlingObservatør(private val messageContext: MessageCon
         }
     }
 
-    override fun behandlingAvsluttet(behandlingAvsluttet: BehandlingObservatør.BehandlingAvsluttet) {
+    override fun forslagTilVedtak(forslagTilVedtak: BehandlingObservatør.ForslagTilVedtak) {
         withLoggingContext(
             mapOf(
-                "behandlingId" to behandlingAvsluttet.behandlingId.toString(),
-                "søknadId" to behandlingAvsluttet.søknadId.toString(),
+                "behandlingId" to forslagTilVedtak.behandlingId.toString(),
+                "søknadId" to forslagTilVedtak.søknadId.toString(),
             ),
         ) {
             val event =
                 JsonMessage.newMessage(
                     "behandling_avsluttet",
                     mapOf(
-                        "ident" to behandlingAvsluttet.ident,
-                        "behandlingId" to behandlingAvsluttet.behandlingId,
-                        "søknadId" to behandlingAvsluttet.søknadId,
+                        "ident" to forslagTilVedtak.ident,
+                        "behandlingId" to forslagTilVedtak.behandlingId,
+                        "søknadId" to forslagTilVedtak.søknadId,
                     ),
                 )
-            messageContext.publish(behandlingAvsluttet.ident, event.toJson())
+            messageContext.publish(forslagTilVedtak.ident, event.toJson())
             logger.info { "Sendt 'behandling_avsluttet'" }
         }
     }
