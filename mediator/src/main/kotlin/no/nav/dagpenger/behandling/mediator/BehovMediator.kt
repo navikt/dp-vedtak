@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling.mediator
 
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -31,8 +32,11 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
                     }
                     .let { JsonMessage.newNeed(behovMap.keys, it) }
                     .also {
-                        sikkerlogg.info("sender behov for {}:\n{}", behovMap.keys, it.toJson())
-                        rapidsConnection.publish(hendelse.ident(), it.toJson())
+                        withLoggingContext("behovId" to it.id) {
+                            sikkerlogg.info { "sender behov for ${behovMap.keys}:\n${it.toJson()}}" }
+                            logger.info { "sender behov for ${behovMap.keys}" }
+                            rapidsConnection.publish(hendelse.ident(), it.toJson())
+                        }
                     }
             }
     }
