@@ -43,7 +43,10 @@ spec:
         groups:
           - id: {{azure.grupper.saksbehandler}}
           - id: {{azure.grupper.beslutter}}
-
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   gcp:
     sqlInstances:
       - type: POSTGRES_15
