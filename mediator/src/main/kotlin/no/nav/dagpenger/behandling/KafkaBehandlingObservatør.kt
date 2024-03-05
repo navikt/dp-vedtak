@@ -41,7 +41,7 @@ internal class KafkaBehandlingObservatør(private val messageContext: MessageCon
         ) {
             val event =
                 JsonMessage.newMessage(
-                    "behandling_avsluttet",
+                    "forslag_til_vedtak",
                     mapOf(
                         "ident" to forslagTilVedtak.ident,
                         "behandlingId" to forslagTilVedtak.behandlingId,
@@ -49,7 +49,7 @@ internal class KafkaBehandlingObservatør(private val messageContext: MessageCon
                     ),
                 )
             messageContext.publish(forslagTilVedtak.ident, event.toJson())
-            logger.info { "Sendt 'behandling_avsluttet'" }
+            logger.info { "Sendt 'forslag_til_vedtak'" }
         }
     }
 }
