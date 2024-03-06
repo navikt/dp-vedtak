@@ -1,4 +1,4 @@
-
+**/*.received.*
 # Created by https://www.gitignore.io/api/gradle,kotlin,intellij+all,macos
 
 ### Intellij+all ###
