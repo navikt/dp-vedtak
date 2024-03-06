@@ -65,7 +65,7 @@ class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
                     >``` 
                     """.trimMargin(">")
                 skriv(
-                    navn!!,
+                    navn,
                     markdown,
                 )
             }

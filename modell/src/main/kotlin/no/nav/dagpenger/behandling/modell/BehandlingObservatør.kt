@@ -3,19 +3,21 @@ package no.nav.dagpenger.behandling.modell
 import java.util.UUID
 
 interface BehandlingObservatør {
-    fun behandlingOpprettet(behandlingOpprettet: BehandlingOpprettet) {}
+    fun behandlingOpprettet(behandlingOpprettet: BehandlingEvent.Opprettet) {}
 
-    fun forslagTilVedtak(forslagTilVedtak: ForslagTilVedtak)
+    fun forslagTilVedtak(forslagTilVedtak: BehandlingEvent.ForslagTilVedtak)
 
-    data class BehandlingOpprettet(
-        val ident: String,
-        val behandlingId: UUID,
-        val søknadId: UUID,
-    )
+    sealed class BehandlingEvent {
+        data class Opprettet(
+            val ident: String,
+            val behandlingId: UUID,
+            val søknadId: UUID,
+        ) : BehandlingEvent()
 
-    data class ForslagTilVedtak(
-        val ident: String,
-        val behandlingId: UUID,
-        val søknadId: UUID,
-    )
+        data class ForslagTilVedtak(
+            val ident: String,
+            val behandlingId: UUID,
+            val søknadId: UUID,
+        ) : BehandlingEvent()
+    }
 }

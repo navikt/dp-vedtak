@@ -4,6 +4,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEvent
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
@@ -71,11 +72,11 @@ internal class BehandlingTest {
 }
 
 private class TestObservatør : BehandlingObservatør {
-    lateinit var behandlingOpprettet: BehandlingObservatør.BehandlingOpprettet
+    lateinit var behandlingOpprettet: BehandlingEvent.Opprettet
 
-    override fun behandlingOpprettet(behandlingOpprettet: BehandlingObservatør.BehandlingOpprettet) {
+    override fun behandlingOpprettet(behandlingOpprettet: BehandlingEvent.Opprettet) {
         this.behandlingOpprettet = behandlingOpprettet
     }
 
-    override fun forslagTilVedtak(forslagTilVedtak: BehandlingObservatør.ForslagTilVedtak) {}
+    override fun forslagTilVedtak(forslagTilVedtak: BehandlingEvent.ForslagTilVedtak) {}
 }

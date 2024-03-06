@@ -4,7 +4,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
-import no.nav.dagpenger.behandling.modell.BehandlingObservatør.ForslagTilVedtak
+import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEvent
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøkerHendelse
@@ -53,7 +53,7 @@ class Behandling private constructor(
 
         observatører.forEach {
             it.behandlingOpprettet(
-                BehandlingObservatør.BehandlingOpprettet(hendelse.ident, behandlingId, hendelse.søknadId),
+                BehandlingEvent.Opprettet(hendelse.ident, behandlingId, hendelse.søknadId),
             )
         }
         hvaTrengerViNå(hendelse)
@@ -70,7 +70,7 @@ class Behandling private constructor(
             // TODO: Tilstand?
             hendelse.info("Alle opplysninger mottatt")
             observatører.forEach {
-                it.forslagTilVedtak(ForslagTilVedtak(behandler.ident, behandlingId, behandler.søknadId))
+                it.forslagTilVedtak(BehandlingEvent.ForslagTilVedtak(behandler.ident, behandlingId, behandler.søknadId))
             }
         }
     }
@@ -99,8 +99,8 @@ class Behandling private constructor(
 
 data class OpplysningBehov(override val name: String) : Aktivitet.Behov.Behovtype
 
+@Suppress("ktlint:standard:class-naming")
 object Behandlingsvarsler {
-    @Suppress("ClassName")
     data object SØKNAD_MOTTATT : Varselkode2("Søknad mottatt - midlertidlig test av varsel")
 }
 
