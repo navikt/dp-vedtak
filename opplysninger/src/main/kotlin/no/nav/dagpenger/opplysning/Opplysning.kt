@@ -29,7 +29,7 @@ sealed class Opplysning<T : Comparable<T>>(
     }
 }
 
-class Hypotese<T : Comparable<T>> internal constructor(
+class Hypotese<T : Comparable<T>> constructor(
     id: UUID,
     opplysningstype: Opplysningstype<T>,
     verdi: T,
@@ -48,7 +48,7 @@ class Hypotese<T : Comparable<T>> internal constructor(
     override fun bekreft() = Faktum(id, super.opplysningstype, verdi, gyldighetsperiode, utledetAv)
 }
 
-class Faktum<T : Comparable<T>> internal constructor(
+class Faktum<T : Comparable<T>> constructor(
     id: UUID,
     opplysningstype: Opplysningstype<T>,
     verdi: T,
