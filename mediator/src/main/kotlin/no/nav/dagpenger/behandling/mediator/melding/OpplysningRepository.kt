@@ -20,7 +20,6 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.Utledning
 import no.nav.dagpenger.opplysning.verdier.Ulid
-import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -43,26 +42,13 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
                     WHERE o.id = :id
                     """.trimIndent(),
                     mapOf("id" to opplysningId),
-                ).map { rs ->
-                    val status = rs.string("status")
-                    val id = rs.uuid("id")
-                    val gyldighetsperiode = GyldighetsperiodeDAO(rs.string("fom"), rs.string("tom")).gyldighetsperiode()
-                    val datatype1 = rs.string("datatype")
-                    val opplysning: Opplysning<*>? =
-                        when {
-                            datatype1 == "boolsk" -> {
-                                val datatype = datatype(datatype1) as Boolsk
-                                opplysning(rs, datatype, status, id, gyldighetsperiode)
-                            }
-
-                            datatype1 == "Heltall" -> {
-                                val datatype = datatype(datatype1) as Heltall
-                                opplysning(rs, datatype, status, id, gyldighetsperiode)
-                            }
-
-                            else -> {
-                                throw IllegalStateException("Ukjent datatype $datatype1")
-                            }
+                ).map { row ->
+                    val opplysning: Opplysning<*> =
+                        when (val datatype = row.string("datatype")) {
+                            "Boolsk" -> row.opplysning(Boolsk)
+                            "Heltall" -> row.opplysning(Heltall)
+                            "Desimaltall" -> row.opplysning(Desimaltall)
+                            else -> throw IllegalStateException("Ukjent datatype $datatype")
                         }
                     opplysning
                 }.asSingle,
@@ -70,82 +56,30 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
         }
     }
 
-    private fun opplysning(
-        rs: Row,
-        datatype: Boolsk,
-        status: String,
-        id: UUID,
-        gyldighetsperiode: Gyldighetsperiode,
-    ): Opplysning<*>? {
-        val opplysningstype = Opplysningstype(rs.string("opplysningstype"), datatype)
-        val verdi =
-            verdi(
-                datatype,
-                rs.boolean("verdi_boolsk"),
-                rs.localDateTimeOrNull("verdi_dato"),
-                rs.bigDecimalOrNull("verdi_desimaltall"),
-                rs.intOrNull("verdi_heltall"),
-                rs.stringOrNull("verdi_ulid"),
-            )
-        return when (status) {
+    private fun <T : Comparable<T>> Row.opplysning(datatype: Datatype<T>): Opplysning<T> {
+        val id = uuid("id")
+        val opplysningstype = Opplysningstype(string("opplysningstype"), datatype)
+        val gyldighetsperiode = GyldighetsperiodeDAO(string("fom"), string("tom")).gyldighetsperiode()
+        val verdi = datatype.verdi(this)
+        return when (string("status")) {
             "Hypotese" -> Hypotese(id, opplysningstype, verdi, gyldighetsperiode)
             "Faktum" -> Faktum(id, opplysningstype, verdi, gyldighetsperiode)
             else -> throw IllegalStateException("Ukjent opplysningstype")
         }
     }
 
-    private fun opplysning(
-        rs: Row,
-        datatype: Heltall,
-        status: String,
-        id: UUID,
-        gyldighetsperiode: Gyldighetsperiode,
-    ): Opplysning<*>? {
-        val opplysningstype = Opplysningstype(rs.string("opplysningstype"), datatype)
-        val verdi =
-            verdi(
-                datatype,
-                rs.boolean("verdi_boolsk"),
-                rs.localDateTimeOrNull("verdi_dato"),
-                rs.bigDecimalOrNull("verdi_desimaltall"),
-                rs.intOrNull("verdi_heltall"),
-                rs.stringOrNull("verdi_ulid"),
-            )
-        return when (status) {
-            "Hypotese" -> Hypotese(id, opplysningstype, verdi, gyldighetsperiode)
-            "Faktum" -> Faktum(id, opplysningstype, verdi, gyldighetsperiode)
-            else -> throw IllegalStateException("Ukjent opplysningstype")
-        }
-    }
-
-    private fun datatype(string: String): Datatype<*> =
-        when (string) {
-            "Boolsk" -> Boolsk
-            "Dato" -> Dato
-            "Desimaltall" -> Desimaltall
-            "Heltall" -> Heltall
-            "ULID" -> ULID
-            else -> throw IllegalStateException("Ukjent datatype")
+    private fun <T : Comparable<T>> Datatype<T>.verdi(row: Row): T =
+        when (this) {
+            Boolsk -> row.boolean("verdi_boolsk") as T
+            Dato -> row.localDateTime("verdi_dato") as T
+            Desimaltall -> row.bigDecimal("verdi_desimaltall") as T
+            Heltall -> row.int("verdi_heltall") as T
+            ULID -> Ulid(row.string("ulid")) as T
         }
 
-    private fun <T : Comparable<T>> verdi(
-        datatype: Datatype<T>,
-        boolsk: Boolean,
-        dato: LocalDateTime?,
-        desimaltall: BigDecimal?,
-        heltall: Int?,
-        ulid: String?,
-    ): T =
-        when (datatype) {
-            Boolsk -> boolsk as T
-            Dato -> dato as T
-            Desimaltall -> desimaltall as T
-            Heltall -> heltall as T
-            ULID -> Ulid(ulid as String) as T
-        }
-
-    private class GyldighetsperiodeDAO(private val fomString: String, private val tomString: String) {
+    private class GyldighetsperiodeDAO(fomString: String, tomString: String) {
         private val fom = infintyToTimestamp(fomString)
+
         private val tom = infintyToTimestamp(tomString)
 
         private fun infintyToTimestamp(inf: String) =
