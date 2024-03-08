@@ -16,15 +16,15 @@ internal class InMemoryMeldingRepository : HendelseRepository {
         meldingDb[id] = MeldingDto(hendelseMessage, MeldingStatus.MOTTATT)
     }
 
-    override fun markerSomBehandlet(hendelseId: UUID): Int {
-        val melding = hentMelding(hendelseId)
+    override fun markerSomBehandlet(meldingId: UUID): Int {
+        val melding = hentMelding(meldingId)
         melding.status = MeldingStatus.BEHANDLET
-        meldingDb[hendelseId] = melding
+        meldingDb[meldingId] = melding
         return 1
     }
 
-    override fun erBehandlet(hendelseId: UUID): Boolean {
-        return meldingDb[hendelseId]?.status == MeldingStatus.BEHANDLET
+    override fun erBehandlet(meldingId: UUID): Boolean {
+        return meldingDb[meldingId]?.status == MeldingStatus.BEHANDLET
     }
 
     private fun hentMelding(id: UUID) =

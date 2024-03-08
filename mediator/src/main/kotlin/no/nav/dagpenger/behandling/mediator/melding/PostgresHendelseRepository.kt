@@ -5,6 +5,8 @@ import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import mu.KotlinLogging
+import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
+import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
 import org.postgresql.util.PGobject
 import java.util.UUID
 import javax.sql.DataSource
@@ -25,18 +27,18 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
                         //language=PostgreSQL
                         statement =
                             """
-                            INSERT INTO hendelse
-                                (hendelse_id, hendelse_type, ident, melding, endret)
+                            INSERT INTO melding
+                                (ident, melding_id, melding_type, data, lest_dato)
                             VALUES
-                                (:hendelse_id, :hendelse_type, :ident, :melding, now())
+                                (:ident, :melding_id, :melding_type, :data, now())
                             ON CONFLICT DO NOTHING
                             """.trimIndent(),
                         paramMap =
                             mapOf(
-                                "hendelse_id" to id,
-                                "hendelse_type" to hendelseType.name,
                                 "ident" to ident,
-                                "melding" to
+                                "melding_id" to id,
+                                "melding_type" to hendelseType.name,
+                                "data" to
                                     PGobject().apply {
                                         type = "json"
                                         value = toJson
@@ -48,39 +50,41 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
         }
     }
 
-    override fun markerSomBehandlet(hendelseId: UUID) =
+    override fun markerSomBehandlet(meldingId: UUID) =
         sessionOf(dataSource).use { session ->
             session.run(
                 queryOf(
                     //language=PostgreSQL
                     statement =
                         """
-                        UPDATE hendelse
+                        UPDATE melding
                         SET behandlet_tidspunkt=now()
-                        WHERE hendelse_id = :hendelse_id
+                        WHERE melding_id = :melding_id
                           AND behandlet_tidspunkt IS NULL
                         """.trimIndent(),
-                    paramMap = mapOf("hendelse_id" to hendelseId),
+                    paramMap = mapOf("melding_id" to meldingId),
                 ).asUpdate,
             )
         }
 
-    override fun erBehandlet(hendelseId: UUID): Boolean =
+    override fun erBehandlet(meldingId: UUID): Boolean =
         sessionOf(dataSource).use { session ->
             session.run(
                 queryOf(
                     //language=PostgreSQL
                     statement =
                         """
-                        SELECT behandlet_tidspunkt FROM hendelse WHERE hendelse_id = :hendelse_id
+                        SELECT behandlet_tidspunkt FROM melding WHERE melding_id = :melding_id
                         """.trimIndent(),
-                    paramMap = mapOf("hendelse_id" to hendelseId),
+                    paramMap = mapOf("melding_id" to meldingId),
                 ).map { rad -> rad.localDateTimeOrNull("behandlet_tidspunkt") }.asSingle,
             ) != null
         }
 
     private fun hendelseType(hendelseMessage: HendelseMessage): HendelseTypeDTO? {
         return when (hendelseMessage) {
+            is SøknadInnsendtMessage -> HendelseTypeDTO.SØKNAD_INNSENDT
+            is OpplysningSvarMessage -> HendelseTypeDTO.OPPLYSNING_SVAR
             else ->
                 null.also {
                     logger.warn { "ukjent meldingstype ${hendelseMessage::class.simpleName}: melding lagres ikke" }
@@ -93,4 +97,7 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
     }
 }
 
-enum class HendelseTypeDTO
+private enum class HendelseTypeDTO {
+    SØKNAD_INNSENDT,
+    OPPLYSNING_SVAR,
+}

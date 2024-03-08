@@ -16,8 +16,7 @@ internal abstract class HendelseMessage(private val packet: JsonMessage) {
     internal val id: UUID = packet["@id"].asUUID()
     private val navn = packet["@event_name"].asText()
     private val opprettet = packet["@opprettet"].asLocalDateTime()
-    internal open val skalDuplikatsjekkes = true
-    protected abstract val ident: String
+    internal abstract val ident: String
 
     internal abstract fun behandle(
         mediator: IHendelseMediator,

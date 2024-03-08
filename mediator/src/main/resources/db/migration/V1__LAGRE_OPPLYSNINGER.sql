@@ -1,7 +1,7 @@
 CREATE TABLE melding
 (
     id                  BIGSERIAL PRIMARY KEY,
-    fnr                 TEXT                                   NOT NULL,
+    ident               TEXT                                   NOT NULL,
     melding_id          uuid                                   NOT NULL UNIQUE,
     melding_type        TEXT                                   NOT NULL,
     data                jsonb                                  NOT NULL,

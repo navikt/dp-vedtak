@@ -10,7 +10,7 @@ internal interface HendelseRepository {
         toJson: String,
     )
 
-    fun markerSomBehandlet(hendelseId: UUID): Int
+    fun markerSomBehandlet(meldingId: UUID): Int
 
-    fun erBehandlet(hendelseId: UUID): Boolean
+    fun erBehandlet(meldingId: UUID): Boolean
 }
