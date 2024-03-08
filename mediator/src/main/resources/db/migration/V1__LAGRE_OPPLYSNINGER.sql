@@ -2,7 +2,7 @@ CREATE TABLE melding
 (
     id                  BIGSERIAL PRIMARY KEY,
     fnr                 TEXT                                   NOT NULL,
-    melding_id          uuid                                   NOT NULL,
+    melding_id          uuid                                   NOT NULL UNIQUE,
     melding_type        TEXT                                   NOT NULL,
     data                jsonb                                  NOT NULL,
     lest_dato           TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
@@ -17,14 +17,14 @@ CREATE TABLE opplysningstype
     datatype           TEXT NOT NULL,
     parent             BIGINT                   DEFAULT NULL REFERENCES opplysningstype (opplysningstype_id),
     opprettet          TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    CONSTRAINT f UNIQUE (id, navn)
+    CONSTRAINT f UNIQUE (id, navn, datatype)
 );
 
 CREATE TABLE opplysning
 (
     id                 uuid PRIMARY KEY,
     status             TEXT                     NOT NULL,
-    opplysningstype_id BIGINT                     NOT NULL REFERENCES opplysningstype (opplysningstype_id),
+    opplysningstype_id BIGINT                   NOT NULL REFERENCES opplysningstype (opplysningstype_id),
     fom                TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
     tom                TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
     opprettet          TIMESTAMP WITH TIME ZONE      DEFAULT NOW()
@@ -46,8 +46,6 @@ CREATE TABLE opplysning_verdi
 CREATE TABLE opplysning_kilde
 (
     opplysning_id        uuid PRIMARY KEY,
-    meldingsreferanse_id uuid,
-    opprettet            TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    FOREIGN KEY (opplysning_id) REFERENCES opplysning (id)
-    -- FOREIGN KEY (meldingsreferanse_id) REFERENCES melding (id)
+    meldingsreferanse_id uuid REFERENCES melding (melding_id),
+    opprettet            TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

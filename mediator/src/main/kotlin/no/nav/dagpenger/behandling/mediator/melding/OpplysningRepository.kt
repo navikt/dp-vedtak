@@ -82,7 +82,8 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
             session.transaction { tx ->
                 val opplysningId = tx.lagreOpplysningstype(opplysning.opplysningstype)
                 tx.lagreOpplysning(opplysning.id, opplysning.javaClass.simpleName, opplysningId, opplysning.gyldighetsperiode)
-                // tx.lagreKilde(opplysning.id, opplysning.kilde)
+                // TODO: tx.lagreKilde(opplysning.id, opplysning.kilde)
+                // TODO: tx.lagreUtledetAv()
                 tx.lagreVerdi(opplysning.id, opplysning.opplysningstype.datatype, opplysning.verdi)
             }
         }
@@ -93,21 +94,21 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
             queryOf(
                 //language=PostgreSQL
                 """
-                INSERT INTO opplysningstype (id, navn, datatype)
-                VALUES (:id, :navn, :datatype)
-                ON CONFLICT DO NOTHING 
-                RETURNING opplysningstype_id
+                WITH ins AS (
+                    INSERT INTO opplysningstype (id, navn, datatype)
+                    VALUES (:id, :navn, :datatype)
+                    ON CONFLICT DO NOTHING 
+                    RETURNING opplysningstype_id
+                )
+                SELECT opplysningstype_id FROM ins
+                UNION ALL
+                SELECT opplysningstype_id FROM opplysningstype WHERE id = :id AND navn = :navn AND datatype = :datatype
                 """.trimIndent(),
                 mapOf(
                     "id" to opplysningstype.id,
                     "navn" to opplysningstype.navn,
                     "datatype" to opplysningstype.datatype.javaClass.simpleName,
                 ),
-            ).map { it.long("opplysningstype_id") }.asSingle,
-        ) ?: run(
-            queryOf(
-                "SELECT opplysningstype_id FROM opplysningstype WHERE id = :id ",
-                mapOf("id" to opplysningstype.id),
             ).map { it.long("opplysningstype_id") }.asSingle,
         ) ?: throw IllegalStateException("Kunne ikke lagre eller finne opplysningstype")
 

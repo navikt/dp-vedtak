@@ -34,12 +34,15 @@ class OpplysningRepositoryPostgresTest {
                     ),
                     Faktum(Opplysningstype.somBoolsk("Boolsk"), true, gyldighetsperiode = Gyldighetsperiode(tom = LocalDateTime.now())),
                     Faktum(Opplysningstype.somUlid("Ulid"), Ulid("01E5Z6Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1")),
+                    // Ulike typer kan bruke samme navn
+                    Faktum(Opplysningstype.somBoolsk("Ulid"), false),
                 )
             val ints =
                 opplysninger.map { opplysning ->
-                    val a = repo.lagreOpplysning(opplysning)
-                    repo.lagreOpplysning(opplysning)
-                    a
+                    repo.lagreOpplysning(opplysning).also {
+                        // Duplikat skriving skal ikke lage duplikate rader
+                        repo.lagreOpplysning(opplysning)
+                    }
                 }
             ints.sum() shouldBe opplysninger.size
 
