@@ -30,6 +30,7 @@ internal object PostgresDataSourceBuilder {
             idleTimeout = 10001
             connectionTimeout = 1000
             maxLifetime = 30001
+            initializationFailTimeout = 5000
         }
     }
 
