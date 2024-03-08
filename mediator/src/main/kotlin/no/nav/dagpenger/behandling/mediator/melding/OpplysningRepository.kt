@@ -62,14 +62,15 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T : Comparable<T>> Datatype<T>.verdi(row: Row): T =
         when (this) {
-            Boolsk -> row.boolean("verdi_boolsk") as T
-            Dato -> row.localDateTime("verdi_dato") as T
-            Desimaltall -> row.bigDecimal("verdi_desimaltall") as T
-            Heltall -> row.int("verdi_heltall") as T
-            ULID -> Ulid(row.string("ulid")) as T
-        }
+            Boolsk -> row.boolean("verdi_boolsk")
+            Dato -> row.localDateTime("verdi_dato")
+            Desimaltall -> row.bigDecimal("verdi_desimaltall")
+            Heltall -> row.int("verdi_heltall")
+            ULID -> Ulid(row.string("ulid"))
+        } as T
 
     private class GyldighetsperiodeDAO(fomString: String, tomString: String) {
         private val fom = infintyToTimestamp(fomString)
