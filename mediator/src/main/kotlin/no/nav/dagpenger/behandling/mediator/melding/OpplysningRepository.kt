@@ -44,13 +44,13 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
                     mapOf("id" to opplysningId),
                 ).map { row ->
                     val datatype = Datatype.fromString(row.string("datatype"))
-                    row.opplysning(datatype)
+                    row.somOpplysning(datatype)
                 }.asSingle,
             )
         }
     }
 
-    private fun <T : Comparable<T>> Row.opplysning(datatype: Datatype<T>): Opplysning<T> {
+    private fun <T : Comparable<T>> Row.somOpplysning(datatype: Datatype<T>): Opplysning<T> {
         val id = uuid("id")
         val opplysningstype = Opplysningstype(string("opplysningstype"), datatype)
         val gyldighetsperiode = GyldighetsperiodeDAO(string("fom"), string("tom")).gyldighetsperiode()

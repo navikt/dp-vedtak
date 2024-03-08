@@ -31,7 +31,12 @@ class OpplysningRepositoryPostgresTest {
             val ints = opplysninger.map { opplysning -> repo.lagreOpplysning(opplysning) }
             ints.sum() shouldBe opplysninger.size
 
-            repo.hentOpplysning(faktum.id)?.verdi shouldBe faktum.verdi
+            with(repo.hentOpplysning(faktum.id)!!) {
+                id shouldBe faktum.id
+                verdi shouldBe faktum.verdi
+                gyldighetsperiode shouldBe faktum.gyldighetsperiode
+                opplysningstype shouldBe faktum.opplysningstype
+            }
         }
     }
 }
