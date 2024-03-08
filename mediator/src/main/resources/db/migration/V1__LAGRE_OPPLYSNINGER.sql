@@ -9,14 +9,25 @@ CREATE TABLE melding
     behandlet_tidspunkt TIMESTAMP WITH TIME ZONE
 );
 
+CREATE TABLE opplysningstype
+(
+    opplysningstype_id BIGSERIAL PRIMARY KEY,
+    id                 TEXT NOT NULL,
+    navn               TEXT NOT NULL,
+    datatype           TEXT NOT NULL,
+    parent             BIGINT                   DEFAULT NULL REFERENCES opplysningstype (opplysningstype_id),
+    opprettet          TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    CONSTRAINT f UNIQUE (id, navn)
+);
+
 CREATE TABLE opplysning
 (
-    id              uuid PRIMARY KEY,
-    status          TEXT                        NOT NULL,
-    opplysningstype TEXT                        NOT NULL,
-    fom             TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT '-infinity',
-    tom             TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT 'infinity',
-    opprettet       TIMESTAMP WITH TIME ZONE             DEFAULT NOW()
+    id                 uuid PRIMARY KEY,
+    status             TEXT                     NOT NULL,
+    opplysningstype_id BIGINT                     NOT NULL REFERENCES opplysningstype (opplysningstype_id),
+    fom                TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
+    tom                TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
+    opprettet          TIMESTAMP WITH TIME ZONE      DEFAULT NOW()
 );
 
 CREATE TABLE opplysning_verdi
@@ -27,7 +38,7 @@ CREATE TABLE opplysning_verdi
     verdi_desimaltall DECIMAL,
     verdi_dato        TIMESTAMP WITH TIME ZONE,
     verdi_boolsk      BOOLEAN,
-    verdi_ulid        TEXT,
+    verdi_string      TEXT,
     opprettet         TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     FOREIGN KEY (opplysning_id) REFERENCES opplysning (id)
 );

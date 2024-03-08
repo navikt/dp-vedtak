@@ -11,7 +11,7 @@ fun String.id(id: String) = OpplysningTypeId(id, this)
 
 data class OpplysningTypeId(val id: String, val beskrivelse: String)
 
-class Opplysningstype<T : Comparable<T>> private constructor(
+class Opplysningstype<T : Comparable<T>>(
     private val opplysningTypeId: OpplysningTypeId,
     val datatype: Datatype<T>,
     private val parent: Opplysningstype<T>? = null,
@@ -98,5 +98,5 @@ class Opplysningstype<T : Comparable<T>> private constructor(
 
     override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningTypeId == this.opplysningTypeId
 
-    override fun hashCode() = navn.hashCode() * 31
+    override fun hashCode() = opplysningTypeId.hashCode() * 31
 }

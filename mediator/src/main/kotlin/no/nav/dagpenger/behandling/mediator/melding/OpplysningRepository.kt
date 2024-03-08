@@ -18,7 +18,7 @@ import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.ULID
-import no.nav.dagpenger.opplysning.Utledning
+import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import java.time.LocalDateTime
 import java.util.UUID
@@ -36,10 +36,11 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
                 queryOf(
                     //language=PostgreSQL
                     """
-                    SELECT o.*, v.datatype, v.verdi_boolsk, v.verdi_dato, v.verdi_desimaltall, v.verdi_heltall, v.verdi_ulid
-                    FROM opplysning o
-                    LEFT JOIN opplysning_verdi v ON o.id = v.opplysning_id
-                    WHERE o.id = :id
+                    SELECT opplysning.*, opplysning_verdi.*, opplysningstype.id AS type_id, opplysningstype.navn AS type_navn, opplysningstype.datatype
+                    FROM opplysning 
+                    LEFT JOIN opplysningstype ON opplysning.opplysningstype_id = opplysningstype.opplysningstype_id
+                    LEFT JOIN opplysning_verdi ON opplysning.id = opplysning_verdi.opplysning_id
+                    WHERE opplysning.id = :id
                     """.trimIndent(),
                     mapOf("id" to opplysningId),
                 ).map { row ->
@@ -52,8 +53,12 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
 
     private fun <T : Comparable<T>> Row.somOpplysning(datatype: Datatype<T>): Opplysning<T> {
         val id = uuid("id")
-        val opplysningstype = Opplysningstype(string("opplysningstype"), datatype)
-        val gyldighetsperiode = GyldighetsperiodeDAO(string("fom"), string("tom")).gyldighetsperiode()
+        val opplysningstype = Opplysningstype(string("type_navn").id(string("type_id")), datatype)
+        val gyldighetsperiode =
+            Gyldighetsperiode(
+                localDateTimeOrNull("fom") ?: LocalDateTime.MIN,
+                localDateTimeOrNull("tom") ?: LocalDateTime.MAX,
+            )
         val verdi = datatype.verdi(this)
         return when (string("status")) {
             "Hypotese" -> Hypotese(id, opplysningstype, verdi, gyldighetsperiode)
@@ -67,53 +72,64 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
         when (this) {
             Boolsk -> row.boolean("verdi_boolsk")
             Dato -> row.localDateTime("verdi_dato")
-            Desimaltall -> row.bigDecimal("verdi_desimaltall")
+            Desimaltall -> row.double("verdi_desimaltall")
             Heltall -> row.int("verdi_heltall")
-            ULID -> Ulid(row.string("ulid"))
+            ULID -> Ulid(row.string("verdi_string"))
         } as T
-
-    private class GyldighetsperiodeDAO(fomString: String, tomString: String) {
-        private val fom = infintyToTimestamp(fomString)
-
-        private val tom = infintyToTimestamp(tomString)
-
-        private fun infintyToTimestamp(inf: String) =
-            when (inf) {
-                "-infinity" -> LocalDateTime.MIN
-                "infinity" -> LocalDateTime.MAX
-                else -> LocalDateTime.parse(inf)
-            }
-
-        fun gyldighetsperiode() = Gyldighetsperiode(fom, tom)
-    }
 
     override fun lagreOpplysning(opplysning: Opplysning<*>) =
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
-                tx.lagreOpplysning(opplysning.id, opplysning.javaClass.simpleName, opplysning.opplysningstype, opplysning.gyldighetsperiode)
+                val opplysningId = tx.lagreOpplysningstype(opplysning.opplysningstype)
+                tx.lagreOpplysning(opplysning.id, opplysning.javaClass.simpleName, opplysningId, opplysning.gyldighetsperiode)
                 // tx.lagreKilde(opplysning.id, opplysning.kilde)
                 tx.lagreVerdi(opplysning.id, opplysning.opplysningstype.datatype, opplysning.verdi)
             }
         }
 
+    // TODO: Lage støtte for parent?
+    private fun TransactionalSession.lagreOpplysningstype(opplysningstype: Opplysningstype<*>): Long =
+        run(
+            queryOf(
+                //language=PostgreSQL
+                """
+                INSERT INTO opplysningstype (id, navn, datatype)
+                VALUES (:id, :navn, :datatype)
+                ON CONFLICT DO NOTHING 
+                RETURNING opplysningstype_id
+                """.trimIndent(),
+                mapOf(
+                    "id" to opplysningstype.id,
+                    "navn" to opplysningstype.navn,
+                    "datatype" to opplysningstype.datatype.javaClass.simpleName,
+                ),
+            ).map { it.long("opplysningstype_id") }.asSingle,
+        ) ?: run(
+            queryOf(
+                "SELECT opplysningstype_id FROM opplysningstype WHERE id = :id ",
+                mapOf("id" to opplysningstype.id),
+            ).map { it.long("opplysningstype_id") }.asSingle,
+        ) ?: throw IllegalStateException("Kunne ikke lagre eller finne opplysningstype")
+
     private fun TransactionalSession.lagreOpplysning(
         id: UUID,
         status: String,
-        opplysningstype: Opplysningstype<*>,
+        opplysningstype: Long,
         gyldighetsperiode: Gyldighetsperiode,
     ) = run(
         queryOf(
             //language=PostgreSQL
             """
-            INSERT INTO opplysning (id, status, opplysningstype, fom, tom)
+            INSERT INTO opplysning (id, status, opplysningstype_id, fom, tom)
             VALUES (:id, :status, :opplysningstype, :fom::timestamp, :tom::timestamp)
+            ON CONFLICT DO NOTHING
             """.trimIndent(),
             mapOf(
                 "id" to id,
                 "status" to status,
-                "opplysningstype" to opplysningstype.navn,
-                "fom" to gyldighetsperiode.fom.let { if (it == LocalDateTime.MIN) "-infinity" else it },
-                "tom" to gyldighetsperiode.tom.let { if (it == LocalDateTime.MAX) "infinity" else it },
+                "opplysningstype" to opplysningstype,
+                "fom" to gyldighetsperiode.fom.let { if (it == LocalDateTime.MIN) null else it },
+                "tom" to gyldighetsperiode.tom.let { if (it == LocalDateTime.MAX) null else it },
             ),
         ).asUpdate,
     )
@@ -142,7 +158,9 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
             queryOf(
                 //language=PostgreSQL
                 """
-                INSERT INTO opplysning_verdi (opplysning_id, datatype, $kolonne) VALUES (:opplysning_id, :datatype, :verdi)
+                INSERT INTO opplysning_verdi (opplysning_id, datatype, $kolonne) 
+                VALUES (:opplysning_id, :datatype, :verdi)
+                ON CONFLICT DO NOTHING
                 """.trimIndent(),
                 mapOf(
                     "opplysning_id" to opplysningId,
@@ -161,24 +179,6 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
         Dato -> Pair("verdi_dato", verdi)
         Desimaltall -> Pair("verdi_desimaltall", verdi)
         Heltall -> Pair("verdi_heltall", verdi)
-        ULID -> Pair("verdi_ulid", (verdi as Ulid).verdi)
-    }
-
-    private data class Memento<T : Comparable<T>>(
-        private val type: Class<out Opplysning<T>>,
-        private val id: UUID,
-        private val opplysningstype: Opplysningstype<T>,
-        private val verdi: T,
-        private val gyldighetsperiode: Gyldighetsperiode,
-        private val utledetAv: Utledning?,
-        private val kilde: Kilde?,
-    ) {
-        fun restore(): Opplysning<T> {
-            return when (type) {
-                Hypotese::class.java -> Hypotese(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde)
-                Faktum::class.java -> Faktum(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde)
-                else -> throw IllegalStateException("Ukjent opplysningstype")
-            }
-        }
+        ULID -> Pair("verdi_string", (verdi as Ulid).verdi)
     }
 }
