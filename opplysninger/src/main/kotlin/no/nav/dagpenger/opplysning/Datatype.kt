@@ -3,7 +3,19 @@ package no.nav.dagpenger.opplysning
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import java.time.LocalDate
 
-sealed class Datatype<T : Comparable<T>>(val klasse: Class<T>)
+sealed class Datatype<T : Comparable<T>>(val klasse: Class<T>) {
+    companion object {
+        fun fromString(datatype: String): Datatype<*> =
+            when (datatype) {
+                "Dato" -> Dato
+                "Desimaltall" -> Desimaltall
+                "Heltall" -> Heltall
+                "Boolsk" -> Boolsk
+                "ULID" -> ULID
+                else -> throw IllegalArgumentException("Unknown datatype: $datatype")
+            }
+    }
+}
 
 data object Dato : Datatype<LocalDate>(LocalDate::class.java)
 

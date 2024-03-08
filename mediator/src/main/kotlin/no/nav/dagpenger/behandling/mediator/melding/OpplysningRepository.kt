@@ -43,14 +43,8 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
                     """.trimIndent(),
                     mapOf("id" to opplysningId),
                 ).map { row ->
-                    val opplysning: Opplysning<*> =
-                        when (val datatype = row.string("datatype")) {
-                            "Boolsk" -> row.opplysning(Boolsk)
-                            "Heltall" -> row.opplysning(Heltall)
-                            "Desimaltall" -> row.opplysning(Desimaltall)
-                            else -> throw IllegalStateException("Ukjent datatype $datatype")
-                        }
-                    opplysning
+                    val datatype = Datatype.fromString(row.string("datatype"))
+                    row.opplysning(datatype)
                 }.asSingle,
             )
         }
