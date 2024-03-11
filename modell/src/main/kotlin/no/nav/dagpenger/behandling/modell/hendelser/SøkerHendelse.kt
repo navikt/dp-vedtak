@@ -1,5 +1,7 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Regelsett
 import java.time.LocalDate
 import java.util.UUID
 
@@ -15,4 +17,8 @@ abstract class SøkerHendelse(
             "søknadId" to søknadId.toString(),
             "gjelderDato" to gjelderDato.toString(),
         )
+
+    abstract fun regelsett(): List<Regelsett>
+
+    abstract fun avklarer(): Opplysningstype<*>
 }

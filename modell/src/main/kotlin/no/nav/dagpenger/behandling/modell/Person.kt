@@ -5,11 +5,6 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
-import no.nav.dagpenger.regel.Alderskrav
-import no.nav.dagpenger.regel.Minsteinntekt
-import no.nav.dagpenger.regel.Opptjeningstid
-import no.nav.dagpenger.regel.RettTilDagpenger
-import no.nav.dagpenger.regel.Søknadstidspunkt
 
 class Person(
     private val ident: PersonIdentifikator,
@@ -29,12 +24,6 @@ class Person(
             Behandling(
                 hendelse,
                 emptyList(),
-                // TODO: Må flyttes ut til et noe mer passende sted. En dings som skjønner hvordan vi behandler en gitt hendelse
-                RettTilDagpenger.regelsett,
-                Alderskrav.regelsett,
-                Minsteinntekt.regelsett,
-                Søknadstidspunkt.regelsett,
-                Opptjeningstid.regelsett,
             ).also { behandling ->
                 personobservatører.forEach { behandling.leggTilObservatør(it) }
                 behandlinger.add(behandling)

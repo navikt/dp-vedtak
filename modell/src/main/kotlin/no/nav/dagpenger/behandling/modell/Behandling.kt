@@ -12,9 +12,7 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
-import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.verdier.Ulid
-import no.nav.dagpenger.regel.RettTilDagpenger
 import java.util.UUID
 
 class Behandling private constructor(
@@ -22,19 +20,17 @@ class Behandling private constructor(
     private val behandler: SøkerHendelse,
     aktiveOpplysninger: List<Opplysning<*>> = emptyList(),
     basertPå: List<Behandling> = emptyList(),
-    vararg regelsett: Regelsett,
 ) : Aktivitetskontekst {
     constructor(
         behandler: SøkerHendelse,
         opplysninger: List<Opplysning<*>>,
-        vararg regelsett: Regelsett,
         basertPå: List<Behandling> = emptyList(),
-    ) : this(UUIDv7.ny(), behandler, opplysninger, basertPå, *regelsett)
+    ) : this(UUIDv7.ny(), behandler, opplysninger, basertPå)
 
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
     private val opplysninger = Opplysninger(aktiveOpplysninger, tidligereOpplysninger)
 
-    private val regelkjøring = Regelkjøring(behandler.gjelderDato, opplysninger, *regelsett)
+    private val regelkjøring = Regelkjøring(behandler.gjelderDato, opplysninger, *behandler.regelsett().toTypedArray())
     private val observatører = mutableListOf<BehandlingObservatør>()
 
     internal fun leggTilObservatør(observatør: BehandlingObservatør) {
@@ -43,7 +39,7 @@ class Behandling private constructor(
 
     fun opplysninger(): LesbarOpplysninger = opplysninger
 
-    private fun informasjonsbehov() = regelkjøring.informasjonsbehov(RettTilDagpenger.kravPåDagpenger)
+    private fun informasjonsbehov() = regelkjøring.informasjonsbehov(behandler.avklarer())
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
