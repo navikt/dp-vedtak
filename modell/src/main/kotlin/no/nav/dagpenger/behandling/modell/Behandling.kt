@@ -94,10 +94,5 @@ class Behandling private constructor(
 
 @Suppress("ktlint:standard:class-naming")
 object Behandlingsvarsler {
-    data object SØKNAD_MOTTATT : Varselkode2("Søknad mottatt - midlertidlig test av varsel")
-}
-
-// TODO: Midlertidlig bridge til vi får fikset aktivitetsloggen
-abstract class Varselkode2(override val varseltekst: String) : Varselkode() {
-    override fun toString() = "${this::class.java.simpleName}: $varseltekst"
+    data object SØKNAD_MOTTATT : Varselkode("Søknad mottatt - midlertidlig test av varsel")
 }

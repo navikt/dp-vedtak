@@ -2,7 +2,7 @@ package no.nav.dagpenger.behandling.mediator
 
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.aktivitetslogg.Aktivitet
+import no.nav.dagpenger.aktivitetslogg.aktivitet.Behov
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -19,7 +19,7 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
 
     private fun håndter(
         hendelse: PersonHendelse,
-        behov: List<Aktivitet.Behov>,
+        behov: List<Behov>,
     ) {
         behov
             .groupBy { it.kontekst() }
@@ -41,7 +41,7 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
             }
     }
 
-    private fun Map<Map<String, String>, List<Aktivitet.Behov>>.grupperBehovTilDetaljer() =
+    private fun Map<Map<String, String>, List<Behov>>.grupperBehovTilDetaljer() =
         mapValues { (kontekst, behovliste) ->
             behovliste
                 .groupBy({ it.type.name }, { it.detaljer() })
@@ -50,7 +50,7 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
 
     private fun <K : Any> Map<K, List<Map<String, Any?>>>.ikkeTillatUnikeDetaljerPåSammeBehov(
         kontekst: Map<String, String>,
-        behovliste: List<Aktivitet.Behov>,
+        behovliste: List<Behov>,
     ) = mapValues { (_, detaljerList) ->
         // tillater duplikate detaljer-maps, så lenge de er like
         detaljerList

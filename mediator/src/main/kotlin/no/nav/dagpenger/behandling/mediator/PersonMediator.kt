@@ -2,10 +2,10 @@ package no.nav.dagpenger.behandling.mediator
 
 import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
+import no.nav.dagpenger.aktivitetslogg.AktivitetsloggObserver
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonIdentifikator
 import no.nav.dagpenger.behandling.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
-import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
@@ -15,7 +15,8 @@ internal class PersonMediator(
     private val personRepository: PersonRepository,
     private val aktivitetsloggMediator: AktivitetsloggMediator,
     private val behovMediator: BehovMediator,
-    private val personobservatører: List<PersonObservatør> = emptyList(),
+    private val denAndreHendelseMediatoren: DenAndreHendelseMediatoren,
+    private val aktivitetsloggObservatørerer: List<AktivitetsloggObserver> = emptyList(),
 ) {
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -39,7 +40,7 @@ internal class PersonMediator(
         håndter: (Person) -> Unit,
     ) = try {
         val person = hentEllerOpprettPerson(hendelse)
-        personobservatører.forEach { person.leggTilObservatør(it) }
+        aktivitetsloggObservatørerer.forEach { hendelse.registrer(it) }
         håndter(person)
         lagre(person)
         ferdigstill(hendelse)
@@ -75,6 +76,7 @@ internal class PersonMediator(
         }
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
         behovMediator.håndter(hendelse)
+        denAndreHendelseMediatoren.håndter(hendelse)
         aktivitetsloggMediator.håndter(hendelse)
     }
 

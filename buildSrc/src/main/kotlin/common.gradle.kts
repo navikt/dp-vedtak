@@ -1,11 +1,10 @@
-import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
-    id("com.diffplug.spotless")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 repositories {
@@ -23,7 +22,7 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 tasks.test {
@@ -36,16 +35,6 @@ tasks.test {
     }
 }
 
-configure<SpotlessExtension> {
-    kotlin {
-        ktlint()
-    }
-
-    kotlinGradle {
-        ktlint()
-    }
-}
-
 tasks.withType<KotlinCompile>().configureEach {
-    dependsOn("spotlessApply")
+    dependsOn("ktlintFormat")
 }

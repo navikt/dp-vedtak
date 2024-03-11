@@ -8,7 +8,7 @@ tasks.named("compileKotlin").configure {
     dependsOn("openApiGenerate")
 }
 
-tasks.named("spotlessKotlin").configure {
+tasks.named("runKtlintFormatOverMainSourceSet").configure {
     dependsOn("openApiGenerate")
 }
 
@@ -20,9 +20,9 @@ sourceSets {
     }
 }
 
-spotless {
-    kotlin {
-        targetExclude("**/generated/**")
+ktlint {
+    filter {
+        exclude("**/generated/**")
     }
 }
 
