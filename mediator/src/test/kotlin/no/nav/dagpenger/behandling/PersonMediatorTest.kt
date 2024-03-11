@@ -8,6 +8,7 @@ import io.mockk.mockk
 import no.nav.dagpenger.behandling.db.InMemoryMeldingRepository
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.mediator.BehovMediator
+import no.nav.dagpenger.behandling.mediator.DenAndreHendelseMediatoren
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.regel.Behov.InntektId
@@ -33,7 +34,8 @@ internal class PersonMediatorTest {
                     personRepository = personRepository,
                     aktivitetsloggMediator = mockk(relaxed = true),
                     behovMediator = BehovMediator(rapid),
-                    personobservatører = listOf(KafkaBehandlingObservatør(rapid)),
+                    denAndreHendelseMediatoren = DenAndreHendelseMediatoren(rapid),
+                    observatører = listOf(KafkaBehandlingObservatør(rapid)),
                 ),
             hendelseRepository = InMemoryMeldingRepository(),
         )
@@ -54,8 +56,9 @@ internal class PersonMediatorTest {
                 søknadstidspunkt = 5.mai(2021),
             )
         testPerson.sendSøknad()
+        rapid.harHendelse("behandling_opprettet")
 
-        rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
+        rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato", offset = 2)
         testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
         rapid.harBehov(InntektId) {
@@ -79,15 +82,21 @@ internal class PersonMediatorTest {
     }
 }
 
-private fun TestRapid.harBehov(vararg behov: String) {
+private fun TestRapid.harBehov(
+    vararg behov: String,
+    offset: Int = 1,
+) {
     withClue("Siste melding på rapiden skal inneholde behov: ${behov.toList()}") {
-        inspektør.message(inspektør.size - 1)["@behov"].map { it.asText() } shouldContainAll behov.toList()
+        inspektør.message(inspektør.size - offset)["@behov"].map { it.asText() } shouldContainAll behov.toList()
     }
 }
 
-private fun TestRapid.harHendelse(navn: String) {
+private fun TestRapid.harHendelse(
+    navn: String,
+    offset: Int = 1,
+) {
     withClue("Siste melding på rapiden skal inneholde hendelse: $navn") {
-        inspektør.message(inspektør.size - 1)["@event_name"].asText() shouldBe navn
+        inspektør.message(inspektør.size - offset)["@event_name"].asText() shouldBe navn
     }
 }
 

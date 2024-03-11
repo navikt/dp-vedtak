@@ -25,7 +25,6 @@ class Person(
                 hendelse,
                 emptyList(),
             ).also { behandling ->
-                personobservatører.forEach { behandling.leggTilObservatør(it) }
                 behandlinger.add(behandling)
             }
         behandling.håndter(hendelse)
@@ -45,5 +44,9 @@ class Person(
     // todo: vi trenger en metode for å hente behandlinger fra utsiden.
     fun behandlinger() = behandlinger.toList()
 
-    override fun toSpesifikkKontekst(): SpesifikkKontekst = SpesifikkKontekst("Person", mapOf("ident" to ident.identifikator()))
+    override fun toSpesifikkKontekst(): SpesifikkKontekst = PersonKontekst(ident.identifikator())
+
+    data class PersonKontekst(val ident: String) : SpesifikkKontekst("Person") {
+        override val kontekstMap = mapOf("ident" to ident)
+    }
 }

@@ -42,6 +42,7 @@ class TestPerson(
             mapOf(
                 "ident" to ident,
                 "behandlingId" to behandlingId,
+                "søknadId" to søknadId,
                 "@final" to true,
                 "@løsning" to løsninger,
             ),

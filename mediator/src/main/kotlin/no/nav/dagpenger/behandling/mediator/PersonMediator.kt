@@ -16,7 +16,7 @@ internal class PersonMediator(
     private val aktivitetsloggMediator: AktivitetsloggMediator,
     private val behovMediator: BehovMediator,
     private val denAndreHendelseMediatoren: DenAndreHendelseMediatoren,
-    private val aktivitetsloggObservatørerer: List<AktivitetsloggObserver> = emptyList(),
+    private val observatører: List<AktivitetsloggObserver> = emptyList(),
 ) {
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -40,7 +40,7 @@ internal class PersonMediator(
         håndter: (Person) -> Unit,
     ) = try {
         val person = hentEllerOpprettPerson(hendelse)
-        aktivitetsloggObservatørerer.forEach { hendelse.registrer(it) }
+        observatører.forEach { hendelse.registrer(it) }
         håndter(person)
         lagre(person)
         ferdigstill(hendelse)

@@ -2,11 +2,11 @@ package no.nav.dagpenger.behandling
 
 import mu.withLoggingContext
 import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEvent
-import no.nav.dagpenger.behandling.modell.PersonObservatør
+import no.nav.dagpenger.behandling.modell.BehandlingObservatørAdapter
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 
-internal class KafkaBehandlingObservatør(private val messageContext: MessageContext) : PersonObservatør {
+internal class KafkaBehandlingObservatør(private val messageContext: MessageContext) : BehandlingObservatørAdapter {
     private companion object {
         val logger = mu.KotlinLogging.logger {}
     }

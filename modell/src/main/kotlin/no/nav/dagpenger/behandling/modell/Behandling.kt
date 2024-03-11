@@ -3,7 +3,7 @@ package no.nav.dagpenger.behandling.modell
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
-import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEvent
+import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøkerHendelse
@@ -31,11 +31,6 @@ class Behandling private constructor(
     private val opplysninger = Opplysninger(aktiveOpplysninger, tidligereOpplysninger)
 
     private val regelkjøring = Regelkjøring(behandler.gjelderDato, opplysninger, *behandler.regelsett().toTypedArray())
-    private val observatører = mutableListOf<BehandlingObservatør>()
-
-    internal fun leggTilObservatør(observatør: BehandlingObservatør) {
-        observatører.add(observatør)
-    }
 
     fun opplysninger(): LesbarOpplysninger = opplysninger
 
@@ -45,12 +40,8 @@ class Behandling private constructor(
         hendelse.kontekst(this)
         hendelse.info("Mottatt søknad og startet behandling")
         hendelse.varsel(Behandlingsvarsler.SØKNAD_MOTTATT)
+        hendelse.hendelse(BehandlingHendelser.behandling_opprettet, "Behandling opprettet")
 
-        observatører.forEach {
-            it.behandlingOpprettet(
-                BehandlingEvent.Opprettet(hendelse.ident, behandlingId, hendelse.søknadId),
-            )
-        }
         hvaTrengerViNå(hendelse)
     }
 
@@ -64,9 +55,7 @@ class Behandling private constructor(
         if (trenger.isEmpty()) {
             // TODO: Tilstand?
             hendelse.info("Alle opplysninger mottatt")
-            observatører.forEach {
-                it.forslagTilVedtak(BehandlingEvent.ForslagTilVedtak(behandler.ident, behandlingId, behandler.søknadId))
-            }
+            hendelse.hendelse(BehandlingHendelser.forslag_til_vedtak, "Foreslår vedtak")
         }
     }
 
@@ -89,10 +78,21 @@ class Behandling private constructor(
             )
         }
 
-    override fun toSpesifikkKontekst() = SpesifikkKontekst("Behandling", mapOf("behandlingId" to behandlingId.toString()))
+    override fun toSpesifikkKontekst() = BehandlingKontekst(behandlingId, behandler.søknadId)
+
+    // TODO: VIl helst ikke ha søknadId inn her
+    data class BehandlingKontekst(val behandlingId: UUID, val søknadId: UUID) : SpesifikkKontekst("Behandling") {
+        override val kontekstMap = mapOf("behandlingId" to behandlingId.toString(), "søknadId" to søknadId.toString())
+    }
 }
 
 @Suppress("ktlint:standard:class-naming")
 object Behandlingsvarsler {
     data object SØKNAD_MOTTATT : Varselkode("Søknad mottatt - midlertidlig test av varsel")
+}
+
+@Suppress("ktlint:standard:enum-entry-name-case")
+enum class BehandlingHendelser : Hendelse.Hendelsetype {
+    behandling_opprettet,
+    forslag_til_vedtak,
 }

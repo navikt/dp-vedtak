@@ -58,11 +58,13 @@ internal class BehandlingTest {
     fun `behandling sender ut behandling opprettet eventer `() {
         val behandling =
             Behandling(
-                behandler = søknadInnsendtHendelse,
+                behandler =
+                    søknadInnsendtHendelse.also {
+                        it.registrer(testObservatør)
+                        søknadInnsendtHendelse.kontekst(it)
+                    },
                 opplysninger = emptyList(),
-            ).also {
-                it.leggTilObservatør(testObservatør)
-            }
+            )
 
         behandling.håndter(søknadInnsendtHendelse)
         testObservatør.behandlingOpprettet shouldNotBe null
@@ -71,7 +73,7 @@ internal class BehandlingTest {
     }
 }
 
-private class TestObservatør : BehandlingObservatør {
+private class TestObservatør : BehandlingObservatørAdapter {
     lateinit var behandlingOpprettet: BehandlingEvent.Opprettet
 
     override fun behandlingOpprettet(behandlingOpprettet: BehandlingEvent.Opprettet) {
