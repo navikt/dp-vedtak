@@ -5,7 +5,6 @@ import no.nav.dagpenger.behandling.mediator.IHendelseMediator
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.asLocalDateTime
-import org.slf4j.Logger
 import java.util.UUID
 
 internal abstract class HendelseMessage(private val packet: JsonMessage) {
@@ -32,7 +31,7 @@ internal abstract class HendelseMessage(private val packet: JsonMessage) {
             mapOf(
                 "event_name" to navn,
                 "id" to id.toString(),
-                "opprettet" to opprettet.toString()
+                "opprettet" to opprettet.toString(),
             )
 
     protected open fun additionalTracinginfo(packet: JsonMessage): Map<String, String> = emptyMap()

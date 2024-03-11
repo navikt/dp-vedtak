@@ -4,7 +4,6 @@ import mu.KotlinLogging
 import no.nav.dagpenger.behandling.KafkaBehandlingObservatør
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
-import no.nav.dagpenger.behandling.mediator.melding.InMemoryMeldingRepository
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Person
@@ -58,6 +57,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
+        PostgresDataSourceBuilder.runMigration()
         logger.info { "Starter opp dp-behandling" }
     }
 }

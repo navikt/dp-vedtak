@@ -1,7 +1,6 @@
 package no.nav.dagpenger.behandling.mediator
 
 import com.fasterxml.jackson.databind.JsonNode
-import mu.withLoggingContext
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.mediator.melding.HendelseRepository
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
