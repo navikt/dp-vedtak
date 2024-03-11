@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling.mediator
 
 import com.fasterxml.jackson.databind.JsonNode
+import mu.withLoggingContext
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.mediator.melding.HendelseRepository
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
@@ -12,6 +13,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.helse.rapids_rivers.withMDC
 import java.util.UUID
 
 internal class HendelseMediator(
@@ -49,9 +51,11 @@ internal class HendelseMediator(
         message: HendelseMessage,
         håndter: (HENDELSE) -> Unit,
     ) {
-        message.lagreMelding(hendelseRepository)
-        håndter(hendelse) // @todo: feilhåndtering
-        hendelseRepository.markerSomBehandlet(message.id)
+        withMDC(message.tracinginfo()) {
+            message.lagreMelding(hendelseRepository)
+            håndter(hendelse) // @todo: feilhåndtering
+            hendelseRepository.markerSomBehandlet(message.id)
+        }
     }
 }
 

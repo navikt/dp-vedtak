@@ -18,7 +18,7 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
         id: UUID,
         toJson: String,
     ) {
-        val hendelseType = hendelseType(hendelseMessage) ?: return
+        val hendelseType = meldingType(hendelseMessage) ?: return
 
         sessionOf(dataSource).use { session ->
             session.transaction { transactionalSession: TransactionalSession ->
@@ -81,10 +81,10 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
             ) != null
         }
 
-    private fun hendelseType(hendelseMessage: HendelseMessage): HendelseTypeDTO? {
+    private fun meldingType(hendelseMessage: HendelseMessage): MeldingTypeDTO? {
         return when (hendelseMessage) {
-            is SøknadInnsendtMessage -> HendelseTypeDTO.SØKNAD_INNSENDT
-            is OpplysningSvarMessage -> HendelseTypeDTO.OPPLYSNING_SVAR
+            is SøknadInnsendtMessage -> MeldingTypeDTO.SØKNAD_INNSENDT
+            is OpplysningSvarMessage -> MeldingTypeDTO.OPPLYSNING_SVAR
             else ->
                 null.also {
                     logger.warn { "ukjent meldingstype ${hendelseMessage::class.simpleName}: melding lagres ikke" }
@@ -97,7 +97,7 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
     }
 }
 
-private enum class HendelseTypeDTO {
+private enum class MeldingTypeDTO {
     SØKNAD_INNSENDT,
     OPPLYSNING_SVAR,
 }
