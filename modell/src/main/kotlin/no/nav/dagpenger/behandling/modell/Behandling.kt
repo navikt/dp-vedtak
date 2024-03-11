@@ -1,6 +1,5 @@
 package no.nav.dagpenger.behandling.modell
 
-import no.nav.dagpenger.aktivitetslogg.Aktivitet
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
@@ -96,8 +95,6 @@ class Behandling private constructor(
 
     override fun toSpesifikkKontekst() = SpesifikkKontekst("Behandling", mapOf("behandlingId" to behandlingId.toString()))
 }
-
-data class OpplysningBehov(override val name: String) : Aktivitet.Behov.Behovtype
 
 @Suppress("ktlint:standard:class-naming")
 object Behandlingsvarsler {
