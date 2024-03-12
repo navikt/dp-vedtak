@@ -19,17 +19,17 @@ class DenAndreHendelseMediatoren(private val rapidsConnection: RapidsConnection)
     }
 
     private fun håndter(
-        hendelse: PersonHendelse,
+        personhendelse: PersonHendelse,
         hendelser: List<Hendelse>,
     ) {
-        val hendelsestyper = hendelser.groupBy { it.type }.mapValues { (_, behovList) -> behovList.single() }
+        val hendelsestyper = hendelser.groupBy { it.type }.mapValues { (_, hendelseliste) -> hendelseliste.single() }
 
-        hendelsestyper.forEach { (type, behovMap) ->
-            val data = behovMap.detaljer() + behovMap.kontekst()
+        hendelsestyper.forEach { (type, hendelse) ->
+            val data = hendelse.detaljer() + hendelse.kontekst()
             val melding = JsonMessage.newMessage(type.name, data)
             sikkerlogg.info { "sender hendelse ${type.name}:\n${melding.toJson()}}" }
             logger.info { "sender hendelse for ${type.name}" }
-            rapidsConnection.publish(hendelse.ident(), melding.toJson())
+            rapidsConnection.publish(personhendelse.ident(), melding.toJson())
         }
     }
 }
