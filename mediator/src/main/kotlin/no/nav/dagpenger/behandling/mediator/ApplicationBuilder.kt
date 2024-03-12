@@ -1,7 +1,6 @@
 package no.nav.dagpenger.behandling.mediator
 
 import mu.KotlinLogging
-import no.nav.dagpenger.behandling.KafkaBehandlingObservatør
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
@@ -45,7 +44,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
                     aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
                     behovMediator = BehovMediator(rapidsConnection),
                     denAndreHendelseMediatoren = DenAndreHendelseMediatoren(rapidsConnection),
-                    observatører = listOf(KafkaBehandlingObservatør(rapidsConnection)),
+                    observatører = emptyList(),
                 ),
             hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),
         )

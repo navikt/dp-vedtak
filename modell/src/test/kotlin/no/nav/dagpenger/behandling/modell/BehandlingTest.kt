@@ -2,9 +2,8 @@ package no.nav.dagpenger.behandling.modell
 
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
-import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEvent
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
@@ -22,7 +21,6 @@ internal class BehandlingTest {
             meldingsreferanseId = søknadId,
             gjelderDato = LocalDate.now(),
         )
-    private val testObservatør = TestObservatør()
     private val tidligereOpplysning = Opplysningstype.somDesimaltall("opplysning-fra-tidligere-behandling")
 
     @Test
@@ -60,25 +58,18 @@ internal class BehandlingTest {
             Behandling(
                 behandler =
                     søknadInnsendtHendelse.also {
-                        it.registrer(testObservatør)
                         søknadInnsendtHendelse.kontekst(it)
                     },
                 opplysninger = emptyList(),
             )
 
         behandling.håndter(søknadInnsendtHendelse)
-        testObservatør.behandlingOpprettet shouldNotBe null
-        testObservatør.behandlingOpprettet.ident shouldBe ident
-        testObservatør.behandlingOpprettet.søknadId shouldBe søknadId
+        søknadInnsendtHendelse.hendelse() shouldHaveSize 1
+        val hendelse = søknadInnsendtHendelse.hendelse().first()
+        hendelse.type.name shouldBe "behandling_opprettet"
+        val kontekst = hendelse.kontekst()
+        kontekst.shouldContain("behandlingId", behandling.behandlingId.toString())
+        kontekst.shouldContain("søknadId", søknadId.toString())
+        kontekst.shouldContain("ident", ident)
     }
-}
-
-private class TestObservatør : BehandlingObservatørAdapter {
-    lateinit var behandlingOpprettet: BehandlingEvent.Opprettet
-
-    override fun behandlingOpprettet(behandlingOpprettet: BehandlingEvent.Opprettet) {
-        this.behandlingOpprettet = behandlingOpprettet
-    }
-
-    override fun forslagTilVedtak(forslagTilVedtak: BehandlingEvent.ForslagTilVedtak) {}
 }

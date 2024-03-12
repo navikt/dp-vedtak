@@ -10,13 +10,7 @@ class Person(
     private val ident: PersonIdentifikator,
     private val behandlinger: MutableList<Behandling> = mutableListOf(),
 ) : Aktivitetskontekst {
-    private val personobservatører = mutableListOf<PersonObservatør>()
-
     fun ident() = ident
-
-    fun leggTilObservatør(observatør: PersonObservatør) {
-        personobservatører.add(observatør)
-    }
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.leggTilKontekst(this)
