@@ -60,7 +60,7 @@ internal class PersonMediatorTest {
             testPerson.sendSøknad()
             rapid.harHendelse("behandling_opprettet")
 
-            rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato", offset = 2)
+            rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato", melding = 2)
             testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
             rapid.harBehov(InntektId) {
@@ -100,10 +100,10 @@ private fun TestRapid.harHendelse(
 
 private fun TestRapid.harBehov(
     vararg behov: String,
-    offset: Int = 1,
+    melding: Int = 1,
 ) {
     withClue("Siste melding på rapiden skal inneholde behov: ${behov.toList()}") {
-        inspektør.message(inspektør.size - offset)["@behov"].map { it.asText() } shouldContainAll behov.toList()
+        inspektør.message(inspektør.size - melding)["@behov"].map { it.asText() } shouldContainAll behov.toList()
     }
 }
 

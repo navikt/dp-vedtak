@@ -30,9 +30,7 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
                 queryOf(
                     //language=PostgreSQL
                     """
-                    SELECT * 
-                    FROM opplysningstabell
-                    WHERE id = :id
+                    SELECT * FROM opplysningstabell WHERE id = :id
                     """.trimIndent(),
                     mapOf("id" to opplysningId),
                 ).map { row ->
