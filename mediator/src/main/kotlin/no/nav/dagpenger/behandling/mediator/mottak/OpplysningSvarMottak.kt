@@ -1,6 +1,5 @@
 package no.nav.dagpenger.behandling.mediator.mottak
 
-import com.fasterxml.jackson.databind.JsonNode
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
@@ -84,7 +83,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
                     return@forEach
                 }
                 // @todo: Forventer at verdi er en nøkkel på alle løsninger men vi må skrive om behovløserne for å få dette til å stemme
-                val verdi = if(jsonVerdi.isObject) jsonVerdi["verdi"] else jsonVerdi
+                val verdi = if (jsonVerdi.isObject) jsonVerdi["verdi"] else jsonVerdi
                 val type = Opplysningstype.typer.single { opplysningstype -> opplysningstype.id == typeNavn }
                 val opplysning =
                     @Suppress("UNCHECKED_CAST")
@@ -118,4 +117,3 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
         }
     }
 }
-
