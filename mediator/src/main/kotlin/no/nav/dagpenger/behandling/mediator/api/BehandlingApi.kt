@@ -47,9 +47,7 @@ fun Application.behandlingApi(personRepository: PersonRepository) {
                 get("{behandlingId}") {
                     val behandlingId =
                         call.parameters["behandlingId"]?.let {
-                            UUID.fromString(
-                                it,
-                            )
+                            UUID.fromString(it)
                         } ?: throw IllegalArgumentException("Mangler behandlingId")
 
                     val behandling = personRepository.hent(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")

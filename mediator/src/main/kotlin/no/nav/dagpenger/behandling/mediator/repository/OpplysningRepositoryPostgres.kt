@@ -30,11 +30,9 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
                 queryOf(
                     //language=PostgreSQL
                     """
-                    SELECT opplysning.*, opplysning_verdi.*, opplysningstype.id AS type_id, opplysningstype.navn AS type_navn, opplysningstype.datatype
-                    FROM opplysning 
-                    LEFT JOIN opplysningstype ON opplysning.opplysningstype_id = opplysningstype.opplysningstype_id
-                    LEFT JOIN opplysning_verdi ON opplysning.id = opplysning_verdi.opplysning_id
-                    WHERE opplysning.id = :id
+                    SELECT * 
+                    FROM opplysningstabell
+                    WHERE id = :id
                     """.trimIndent(),
                     mapOf("id" to opplysningId),
                 ).map { row ->
@@ -50,8 +48,8 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
         val opplysningstype = Opplysningstype(string("type_navn").id(string("type_id")), datatype)
         val gyldighetsperiode =
             Gyldighetsperiode(
-                localDateTimeOrNull("fom") ?: LocalDateTime.MIN,
-                localDateTimeOrNull("tom") ?: LocalDateTime.MAX,
+                localDateTimeOrNull("gyldig_fom") ?: LocalDateTime.MIN,
+                localDateTimeOrNull("gyldig_tom") ?: LocalDateTime.MAX,
             )
         val verdi = datatype.verdi(this)
         return when (string("status")) {
@@ -109,7 +107,7 @@ class OpplysningRepositoryPostgres : OpplysningRepository {
             WITH ins AS (
                 SELECT opplysningstype_id FROM opplysningstype WHERE id = :typeId AND navn = :typeNavn AND  datatype = :datatype
             )
-            INSERT INTO opplysning (id, status, opplysningstype_id, fom, tom)
+            INSERT INTO opplysning (id, status, opplysningstype_id, gyldig_fom, gyldig_tom)
             VALUES (:id, :status, (SELECT opplysningstype_id FROM ins), :fom::timestamp, :tom::timestamp)
             ON CONFLICT DO NOTHING
             """.trimIndent(),

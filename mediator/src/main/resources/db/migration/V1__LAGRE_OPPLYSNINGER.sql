@@ -25,8 +25,8 @@ CREATE TABLE opplysning
     id                 uuid PRIMARY KEY,
     status             TEXT                     NOT NULL,
     opplysningstype_id BIGINT                   NOT NULL REFERENCES opplysningstype (opplysningstype_id),
-    fom                TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
-    tom                TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
+    gyldig_fom         TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
+    gyldig_tom         TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
     opprettet          TIMESTAMP WITH TIME ZONE      DEFAULT NOW()
 );
 
@@ -49,3 +49,24 @@ CREATE TABLE opplysning_kilde
     meldingsreferanse_id uuid REFERENCES melding (melding_id),
     opprettet            TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+CREATE VIEW opplysningstabell AS
+SELECT opplysning.id,
+       opplysning.status,
+       opplysningstype.datatype,
+       opplysningstype.id   AS type_id,
+       opplysningstype.navn AS type_navn,
+       opplysning.gyldig_fom,
+       opplysning.gyldig_tom,
+       opplysning_verdi.verdi_heltall,
+       opplysning_verdi.verdi_desimaltall,
+       opplysning_verdi.verdi_dato,
+       opplysning_verdi.verdi_boolsk,
+       opplysning_verdi.verdi_string
+FROM opplysning
+         LEFT JOIN
+     opplysningstype ON opplysning.opplysningstype_id = opplysningstype.opplysningstype_id
+         LEFT JOIN
+     opplysning_verdi ON opplysning.id = opplysning_verdi.opplysning_id;
+
+
