@@ -2,6 +2,8 @@ package no.nav.dagpenger.behandling.mediator
 
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder
+import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.clean
+import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningRepositoryPostgres
@@ -60,7 +62,8 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
-        PostgresDataSourceBuilder.runMigration()
+        clean()
+        runMigration()
         logger.info { "Starter opp dp-behandling" }
     }
 }
