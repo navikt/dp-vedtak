@@ -28,7 +28,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
 
             override fun lagre(person: Person) {
                 personer[person.ident()] = person
-                // TODO: opplysningRepository.lagreOpplysninger(person.behandlinger().flatMap { it.opplysninger().finnAlle() })
+                opplysningRepository.lagreOpplysninger(person.behandlinger().flatMap { it.opplysninger().finnAlle() })
             }
 
             override fun hent(behandlingId: UUID): Behandling? {
