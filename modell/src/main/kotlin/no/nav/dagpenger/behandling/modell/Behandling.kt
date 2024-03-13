@@ -55,7 +55,14 @@ class Behandling private constructor(
         if (trenger.isEmpty()) {
             // TODO: Tilstand?
             hendelse.info("Alle opplysninger mottatt")
-            hendelse.hendelse(BehandlingHendelser.forslag_til_vedtak, "Foreslår vedtak")
+            hendelse.hendelse(
+                BehandlingHendelser.forslag_til_vedtak,
+                "Foreslår vedtak",
+                mapOf(
+                    "utfall" to opplysninger.finnOpplysning(behandler.avklarer()).verdi,
+                    "harAvklart" to opplysninger.finnOpplysning(behandler.avklarer()).opplysningstype.navn,
+                ),
+            )
         }
     }
 

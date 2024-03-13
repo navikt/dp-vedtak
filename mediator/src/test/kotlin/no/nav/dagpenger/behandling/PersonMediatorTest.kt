@@ -75,13 +75,27 @@ internal class PersonMediatorTest {
 
             testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
 
-            rapid.harHendelse("forslag_til_vedtak")
+            rapid.harHendelse("forslag_til_vedtak") {
+                medBoolsk("utfall") shouldBe false
+            }
         }
 
-    private fun BehovHelper.opptjeningsperiodeEr(måneder: Int) {
+    private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {
         val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned))
         withClue("Opptjeningsperiode skal være 3 år") { periode.toTotalMonths() shouldBe måneder }
     }
+}
+
+private fun TestRapid.harHendelse(
+    navn: String,
+    offset: Int = 1,
+    block: Meldingsinnhold.() -> Unit = {},
+) {
+    val message = inspektør.message(inspektør.size - offset)
+    withClue("Siste melding på rapiden skal inneholde hendelse: $navn") {
+        message["@event_name"].asText() shouldBe navn
+    }
+    Meldingsinnhold(message).apply { block() }
 }
 
 private fun TestRapid.harBehov(
@@ -93,25 +107,18 @@ private fun TestRapid.harBehov(
     }
 }
 
-private fun TestRapid.harHendelse(
-    navn: String,
-    offset: Int = 1,
-) {
-    withClue("Siste melding på rapiden skal inneholde hendelse: $navn") {
-        inspektør.message(inspektør.size - offset)["@event_name"].asText() shouldBe navn
-    }
-}
-
 private fun TestRapid.harBehov(
     behov: String,
-    block: BehovHelper.() -> Unit,
+    block: Meldingsinnhold.() -> Unit,
 ) {
     harBehov(behov)
-    BehovHelper(inspektør.message(inspektør.size - 1)[behov]).apply { block() }
+    Meldingsinnhold(inspektør.message(inspektør.size - 1)[behov]).apply { block() }
 }
 
-private class BehovHelper(private val message: JsonNode) {
+private class Meldingsinnhold(private val message: JsonNode) {
     fun medTekst(navn: String) = message.get(navn)?.asText()
 
     fun medDato(navn: String) = message.get(navn)?.asLocalDate()
+
+    fun medBoolsk(navn: String) = message.get(navn)?.asBoolean()
 }
