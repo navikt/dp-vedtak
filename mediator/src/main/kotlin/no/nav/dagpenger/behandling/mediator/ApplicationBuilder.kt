@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
+import no.nav.dagpenger.behandling.mediator.repository.OpplysningRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonIdentifikator
@@ -16,6 +17,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
         private val logger = KotlinLogging.logger { }
     }
 
+    private val opplysningRepository = OpplysningRepositoryPostgres()
     private val personRepository =
         object : PersonRepository, BehandlingRepository {
             private val personer = mutableMapOf<PersonIdentifikator, Person>()
@@ -24,6 +26,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
 
             override fun lagre(person: Person) {
                 personer[person.ident()] = person
+                // TODO: opplysningRepository.lagreOpplysninger(person.behandlinger().flatMap { it.opplysninger().finnAlle() })
             }
 
             override fun hent(behandlingId: UUID): Behandling? {

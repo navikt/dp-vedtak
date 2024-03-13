@@ -6,11 +6,12 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import no.nav.dagpenger.behandling.db.InMemoryMeldingRepository
-import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
+import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.BehovMediator
 import no.nav.dagpenger.behandling.mediator.DenAndreHendelseMediatoren
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
+import no.nav.dagpenger.behandling.mediator.repository.InMemoryPersonRepository
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
@@ -48,33 +49,34 @@ internal class PersonMediatorTest {
     }
 
     @Test
-    fun `e2e av søknad innsendt`() {
-        val testPerson =
-            TestPerson(
-                ident,
-                rapid,
-                søknadstidspunkt = 5.mai(2021),
-            )
-        testPerson.sendSøknad()
-        rapid.harHendelse("behandling_opprettet")
+    fun `e2e av søknad innsendt`() =
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    søknadstidspunkt = 5.mai(2021),
+                )
+            testPerson.sendSøknad()
+            rapid.harHendelse("behandling_opprettet")
 
-        rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato", offset = 2)
-        testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
+            rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato", offset = 2)
+            testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
-        rapid.harBehov(InntektId) {
-            medDato(SisteAvsluttendeKalenderMåned) shouldBe 31.mars(2021)
-            medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.mars(2018)
-            opptjeningsperiodeEr(måneder = 36)
+            rapid.harBehov(InntektId) {
+                medDato(SisteAvsluttendeKalenderMåned) shouldBe 31.mars(2021)
+                medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.mars(2018)
+                opptjeningsperiodeEr(måneder = 36)
+            }
+            testPerson.løsBehov(InntektId)
+
+            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+
+            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
+
+            rapid.harHendelse("forslag_til_vedtak")
         }
-        testPerson.løsBehov(InntektId)
-
-        rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-        rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-
-        testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
-
-        rapid.harHendelse("forslag_til_vedtak")
-    }
 
     private fun BehovHelper.opptjeningsperiodeEr(måneder: Int) {
         val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned))
