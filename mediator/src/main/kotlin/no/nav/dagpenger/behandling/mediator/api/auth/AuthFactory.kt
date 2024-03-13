@@ -16,6 +16,7 @@ import io.ktor.server.auth.jwt.JWTAuthenticationProvider
 import kotlinx.coroutines.runBlocking
 import no.nav.dagpenger.behandling.mediator.Configuration
 import no.nav.dagpenger.behandling.mediator.api.auth.validering.autoriserADGrupper
+import java.net.URI
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
@@ -52,7 +53,7 @@ object AuthFactory {
 
     private fun JWTAuthenticationProvider.Config.verifiserTokenFormatOgSignatur() {
         verifier(
-            jwkProvider = jwkProvider(URL(azureAdConfiguration.jwksUri)),
+            jwkProvider = jwkProvider(URI(azureAdConfiguration.jwksUri).toURL()),
             issuer = azureAdConfiguration.issuer,
             configure = {
                 withAudience(Configuration.properties[azure_app.client_id])
