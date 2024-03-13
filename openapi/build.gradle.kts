@@ -11,6 +11,7 @@ tasks.named("compileKotlin").configure {
 tasks.named("runKtlintCheckOverMainSourceSet").configure {
     dependsOn("openApiGenerate")
 }
+
 tasks.named("runKtlintFormatOverMainSourceSet").configure {
     dependsOn("openApiGenerate")
 }
@@ -25,7 +26,7 @@ sourceSets {
 
 ktlint {
     filter {
-        exclude("**/generated/**")
+        exclude { element -> element.file.path.contains("generated/") }
     }
 }
 
