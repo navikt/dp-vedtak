@@ -16,7 +16,7 @@ internal class PersonMediator(
     private val aktivitetsloggMediator: AktivitetsloggMediator,
     private val behovMediator: BehovMediator,
     private val denAndreHendelseMediatoren: DenAndreHendelseMediatoren,
-    private val observatører: List<AktivitetsloggObserver> = emptyList(),
+    private val observatører: Set<AktivitetsloggObserver> = emptySet(),
 ) {
     private companion object {
         val logger = KotlinLogging.logger { }

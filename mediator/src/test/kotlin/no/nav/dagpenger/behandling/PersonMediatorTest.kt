@@ -36,7 +36,7 @@ internal class PersonMediatorTest {
                     aktivitetsloggMediator = mockk(relaxed = true),
                     behovMediator = BehovMediator(rapid),
                     denAndreHendelseMediatoren = DenAndreHendelseMediatoren(rapid),
-                    observatører = emptyList(),
+                    observatører = emptySet(),
                 ),
             hendelseRepository = InMemoryMeldingRepository(),
         )

@@ -91,6 +91,7 @@ object Behandlingsvarsler {
     data object SØKNAD_MOTTATT : Varselkode("Søknad mottatt - midlertidlig test av varsel")
 }
 
+// TODO: Vi bør ha bedre kontroll på navnene og kanskje henge sammen med behov?
 @Suppress("ktlint:standard:enum-entry-name-case")
 enum class BehandlingHendelser : Hendelse.Hendelsetype {
     behandling_opprettet,

@@ -8,6 +8,9 @@ tasks.named("compileKotlin").configure {
     dependsOn("openApiGenerate")
 }
 
+tasks.named("runKtlintCheckOverMainSourceSet").configure {
+    dependsOn("openApiGenerate")
+}
 tasks.named("runKtlintFormatOverMainSourceSet").configure {
     dependsOn("openApiGenerate")
 }
