@@ -32,9 +32,9 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
                         // TODO: Flat ut alle kontekster rett på root i behovet. Dette er for å være kompatibel med gamle behovløsere
                         behovMap.values.forEach { putAll(it as Map<String, Any>) }
                     }
-                    .let { JsonMessage.newNeed(behovMap.keys, it) }
+                    .let { JsonMessage.newNeed(behovMap.keys, it).also { message -> message.interestedIn("@behovId") } }
                     .also {
-                        withLoggingContext("behovId" to it.id) {
+                        withLoggingContext("behovId" to it["@behovId"].asUUID().toString()) {
                             sikkerlogg.info { "sender behov for ${behovMap.keys}:\n${it.toJson()}}" }
                             logger.info { "sender behov for ${behovMap.keys}" }
                             rapidsConnection.publish(hendelse.ident(), it.toJson())
