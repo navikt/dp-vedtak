@@ -81,7 +81,10 @@ class Behandling private constructor(
                         avhengighet.opplysningstype.id to verdi
                     } +
                         // @todo: Denne skal bort så fort vi har en behovløser vi kan være enige med innbyggerflate om. Tilpasset 'SøknadInnsendtTidspunktTjeneste' for å kunne teste
-                        mapOf("søknad_uuid" to behandler.søknadId.toString()),
+                        mapOf(
+                            "søknad_uuid" to behandler.søknadId.toString(),
+                            "InnsendtSøknadsId" to mapOf("urn" to "urn:soknadid:${behandler.søknadId}"),
+                        ),
             )
         }
 
