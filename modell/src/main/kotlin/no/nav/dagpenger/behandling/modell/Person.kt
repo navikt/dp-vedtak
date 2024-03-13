@@ -2,6 +2,7 @@ package no.nav.dagpenger.behandling.modell
 
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
+import no.nav.dagpenger.behandling.modell.Behandling.Companion.finn
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
@@ -26,7 +27,7 @@ class Person(
 
     fun håndter(hendelse: OpplysningSvarHendelse) {
         hendelse.leggTilKontekst(this)
-        val behandling = behandlinger.first() // .first { it.behandlingId == hendelse.behandlingId }
+        val behandling = behandlinger.finn(hendelse.behandlingId)
         behandling.håndter(hendelse)
     }
 

@@ -32,6 +32,15 @@ class Behandling private constructor(
 
     private val regelkjøring = Regelkjøring(behandler.gjelderDato, opplysninger, *behandler.regelsett().toTypedArray())
 
+    companion object {
+        fun List<Behandling>.finn(behandlingId: UUID) =
+            try {
+                single { it.behandlingId == behandlingId }
+            } catch (e: IllegalArgumentException) {
+                throw IllegalArgumentException("Fant flere behandlinger med samme id, id=$behandlingId", e)
+            }
+    }
+
     fun opplysninger(): LesbarOpplysninger = opplysninger
 
     private fun informasjonsbehov() = regelkjøring.informasjonsbehov(behandler.avklarer())

@@ -58,9 +58,9 @@ internal class PersonMediatorTest {
                     søknadstidspunkt = 5.mai(2021),
                 )
             testPerson.sendSøknad()
-            rapid.harHendelse("behandling_opprettet")
+            rapid.harHendelse("behandling_opprettet", offset = 2)
 
-            rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato", melding = 2)
+            rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
             testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
             rapid.harBehov(InntektId) {

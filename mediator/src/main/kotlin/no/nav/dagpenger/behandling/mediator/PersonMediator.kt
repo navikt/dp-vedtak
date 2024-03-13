@@ -75,8 +75,8 @@ internal class PersonMediator(
             sikkerLogger.info("aktivitetslogg inneholder meldinger:\n${hendelse.toLogString()}")
         }
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
-        behovMediator.håndter(hendelse)
         denAndreHendelseMediatoren.håndter(hendelse)
+        behovMediator.håndter(hendelse)
         aktivitetsloggMediator.håndter(hendelse)
     }
 

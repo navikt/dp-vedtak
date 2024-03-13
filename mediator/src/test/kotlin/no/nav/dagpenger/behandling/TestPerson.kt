@@ -12,8 +12,8 @@ class TestPerson(
     private val alder: Int = 30,
 ) {
     val inntektId = "01HQTE3GBWCSVYH6S436DYFREN"
-    val søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"
-    val behandlingId = "58897286-5668-47de-9ec7-30b9f950b432"
+    private val søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"
+    private val behandlingId by lazy { rapid.inspektør.field(1, "behandlingId").asText() }
 
     fun sendSøknad() = rapid.sendTestMessage(søknadInnsendt())
 
