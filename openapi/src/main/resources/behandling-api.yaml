@@ -362,7 +362,7 @@ components:
       bearerFormat: JWT
       description: |
         Bruker [AzureAD](https://docs.nais.io/security/auth/azure-ad) til autentisering. 
-        Token må ha `audience` satt til `[cluster]:teamdagpenger:dp-rapportering`.
+        Token må ha `audience` satt til `[cluster].teamdagpenger.dp-behandling`.
         
         For å teste APIet kan du lage et gyldig OBO-token ved å bruke wonderwalled:
-        - [dev-gcp](https://wonderwalled-idporten.intern.dev.nav.no/api/obo?aud=dev-gcp:teamdagpenger:dp-rapportering)
+        - [dev-gcp](https://azure-token-generator.intern.dev.nav.no/api/obo?aud=dev-gcp.teamdagpenger.dp-behandling)
