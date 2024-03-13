@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.mottak
 
+import com.fasterxml.jackson.databind.JsonNode
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
@@ -76,13 +77,15 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
 
     private val opplysning =
         mutableListOf<OpplysningSvar<*>>().apply {
-            packet["@løsning"].fields().forEach { (typeNavn, verdi) ->
+            packet["@løsning"].fields().forEach { (typeNavn, jsonVerdi) ->
 
                 if (Opplysningstype.typer.find { it.id == typeNavn } == null) {
                     logger.error { "Ukjent opplysningstype: $typeNavn" }
                     return@forEach
                 }
-                val type = Opplysningstype.typer.single { sadf -> sadf.id == typeNavn }
+                // @todo: Forventer at verdi er en nøkkel på alle løsninger men vi må skrive om behovløserne for å få dette til å stemme
+                val verdi = if(jsonVerdi.isObject) jsonVerdi["verdi"] else jsonVerdi
+                val type = Opplysningstype.typer.single { opplysningstype -> opplysningstype.id == typeNavn }
                 val opplysning =
                     @Suppress("UNCHECKED_CAST")
                     when (type.datatype) {
@@ -115,3 +118,4 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
         }
     }
 }
+
