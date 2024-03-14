@@ -1,5 +1,7 @@
 package no.nav.dagpenger.behandling.mediator
 
+import io.opentelemetry.api.trace.Span
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
@@ -12,6 +14,7 @@ class HendelseMediator(private val rapidsConnection: RapidsConnection) {
         val sikkerlogg = KotlinLogging.logger("tjenestekall.DenAndreHendelseMediatoren")
     }
 
+    @WithSpan
     internal fun håndter(hendelse: PersonHendelse) {
         hendelse.kontekster().forEach {
             if (!it.harFunksjonelleFeilEllerVerre()) håndter(hendelse, it.hendelse())
@@ -29,6 +32,7 @@ class HendelseMediator(private val rapidsConnection: RapidsConnection) {
             val melding = JsonMessage.newMessage(type.name, data)
             sikkerlogg.info { "sender hendelse ${type.name}:\n${melding.toJson()}}" }
             logger.info { "sender hendelse for ${type.name}" }
+            Span.current().addEvent("Publiserer hendelse") // Todo: ta med navn
             rapidsConnection.publish(personhendelse.ident(), melding.toJson())
         }
     }

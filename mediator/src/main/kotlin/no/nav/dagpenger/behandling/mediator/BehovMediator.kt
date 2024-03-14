@@ -1,5 +1,7 @@
 package no.nav.dagpenger.behandling.mediator
 
+import io.opentelemetry.api.trace.Span
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Behov
@@ -13,6 +15,7 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
         val sikkerlogg = KotlinLogging.logger("tjenestekall.BehovMediator")
     }
 
+    @WithSpan
     internal fun håndter(hendelse: PersonHendelse) {
         hendelse.kontekster().forEach { if (!it.harFunksjonelleFeilEllerVerre()) håndter(hendelse, it.behov()) }
     }
@@ -37,6 +40,7 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
                         withLoggingContext("behovId" to it["@behovId"].asUUID().toString()) {
                             sikkerlogg.info { "sender behov for ${behovMap.keys}:\n${it.toJson()}}" }
                             logger.info { "sender behov for ${behovMap.keys}" }
+                            Span.current().addEvent("Publiserer behov") // Todo: ta med navn
                             rapidsConnection.publish(hendelse.ident(), it.toJson())
                         }
                     }
