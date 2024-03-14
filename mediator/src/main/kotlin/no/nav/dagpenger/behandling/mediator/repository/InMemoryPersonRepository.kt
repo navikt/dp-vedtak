@@ -5,9 +5,10 @@ import no.nav.dagpenger.behandling.mediator.PersonRepository
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonIdentifikator
+import no.nav.dagpenger.opplysning.Opplysninger
 import java.util.UUID
 
-class InMemoryPersonRepository(private val opplysningRepository: OpplysningRepository = OpplysningRepositoryPostgres()) :
+class InMemoryPersonRepository(private val opplysningerRepository: OpplysningerRepository = OpplysningerRepositoryPostgres()) :
     PersonRepository,
     BehandlingRepository {
     private val persondb = mutableMapOf<PersonIdentifikator, Person>()
@@ -20,7 +21,7 @@ class InMemoryPersonRepository(private val opplysningRepository: OpplysningRepos
 
     override fun lagre(person: Person) {
         persondb[person.ident()] = person
-        opplysningRepository.lagreOpplysninger(person.behandlinger().flatMap { it.opplysninger().finnAlle() })
+        opplysningerRepository.lagreOpplysninger(person.behandlinger().map { it.opplysninger() as Opplysninger })
     }
 
     fun reset() {

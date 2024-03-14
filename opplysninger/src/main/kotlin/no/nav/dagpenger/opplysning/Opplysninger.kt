@@ -1,5 +1,7 @@
 package no.nav.dagpenger.opplysning
 
+import java.util.UUID
+
 interface LesbarOpplysninger {
     fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>
 
@@ -8,9 +10,12 @@ interface LesbarOpplysninger {
     fun finnAlle(opplysningstyper: List<Opplysningstype<*>>): List<Opplysning<*>>
 
     fun finnAlle(): List<Opplysning<*>>
+
+    fun finnOpplysning(opplysningId: UUID): Opplysning<*>
 }
 
-class Opplysninger(
+class Opplysninger private constructor(
+    val id: UUID,
     opplysninger: List<Opplysning<*>> = emptyList(),
     private val basertPå: List<Opplysninger> = emptyList(),
 ) : LesbarOpplysninger {
@@ -19,9 +24,9 @@ class Opplysninger(
     private val basertPåOpplysninger: List<Opplysning<*>> = basertPå.flatMap { it.basertPåOpplysninger + it.opplysninger }.toList()
     private val alleOpplysninger: List<Opplysning<*>> get() = basertPåOpplysninger + opplysninger
 
-    constructor() : this(mutableListOf(), emptyList())
+    constructor() : this(UUIDv7.ny(), emptyList(), emptyList())
+    constructor(opplysninger: List<Opplysning<*>>, basertPå: List<Opplysninger> = emptyList()) : this(UUIDv7.ny(), opplysninger, basertPå)
     constructor(vararg basertPå: Opplysninger) : this(emptyList(), basertPå.toList())
-    constructor(basertPå: List<Opplysninger>) : this(emptyList(), basertPå)
 
     fun registrer(regelkjøring: Regelkjøring) {
         this.regelkjøring = regelkjøring
@@ -39,6 +44,9 @@ class Opplysninger(
         return finnNullableOpplysning(opplysningstype)
             ?: throw IllegalStateException("Har ikke opplysning $opplysningstype som er gyldig for ${regelkjøring.forDato}")
     }
+
+    override fun finnOpplysning(opplysningId: UUID) =
+        opplysninger.firstOrNull { it.id == opplysningId } ?: throw IllegalStateException("Har ikke opplysning $opplysningId")
 
     override fun har(opplysningstype: Opplysningstype<*>) = finnNullableOpplysning(opplysningstype) != null
 

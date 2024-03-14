@@ -49,3 +49,15 @@ CREATE TABLE opplysning_kilde
     meldingsreferanse_id uuid REFERENCES melding (melding_id),
     opprettet            TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+CREATE TABLE opplysninger
+(
+    opplysninger_id uuid PRIMARY KEY,
+    opprettet       TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE opplysninger_opplysning
+(
+    opplysninger_id uuid REFERENCES opplysninger (opplysninger_id),
+    opplysning_id   uuid REFERENCES opplysning (id)
+);

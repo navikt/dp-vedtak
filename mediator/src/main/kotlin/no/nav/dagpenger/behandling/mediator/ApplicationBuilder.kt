@@ -6,10 +6,11 @@ import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
-import no.nav.dagpenger.behandling.mediator.repository.OpplysningRepositoryPostgres
+import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonIdentifikator
+import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 import java.util.UUID
@@ -19,7 +20,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
         private val logger = KotlinLogging.logger { }
     }
 
-    private val opplysningRepository = OpplysningRepositoryPostgres()
+    private val opplysningRepository = OpplysningerRepositoryPostgres()
     private val personRepository =
         object : PersonRepository, BehandlingRepository {
             private val personer = mutableMapOf<PersonIdentifikator, Person>()
@@ -28,7 +29,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
 
             override fun lagre(person: Person) {
                 personer[person.ident()] = person
-                opplysningRepository.lagreOpplysninger(person.behandlinger().flatMap { it.opplysninger().finnAlle() })
+                opplysningRepository.lagreOpplysninger(person.behandlinger().map { it.opplysninger() as Opplysninger })
             }
 
             override fun hent(behandlingId: UUID): Behandling? {

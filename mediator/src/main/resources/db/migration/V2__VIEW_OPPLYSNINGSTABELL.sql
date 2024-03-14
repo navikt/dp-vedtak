@@ -1,5 +1,6 @@
 CREATE VIEW opplysningstabell AS
-SELECT opplysning.id,
+SELECT opplysninger_opplysning.opplysninger_id,
+       opplysning.id,
        opplysning.status,
        opplysningstype.datatype,
        opplysningstype.id   AS type_id,
@@ -12,6 +13,8 @@ SELECT opplysning.id,
        opplysning_verdi.verdi_boolsk,
        opplysning_verdi.verdi_string
 FROM opplysning
+         LEFT JOIN
+     opplysninger_opplysning ON opplysning.id = opplysninger_opplysning.opplysning_id
          LEFT JOIN
      opplysningstype ON opplysning.opplysningstype_id = opplysningstype.opplysningstype_id
          LEFT JOIN
