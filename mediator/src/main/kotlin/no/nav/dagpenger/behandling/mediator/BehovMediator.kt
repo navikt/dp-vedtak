@@ -1,5 +1,7 @@
 package no.nav.dagpenger.behandling.mediator
 
+import io.opentelemetry.api.common.AttributeKey
+import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
@@ -40,7 +42,9 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
                         withLoggingContext("behovId" to it["@behovId"].asUUID().toString()) {
                             sikkerlogg.info { "sender behov for ${behovMap.keys}:\n${it.toJson()}}" }
                             logger.info { "sender behov for ${behovMap.keys}" }
-                            Span.current().addEvent("Publiserer behov") // Todo: ta med navn
+                            behovMap.keys.forEach { behovNavn ->
+                                Span.current().addEvent("Publiserer behov", Attributes.of(AttributeKey.stringKey("behov"), behovNavn))
+                            }
                             rapidsConnection.publish(hendelse.ident(), it.toJson())
                         }
                     }
