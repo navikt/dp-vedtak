@@ -1,5 +1,7 @@
 package no.nav.dagpenger.behandling.mediator
 
+import io.opentelemetry.api.common.AttributeKey
+import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
@@ -32,7 +34,7 @@ class HendelseMediator(private val rapidsConnection: RapidsConnection) {
             val melding = JsonMessage.newMessage(type.name, data)
             sikkerlogg.info { "sender hendelse ${type.name}:\n${melding.toJson()}}" }
             logger.info { "sender hendelse for ${type.name}" }
-            Span.current().addEvent("Publiserer hendelse") // Todo: ta med navn
+            Span.current().addEvent("Publiserer hendelse", Attributes.of(AttributeKey.stringKey("hendelse"), type.name))
             rapidsConnection.publish(personhendelse.ident(), melding.toJson())
         }
     }
