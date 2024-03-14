@@ -17,12 +17,9 @@ class BehandlingRepositoryPostgres() : BehandlingRepository {
                     """
                     SELECT *  
                     FROM behandling 
-
-                    JOIN behandler_hendelse_behandling ON behandling.behandling_id = behandler_hendelse_behandling.behandling_id
-                    
+                    INNER JOIN behandler_hendelse_behandling ON behandling.behandling_id = behandler_hendelse_behandling.behandling_id
+                    INNER JOIN behandler_hendelse ON behandler_hendelse_behandling.behandling_id = behandling.behandling_id                    
                     WHERE behandling.behandling_id = :id
-                    
-                    
                     """.trimIndent(),
                     mapOf(
                         "id" to behandlingId,
@@ -36,7 +33,7 @@ class BehandlingRepositoryPostgres() : BehandlingRepository {
                                     SøknadInnsendtHendelse(
                                         ident = row.string("ident"),
                                         meldingsreferanseId = row.uuid("melding_id"),
-                                        søknadId = row.uuid("ekstern_id"),
+                                        søknadId = UUID.fromString(row.string("ekstern_id")),
                                         gjelderDato = row.localDate("skjedde"),
                                     )
                                 else -> throw IllegalArgumentException("Ukjent hendelse type")
