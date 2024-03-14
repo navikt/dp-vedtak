@@ -38,8 +38,8 @@ internal class SøknadInnsendtMottak(
         context: MessageContext,
     ) {
         Span.current().apply {
-            setAttribute("river", this::class.java.simpleName)
-            setAttribute("søknadId", packet["søknadsData"]["søknad_uuid"].asUUID().toString())
+            setAttribute("app.river", name())
+            setAttribute("app.søknadId", packet["søknadsData"]["søknad_uuid"].asUUID().toString())
         }
         logger.info { "Mottok søknad innsendt hendelse" }
         sikkerlogg.info { "Mottok søknad innsendt hendelse: ${packet.toJson()}" }
