@@ -59,7 +59,8 @@ CREATE TABLE opplysninger
 CREATE TABLE opplysninger_opplysning
 (
     opplysninger_id uuid REFERENCES opplysninger (opplysninger_id),
-    opplysning_id   uuid REFERENCES opplysning (id)
+    opplysning_id   uuid REFERENCES opplysning (id),
+    CONSTRAINT unik_kobling UNIQUE (opplysninger_id, opplysning_id)
 );
 
 
