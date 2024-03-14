@@ -1,5 +1,7 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.UUIDv7
@@ -30,7 +32,8 @@ class BehandlingRepositoryPostgresTest {
         withMigratedDb {
             val behandlingRepositoryPostgres = BehandlingRepositoryPostgres()
             behandlingRepositoryPostgres.lagre(behandling)
-            val hentetBehandling = behandlingRepositoryPostgres.hent(behandling.behandlingId)
+            val hentetBehandling = behandlingRepositoryPostgres.hent(behandling.behandlingId).shouldNotBeNull()
+            behandling.behandlingId shouldBe hentetBehandling.behandlingId
         }
     }
 }
