@@ -35,6 +35,10 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
             override fun hent(behandlingId: UUID): Behandling? {
                 return personer.values.flatMap { it.behandlinger() }.find { it.behandlingId == behandlingId }
             }
+
+            override fun lagre(behandling: Behandling) {
+                TODO("Not yet implemented")
+            }
         }
 
     private val rapidsConnection =

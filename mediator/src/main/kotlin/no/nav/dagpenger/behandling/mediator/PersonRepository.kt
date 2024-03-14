@@ -7,6 +7,8 @@ import java.util.UUID
 
 interface BehandlingRepository {
     fun hent(behandlingId: UUID): Behandling?
+
+    fun lagre(behandling: Behandling)
 }
 
 interface PersonRepository : BehandlingRepository {

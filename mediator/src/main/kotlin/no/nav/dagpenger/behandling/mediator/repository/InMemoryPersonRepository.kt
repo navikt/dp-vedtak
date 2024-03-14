@@ -19,6 +19,10 @@ class InMemoryPersonRepository(private val opplysningerRepository: OpplysningerR
         return persondb.values.flatMap { it.behandlinger() }.find { it.behandlingId == behandlingId }
     }
 
+    override fun lagre(behandling: Behandling) {
+        TODO("Not yet implemented")
+    }
+
     override fun lagre(person: Person) {
         persondb[person.ident()] = person
         opplysningerRepository.lagreOpplysninger(person.behandlinger().map { it.opplysninger() as Opplysninger })

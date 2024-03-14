@@ -61,3 +61,25 @@ CREATE TABLE opplysninger_opplysning
     opplysninger_id uuid REFERENCES opplysninger (opplysninger_id),
     opplysning_id   uuid REFERENCES opplysning (id)
 );
+
+
+CREATE TABLE IF NOT EXISTS behandling
+(
+    behandling_id uuid PRIMARY KEY,
+    opprettet     TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS behandler_hendelse
+(
+    melding_id    uuid  PRIMARY KEY, -- todo: REFERENCES melding (melding_id)
+    ident         text                     NOT NULL,
+    ekstern_id    text                     NOT NULL,
+    hendelse_type text                     NOT NULL,
+    skjedde       TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS behandler_hendelse_behandling
+(
+    behandling_id uuid REFERENCES behandling (behandling_id),
+    melding_id uuid REFERENCES behandler_hendelse (melding_id)
+);

@@ -1,0 +1,95 @@
+package no.nav.dagpenger.behandling.mediator.repository
+
+import kotliquery.queryOf
+import kotliquery.sessionOf
+import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder
+import no.nav.dagpenger.behandling.mediator.BehandlingRepository
+import no.nav.dagpenger.behandling.modell.Behandling
+import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import java.util.UUID
+
+class BehandlingRepositoryPostgres() : BehandlingRepository {
+    override fun hent(behandlingId: UUID): Behandling? {
+        return sessionOf(PostgresDataSourceBuilder.dataSource).use {
+            it.run(
+                queryOf(
+                    // language=PostgreSQL
+                    """
+                    SELECT *  
+                    FROM behandling 
+
+                    JOIN behandler_hendelse_behandling ON behandling.behandling_id = behandler_hendelse_behandling.behandling_id
+                    
+                    WHERE behandling.behandling_id = :id
+                    
+                    
+                    """.trimIndent(),
+                    mapOf(
+                        "id" to behandlingId,
+                    ),
+                ).map { row ->
+                    Behandling.rehydrer(
+                        behandlingId = row.uuid("behandling_id"),
+                        behandler =
+                            when (row.string("hendelse_type")) {
+                                SøknadInnsendtHendelse::class.simpleName ->
+                                    SøknadInnsendtHendelse(
+                                        ident = row.string("ident"),
+                                        meldingsreferanseId = row.uuid("melding_id"),
+                                        søknadId = row.uuid("ekstern_id"),
+                                        gjelderDato = row.localDate("skjedde"),
+                                    )
+                                else -> throw IllegalArgumentException("Ukjent hendelse type")
+                            },
+                    )
+                }.asSingle,
+            )
+        }
+    }
+
+    override fun lagre(behandling: Behandling) {
+        sessionOf(PostgresDataSourceBuilder.dataSource).use { session ->
+
+            session.transaction { transactionalSession ->
+                transactionalSession.run(
+                    queryOf(
+                        // language=PostgreSQL
+                        """
+                        INSERT INTO behandler_hendelse (ident, melding_id, ekstern_id, hendelse_type, skjedde) 
+                        VALUES (:ident, :melding_id, :ekstern_id, :hendelse_type, :skjedde) ON CONFLICT DO NOTHING 
+                        """.trimMargin(),
+                        mapOf(
+                            "ident" to behandling.behandler.ident,
+                            "melding_id" to behandling.behandler.meldingsreferanseId,
+                            "ekstern_id" to behandling.behandler.eksternId.id,
+                            "hendelse_type" to behandling.behandler.type,
+                            "skjedde" to behandling.behandler.skjedde,
+                        ),
+                    ).asUpdate,
+                )
+                transactionalSession.run(
+                    queryOf(
+                        // language=PostgreSQL
+                        "INSERT INTO behandling (behandling_id) VALUES (:id)",
+                        mapOf(
+                            "id" to behandling.behandlingId,
+                        ),
+                    ).asUpdate,
+                )
+                transactionalSession.run(
+                    queryOf(
+                        // language=PostgreSQL
+                        """
+                        INSERT INTO behandler_hendelse_behandling (behandling_id, melding_id) 
+                        VALUES (:behandling_id, :melding_id) ON CONFLICT DO NOTHING
+                        """.trimIndent(),
+                        mapOf(
+                            "behandling_id" to behandling.behandlingId,
+                            "melding_id" to behandling.behandler.meldingsreferanseId,
+                        ),
+                    ).asUpdate,
+                )
+            }
+        }
+    }
+}
