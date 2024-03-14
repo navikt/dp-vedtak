@@ -19,7 +19,7 @@ class DenAndreMessageMediatorenTest {
 
     @Test
     fun foobar() {
-        val mediator = HendelseMediatoren(rapid)
+        val mediator = HendelseMediator(rapid)
         val søknadId = UUID.randomUUID()
         val gjelderDato = LocalDate.now()
         val hendelse = SøknadInnsendtHendelse(UUID.randomUUID(), "ident", søknadId, gjelderDato)

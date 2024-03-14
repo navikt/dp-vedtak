@@ -15,7 +15,7 @@ internal class PersonMediator(
     private val personRepository: PersonRepository,
     private val aktivitetsloggMediator: AktivitetsloggMediator,
     private val behovMediator: BehovMediator,
-    private val hendelseMediatoren: HendelseMediatoren,
+    private val hendelseMediator: HendelseMediator,
     private val observatører: Set<AktivitetsloggObserver> = emptySet(),
 ) {
     private companion object {
@@ -75,7 +75,7 @@ internal class PersonMediator(
             sikkerLogger.info("aktivitetslogg inneholder meldinger:\n${hendelse.toLogString()}")
         }
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
-        hendelseMediatoren.håndter(hendelse)
+        hendelseMediator.håndter(hendelse)
         behovMediator.håndter(hendelse)
         aktivitetsloggMediator.håndter(hendelse)
     }

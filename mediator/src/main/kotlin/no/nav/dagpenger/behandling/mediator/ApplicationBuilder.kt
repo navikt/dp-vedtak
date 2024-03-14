@@ -48,7 +48,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
                     personRepository = personRepository,
                     aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
                     behovMediator = BehovMediator(rapidsConnection),
-                    hendelseMediatoren = HendelseMediatoren(rapidsConnection),
+                    hendelseMediator = HendelseMediator(rapidsConnection),
                     observatører = emptySet(),
                 ),
             hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),

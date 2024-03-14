@@ -8,7 +8,7 @@ import io.mockk.mockk
 import no.nav.dagpenger.behandling.db.InMemoryMeldingRepository
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.BehovMediator
-import no.nav.dagpenger.behandling.mediator.HendelseMediatoren
+import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.repository.InMemoryPersonRepository
@@ -35,7 +35,7 @@ internal class PersonMediatorTest {
                     personRepository = personRepository,
                     aktivitetsloggMediator = mockk(relaxed = true),
                     behovMediator = BehovMediator(rapid),
-                    hendelseMediatoren = HendelseMediatoren(rapid),
+                    hendelseMediator = HendelseMediator(rapid),
                     observatører = emptySet(),
                 ),
             hendelseRepository = InMemoryMeldingRepository(),
