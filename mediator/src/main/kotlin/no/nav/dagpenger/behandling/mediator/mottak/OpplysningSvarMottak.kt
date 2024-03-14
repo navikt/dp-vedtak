@@ -47,8 +47,8 @@ internal class OpplysningSvarMottak(
         context: MessageContext,
     ) {
         Span.current().apply {
-            setAttribute("river", this::class.java.simpleName)
-            setAttribute("behandlingId", packet["behandlingId"].asUUID().toString())
+            setAttribute("app.river", name())
+            setAttribute("app.behandlingId", packet["behandlingId"].asUUID().toString())
         }
         logger.info { "Mottok svar på en opplysning" }
         val message = OpplysningSvarMessage(packet)
