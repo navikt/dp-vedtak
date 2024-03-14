@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator
 
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.AktivitetsloggObserver
@@ -35,6 +36,7 @@ internal class PersonMediator(
         }
     }
 
+    @WithSpan
     private fun behandle(
         hendelse: PersonHendelse,
         håndter: (Person) -> Unit,
@@ -66,6 +68,7 @@ internal class PersonMediator(
             .also { logger.error { "Oppretter default person 👨🏽" } } // TODO: Fjern når vi har database
     }
 
+    @WithSpan
     private fun ferdigstill(hendelse: PersonHendelse) {
         if (!hendelse.harAktiviteter()) return
         if (hendelse.harFunksjonelleFeilEllerVerre()) {
