@@ -39,11 +39,17 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
                     }
                     .let { JsonMessage.newNeed(behovMap.keys, it).also { message -> message.interestedIn("@behovId") } }
                     .also {
-                        withLoggingContext("behovId" to it["@behovId"].asUUID().toString()) {
+                        val behovId = it["@behovId"].asUUID().toString()
+                        withLoggingContext("behovId" to behovId) {
                             sikkerlogg.info { "sender behov for ${behovMap.keys}:\n${it.toJson()}}" }
                             logger.info { "sender behov for ${behovMap.keys}" }
+                            val currentSpan = Span.current()
+                            currentSpan.setAttribute("app.behovId", behovId)
                             behovMap.keys.forEach { behovNavn ->
-                                Span.current().addEvent("Publiserer behov", Attributes.of(AttributeKey.stringKey("behov"), behovNavn))
+                                currentSpan.addEvent(
+                                    "Publiserer behov",
+                                    Attributes.of(AttributeKey.stringKey("behov"), behovNavn, AttributeKey.stringKey("behovId"), behovId),
+                                )
                             }
                             rapidsConnection.publish(hendelse.ident(), it.toJson())
                         }
