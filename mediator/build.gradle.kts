@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.konfig)
     implementation(libs.kotlin.logging)
     implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.1.0")
+    implementation("io.opentelemetry:opentelemetry-api:1.36.0")
 
     implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.ktor.server)

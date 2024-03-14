@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.mottak
 
+import io.opentelemetry.api.trace.Span
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
@@ -36,6 +37,10 @@ internal class SøknadInnsendtMottak(
         packet: JsonMessage,
         context: MessageContext,
     ) {
+        Span.current().apply {
+            setAttribute("river", this::class.java.simpleName)
+            setAttribute("søknadId", packet["søknadsData"]["søknad_uuid"].asUUID().toString())
+        }
         logger.info { "Mottok søknad innsendt hendelse" }
         sikkerlogg.info { "Mottok søknad innsendt hendelse: ${packet.toJson()}" }
         val message = SøknadInnsendtMessage(packet)

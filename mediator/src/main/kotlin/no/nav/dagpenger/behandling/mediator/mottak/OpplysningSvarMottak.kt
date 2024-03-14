@@ -1,10 +1,12 @@
 package no.nav.dagpenger.behandling.mediator.mottak
 
+import io.opentelemetry.api.trace.Span
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
+import no.nav.dagpenger.behandling.mediator.asUUID
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar.Tilstand
@@ -44,6 +46,10 @@ internal class OpplysningSvarMottak(
         packet: JsonMessage,
         context: MessageContext,
     ) {
+        Span.current().apply {
+            setAttribute("river", this::class.java.simpleName)
+            setAttribute("behandlingId", packet["behandlingId"].asUUID().toString())
+        }
         logger.info { "Mottok svar på en opplysning" }
         val message = OpplysningSvarMessage(packet)
         message.behandle(messageMediator, context)
