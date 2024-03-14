@@ -1,6 +1,5 @@
 package no.nav.dagpenger.behandling
 
-import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import java.time.LocalDate
@@ -53,7 +52,7 @@ class TestPerson(
             "Fødselsdato" to søknadstidspunkt.minusYears(alder.toLong()),
             "Søknadstidspunkt" to søknadstidspunkt,
             "ØnskerDagpengerFraDato" to søknadstidspunkt,
-            InntektId to inntektId,
+            "InntektId" to mapOf("verdi" to inntektId),
             "InntektSiste12Mnd" to 1234,
             "InntektSiste36Mnd" to 1234,
         )

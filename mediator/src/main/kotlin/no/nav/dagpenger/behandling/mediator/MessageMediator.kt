@@ -15,11 +15,11 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.withMDC
 import java.util.UUID
 
-internal class HendelseMediator(
+internal class MessageMediator(
     rapidsConnection: RapidsConnection,
     private val personMediator: PersonMediator,
     private val hendelseRepository: HendelseRepository,
-) : IHendelseMediator {
+) : IMessageMediator {
     init {
         SøknadInnsendtMottak(rapidsConnection, this)
         OpplysningSvarMottak(rapidsConnection, this)
@@ -58,7 +58,7 @@ internal class HendelseMediator(
     }
 }
 
-internal interface IHendelseMediator {
+internal interface IMessageMediator {
     fun behandle(
         hendelse: SøknadInnsendtHendelse,
         message: SøknadInnsendtMessage,

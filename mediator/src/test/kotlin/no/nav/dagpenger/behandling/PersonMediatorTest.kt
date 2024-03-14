@@ -8,8 +8,8 @@ import io.mockk.mockk
 import no.nav.dagpenger.behandling.db.InMemoryMeldingRepository
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.BehovMediator
-import no.nav.dagpenger.behandling.mediator.DenAndreHendelseMediatoren
-import no.nav.dagpenger.behandling.mediator.HendelseMediator
+import no.nav.dagpenger.behandling.mediator.HendelseMediatoren
+import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.repository.InMemoryPersonRepository
 import no.nav.dagpenger.regel.Behov.InntektId
@@ -28,14 +28,14 @@ internal class PersonMediatorTest {
     private val personRepository = InMemoryPersonRepository()
 
     init {
-        HendelseMediator(
+        MessageMediator(
             rapidsConnection = rapid,
             personMediator =
                 PersonMediator(
                     personRepository = personRepository,
                     aktivitetsloggMediator = mockk(relaxed = true),
                     behovMediator = BehovMediator(rapid),
-                    denAndreHendelseMediatoren = DenAndreHendelseMediatoren(rapid),
+                    hendelseMediatoren = HendelseMediatoren(rapid),
                     observatører = emptySet(),
                 ),
             hendelseRepository = InMemoryMeldingRepository(),

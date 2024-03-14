@@ -41,14 +41,14 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
             .withKtorModule { behandlingApi(personRepository = personRepository) }.build()
 
     init {
-        HendelseMediator(
+        MessageMediator(
             rapidsConnection = rapidsConnection,
             personMediator =
                 PersonMediator(
                     personRepository = personRepository,
                     aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
                     behovMediator = BehovMediator(rapidsConnection),
-                    denAndreHendelseMediatoren = DenAndreHendelseMediatoren(rapidsConnection),
+                    hendelseMediatoren = HendelseMediatoren(rapidsConnection),
                     observatører = emptySet(),
                 ),
             hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),

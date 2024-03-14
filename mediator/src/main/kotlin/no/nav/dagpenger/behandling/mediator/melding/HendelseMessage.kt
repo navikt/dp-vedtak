@@ -1,7 +1,7 @@
 package no.nav.dagpenger.behandling.mediator.melding
 
 import com.fasterxml.jackson.databind.JsonNode
-import no.nav.dagpenger.behandling.mediator.IHendelseMediator
+import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.asLocalDateTime
@@ -18,7 +18,7 @@ internal abstract class HendelseMessage(private val packet: JsonMessage) {
     internal abstract val ident: String
 
     internal abstract fun behandle(
-        mediator: IHendelseMediator,
+        mediator: IMessageMediator,
         context: MessageContext,
     )
 

@@ -3,8 +3,8 @@ package no.nav.dagpenger.behandling.mediator.mottak
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.behandling.mediator.HendelseMediator
-import no.nav.dagpenger.behandling.mediator.IHendelseMediator
+import no.nav.dagpenger.behandling.mediator.IMessageMediator
+import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.asUUID
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
@@ -15,7 +15,7 @@ import no.nav.helse.rapids_rivers.River
 
 internal class SøknadInnsendtMottak(
     rapidsConnection: RapidsConnection,
-    private val hendelseMediator: HendelseMediator,
+    private val messageMediator: MessageMediator,
 ) : River.PacketListener {
     init {
         River(rapidsConnection).apply {
@@ -39,7 +39,7 @@ internal class SøknadInnsendtMottak(
         logger.info { "Mottok søknad innsendt hendelse" }
         sikkerlogg.info { "Mottok søknad innsendt hendelse: ${packet.toJson()}" }
         val message = SøknadInnsendtMessage(packet)
-        message.behandle(hendelseMediator, context)
+        message.behandle(messageMediator, context)
     }
 
     private companion object {
@@ -60,7 +60,7 @@ internal class SøknadInnsendtMessage(private val packet: JsonMessage) : Hendels
             )
 
     override fun behandle(
-        mediator: IHendelseMediator,
+        mediator: IMessageMediator,
         context: MessageContext,
     ) {
         withLoggingContext(hendelse.kontekstMap()) {

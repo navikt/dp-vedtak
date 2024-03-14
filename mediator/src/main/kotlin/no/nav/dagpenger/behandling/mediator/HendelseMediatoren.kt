@@ -6,7 +6,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 
-class DenAndreHendelseMediatoren(private val rapidsConnection: RapidsConnection) {
+class HendelseMediatoren(private val rapidsConnection: RapidsConnection) {
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerlogg = KotlinLogging.logger("tjenestekall.DenAndreHendelseMediatoren")

@@ -14,12 +14,12 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class DenAndreHendelseMediatorenTest {
+class DenAndreMessageMediatorenTest {
     private val rapid = TestRapid()
 
     @Test
     fun foobar() {
-        val mediator = DenAndreHendelseMediatoren(rapid)
+        val mediator = HendelseMediatoren(rapid)
         val søknadId = UUID.randomUUID()
         val gjelderDato = LocalDate.now()
         val hendelse = SøknadInnsendtHendelse(UUID.randomUUID(), "ident", søknadId, gjelderDato)

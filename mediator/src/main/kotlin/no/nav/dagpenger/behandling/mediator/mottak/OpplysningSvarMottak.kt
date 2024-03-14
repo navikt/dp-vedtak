@@ -3,8 +3,8 @@ package no.nav.dagpenger.behandling.mediator.mottak
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.behandling.mediator.HendelseMediator
-import no.nav.dagpenger.behandling.mediator.IHendelseMediator
+import no.nav.dagpenger.behandling.mediator.IMessageMediator
+import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar.Tilstand
@@ -26,7 +26,7 @@ import java.time.LocalDate
 
 internal class OpplysningSvarMottak(
     rapidsConnection: RapidsConnection,
-    private val hendelseMediator: HendelseMediator,
+    private val messageMediator: MessageMediator,
 ) : River.PacketListener {
     init {
         River(rapidsConnection).apply {
@@ -46,7 +46,7 @@ internal class OpplysningSvarMottak(
     ) {
         logger.info { "Mottok svar på en opplysning" }
         val message = OpplysningSvarMessage(packet)
-        message.behandle(hendelseMediator, context)
+        message.behandle(messageMediator, context)
     }
 
     override fun onError(
@@ -83,7 +83,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
                     return@forEach
                 }
                 // @todo: Forventer at verdi er en nøkkel på alle løsninger men vi må skrive om behovløserne for å få dette til å stemme
-                val verdi = if (jsonVerdi.isObject) jsonVerdi["verdi"] else jsonVerdi
+                val verdi = if (jsonVerdi.isObject && jsonVerdi.has("verdi")) jsonVerdi["verdi"] else jsonVerdi
                 val type = Opplysningstype.typer.single { opplysningstype -> opplysningstype.id == typeNavn }
                 val opplysning =
                     @Suppress("UNCHECKED_CAST")
@@ -108,7 +108,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
     )
 
     override fun behandle(
-        mediator: IHendelseMediator,
+        mediator: IMessageMediator,
         context: MessageContext,
     ) {
         withLoggingContext(hendelse.kontekstMap()) {
