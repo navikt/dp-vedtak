@@ -54,6 +54,8 @@ class OpplysningerRepositoryPostgresTest {
 
             val fraDb = repo.hentOpplysninger(opplysninger.id)
 
+            fraDb.finnAlle().size shouldBe opplysninger.finnAlle().size
+
             with(fraDb.finnOpplysning(heltallFaktum.id)) {
                 id shouldBe heltallFaktum.id
                 verdi shouldBe heltallFaktum.verdi
