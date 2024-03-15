@@ -1,11 +1,13 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
 import kotliquery.Row
+import kotliquery.Session
 import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import kotliquery.using
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.behandling.mediator.PostgresUnitOfWork
+import no.nav.dagpenger.behandling.mediator.UnitOfWork
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
@@ -26,36 +28,42 @@ import java.util.UUID
 
 class OpplysningerRepositoryPostgres : OpplysningerRepository {
     override fun hentOpplysninger(opplysningerId: UUID) =
-        using(sessionOf(dataSource)) { session ->
+        sessionOf(dataSource).use { session ->
             session.transaction { tx ->
                 OpplysningRepository(opplysningerId, tx).hentOpplysninger()
             }
         }.let { Opplysninger(it) }
 
     override fun lagreOpplysninger(opplysninger: Opplysninger) {
-        using(sessionOf(dataSource)) { session ->
-            session.transaction { tx ->
-                tx.run(
-                    queryOf(
-                        //language=PostgreSQL
-                        """
-                        INSERT INTO opplysninger (opplysninger_id) VALUES (:opplysningerId) ON CONFLICT DO NOTHING
-                        """.trimIndent(),
-                        mapOf("opplysningerId" to opplysninger.id),
-                    ).asUpdate,
-                )
-                OpplysningRepository(opplysninger.id, tx).lagreOpplysninger(opplysninger.finnAlle())
-            }
-        }
+        val unitOfWork = PostgresUnitOfWork.transaction()
+        lagreOpplysninger(opplysninger, unitOfWork)
+        unitOfWork.commit()
     }
 
-    override fun lagreOpplysninger(opplysninger: List<Opplysninger>) {
-        opplysninger.map { lagreOpplysninger(it) }
+    override fun lagreOpplysninger(
+        opplysninger: Opplysninger,
+        unitOfWork: UnitOfWork<*>,
+    ) = lagreOpplysninger(opplysninger, unitOfWork as PostgresUnitOfWork)
+
+    private fun lagreOpplysninger(
+        opplysninger: Opplysninger,
+        unitOfWork: PostgresUnitOfWork,
+    ) = unitOfWork.inTransaction { tx ->
+        tx.run(
+            queryOf(
+                //language=PostgreSQL
+                """
+                INSERT INTO opplysninger (opplysninger_id) VALUES (:opplysningerId) ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                mapOf("opplysningerId" to opplysninger.id),
+            ).asUpdate,
+        )
+        OpplysningRepository(opplysninger.id, tx).lagreOpplysninger(opplysninger.aktiveOpplysninger())
     }
 
-    private class OpplysningRepository(private val opplysningerId: UUID, private val tx: TransactionalSession) {
+    private class OpplysningRepository(private val opplysningerId: UUID, private val tx: Session) {
         fun hentOpplysninger(): List<Opplysning<*>> =
-            using(sessionOf(dataSource)) { session ->
+            sessionOf(dataSource).use { session ->
                 session.run(
                     queryOf(
                         //language=PostgreSQL
@@ -94,7 +102,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 ULID -> Ulid(row.string("verdi_string"))
             } as T
 
-        internal fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
+        fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
             batchOpplysningstyper(opplysninger.map { it.opplysningstype }).run(tx)
             batchOpplysninger(opplysninger).run(tx)
             batchVerdi(opplysninger).run(tx)

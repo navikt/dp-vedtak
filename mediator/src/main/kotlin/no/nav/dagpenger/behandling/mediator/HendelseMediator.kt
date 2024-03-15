@@ -13,7 +13,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 class HendelseMediator(private val rapidsConnection: RapidsConnection) {
     private companion object {
         val logger = KotlinLogging.logger { }
-        val sikkerlogg = KotlinLogging.logger("tjenestekall.DenAndreHendelseMediatoren")
+        val sikkerlogg = KotlinLogging.logger("tjenestekall.HendelseMediator")
     }
 
     @WithSpan

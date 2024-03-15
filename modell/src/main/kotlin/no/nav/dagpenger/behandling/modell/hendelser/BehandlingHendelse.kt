@@ -6,17 +6,18 @@ import java.time.LocalDate
 import java.util.UUID
 
 // Baseklasse for alle hendelser som er knyttet til en person som søker om dagpenger
-abstract class SøkerHendelse(
-    meldingsreferanseId: UUID,
+abstract class BehandlingHendelse(
+    val meldingsreferanseId: UUID,
     val ident: String,
-    internal val søknadId: UUID,
-    internal val gjelderDato: LocalDate,
+    val eksternId: ExternId<*>,
+    val skjedde: LocalDate,
 ) : PersonHendelse(meldingsreferanseId, ident) {
+    val type: String = this.javaClass.simpleName
+
     override fun kontekstMap() =
         mapOf(
-            "søknadId" to søknadId.toString(),
-            "gjelderDato" to gjelderDato.toString(),
-        )
+            "gjelderDato" to skjedde.toString(),
+        ) + eksternId.kontekstMap()
 
     abstract fun regelsett(): List<Regelsett>
 

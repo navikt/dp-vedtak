@@ -8,10 +8,12 @@ import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 
 class Person(
-    private val ident: PersonIdentifikator,
-    private val behandlinger: MutableList<Behandling> = mutableListOf(),
+    val ident: Ident,
+    behandlinger: List<Behandling>,
 ) : Aktivitetskontekst {
-    fun ident() = ident
+    private val behandlinger = behandlinger.toMutableList()
+
+    constructor(ident: Ident) : this(ident, mutableListOf())
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.leggTilKontekst(this)
@@ -31,13 +33,12 @@ class Person(
         behandling.håndter(hendelse)
     }
 
+    fun behandlinger() = behandlinger.toList()
+
     private fun PersonHendelse.leggTilKontekst(kontekst: Aktivitetskontekst) {
         kontekst(this)
         kontekst(kontekst)
     }
-
-    // todo: vi trenger en metode for å hente behandlinger fra utsiden.
-    fun behandlinger() = behandlinger.toList()
 
     override fun toSpesifikkKontekst(): SpesifikkKontekst = PersonKontekst(ident.identifikator())
 

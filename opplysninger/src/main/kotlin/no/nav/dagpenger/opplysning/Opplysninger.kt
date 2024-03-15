@@ -3,6 +3,8 @@ package no.nav.dagpenger.opplysning
 import java.util.UUID
 
 interface LesbarOpplysninger {
+    val id: UUID
+
     fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>
 
     fun har(opplysningstype: Opplysningstype<*>): Boolean
@@ -15,9 +17,9 @@ interface LesbarOpplysninger {
 }
 
 class Opplysninger private constructor(
-    val id: UUID,
+    override val id: UUID,
     opplysninger: List<Opplysning<*>> = emptyList(),
-    private val basertPå: List<Opplysninger> = emptyList(),
+    basertPå: List<Opplysninger> = emptyList(),
 ) : LesbarOpplysninger {
     private lateinit var regelkjøring: Regelkjøring
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
@@ -53,6 +55,8 @@ class Opplysninger private constructor(
     override fun finnAlle(opplysningstyper: List<Opplysningstype<*>>) = opplysningstyper.mapNotNull { finnNullableOpplysning(it) }
 
     override fun finnAlle() = alleOpplysninger.toList()
+
+    fun aktiveOpplysninger() = opplysninger.toList()
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? =

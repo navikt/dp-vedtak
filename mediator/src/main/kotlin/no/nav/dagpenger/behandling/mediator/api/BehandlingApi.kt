@@ -18,7 +18,7 @@ import no.nav.dagpenger.behandling.api.models.RegelDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
 import no.nav.dagpenger.behandling.mediator.PersonRepository
 import no.nav.dagpenger.behandling.modell.Behandling
-import no.nav.dagpenger.behandling.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Opplysning

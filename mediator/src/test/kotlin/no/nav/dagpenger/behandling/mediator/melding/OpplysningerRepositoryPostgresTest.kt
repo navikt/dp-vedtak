@@ -52,15 +52,17 @@ class OpplysningerRepositoryPostgresTest {
             val tidBrukt = measureTimeMillis { repo.lagreOpplysninger(Opplysninger(inserts)) }
             tidBrukt shouldBeLessThan 5000
 
-            val fraDb = repo.hentOpplysninger(opplysninger.id)!!
+            val fraDb = repo.hentOpplysninger(opplysninger.id)
 
-            with(fraDb.finnOpplysning(heltallFaktum.id)!!) {
+            fraDb.finnAlle().size shouldBe opplysninger.finnAlle().size
+
+            with(fraDb.finnOpplysning(heltallFaktum.id)) {
                 id shouldBe heltallFaktum.id
                 verdi shouldBe heltallFaktum.verdi
                 gyldighetsperiode shouldBe heltallFaktum.gyldighetsperiode
                 opplysningstype shouldBe heltallFaktum.opplysningstype
             }
-            with(fraDb.finnOpplysning(desimalFaktum.id)!!) {
+            with(fraDb.finnOpplysning(desimalFaktum.id)) {
                 id shouldBe desimalFaktum.id
                 verdi shouldBe desimalFaktum.verdi
                 gyldighetsperiode shouldBe desimalFaktum.gyldighetsperiode

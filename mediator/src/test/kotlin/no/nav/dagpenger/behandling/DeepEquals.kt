@@ -22,11 +22,6 @@ private class ModelDeepEquals {
         other: Any?,
         fieldName: String,
     ) {
-        if (fieldName == "behandlinger") { // @todo: Vi er usikre på hvordan Behandling skal se ut.
-            // aaalll goood!
-            return
-        }
-
         if (one == null && other == null) return
         assertFalse(one == null || other == null, "For field $fieldName: $one or $other is null")
         requireNotNull(one)
@@ -50,6 +45,7 @@ private class ModelDeepEquals {
         other: Any,
         fieldName: String,
     ) {
+        println("Sjekker $fieldName")
         assertEquals(
             one::class,
             other::class,

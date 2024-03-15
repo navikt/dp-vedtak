@@ -4,9 +4,9 @@ import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.AktivitetsloggObserver
+import no.nav.dagpenger.behandling.modell.Ident
+import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
-import no.nav.dagpenger.behandling.modell.PersonIdentifikator
-import no.nav.dagpenger.behandling.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
@@ -64,7 +64,7 @@ internal class PersonMediator(
 
     private fun hentEllerOpprettPerson(hendelse: PersonHendelse): Person {
         val person = personRepository.hent(hendelse.ident().tilPersonIdentfikator())
-        return person ?: Person(PersonIdentifikator(hendelse.ident()))
+        return person ?: Person(Ident(hendelse.ident()))
             .also { logger.error { "Oppretter default person 👨🏽" } } // TODO: Fjern når vi har database
     }
 

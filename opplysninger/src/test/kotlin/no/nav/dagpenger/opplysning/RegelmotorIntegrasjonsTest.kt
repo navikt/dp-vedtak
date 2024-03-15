@@ -6,6 +6,7 @@ import no.nav.dagpenger.opplysning.dag.DatatreBygger
 import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import no.nav.dagpenger.opplysning.dag.printer.MermaidPrinter
 import no.nav.dagpenger.opplysning.regel.alle
+import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regelsett.Alderskrav
 import no.nav.dagpenger.opplysning.regelsett.Grunnbeløp
 import no.nav.dagpenger.opplysning.regelsett.Minsteinntekt
@@ -74,8 +75,8 @@ class RegelmotorIntegrasjonsTest {
         regelkjøring.informasjonsbehov(alleVilkår) shouldContainAll mapOf(Alderskrav.fødselsdato to listOf())
         opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
 
+        val faktiskVirkningsdato = opplysninger.finnOpplysning(virkningsdato)
         with(regelkjøring.informasjonsbehov(alleVilkår)) {
-            val faktiskVirkningsdato = opplysninger.finnOpplysning(virkningsdato)
             shouldContainAll(
                 mapOf(
                     Minsteinntekt.inntekt12 to listOf(faktiskVirkningsdato),
@@ -86,7 +87,14 @@ class RegelmotorIntegrasjonsTest {
         assertEquals(Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(Minsteinntekt.grunnbeløp).verdi)
 
         // Har er ikke lengre gyldig inntekt og må hentes på nytt
-        opplysninger.leggTil(Hypotese(Minsteinntekt.inntekt12, 321321.0, Gyldighetsperiode(9.mai)))
+        opplysninger.leggTil(
+            Hypotese(
+                Minsteinntekt.inntekt12,
+                321321.0,
+                Gyldighetsperiode(9.mai),
+                utledetAv = Utledning(Minsteinntekt.inntekt12.innhentMed(virkningsdato), listOf(faktiskVirkningsdato)),
+            ),
+        )
         opplysninger.leggTil(Hypotese(Minsteinntekt.inntekt36, 321321.0, Gyldighetsperiode(9.mai, 12.mai)))
         assertEquals(0, regelkjøring.trenger(Minsteinntekt.minsteinntekt).size)
 

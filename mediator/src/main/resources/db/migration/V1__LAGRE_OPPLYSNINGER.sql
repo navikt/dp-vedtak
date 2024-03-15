@@ -62,3 +62,54 @@ CREATE TABLE opplysninger_opplysning
     opplysning_id   uuid REFERENCES opplysning (id),
     CONSTRAINT unik_kobling UNIQUE (opplysninger_id, opplysning_id)
 );
+
+
+CREATE TABLE IF NOT EXISTS behandling
+(
+    behandling_id uuid PRIMARY KEY,
+    opprettet     TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS behandler_hendelse
+(
+    melding_id    uuid PRIMARY KEY, -- todo: REFERENCES melding (melding_id)
+    ident         TEXT                     NOT NULL,
+    ekstern_id    TEXT                     NOT NULL,
+    hendelse_type TEXT                     NOT NULL,
+    skjedde       TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS behandler_hendelse_behandling
+(
+    behandling_id uuid NOT NULL REFERENCES behandling (behandling_id),
+    melding_id    uuid NOT NULL REFERENCES behandler_hendelse (melding_id),
+    CONSTRAINT behandler_hendelse_behandling_unik_kobling UNIQUE (behandling_id, melding_id)
+);
+
+CREATE TABLE IF NOT EXISTS behandling_opplysninger
+(
+    behandling_id   uuid NOT NULL REFERENCES behandling (behandling_id),
+    opplysninger_id uuid NOT NULL REFERENCES opplysninger (opplysninger_id),
+    CONSTRAINT behandling_opplysninger_unik_kobling UNIQUE (behandling_id, opplysninger_id)
+);
+
+CREATE TABLE IF NOT EXISTS behandling_basertpå
+(
+    behandling_id           uuid NOT NULL REFERENCES behandling (behandling_id),
+    basert_på_behandling_id uuid NOT NULL REFERENCES behandling (behandling_id),
+    CONSTRAINT behandling_basertpå_unik_kobling UNIQUE (behandling_id, basert_på_behandling_id)
+);
+
+CREATE TABLE IF NOT EXISTS person
+(
+    id        BIGSERIAL PRIMARY KEY,
+    ident     TEXT NOT NULL UNIQUE,
+    opprettet TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS person_behandling
+(
+    ident         TEXT NOT NULL REFERENCES person (ident),
+    behandling_id uuid NOT NULL REFERENCES behandling (behandling_id),
+    CONSTRAINT person_behandling_unik_kobling UNIQUE (ident, behandling_id)
+);
