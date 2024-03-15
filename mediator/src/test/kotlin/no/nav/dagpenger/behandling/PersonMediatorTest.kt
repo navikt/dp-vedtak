@@ -60,6 +60,10 @@ internal class PersonMediatorTest {
             testPerson.sendSøknad()
             rapid.harHendelse("behandling_opprettet", offset = 2)
 
+            rapid.harBehov("Søknadstidspunkt") {
+                medTekst("søknad_uuid") shouldBe testPerson.søknadId
+                medNode("InnsendtSøknadsId")["urn"].asText() shouldBe testPerson.søknadId
+            }
             rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
             testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
@@ -116,6 +120,8 @@ private fun TestRapid.harBehov(
 }
 
 private class Meldingsinnhold(private val message: JsonNode) {
+    fun medNode(navn: String) = message.get(navn)
+
     fun medTekst(navn: String) = message.get(navn)?.asText()
 
     fun medDato(navn: String) = message.get(navn)?.asLocalDate()

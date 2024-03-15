@@ -14,7 +14,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class DenAndreMessageMediatorenTest {
+class HendelseMediatorTest {
     private val rapid = TestRapid()
 
     @Test

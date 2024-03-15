@@ -95,7 +95,12 @@ class Behandling private constructor(
                                 else -> avhengighet.verdi
                             }
                         avhengighet.opplysningstype.id to verdi
-                    },
+                    } +
+                        // TODO: Midlertidlig hack for å få med søknadId for gamle behovløsere
+                        mapOf(
+                            "InnsendtSøknadsId" to mapOf("urn" to behandler.eksternId.id.toString()),
+                            "søknad_uuid" to behandler.eksternId.id.toString(),
+                        ),
             )
         }
 
