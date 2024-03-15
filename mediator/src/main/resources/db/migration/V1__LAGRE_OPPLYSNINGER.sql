@@ -103,17 +103,13 @@ CREATE TABLE IF NOT EXISTS behandling_basertpå
 CREATE TABLE IF NOT EXISTS person
 (
     id        BIGSERIAL PRIMARY KEY,
+    ident     TEXT NOT NULL UNIQUE,
     opprettet TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS person_identer
+CREATE TABLE IF NOT EXISTS person_behandling
 (
-    person_id BIGINT NOT NULL REFERENCES person (id),
-    ident     TEXT   NOT NULL UNIQUE,
-    opprettet TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    ident         TEXT NOT NULL REFERENCES person (ident),
+    behandling_id uuid NOT NULL REFERENCES behandling (behandling_id),
+    CONSTRAINT person_behandling_unik_kobling UNIQUE (ident, behandling_id)
 );
-
-CREATE VIEW person_view AS
-SELECT person.id AS person_id, person.opprettet AS person_opprettet, person_identer.ident AS person_ident
-FROM person
-         JOIN person_identer ON person.id = person_identer.person_id;

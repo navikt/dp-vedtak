@@ -1,13 +1,13 @@
 package no.nav.dagpenger.behandling.modell
 
-import no.nav.dagpenger.behandling.modell.PersonIdentifikator.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-internal class PersonIdentifikatorTest {
+internal class IdentTest {
     @Test
     fun `personidentifikator består av 11 siffer`() {
         Assertions.assertDoesNotThrow { "12345678901".tilPersonIdentfikator() }

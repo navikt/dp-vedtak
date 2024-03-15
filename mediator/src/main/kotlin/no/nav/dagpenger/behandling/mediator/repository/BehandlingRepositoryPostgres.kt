@@ -73,8 +73,8 @@ class BehandlingRepositoryPostgres : BehandlingRepository {
     override fun lagre(behandling: Behandling) {
         sessionOf(dataSource).use { session ->
 
-            session.transaction { transactionalSession ->
-                transactionalSession.run(
+            session.transaction { tx ->
+                tx.run(
                     queryOf(
                         // language=PostgreSQL
                         """
@@ -90,16 +90,16 @@ class BehandlingRepositoryPostgres : BehandlingRepository {
                         ),
                     ).asUpdate,
                 )
-                transactionalSession.run(
+                tx.run(
                     queryOf(
                         // language=PostgreSQL
-                        "INSERT INTO behandling (behandling_id) VALUES (:id)",
+                        "INSERT INTO behandling (behandling_id) VALUES (:id) ON CONFLICT DO NOTHING",
                         mapOf(
                             "id" to behandling.behandlingId,
                         ),
                     ).asUpdate,
                 )
-                transactionalSession.run(
+                tx.run(
                     queryOf(
                         // language=PostgreSQL
                         """
@@ -115,7 +115,7 @@ class BehandlingRepositoryPostgres : BehandlingRepository {
 
                 OpplysningerRepositoryPostgres().lagreOpplysninger(behandling.opplysninger() as Opplysninger)
 
-                transactionalSession.run(
+                tx.run(
                     queryOf(
                         // language=PostgreSQL
                         """
@@ -130,7 +130,7 @@ class BehandlingRepositoryPostgres : BehandlingRepository {
                 )
 
                 behandling.basertPå.forEach { basertPåBehandling ->
-                    transactionalSession.run(
+                    tx.run(
                         queryOf(
                             // language=PostgreSQL
                             """

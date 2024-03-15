@@ -8,8 +8,8 @@ import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.Behandling
+import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Person
-import no.nav.dagpenger.behandling.modell.PersonIdentifikator
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -23,12 +23,12 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     private val opplysningRepository = OpplysningerRepositoryPostgres()
     private val personRepository =
         object : PersonRepository, BehandlingRepository {
-            private val personer = mutableMapOf<PersonIdentifikator, Person>()
+            private val personer = mutableMapOf<Ident, Person>()
 
-            override fun hent(ident: PersonIdentifikator): Person? = personer[ident]
+            override fun hent(ident: Ident): Person? = personer[ident]
 
             override fun lagre(person: Person) {
-                personer[person.ident()] = person
+                personer[person.ident] = person
                 opplysningRepository.lagreOpplysninger(person.behandlinger().map { it.opplysninger() as Opplysninger })
             }
 
