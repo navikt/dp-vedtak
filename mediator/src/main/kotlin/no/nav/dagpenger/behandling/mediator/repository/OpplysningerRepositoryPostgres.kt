@@ -94,7 +94,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 ULID -> Ulid(row.string("verdi_string"))
             } as T
 
-        internal fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
+        fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
             batchOpplysningstyper(opplysninger.map { it.opplysningstype }).run(tx)
             batchOpplysninger(opplysninger).run(tx)
             batchVerdi(opplysninger).run(tx)

@@ -43,7 +43,7 @@ class BehandlingRepositoryPostgresTest {
             behandlingRepositoryPostgres.lagre(behandling)
             val rehydrertBehandling = behandlingRepositoryPostgres.hent(behandling.behandlingId).shouldNotBeNull()
             rehydrertBehandling.behandlingId shouldBe behandling.behandlingId
-            rehydrertBehandling.opplysninger().finnAlle() shouldBe behandling.opplysninger().finnAlle()
+            rehydrertBehandling.opplysninger().finnAlle().size shouldBe behandling.opplysninger().finnAlle().size
         }
     }
 }

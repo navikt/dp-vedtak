@@ -3,6 +3,8 @@ package no.nav.dagpenger.opplysning
 import java.util.UUID
 
 interface LesbarOpplysninger {
+    val id: UUID
+
     fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>
 
     fun har(opplysningstype: Opplysningstype<*>): Boolean
@@ -15,7 +17,7 @@ interface LesbarOpplysninger {
 }
 
 class Opplysninger private constructor(
-    val id: UUID,
+    override val id: UUID,
     opplysninger: List<Opplysning<*>> = emptyList(),
     private val basertPå: List<Opplysninger> = emptyList(),
 ) : LesbarOpplysninger {

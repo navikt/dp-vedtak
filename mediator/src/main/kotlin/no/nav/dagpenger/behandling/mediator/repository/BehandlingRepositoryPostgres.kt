@@ -6,6 +6,7 @@ import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.behandling.mediator.BehandlingRepository
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.opplysning.Opplysninger
 import java.util.UUID
 
 class BehandlingRepositoryPostgres() : BehandlingRepository {
@@ -19,6 +20,7 @@ class BehandlingRepositoryPostgres() : BehandlingRepository {
                     FROM behandling 
                     INNER JOIN behandler_hendelse_behandling ON behandling.behandling_id = behandler_hendelse_behandling.behandling_id
                     INNER JOIN behandler_hendelse ON behandler_hendelse_behandling.behandling_id = behandling.behandling_id                    
+                    INNER JOIN behandling_opplysninger ON behandling_opplysninger.behandling_id = behandling.behandling_id                    
                     WHERE behandling.behandling_id = :id
                     """.trimIndent(),
                     mapOf(
@@ -38,6 +40,7 @@ class BehandlingRepositoryPostgres() : BehandlingRepository {
                                     )
                                 else -> throw IllegalArgumentException("Ukjent hendelse type")
                             },
+                        aktiveOpplysninger = OpplysningerRepositoryPostgres().hentOpplysninger(row.uuid("opplysninger_id")).finnAlle(),
                     )
                 }.asSingle,
             )
@@ -83,6 +86,22 @@ class BehandlingRepositoryPostgres() : BehandlingRepository {
                         mapOf(
                             "behandling_id" to behandling.behandlingId,
                             "melding_id" to behandling.behandler.meldingsreferanseId,
+                        ),
+                    ).asUpdate,
+                )
+
+                OpplysningerRepositoryPostgres().lagreOpplysninger(behandling.opplysninger() as Opplysninger)
+
+                transactionalSession.run(
+                    queryOf(
+                        // language=PostgreSQL
+                        """
+                        INSERT INTO behandling_opplysninger (opplysninger_id, behandling_id) 
+                        VALUES (:opplysninger_id, :behandling_id) ON CONFLICT DO NOTHING
+                        """.trimIndent(),
+                        mapOf(
+                            "opplysninger_id" to behandling.opplysninger().id,
+                            "behandling_id" to behandling.behandlingId,
                         ),
                     ).asUpdate,
                 )
