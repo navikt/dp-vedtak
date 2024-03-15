@@ -89,6 +89,7 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
                     opplysninger = utledning.opplysninger.map { it.tilOpplysningDTO() },
                 )
             },
+        redigerbar = this.kanRedigeres,
     )
 }
 

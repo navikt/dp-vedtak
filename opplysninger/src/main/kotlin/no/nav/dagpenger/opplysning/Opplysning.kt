@@ -22,7 +22,7 @@ sealed class Opplysning<T : Comparable<T>>(
 ) : Klassifiserbart by opplysningstype {
     abstract fun bekreft(): Faktum<T>
 
-    override fun toString() = "${javaClass.simpleName} om ${opplysningstype.navn} har verdi: $verdi som er $gyldighetsperiode"
+    val kanRedigeres get() = utledetAv == null && opplysningstype.datatype != ULID
 
     fun sammeSom(opplysning: Opplysning<*>) =
         opplysningstype == opplysning.opplysningstype && gyldighetsperiode.overlapp(opplysning.gyldighetsperiode)
@@ -30,6 +30,8 @@ sealed class Opplysning<T : Comparable<T>>(
     override fun equals(other: Any?) = other is Opplysning<*> && id == other.id
 
     override fun hashCode() = id.hashCode()
+
+    override fun toString() = "${javaClass.simpleName} om ${opplysningstype.navn} har verdi: $verdi som er $gyldighetsperiode"
 }
 
 class Hypotese<T : Comparable<T>> constructor(

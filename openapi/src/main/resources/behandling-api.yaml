@@ -267,6 +267,9 @@ components:
           type: string
           description: |
             Hvilken datatype opplysningen har, f.eks.: "string", "number", "date"
+        redigerbar:
+          type: boolean
+          description: Indikerer om opplysningen kan redigeres
         kilde:
           oneOf:
             - $ref: '#/components/schemas/Systemkilde'
