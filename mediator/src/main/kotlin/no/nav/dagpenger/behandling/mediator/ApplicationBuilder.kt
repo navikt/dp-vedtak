@@ -8,6 +8,11 @@ import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
+import no.nav.dagpenger.regel.Alderskrav
+import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.Opptjeningstid
+import no.nav.dagpenger.regel.RettTilDagpenger
+import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -39,6 +44,16 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
 
         rapidsConnection.register(this)
     }
+
+    // TODO: Last alle regler ved startup. Dette må inn i ett register.
+    val regler =
+        listOf(
+            RettTilDagpenger.regelsett,
+            Alderskrav.regelsett,
+            Minsteinntekt.regelsett,
+            Søknadstidspunkt.regelsett,
+            Opptjeningstid.regelsett,
+        )
 
     fun start() = rapidsConnection.start()
 
