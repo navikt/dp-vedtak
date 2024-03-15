@@ -23,6 +23,16 @@ class Opplysningstype<T : Comparable<T>>(
         parent: Opplysningstype<T>? = null,
     ) : this(OpplysningTypeId(navn, navn), datatype, parent)
 
+    val id = opplysningTypeId.id
+    val navn = opplysningTypeId.beskrivelse
+
+    init {
+        // TODO: Vi bør gjøre noe slikt, men det brekker mye tester
+        // require(typer.none { it.opplysningTypeId == this.opplysningTypeId }) { "Opplysningstype ${this.opplysningTypeId} finnes allerede" }
+        typer.add(this)
+        parent?.child?.add(this)
+    }
+
     companion object {
         val typer = mutableListOf<Opplysningstype<*>>()
 
@@ -75,19 +85,6 @@ class Opplysningstype<T : Comparable<T>>(
             navn: String,
             parent: Opplysningstype<Boolean>? = null,
         ) = somBoolsk(navn.id(navn), parent)
-    }
-
-    init {
-        // TODO: Vi bør gjøre noe slikt, men det brekker mye tester
-        // require(typer.none { it.opplysningTypeId == this.opplysningTypeId }) { "Opplysningstype finnes allerede" }
-        typer.add(this)
-    }
-
-    val id = opplysningTypeId.id
-    val navn = opplysningTypeId.beskrivelse
-
-    init {
-        parent?.child?.add(this)
     }
 
     override infix fun er(type: Opplysningstype<*>): Boolean {

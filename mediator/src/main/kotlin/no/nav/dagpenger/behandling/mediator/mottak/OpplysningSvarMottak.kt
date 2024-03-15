@@ -46,13 +46,18 @@ internal class OpplysningSvarMottak(
         packet: JsonMessage,
         context: MessageContext,
     ) {
+        val behandlingId = packet["behandlingId"].asUUID()
         Span.current().apply {
             setAttribute("app.river", name())
-            setAttribute("app.behandlingId", packet["behandlingId"].asUUID().toString())
+            setAttribute("app.behandlingId", behandlingId.toString())
         }
-        logger.info { "Mottok svar på en opplysning" }
-        val message = OpplysningSvarMessage(packet)
-        message.behandle(messageMediator, context)
+        withLoggingContext(
+            "behandlingId" to behandlingId.toString(),
+        ) {
+            logger.info { "Mottok svar på en opplysning" }
+            val message = OpplysningSvarMessage(packet)
+            message.behandle(messageMediator, context)
+        }
     }
 
     override fun onError(
