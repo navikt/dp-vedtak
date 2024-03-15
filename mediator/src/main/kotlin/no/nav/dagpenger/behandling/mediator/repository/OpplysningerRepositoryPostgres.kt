@@ -1,10 +1,10 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
 import kotliquery.Row
+import kotliquery.Session
 import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import kotliquery.using
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.PostgresUnitOfWork
 import no.nav.dagpenger.behandling.mediator.UnitOfWork
@@ -28,13 +28,17 @@ import java.util.UUID
 
 class OpplysningerRepositoryPostgres : OpplysningerRepository {
     override fun hentOpplysninger(opplysningerId: UUID) =
-        using(sessionOf(dataSource)) { session ->
+        sessionOf(dataSource).use { session ->
             session.transaction { tx ->
                 OpplysningRepository(opplysningerId, tx).hentOpplysninger()
             }
         }.let { Opplysninger(it) }
 
-    override fun lagreOpplysninger(opplysninger: Opplysninger) = lagreOpplysninger(opplysninger, PostgresUnitOfWork.start())
+    override fun lagreOpplysninger(opplysninger: Opplysninger) {
+        val unitOfWork = PostgresUnitOfWork.transaction()
+        lagreOpplysninger(opplysninger, unitOfWork)
+        unitOfWork.commit()
+    }
 
     override fun lagreOpplysninger(
         opplysninger: Opplysninger,
@@ -57,9 +61,9 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         OpplysningRepository(opplysninger.id, tx).lagreOpplysninger(opplysninger.aktiveOpplysninger())
     }
 
-    private class OpplysningRepository(private val opplysningerId: UUID, private val tx: TransactionalSession) {
+    private class OpplysningRepository(private val opplysningerId: UUID, private val tx: Session) {
         fun hentOpplysninger(): List<Opplysning<*>> =
-            using(sessionOf(dataSource)) { session ->
+            sessionOf(dataSource).use { session ->
                 session.run(
                     queryOf(
                         //language=PostgreSQL

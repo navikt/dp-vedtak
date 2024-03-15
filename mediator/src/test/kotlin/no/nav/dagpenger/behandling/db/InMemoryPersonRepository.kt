@@ -3,16 +3,12 @@ package no.nav.dagpenger.behandling.db
 import no.nav.dagpenger.behandling.mediator.BehandlingRepository
 import no.nav.dagpenger.behandling.mediator.PersonRepository
 import no.nav.dagpenger.behandling.mediator.UnitOfWork
-import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepository
-import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Person
 import java.util.UUID
 
-class InMemoryPersonRepository(private val opplysningerRepository: OpplysningerRepository = OpplysningerRepositoryPostgres()) :
-    PersonRepository,
-    BehandlingRepository {
+class InMemoryPersonRepository : PersonRepository, BehandlingRepository {
     private val persondb = mutableMapOf<Ident, Person>()
 
     override fun hent(ident: Ident): Person? = persondb[ident]

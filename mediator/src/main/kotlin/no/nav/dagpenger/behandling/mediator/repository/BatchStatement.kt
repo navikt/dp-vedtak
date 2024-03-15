@@ -1,7 +1,7 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
-import kotliquery.TransactionalSession
+import kotliquery.Session
 
 internal data class BatchStatement(private val query: String, private val params: List<Map<String, Any?>>) {
-    fun run(tx: TransactionalSession) = tx.batchPreparedNamedStatement(query, params)
+    fun run(tx: Session) = tx.batchPreparedNamedStatement(query, params)
 }

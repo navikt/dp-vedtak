@@ -29,4 +29,8 @@ interface PersonRepository : BehandlingRepository {
 
 interface UnitOfWork<S> {
     fun <T> inTransaction(block: (S) -> T): T
+
+    fun rollback()
+
+    fun commit()
 }

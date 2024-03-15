@@ -55,10 +55,9 @@ class PersonRepositoryPostgresTest {
             val behandling = Behandling(søknadInnsendtHendelse, emptyList())
             val person = Person(ident, listOf(behandling))
 
-            val personRepositoryPostgres1 = PersonRepositoryPostgres(BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres()))
-            personRepositoryPostgres1.lagre(person)
+            personRepositoryPostgres.lagre(person)
 
-            val fraDb = personRepositoryPostgres1.hent(ident)
+            val fraDb = personRepositoryPostgres.hent(ident)
             fraDb?.let {
                 assertEquals(person.ident, it.ident)
                 person.behandlinger() shouldContain behandling

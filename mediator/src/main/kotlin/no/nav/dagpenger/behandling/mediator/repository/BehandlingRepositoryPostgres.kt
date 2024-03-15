@@ -74,7 +74,11 @@ class BehandlingRepositoryPostgres(
             }.asList,
         )
 
-    override fun lagre(behandling: Behandling) = lagre(behandling, PostgresUnitOfWork.start())
+    override fun lagre(behandling: Behandling) {
+        val unitOfWork = PostgresUnitOfWork.transaction()
+        lagre(behandling, unitOfWork)
+        unitOfWork.commit()
+    }
 
     override fun lagre(
         behandling: Behandling,
@@ -125,7 +129,7 @@ class BehandlingRepositoryPostgres(
                 ).asUpdate,
             )
 
-            opplysningRepository.lagreOpplysninger(behandling.opplysninger() as Opplysninger)
+            opplysningRepository.lagreOpplysninger(behandling.opplysninger() as Opplysninger, unitOfWork)
 
             tx.run(
                 queryOf(

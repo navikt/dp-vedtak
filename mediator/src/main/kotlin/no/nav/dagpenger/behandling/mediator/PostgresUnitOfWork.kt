@@ -1,21 +1,25 @@
 package no.nav.dagpenger.behandling.mediator
 
-import kotliquery.TransactionalSession
+import kotliquery.Session
 import kotliquery.sessionOf
-import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder
+import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 
-class PostgresUnitOfWork(private val session: TransactionalSession) : UnitOfWork<TransactionalSession> {
+class PostgresUnitOfWork private constructor(private val session: Session) : UnitOfWork<Session> {
     companion object {
-        fun start() = PostgresUnitOfWork(sessionOf(PostgresDataSourceBuilder.dataSource).transaction { it })
+        fun transaction() = PostgresUnitOfWork(sessionOf(dataSource)).apply { begin() }
     }
 
-    override fun <T> inTransaction(block: (TransactionalSession) -> T) =
-        // session.transaction { tx ->
+    private fun begin() = session.connection.begin()
+
+    override fun commit() = session.use { it.connection.commit() }
+
+    override fun rollback() = session.use { it.connection.rollback() }
+
+    override fun <T> inTransaction(block: (Session) -> T) =
         try {
             block(session)
         } catch (e: Exception) {
-            println(e)
+            rollback()
             throw e
         }
-    // }
 }

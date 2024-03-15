@@ -45,7 +45,11 @@ class PersonRepositoryPostgres(
             )
         }
 
-    override fun lagre(person: Person) = lagre(person, PostgresUnitOfWork.start())
+    override fun lagre(person: Person) {
+        val unitOfWork = PostgresUnitOfWork.transaction()
+        lagre(person, unitOfWork)
+        unitOfWork.commit()
+    }
 
     override fun lagre(
         person: Person,
