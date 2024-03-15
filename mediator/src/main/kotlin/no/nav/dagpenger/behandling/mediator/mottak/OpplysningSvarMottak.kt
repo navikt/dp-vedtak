@@ -55,13 +55,8 @@ internal class OpplysningSvarMottak(
             "behandlingId" to behandlingId.toString(),
         ) {
             logger.info { "Mottok svar på en opplysning" }
-            try {
-                val message = OpplysningSvarMessage(packet)
-                message.behandle(messageMediator, context)
-            } catch (e: NoSuchElementException) {
-                // TODO: TA bort dette :)
-                logger.error(e) { "Noe gikk galt ved behandling av opplysningssvar" }
-            }
+            val message = OpplysningSvarMessage(packet)
+            message.behandle(messageMediator, context)
         }
     }
 
