@@ -56,6 +56,8 @@ class Opplysninger private constructor(
 
     override fun finnAlle() = alleOpplysninger.toList()
 
+    fun aktiveOpplysninger() = opplysninger.toList()
+
     @Suppress("UNCHECKED_CAST")
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? =
         alleOpplysninger.firstOrNull { it.er(opplysningstype) && it.gyldighetsperiode.inneholder(regelkjøring.forDato) } as Opplysning<T>?

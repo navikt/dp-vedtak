@@ -44,7 +44,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         mapOf("opplysningerId" to opplysninger.id),
                     ).asUpdate,
                 )
-                OpplysningRepository(opplysninger.id, tx).lagreOpplysninger(opplysninger.finnAlle())
+                OpplysningRepository(opplysninger.id, tx).lagreOpplysninger(opplysninger.aktiveOpplysninger())
             }
         }
     }

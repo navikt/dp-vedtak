@@ -1,18 +1,19 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
+import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder
+import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.BehandlingRepository
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Opplysninger
 import java.util.UUID
 
-class BehandlingRepositoryPostgres() : BehandlingRepository {
+class BehandlingRepositoryPostgres : BehandlingRepository {
     override fun hent(behandlingId: UUID): Behandling? {
-        return sessionOf(PostgresDataSourceBuilder.dataSource).use {
-            it.run(
+        return sessionOf(dataSource).use { session ->
+            session.run(
                 queryOf(
                     // language=PostgreSQL
                     """
@@ -27,6 +28,9 @@ class BehandlingRepositoryPostgres() : BehandlingRepository {
                         "id" to behandlingId,
                     ),
                 ).map { row ->
+                    val basertPåBehandlingId = session.hentBasertPåFor(behandlingId)
+                    val basertPåBehandling = basertPåBehandlingId.mapNotNull { id -> hent(id) }
+
                     Behandling.rehydrer(
                         behandlingId = row.uuid("behandling_id"),
                         behandler =
@@ -38,17 +42,36 @@ class BehandlingRepositoryPostgres() : BehandlingRepository {
                                         søknadId = UUID.fromString(row.string("ekstern_id")),
                                         gjelderDato = row.localDate("skjedde"),
                                     )
+
                                 else -> throw IllegalArgumentException("Ukjent hendelse type")
                             },
                         aktiveOpplysninger = OpplysningerRepositoryPostgres().hentOpplysninger(row.uuid("opplysninger_id")).finnAlle(),
+                        basertPå = basertPåBehandling,
                     )
                 }.asSingle,
             )
         }
     }
 
+    private fun Session.hentBasertPåFor(behandlingId: UUID) =
+        this.run(
+            queryOf(
+                // language=PostgreSQL
+                """
+                SELECT *  
+                FROM behandling_basertpå 
+                WHERE behandling_id = :id
+                """.trimIndent(),
+                mapOf(
+                    "id" to behandlingId,
+                ),
+            ).map { row ->
+                row.uuid("basert_på_behandling_id")
+            }.asList,
+        )
+
     override fun lagre(behandling: Behandling) {
-        sessionOf(PostgresDataSourceBuilder.dataSource).use { session ->
+        sessionOf(dataSource).use { session ->
 
             session.transaction { transactionalSession ->
                 transactionalSession.run(
@@ -116,7 +139,7 @@ class BehandlingRepositoryPostgres() : BehandlingRepository {
                             """.trimIndent(),
                             mapOf(
                                 "behandling_id" to behandling.behandlingId,
-                                "basert_på_behandling_id" to basertPåBehandling.behandlingId,
+                                "basert_paa_behandling_id" to basertPåBehandling.behandlingId,
                             ),
                         ).asUpdate,
                     )

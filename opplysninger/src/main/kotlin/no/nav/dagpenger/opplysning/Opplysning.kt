@@ -24,9 +24,12 @@ sealed class Opplysning<T : Comparable<T>>(
 
     override fun toString() = "${javaClass.simpleName} om ${opplysningstype.navn} har verdi: $verdi som er $gyldighetsperiode"
 
-    fun sammeSom(opplysning: Opplysning<*>): Boolean {
-        return opplysningstype == opplysning.opplysningstype && gyldighetsperiode.overlapp(opplysning.gyldighetsperiode)
-    }
+    fun sammeSom(opplysning: Opplysning<*>) =
+        opplysningstype == opplysning.opplysningstype && gyldighetsperiode.overlapp(opplysning.gyldighetsperiode)
+
+    override fun equals(other: Any?) = other is Opplysning<*> && id == other.id
+
+    override fun hashCode() = id.hashCode()
 }
 
 class Hypotese<T : Comparable<T>> constructor(

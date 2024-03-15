@@ -101,6 +101,10 @@ class Behandling private constructor(
 
     override fun toSpesifikkKontekst() = BehandlingKontekst(behandlingId, behandler.kontekstMap())
 
+    override fun equals(other: Any?) = other is Behandling && behandlingId == other.behandlingId
+
+    override fun hashCode() = behandlingId.hashCode()
+
     // TODO: VIl helst ikke ha søknadId inn her
     data class BehandlingKontekst(val behandlingId: UUID, val behandlerKontekst: Map<String, String>) : SpesifikkKontekst("Behandling") {
         override val kontekstMap = mapOf("behandlingId" to behandlingId.toString()) + behandlerKontekst

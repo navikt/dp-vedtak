@@ -72,27 +72,48 @@ CREATE TABLE IF NOT EXISTS behandling
 
 CREATE TABLE IF NOT EXISTS behandler_hendelse
 (
-    melding_id    uuid  PRIMARY KEY, -- todo: REFERENCES melding (melding_id)
-    ident         text                     NOT NULL,
-    ekstern_id    text                     NOT NULL,
-    hendelse_type text                     NOT NULL,
+    melding_id    uuid PRIMARY KEY, -- todo: REFERENCES melding (melding_id)
+    ident         TEXT                     NOT NULL,
+    ekstern_id    TEXT                     NOT NULL,
+    hendelse_type TEXT                     NOT NULL,
     skjedde       TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS behandler_hendelse_behandling
 (
-    behandling_id uuid REFERENCES behandling (behandling_id),
-    melding_id uuid REFERENCES behandler_hendelse (melding_id)
+    behandling_id uuid NOT NULL REFERENCES behandling (behandling_id),
+    melding_id    uuid NOT NULL REFERENCES behandler_hendelse (melding_id),
+    CONSTRAINT behandler_hendelse_behandling_unik_kobling UNIQUE (behandling_id, melding_id)
 );
 
 CREATE TABLE IF NOT EXISTS behandling_opplysninger
 (
-    behandling_id uuid REFERENCES behandling (behandling_id),
-    opplysninger_id uuid REFERENCES opplysninger (opplysninger_id)
+    behandling_id   uuid NOT NULL REFERENCES behandling (behandling_id),
+    opplysninger_id uuid NOT NULL REFERENCES opplysninger (opplysninger_id),
+    CONSTRAINT behandling_opplysninger_unik_kobling UNIQUE (behandling_id, opplysninger_id)
 );
 
 CREATE TABLE IF NOT EXISTS behandling_basertpå
 (
-    behandling_id uuid REFERENCES behandling (behandling_id),
-    basert_på_behandling_id uuid REFERENCES behandling (behandling_id)
+    behandling_id           uuid NOT NULL REFERENCES behandling (behandling_id),
+    basert_på_behandling_id uuid NOT NULL REFERENCES behandling (behandling_id),
+    CONSTRAINT behandling_basertpå_unik_kobling UNIQUE (behandling_id, basert_på_behandling_id)
 );
+
+CREATE TABLE IF NOT EXISTS person
+(
+    id        BIGSERIAL PRIMARY KEY,
+    opprettet TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS person_identer
+(
+    person_id BIGINT NOT NULL REFERENCES person (id),
+    ident     TEXT   NOT NULL UNIQUE,
+    opprettet TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE VIEW person_view AS
+SELECT person.id AS person_id, person.opprettet AS person_opprettet, person_identer.ident AS person_ident
+FROM person
+         JOIN person_identer ON person.id = person_identer.person_id;
