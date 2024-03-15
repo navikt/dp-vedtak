@@ -6,6 +6,7 @@ import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.UUIDv7
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysningstype
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -20,15 +21,23 @@ class BehandlingRepositoryPostgresTest {
             meldingsreferanseId = søknadId,
             gjelderDato = LocalDate.now(),
         )
-    private val tidligereOpplysning = Opplysningstype.somDesimaltall("opplysning-fra-tidligere-behandling")
+    private val basertPåBehandling =
+        Behandling(
+            behandler = søknadInnsendtHendelse,
+            opplysninger = listOf(Faktum(Opplysningstype.somDesimaltall("tidligere-opplysning"), 1.0)),
+        )
+    private val opplysning1 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning1"), 1.0)
+    private val opplysning2 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning2"), 2.0)
+    private val opplysning3 = Faktum(Opplysningstype.somBoolsk("aktiv-opplysning3"), false)
+    private val behandling =
+        Behandling(
+            behandler = søknadInnsendtHendelse,
+            opplysninger = listOf(opplysning1, opplysning2, opplysning3),
+            basertPå = listOf(basertPåBehandling),
+        )
 
     @Test
-    fun `hent behandling fra postgres`() {
-        val behandling =
-            Behandling(
-                behandler = søknadInnsendtHendelse,
-                opplysninger = emptyList(),
-            )
+    fun `lagre og hent behandling fra postgres`() {
         withMigratedDb {
             val behandlingRepositoryPostgres = BehandlingRepositoryPostgres()
             behandlingRepositoryPostgres.lagre(behandling)
