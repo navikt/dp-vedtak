@@ -98,7 +98,7 @@ class Behandling private constructor(
                     } +
                         // TODO: Midlertidlig hack for å få med søknadId for gamle behovløsere
                         mapOf(
-                            "InnsendtSøknadsId" to mapOf("urn" to behandler.eksternId.id.toString()),
+                            "InnsendtSøknadsId" to mapOf("urn" to "urn:søknad:${behandler.eksternId.id}"),
                             "søknad_uuid" to behandler.eksternId.id.toString(),
                         ),
             )
