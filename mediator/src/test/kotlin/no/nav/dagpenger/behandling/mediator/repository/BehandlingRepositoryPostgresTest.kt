@@ -40,7 +40,7 @@ class BehandlingRepositoryPostgresTest {
     @Test
     fun `lagre og hent behandling fra postgres`() {
         withMigratedDb {
-            val behandlingRepositoryPostgres = BehandlingRepositoryPostgres()
+            val behandlingRepositoryPostgres = BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres())
             behandlingRepositoryPostgres.lagre(basertPåBehandling)
             behandlingRepositoryPostgres.lagre(behandling)
             val rehydrertBehandling = behandlingRepositoryPostgres.hent(behandling.behandlingId).shouldNotBeNull()

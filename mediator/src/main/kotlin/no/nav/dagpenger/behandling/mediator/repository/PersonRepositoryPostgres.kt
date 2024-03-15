@@ -5,6 +5,8 @@ import kotliquery.sessionOf
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.BehandlingRepository
 import no.nav.dagpenger.behandling.mediator.PersonRepository
+import no.nav.dagpenger.behandling.mediator.PostgresUnitOfWork
+import no.nav.dagpenger.behandling.mediator.UnitOfWork
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Person
 
@@ -43,37 +45,43 @@ class PersonRepositoryPostgres(
             )
         }
 
-    override fun lagre(person: Person) =
-        sessionOf(dataSource).use { session ->
-            session.transaction { tx ->
-                tx.run(
-                    queryOf(
-                        //language=PostgreSQL
-                        """
-                        INSERT INTO person (ident) VALUES (:ident) ON CONFLICT DO NOTHING
-                        """.trimIndent(),
-                        mapOf("ident" to person.ident.identifikator()),
-                    ).asUpdate,
-                )
-                person.behandlinger().forEach { behandling ->
-                    // TODO: Denne må inn i samme transaksjon
-                    behandlingRepository.lagre(behandling)
+    override fun lagre(person: Person) = lagre(person, PostgresUnitOfWork.start())
 
-                    session.run(
-                        queryOf(
-                            //language=PostgreSQL
-                            """
-                            INSERT INTO person_behandling (ident, behandling_id)
-                            VALUES (:ident, :behandling_id)
-                            ON CONFLICT DO NOTHING
-                            """.trimIndent(),
-                            mapOf(
-                                "ident" to person.ident.identifikator(),
-                                "behandling_id" to behandling.behandlingId,
-                            ),
-                        ).asUpdate,
-                    )
-                }
-            }
+    override fun lagre(
+        person: Person,
+        unitOfWork: UnitOfWork<*>,
+    ) = lagre(person, unitOfWork as PostgresUnitOfWork)
+
+    private fun lagre(
+        person: Person,
+        unitOfWork: PostgresUnitOfWork,
+    ) = unitOfWork.inTransaction { tx ->
+        tx.run(
+            queryOf(
+                //language=PostgreSQL
+                """
+                INSERT INTO person (ident) VALUES (:ident) ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                mapOf("ident" to person.ident.identifikator()),
+            ).asUpdate,
+        )
+        person.behandlinger().forEach { behandling ->
+            behandlingRepository.lagre(behandling, unitOfWork)
+
+            tx.run(
+                queryOf(
+                    //language=PostgreSQL
+                    """
+                    INSERT INTO person_behandling (ident, behandling_id)
+                    VALUES (:ident, :behandling_id)
+                    ON CONFLICT DO NOTHING
+                    """.trimIndent(),
+                    mapOf(
+                        "ident" to person.ident.identifikator(),
+                        "behandling_id" to behandling.behandlingId,
+                    ),
+                ).asUpdate,
+            )
         }
+    }
 }

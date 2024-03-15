@@ -6,14 +6,11 @@ import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
+import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
-import no.nav.dagpenger.behandling.modell.Behandling
-import no.nav.dagpenger.behandling.modell.Ident
-import no.nav.dagpenger.behandling.modell.Person
-import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
-import java.util.UUID
 
 internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnection.StatusListener {
     companion object {
@@ -21,26 +18,8 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     }
 
     private val opplysningRepository = OpplysningerRepositoryPostgres()
-    private val personRepository =
-        object : PersonRepository, BehandlingRepository {
-            private val personer = mutableMapOf<Ident, Person>()
-
-            override fun hent(ident: Ident): Person? = personer[ident]
-
-            override fun lagre(person: Person) {
-                personer[person.ident] = person
-                opplysningRepository.lagreOpplysninger(person.behandlinger().map { it.opplysninger() as Opplysninger })
-            }
-
-            override fun hent(behandlingId: UUID): Behandling? {
-                return personer.values.flatMap { it.behandlinger() }.find { it.behandlingId == behandlingId }
-            }
-
-            override fun lagre(behandling: Behandling) {
-                TODO("Not yet implemented")
-            }
-        }
-
+    private val behandlingRepository = BehandlingRepositoryPostgres(opplysningRepository)
+    private val personRepository = PersonRepositoryPostgres(behandlingRepository)
     private val rapidsConnection =
         RapidApplication.Builder(RapidApplication.RapidApplicationConfig.fromEnv(config))
             .withKtorModule { behandlingApi(personRepository = personRepository) }.build()

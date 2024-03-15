@@ -6,6 +6,8 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.behandling.mediator.PostgresUnitOfWork
+import no.nav.dagpenger.behandling.mediator.UnitOfWork
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
@@ -32,25 +34,27 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             }
         }.let { Opplysninger(it) }
 
-    override fun lagreOpplysninger(opplysninger: Opplysninger) {
-        using(sessionOf(dataSource)) { session ->
-            session.transaction { tx ->
-                tx.run(
-                    queryOf(
-                        //language=PostgreSQL
-                        """
-                        INSERT INTO opplysninger (opplysninger_id) VALUES (:opplysningerId) ON CONFLICT DO NOTHING
-                        """.trimIndent(),
-                        mapOf("opplysningerId" to opplysninger.id),
-                    ).asUpdate,
-                )
-                OpplysningRepository(opplysninger.id, tx).lagreOpplysninger(opplysninger.aktiveOpplysninger())
-            }
-        }
-    }
+    override fun lagreOpplysninger(opplysninger: Opplysninger) = lagreOpplysninger(opplysninger, PostgresUnitOfWork.start())
 
-    override fun lagreOpplysninger(opplysninger: List<Opplysninger>) {
-        opplysninger.map { lagreOpplysninger(it) }
+    override fun lagreOpplysninger(
+        opplysninger: Opplysninger,
+        unitOfWork: UnitOfWork<*>,
+    ) = lagreOpplysninger(opplysninger, unitOfWork as PostgresUnitOfWork)
+
+    private fun lagreOpplysninger(
+        opplysninger: Opplysninger,
+        unitOfWork: PostgresUnitOfWork,
+    ) = unitOfWork.inTransaction { tx ->
+        tx.run(
+            queryOf(
+                //language=PostgreSQL
+                """
+                INSERT INTO opplysninger (opplysninger_id) VALUES (:opplysningerId) ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                mapOf("opplysningerId" to opplysninger.id),
+            ).asUpdate,
+        )
+        OpplysningRepository(opplysninger.id, tx).lagreOpplysninger(opplysninger.aktiveOpplysninger())
     }
 
     private class OpplysningRepository(private val opplysningerId: UUID, private val tx: TransactionalSession) {

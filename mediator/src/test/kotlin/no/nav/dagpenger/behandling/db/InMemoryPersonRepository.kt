@@ -1,11 +1,13 @@
-package no.nav.dagpenger.behandling.mediator.repository
+package no.nav.dagpenger.behandling.db
 
 import no.nav.dagpenger.behandling.mediator.BehandlingRepository
 import no.nav.dagpenger.behandling.mediator.PersonRepository
+import no.nav.dagpenger.behandling.mediator.UnitOfWork
+import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepository
+import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Person
-import no.nav.dagpenger.opplysning.Opplysninger
 import java.util.UUID
 
 class InMemoryPersonRepository(private val opplysningerRepository: OpplysningerRepository = OpplysningerRepositoryPostgres()) :
@@ -23,9 +25,22 @@ class InMemoryPersonRepository(private val opplysningerRepository: OpplysningerR
         TODO("Not yet implemented")
     }
 
+    override fun lagre(
+        behandling: Behandling,
+        unitOfWork: UnitOfWork<*>,
+    ) {
+        TODO("Not yet implemented")
+    }
+
     override fun lagre(person: Person) {
         persondb[person.ident] = person
-        opplysningerRepository.lagreOpplysninger(person.behandlinger().map { it.opplysninger() as Opplysninger })
+    }
+
+    override fun lagre(
+        person: Person,
+        unitOfWork: UnitOfWork<*>,
+    ) {
+        TODO("Not yet implemented")
     }
 
     fun reset() {

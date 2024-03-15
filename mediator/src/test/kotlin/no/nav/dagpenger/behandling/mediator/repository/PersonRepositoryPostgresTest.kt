@@ -15,7 +15,7 @@ import java.time.LocalDate
 class PersonRepositoryPostgresTest {
     private val fnr = "12345678901"
     private val søknadId = UUIDv7.ny()
-    private val personRepositoryPostgres = PersonRepositoryPostgres(BehandlingRepositoryPostgres())
+    private val personRepositoryPostgres get() = PersonRepositoryPostgres(BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres()))
     private val søknadInnsendtHendelse =
         SøknadInnsendtHendelse(
             søknadId = søknadId,
@@ -55,9 +55,10 @@ class PersonRepositoryPostgresTest {
             val behandling = Behandling(søknadInnsendtHendelse, emptyList())
             val person = Person(ident, listOf(behandling))
 
-            personRepositoryPostgres.lagre(person)
+            val personRepositoryPostgres1 = PersonRepositoryPostgres(BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres()))
+            personRepositoryPostgres1.lagre(person)
 
-            val fraDb = personRepositoryPostgres.hent(ident)
+            val fraDb = personRepositoryPostgres1.hent(ident)
             fraDb?.let {
                 assertEquals(person.ident, it.ident)
                 person.behandlinger() shouldContain behandling

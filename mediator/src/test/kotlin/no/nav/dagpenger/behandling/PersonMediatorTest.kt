@@ -6,12 +6,12 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import no.nav.dagpenger.behandling.db.InMemoryMeldingRepository
+import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.BehovMediator
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
-import no.nav.dagpenger.behandling.mediator.repository.InMemoryPersonRepository
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
