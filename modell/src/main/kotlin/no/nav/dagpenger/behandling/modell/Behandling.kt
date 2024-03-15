@@ -19,7 +19,7 @@ class Behandling private constructor(
     val behandlingId: UUID,
     val behandler: BehandlingHendelse,
     aktiveOpplysninger: List<Opplysning<*>> = emptyList(),
-    basertPå: List<Behandling> = emptyList(),
+    val basertPå: List<Behandling> = emptyList(),
 ) : Aktivitetskontekst {
     constructor(
         behandler: BehandlingHendelse,

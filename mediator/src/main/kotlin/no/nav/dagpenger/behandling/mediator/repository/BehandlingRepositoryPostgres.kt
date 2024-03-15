@@ -105,6 +105,22 @@ class BehandlingRepositoryPostgres() : BehandlingRepository {
                         ),
                     ).asUpdate,
                 )
+
+                behandling.basertPå.forEach { basertPåBehandling ->
+                    transactionalSession.run(
+                        queryOf(
+                            // language=PostgreSQL
+                            """
+                            INSERT INTO behandling_basertpå (behandling_id, basert_på_behandling_id) 
+                            VALUES (:behandling_id, :basert_paa_behandling_id) ON CONFLICT DO NOTHING
+                            """.trimIndent(),
+                            mapOf(
+                                "behandling_id" to behandling.behandlingId,
+                                "basert_på_behandling_id" to basertPåBehandling.behandlingId,
+                            ),
+                        ).asUpdate,
+                    )
+                }
             }
         }
     }

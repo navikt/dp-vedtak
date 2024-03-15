@@ -89,3 +89,9 @@ CREATE TABLE IF NOT EXISTS behandling_opplysninger
     behandling_id uuid REFERENCES behandling (behandling_id),
     opplysninger_id uuid REFERENCES opplysninger (opplysninger_id)
 );
+
+CREATE TABLE IF NOT EXISTS behandling_basertpå
+(
+    behandling_id uuid REFERENCES behandling (behandling_id),
+    basert_på_behandling_id uuid REFERENCES behandling (behandling_id)
+);

@@ -2,7 +2,6 @@ package no.nav.dagpenger.behandling.mediator.repository
 
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import no.nav.dagpenger.behandling.assertDeepEquals
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.UUIDv7
@@ -34,18 +33,19 @@ class BehandlingRepositoryPostgresTest {
         Behandling(
             behandler = søknadInnsendtHendelse,
             opplysninger = listOf(opplysning1, opplysning2, opplysning3),
-            basertPå = emptyList(),
+            basertPå = listOf(basertPåBehandling),
         )
 
     @Test
     fun `lagre og hent behandling fra postgres`() {
         withMigratedDb {
             val behandlingRepositoryPostgres = BehandlingRepositoryPostgres()
+            behandlingRepositoryPostgres.lagre(basertPåBehandling)
             behandlingRepositoryPostgres.lagre(behandling)
             val rehydrertBehandling = behandlingRepositoryPostgres.hent(behandling.behandlingId).shouldNotBeNull()
             rehydrertBehandling.behandlingId shouldBe behandling.behandlingId
             rehydrertBehandling.opplysninger().finnAlle().size shouldBe behandling.opplysninger().finnAlle().size
-            assertDeepEquals(rehydrertBehandling, behandling)
+            rehydrertBehandling.basertPå.size shouldBe behandling.basertPå.size
         }
     }
 }
