@@ -41,8 +41,9 @@ class BehandlingRepositoryPostgresTest {
         withMigratedDb {
             val behandlingRepositoryPostgres = BehandlingRepositoryPostgres()
             behandlingRepositoryPostgres.lagre(behandling)
-            val hentetBehandling = behandlingRepositoryPostgres.hent(behandling.behandlingId).shouldNotBeNull()
-            behandling.behandlingId shouldBe hentetBehandling.behandlingId
+            val rehydrertBehandling = behandlingRepositoryPostgres.hent(behandling.behandlingId).shouldNotBeNull()
+            rehydrertBehandling.behandlingId shouldBe behandling.behandlingId
+            rehydrertBehandling.opplysninger().finnAlle() shouldBe behandling.opplysninger().finnAlle()
         }
     }
 }
