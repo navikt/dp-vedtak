@@ -29,10 +29,8 @@ import java.util.UUID
 class OpplysningerRepositoryPostgres : OpplysningerRepository {
     override fun hentOpplysninger(opplysningerId: UUID) =
         sessionOf(dataSource).use { session ->
-            session.transaction { tx ->
-                OpplysningRepository(opplysningerId, tx).hentOpplysninger()
-            }
-        }.let { Opplysninger(it) }
+            OpplysningRepository(opplysningerId, session).hentOpplysninger()
+        }.let { Opplysninger(opplysningerId, it) }
 
     override fun lagreOpplysninger(opplysninger: Opplysninger) {
         val unitOfWork = PostgresUnitOfWork.transaction()

@@ -62,7 +62,7 @@ internal class PersonMediatorTest {
 
             rapid.harBehov("Søknadstidspunkt") {
                 medTekst("søknad_uuid") shouldBe testPerson.søknadId
-                medNode("InnsendtSøknadsId")["urn"].asText() shouldBe testPerson.søknadId
+                medNode("InnsendtSøknadsId")["urn"].asText() shouldBe "urn:soknad:${testPerson.søknadId}"
             }
             rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
             testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")

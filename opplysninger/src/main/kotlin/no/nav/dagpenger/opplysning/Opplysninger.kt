@@ -27,6 +27,7 @@ class Opplysninger private constructor(
     private val alleOpplysninger: List<Opplysning<*>> get() = basertPåOpplysninger + opplysninger
 
     constructor() : this(UUIDv7.ny(), emptyList(), emptyList())
+    constructor(id: UUID, opplysninger: List<Opplysning<*>>) : this(id, opplysninger, emptyList())
     constructor(opplysninger: List<Opplysning<*>>, basertPå: List<Opplysninger> = emptyList()) : this(UUIDv7.ny(), opplysninger, basertPå)
     constructor(vararg basertPå: Opplysninger) : this(emptyList(), basertPå.toList())
 
@@ -61,4 +62,6 @@ class Opplysninger private constructor(
     @Suppress("UNCHECKED_CAST")
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? =
         alleOpplysninger.firstOrNull { it.er(opplysningstype) && it.gyldighetsperiode.inneholder(regelkjøring.forDato) } as Opplysning<T>?
+
+    operator fun plus(tidligereOpplysninger: List<Opplysninger>) = Opplysninger(id, opplysninger, tidligereOpplysninger)
 }

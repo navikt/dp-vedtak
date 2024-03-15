@@ -18,17 +18,17 @@ import java.util.UUID
 class Behandling private constructor(
     val behandlingId: UUID,
     val behandler: BehandlingHendelse,
-    aktiveOpplysninger: List<Opplysning<*>> = emptyList(),
+    aktiveOpplysninger: Opplysninger,
     val basertPå: List<Behandling> = emptyList(),
 ) : Aktivitetskontekst {
     constructor(
         behandler: BehandlingHendelse,
         opplysninger: List<Opplysning<*>>,
         basertPå: List<Behandling> = emptyList(),
-    ) : this(UUIDv7.ny(), behandler, opplysninger, basertPå)
+    ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå)
 
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
-    private val opplysninger = Opplysninger(aktiveOpplysninger, tidligereOpplysninger)
+    private val opplysninger = aktiveOpplysninger + tidligereOpplysninger
 
     private val regelkjøring = Regelkjøring(behandler.skjedde, opplysninger, *behandler.regelsett().toTypedArray())
 
@@ -36,7 +36,7 @@ class Behandling private constructor(
         fun rehydrer(
             behandlingId: UUID,
             behandler: BehandlingHendelse,
-            aktiveOpplysninger: List<Opplysning<*>> = emptyList(),
+            aktiveOpplysninger: Opplysninger,
             basertPå: List<Behandling> = emptyList(),
         ) = Behandling(behandlingId, behandler, aktiveOpplysninger, basertPå)
 

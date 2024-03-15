@@ -49,7 +49,7 @@ class BehandlingRepositoryPostgres(
 
                                 else -> throw IllegalArgumentException("Ukjent hendelse type")
                             },
-                        aktiveOpplysninger = OpplysningerRepositoryPostgres().hentOpplysninger(row.uuid("opplysninger_id")).finnAlle(),
+                        aktiveOpplysninger = opplysningRepository.hentOpplysninger(row.uuid("opplysninger_id"))!!,
                         basertPå = basertPåBehandling,
                     )
                 }.asSingle,

@@ -71,6 +71,8 @@ class PersonRepositoryPostgresTest {
             fraDb?.let {
                 it.ident shouldBe person.ident
                 it.behandlinger() shouldContain behandling
+                it.behandlinger().first().behandlingId shouldBe behandling.behandlingId
+                it.behandlinger().first().opplysninger().id shouldBe behandling.opplysninger().id
                 it.behandlinger()
                     .flatMap { behandling -> behandling.opplysninger().finnAlle() } shouldContain opplysning
             }
