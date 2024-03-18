@@ -37,7 +37,7 @@ internal class OpplysningSvarMottak(
             validate { it.requireKey("ident") }
             validate { it.requireKey("@løsning") }
             validate { it.requireKey("behandlingId") }
-            validate { it.interestedIn("@id", "@opprettet") }
+            validate { it.interestedIn("@id", "@opprettet", "@behovId") }
         }.register(this)
     }
 
@@ -46,12 +46,15 @@ internal class OpplysningSvarMottak(
         packet: JsonMessage,
         context: MessageContext,
     ) {
+        val behovId = packet["behovId"].asUUID()
         val behandlingId = packet["behandlingId"].asUUID()
         Span.current().apply {
             setAttribute("app.river", name())
+            setAttribute("app.behovId", behovId.toString())
             setAttribute("app.behandlingId", behandlingId.toString())
         }
         withLoggingContext(
+            "behovId" to behovId.toString(),
             "behandlingId" to behandlingId.toString(),
         ) {
             logger.info { "Mottok svar på en opplysning" }
@@ -88,6 +91,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
     private val opplysning =
         mutableListOf<OpplysningSvar<*>>().apply {
             packet["@løsning"].fields().forEach { (typeNavn, jsonVerdi) ->
+                logger.info { "Tok i mot opplysning av $typeNavn" }
 
                 if (Opplysningstype.typer.find { it.id == typeNavn } == null) {
                     logger.error { "Ukjent opplysningstype: $typeNavn" }
