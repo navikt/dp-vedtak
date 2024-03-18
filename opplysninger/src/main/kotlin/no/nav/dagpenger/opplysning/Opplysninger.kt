@@ -37,7 +37,15 @@ class Opplysninger private constructor(
 
     fun leggTil(opplysning: Opplysning<*>) {
         require(alleOpplysninger.none { it.sammeSom(opplysning) }) {
-            "Opplysning ${opplysning.opplysningstype} finnes allerede med overlappende gyldighetsperiode"
+            """Opplysning ${opplysning.opplysningstype} finnes allerede med overlappende gyldighetsperiode. 
+               Opplysning som legges til: ${opplysning.gyldighetsperiode}
+               Opplysning som allerede finnes: ${
+                alleOpplysninger.first {
+                    it.sammeSom(
+                        opplysning,
+                    )
+                }.gyldighetsperiode
+            }"""
         }
         opplysninger.add(opplysning)
         regelkjøring.evaluer()
