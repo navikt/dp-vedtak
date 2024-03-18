@@ -11,7 +11,8 @@ SELECT opplysninger_opplysning.opplysninger_id,
        opplysning_verdi.verdi_desimaltall,
        opplysning_verdi.verdi_dato,
        opplysning_verdi.verdi_boolsk,
-       opplysning_verdi.verdi_string
+       opplysning_verdi.verdi_string,
+       opplysning.opprettet
 FROM opplysning
          LEFT JOIN
      opplysninger_opplysning ON opplysning.id = opplysninger_opplysning.opplysning_id

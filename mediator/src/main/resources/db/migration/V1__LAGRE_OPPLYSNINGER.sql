@@ -27,7 +27,7 @@ CREATE TABLE opplysning
     opplysningstype_id BIGINT                   NOT NULL REFERENCES opplysningstype (opplysningstype_id),
     gyldig_fom         TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
     gyldig_tom         TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
-    opprettet          TIMESTAMP WITH TIME ZONE      DEFAULT NOW()
+    opprettet          TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 CREATE TABLE opplysning_verdi

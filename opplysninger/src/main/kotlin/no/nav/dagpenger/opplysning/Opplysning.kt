@@ -1,6 +1,7 @@
 package no.nav.dagpenger.opplysning
 
 import no.nav.dagpenger.opplysning.regel.Regel
+import java.time.LocalDateTime
 import java.util.UUID
 
 data class Utledning internal constructor(
@@ -19,6 +20,7 @@ sealed class Opplysning<T : Comparable<T>>(
     val gyldighetsperiode: Gyldighetsperiode,
     val utledetAv: Utledning?,
     val kilde: Kilde?,
+    val opprettet: LocalDateTime,
 ) : Klassifiserbart by opplysningstype {
     abstract fun bekreft(): Faktum<T>
 
@@ -34,40 +36,44 @@ sealed class Opplysning<T : Comparable<T>>(
     override fun toString() = "${javaClass.simpleName} om ${opplysningstype.navn} har verdi: $verdi som er $gyldighetsperiode"
 }
 
-class Hypotese<T : Comparable<T>> constructor(
+class Hypotese<T : Comparable<T>>(
     id: UUID,
     opplysningstype: Opplysningstype<T>,
     verdi: T,
     gyldighetsperiode: Gyldighetsperiode = Gyldighetsperiode(),
     utledetAv: Utledning? = null,
     kilde: Kilde? = null,
-) : Opplysning<T>(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde) {
+    opprettet: LocalDateTime,
+) : Opplysning<T>(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet) {
     constructor(
         opplysningstype: Opplysningstype<T>,
         verdi: T,
         gyldighetsperiode: Gyldighetsperiode = Gyldighetsperiode(),
         utledetAv: Utledning? = null,
         kilde: Kilde? = null,
-    ) : this(UUIDv7.ny(), opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde)
+        opprettet: LocalDateTime = LocalDateTime.now(),
+    ) : this(UUIDv7.ny(), opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet)
 
-    override fun bekreft() = Faktum(id, super.opplysningstype, verdi, gyldighetsperiode, utledetAv)
+    override fun bekreft() = Faktum(id, super.opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet)
 }
 
-class Faktum<T : Comparable<T>> constructor(
+class Faktum<T : Comparable<T>>(
     id: UUID,
     opplysningstype: Opplysningstype<T>,
     verdi: T,
     gyldighetsperiode: Gyldighetsperiode = Gyldighetsperiode(),
     utledetAv: Utledning? = null,
     kilde: Kilde? = null,
-) : Opplysning<T>(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde) {
+    opprettet: LocalDateTime,
+) : Opplysning<T>(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet) {
     constructor(
         opplysningstype: Opplysningstype<T>,
         verdi: T,
         gyldighetsperiode: Gyldighetsperiode = Gyldighetsperiode(),
         utledetAv: Utledning? = null,
         kilde: Kilde? = null,
-    ) : this(UUIDv7.ny(), opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde)
+        opprettet: LocalDateTime = LocalDateTime.now(),
+    ) : this(UUIDv7.ny(), opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet)
 
     override fun bekreft() = this
 }

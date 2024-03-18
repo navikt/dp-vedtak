@@ -83,9 +83,12 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     localDateTimeOrNull("gyldig_tom") ?: LocalDateTime.MAX,
                 )
             val verdi = datatype.verdi(this)
+            val opprettet = this.localDateTime("opprettet")
             return when (string("status")) {
-                "Hypotese" -> Hypotese(id, opplysningstype, verdi, gyldighetsperiode)
-                "Faktum" -> Faktum(id, opplysningstype, verdi, gyldighetsperiode)
+                "Hypotese" -> {
+                    Hypotese(id, opplysningstype, verdi, gyldighetsperiode, null, null, opprettet)
+                }
+                "Faktum" -> Faktum(id, opplysningstype, verdi, gyldighetsperiode, null, null, opprettet)
                 else -> throw IllegalStateException("Ukjent opplysningstype")
             }
         }
@@ -148,8 +151,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 WITH ins AS (
                     SELECT opplysningstype_id FROM opplysningstype WHERE id = :typeId AND navn = :typeNavn AND  datatype = :datatype
                 )
-                INSERT INTO opplysning (id, status, opplysningstype_id, gyldig_fom, gyldig_tom)
-                VALUES (:id, :status, (SELECT opplysningstype_id FROM ins), :fom::timestamp, :tom::timestamp)
+                INSERT INTO opplysning (id, status, opplysningstype_id, gyldig_fom, gyldig_tom, opprettet)
+                VALUES (:id, :status, (SELECT opplysningstype_id FROM ins), :fom::timestamp, :tom::timestamp, :opprettet::timestamp)
                 ON CONFLICT DO NOTHING
                 """.trimIndent(),
                 opplysninger.map { opplysning ->
@@ -162,6 +165,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         "datatype" to opplysning.opplysningstype.datatype.javaClass.simpleName,
                         "fom" to gyldighetsperiode.fom.let { if (it == LocalDateTime.MIN) null else it },
                         "tom" to gyldighetsperiode.tom.let { if (it == LocalDateTime.MAX) null else it },
+                        "opprettet" to opplysning.opprettet,
                     )
                 },
             )

@@ -5,6 +5,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 class OpplysningTest {
@@ -19,5 +20,11 @@ class OpplysningTest {
         val opplysning = Faktum(Opplysningstype.somDato("Fødselsdato"), LocalDate.now())
         shouldNotThrowAny { UUID.fromString(opplysning.id.toString()) }
         opplysning.id.version() shouldBe 7
+    }
+
+    @Test
+    fun `opplysning har opprettet dato`() {
+        val opplysning = Faktum(Opplysningstype.somDato("Fødselsdato"), LocalDate.now())
+        assertTrue(opplysning.opprettet.isBefore(LocalDateTime.now()))
     }
 }
