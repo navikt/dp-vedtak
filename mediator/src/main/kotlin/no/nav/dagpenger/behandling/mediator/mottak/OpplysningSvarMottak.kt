@@ -46,7 +46,7 @@ internal class OpplysningSvarMottak(
         packet: JsonMessage,
         context: MessageContext,
     ) {
-        val behovId = packet["behovId"].asUUID()
+        val behovId = packet["@behovId"].asText()
         val behandlingId = packet["behandlingId"].asUUID()
         Span.current().apply {
             setAttribute("app.river", name())
