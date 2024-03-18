@@ -94,7 +94,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         private fun <T : Comparable<T>> Datatype<T>.verdi(row: Row): T =
             when (this) {
                 Boolsk -> row.boolean("verdi_boolsk")
-                Dato -> row.localDateTime("verdi_dato")
+                Dato -> row.localDate("verdi_dato")
                 Desimaltall -> row.double("verdi_desimaltall")
                 Heltall -> row.int("verdi_heltall")
                 ULID -> Ulid(row.string("verdi_string"))
