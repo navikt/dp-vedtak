@@ -6,8 +6,12 @@ metadata:
   labels:
     team: teamdagpenger
 spec:
-  image: {{ image }}
+  image: "{{ image }}"
   port: 8080
+  liveness:
+    path: /isalive
+  readiness:
+    path: /isready
   prometheus:
     enabled: true
     path: /metrics
@@ -59,7 +63,7 @@ spec:
           - name: behandling
             envVarPrefix: DB
   kafka:
-    pool: {{ kafka_pool }}
+    pool: "{{ kafka_pool }}"
   accessPolicy:
     inbound:
       rules:
