@@ -71,7 +71,7 @@ private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
 private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
     return OpplysningDTO(
         id = this.id,
-        opplysningstype = this.opplysningstype.id,
+        opplysningstype = this.opplysningstype.navn,
         verdi = this.verdi.toString(),
         status =
             when (this) {
