@@ -22,6 +22,8 @@ import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Opplysning
+import no.nav.dagpenger.opplysning.ULID
+import no.nav.dagpenger.opplysning.verdier.Ulid
 import org.apache.kafka.common.errors.ResourceNotFoundException
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -72,7 +74,11 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
     return OpplysningDTO(
         id = this.id,
         opplysningstype = this.opplysningstype.navn,
-        verdi = this.verdi.toString(),
+        verdi =
+            when (this.opplysningstype.datatype) {
+                is ULID -> (this.verdi as Ulid).verdi
+                else -> this.verdi.toString()
+            },
         status =
             when (this) {
                 is Faktum -> OpplysningDTO.Status.Faktum
