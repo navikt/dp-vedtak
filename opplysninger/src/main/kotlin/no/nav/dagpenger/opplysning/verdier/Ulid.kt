@@ -6,4 +6,6 @@ data class Ulid(val verdi: String) : Comparable<Ulid> {
     }
 
     override fun compareTo(other: Ulid) = verdi.compareTo(other.verdi)
+
+    override fun toString() = verdi
 }
