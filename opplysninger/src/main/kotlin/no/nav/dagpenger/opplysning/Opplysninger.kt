@@ -35,19 +35,44 @@ class Opplysninger private constructor(
         this.regelkjøring = regelkjøring
     }
 
+    internal fun leggTilUtledet(opplysning: Opplysning<*>) {
+        alleOpplysninger.find { it.overlapper(opplysning) }?.let {
+            opplysninger.remove(it)
+        }
+        opplysninger.add(opplysning)
+        regelkjøring.evaluer()
+    }
+
     fun leggTil(opplysning: Opplysning<*>) {
-        require(alleOpplysninger.none { it.sammeSom(opplysning) }) {
-            """Opplysning ${opplysning.opplysningstype} finnes allerede med overlappende gyldighetsperiode. 
+        require(alleOpplysninger.none { it.overlapper(opplysning) }) {
+            """Opplysning ${opplysning.opplysningstype} finnes allerede med overlappende gyldighetsperiode.
                Opplysning som legges til: ${opplysning.gyldighetsperiode}
                Opplysning som allerede finnes: ${
                 alleOpplysninger.first {
-                    it.sammeSom(
+                    it.overlapper(
                         opplysning,
                     )
                 }.gyldighetsperiode
             }"""
         }
         opplysninger.add(opplysning)
+        regelkjøring.evaluer()
+    }
+
+    fun erstatt(
+        opplysning: Opplysning<*>,
+        med: Opplysning<*>,
+    ) {
+        require(alleOpplysninger.contains(opplysning)) {
+            "Opplysning ${opplysning.opplysningstype} finnes ikke. Kan ikke erstatte noe som ikke finnes."
+        }
+        require(opplysning.overlapper(med)) {
+            """Opplysning ${opplysning.opplysningstype} og ${med.opplysningstype} overlapper ikke. 
+                |Kan ikke erstatte med en opplysning som ikke er lik.
+            """.trimMargin()
+        }
+        opplysninger.remove(opplysning)
+        opplysninger.add(med)
         regelkjøring.evaluer()
     }
 

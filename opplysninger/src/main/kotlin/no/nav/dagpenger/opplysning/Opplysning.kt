@@ -26,7 +26,7 @@ sealed class Opplysning<T : Comparable<T>>(
 
     val kanRedigeres get() = utledetAv == null && opplysningstype.datatype != ULID
 
-    fun sammeSom(opplysning: Opplysning<*>) =
+    fun overlapper(opplysning: Opplysning<*>) =
         opplysningstype == opplysning.opplysningstype && gyldighetsperiode.overlapp(opplysning.gyldighetsperiode)
 
     override fun equals(other: Any?) = other is Opplysning<*> && id == other.id

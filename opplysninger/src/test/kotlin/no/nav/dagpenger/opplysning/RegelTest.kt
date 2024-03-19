@@ -20,17 +20,15 @@ class RegelTest {
 
         val opplysninger = Opplysninger()
         val regelkjøring1 = Regelkjøring(1.mai, opplysninger, regelsett)
-        opplysninger.leggTil(Faktum(a, true, Gyldighetsperiode(1.januar, 1.mai)))
+        val opplysning = Faktum(a, true, Gyldighetsperiode(1.januar, 2.mai))
+        opplysninger.leggTil(opplysning)
         opplysninger.leggTil(Faktum(b, true))
         regelkjøring1.evaluer()
         opplysninger.finnOpplysning(c).verdi shouldBe true
 
+        // Første forsøk på å fastsette A var feil.
         val regelkjøring2 = Regelkjøring(1.mai, opplysninger, regelsett)
-
-        shouldNotThrow<IllegalArgumentException> { regelkjøring2.evaluer() }
-
-        opplysninger.leggTil(Faktum(a, false, Gyldighetsperiode(2.mai)))
-
+        opplysninger.erstatt(opplysning, Faktum(a, false, Gyldighetsperiode(1.januar, 2.mai)))
         shouldNotThrow<IllegalArgumentException> { regelkjøring2.evaluer() }
 
         opplysninger.finnOpplysning(c).verdi shouldBe false

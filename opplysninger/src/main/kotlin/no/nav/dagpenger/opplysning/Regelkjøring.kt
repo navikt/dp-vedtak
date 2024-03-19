@@ -47,7 +47,7 @@ class Regelkjøring(
         val opplysning = regel.lagProdukt(opplysninger)
         kjørteRegler.add(regel)
         plan.remove(regel)
-        opplysninger.leggTil(opplysning)
+        opplysninger.leggTilUtledet(opplysning)
     }
 
     private fun aktiverRegler() {
