@@ -12,7 +12,8 @@ abstract class Regel<T : Comparable<T>> internal constructor(
     internal val produserer: Opplysningstype<T>,
     internal val avhengerAv: List<Opplysningstype<*>> = emptyList(),
 ) {
-    internal open fun kanKjøre(opplysninger: LesbarOpplysninger): Boolean = opplysninger.finnAlle(avhengerAv).size == avhengerAv.size
+    internal open fun kanKjøre(opplysninger: LesbarOpplysninger): Boolean =
+        opplysninger.finnAlle(avhengerAv).size == avhengerAv.size && !opplysninger.har(produserer)
 
     protected abstract fun kjør(opplysninger: LesbarOpplysninger): T
 
