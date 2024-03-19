@@ -35,14 +35,6 @@ class Opplysninger private constructor(
         this.regelkjøring = regelkjøring
     }
 
-    internal fun leggTilUtledet(opplysning: Opplysning<*>) {
-        alleOpplysninger.find { it.overlapper(opplysning) }?.let {
-            opplysninger.remove(it)
-        }
-        opplysninger.add(opplysning)
-        regelkjøring.evaluer()
-    }
-
     fun leggTil(opplysning: Opplysning<*>) {
         require(alleOpplysninger.none { it.overlapper(opplysning) }) {
             """Opplysning ${opplysning.opplysningstype} finnes allerede med overlappende gyldighetsperiode.
@@ -54,6 +46,14 @@ class Opplysninger private constructor(
                     )
                 }.gyldighetsperiode
             }"""
+        }
+        opplysninger.add(opplysning)
+        regelkjøring.evaluer()
+    }
+
+    internal fun leggTilUtledet(opplysning: Opplysning<*>) {
+        alleOpplysninger.find { it.overlapper(opplysning) }?.let {
+            opplysninger.remove(it)
         }
         opplysninger.add(opplysning)
         regelkjøring.evaluer()

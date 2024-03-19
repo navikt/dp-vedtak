@@ -15,12 +15,14 @@ abstract class Regel<T : Comparable<T>> internal constructor(
     internal open fun kanKjøre(opplysninger: LesbarOpplysninger): Boolean {
         val avhengigheter = opplysninger.finnAlle(avhengerAv)
 
+        if (avhengigheter.size != avhengerAv.size) return false
+
         return if (opplysninger.har(produserer)) {
             opplysninger.finnOpplysning(produserer).let { produkt ->
                 avhengigheter.any { it.opprettet.isBefore(produkt.opprettet) }
             }
         } else {
-            avhengigheter.size == avhengerAv.size
+            true
         }
     }
 
