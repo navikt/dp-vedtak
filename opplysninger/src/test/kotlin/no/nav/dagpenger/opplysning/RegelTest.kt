@@ -31,6 +31,7 @@ class RegelTest {
         opplysninger.erstatt(opplysning, Faktum(a, false, Gyldighetsperiode(1.januar, 2.mai)))
         shouldNotThrow<IllegalArgumentException> { regelkjøring2.evaluer() }
 
+        // Endring av A fører til at C blir beregnet på nytt
         opplysninger.finnOpplysning(c).verdi shouldBe false
     }
 }
