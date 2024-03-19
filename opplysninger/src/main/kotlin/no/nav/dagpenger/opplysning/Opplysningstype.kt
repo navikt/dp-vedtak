@@ -28,13 +28,12 @@ class Opplysningstype<T : Comparable<T>>(
 
     init {
         // TODO: Vi bør gjøre noe slikt, men det brekker mye tester
-        // require(typer.none { it.opplysningTypeId == this.opplysningTypeId }) { "Opplysningstype ${this.opplysningTypeId} finnes allerede" }
         typer.add(this)
         parent?.child?.add(this)
     }
 
     companion object {
-        val typer = mutableListOf<Opplysningstype<*>>()
+        val typer = mutableSetOf<Opplysningstype<*>>()
 
         fun somHeltall(
             opplysningTypeId: OpplysningTypeId,
