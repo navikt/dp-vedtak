@@ -3,15 +3,19 @@ package no.nav.dagpenger.behandling
 import com.fasterxml.jackson.databind.JsonNode
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import no.nav.dagpenger.behandling.db.InMemoryMeldingRepository
-import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.BehovMediator
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
+import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
+import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
+import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
+import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
@@ -25,7 +29,7 @@ internal class PersonMediatorTest {
     private val rapid = TestRapid()
     private val ident = "11109233444"
 
-    private val personRepository = InMemoryPersonRepository()
+    private val personRepository = PersonRepositoryPostgres(BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres()))
 
     init {
         MessageMediator(
@@ -45,7 +49,6 @@ internal class PersonMediatorTest {
     @BeforeEach
     fun setUp() {
         rapid.reset()
-        personRepository.reset()
     }
 
     @Test
@@ -81,6 +84,12 @@ internal class PersonMediatorTest {
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe false
+            }
+
+            personRepository.hent(ident.tilPersonIdentfikator()).also {
+                it.shouldNotBeNull()
+                it.behandlinger().size shouldBe 1
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 25
             }
         }
 

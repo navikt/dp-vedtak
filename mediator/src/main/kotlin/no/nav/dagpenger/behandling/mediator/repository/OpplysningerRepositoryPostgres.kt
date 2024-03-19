@@ -152,7 +152,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     SELECT opplysningstype_id FROM opplysningstype WHERE id = :typeId AND navn = :typeNavn AND  datatype = :datatype
                 )
                 INSERT INTO opplysning (id, status, opplysningstype_id, gyldig_fom, gyldig_tom, opprettet)
-                VALUES (:id, :status, (SELECT opplysningstype_id FROM ins), :fom::timestamp, :tom::timestamp, :opprettet::timestamp)
+                VALUES (:id, :status, (SELECT opplysningstype_id FROM ins), :fom::timestamp, :tom::timestamp, :opprettet)
                 ON CONFLICT DO NOTHING
                 """.trimIndent(),
                 opplysninger.map { opplysning ->

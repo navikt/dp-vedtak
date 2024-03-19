@@ -15,7 +15,7 @@ import java.util.UUID
 class BehandlingRepositoryPostgres(
     private val opplysningRepository: OpplysningerRepository,
 ) : BehandlingRepository {
-    override fun hent(behandlingId: UUID): Behandling? {
+    override fun hentBehandling(behandlingId: UUID): Behandling? {
         return sessionOf(dataSource).use { session ->
             session.run(
                 queryOf(
@@ -33,7 +33,7 @@ class BehandlingRepositoryPostgres(
                     ),
                 ).map { row ->
                     val basertPåBehandlingId = session.hentBasertPåFor(behandlingId)
-                    val basertPåBehandling = basertPåBehandlingId.mapNotNull { id -> hent(id) }
+                    val basertPåBehandling = basertPåBehandlingId.mapNotNull { id -> hentBehandling(id) }
 
                     Behandling.rehydrer(
                         behandlingId = row.uuid("behandling_id"),

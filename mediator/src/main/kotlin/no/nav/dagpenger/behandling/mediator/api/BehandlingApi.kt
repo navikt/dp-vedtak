@@ -50,7 +50,10 @@ fun Application.behandlingApi(personRepository: PersonRepository) {
                             UUID.fromString(it)
                         } ?: throw IllegalArgumentException("Mangler behandlingId")
 
-                    val behandling = personRepository.hent(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+                    val behandling =
+                        personRepository.hentBehandling(
+                            behandlingId,
+                        ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
                     call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
                 }
             }

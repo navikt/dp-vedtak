@@ -13,7 +13,7 @@ class InMemoryPersonRepository : PersonRepository, BehandlingRepository {
 
     override fun hent(ident: Ident): Person? = persondb[ident]
 
-    override fun hent(behandlingId: UUID): Behandling? {
+    override fun hentBehandling(behandlingId: UUID): Behandling? {
         return persondb.values.flatMap { it.behandlinger() }.find { it.behandlingId == behandlingId }
     }
 

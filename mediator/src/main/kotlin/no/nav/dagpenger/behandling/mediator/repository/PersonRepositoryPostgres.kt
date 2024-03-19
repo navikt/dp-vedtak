@@ -40,7 +40,7 @@ class PersonRepositoryPostgres(
                     """.trimIndent(),
                     mapOf("ident" to ident.alleIdentifikatorer().first()),
                 ).map { row ->
-                    behandlingRepository.hent(row.uuid("behandling_id"))
+                    behandlingRepository.hentBehandling(row.uuid("behandling_id"))
                 }.asList,
             )
         }

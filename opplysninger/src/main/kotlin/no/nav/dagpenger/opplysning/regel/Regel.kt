@@ -19,7 +19,7 @@ abstract class Regel<T : Comparable<T>> internal constructor(
 
         return if (opplysninger.har(produserer)) {
             opplysninger.finnOpplysning(produserer).let { produkt ->
-                avhengigheter.any { it.opprettet.isBefore(produkt.opprettet) }
+                avhengigheter.any { it.opprettet.isAfter(produkt.opprettet) }
             }
         } else {
             true
