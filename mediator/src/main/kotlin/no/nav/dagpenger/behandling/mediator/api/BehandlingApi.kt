@@ -35,6 +35,7 @@ fun Application.behandlingApi(personRepository: PersonRepository) {
         swaggerUI(path = "openapi", swaggerFile = "behandling-api.yaml")
 
         authenticate("azureAd") {
+            get("/") { call.respond(HttpStatusCode.OK) }
             route("behandling") {
                 post {
                     val identForespørsel = call.receive<IdentForesporselDTO>()
