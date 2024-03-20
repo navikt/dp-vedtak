@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.melding
 
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.longs.shouldBeLessThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -53,7 +54,8 @@ class OpplysningerRepositoryPostgresTest {
                     opplysninger,
                     Regelsett("Regelsett") { regel(utledetFaktumType) { oppslag(datoOpplysningstype) { 5 } } },
                 )
-            opplysninger.leggTil(Faktum(datoOpplysningstype, LocalDate.now()))
+            val datoOpplysning = Faktum(datoOpplysningstype, LocalDate.now())
+            opplysninger.leggTil(datoOpplysning)
             repo.lagreOpplysninger(opplysninger).also {
                 // Duplikat skriving skal ikke lage duplikate rader
                 repo.lagreOpplysninger(opplysninger)
@@ -73,6 +75,8 @@ class OpplysningerRepositoryPostgresTest {
             with(fraDb.finnOpplysning(utledetFaktumType)) {
                 verdi shouldBe 5
                 utledetAv.shouldNotBeNull()
+                utledetAv!!.regel shouldBe "Oppslag"
+                utledetAv!!.opplysninger shouldContainExactly listOf(datoOpplysning)
             }
             with(fraDb.finnOpplysning(desimalFaktum.id)) {
                 id shouldBe desimalFaktum.id
