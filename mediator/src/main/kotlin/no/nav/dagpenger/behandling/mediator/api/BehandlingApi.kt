@@ -73,9 +73,9 @@ private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
     return BehandlingDTO(
         behandlingId = this.behandlingId,
         opplysning =
-        this.opplysninger().finnAlle().map { opplysning ->
-            opplysning.tilOpplysningDTO()
-        },
+            this.opplysninger().finnAlle().map { opplysning ->
+                opplysning.tilOpplysningDTO()
+            },
     )
 }
 
@@ -85,28 +85,28 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
         opplysningstype = this.opplysningstype.navn,
         verdi = this.verdi.toString(),
         status =
-        when (this) {
-            is Faktum -> OpplysningDTO.Status.Faktum
-            is Hypotese -> OpplysningDTO.Status.Hypotese
-        },
+            when (this) {
+                is Faktum -> OpplysningDTO.Status.Faktum
+                is Hypotese -> OpplysningDTO.Status.Hypotese
+            },
         gyldigFraOgMed = this.gyldighetsperiode.fom.tilOffsetDato(),
         gyldigTilOgMed = this.gyldighetsperiode.tom.tilOffsetDato(),
         datatype =
-        when (this.opplysningstype.datatype) {
-            Boolsk -> DataTypeDTO.boolsk
-            Dato -> DataTypeDTO.dato
-            Desimaltall -> DataTypeDTO.desimaltall
-            Heltall -> DataTypeDTO.heltall
-            ULID -> DataTypeDTO.ulid
-        },
+            when (this.opplysningstype.datatype) {
+                Boolsk -> DataTypeDTO.boolsk
+                Dato -> DataTypeDTO.dato
+                Desimaltall -> DataTypeDTO.desimaltall
+                Heltall -> DataTypeDTO.heltall
+                ULID -> DataTypeDTO.ulid
+            },
         kilde = null,
         utledetAv =
-        this.utledetAv?.let { utledning ->
-            UtledningDTO(
-                regel = RegelDTO(navn = utledning.regel),
-                opplysninger = utledning.opplysninger.map { it.tilOpplysningDTO() },
-            )
-        },
+            this.utledetAv?.let { utledning ->
+                UtledningDTO(
+                    regel = RegelDTO(navn = utledning.regel),
+                    opplysninger = utledning.opplysninger.map { it.tilOpplysningDTO() },
+                )
+            },
         redigerbar = this.kanRedigeres,
     )
 }
