@@ -3,8 +3,8 @@ SELECT opplysninger_opplysning.opplysninger_id,
        opplysning.id,
        opplysning.status,
        opplysningstype.datatype,
-       opplysningstype.id   AS type_id,
-       opplysningstype.navn AS type_navn,
+       opplysningstype.id         AS type_id,
+       opplysningstype.navn       AS type_navn,
        opplysning.gyldig_fom,
        opplysning.gyldig_tom,
        opplysning_verdi.verdi_heltall,
@@ -12,6 +12,7 @@ SELECT opplysninger_opplysning.opplysninger_id,
        opplysning_verdi.verdi_dato,
        opplysning_verdi.verdi_boolsk,
        opplysning_verdi.verdi_string,
+       opplysning_utledning.regel AS utledet_av,
        opplysning.opprettet
 FROM opplysning
          LEFT JOIN
@@ -19,5 +20,7 @@ FROM opplysning
          LEFT JOIN
      opplysningstype ON opplysning.opplysningstype_id = opplysningstype.opplysningstype_id
          LEFT JOIN
-     opplysning_verdi ON opplysning.id = opplysning_verdi.opplysning_id;
+     opplysning_verdi ON opplysning.id = opplysning_verdi.opplysning_id
+         LEFT JOIN
+     opplysning_utledning ON opplysning.id = opplysning_utledning.opplysning_id;
 

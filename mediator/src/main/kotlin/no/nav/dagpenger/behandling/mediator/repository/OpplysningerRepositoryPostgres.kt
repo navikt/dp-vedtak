@@ -21,6 +21,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.ULID
+import no.nav.dagpenger.opplysning.Utledning
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import java.time.LocalDateTime
@@ -60,21 +61,24 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
     }
 
     private class OpplysningRepository(private val opplysningerId: UUID, private val tx: Session) {
-        fun hentOpplysninger(): List<Opplysning<*>> =
-            sessionOf(dataSource).use { session ->
-                session.run(
-                    queryOf(
-                        //language=PostgreSQL
-                        "SELECT * FROM opplysningstabell WHERE opplysninger_id = :id",
-                        mapOf("id" to opplysningerId),
-                    ).map { row ->
-                        val datatype = Datatype.fromString(row.string("datatype"))
-                        row.somOpplysning(datatype)
-                    }.asList,
-                )
-            }
+        fun hentOpplysninger(): List<Opplysning<*>> {
+            val rader: List<OpplysningRad<*>> =
+                sessionOf(dataSource).use { session ->
+                    session.run(
+                        queryOf(
+                            //language=PostgreSQL
+                            "SELECT * FROM opplysningstabell WHERE opplysninger_id = :id",
+                            mapOf("id" to opplysningerId),
+                        ).map { row ->
+                            val datatype = Datatype.fromString(row.string("datatype"))
+                            row.somOpplysningRad(datatype)
+                        }.asList,
+                    )
+                }
+            return rader.somOpplysninger()
+        }
 
-        private fun <T : Comparable<T>> Row.somOpplysning(datatype: Datatype<T>): Opplysning<T> {
+        private fun <T : Comparable<T>> Row.somOpplysningRad(datatype: Datatype<T>): OpplysningRad<T> {
             val id = uuid("id")
             val opplysningstype = Opplysningstype(string("type_navn").id(string("type_id")), datatype)
             val gyldighetsperiode =
@@ -82,16 +86,35 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     localDateTimeOrNull("gyldig_fom") ?: LocalDateTime.MIN,
                     localDateTimeOrNull("gyldig_tom") ?: LocalDateTime.MAX,
                 )
+            val status = this.string("status")
             val verdi = datatype.verdi(this)
             val opprettet = this.localDateTime("opprettet")
-            return when (string("status")) {
+            val utledetAv = this.stringOrNull("utledet_av")?.let { UtledningRad(it, utledetAv(id)) }
+            return OpplysningRad(id, opplysningstype, verdi, status, gyldighetsperiode, utledetAv, null, opprettet)
+            /*return when (string("status")) {
                 "Hypotese" -> {
-                    Hypotese(id, opplysningstype, verdi, gyldighetsperiode, null, null, opprettet)
+                    Hypotese(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, null, opprettet)
                 }
-                "Faktum" -> Faktum(id, opplysningstype, verdi, gyldighetsperiode, null, null, opprettet)
+
+                "Faktum" -> Faktum(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, null, opprettet)
                 else -> throw IllegalStateException("Ukjent opplysningstype")
-            }
+            }*/
         }
+
+        private fun utledetAv(id: UUID): List<UUID> =
+            sessionOf(dataSource).use {
+                it.run(
+                    queryOf(
+                        //language=PostgreSQL
+                        """
+                        SELECT utledet_av FROM opplysning_utledet_av WHERE opplysning_id = :id
+                        """.trimIndent(),
+                        mapOf("id" to id),
+                    ).map { row ->
+                        row.uuid("utledet_av")
+                    }.asList,
+                )
+            }
 
         @Suppress("UNCHECKED_CAST")
         private fun <T : Comparable<T>> Datatype<T>.verdi(row: Row): T =
@@ -108,9 +131,49 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             batchOpplysninger(opplysninger).run(tx)
             batchVerdi(opplysninger).run(tx)
             batchOpplysningLink(opplysninger).run(tx)
+            lagreUtledetAv(opplysninger)
             // TODO: tx.lagreKilde(opplysning.id, opplysning.kilde)
-            // TODO: tx.lagreUtledetAv()
         }
+
+        private fun OpplysningRepository.lagreUtledetAv(opplysninger: List<Opplysning<*>>) {
+            val utlededeOpplysninger = opplysninger.filterNot { it.utledetAv == null }
+            batchUtledning(utlededeOpplysninger).run(tx)
+            utlededeOpplysninger.forEach { opplysning ->
+                batchUtledetAv(opplysning).run(tx)
+            }
+        }
+
+        private fun batchUtledning(opplysninger: List<Opplysning<*>>) =
+            BatchStatement(
+                // language=PostgreSQL
+                """
+                INSERT INTO opplysning_utledning (opplysning_id, regel) 
+                VALUES (:opplysningId, :regel)
+                ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                opplysninger.map {
+                    mapOf(
+                        "opplysningId" to it.id,
+                        "regel" to it.utledetAv!!.regel,
+                    )
+                },
+            )
+
+        private fun batchUtledetAv(opplysning: Opplysning<*>) =
+            BatchStatement(
+                // language=PostgreSQL
+                """
+                INSERT INTO opplysning_utledet_av (opplysning_id, utledet_av) 
+                VALUES (:opplysningId, :utledetAv)
+                ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                opplysning.utledetAv!!.opplysninger.map {
+                    mapOf(
+                        "opplysningId" to opplysning.id,
+                        "utledetAv" to it.id,
+                    )
+                },
+            )
 
         private fun batchOpplysningLink(opplysninger: List<Opplysning<*>>) =
             BatchStatement(
@@ -225,3 +288,54 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         )
     }
 }
+
+private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
+    val opplysningMap = mutableMapOf<UUID, Opplysning<*>>()
+
+    fun OpplysningRad<*>.toOpplysning(): Opplysning<*> {
+        // If the Opplysning instance has already been created, return it
+        opplysningMap[id]?.let { return it }
+
+        // Create the Utledning instance if necessary
+        val utledetAv =
+            utledetAv?.let { utledetAv ->
+                Utledning(
+                    utledetAv.regel,
+                    utledetAv.opplysninger.mapNotNull { opplysningId ->
+                        opplysningMap[opplysningId] ?: this@somOpplysninger.find { it.id == opplysningId }?.toOpplysning()
+                    },
+                )
+            }
+
+        // Create the Opplysning instance
+        val opplysning =
+            when (status) {
+                "Hypotese" -> Hypotese(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet)
+                "Faktum" -> Faktum(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet)
+                else -> throw IllegalStateException("Ukjent opplysningstype")
+            }
+
+        // Add the Opplysning instance to the map and return it
+        opplysningMap[id] = opplysning
+        return opplysning
+    }
+
+    // Convert all OpplysningRad instances to Opplysning instances
+    return this.map { it.toOpplysning() }
+}
+
+private data class UtledningRad(
+    val regel: String,
+    val opplysninger: List<UUID>,
+)
+
+private data class OpplysningRad<T : Comparable<T>>(
+    val id: UUID,
+    val opplysningstype: Opplysningstype<T>,
+    val verdi: T,
+    val status: String,
+    val gyldighetsperiode: Gyldighetsperiode,
+    val utledetAv: UtledningRad? = null,
+    val kilde: Kilde? = null,
+    val opprettet: LocalDateTime,
+)

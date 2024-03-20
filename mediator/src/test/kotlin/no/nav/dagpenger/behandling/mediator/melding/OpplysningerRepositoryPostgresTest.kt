@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling.mediator.melding
 
 import io.kotest.matchers.longs.shouldBeLessThan
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
@@ -8,7 +9,10 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
+import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -20,20 +24,20 @@ class OpplysningerRepositoryPostgresTest {
     fun `lagre opplysning`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
-            val heltallFaktum = Faktum(Opplysningstype.somHeltall("Heltall"), 5)
+            val datoOpplysningstype = Opplysningstype.somDato("Dato")
             val desimalFaktum =
                 Faktum(
                     Opplysningstype.somDesimaltall("Desimal".id("desitall")),
                     5.5,
                     gyldighetsperiode = Gyldighetsperiode(fom = LocalDate.now()),
                 )
+            val utledetFaktumType = Opplysningstype.somHeltall("Utledet")
             val opplysninger =
                 Opplysninger(
                     listOf(
-                        heltallFaktum,
                         desimalFaktum,
                         Faktum(
-                            Opplysningstype.somDato("Dato"),
+                            Opplysningstype.somDato("En annen dato"),
                             LocalDate.now(),
                             gyldighetsperiode = Gyldighetsperiode(LocalDate.now(), LocalDate.now()),
                         ),
@@ -43,6 +47,13 @@ class OpplysningerRepositoryPostgresTest {
                         Faktum(Opplysningstype.somBoolsk("Ulid"), false),
                     ),
                 )
+            val regelkjøring =
+                Regelkjøring(
+                    LocalDate.now(),
+                    opplysninger,
+                    Regelsett("Regelsett") { regel(utledetFaktumType) { oppslag(datoOpplysningstype) { 5 } } },
+                )
+            opplysninger.leggTil(Faktum(datoOpplysningstype, LocalDate.now()))
             repo.lagreOpplysninger(opplysninger).also {
                 // Duplikat skriving skal ikke lage duplikate rader
                 repo.lagreOpplysninger(opplysninger)
@@ -52,15 +63,16 @@ class OpplysningerRepositoryPostgresTest {
             val tidBrukt = measureTimeMillis { repo.lagreOpplysninger(Opplysninger(inserts)) }
             tidBrukt shouldBeLessThan 5000
 
-            val fraDb = repo.hentOpplysninger(opplysninger.id)
+            val fraDb =
+                repo.hentOpplysninger(opplysninger.id).also {
+                    Regelkjøring(LocalDate.now(), it)
+                }
 
             fraDb.finnAlle().size shouldBe opplysninger.finnAlle().size
 
-            with(fraDb.finnOpplysning(heltallFaktum.id)) {
-                id shouldBe heltallFaktum.id
-                verdi shouldBe heltallFaktum.verdi
-                gyldighetsperiode shouldBe heltallFaktum.gyldighetsperiode
-                opplysningstype shouldBe heltallFaktum.opplysningstype
+            with(fraDb.finnOpplysning(utledetFaktumType)) {
+                verdi shouldBe 5
+                utledetAv.shouldNotBeNull()
             }
             with(fraDb.finnOpplysning(desimalFaktum.id)) {
                 id shouldBe desimalFaktum.id

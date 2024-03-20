@@ -4,10 +4,9 @@ import no.nav.dagpenger.opplysning.regel.Regel
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class Utledning internal constructor(
-    val regel: Regel<*>,
-    val opplysninger: List<Opplysning<*>>,
-)
+data class Utledning(val regel: String, val opplysninger: List<Opplysning<*>>) {
+    internal constructor(regel: Regel<*>, opplysninger: List<Opplysning<*>>) : this(regel::class.java.simpleName, opplysninger)
+}
 
 data class Kilde(
     val meldingsreferanseId: UUID,

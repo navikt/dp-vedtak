@@ -113,3 +113,20 @@ CREATE TABLE IF NOT EXISTS person_behandling
     behandling_id uuid NOT NULL REFERENCES behandling (behandling_id),
     CONSTRAINT person_behandling_unik_kobling UNIQUE (ident, behandling_id)
 );
+
+
+
+CREATE TABLE IF NOT EXISTS opplysning_utledning
+(
+    opplysning_id uuid PRIMARY KEY,
+    regel         TEXT,
+    opprettet     TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    FOREIGN KEY (opplysning_id) REFERENCES opplysning (id)
+);
+CREATE TABLE IF NOT EXISTS opplysning_utledet_av
+(
+    opplysning_id uuid PRIMARY KEY,
+    utledet_av    uuid REFERENCES opplysning (id),
+    opprettet     TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    FOREIGN KEY (opplysning_id) REFERENCES opplysning_utledning (opplysning_id)
+);
