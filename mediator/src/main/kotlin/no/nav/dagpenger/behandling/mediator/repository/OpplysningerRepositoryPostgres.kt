@@ -90,15 +90,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val verdi = datatype.verdi(this)
             val opprettet = this.localDateTime("opprettet")
             val utledetAv = this.stringOrNull("utledet_av")?.let { UtledningRad(it, utledetAv(id)) }
-            return OpplysningRad(id, opplysningstype, verdi, status, gyldighetsperiode, utledetAv, null, opprettet)
-            /*return when (string("status")) {
-                "Hypotese" -> {
-                    Hypotese(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, null, opprettet)
-                }
 
-                "Faktum" -> Faktum(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, null, opprettet)
-                else -> throw IllegalStateException("Ukjent opplysningstype")
-            }*/
+            return OpplysningRad(id, opplysningstype, verdi, status, gyldighetsperiode, utledetAv, null, opprettet)
         }
 
         private fun utledetAv(id: UUID): List<UUID> =
