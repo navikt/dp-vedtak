@@ -292,7 +292,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
 private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
     val opplysningMap = mutableMapOf<UUID, Opplysning<*>>()
 
-    fun OpplysningRad<*>.toOpplysning(): Opplysning<*> {
+    fun <T : Comparable<T>> OpplysningRad<T>.toOpplysning(): Opplysning<*> {
         // If the Opplysning instance has already been created, return it
         opplysningMap[id]?.let { return it }
 
