@@ -11,6 +11,13 @@ Behandlingsmodell for Dagpenger
 - Si ifra når behandling har nok opplysninger til å kunne ferdigstilles. (Bekrefte opplysninger (Gjøre hypoteser til faktum))
 - Har tilstand som vet hva som skal til for å ferdigstille behandling og lage vedtak/forslag til vedtak
 
+### Opplysninger og regelmotor
+
+![image.png](docs/rm.png)
+
+[Opplysninger og regelmotor](docs/opplysning/README.md)
+
+
 ## Komme i gang
 
 Gradle brukes som byggverktøy og er bundlet inn.
