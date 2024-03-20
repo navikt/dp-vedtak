@@ -265,10 +265,7 @@ components:
           type: string
           format: date-time
         datatype:
-          type: string
-          enum: [ "dato", "desimaltall", "heltall", "boolsk", "ulid" ]
-          description: |
-            Hvilken datatype opplysningen har, for å kunne validere at verdi er riktig format
+            $ref: '#/components/schemas/DataType'
         redigerbar:
           type: boolean
           description: Indikerer om opplysningen kan redigeres
@@ -359,6 +356,14 @@ components:
       properties:
         ident:
           type: string
+
+    DataType:
+      type: string
+      enum: [ "dato", "desimaltall", "heltall", "boolsk", "ulid" ]
+      description: |
+        Hvilken datatype opplysningen har, for å kunne validere at verdi er riktig format
+          
+          
 
   securitySchemes:
     azureAd:
