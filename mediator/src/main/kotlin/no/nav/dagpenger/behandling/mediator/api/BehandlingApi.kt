@@ -12,6 +12,7 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
+import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
@@ -20,6 +21,7 @@ import no.nav.dagpenger.behandling.mediator.PersonRepository
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.opplysning.Boolsk
+import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Faktum
@@ -92,11 +94,11 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
         gyldigTilOgMed = this.gyldighetsperiode.tom.tilOffsetDato(),
         datatype =
             when (this.opplysningstype.datatype) {
-                Boolsk -> OpplysningDTO.Datatype.boolsk
-                Dato -> OpplysningDTO.Datatype.dato
-                Desimaltall -> OpplysningDTO.Datatype.desimaltall
-                Heltall -> OpplysningDTO.Datatype.heltall
-                ULID -> OpplysningDTO.Datatype.ulid
+                Boolsk -> DataTypeDTO.boolsk
+                Dato -> DataTypeDTO.dato
+                Desimaltall -> DataTypeDTO.desimaltall
+                Heltall -> DataTypeDTO.heltall
+                ULID -> DataTypeDTO.ulid
             },
         kilde = null,
         utledetAv =
