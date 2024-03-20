@@ -19,9 +19,14 @@ import no.nav.dagpenger.behandling.api.models.UtledningDTO
 import no.nav.dagpenger.behandling.mediator.PersonRepository
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.opplysning.Boolsk
+import no.nav.dagpenger.opplysning.Dato
+import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Opplysning
+import no.nav.dagpenger.opplysning.ULID
 import org.apache.kafka.common.errors.ResourceNotFoundException
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -85,7 +90,14 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
             },
         gyldigFraOgMed = this.gyldighetsperiode.fom.tilOffsetDato(),
         gyldigTilOgMed = this.gyldighetsperiode.tom.tilOffsetDato(),
-        datatype = this.opplysningstype.datatype.klasse.simpleName,
+        datatype =
+            when (this.opplysningstype.datatype) {
+                Boolsk -> OpplysningDTO.Datatype.boolsk
+                Dato -> OpplysningDTO.Datatype.dato
+                Desimaltall -> OpplysningDTO.Datatype.desimaltall
+                Heltall -> OpplysningDTO.Datatype.heltall
+                ULID -> OpplysningDTO.Datatype.ulid
+            },
         kilde = null,
         utledetAv =
             this.utledetAv?.let { utledning ->

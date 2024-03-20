@@ -266,8 +266,9 @@ components:
           format: date-time
         datatype:
           type: string
+          enum: [ "dato", "desimaltall", "heltall", "boolsk", "ulid" ]
           description: |
-            Hvilken datatype opplysningen har, f.eks.: "string", "number", "date"
+            Hvilken datatype opplysningen har, for å kunne validere at verdi er riktig format
         redigerbar:
           type: boolean
           description: Indikerer om opplysningen kan redigeres
