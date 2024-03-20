@@ -125,8 +125,8 @@ CREATE TABLE IF NOT EXISTS opplysning_utledning
 );
 CREATE TABLE IF NOT EXISTS opplysning_utledet_av
 (
-    opplysning_id uuid PRIMARY KEY,
+    opplysning_id uuid REFERENCES opplysning_utledning (opplysning_id),
     utledet_av    uuid REFERENCES opplysning (id),
     opprettet     TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    FOREIGN KEY (opplysning_id) REFERENCES opplysning_utledning (opplysning_id)
+    UNIQUE (opplysning_id, utledet_av)
 );
