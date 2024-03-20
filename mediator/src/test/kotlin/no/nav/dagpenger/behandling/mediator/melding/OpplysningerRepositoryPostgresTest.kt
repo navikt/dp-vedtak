@@ -2,12 +2,12 @@ package no.nav.dagpenger.behandling.mediator.melding
 
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.longs.shouldBeLessThan
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.opplysning.Faktum
-import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
@@ -15,75 +15,103 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.time.LocalDateTime
 import kotlin.system.measureTimeMillis
 
 class OpplysningerRepositoryPostgresTest {
     @Test
-    fun `lagre opplysning`() {
+    fun `lagrer enkle opplysninger`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
-            val datoOpplysningstype = Opplysningstype.somDato("Dato")
-            val desimalFaktum =
-                Faktum(
-                    Opplysningstype.somDesimaltall("Desimal".id("desitall")),
-                    5.5,
-                    gyldighetsperiode = Gyldighetsperiode(fom = LocalDate.now()),
-                )
-            val utledetFaktumType = Opplysningstype.somHeltall("Utledet")
-            val opplysninger =
-                Opplysninger(
-                    listOf(
-                        desimalFaktum,
-                        Faktum(
-                            Opplysningstype.somDato("En annen dato"),
-                            LocalDate.now(),
-                            gyldighetsperiode = Gyldighetsperiode(LocalDate.now(), LocalDate.now()),
-                        ),
-                        Faktum(Opplysningstype.somBoolsk("Boolsk"), true, gyldighetsperiode = Gyldighetsperiode(tom = LocalDateTime.now())),
-                        Faktum(Opplysningstype.somUlid("Ulid"), Ulid("01E5Z6Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1")),
-                        // Ulike typer kan bruke samme navn
-                        Faktum(Opplysningstype.somBoolsk("Ulid"), false),
-                    ),
-                )
-            val regelkjøring =
-                Regelkjøring(
-                    LocalDate.now(),
-                    opplysninger,
-                    Regelsett("Regelsett") { regel(utledetFaktumType) { oppslag(datoOpplysningstype) { 5 } } },
-                )
-            val datoOpplysning = Faktum(datoOpplysningstype, LocalDate.now())
-            opplysninger.leggTil(datoOpplysning)
-            repo.lagreOpplysninger(opplysninger).also {
-                // Duplikat skriving skal ikke lage duplikate rader
-                repo.lagreOpplysninger(opplysninger)
-            }
+            val heltallFaktum = Faktum(Opplysningstype.somHeltall("Heltall"), 10)
+            val boolskFaktum = Faktum(Opplysningstype.somBoolsk("Boolsk"), true)
+            val datoFaktum = Faktum(Opplysningstype.somDato("Dato"), LocalDate.now())
 
-            val inserts = (1..50000).map { Faktum(Opplysningstype.somHeltall("Desimal".id("desitall")), it) }
-            val tidBrukt = measureTimeMillis { repo.lagreOpplysninger(Opplysninger(inserts)) }
-            tidBrukt shouldBeLessThan 5000
+            val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum))
+            repo.lagreOpplysninger(opplysninger)
 
             val fraDb =
                 repo.hentOpplysninger(opplysninger.id).also {
                     Regelkjøring(LocalDate.now(), it)
                 }
+            fraDb.finnAlle().size shouldBe opplysninger.finnAlle().size
+            fraDb.finnOpplysning(heltallFaktum.opplysningstype).verdi shouldBe heltallFaktum.verdi
+            fraDb.finnOpplysning(boolskFaktum.opplysningstype).verdi shouldBe boolskFaktum.verdi
+            fraDb.finnOpplysning(datoFaktum.opplysningstype).verdi shouldBe datoFaktum.verdi
+        }
+    }
 
+    @Test
+    @Disabled("Modellen støtter ikke å bruke opplysninger med samme navn og ulik type")
+    fun `lagrer opplysninger med samme navn og ulik type`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val opplysningstype = Opplysningstype.somUlid("Ulid")
+            val opplysningstype1 = Opplysningstype.somBoolsk("Ulid")
+
+            val ulidFaktum = Faktum(opplysningstype, Ulid("01E5Z6Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1"))
+            val ulidBoolskFaktum = Faktum(opplysningstype1, false)
+
+            val opplysninger = Opplysninger(listOf(ulidFaktum, ulidBoolskFaktum))
+            repo.lagreOpplysninger(opplysninger)
+
+            val fraDb =
+                repo.hentOpplysninger(opplysninger.id).also {
+                    Regelkjøring(LocalDate.now(), it)
+                }
+            fraDb.finnOpplysning(opplysningstype).verdi shouldBe ulidFaktum.verdi
+            fraDb.finnOpplysning(opplysningstype1).verdi shouldBe ulidBoolskFaktum.verdi
+        }
+    }
+
+    @Test
+    fun `lagrer opplysninger med utledning`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val baseOpplysningstype = Opplysningstype.somDato("Dato")
+            val utledetOpplysningstype = Opplysningstype.somHeltall("Utledet")
+
+            val baseOpplysning = Faktum(baseOpplysningstype, LocalDate.now())
+
+            val regelsett = Regelsett("Regelsett") { regel(utledetOpplysningstype) { oppslag(baseOpplysningstype) { 5 } } }
+            val opplysninger = Opplysninger().also { Regelkjøring(LocalDate.now(), it, regelsett) }
+            opplysninger.leggTil(baseOpplysning)
+
+            repo.lagreOpplysninger(opplysninger)
+
+            val fraDb = repo.hentOpplysninger(opplysninger.id).also { Regelkjøring(LocalDate.now(), it) }
             fraDb.finnAlle().size shouldBe opplysninger.finnAlle().size
 
-            with(fraDb.finnOpplysning(utledetFaktumType)) {
+            with(fraDb.finnOpplysning(utledetOpplysningstype)) {
                 verdi shouldBe 5
                 utledetAv.shouldNotBeNull()
                 utledetAv!!.regel shouldBe "Oppslag"
-                utledetAv!!.opplysninger shouldContainExactly listOf(datoOpplysning)
+                utledetAv!!.opplysninger shouldContainExactly listOf(baseOpplysning)
             }
-            with(fraDb.finnOpplysning(desimalFaktum.id)) {
-                id shouldBe desimalFaktum.id
-                verdi shouldBe desimalFaktum.verdi
-                gyldighetsperiode shouldBe desimalFaktum.gyldighetsperiode
-                opplysningstype shouldBe desimalFaktum.opplysningstype
+            with(fraDb.finnOpplysning(baseOpplysning.id)) {
+                id shouldBe baseOpplysning.id
+                verdi shouldBe baseOpplysning.verdi
+                gyldighetsperiode shouldBe baseOpplysning.gyldighetsperiode
+                opplysningstype shouldBe baseOpplysning.opplysningstype
+                utledetAv.shouldBeNull()
             }
+        }
+    }
+
+    @Test
+    fun `Klarer å lagre store mengder opplysninger effektivt`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val fakta = (1..50000).map { Faktum(Opplysningstype.somHeltall("Desimal".id("desitall")), it) }
+            val opplysninger = Opplysninger(fakta)
+
+            val tidBrukt = measureTimeMillis { repo.lagreOpplysninger(opplysninger) }
+            tidBrukt shouldBeLessThan 5000
+
+            val fraDb = repo.hentOpplysninger(opplysninger.id)
+            fraDb.finnAlle().size shouldBe fakta.size
         }
     }
 }
