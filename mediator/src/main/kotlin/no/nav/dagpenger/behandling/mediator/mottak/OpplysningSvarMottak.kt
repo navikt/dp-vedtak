@@ -15,7 +15,9 @@ import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Heltall
+import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -24,6 +26,7 @@ import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDate
+import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.time.LocalDate
 
 internal class OpplysningSvarMottak(
@@ -100,14 +103,17 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
                 // @todo: Forventer at verdi er en nøkkel på alle løsninger men vi må skrive om behovløserne for å få dette til å stemme
                 val verdi = if (jsonVerdi.isObject && jsonVerdi.has("verdi")) jsonVerdi["verdi"] else jsonVerdi
                 val type = Opplysningstype.typer.single { opplysningstype -> opplysningstype.id == typeNavn }
+
+                val kilde = Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
+
                 val opplysning =
                     @Suppress("UNCHECKED_CAST")
                     when (type.datatype) {
-                        Dato -> opplysningSvar(type as Opplysningstype<LocalDate>, verdi.asLocalDate())
-                        Heltall -> opplysningSvar(type as Opplysningstype<Int>, verdi.asInt())
-                        Desimaltall -> opplysningSvar(type as Opplysningstype<Double>, verdi.asDouble())
-                        Boolsk -> opplysningSvar(type as Opplysningstype<Boolean>, verdi.asBoolean())
-                        ULID -> opplysningSvar(type as Opplysningstype<Ulid>, Ulid(verdi.asText()))
+                        Dato -> opplysningSvar(type as Opplysningstype<LocalDate>, verdi.asLocalDate(), kilde)
+                        Heltall -> opplysningSvar(type as Opplysningstype<Int>, verdi.asInt(), kilde)
+                        Desimaltall -> opplysningSvar(type as Opplysningstype<Double>, verdi.asDouble(), kilde)
+                        Boolsk -> opplysningSvar(type as Opplysningstype<Boolean>, verdi.asBoolean(), kilde)
+                        ULID -> opplysningSvar(type as Opplysningstype<Ulid>, Ulid(verdi.asText()), kilde)
                     }
                 add(opplysning)
             }
@@ -116,10 +122,12 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
     private fun <T : Comparable<T>> opplysningSvar(
         type: Opplysningstype<T>,
         verdi: T,
+        kilde: Kilde,
     ) = OpplysningSvar(
         opplysningstype = type,
         verdi = verdi,
         tilstand = Tilstand.Hypotese,
+        kilde = kilde,
     )
 
     override fun behandle(

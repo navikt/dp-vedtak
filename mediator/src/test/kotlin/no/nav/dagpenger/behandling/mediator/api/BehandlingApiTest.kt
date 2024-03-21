@@ -24,6 +24,7 @@ import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.UUIDv7
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.AfterEach
@@ -53,6 +54,7 @@ internal class BehandlingApiTest {
                                 opplysningstype = Søknadstidspunkt.søknadsdato,
                                 verdi = LocalDate.now(),
                                 tilstand = OpplysningSvar.Tilstand.Faktum,
+                                kilde = Saksbehandlerkilde("Z123456"),
                             ),
                         ),
                 ),

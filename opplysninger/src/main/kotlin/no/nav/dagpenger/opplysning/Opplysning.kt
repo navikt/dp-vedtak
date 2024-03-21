@@ -8,10 +8,6 @@ data class Utledning(val regel: String, val opplysninger: List<Opplysning<*>>) {
     internal constructor(regel: Regel<*>, opplysninger: List<Opplysning<*>>) : this(regel::class.java.simpleName, opplysninger)
 }
 
-data class Kilde(
-    val meldingsreferanseId: UUID,
-)
-
 sealed class Opplysning<T : Comparable<T>>(
     val id: UUID,
     val opplysningstype: Opplysningstype<T>,

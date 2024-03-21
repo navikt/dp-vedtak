@@ -13,6 +13,7 @@ SELECT opplysninger_opplysning.opplysninger_id,
        opplysning_verdi.verdi_boolsk,
        opplysning_verdi.verdi_string,
        opplysning_utledning.regel AS utledet_av,
+       opplysning_kilde.id        AS kilde_id,
        opplysning.opprettet
 FROM opplysning
          LEFT JOIN
@@ -22,5 +23,6 @@ FROM opplysning
          LEFT JOIN
      opplysning_verdi ON opplysning.id = opplysning_verdi.opplysning_id
          LEFT JOIN
-     opplysning_utledning ON opplysning.id = opplysning_utledning.opplysning_id;
-
+     opplysning_utledning ON opplysning.id = opplysning_utledning.opplysning_id
+         LEFT JOIN
+     opplysning_kilde ON opplysning.id = opplysning_kilde.opplysning_id;

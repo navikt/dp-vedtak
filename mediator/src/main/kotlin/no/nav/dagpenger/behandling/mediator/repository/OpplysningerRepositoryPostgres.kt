@@ -2,7 +2,6 @@ package no.nav.dagpenger.behandling.mediator.repository
 
 import kotliquery.Row
 import kotliquery.Session
-import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
@@ -20,6 +19,8 @@ import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.Utledning
 import no.nav.dagpenger.opplysning.id
@@ -91,8 +92,51 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val opprettet = this.localDateTime("opprettet")
             val utledetAv = this.stringOrNull("utledet_av")?.let { UtledningRad(it, utledetAv(id)) }
 
-            return OpplysningRad(id, opplysningstype, verdi, status, gyldighetsperiode, utledetAv, null, opprettet)
+            val kilde = this.uuidOrNull("kilde_id")?.let { kildeId -> hentKilde(kildeId) }
+
+            return OpplysningRad(id, opplysningstype, verdi, status, gyldighetsperiode, utledetAv, kilde, opprettet)
         }
+
+        private fun hentKilde(kildeId: UUID) =
+            sessionOf(dataSource).use { session ->
+                session.run(
+                    queryOf(
+                        //language=PostgreSQL
+                        """
+                        SELECT 
+                            opplysning_kilde.id, 
+                            opplysning_kilde.type, 
+                            opplysning_kilde.opprettet, 
+                            opplysning_kilde.registrert, 
+                            opplysning_kilde_system.melding_id AS system_melding_id, 
+                            opplysning_kilde_saksbehandler.ident AS saksbehandler_ident
+                        FROM 
+                            opplysning_kilde 
+                        LEFT JOIN 
+                            opplysning_kilde_system ON opplysning_kilde.id = opplysning_kilde_system.kilde_id
+                        LEFT JOIN 
+                            opplysning_kilde_saksbehandler ON opplysning_kilde.id = opplysning_kilde_saksbehandler.kilde_id
+                        """.trimIndent(),
+                        mapOf("id" to kildeId),
+                    ).map { row ->
+                        val kildeType = row.string("type")
+                        val opprettet = row.localDateTime("opprettet")
+                        val registrert = row.localDateTime("registrert")
+                        when (kildeType) {
+                            Systemkilde::class.java.simpleName -> Systemkilde(row.uuid("system_melding_id"), opprettet, kildeId, registrert)
+                            Saksbehandlerkilde::class.java.simpleName ->
+                                Saksbehandlerkilde(
+                                    row.string("saksbehandler_ident"),
+                                    opprettet,
+                                    kildeId,
+                                    registrert,
+                                )
+
+                            else -> throw IllegalStateException("Ukjent kilde")
+                        }
+                    }.asSingle,
+                )
+            }
 
         private fun utledetAv(id: UUID): List<UUID> =
             sessionOf(dataSource).use {
@@ -125,10 +169,71 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             batchVerdi(opplysninger).run(tx)
             batchOpplysningLink(opplysninger).run(tx)
             lagreUtledetAv(opplysninger)
-            // TODO: tx.lagreKilde(opplysning.id, opplysning.kilde)
+            lagreKilde(opplysninger)
         }
 
-        private fun OpplysningRepository.lagreUtledetAv(opplysninger: List<Opplysning<*>>) {
+        private fun lagreKilde(opplysninger: List<Opplysning<*>>) {
+            batchKilde(opplysninger).run(tx)
+            val kilder = opplysninger.mapNotNull { it.kilde }
+            require(kilder.all { it is Systemkilde || it is Saksbehandlerkilde }) { "Mangler lagring av kildetypen" }
+            batchKildeSystem(kilder.filterIsInstance<Systemkilde>()).run(tx)
+            batchKildeSaksbehandler(kilder.filterIsInstance<Saksbehandlerkilde>()).run(tx)
+        }
+
+        private fun batchKilde(opplysninger: List<Opplysning<*>>) =
+            BatchStatement(
+                // language=PostgreSQL
+                """
+                INSERT INTO opplysning_kilde (id, opplysning_id, type, opprettet, registrert) 
+                VALUES (:id, :opplysningId, :type, :opprettet, :registrert)
+                ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                opplysninger.mapNotNull {
+                    it.kilde?.let { kilde ->
+                        mapOf(
+                            "id" to kilde.id,
+                            "opplysningId" to it.id,
+                            "type" to kilde.javaClass.simpleName,
+                            "opprettet" to kilde.opprettet,
+                            "registrert" to kilde.registrert,
+                        )
+                    }
+                },
+            )
+
+        private fun batchKildeSystem(kilder: List<Systemkilde>) =
+            BatchStatement(
+                // language=PostgreSQL
+                """
+                INSERT INTO opplysning_kilde_system (kilde_id, melding_id) 
+                VALUES (:kildeId, :meldingId)
+                ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                kilder.map { kilde ->
+                    mapOf(
+                        "kildeId" to kilde.id,
+                        "meldingId" to kilde.meldingsreferanseId,
+                    )
+                },
+            )
+
+        private fun batchKildeSaksbehandler(kilder: List<Saksbehandlerkilde>) =
+            BatchStatement(
+                // language=PostgreSQL
+                """
+                INSERT INTO opplysning_kilde_saksbehandler (kilde_id, ident) 
+                VALUES (:kildeId, :ident)
+                ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                kilder.map { kilde ->
+                    mapOf(
+                        "kildeId" to kilde.id,
+                        "ident" to kilde.ident,
+                    )
+                },
+            )
+
+        private fun lagreUtledetAv(opplysninger: List<Opplysning<*>>) {
             val utlededeOpplysninger = opplysninger.filterNot { it.utledetAv == null }
             batchUtledning(utlededeOpplysninger).run(tx)
             utlededeOpplysninger.forEach { opplysning ->
@@ -144,11 +249,13 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 VALUES (:opplysningId, :regel)
                 ON CONFLICT DO NOTHING
                 """.trimIndent(),
-                opplysninger.map {
-                    mapOf(
-                        "opplysningId" to it.id,
-                        "regel" to it.utledetAv!!.regel,
-                    )
+                opplysninger.mapNotNull {
+                    it.utledetAv?.let { utledning ->
+                        mapOf(
+                            "opplysningId" to it.id,
+                            "regel" to utledning.regel,
+                        )
+                    }
                 },
             )
 
@@ -265,20 +372,6 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             Heltall -> Pair("verdi_heltall", verdi)
             ULID -> Pair("verdi_string", (verdi as Ulid).verdi)
         }
-
-        private fun TransactionalSession.lagreKilde(
-            opplysningId: UUID,
-            kilde: Kilde?,
-        ) = run(
-            queryOf(
-                //language=PostgreSQL
-                """INSERT INTO opplysning_kilde (opplysning_id, meldingsreferanse_id) VALUES (?,?)""",
-                mapOf(
-                    "opplysning_id" to opplysningId,
-                    "meldingsreferanse_id" to kilde?.meldingsreferanseId,
-                ),
-            ).asUpdate,
-        )
     }
 }
 

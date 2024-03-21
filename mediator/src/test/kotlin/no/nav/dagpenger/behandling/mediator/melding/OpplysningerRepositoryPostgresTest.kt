@@ -12,6 +12,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Ulid
@@ -27,7 +28,8 @@ class OpplysningerRepositoryPostgresTest {
             val repo = OpplysningerRepositoryPostgres()
             val heltallFaktum = Faktum(Opplysningstype.somHeltall("Heltall"), 10)
             val boolskFaktum = Faktum(Opplysningstype.somBoolsk("Boolsk"), true)
-            val datoFaktum = Faktum(Opplysningstype.somDato("Dato"), LocalDate.now())
+            val kilde = Saksbehandlerkilde("foo")
+            val datoFaktum = Faktum(Opplysningstype.somDato("Dato"), LocalDate.now(), kilde = kilde)
 
             val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum))
             repo.lagreOpplysninger(opplysninger)
@@ -40,6 +42,7 @@ class OpplysningerRepositoryPostgresTest {
             fraDb.finnOpplysning(heltallFaktum.opplysningstype).verdi shouldBe heltallFaktum.verdi
             fraDb.finnOpplysning(boolskFaktum.opplysningstype).verdi shouldBe boolskFaktum.verdi
             fraDb.finnOpplysning(datoFaktum.opplysningstype).verdi shouldBe datoFaktum.verdi
+            fraDb.finnOpplysning(datoFaktum.opplysningstype).kilde?.id shouldBe kilde.id
         }
     }
 

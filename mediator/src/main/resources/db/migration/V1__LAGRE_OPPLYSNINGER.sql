@@ -45,9 +45,21 @@ CREATE TABLE opplysning_verdi
 
 CREATE TABLE opplysning_kilde
 (
-    opplysning_id        uuid PRIMARY KEY,
-    meldingsreferanse_id uuid REFERENCES melding (melding_id),
-    opprettet            TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    id            uuid PRIMARY KEY,
+    opplysning_id uuid REFERENCES opplysning (id),
+    type          TEXT                     NOT NULL,
+    opprettet     TIMESTAMP WITH TIME ZONE NOT NULL,
+    registrert    TIMESTAMP WITH TIME ZONE NOT NULL
+);
+CREATE TABLE opplysning_kilde_system
+(
+    kilde_id   uuid PRIMARY KEY REFERENCES opplysning_kilde (id),
+    melding_id uuid REFERENCES melding (melding_id)
+);
+CREATE TABLE opplysning_kilde_saksbehandler
+(
+    kilde_id uuid PRIMARY KEY REFERENCES opplysning_kilde (id),
+    ident    TEXT NOT NULL
 );
 
 CREATE TABLE opplysninger
