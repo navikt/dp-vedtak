@@ -3,10 +3,6 @@ package no.nav.dagpenger.behandling.mediator.repository
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
-import no.nav.dagpenger.behandling.mediator.BehandlingRepository
-import no.nav.dagpenger.behandling.mediator.PersonRepository
-import no.nav.dagpenger.behandling.mediator.PostgresUnitOfWork
-import no.nav.dagpenger.behandling.mediator.UnitOfWork
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Person
 

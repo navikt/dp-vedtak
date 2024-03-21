@@ -1,8 +1,8 @@
 package no.nav.dagpenger.behandling.db
 
-import no.nav.dagpenger.behandling.mediator.BehandlingRepository
-import no.nav.dagpenger.behandling.mediator.PersonRepository
-import no.nav.dagpenger.behandling.mediator.UnitOfWork
+import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepository
+import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
+import no.nav.dagpenger.behandling.mediator.repository.UnitOfWork
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Person

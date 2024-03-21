@@ -4,9 +4,6 @@ import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
-import no.nav.dagpenger.behandling.mediator.BehandlingRepository
-import no.nav.dagpenger.behandling.mediator.PostgresUnitOfWork
-import no.nav.dagpenger.behandling.mediator.UnitOfWork
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Opplysninger

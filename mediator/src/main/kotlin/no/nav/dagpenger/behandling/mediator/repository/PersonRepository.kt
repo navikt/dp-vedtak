@@ -1,4 +1,4 @@
-package no.nav.dagpenger.behandling.mediator
+package no.nav.dagpenger.behandling.mediator.repository
 
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident

@@ -1,6 +1,5 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
-import no.nav.dagpenger.behandling.mediator.UnitOfWork
 import no.nav.dagpenger.opplysning.Opplysninger
 import java.util.UUID
 

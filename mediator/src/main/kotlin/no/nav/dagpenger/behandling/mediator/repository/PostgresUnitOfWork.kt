@@ -1,4 +1,4 @@
-package no.nav.dagpenger.behandling.mediator
+package no.nav.dagpenger.behandling.mediator.repository
 
 import kotliquery.Session
 import kotliquery.sessionOf

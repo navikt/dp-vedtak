@@ -16,9 +16,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.ApplicationTestBuilder
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
-import no.nav.dagpenger.behandling.mediator.PersonRepository
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.autentisert
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.testAzureAdToken
+import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar

@@ -272,11 +272,7 @@ components:
           type: boolean
           description: Indikerer om opplysningen kan redigeres
         kilde:
-          oneOf:
-            - $ref: '#/components/schemas/Systemkilde'
-            - $ref: '#/components/schemas/Saksbehandlerkilde'
-          discriminator:
-            propertyName: type
+          $ref: '#/components/schemas/Opplysningskilde'
         utledetAv:
           $ref: '#/components/schemas/Utledning'
 
@@ -288,25 +284,16 @@ components:
       properties:
         type:
           type: string
-      discriminator:
-        propertyName: type
-
-    Saksbehandlerkilde:
-      allOf:
-        - $ref: "#/components/schemas/Opplysningskilde"
-        - $ref: '#/components/schemas/Saksbehandler'
-
-    Systemkilde:
-      allOf:
-        - $ref: "#/components/schemas/Opplysningskilde"
-        - type: object
-          required:
-            - id
-          properties:
-            id:
-              type: string
-          example:
-            id: "dp-inntekt"
+        registrert:
+          type: string
+          format: date-time
+        ident:
+          type: string
+          nullable: true
+        meldingId:
+          type: string
+          format: uuid
+          nullable: true
 
     Utledning:
       type: object

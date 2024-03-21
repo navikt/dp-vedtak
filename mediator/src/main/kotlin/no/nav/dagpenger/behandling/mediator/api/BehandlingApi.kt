@@ -15,9 +15,10 @@ import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
+import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
-import no.nav.dagpenger.behandling.mediator.PersonRepository
+import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.opplysning.Boolsk
@@ -27,6 +28,8 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Opplysning
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
 import org.apache.kafka.common.errors.ResourceNotFoundException
 import java.time.LocalDateTime
@@ -99,7 +102,14 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
                 Heltall -> DataTypeDTO.heltall
                 ULID -> DataTypeDTO.ulid
             },
-        kilde = null,
+        kilde =
+            this.kilde?.let {
+                val registrert = it.registrert.tilOffsetDato()
+                when (it) {
+                    is Saksbehandlerkilde -> OpplysningskildeDTO("Saksbehandler", ident = it.ident, registrert = registrert)
+                    is Systemkilde -> OpplysningskildeDTO("System", meldingId = it.meldingsreferanseId, registrert = registrert)
+                }
+            },
         utledetAv =
             this.utledetAv?.let { utledning ->
                 UtledningDTO(
