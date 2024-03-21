@@ -143,9 +143,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 it.run(
                     queryOf(
                         //language=PostgreSQL
-                        """
-                        SELECT utledet_av FROM opplysning_utledet_av WHERE opplysning_id = :id
-                        """.trimIndent(),
+                        "SELECT utledet_av FROM opplysning_utledet_av WHERE opplysning_id = :id",
                         mapOf("id" to id),
                     ).map { row ->
                         row.uuid("utledet_av")

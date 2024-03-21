@@ -48,6 +48,7 @@ class BehandlingRepositoryPostgresTest {
             rehydrertBehandling.basertPå.size shouldBe behandling.basertPå.size
 
             rehydrertBehandling.basertPå shouldContainExactly behandling.basertPå
+            rehydrertBehandling.opplysninger().finnAlle().size shouldBe behandling.opplysninger().finnAlle().size
             rehydrertBehandling.opplysninger().finnAlle() shouldContainExactly behandling.opplysninger().finnAlle()
         }
     }

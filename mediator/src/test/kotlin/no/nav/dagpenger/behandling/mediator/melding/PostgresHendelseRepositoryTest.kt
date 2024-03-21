@@ -2,7 +2,6 @@ package no.nav.dagpenger.behandling.mediator.melding
 
 import io.kotest.matchers.equals.shouldBeEqual
 import no.nav.dagpenger.behandling.db.Postgres
-import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -33,7 +32,7 @@ internal class PostgresHendelseRepositoryTest {
         val søknadInnsendtMessage = SøknadInnsendtMessage(jsonMessage)
 
         Postgres.withMigratedDb {
-            val postgresHendelseRepository = PostgresHendelseRepository(dataSource)
+            val postgresHendelseRepository = PostgresHendelseRepository()
             postgresHendelseRepository.lagreMelding(
                 hendelseMessage = søknadInnsendtMessage,
                 ident = søknadInnsendtMessage.ident,

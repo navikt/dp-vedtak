@@ -1,7 +1,6 @@
 package no.nav.dagpenger.behandling.mediator
 
 import mu.KotlinLogging
-import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
@@ -39,7 +38,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
                     hendelseMediator = HendelseMediator(rapidsConnection),
                     observatører = emptySet(),
                 ),
-            hendelseRepository = PostgresHendelseRepository(PostgresDataSourceBuilder.dataSource),
+            hendelseRepository = PostgresHendelseRepository(),
         )
 
         rapidsConnection.register(this)

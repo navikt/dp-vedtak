@@ -25,4 +25,5 @@ FROM opplysning
          LEFT JOIN
      opplysning_utledning ON opplysning.id = opplysning_utledning.opplysning_id
          LEFT JOIN
-     opplysning_kilde ON opplysning.id = opplysning_kilde.opplysning_id;
+     opplysning_kilde ON opplysning.id = opplysning_kilde.opplysning_id
+ORDER BY opplysning.id;

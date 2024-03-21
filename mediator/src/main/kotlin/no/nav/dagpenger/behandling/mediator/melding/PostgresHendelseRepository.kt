@@ -5,13 +5,13 @@ import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import mu.KotlinLogging
+import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
 import org.postgresql.util.PGobject
 import java.util.UUID
-import javax.sql.DataSource
 
-internal class PostgresHendelseRepository(private val dataSource: DataSource) : HendelseRepository {
+internal class PostgresHendelseRepository() : HendelseRepository {
     override fun lagreMelding(
         hendelseMessage: HendelseMessage,
         ident: String,
@@ -30,7 +30,7 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
                             INSERT INTO melding
                                 (ident, melding_id, melding_type, data, lest_dato)
                             VALUES
-                                (:ident, :melding_id, :melding_type, :data, now())
+                                (:ident, :melding_id, :melding_type, :data, NOW())
                             ON CONFLICT DO NOTHING
                             """.trimIndent(),
                         paramMap =
@@ -58,7 +58,7 @@ internal class PostgresHendelseRepository(private val dataSource: DataSource) : 
                     statement =
                         """
                         UPDATE melding
-                        SET behandlet_tidspunkt=now()
+                        SET behandlet_tidspunkt=NOW()
                         WHERE melding_id = :melding_id
                           AND behandlet_tidspunkt IS NULL
                         """.trimIndent(),
