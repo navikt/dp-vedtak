@@ -111,10 +111,10 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
     )
 }
 
-private fun LocalDateTime.tilOffsetDato(): OffsetDateTime {
+private fun LocalDateTime.tilOffsetDato(): OffsetDateTime? {
     return when (this) {
-        LocalDateTime.MIN -> OffsetDateTime.MIN
-        LocalDateTime.MAX -> OffsetDateTime.MAX
+        LocalDateTime.MIN -> null
+        LocalDateTime.MAX -> null
         else -> this.atZone(ZoneId.systemDefault()).toOffsetDateTime()
     }
 }

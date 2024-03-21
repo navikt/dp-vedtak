@@ -245,8 +245,6 @@ components:
         - verdi
         - datatype
         - status
-        - gyldigFraOgMed
-        - gyldigTilOgMed
         - redigerbar
       properties:
         id:
@@ -261,9 +259,13 @@ components:
         gyldigFraOgMed:
           type: string
           format: date-time
+          nullable: true
+          description: Om opplysningen er gyldig fra en bestemt dato. Er den null, er den gyldig fra tidens morgen.
         gyldigTilOgMed:
           type: string
           format: date-time
+          nullable: true
+          description: Om opplysningen er gyldig fra en bestemt dato. Er den null, er den gyldig til evig tid.
         datatype:
           $ref: '#/components/schemas/DataType'
         redigerbar:
