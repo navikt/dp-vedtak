@@ -114,4 +114,28 @@ class OpplysningerRepositoryPostgresTest {
             fraDb.finnAlle().size shouldBe fakta.size
         }
     }
+
+    @Test
+    @Disabled("Databasen støtter ikke å erstatte opplysninger")
+    fun `lagre erstattet opplysning`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val opplysningstype = Opplysningstype.somHeltall("Heltall")
+            val opplysning = Faktum(opplysningstype, 10)
+            val opplysningErstattet = Faktum(opplysningstype, 20)
+            val opplysninger =
+                Opplysninger(listOf(opplysning)).also {
+                    Regelkjøring(LocalDate.now(), it)
+                }
+            repo.lagreOpplysninger(opplysninger)
+            opplysninger.erstatt(opplysning, opplysningErstattet)
+            repo.lagreOpplysninger(opplysninger)
+            val fraDb =
+                repo.hentOpplysninger(opplysninger.id).also {
+                    Regelkjøring(LocalDate.now(), it)
+                }
+            fraDb.aktiveOpplysninger().size shouldBe 1
+            fraDb.finnOpplysning(opplysningstype).verdi shouldBe opplysningErstattet.verdi
+        }
+    }
 }
