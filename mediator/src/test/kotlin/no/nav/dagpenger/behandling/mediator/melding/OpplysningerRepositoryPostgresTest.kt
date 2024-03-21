@@ -134,7 +134,7 @@ class OpplysningerRepositoryPostgresTest {
                 repo.hentOpplysninger(opplysninger.id).also {
                     Regelkjøring(LocalDate.now(), it)
                 }
-            fraDb.aktiveOpplysninger().size shouldBe 1
+            fraDb.aktiveOpplysninger() shouldContainExactly opplysninger.aktiveOpplysninger()
             fraDb.finnOpplysning(opplysningstype).verdi shouldBe opplysningErstattet.verdi
         }
     }
