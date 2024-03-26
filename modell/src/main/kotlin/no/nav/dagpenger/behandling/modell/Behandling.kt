@@ -5,7 +5,7 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
-import no.nav.dagpenger.behandling.modell.hendelser.BehandlingAvbruttHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.BehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
@@ -66,6 +66,10 @@ class Behandling private constructor(
     fun håndter(hendelse: OpplysningSvarHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
+    }
+
+    fun håndter(hendelse: AvbrytBehandlingHendelse) {
+        tilstand(Avbrutt, hendelse)
     }
 
     private fun hvaTrengerViNå(hendelse: PersonHendelse) =
@@ -239,10 +243,6 @@ class Behandling private constructor(
         tilstand = nyTilstand
         hendelse.kontekst(tilstand)
         tilstand.entering(this, hendelse)
-    }
-
-    fun avbryt(hendelse: BehandlingAvbruttHendelse) {
-        tilstand(Avbrutt, hendelse)
     }
 }
 

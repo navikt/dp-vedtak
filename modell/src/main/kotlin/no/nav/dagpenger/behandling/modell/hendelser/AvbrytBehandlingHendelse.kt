@@ -2,7 +2,8 @@ package no.nav.dagpenger.behandling.modell.hendelser
 
 import java.util.UUID
 
-class BehandlingAvbruttHendelse(
+class AvbrytBehandlingHendelse(
     meldingsreferanseId: UUID,
     ident: String,
+    val behandlingId: UUID,
 ) : PersonHendelse(meldingsreferanseId, ident)
