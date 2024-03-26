@@ -69,7 +69,8 @@ class Behandling private constructor(
     }
 
     fun håndter(hendelse: AvbrytBehandlingHendelse) {
-        tilstand(Avbrutt, hendelse)
+        hendelse.kontekst(this)
+        tilstand.håndter(this, hendelse)
     }
 
     private fun hvaTrengerViNå(hendelse: PersonHendelse) =
@@ -140,6 +141,14 @@ class Behandling private constructor(
             throw IllegalStateException(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
             )
+        }
+
+        fun håndter(
+            behandling: Behandling,
+            hendelse: AvbrytBehandlingHendelse,
+        ) {
+            hendelse.info("Avbryter behandlingen")
+            behandling.tilstand(Avbrutt, hendelse)
         }
 
         override fun toSpesifikkKontekst() = SpesifikkKontekst(type.name, emptyMap())
@@ -224,12 +233,20 @@ class Behandling private constructor(
     private data object Avbrutt : BehandlingTilstand {
         override val type = TilstandType.Avbrutt
 
-        override fun entering(
+        override fun håndter(
             behandling: Behandling,
-            hendelse: PersonHendelse,
-        ) {
-            hendelse.kontekst(this)
-            hendelse.info("Avbryter behandlingen")
+            hendelse: AvbrytBehandlingHendelse,
+        ) { // No-op
+        }
+    }
+
+    private data object Ferdig : BehandlingTilstand {
+        override val type = TilstandType.Ferdig
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvbrytBehandlingHendelse,
+        ) { // No-op
         }
     }
 
