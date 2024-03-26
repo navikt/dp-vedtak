@@ -19,7 +19,8 @@ class PostgresUnitOfWork private constructor(private val session: Session) : Uni
         try {
             block(session)
         } catch (e: Exception) {
-            rollback()
+            // TODO Rollback kan ikke gjøres fordi connection er allerede stengt og maskerer feil mot PostgreSQL
+            // rollback()
             throw e
         }
 }

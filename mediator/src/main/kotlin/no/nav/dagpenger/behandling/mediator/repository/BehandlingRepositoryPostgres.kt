@@ -48,6 +48,7 @@ class BehandlingRepositoryPostgres(
                             },
                         aktiveOpplysninger = opplysningRepository.hentOpplysninger(row.uuid("opplysninger_id"))!!,
                         basertPå = basertPåBehandling,
+                        tilstand = Behandling.TilstandType.valueOf(row.string("tilstand")),
                     )
                 }.asSingle,
             )
@@ -106,9 +107,14 @@ class BehandlingRepositoryPostgres(
             tx.run(
                 queryOf(
                     // language=PostgreSQL
-                    "INSERT INTO behandling (behandling_id) VALUES (:id) ON CONFLICT DO NOTHING",
+                    """
+                    INSERT INTO behandling (behandling_id, tilstand)
+                    VALUES (:id, :tilstand)
+                    ON CONFLICT (behandling_id) DO UPDATE SET tilstand = :tilstand
+                    """.trimIndent(),
                     mapOf(
                         "id" to behandling.behandlingId,
+                        "tilstand" to behandling.tilstand().name,
                     ),
                 ).asUpdate,
             )

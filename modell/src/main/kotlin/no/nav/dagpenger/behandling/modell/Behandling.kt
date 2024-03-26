@@ -4,6 +4,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
+import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.hendelser.BehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
@@ -20,12 +21,13 @@ class Behandling private constructor(
     val behandler: BehandlingHendelse,
     aktiveOpplysninger: Opplysninger,
     val basertPå: List<Behandling> = emptyList(),
+    private var tilstand: BehandlingTilstand,
 ) : Aktivitetskontekst {
     constructor(
         behandler: BehandlingHendelse,
         opplysninger: List<Opplysning<*>>,
         basertPå: List<Behandling> = emptyList(),
-    ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå)
+    ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå, UnderOpprettelse)
 
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
     private val opplysninger = aktiveOpplysninger + tidligereOpplysninger
@@ -38,7 +40,8 @@ class Behandling private constructor(
             behandler: BehandlingHendelse,
             aktiveOpplysninger: Opplysninger,
             basertPå: List<Behandling> = emptyList(),
-        ) = Behandling(behandlingId, behandler, aktiveOpplysninger, basertPå)
+            tilstand: TilstandType,
+        ) = Behandling(behandlingId, behandler, aktiveOpplysninger, basertPå, fraType(tilstand))
 
         fun List<Behandling>.finn(behandlingId: UUID) =
             try {
@@ -48,38 +51,20 @@ class Behandling private constructor(
             }
     }
 
+    fun tilstand() = tilstand.type
+
     fun opplysninger(): LesbarOpplysninger = opplysninger
 
     private fun informasjonsbehov() = regelkjøring.informasjonsbehov(behandler.avklarer())
 
     fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
-        hendelse.info("Mottatt søknad og startet behandling")
-        hendelse.varsel(Behandlingsvarsler.SØKNAD_MOTTATT)
-        hendelse.hendelse(BehandlingHendelser.behandling_opprettet, "Behandling opprettet")
-
-        hvaTrengerViNå(hendelse)
+        tilstand.håndter(this, hendelse)
     }
 
     fun håndter(hendelse: OpplysningSvarHendelse) {
         hendelse.kontekst(this)
-        hendelse.opplysninger.forEach { opplysning ->
-            opplysninger.leggTil(opplysning.opplysning())
-        }
-        val trenger = hvaTrengerViNå(hendelse)
-
-        if (trenger.isEmpty()) {
-            // TODO: Tilstand?
-            hendelse.info("Alle opplysninger mottatt")
-            hendelse.hendelse(
-                BehandlingHendelser.forslag_til_vedtak,
-                "Foreslår vedtak",
-                mapOf(
-                    "utfall" to opplysninger.finnOpplysning(behandler.avklarer()).verdi,
-                    "harAvklart" to opplysninger.finnOpplysning(behandler.avklarer()).opplysningstype.navn,
-                ),
-            )
-        }
+        tilstand.håndter(this, hendelse)
     }
 
     private fun hvaTrengerViNå(hendelse: PersonHendelse) =
@@ -110,9 +95,137 @@ class Behandling private constructor(
 
     override fun hashCode() = behandlingId.hashCode()
 
-    // TODO: VIl helst ikke ha søknadId inn her
     data class BehandlingKontekst(val behandlingId: UUID, val behandlerKontekst: Map<String, String>) : SpesifikkKontekst("Behandling") {
         override val kontekstMap = mapOf("behandlingId" to behandlingId.toString()) + behandlerKontekst
+    }
+
+    private sealed interface BehandlingTilstand : Aktivitetskontekst {
+        val type: TilstandType
+
+        companion object {
+            fun fraType(type: TilstandType) =
+                when (type) {
+                    TilstandType.UnderOpprettelse -> UnderOpprettelse
+                    TilstandType.UnderBehandling -> UnderBehandling
+                    TilstandType.ForslagTilVedtak -> ForslagTilVedtak
+                    TilstandType.Avbrutt -> TODO()
+                    TilstandType.Ferdig -> TODO()
+                }
+        }
+
+        fun entering(
+            behandling: Behandling,
+            hendelse: PersonHendelse,
+        ) {
+        }
+
+        fun håndter(
+            behandling: Behandling,
+            hendelse: SøknadInnsendtHendelse,
+        ) {
+            throw IllegalStateException(
+                "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
+            )
+        }
+
+        fun håndter(
+            behandling: Behandling,
+            hendelse: OpplysningSvarHendelse,
+        ) {
+            throw IllegalStateException(
+                "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
+            )
+        }
+
+        override fun toSpesifikkKontekst() = SpesifikkKontekst(type.name, emptyMap())
+    }
+
+    enum class TilstandType {
+        UnderOpprettelse,
+        UnderBehandling,
+        ForslagTilVedtak,
+        Avbrutt,
+        Ferdig,
+    }
+
+    private data object UnderOpprettelse : BehandlingTilstand {
+        override val type = TilstandType.UnderOpprettelse
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: SøknadInnsendtHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Mottatt søknad og startet behandling")
+            hendelse.varsel(Behandlingsvarsler.SØKNAD_MOTTATT)
+            hendelse.hendelse(BehandlingHendelser.behandling_opprettet, "Behandling opprettet")
+
+            behandling.hvaTrengerViNå(hendelse)
+            behandling.tilstand(UnderBehandling, hendelse)
+        }
+    }
+
+    private data object UnderBehandling : BehandlingTilstand {
+        override val type = TilstandType.UnderBehandling
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: SøknadInnsendtHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Mottatt søknad og startet behandling")
+            hendelse.varsel(Behandlingsvarsler.SØKNAD_MOTTATT)
+            hendelse.hendelse(BehandlingHendelser.behandling_opprettet, "Behandling opprettet")
+
+            behandling.hvaTrengerViNå(hendelse)
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: OpplysningSvarHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.opplysninger.forEach { opplysning ->
+                behandling.opplysninger.leggTil(opplysning.opplysning())
+            }
+            val trenger = behandling.hvaTrengerViNå(hendelse)
+
+            if (trenger.isEmpty()) {
+                behandling.tilstand(ForslagTilVedtak, hendelse)
+            }
+        }
+    }
+
+    private data object ForslagTilVedtak : BehandlingTilstand {
+        override val type = TilstandType.ForslagTilVedtak
+
+        override fun entering(
+            behandling: Behandling,
+            hendelse: PersonHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Alle opplysninger mottatt, lager forslag til vedtak")
+            hendelse.hendelse(
+                BehandlingHendelser.forslag_til_vedtak,
+                "Foreslår vedtak",
+                mapOf(
+                    "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).verdi,
+                    "harAvklart" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).opplysningstype.navn,
+                ),
+            )
+        }
+    }
+
+    private fun tilstand(
+        nyTilstand: BehandlingTilstand,
+        hendelse: PersonHendelse,
+    ) {
+        if (tilstand.type == nyTilstand.type) return
+
+        val forrigeTilstand = tilstand
+        tilstand = nyTilstand
+        hendelse.kontekst(tilstand)
+        tilstand.entering(this, hendelse)
     }
 }
 

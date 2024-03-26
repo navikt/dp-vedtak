@@ -79,6 +79,7 @@ CREATE TABLE opplysninger_opplysning
 CREATE TABLE IF NOT EXISTS behandling
 (
     behandling_id uuid PRIMARY KEY,
+    tilstand      TEXT NOT NULL,
     opprettet     TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
