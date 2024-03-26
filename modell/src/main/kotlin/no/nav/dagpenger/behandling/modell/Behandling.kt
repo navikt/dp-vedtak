@@ -113,7 +113,7 @@ class Behandling private constructor(
                     TilstandType.UnderOpprettelse -> UnderOpprettelse
                     TilstandType.UnderBehandling -> UnderBehandling
                     TilstandType.ForslagTilVedtak -> ForslagTilVedtak
-                    TilstandType.Avbrutt -> TODO()
+                    TilstandType.Avbrutt -> Avbrutt
                     TilstandType.Ferdig -> TODO()
                 }
         }
