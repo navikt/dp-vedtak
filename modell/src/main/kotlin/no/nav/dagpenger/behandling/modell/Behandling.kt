@@ -5,6 +5,7 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
+import no.nav.dagpenger.behandling.modell.hendelser.BehandlingAvbruttHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.BehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
@@ -216,6 +217,18 @@ class Behandling private constructor(
         }
     }
 
+    private data object Avbrutt : BehandlingTilstand {
+        override val type = TilstandType.Avbrutt
+
+        override fun entering(
+            behandling: Behandling,
+            hendelse: PersonHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Avbryter behandlingen")
+        }
+    }
+
     private fun tilstand(
         nyTilstand: BehandlingTilstand,
         hendelse: PersonHendelse,
@@ -226,6 +239,10 @@ class Behandling private constructor(
         tilstand = nyTilstand
         hendelse.kontekst(tilstand)
         tilstand.entering(this, hendelse)
+    }
+
+    fun avbryt(hendelse: BehandlingAvbruttHendelse) {
+        tilstand(Avbrutt, hendelse)
     }
 }
 

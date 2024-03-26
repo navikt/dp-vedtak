@@ -21,6 +21,8 @@ import no.nav.dagpenger.behandling.api.models.UtledningDTO
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.behandling.modell.UUIDv7
+import no.nav.dagpenger.behandling.modell.hendelser.BehandlingAvbruttHendelse
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
@@ -55,17 +57,36 @@ fun Application.behandlingApi(personRepository: PersonRepository) {
                         ) ?: throw ResourceNotFoundException("Person ikke funnet")
                     call.respond(HttpStatusCode.OK, person.behandlinger().map { it.tilBehandlingDTO() })
                 }
-                get("{behandlingId}") {
-                    val behandlingId =
-                        call.parameters["behandlingId"]?.let {
-                            UUID.fromString(it)
-                        } ?: throw IllegalArgumentException("Mangler behandlingId")
+                route("{behandlingId}") {
+                    get {
+                        val behandlingId =
+                            call.parameters["behandlingId"]?.let {
+                                UUID.fromString(it)
+                            } ?: throw IllegalArgumentException("Mangler behandlingId")
 
-                    val behandling =
-                        personRepository.hentBehandling(
-                            behandlingId,
-                        ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
-                    call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
+                        val behandling =
+                            personRepository.hentBehandling(
+                                behandlingId,
+                            ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+                        call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
+                    }
+                    post("/avbryt") {
+                        val behandlingId =
+                            call.parameters["behandlingId"]?.let {
+                                UUID.fromString(it)
+                            } ?: throw IllegalArgumentException("Mangler behandlingId")
+
+                        val behandling =
+                            personRepository.hentBehandling(
+                                behandlingId,
+                            ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+
+                        // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
+                        val hendelse = BehandlingAvbruttHendelse(UUIDv7.ny(), "999999999")
+                        behandling.avbryt(hendelse)
+
+                        call.respond(HttpStatusCode.Created)
+                    }
                 }
             }
         }

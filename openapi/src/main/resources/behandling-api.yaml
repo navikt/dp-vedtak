@@ -64,6 +64,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/Behandling'
           description: OK
+  /behandling/{behandlingId}/avbryt:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+    post:
+      summary: Avbryt en behandling
+      security:
+        - azureAd: [ ]
+      responses:
+        204:
+          description: OK
   /behandling/{behandlingId}/opplysning/{opplysningId}:
     parameters:
       - name: behandlingId

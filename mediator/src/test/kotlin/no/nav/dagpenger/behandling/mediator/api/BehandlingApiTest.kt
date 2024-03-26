@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldNotBeEmpty
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -123,6 +124,16 @@ internal class BehandlingApiTest {
             val behandling = shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), BehandlingDTO::class.java) }
             behandling.behandlingId shouldBe behandlingId
             behandling.opplysning.shouldNotBeEmpty()
+        }
+    }
+
+    @Test
+    fun `avbryt behandling gitt behandlingId`() {
+        medSikretBehandlingApi {
+            val behandlingId = person.behandlinger().first().behandlingId
+            val response = autentisert(httpMethod = HttpMethod.Post, endepunkt = "/behandling/$behandlingId/avbryt")
+            response.status shouldBe HttpStatusCode.Created
+            response.bodyAsText().shouldBeEmpty()
         }
     }
 
