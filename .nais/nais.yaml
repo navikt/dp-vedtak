@@ -28,6 +28,8 @@ spec:
       value: {{azure.grupper.saksbehandler}}
     - name: flyway.cleanDisabled
       value: '{{flyway.cleanDisabled}}'
+    - name: CLEAN_ON_STARTUP
+      value: false
     - name: OTEL_JAVAAGENT_EXCLUDE_CLASSES
       value: "no.nav.helse.rapids_rivers.PingPong"
   {{#if ingresses}}
