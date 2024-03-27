@@ -116,6 +116,7 @@ private val logger = KotlinLogging.logger { }
 private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
     return BehandlingDTO(
         behandlingId = this.behandlingId,
+        tilstand = BehandlingDTO.Tilstand.valueOf(tilstand().name),
         opplysning =
             this.opplysninger().finnAlle().map { opplysning ->
                 opplysning.tilOpplysningDTO()

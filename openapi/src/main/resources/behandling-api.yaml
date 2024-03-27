@@ -257,11 +257,14 @@ components:
       required:
         - behandlingId
         - opplysning
-        - utbetalinger
+        - tilstand
       properties:
         behandlingId:
           type: string
           format: uuid
+        tilstand:
+          type: string
+          enum: [ "UnderOpprettelse", "UnderBehandling", "ForslagTilVedtak", "Avbrutt", "Ferdig" ]
         opplysning:
           type: array
           items:
