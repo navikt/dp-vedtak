@@ -16,6 +16,8 @@ import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostg
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.behandling.modell.UUIDv7
+import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
@@ -90,7 +92,19 @@ internal class PersonMediatorTest {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
                 it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 25
+
+                // Godkjenner forslag til vedtak
+                // TODO: Skal dette også være mulig å gjøre via rapiden?
+                it.behandlinger().first().let { behandling ->
+                    behandling.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, behandling.behandlingId))
+                }
             }
+
+            /*
+            // TODO: Dette funker bare om hendelsen har gått via mediatoren
+            rapid.harHendelse("vedtak_fattet") {
+                medBoolsk("utfall") shouldBe false
+            }*/
         }
 
     private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {

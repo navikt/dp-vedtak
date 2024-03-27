@@ -5,6 +5,7 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
+import no.nav.dagpenger.behandling.modell.BehandlingHendelser.vedtak_fattet
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
@@ -257,6 +258,15 @@ class Behandling private constructor(
                 // TODO: Vi bør sannsynligvis gjøre dette
                 // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
             }
+            hendelse.hendelse(
+                vedtak_fattet,
+                "Vedtak fattet",
+                mapOf(
+                    "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).verdi,
+                    "harAvklart" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).opplysningstype.navn,
+                    "opplysninger" to behandling.opplysninger.finnAlle(),
+                ),
+            )
             behandling.tilstand(Ferdig, hendelse)
         }
     }
@@ -305,4 +315,5 @@ object Behandlingsvarsler {
 enum class BehandlingHendelser : Hendelse.Hendelsetype {
     behandling_opprettet,
     forslag_til_vedtak,
+    vedtak_fattet,
 }
