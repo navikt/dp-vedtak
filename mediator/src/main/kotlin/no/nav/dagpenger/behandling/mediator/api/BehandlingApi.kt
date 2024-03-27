@@ -11,7 +11,6 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import mu.KotlinLogging
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
@@ -107,8 +106,6 @@ internal fun Application.behandlingApi(
         }
     }
 }
-
-private val logger = KotlinLogging.logger { }
 
 private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
     return BehandlingDTO(

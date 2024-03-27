@@ -137,7 +137,12 @@ internal class BehandlingApiTest {
     fun `avbryt behandling gitt behandlingId`() {
         medSikretBehandlingApi {
             val behandlingId = person.behandlinger().first().behandlingId
-            val response = autentisert(httpMethod = HttpMethod.Post, endepunkt = "/behandling/$behandlingId/avbryt")
+            val response =
+                autentisert(
+                    httpMethod = HttpMethod.Post,
+                    endepunkt = "/behandling/$behandlingId/avbryt",
+                    body = """{"ident":"09876543311"}""",
+                )
             response.status shouldBe HttpStatusCode.Created
             response.bodyAsText().shouldBeEmpty()
             verify {
@@ -150,7 +155,12 @@ internal class BehandlingApiTest {
     fun `godkjenn behandling gitt behandlingId`() {
         medSikretBehandlingApi {
             val behandlingId = person.behandlinger().first().behandlingId
-            val response = autentisert(httpMethod = HttpMethod.Post, endepunkt = "/behandling/$behandlingId/godkjenn")
+            val response =
+                autentisert(
+                    httpMethod = HttpMethod.Post,
+                    endepunkt = "/behandling/$behandlingId/godkjenn",
+                    body = """{"ident":"09876543311"}""",
+                )
             response.status shouldBe HttpStatusCode.Created
             response.bodyAsText().shouldBeEmpty()
             verify {
