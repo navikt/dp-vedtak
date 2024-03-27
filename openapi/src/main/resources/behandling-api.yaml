@@ -14,6 +14,8 @@ paths:
   /behandling:
     post:
       description: Hent alle behandlinger for en gitt person
+      security:
+        - azureAd: [ ]
       requestBody:
         required: true
         content:
