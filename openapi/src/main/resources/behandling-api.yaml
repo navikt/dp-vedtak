@@ -31,21 +31,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Behandling'
-
-
-    get:
-      summary: Hent alle behandlinger for en gitt person
-      security:
-        - azureAd: [ ]
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Behandling'
-          description: OK
   /behandling/{behandlingId}:
     parameters:
       - name: behandlingId
@@ -79,6 +64,12 @@ paths:
       summary: Avbryt en behandling
       security:
         - azureAd: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentForesporsel'
       responses:
         204:
           description: OK
@@ -95,6 +86,12 @@ paths:
       summary: Godkjenn en behandling
       security:
         - azureAd: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentForesporsel'
       responses:
         204:
           description: OK

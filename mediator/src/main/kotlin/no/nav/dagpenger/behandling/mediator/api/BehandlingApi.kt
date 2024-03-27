@@ -82,13 +82,9 @@ internal fun Application.behandlingApi(
                                 UUID.fromString(it)
                             } ?: throw IllegalArgumentException("Mangler behandlingId")
 
-                        val behandling =
-                            personRepository.hentBehandling(
-                                behandlingId,
-                            ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
-
+                        val identForespørsel = call.receive<IdentForesporselDTO>()
                         // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
-                        val hendelse = AvbrytBehandlingHendelse(UUIDv7.ny(), "999999999", behandlingId)
+                        val hendelse = AvbrytBehandlingHendelse(UUIDv7.ny(), identForespørsel.ident, behandlingId)
                         personMediator.håndter(hendelse)
 
                         call.respond(HttpStatusCode.Created)
@@ -99,14 +95,11 @@ internal fun Application.behandlingApi(
                                 UUID.fromString(it)
                             } ?: throw IllegalArgumentException("Mangler behandlingId")
 
-                        val behandling =
-                            personRepository.hentBehandling(
-                                behandlingId,
-                            ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
-                        logger.info("Godkjenner behandling: $behandling")
+                        val identForespørsel = call.receive<IdentForesporselDTO>()
                         // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
-                        val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), "999999999", behandlingId)
+                        val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, behandlingId)
                         personMediator.håndter(hendelse)
+
                         call.respond(HttpStatusCode.Created)
                     }
                 }
