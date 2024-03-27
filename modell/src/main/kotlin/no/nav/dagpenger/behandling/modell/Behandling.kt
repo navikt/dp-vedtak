@@ -6,9 +6,9 @@ import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.BehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
@@ -19,13 +19,13 @@ import java.util.UUID
 
 class Behandling private constructor(
     val behandlingId: UUID,
-    val behandler: BehandlingHendelse,
+    val behandler: StartHendelse,
     aktiveOpplysninger: Opplysninger,
     val basertPå: List<Behandling> = emptyList(),
     private var tilstand: BehandlingTilstand,
 ) : Aktivitetskontekst {
     constructor(
-        behandler: BehandlingHendelse,
+        behandler: StartHendelse,
         opplysninger: List<Opplysning<*>>,
         basertPå: List<Behandling> = emptyList(),
     ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå, UnderOpprettelse)
@@ -38,7 +38,7 @@ class Behandling private constructor(
     companion object {
         fun rehydrer(
             behandlingId: UUID,
-            behandler: BehandlingHendelse,
+            behandler: StartHendelse,
             aktiveOpplysninger: Opplysninger,
             basertPå: List<Behandling> = emptyList(),
             tilstand: TilstandType,

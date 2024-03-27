@@ -7,8 +7,12 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
 import java.util.UUID
 
-class OpplysningSvarHendelse(meldingsreferanseId: UUID, ident: String, val behandlingId: UUID, val opplysninger: List<OpplysningSvar<*>>) :
-    PersonHendelse(meldingsreferanseId, ident)
+class OpplysningSvarHendelse(
+    meldingsreferanseId: UUID,
+    ident: String,
+    override val behandlingId: UUID,
+    val opplysninger: List<OpplysningSvar<*>>,
+) : PersonHendelse(meldingsreferanseId, ident), BehandlingHendelse
 
 data class OpplysningSvar<T : Comparable<T>>(
     val opplysningstype: Opplysningstype<T>,
