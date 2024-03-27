@@ -27,19 +27,21 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     private val personRepository = PersonRepositoryPostgres(behandlingRepository)
     private val rapidsConnection =
         RapidApplication.Builder(RapidApplication.RapidApplicationConfig.fromEnv(config))
-            .withKtorModule { behandlingApi(personRepository = personRepository) }.build()
+            .withKtorModule { behandlingApi(personRepository = personRepository, personMediator) }.build()
+
+    private val personMediator: PersonMediator =
+        PersonMediator(
+            personRepository = personRepository,
+            aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
+            behovMediator = BehovMediator(rapidsConnection),
+            hendelseMediator = HendelseMediator(rapidsConnection),
+            observatører = emptySet(),
+        )
 
     init {
         MessageMediator(
             rapidsConnection = rapidsConnection,
-            personMediator =
-                PersonMediator(
-                    personRepository = personRepository,
-                    aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
-                    behovMediator = BehovMediator(rapidsConnection),
-                    hendelseMediator = HendelseMediator(rapidsConnection),
-                    observatører = emptySet(),
-                ),
+            personMediator = personMediator,
             hendelseRepository = PostgresHendelseRepository(),
         )
 

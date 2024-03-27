@@ -8,7 +8,9 @@ import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
+import no.nav.dagpenger.behandling.modell.PersonHåndter
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
@@ -20,25 +22,31 @@ internal class PersonMediator(
     private val behovMediator: BehovMediator,
     private val hendelseMediator: HendelseMediator,
     private val observatører: Set<AktivitetsloggObserver> = emptySet(),
-) {
+) : PersonHåndter {
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerLogger = KotlinLogging.logger("tjenestekall")
     }
 
-    fun håndter(søknadInnsendtHendelse: SøknadInnsendtHendelse) {
-        behandle(søknadInnsendtHendelse) { person ->
-            person.håndter(søknadInnsendtHendelse)
-        }
-    }
-
-    fun håndter(hendelse: OpplysningSvarHendelse) {
+    override fun håndter(hendelse: SøknadInnsendtHendelse) {
         behandle(hendelse) { person ->
             person.håndter(hendelse)
         }
     }
 
-    fun håndter(hendelse: AvbrytBehandlingHendelse) {
+    override fun håndter(hendelse: OpplysningSvarHendelse) {
+        behandle(hendelse) { person ->
+            person.håndter(hendelse)
+        }
+    }
+
+    override fun håndter(hendelse: AvbrytBehandlingHendelse) {
+        behandle(hendelse) { person ->
+            person.håndter(hendelse)
+        }
+    }
+
+    override fun håndter(hendelse: ForslagGodkjentHendelse) {
         behandle(hendelse) { person ->
             person.håndter(hendelse)
         }

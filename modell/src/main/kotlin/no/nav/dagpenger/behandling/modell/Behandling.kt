@@ -26,7 +26,7 @@ class Behandling private constructor(
     aktiveOpplysninger: Opplysninger,
     val basertPå: List<Behandling> = emptyList(),
     private var tilstand: BehandlingTilstand,
-) : Aktivitetskontekst {
+) : Aktivitetskontekst, BehandlingHåndter {
     constructor(
         behandler: StartHendelse,
         opplysninger: List<Opplysning<*>>,
@@ -61,22 +61,22 @@ class Behandling private constructor(
 
     private fun informasjonsbehov() = regelkjøring.informasjonsbehov(behandler.avklarer())
 
-    fun håndter(hendelse: SøknadInnsendtHendelse) {
+    override fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
 
-    fun håndter(hendelse: OpplysningSvarHendelse) {
+    override fun håndter(hendelse: OpplysningSvarHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
 
-    fun håndter(hendelse: AvbrytBehandlingHendelse) {
+    override fun håndter(hendelse: AvbrytBehandlingHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
 
-    fun håndter(hendelse: ForslagGodkjentHendelse) {
+    override fun håndter(hendelse: ForslagGodkjentHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }

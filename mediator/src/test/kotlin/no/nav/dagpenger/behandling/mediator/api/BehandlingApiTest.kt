@@ -15,13 +15,18 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.ApplicationTestBuilder
+import io.mockk.mockk
+import io.mockk.verify
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
+import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.autentisert
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.testAzureAdToken
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
+import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
@@ -65,6 +70,7 @@ internal class BehandlingApiTest {
         InMemoryPersonRepository().also {
             it.lagre(person)
         }
+    private val personMediator = mockk<PersonMediator>(relaxed = true)
 
     @AfterEach
     fun tearDown() {
@@ -134,16 +140,33 @@ internal class BehandlingApiTest {
             val response = autentisert(httpMethod = HttpMethod.Post, endepunkt = "/behandling/$behandlingId/avbryt")
             response.status shouldBe HttpStatusCode.Created
             response.bodyAsText().shouldBeEmpty()
+            verify {
+                personMediator.håndter(any<AvbrytBehandlingHendelse>())
+            }
+        }
+    }
+
+    @Test
+    fun `godkjenn behandling gitt behandlingId`() {
+        medSikretBehandlingApi {
+            val behandlingId = person.behandlinger().first().behandlingId
+            val response = autentisert(httpMethod = HttpMethod.Post, endepunkt = "/behandling/$behandlingId/godkjenn")
+            response.status shouldBe HttpStatusCode.Created
+            response.bodyAsText().shouldBeEmpty()
+            verify {
+                personMediator.håndter(any<ForslagGodkjentHendelse>())
+            }
         }
     }
 
     private fun medSikretBehandlingApi(
         personRepository: PersonRepository = this.personRepository,
+        personMediator: PersonMediator = this.personMediator,
         test: suspend ApplicationTestBuilder.() -> Unit,
     ) {
         TestApplication.withMockAuthServerAndTestApplication(
             moduleFunction = {
-                behandlingApi(personRepository)
+                behandlingApi(personRepository, personMediator)
             },
             test,
         )

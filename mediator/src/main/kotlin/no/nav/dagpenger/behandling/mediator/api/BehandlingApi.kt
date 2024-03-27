@@ -19,6 +19,7 @@ import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
+import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
@@ -41,7 +42,10 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.util.UUID
 
-fun Application.behandlingApi(personRepository: PersonRepository) {
+internal fun Application.behandlingApi(
+    personRepository: PersonRepository,
+    personMediator: PersonMediator,
+) {
     konfigurerApi()
 
     routing {
@@ -85,7 +89,7 @@ fun Application.behandlingApi(personRepository: PersonRepository) {
 
                         // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
                         val hendelse = AvbrytBehandlingHendelse(UUIDv7.ny(), "999999999", behandlingId)
-                        behandling.håndter(hendelse)
+                        personMediator.håndter(hendelse)
 
                         call.respond(HttpStatusCode.Created)
                     }
@@ -102,7 +106,7 @@ fun Application.behandlingApi(personRepository: PersonRepository) {
                         logger.info("Godkjenner behandling: $behandling")
                         // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
                         val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), "999999999", behandlingId)
-                        behandling.håndter(hendelse)
+                        personMediator.håndter(hendelse)
                         call.respond(HttpStatusCode.Created)
                     }
                 }

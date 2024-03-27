@@ -4,6 +4,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.behandling.modell.Behandling.Companion.finn
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
@@ -11,12 +12,12 @@ import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 class Person(
     val ident: Ident,
     behandlinger: List<Behandling>,
-) : Aktivitetskontekst {
+) : Aktivitetskontekst, PersonHåndter {
     private val behandlinger = behandlinger.toMutableList()
 
     constructor(ident: Ident) : this(ident, mutableListOf())
 
-    fun håndter(hendelse: SøknadInnsendtHendelse) {
+    override fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.leggTilKontekst(this)
         val behandling =
             Behandling(
@@ -28,7 +29,7 @@ class Person(
         behandling.håndter(hendelse)
     }
 
-    fun håndter(hendelse: OpplysningSvarHendelse) {
+    override fun håndter(hendelse: OpplysningSvarHendelse) {
         hendelse.leggTilKontekst(this)
         val behandling =
             try {
@@ -40,7 +41,19 @@ class Person(
         behandling.håndter(hendelse)
     }
 
-    fun håndter(hendelse: AvbrytBehandlingHendelse) {
+    override fun håndter(hendelse: AvbrytBehandlingHendelse) {
+        hendelse.leggTilKontekst(this)
+        val behandling =
+            try {
+                behandlinger.finn(hendelse.behandlingId)
+            } catch (e: NoSuchElementException) {
+                // TODO: Behandlingen mangler - hopp til neste melding - det må vi slutte med
+                return
+            }
+        behandling.håndter(hendelse)
+    }
+
+    override fun håndter(hendelse: ForslagGodkjentHendelse) {
         hendelse.leggTilKontekst(this)
         val behandling =
             try {
