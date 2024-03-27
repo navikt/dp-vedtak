@@ -6,10 +6,12 @@ import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
@@ -73,6 +75,11 @@ class Behandling private constructor(
         tilstand.håndter(this, hendelse)
     }
 
+    fun håndter(hendelse: ForslagGodkjentHendelse) {
+        hendelse.kontekst(this)
+        tilstand.håndter(this, hendelse)
+    }
+
     private fun hvaTrengerViNå(hendelse: PersonHendelse) =
         informasjonsbehov().onEach { (behov, avhengigheter) ->
             hendelse.behov(
@@ -115,7 +122,7 @@ class Behandling private constructor(
                     TilstandType.UnderBehandling -> UnderBehandling
                     TilstandType.ForslagTilVedtak -> ForslagTilVedtak
                     TilstandType.Avbrutt -> Avbrutt
-                    TilstandType.Ferdig -> TODO()
+                    TilstandType.Ferdig -> Ferdig
                 }
         }
 
@@ -149,6 +156,15 @@ class Behandling private constructor(
         ) {
             hendelse.info("Avbryter behandlingen")
             behandling.tilstand(Avbrutt, hendelse)
+        }
+
+        fun håndter(
+            behandling: Behandling,
+            hendelse: ForslagGodkjentHendelse,
+        ) {
+            throw IllegalStateException(
+                "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
+            )
         }
 
         override fun toSpesifikkKontekst() = SpesifikkKontekst(type.name, emptyMap())
@@ -228,6 +244,21 @@ class Behandling private constructor(
                 ),
             )
         }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: ForslagGodkjentHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Forslag til vedtak godkjent")
+            // TODO: Hva mer gjør vi når vi har godkjent forslaget?
+            // Sjekke aksjonspunkter/varsel/hypoteser?
+            if (behandling.opplysninger.finnAlle().any { it is Hypotese<*> }) {
+                // TODO: Vi bør sannsynligvis gjøre dette
+                // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
+            }
+            behandling.tilstand(Ferdig, hendelse)
+        }
     }
 
     private data object Avbrutt : BehandlingTilstand {
@@ -246,7 +277,8 @@ class Behandling private constructor(
         override fun håndter(
             behandling: Behandling,
             hendelse: AvbrytBehandlingHendelse,
-        ) { // No-op
+        ) {
+            throw IllegalStateException("Kan ikke avbryte en ferdig behandling")
         }
     }
 
