@@ -11,6 +11,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import mu.KotlinLogging
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
@@ -98,11 +99,10 @@ fun Application.behandlingApi(personRepository: PersonRepository) {
                             personRepository.hentBehandling(
                                 behandlingId,
                             ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
-
+                        logger.info("Godkjenner behandling: $behandling")
                         // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
                         val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), "999999999", behandlingId)
                         behandling.håndter(hendelse)
-
                         call.respond(HttpStatusCode.Created)
                     }
                 }
@@ -110,6 +110,8 @@ fun Application.behandlingApi(personRepository: PersonRepository) {
         }
     }
 }
+
+private val logger = KotlinLogging.logger { }
 
 private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
     return BehandlingDTO(
