@@ -10,12 +10,17 @@ servers:
     description: dev
   - url: https://dp-behandling.intern.nav.no
     description: prod
+tags:
+  - name: Behandling
+    description: Operasjoner på behandlinger
 paths:
   /behandling:
     post:
       description: Hent alle behandlinger for en gitt person
       security:
         - azureAd: [ ]
+      tags:
+        - Behandling
       requestBody:
         required: true
         content:
@@ -44,6 +49,8 @@ paths:
       summary: Hent en spesifikk behandling
       security:
         - azureAd: [ ]
+      tags:
+        - Behandling
       responses:
         200:
           content:
@@ -64,6 +71,8 @@ paths:
       summary: Avbryt en behandling
       security:
         - azureAd: [ ]
+      tags:
+        - Behandling
       requestBody:
         required: true
         content:
@@ -86,6 +95,8 @@ paths:
       summary: Godkjenn en behandling
       security:
         - azureAd: [ ]
+      tags:
+        - Behandling
       requestBody:
         required: true
         content:
@@ -116,6 +127,8 @@ paths:
       operationId: oppdaterOpplysning
       security:
         - azureAd: [ ]
+      tags:
+        - Behandling
       requestBody:
         required: true
         content:
@@ -150,6 +163,8 @@ paths:
       summary: Bekrefter en eller flere opplysninger
       security:
         - azureAd: [ ]
+      tags:
+        - Behandling
       requestBody:
         required: true
         content:
@@ -186,6 +201,8 @@ paths:
       summary: Hent en bekreftelse
       security:
         - azureAd: [ ]
+      tags:
+        - Behandling
       responses:
         200:
           content:
