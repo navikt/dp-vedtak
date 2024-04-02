@@ -14,13 +14,13 @@ import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 
 object ReellArbeidssøker {
     private val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
-    private val registrertArbeidssøker = Opplysningstype.somDato("Registrert som arbeidssøker".id(RegistrertSomArbeidssøker))
+    internal val registrertArbeidssøker = Opplysningstype.somDato("Registrert som arbeidssøker".id(RegistrertSomArbeidssøker))
     private val registrertPåSøknadstidspunktet = Opplysningstype.somBoolsk("Registrert som arbeidssøker på søknadstidspunktet")
 
-    private val kanJobbeDeltid = Opplysningstype.somBoolsk("Kan jobbe heltid og deltid".id(KanJobbeDeltid))
-    private val kanJobbeHvorSomHelst = Opplysningstype.somBoolsk("Kan jobbe i hele Norge".id(KanJobbeHvorSomHelst))
-    private val helseTilAlleTyperJobb = Opplysningstype.somBoolsk("Kan ta alle typer arbeid".id(HelseTilAlleTyperJobb))
-    private val villigTilÅBytteYrke = Opplysningstype.somBoolsk("Villig til å bytte yrke".id(VilligTilÅBytteYrke))
+    internal val kanJobbeDeltid = Opplysningstype.somBoolsk("Kan jobbe heltid og deltid".id(KanJobbeDeltid))
+    internal val kanJobbeHvorSomHelst = Opplysningstype.somBoolsk("Kan jobbe i hele Norge".id(KanJobbeHvorSomHelst))
+    internal val helseTilAlleTyperJobb = Opplysningstype.somBoolsk("Kan ta alle typer arbeid".id(HelseTilAlleTyperJobb))
+    internal val villigTilÅBytteYrke = Opplysningstype.somBoolsk("Villig til å bytte yrke".id(VilligTilÅBytteYrke))
 
     val kravTilArbeidssøker = Opplysningstype.somBoolsk("Krav til arbeidssøker")
 

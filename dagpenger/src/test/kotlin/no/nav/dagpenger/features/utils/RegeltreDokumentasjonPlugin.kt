@@ -14,6 +14,7 @@ import no.nav.dagpenger.opplysning.dag.printer.MermaidPrinter
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Opptjeningstid
+import no.nav.dagpenger.regel.ReellArbeidssøker
 import org.approvaltests.Approvals
 import org.approvaltests.core.Options
 import org.approvaltests.namer.NamerWrapper
@@ -28,9 +29,12 @@ fun dokumentasjon(scenario: Scenario) {
             "@regel-alder" to Alderskrav.regelsett,
             "@regel-minsteinntekt" to Minsteinntekt.regelsett,
             "@regel-opptjeningstid" to Opptjeningstid.regelsett,
+            "@regel-reell-arbeidssøker" to ReellArbeidssøker.regelsett,
         )
     println("Lager dokumentasjon for $test")
-    val regeltre = RegeltreBygger(regler[test]!!)
+    val regelsett = regler[test]
+    requireNotNull(regelsett) { "Fant ikke regelsett for $test, det må mappes manuelt i RegeltreDokumentasjonPlugin" }
+    val regeltre = RegeltreBygger(regelsett)
     val tre = MermaidPrinter(regeltre.dag()).toPrint()
     scenario.attach(tre, "text/markdown", "regeltre.md")
 }
