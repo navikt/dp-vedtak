@@ -85,11 +85,12 @@ CREATE TABLE IF NOT EXISTS behandling
 
 CREATE TABLE IF NOT EXISTS behandler_hendelse
 (
-    melding_id    uuid PRIMARY KEY, -- todo: REFERENCES melding (melding_id)
+    melding_id    uuid PRIMARY KEY,             -- todo: REFERENCES melding (melding_id)
     ident         TEXT                     NOT NULL,
     ekstern_id    TEXT                     NOT NULL,
     hendelse_type TEXT                     NOT NULL,
-    skjedde       TIMESTAMP WITH TIME ZONE NOT NULL
+    skjedde       TIMESTAMP WITH TIME ZONE NOT NULL,
+    fagsak_id     TEXT                     NULL -- todo: Slett denne i framtida
 );
 
 CREATE TABLE IF NOT EXISTS behandler_hendelse_behandling

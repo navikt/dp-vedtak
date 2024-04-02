@@ -33,17 +33,19 @@ internal class PersonMediatorTest {
 
     private val personRepository = PersonRepositoryPostgres(BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres()))
 
+    private val personMediator =
+        PersonMediator(
+            personRepository = personRepository,
+            aktivitetsloggMediator = mockk(relaxed = true),
+            behovMediator = BehovMediator(rapid),
+            hendelseMediator = HendelseMediator(rapid),
+            observatører = emptySet(),
+        )
+
     init {
         MessageMediator(
             rapidsConnection = rapid,
-            personMediator =
-                PersonMediator(
-                    personRepository = personRepository,
-                    aktivitetsloggMediator = mockk(relaxed = true),
-                    behovMediator = BehovMediator(rapid),
-                    hendelseMediator = HendelseMediator(rapid),
-                    observatører = emptySet(),
-                ),
+            personMediator = personMediator,
             hendelseRepository = PostgresHendelseRepository(),
         )
     }
@@ -94,17 +96,13 @@ internal class PersonMediatorTest {
                 it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 25
 
                 // Godkjenner forslag til vedtak
-                // TODO: Skal dette også være mulig å gjøre via rapiden?
-                it.behandlinger().first().let { behandling ->
-                    behandling.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, behandling.behandlingId))
-                }
+                personMediator.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, it.behandlinger().first().behandlingId))
             }
 
-            /*
-            // TODO: Dette funker bare om hendelsen har gått via mediatoren
             rapid.harHendelse("vedtak_fattet") {
                 medBoolsk("utfall") shouldBe false
-            }*/
+                medTekst("fagsakId") shouldBe "123"
+            }
         }
 
     private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {

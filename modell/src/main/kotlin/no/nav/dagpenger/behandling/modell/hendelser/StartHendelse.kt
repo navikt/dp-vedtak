@@ -11,7 +11,7 @@ abstract class StartHendelse(
     val ident: String,
     val eksternId: EksternId<*>,
     val skjedde: LocalDate,
-    private val fagsakId: Int,
+    val fagsakId: Int,
 ) : PersonHendelse(meldingsreferanseId, ident) {
     val type: String = this.javaClass.simpleName
 

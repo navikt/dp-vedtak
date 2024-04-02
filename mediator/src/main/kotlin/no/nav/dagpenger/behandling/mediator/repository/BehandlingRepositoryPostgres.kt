@@ -42,8 +42,7 @@ class BehandlingRepositoryPostgres(
                                         meldingsreferanseId = row.uuid("melding_id"),
                                         søknadId = UUID.fromString(row.string("ekstern_id")),
                                         gjelderDato = row.localDate("skjedde"),
-                                        fagsakId = 1,
-                                        // TODO: row.int("fagsak_id"),
+                                        fagsakId = row.int("fagsak_id"),
                                     )
 
                                 else -> throw IllegalArgumentException("Ukjent hendelse type")
@@ -94,8 +93,8 @@ class BehandlingRepositoryPostgres(
                 queryOf(
                     // language=PostgreSQL
                     """
-                        INSERT INTO behandler_hendelse (ident, melding_id, ekstern_id, hendelse_type, skjedde) 
-                        VALUES (:ident, :melding_id, :ekstern_id, :hendelse_type, :skjedde) ON CONFLICT DO NOTHING 
+                        INSERT INTO behandler_hendelse (ident, melding_id, ekstern_id, hendelse_type, skjedde, fagsak_id) 
+                        VALUES (:ident, :melding_id, :ekstern_id, :hendelse_type, :skjedde, :fagsak_id) ON CONFLICT DO NOTHING 
                     """.trimMargin(),
                     mapOf(
                         "ident" to behandling.behandler.ident,
@@ -103,6 +102,7 @@ class BehandlingRepositoryPostgres(
                         "ekstern_id" to behandling.behandler.eksternId.id,
                         "hendelse_type" to behandling.behandler.type,
                         "skjedde" to behandling.behandler.skjedde,
+                        "fagsak_id" to behandling.behandler.fagsakId,
                     ),
                 ).asUpdate,
             )
