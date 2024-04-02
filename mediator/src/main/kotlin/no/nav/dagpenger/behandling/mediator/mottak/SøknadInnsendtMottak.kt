@@ -22,7 +22,8 @@ internal class SøknadInnsendtMottak(
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "innsending_ferdigstilt") }
             validate { it.demandAny("type", listOf("NySøknad")) }
-            validate { it.requireKey("fødselsnummer", "fagsakId") }
+            validate { it.requireKey("fødselsnummer") }
+            validate { it.interestedIn("fagsakId") }
             validate {
                 it.require("søknadsData") { data ->
                     data["søknad_uuid"].asUUID()
@@ -62,8 +63,10 @@ internal class SøknadInnsendtMessage(private val packet: JsonMessage) : Hendels
                 ident,
                 søknadId = packet["søknadsData"]["søknad_uuid"].asUUID(),
                 gjelderDato = java.time.LocalDate.now(),
-                fagsakId = packet["fagsakId"].asInt(),
-            )
+                fagsakId = packet["fagsakId"].asInt(0),
+            ).also {
+                if (it.fagsakId == 0) logger.warn { "Søknad mottatt uten fagsakId" }
+            }
 
     override fun behandle(
         mediator: IMessageMediator,
