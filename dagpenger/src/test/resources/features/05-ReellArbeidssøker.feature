@@ -9,8 +9,10 @@ Egenskap: § 4-5. Reelle arbeidssøkere
     Og kan jobbe i hele Norge
     Og kan ta alle typer arbeid
     Og er villig til å bytte yrke eller gå ned i lønn
-    Så skal personen være reell arbeidssøker
+    Så skal utfallet for kravet til reell arbeidssøker være "<utfall>"
 
     Eksempler:
-      | søknadstidspunktet | registreringsdato |
-      | 05.12.2023         | 05.12.2023        |
+      | søknadstidspunktet | registreringsdato | utfall |
+      | 05.12.2023         | 05.12.2023        | Ja     |
+      | 05.12.2023         | 01.12.2023        | Ja     |
+      | 05.12.2023         | 10.12.2023        | Nei    |

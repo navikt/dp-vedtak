@@ -8,6 +8,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.Søknadstidspunkt
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
 class ReellArbeidssøkerSteg : No {
@@ -38,9 +39,20 @@ class ReellArbeidssøkerSteg : No {
             opplysninger.leggTil(Faktum(ReellArbeidssøker.villigTilÅBytteYrke, true))
         }
 
-        Så("skal personen være reell arbeidssøker") {
+        Så("skal utfallet for kravet til reell arbeidssøker være {string}") { utfall: String ->
             assertTrue(opplysninger.har(ReellArbeidssøker.kravTilArbeidssøker))
-            assertTrue(opplysninger.finnOpplysning(ReellArbeidssøker.kravTilArbeidssøker).verdi)
+
+            val verdi = opplysninger.finnOpplysning(ReellArbeidssøker.kravTilArbeidssøker).verdi
+
+            when (Utfall.valueOf(utfall)) {
+                Utfall.Ja -> assertTrue(verdi)
+                Utfall.Nei -> assertFalse(verdi)
+            }
         }
     }
+}
+
+private enum class Utfall {
+    Ja,
+    Nei,
 }
