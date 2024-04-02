@@ -18,9 +18,14 @@ import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.UUIDv7
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
+import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
+import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
+import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
+import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
@@ -67,6 +72,9 @@ internal class PersonMediatorTest {
             testPerson.sendSøknad()
             rapid.harHendelse("behandling_opprettet", offset = 2)
 
+            /**
+             * Fastsetter søknadstidspunkt
+             */
             rapid.harBehov("Søknadstidspunkt") {
                 medTekst("søknad_uuid") shouldBe testPerson.søknadId
                 medNode("InnsendtSøknadsId")["urn"].asText() shouldBe "urn:soknad:${testPerson.søknadId}"
@@ -74,6 +82,9 @@ internal class PersonMediatorTest {
             rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
             testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
+            /**
+             * Fastsetter opptjeningsperiode
+             */
             rapid.harBehov(InntektId) {
                 medDato(SisteAvsluttendeKalenderMåned) shouldBe 31.mars(2021)
                 medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.mars(2018)
@@ -81,10 +92,25 @@ internal class PersonMediatorTest {
             }
             testPerson.løsBehov(InntektId)
 
+            /**
+             * Sjekker kravene til inntekt
+             */
             rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
             rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
 
             testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
+
+            /**
+             * Sjekker kravene til reell arbeidssøker
+             */
+            rapid.harBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
+            testPerson.løsBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
+
+            /**
+             * Sjekker kravet til registrering som arbeidssøker
+             */
+            rapid.harBehov(RegistrertSomArbeidssøker)
+            testPerson.løsBehov(RegistrertSomArbeidssøker)
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe false
@@ -93,7 +119,7 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 25
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 32
 
                 // Godkjenner forslag til vedtak
                 personMediator.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, it.behandlinger().first().behandlingId))

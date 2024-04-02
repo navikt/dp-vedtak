@@ -12,7 +12,9 @@ import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Opptjeningstid
+import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.RettTilDagpenger
+import no.nav.dagpenger.regel.Rettighetstype
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -51,11 +53,13 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     // TODO: Last alle regler ved startup. Dette må inn i ett register.
     val regler =
         listOf(
-            RettTilDagpenger.regelsett,
             Alderskrav.regelsett,
             Minsteinntekt.regelsett,
-            Søknadstidspunkt.regelsett,
             Opptjeningstid.regelsett,
+            ReellArbeidssøker.regelsett,
+            RettTilDagpenger.regelsett,
+            Rettighetstype.regelsett,
+            Søknadstidspunkt.regelsett,
         )
 
     fun start() = rapidsConnection.start()

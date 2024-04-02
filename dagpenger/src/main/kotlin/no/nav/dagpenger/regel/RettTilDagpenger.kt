@@ -12,6 +12,7 @@ object RettTilDagpenger {
                 alle(
                     Alderskrav.vilkår,
                     Minsteinntekt.minsteinntekt,
+                    ReellArbeidssøker.kravTilArbeidssøker,
                 )
             }
         }
