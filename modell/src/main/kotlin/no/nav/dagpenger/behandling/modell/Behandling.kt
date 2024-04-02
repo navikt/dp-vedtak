@@ -5,7 +5,7 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
-import no.nav.dagpenger.behandling.modell.BehandlingHendelser.vedtak_fattet
+import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
@@ -32,6 +32,8 @@ class Behandling private constructor(
         opplysninger: List<Opplysning<*>>,
         basertPå: List<Behandling> = emptyList(),
     ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå, UnderOpprettelse)
+
+    private val observatører = mutableListOf<BehandlingObservatør>()
 
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
     private val opplysninger = aktiveOpplysninger + tidligereOpplysninger
@@ -103,6 +105,10 @@ class Behandling private constructor(
             )
         }
 
+    fun registrer(observatør: BehandlingObservatør) {
+        observatører.add(observatør)
+    }
+
     override fun toSpesifikkKontekst() = BehandlingKontekst(behandlingId, behandler.kontekstMap())
 
     override fun equals(other: Any?) = other is Behandling && behandlingId == other.behandlingId
@@ -111,6 +117,14 @@ class Behandling private constructor(
 
     data class BehandlingKontekst(val behandlingId: UUID, val behandlerKontekst: Map<String, String>) : SpesifikkKontekst("Behandling") {
         override val kontekstMap = mapOf("behandlingId" to behandlingId.toString()) + behandlerKontekst
+    }
+
+    enum class TilstandType {
+        UnderOpprettelse,
+        UnderBehandling,
+        ForslagTilVedtak,
+        Avbrutt,
+        Ferdig,
     }
 
     private sealed interface BehandlingTilstand : Aktivitetskontekst {
@@ -171,14 +185,6 @@ class Behandling private constructor(
         override fun toSpesifikkKontekst() = SpesifikkKontekst(type.name, emptyMap())
     }
 
-    enum class TilstandType {
-        UnderOpprettelse,
-        UnderBehandling,
-        ForslagTilVedtak,
-        Avbrutt,
-        Ferdig,
-    }
-
     private data object UnderOpprettelse : BehandlingTilstand {
         override val type = TilstandType.UnderOpprettelse
 
@@ -189,7 +195,7 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             hendelse.info("Mottatt søknad og startet behandling")
             hendelse.varsel(Behandlingsvarsler.SØKNAD_MOTTATT)
-            hendelse.hendelse(BehandlingHendelser.behandling_opprettet, "Behandling opprettet")
+            hendelse.hendelse(BehandlingHendelser.BehandlingOpprettetHendelse, "Behandling opprettet")
 
             behandling.hvaTrengerViNå(hendelse)
             behandling.tilstand(UnderBehandling, hendelse)
@@ -199,6 +205,13 @@ class Behandling private constructor(
     private data object UnderBehandling : BehandlingTilstand {
         override val type = TilstandType.UnderBehandling
 
+        override fun entering(
+            behandling: Behandling,
+            hendelse: PersonHendelse,
+        ) {
+            behandling.observatører.forEach { it.behandlingStartet() }
+        }
+
         override fun håndter(
             behandling: Behandling,
             hendelse: SøknadInnsendtHendelse,
@@ -206,7 +219,7 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             hendelse.info("Mottatt søknad og startet behandling")
             hendelse.varsel(Behandlingsvarsler.SØKNAD_MOTTATT)
-            hendelse.hendelse(BehandlingHendelser.behandling_opprettet, "Behandling opprettet")
+            hendelse.hendelse(BehandlingHendelser.BehandlingOpprettetHendelse, "Behandling opprettet")
 
             behandling.hvaTrengerViNå(hendelse)
         }
@@ -237,13 +250,14 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             hendelse.info("Alle opplysninger mottatt, lager forslag til vedtak")
             hendelse.hendelse(
-                BehandlingHendelser.forslag_til_vedtak,
+                BehandlingHendelser.ForslagTilVedtakHendelse,
                 "Foreslår vedtak",
                 mapOf(
                     "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).verdi,
                     "harAvklart" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).opplysningstype.navn,
                 ),
             )
+            behandling.observatører.forEach { it.forslagTilVedtak() }
         }
 
         override fun håndter(
@@ -258,8 +272,9 @@ class Behandling private constructor(
                 // TODO: Vi bør sannsynligvis gjøre dette
                 // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
             }
+            // TODO: Dette er vel strengt tatt ikke vedtak fattet?
             hendelse.hendelse(
-                vedtak_fattet,
+                VedtakFattetHendelse,
                 "Vedtak fattet",
                 mapOf(
                     "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).verdi,
@@ -274,6 +289,13 @@ class Behandling private constructor(
     private data object Avbrutt : BehandlingTilstand {
         override val type = TilstandType.Avbrutt
 
+        override fun entering(
+            behandling: Behandling,
+            hendelse: PersonHendelse,
+        ) {
+            behandling.observatører.forEach { it.avbrutt() }
+        }
+
         override fun håndter(
             behandling: Behandling,
             hendelse: AvbrytBehandlingHendelse,
@@ -283,6 +305,13 @@ class Behandling private constructor(
 
     private data object Ferdig : BehandlingTilstand {
         override val type = TilstandType.Ferdig
+
+        override fun entering(
+            behandling: Behandling,
+            hendelse: PersonHendelse,
+        ) {
+            behandling.observatører.forEach { it.ferdig() }
+        }
 
         override fun håndter(
             behandling: Behandling,
@@ -305,6 +334,16 @@ class Behandling private constructor(
     }
 }
 
+interface BehandlingObservatør {
+    fun behandlingStartet() {}
+
+    fun forslagTilVedtak() {}
+
+    fun avbrutt() {}
+
+    fun ferdig() {}
+}
+
 @Suppress("ktlint:standard:class-naming")
 object Behandlingsvarsler {
     data object SØKNAD_MOTTATT : Varselkode("Søknad mottatt - midlertidlig test av varsel")
@@ -312,8 +351,10 @@ object Behandlingsvarsler {
 
 // TODO: Vi bør ha bedre kontroll på navnene og kanskje henge sammen med behov?
 @Suppress("ktlint:standard:enum-entry-name-case")
-enum class BehandlingHendelser : Hendelse.Hendelsetype {
-    behandling_opprettet,
-    forslag_til_vedtak,
-    vedtak_fattet,
+sealed class BehandlingHendelser(override val name: String) : Hendelse.Hendelsetype {
+    data object BehandlingOpprettetHendelse : BehandlingHendelser("behandling_opprettet")
+
+    data object ForslagTilVedtakHendelse : BehandlingHendelser("forslag_til_vedtak")
+
+    data object VedtakFattetHendelse : BehandlingHendelser("vedtak_fattet")
 }

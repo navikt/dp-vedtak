@@ -47,6 +47,7 @@ internal class BehandlingApiTest {
                     ident = ident,
                     søknadId = UUIDv7.ny(),
                     gjelderDato = LocalDate.now(),
+                    fagsakId = 1,
                 ),
             )
             it.håndter(

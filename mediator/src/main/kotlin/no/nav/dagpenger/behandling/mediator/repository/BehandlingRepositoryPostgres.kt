@@ -42,6 +42,8 @@ class BehandlingRepositoryPostgres(
                                         meldingsreferanseId = row.uuid("melding_id"),
                                         søknadId = UUID.fromString(row.string("ekstern_id")),
                                         gjelderDato = row.localDate("skjedde"),
+                                        fagsakId = 1,
+                                        // TODO: row.int("fagsak_id"),
                                     )
 
                                 else -> throw IllegalArgumentException("Ukjent hendelse type")

@@ -31,6 +31,7 @@ class PersonRepositoryPostgresTest {
             ident = fnr,
             meldingsreferanseId = søknadId,
             gjelderDato = LocalDate.now(),
+            fagsakId = 1,
         )
 
     @Test

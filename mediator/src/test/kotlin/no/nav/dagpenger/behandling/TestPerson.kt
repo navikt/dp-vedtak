@@ -22,6 +22,7 @@ class TestPerson(
             mapOf(
                 "type" to "NySøknad",
                 "fødselsnummer" to ident,
+                "fagsakId" to 1,
                 "søknadsData" to
                     mapOf(
                         "søknad_uuid" to søknadId,

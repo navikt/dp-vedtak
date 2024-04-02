@@ -11,12 +11,14 @@ abstract class StartHendelse(
     val ident: String,
     val eksternId: EksternId<*>,
     val skjedde: LocalDate,
+    private val fagsakId: Int,
 ) : PersonHendelse(meldingsreferanseId, ident) {
     val type: String = this.javaClass.simpleName
 
     override fun kontekstMap() =
         mapOf(
             "gjelderDato" to skjedde.toString(),
+            "fagsakId" to fagsakId.toString(),
         ) + eksternId.kontekstMap()
 
     abstract fun regelsett(): List<Regelsett>

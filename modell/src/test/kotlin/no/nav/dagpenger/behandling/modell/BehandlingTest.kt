@@ -20,6 +20,7 @@ internal class BehandlingTest {
             ident = ident,
             meldingsreferanseId = søknadId,
             gjelderDato = LocalDate.now(),
+            fagsakId = 1,
         )
     private val tidligereOpplysning = Opplysningstype.somDesimaltall("opplysning-fra-tidligere-behandling")
 

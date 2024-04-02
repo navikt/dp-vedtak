@@ -13,7 +13,8 @@ class SøknadInnsendtHendelse(
     ident: String,
     søknadId: UUID,
     gjelderDato: LocalDate,
-) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato) {
+    fagsakId: Int,
+) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId) {
     override fun regelsett() =
         listOf(
             RettTilDagpenger.regelsett,

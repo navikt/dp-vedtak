@@ -22,7 +22,7 @@ class HendelseMediatorTest {
         val mediator = HendelseMediator(rapid)
         val søknadId = UUID.randomUUID()
         val gjelderDato = LocalDate.now()
-        val hendelse = SøknadInnsendtHendelse(UUID.randomUUID(), "ident", søknadId, gjelderDato)
+        val hendelse = SøknadInnsendtHendelse(UUID.randomUUID(), "ident", søknadId, gjelderDato, 1)
         val observer = TestObserver()
         hendelse.registrer(observer)
         hendelse.kontekst(hendelse)
