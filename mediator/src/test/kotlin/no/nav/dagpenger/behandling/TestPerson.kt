@@ -49,6 +49,7 @@ class TestPerson(
                 "ident" to ident,
                 "behandlingId" to behandlingId,
                 "søknadId" to søknadId,
+                "@opplysningsbehov" to true,
                 "@final" to true,
                 "@løsning" to løsninger,
             ),

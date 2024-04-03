@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysning
@@ -19,6 +20,7 @@ data class OpplysningSvar<T : Comparable<T>>(
     val verdi: T,
     val tilstand: Tilstand,
     val kilde: Kilde,
+    val gyldighetsperiode: Gyldighetsperiode? = null,
 ) {
     enum class Tilstand {
         Hypotese,
@@ -26,9 +28,10 @@ data class OpplysningSvar<T : Comparable<T>>(
     }
 
     fun opplysning(): Opplysning<T> {
+        val gyldighetsperiode = gyldighetsperiode ?: Gyldighetsperiode()
         return when (tilstand) {
-            Tilstand.Hypotese -> Hypotese(opplysningstype, verdi, kilde = kilde)
-            Tilstand.Faktum -> Faktum(opplysningstype, verdi, kilde = kilde)
+            Tilstand.Hypotese -> Hypotese(opplysningstype, verdi, kilde = kilde, gyldighetsperiode = gyldighetsperiode)
+            Tilstand.Faktum -> Faktum(opplysningstype, verdi, kilde = kilde, gyldighetsperiode = gyldighetsperiode)
         }
     }
 }
