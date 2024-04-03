@@ -36,7 +36,7 @@ CREATE TABLE opplysning_verdi
     datatype          TEXT,
     verdi_heltall     INT,
     verdi_desimaltall DECIMAL,
-    verdi_dato        TIMESTAMP WITH TIME ZONE,
+    verdi_dato        DATE,
     verdi_boolsk      BOOLEAN,
     verdi_string      TEXT,
     opprettet         TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
