@@ -23,6 +23,8 @@ import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.Utledning
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import org.postgresql.util.PGobject
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -153,7 +155,12 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         private fun <T : Comparable<T>> Datatype<T>.verdi(row: Row): T =
             when (this) {
                 Boolsk -> row.boolean("verdi_boolsk")
-                Dato -> row.localDate("verdi_dato")
+                Dato ->
+                    when (row.string("verdi_dato")) {
+                        "-infinity" -> LocalDate.MIN
+                        "infinity" -> LocalDate.MAX
+                        else -> row.localDate("verdi_dato")
+                    }
                 Desimaltall -> row.double("verdi_desimaltall")
                 Heltall -> row.int("verdi_heltall")
                 ULID -> Ulid(row.string("verdi_string"))
@@ -363,11 +370,32 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             verdi: Any,
         ) = when (datatype) {
             Boolsk -> Pair("verdi_boolsk", verdi)
-            Dato -> Pair("verdi_dato", verdi)
+            Dato ->
+                Pair(
+                    "verdi_dato",
+                    tilPostgresqlTimestamp(verdi),
+                )
             Desimaltall -> Pair("verdi_desimaltall", verdi)
             Heltall -> Pair("verdi_heltall", verdi)
             ULID -> Pair("verdi_string", (verdi as Ulid).verdi)
         }
+
+        private fun tilPostgresqlTimestamp(verdi: Any) =
+            when (val dato = verdi as LocalDate) {
+                LocalDate.MIN ->
+                    PGobject().apply {
+                        type = "timestamp"
+                        value = "-infinity"
+                    }
+
+                LocalDate.MAX ->
+                    PGobject().apply {
+                        type = "timestamp"
+                        value = "infinity"
+                    }
+
+                else -> dato
+            }
     }
 }
 

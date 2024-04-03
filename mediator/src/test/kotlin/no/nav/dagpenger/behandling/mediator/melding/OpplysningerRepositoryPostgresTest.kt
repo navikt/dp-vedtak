@@ -47,6 +47,25 @@ class OpplysningerRepositoryPostgresTest {
     }
 
     @Test
+    fun `lagrer grenseverdier for dato opplysninger`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val kilde = Saksbehandlerkilde("foo")
+            val maksDatoFaktum = Faktum(Opplysningstype.somDato("MaksDato"), LocalDate.MAX, kilde = kilde)
+            val minDatoFaktum = Faktum(Opplysningstype.somDato("MinDato"), LocalDate.MIN, kilde = kilde)
+            val opplysninger = Opplysninger(listOf(maksDatoFaktum, minDatoFaktum))
+            repo.lagreOpplysninger(opplysninger)
+
+            val fraDb =
+                repo.hentOpplysninger(opplysninger.id).also {
+                    Regelkjøring(LocalDate.now(), it)
+                }
+            fraDb.finnOpplysning(maksDatoFaktum.opplysningstype).verdi shouldBe maksDatoFaktum.verdi
+            fraDb.finnOpplysning(minDatoFaktum.opplysningstype).verdi shouldBe minDatoFaktum.verdi
+        }
+    }
+
+    @Test
     @Disabled("Modellen støtter ikke å bruke opplysninger med samme navn og ulik type")
     fun `lagrer opplysninger med samme navn og ulik type`() {
         withMigratedDb {
