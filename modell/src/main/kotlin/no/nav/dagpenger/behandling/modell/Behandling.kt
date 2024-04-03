@@ -301,6 +301,14 @@ class Behandling private constructor(
             hendelse: AvbrytBehandlingHendelse,
         ) { // No-op
         }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: OpplysningSvarHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er avbrutt, ignorerer opplysningssvar")
+        }
     }
 
     private data object Ferdig : BehandlingTilstand {
