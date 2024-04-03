@@ -220,52 +220,6 @@ components:
       properties:
         ident:
           type: string
-    Ramme:
-      type: object
-      properties:
-        vedtakId:
-          type: string
-          format: uuid
-        virkningsdato:
-          type: string
-          format: date
-      required:
-        - vedtakId
-        - virkningsdato
-    Utbetaling:
-      type: object
-      properties:
-        vedtakId:
-          type: string
-          format: uuid
-        fraOgMed:
-          type: string
-          format: date
-        tilOgMed:
-          type: string
-          format: date
-        sumUtbetalt:
-          type: number
-          format: double
-      required:
-        - vedtakId
-        - fraOgMed
-        - tilOgMed
-    Vedtak:
-      type: object
-      required:
-        - rammer
-        - utbetalinger
-      properties:
-        rammer:
-          type: array
-          items:
-            $ref: '#/components/schemas/Ramme'
-        utbetalinger:
-          type: array
-          items:
-            $ref: '#/components/schemas/Utbetaling'
-
     Behandling:
       type: object
       required:
@@ -292,7 +246,7 @@ components:
       type: object
       required:
         - id
-        - opplysningstype
+        - navn
         - verdi
         - datatype
         - status
@@ -300,7 +254,7 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/OpplysningsId'
-        opplysningstype:
+        navn:
           type: string
         verdi:
           type: string
