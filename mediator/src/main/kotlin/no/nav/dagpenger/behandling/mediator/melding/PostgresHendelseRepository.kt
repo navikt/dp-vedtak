@@ -6,6 +6,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.behandling.mediator.mottak.AvbrytBehandlingMessage
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
 import org.postgresql.util.PGobject
@@ -85,6 +86,7 @@ internal class PostgresHendelseRepository() : HendelseRepository {
         return when (hendelseMessage) {
             is SøknadInnsendtMessage -> MeldingTypeDTO.SØKNAD_INNSENDT
             is OpplysningSvarMessage -> MeldingTypeDTO.OPPLYSNING_SVAR
+            is AvbrytBehandlingMessage -> MeldingTypeDTO.AVBRYT_BEHANDLING
             else ->
                 null.also {
                     logger.warn { "ukjent meldingstype ${hendelseMessage::class.simpleName}: melding lagres ikke" }
@@ -100,4 +102,5 @@ internal class PostgresHendelseRepository() : HendelseRepository {
 private enum class MeldingTypeDTO {
     SØKNAD_INNSENDT,
     OPPLYSNING_SVAR,
+    AVBRYT_BEHANDLING,
 }
