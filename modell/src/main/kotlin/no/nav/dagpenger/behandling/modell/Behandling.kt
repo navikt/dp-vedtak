@@ -89,14 +89,15 @@ class Behandling private constructor(
                 type = OpplysningBehov(behov.id),
                 melding = "Trenger en opplysning (${behov.id})",
                 detaljer =
-                    avhengigheter.associate { avhengighet ->
-                        val verdi =
-                            when (avhengighet.verdi) {
-                                is Ulid -> (avhengighet.verdi as Ulid).verdi
-                                else -> avhengighet.verdi
-                            }
-                        avhengighet.opplysningstype.id to verdi
-                    } +
+                    mapOf("@opplysningsbehov" to true) +
+                        avhengigheter.associate { avhengighet ->
+                            val verdi =
+                                when (avhengighet.verdi) {
+                                    is Ulid -> (avhengighet.verdi as Ulid).verdi
+                                    else -> avhengighet.verdi
+                                }
+                            avhengighet.opplysningstype.id to verdi
+                        } +
                         // TODO: Midlertidlig hack for å få med søknadId for gamle behovløsere
                         mapOf(
                             "InnsendtSøknadsId" to mapOf("urn" to "urn:soknad:${behandler.eksternId.id}"),

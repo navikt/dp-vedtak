@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.mottak
 
+import com.fasterxml.jackson.databind.JsonNode
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
@@ -14,6 +15,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
+import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysningstype
@@ -37,6 +39,7 @@ internal class OpplysningSvarMottak(
         River(rapidsConnection).apply {
             validate { it.demandValue("@event_name", "behov") }
             validate { it.demandValue("@final", true) }
+            validate { it.demandValue("@opplysningsbehov", true) }
             validate { it.requireKey("ident") }
             validate { it.requireKey("@løsning") }
             validate { it.requireKey("behandlingId") }
@@ -101,33 +104,58 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
                     return@forEach
                 }
                 // @todo: Forventer at verdi er en nøkkel på alle løsninger men vi må skrive om behovløserne for å få dette til å stemme
-                val verdi = if (jsonVerdi.isObject && jsonVerdi.has("verdi")) jsonVerdi["verdi"] else jsonVerdi
-                val type = Opplysningstype.typer.single { opplysningstype -> opplysningstype.id == typeNavn }
+                val svar =
+                    when (jsonVerdi.isObject) {
+                        true ->
+                            Svar(
+                                jsonVerdi["verdi"],
+                                jsonVerdi["gyldigFraOgMed"]?.asLocalDate(),
+                                jsonVerdi["gyldigTilOgMed"]?.asLocalDate(),
+                            )
 
+                        false -> Svar(jsonVerdi)
+                    }
+                val type = Opplysningstype.typer.single { opplysningstype -> opplysningstype.id == typeNavn }
                 val kilde = Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
 
                 val opplysning =
                     @Suppress("UNCHECKED_CAST")
                     when (type.datatype) {
-                        Dato -> opplysningSvar(type as Opplysningstype<LocalDate>, verdi.asLocalDate(), kilde)
-                        Heltall -> opplysningSvar(type as Opplysningstype<Int>, verdi.asInt(), kilde)
-                        Desimaltall -> opplysningSvar(type as Opplysningstype<Double>, verdi.asDouble(), kilde)
-                        Boolsk -> opplysningSvar(type as Opplysningstype<Boolean>, verdi.asBoolean(), kilde)
-                        ULID -> opplysningSvar(type as Opplysningstype<Ulid>, Ulid(verdi.asText()), kilde)
+                        Dato -> opplysningSvar(type as Opplysningstype<LocalDate>, svar.verdi.asLocalDate(), kilde, svar.gyldighetsperiode)
+                        Heltall -> opplysningSvar(type as Opplysningstype<Int>, svar.verdi.asInt(), kilde, svar.gyldighetsperiode)
+                        Desimaltall -> opplysningSvar(type as Opplysningstype<Double>, svar.verdi.asDouble(), kilde, svar.gyldighetsperiode)
+                        Boolsk -> opplysningSvar(type as Opplysningstype<Boolean>, svar.verdi.asBoolean(), kilde, svar.gyldighetsperiode)
+                        ULID -> opplysningSvar(type as Opplysningstype<Ulid>, Ulid(svar.verdi.asText()), kilde, svar.gyldighetsperiode)
                     }
                 add(opplysning)
             }
         }
 
+    private data class Svar(val verdi: JsonNode, val gyldigFraOgMed: LocalDate? = null, val gyldigTilOgMed: LocalDate? = null) {
+        val gyldighetsperiode
+            get() =
+                if (gyldigFraOgMed != null && gyldigTilOgMed != null) {
+                    Gyldighetsperiode(gyldigFraOgMed, gyldigTilOgMed)
+                } else if (gyldigFraOgMed != null && gyldigTilOgMed == null) {
+                    Gyldighetsperiode(gyldigFraOgMed)
+                } else if (gyldigTilOgMed != null) {
+                    Gyldighetsperiode(tom = gyldigTilOgMed.atStartOfDay())
+                } else {
+                    null
+                }
+    }
+
     private fun <T : Comparable<T>> opplysningSvar(
         type: Opplysningstype<T>,
         verdi: T,
         kilde: Kilde,
+        gyldighetsperiode: Gyldighetsperiode? = null,
     ) = OpplysningSvar(
         opplysningstype = type,
         verdi = verdi,
         tilstand = Tilstand.Hypotese,
         kilde = kilde,
+        gyldighetsperiode = gyldighetsperiode,
     )
 
     override fun behandle(
