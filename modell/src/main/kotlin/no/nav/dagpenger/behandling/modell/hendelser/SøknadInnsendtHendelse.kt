@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
 import no.nav.dagpenger.regel.Alderskrav
+import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.ReellArbeidssøker
@@ -20,6 +21,7 @@ class SøknadInnsendtHendelse(
     override fun regelsett() =
         listOf(
             Alderskrav.regelsett,
+            Meldeplikt.regelsett,
             Minsteinntekt.regelsett,
             Opptjeningstid.regelsett,
             ReellArbeidssøker.regelsett,

@@ -12,6 +12,7 @@ import io.cucumber.plugin.event.TestSourceRead
 import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import no.nav.dagpenger.opplysning.dag.printer.MermaidPrinter
 import no.nav.dagpenger.regel.Alderskrav
+import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.ReellArbeidssøker
@@ -30,6 +31,7 @@ fun dokumentasjon(scenario: Scenario) {
             "@regel-minsteinntekt" to Minsteinntekt.regelsett,
             "@regel-opptjeningstid" to Opptjeningstid.regelsett,
             "@regel-reell-arbeidssøker" to ReellArbeidssøker.regelsett,
+            "@regel-meldeplikt" to Meldeplikt.regelsett,
         )
     println("Lager dokumentasjon for $test")
     val regelsett = regler[test]

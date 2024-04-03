@@ -2,7 +2,6 @@ package no.nav.dagpenger.features
 
 import io.cucumber.java8.No
 import no.nav.dagpenger.dato.mai
-import no.nav.dagpenger.features.utils.somLocalDate
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
@@ -19,40 +18,44 @@ class ReellArbeidssøkerSteg : No {
     init {
         Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
 
-        Gitt("at personen søkte {string}") { søknadsdato: String ->
-            opplysninger.leggTil(Faktum(Søknadstidspunkt.søknadsdato, søknadsdato.somLocalDate()))
-            opplysninger.leggTil(Faktum(Søknadstidspunkt.ønsketdato, søknadsdato.somLocalDate()))
-        }
-        Gitt("personen registrerte seg {string}") { registrert: String ->
-            opplysninger.leggTil(Faktum(ReellArbeidssøker.registrertArbeidssøker, registrert.somLocalDate()))
+        Gitt("at personen søker dagpenger") {
+            opplysninger.leggTil(Faktum(Søknadstidspunkt.søknadsdato, 11.mai(2022)))
+            opplysninger.leggTil(Faktum(Søknadstidspunkt.ønsketdato, 11.mai(2022)))
         }
         Gitt("kan jobbe både heltid og deltid") {
             opplysninger.leggTil(Faktum(ReellArbeidssøker.kanJobbeDeltid, true))
         }
+        Gitt("kan ikke jobbe både heltid og deltid") {
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.kanJobbeDeltid, false))
+        }
         Gitt("kan jobbe i hele Norge") {
             opplysninger.leggTil(Faktum(ReellArbeidssøker.kanJobbeHvorSomHelst, true))
+        }
+        Gitt("kan ikke jobbe i hele Norge") {
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.kanJobbeHvorSomHelst, false))
         }
         Gitt("kan ta alle typer arbeid") {
             opplysninger.leggTil(Faktum(ReellArbeidssøker.helseTilAlleTyperJobb, true))
         }
+        Gitt("kan ikke ta alle typer arbeid") {
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.helseTilAlleTyperJobb, false))
+        }
         Gitt("er villig til å bytte yrke eller gå ned i lønn") {
             opplysninger.leggTil(Faktum(ReellArbeidssøker.villigTilÅBytteYrke, true))
         }
+        Gitt("er ikke villig til å bytte yrke eller gå ned i lønn") {
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.villigTilÅBytteYrke, false))
+        }
 
-        Så("skal utfallet for kravet til reell arbeidssøker være {string}") { utfall: String ->
+        Så("skal kravet til reell arbeidssøker være oppfylt") {
             assertTrue(opplysninger.har(ReellArbeidssøker.kravTilArbeidssøker))
-
             val verdi = opplysninger.finnOpplysning(ReellArbeidssøker.kravTilArbeidssøker).verdi
-
-            when (Utfall.valueOf(utfall)) {
-                Utfall.Ja -> assertTrue(verdi)
-                Utfall.Nei -> assertFalse(verdi)
-            }
+            assertTrue(verdi)
+        }
+        Så("skal kravet til reell arbeidssøker ikke være oppfylt") {
+            assertTrue(opplysninger.har(ReellArbeidssøker.kravTilArbeidssøker))
+            val verdi = opplysninger.finnOpplysning(ReellArbeidssøker.kravTilArbeidssøker).verdi
+            assertFalse(verdi)
         }
     }
-}
-
-private enum class Utfall {
-    Ja,
-    Nei,
 }

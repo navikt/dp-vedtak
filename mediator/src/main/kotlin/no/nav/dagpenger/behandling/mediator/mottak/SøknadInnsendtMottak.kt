@@ -23,7 +23,7 @@ internal class SøknadInnsendtMottak(
             validate { it.demandValue("@event_name", "innsending_ferdigstilt") }
             validate { it.demandAny("type", listOf("NySøknad")) }
             validate { it.requireKey("fødselsnummer") }
-            validate { it.requireKey("fagsakId") }
+            validate { it.interestedIn("fagsakId") }
             validate {
                 it.require("søknadsData") { data ->
                     data["søknad_uuid"].asUUID()

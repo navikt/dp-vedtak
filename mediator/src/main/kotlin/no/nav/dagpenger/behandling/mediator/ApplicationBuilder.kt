@@ -10,6 +10,7 @@ import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostg
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.regel.Alderskrav
+import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.ReellArbeidssøker
@@ -54,6 +55,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     val regler =
         listOf(
             Alderskrav.regelsett,
+            Meldeplikt.regelsett,
             Minsteinntekt.regelsett,
             Opptjeningstid.regelsett,
             ReellArbeidssøker.regelsett,

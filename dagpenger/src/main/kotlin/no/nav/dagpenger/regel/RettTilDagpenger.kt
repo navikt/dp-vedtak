@@ -13,6 +13,7 @@ object RettTilDagpenger {
                     Alderskrav.vilkår,
                     Minsteinntekt.minsteinntekt,
                     ReellArbeidssøker.kravTilArbeidssøker,
+                    Meldeplikt.registrertPåSøknadstidspunktet,
                 )
             }
         }
