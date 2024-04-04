@@ -9,6 +9,5 @@ Egenskap: § 4-8. Meldeplikt og møteplikt
 
     Eksempler:
       | søknadstidspunktet | registreringsdato | utfall       |
-      | 05.12.2023         | 05.12.2023        | Oppfylt      |
-      | 05.12.2023         | 01.12.2023        | Oppfylt      |
-      | 05.12.2023         | 10.12.2023        | Ikke oppfylt |
+      | 10.05.2022         | 10.05.2022        | Oppfylt      |
+      | 15.05.2022         | 15.05.2022        | Oppfylt      |
