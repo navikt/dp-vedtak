@@ -2,13 +2,14 @@ package no.nav.dagpenger.opplysning
 
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 data class Gyldighetsperiode(
     val fom: LocalDateTime = LocalDateTime.MIN,
     val tom: LocalDateTime = LocalDateTime.MAX,
     private val range: ClosedRange<LocalDateTime> = fom..tom,
 ) : ClosedRange<LocalDateTime> by range {
-    constructor(fom: LocalDate, tom: LocalDate) : this(fom.atStartOfDay(), tom.atStartOfDay())
+    constructor(fom: LocalDate, tom: LocalDate) : this(fom.atStartOfDay(), LocalDateTime.of(tom, LocalTime.MAX))
     constructor(fom: LocalDate) : this(fom.atStartOfDay())
 
     fun inneholder(dato: LocalDateTime) = dato in range
