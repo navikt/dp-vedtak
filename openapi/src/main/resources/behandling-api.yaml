@@ -27,6 +27,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IdentForesporsel'
+            examples:
+              FETCH_SUCCESS:
+                value:
+                  ident: "12345123451"
       responses:
         200:
           description: OK
@@ -36,6 +40,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Behandling'
+              examples:
+                FETCH_SUCCESS:
+                  value: [ ]
         default:
           description: Feil ved henting av behandlinger
           content:
@@ -262,6 +269,9 @@ components:
       properties:
         ident:
           type: string
+      example:
+        ident: "12345678910"
+
     Behandling:
       type: object
       required:
@@ -324,6 +334,7 @@ components:
           $ref: '#/components/schemas/Utledning'
 
     Opplysningskilde:
+      nullable: true
       description: |
         Kilde for opplysningen
       required:
@@ -344,6 +355,7 @@ components:
 
     Utledning:
       type: object
+      nullable: true
       required:
         - regel
         - opplysninger
