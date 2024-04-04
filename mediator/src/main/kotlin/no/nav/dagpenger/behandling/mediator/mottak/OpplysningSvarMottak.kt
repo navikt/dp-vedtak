@@ -30,6 +30,7 @@ import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.time.LocalDate
+import java.util.UUID
 
 internal class OpplysningSvarMottak(
     rapidsConnection: RapidsConnection,
@@ -54,11 +55,7 @@ internal class OpplysningSvarMottak(
     ) {
         val behovId = packet["@behovId"].asText()
         val behandlingId = packet["behandlingId"].asUUID()
-        Span.current().apply {
-            setAttribute("app.river", name())
-            setAttribute("app.behovId", behovId.toString())
-            setAttribute("app.behandlingId", behandlingId.toString())
-        }
+        addOtelAttributes(behovId, behandlingId)
         withLoggingContext(
             "behovId" to behovId.toString(),
             "behandlingId" to behandlingId.toString(),
@@ -66,6 +63,17 @@ internal class OpplysningSvarMottak(
             logger.info { "Mottok svar på en opplysning" }
             val message = OpplysningSvarMessage(packet)
             message.behandle(messageMediator, context)
+        }
+    }
+
+    private fun addOtelAttributes(
+        behovId: String,
+        behandlingId: UUID,
+    ) {
+        Span.current().apply {
+            setAttribute("app.river", name())
+            setAttribute("app.behovId", behovId)
+            setAttribute("app.behandlingId", behandlingId.toString())
         }
     }
 
