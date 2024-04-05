@@ -36,6 +36,7 @@ import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
 import org.apache.kafka.common.errors.ResourceNotFoundException
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -128,8 +129,8 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
                 is Faktum -> OpplysningDTO.Status.Faktum
                 is Hypotese -> OpplysningDTO.Status.Hypotese
             },
-        gyldigFraOgMed = this.gyldighetsperiode.fom.tilOffsetDato(),
-        gyldigTilOgMed = this.gyldighetsperiode.tom.tilOffsetDato(),
+        gyldigFraOgMed = this.gyldighetsperiode.fom.tilApiDato(),
+        gyldigTilOgMed = this.gyldighetsperiode.tom.tilApiDato(),
         datatype =
             when (this.opplysningstype.datatype) {
                 Boolsk -> DataTypeDTO.boolsk
@@ -140,7 +141,7 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
             },
         kilde =
             this.kilde?.let {
-                val registrert = it.registrert.tilOffsetDato()
+                val registrert = it.registrert.tilOffsetTime()
                 when (it) {
                     is Saksbehandlerkilde -> OpplysningskildeDTO("Saksbehandler", ident = it.ident, registrert = registrert)
                     is Systemkilde -> OpplysningskildeDTO("System", meldingId = it.meldingsreferanseId, registrert = registrert)
@@ -157,10 +158,12 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
     )
 }
 
-private fun LocalDateTime.tilOffsetDato(): OffsetDateTime? {
+private fun LocalDate.tilApiDato(): LocalDate? {
     return when (this) {
-        LocalDateTime.MIN -> null
-        LocalDateTime.MAX -> null
-        else -> this.atZone(ZoneId.systemDefault()).toOffsetDateTime()
+        LocalDate.MIN -> null
+        LocalDate.MAX -> null
+        else -> this
     }
 }
+
+private fun LocalDateTime.tilOffsetTime(): OffsetDateTime = this.atZone(ZoneId.systemDefault()).toOffsetDateTime()

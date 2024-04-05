@@ -20,7 +20,7 @@ import kotlin.test.assertEquals
 class RegelmotorIntegrasjonsTest {
     @Test
     fun `som sjekker minsteinntekt og kravet til alder`() {
-        val regelverksdato = 10.mai.atStartOfDay()
+        val regelverksdato = 10.mai
         val tidligereBehandling =
             Opplysninger(
                 listOf(
@@ -49,12 +49,12 @@ class RegelmotorIntegrasjonsTest {
         opplysninger.leggTil(
             Faktum(
                 Virkningsdato.søknadsdato,
-                regelverksdato.toLocalDate(),
-                Gyldighetsperiode(regelverksdato.toLocalDate()),
+                regelverksdato,
+                Gyldighetsperiode(regelverksdato),
             ),
         )
-        opplysninger.leggTil(Faktum(Virkningsdato.sisteDagMedArbeidsplikt, regelverksdato.toLocalDate()))
-        opplysninger.leggTil(Faktum(Virkningsdato.sisteDagMedLønn, regelverksdato.toLocalDate()))
+        opplysninger.leggTil(Faktum(Virkningsdato.sisteDagMedArbeidsplikt, regelverksdato))
+        opplysninger.leggTil(Faktum(Virkningsdato.sisteDagMedLønn, regelverksdato))
 
         // Flyt for å innhente manglende opplysninger
         val avhengigheterTilalleVilkår = regelkjøring.trenger(alleVilkår)
@@ -113,7 +113,7 @@ class RegelmotorIntegrasjonsTest {
 
     @Test
     fun `test av datoer ved å sjekke kravet til alder`() {
-        val fraDato = 10.mai.atStartOfDay()
+        val fraDato = 10.mai
         val opplysninger = Opplysninger()
         val regelkjøring = Regelkjøring(fraDato, opplysninger, Alderskrav.regelsett)
 

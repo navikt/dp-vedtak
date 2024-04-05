@@ -13,7 +13,7 @@ import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.Assertions
 
 class MinsteinntektSteg : No {
-    private val fraDato = 10.mai(2022).atStartOfDay()
+    private val fraDato = 10.mai(2022)
     private val regelsett = listOf(Minsteinntekt.regelsett, Søknadstidspunkt.regelsett)
     private val opplysninger: Opplysninger = Opplysninger()
 

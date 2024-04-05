@@ -13,7 +13,6 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.UUID
 
 class OpplysningSvarMottakTest {
@@ -68,7 +67,7 @@ class OpplysningSvarMottakTest {
         }
 
         hendelse.captured.opplysninger.first().opplysning().gyldighetsperiode shouldBe
-            Gyldighetsperiode(gyldigFraOgMed.atStartOfDay(), LocalDateTime.MAX)
+            Gyldighetsperiode(gyldigFraOgMed, LocalDate.MAX)
     }
 
     @Test
@@ -80,7 +79,7 @@ class OpplysningSvarMottakTest {
         }
 
         hendelse.captured.opplysninger.first().opplysning().gyldighetsperiode shouldBe
-            Gyldighetsperiode(LocalDateTime.MIN, gyldigFraOgMed.atStartOfDay())
+            Gyldighetsperiode(LocalDate.MIN, gyldigFraOgMed)
     }
 
     private val behandlingId = UUID.randomUUID()

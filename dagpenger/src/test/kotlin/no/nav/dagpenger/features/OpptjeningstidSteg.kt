@@ -11,7 +11,7 @@ import no.nav.dagpenger.regel.Søknadstidspunkt
 import java.time.LocalDate
 
 class OpptjeningstidSteg : No {
-    private val fraDato = 10.mai(2022).atStartOfDay()
+    private val fraDato = 10.mai(2022)
     private val regelsett = listOf(Opptjeningstid.regelsett, Søknadstidspunkt.regelsett)
     private val opplysninger = Opplysninger()
 

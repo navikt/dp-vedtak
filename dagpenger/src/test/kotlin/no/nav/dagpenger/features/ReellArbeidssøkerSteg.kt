@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
 class ReellArbeidssøkerSteg : No {
-    private val fraDato = 10.mai(2022).atStartOfDay()
+    private val fraDato = 10.mai(2022)
     private val regelsett = listOf(ReellArbeidssøker.regelsett, Søknadstidspunkt.regelsett)
     private val opplysninger: Opplysninger = Opplysninger()
 

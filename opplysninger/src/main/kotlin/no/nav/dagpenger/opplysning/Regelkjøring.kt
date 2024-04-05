@@ -4,20 +4,13 @@ import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import no.nav.dagpenger.opplysning.regel.Ekstern
 import no.nav.dagpenger.opplysning.regel.Regel
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class Regelkjøring(
-    val forDato: LocalDateTime,
+    val forDato: LocalDate,
     private val opplysninger: Opplysninger,
     vararg regelsett: Regelsett,
 ) {
-    constructor(
-        forDato: LocalDate,
-        opplysninger: Opplysninger,
-        vararg regelsett: Regelsett,
-    ) : this(forDato.atStartOfDay(), opplysninger, *regelsett)
-
-    private val alleRegler: List<Regel<*>> = regelsett.flatMap { it.regler(forDato.toLocalDate()) }
+    private val alleRegler: List<Regel<*>> = regelsett.flatMap { it.regler(forDato) }
     private val muligeRegler: MutableList<Regel<*>> = alleRegler.toMutableList()
     private val plan: MutableList<Regel<*>> = mutableListOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
