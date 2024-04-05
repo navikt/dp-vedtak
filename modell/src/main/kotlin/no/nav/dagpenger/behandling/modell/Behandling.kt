@@ -101,7 +101,8 @@ class Behandling private constructor(
                         // TODO: Midlertidlig hack for å få med søknadId for gamle behovløsere
                         mapOf(
                             "InnsendtSøknadsId" to mapOf("urn" to "urn:soknad:${behandler.eksternId.id}"),
-                            "søknad_uuid" to behandler.eksternId.id.toString(),
+                            // søknad_uuid er egentlig ID på prosessen i quiz, som ikke er det samme som søknaden som behandles sin ID
+                            "søknad_uuid" to behandlingId.toString(),
                         ),
             )
         }
