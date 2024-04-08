@@ -23,7 +23,11 @@ import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
+import no.nav.dagpenger.regel.Behov.Lønnsgaranti
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
+import no.nav.dagpenger.regel.Behov.Ordinær
+import no.nav.dagpenger.regel.Behov.Permittert
+import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
@@ -113,6 +117,12 @@ internal class PersonMediatorTest {
             rapid.harBehov(RegistrertSomArbeidssøker)
             testPerson.løsBehov(RegistrertSomArbeidssøker)
 
+            /**
+             * Innhenter rettighetstype
+             */
+            rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+            testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe false
             }
@@ -120,7 +130,7 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 32
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 37
 
                 // Godkjenner forslag til vedtak
                 personMediator.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, it.behandlinger().first().behandlingId))

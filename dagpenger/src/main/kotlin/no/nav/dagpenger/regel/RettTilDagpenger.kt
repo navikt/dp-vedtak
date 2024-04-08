@@ -14,6 +14,7 @@ object RettTilDagpenger {
                     Minsteinntekt.minsteinntekt,
                     ReellArbeidssøker.kravTilArbeidssøker,
                     Meldeplikt.registrertPåSøknadstidspunktet,
+                    Rettighetstype.rettighetstype,
                 )
             }
         }

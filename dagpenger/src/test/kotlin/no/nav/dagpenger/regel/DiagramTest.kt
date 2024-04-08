@@ -16,6 +16,7 @@ class DiagramTest {
                 Opptjeningstid.regelsett,
                 ReellArbeidssøker.regelsett,
                 RettTilDagpenger.regelsett,
+                Rettighetstype.regelsett,
                 Søknadstidspunkt.regelsett,
             )
 
