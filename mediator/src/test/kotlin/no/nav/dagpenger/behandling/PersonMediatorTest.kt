@@ -35,6 +35,7 @@ import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 import java.time.Period
 
 internal class PersonMediatorTest {
@@ -140,6 +141,8 @@ internal class PersonMediatorTest {
                 medBoolsk("utfall") shouldBe false
                 medTekst("fagsakId") shouldBe "123"
                 medTekst("søknadId") shouldBe testPerson.søknadId
+
+                medOpplysning<Boolean>("Ordinær") shouldBe false
             }
         }
 
@@ -186,4 +189,15 @@ private class Meldingsinnhold(private val message: JsonNode) {
     fun medDato(navn: String) = message.get(navn)?.asLocalDate()
 
     fun medBoolsk(navn: String) = message.get(navn)?.asBoolean()
+
+    fun medOpplysning(navn: String) = message.get("opplysninger").single { it["opplysningstype"]["id"].asText() == navn }
+
+    inline fun <reified T> medOpplysning(navn: String): T =
+        when (T::class) {
+            Boolean::class -> medOpplysning(navn)["verdi"].asBoolean() as T
+            String::class -> medOpplysning(navn)["verdi"].asText() as T
+            LocalDate::class -> medOpplysning(navn)["verdi"].asLocalDate() as T
+            Int::class -> medOpplysning(navn)["verdi"].asInt() as T
+            else -> throw IllegalArgumentException("Ukjent type")
+        }
 }
