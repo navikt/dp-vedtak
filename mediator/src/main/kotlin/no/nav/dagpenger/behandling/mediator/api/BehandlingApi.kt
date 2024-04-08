@@ -11,6 +11,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
@@ -19,6 +20,8 @@ import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
 import no.nav.dagpenger.behandling.mediator.PersonMediator
+import no.nav.dagpenger.behandling.mediator.api.auth.saksbehandlerId
+import no.nav.dagpenger.behandling.mediator.audit.Auditlogg
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
@@ -45,6 +48,7 @@ import java.util.UUID
 internal fun Application.behandlingApi(
     personRepository: PersonRepository,
     personMediator: PersonMediator,
+    auditlogg: Auditlogg,
 ) {
     konfigurerApi()
 
@@ -61,6 +65,9 @@ internal fun Application.behandlingApi(
                         personRepository.hent(
                             identForespørsel.ident.tilPersonIdentfikator(),
                         ) ?: throw ResourceNotFoundException("Person ikke funnet")
+
+                    auditlogg.les("Listet ut behandlinger", identForespørsel.ident, call.saksbehandlerId())
+
                     call.respond(HttpStatusCode.OK, person.behandlinger().map { it.tilBehandlingDTO() })
                 }
                 route("{behandlingId}") {
@@ -74,6 +81,10 @@ internal fun Application.behandlingApi(
                             personRepository.hentBehandling(
                                 behandlingId,
                             ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+
+                        // TODO: hent ident fra behandling
+                        auditlogg.les("Så en behandling", "", call.saksbehandlerId())
+
                         call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
                     }
                     post("/avbryt") {
@@ -87,6 +98,8 @@ internal fun Application.behandlingApi(
                         val hendelse = AvbrytBehandlingHendelse(UUIDv7.ny(), identForespørsel.ident, behandlingId)
                         personMediator.håndter(hendelse)
 
+                        hendelse.varsel("Avbrøt behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+
                         call.respond(HttpStatusCode.Created)
                     }
                     post("/godkjenn") {
@@ -98,7 +111,10 @@ internal fun Application.behandlingApi(
                         val identForespørsel = call.receive<IdentForesporselDTO>()
                         // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
                         val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, behandlingId)
+                        hendelse.varsel("Godkjenn forslag til vedtak", identForespørsel.ident, "NAY", AuditOperasjon.UPDATE)
                         personMediator.håndter(hendelse)
+
+                        hendelse.varsel("Godkjente behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
 
                         call.respond(HttpStatusCode.Created)
                     }

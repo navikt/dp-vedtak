@@ -5,6 +5,7 @@ import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.mediator.Configuration.config
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
+import no.nav.dagpenger.behandling.mediator.audit.AktivitetsloggAuditlogg
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
@@ -28,14 +29,21 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     private val opplysningRepository = OpplysningerRepositoryPostgres()
     private val behandlingRepository = BehandlingRepositoryPostgres(opplysningRepository)
     private val personRepository = PersonRepositoryPostgres(behandlingRepository)
-    private val rapidsConnection =
+    private val rapidsConnection: RapidsConnection =
         RapidApplication.Builder(RapidApplication.RapidApplicationConfig.fromEnv(config))
-            .withKtorModule { behandlingApi(personRepository = personRepository, personMediator) }.build()
+            .withKtorModule {
+                behandlingApi(
+                    personRepository = personRepository,
+                    personMediator,
+                    AktivitetsloggAuditlogg(aktivitetsloggMediator),
+                )
+            }.build()
 
+    private val aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection)
     private val personMediator: PersonMediator =
         PersonMediator(
             personRepository = personRepository,
-            aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection),
+            aktivitetsloggMediator = aktivitetsloggMediator,
             behovMediator = BehovMediator(rapidsConnection),
             hendelseMediator = HendelseMediator(rapidsConnection),
             observatører = emptySet(),
