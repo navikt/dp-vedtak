@@ -9,11 +9,11 @@ import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.UUIDv7
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.util.UUID
 
 class OpplysningSvarMottakTest {
     private val rapid = TestRapid()
@@ -82,7 +82,7 @@ class OpplysningSvarMottakTest {
             Gyldighetsperiode(LocalDate.MIN, gyldigFraOgMed)
     }
 
-    private val behandlingId = UUID.randomUUID()
+    private val behandlingId = UUIDv7.ny()
     private val konvolutt =
         mapOf(
             "ident" to "12345678901",

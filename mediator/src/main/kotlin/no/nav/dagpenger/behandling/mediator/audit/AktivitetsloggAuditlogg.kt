@@ -6,7 +6,7 @@ import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
 import no.nav.dagpenger.aktivitetslogg.IAktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.behandling.mediator.AktivitetsloggMediator
-import java.util.UUID
+import no.nav.dagpenger.behandling.modell.UUIDv7
 
 internal class AktivitetsloggAuditlogg(private val aktivitetsloggMediator: AktivitetsloggMediator) : Auditlogg {
     override fun les(
@@ -54,7 +54,7 @@ internal class AktivitetsloggAuditlogg(private val aktivitetsloggMediator: Aktiv
         AktivitetsloggHendelse, IAktivitetslogg by aktivitetslogg {
         override fun ident() = ident
 
-        override fun meldingsreferanseId() = UUID.randomUUID()
+        override fun meldingsreferanseId() = UUIDv7.ny()
 
         override fun toSpesifikkKontekst() = SpesifikkKontekst("Auditlogg", mapOf("ident" to ident))
     }

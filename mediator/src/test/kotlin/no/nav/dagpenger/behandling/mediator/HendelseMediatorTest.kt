@@ -6,6 +6,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.AktivitetsloggObserver
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
+import no.nav.dagpenger.behandling.modell.UUIDv7
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -20,9 +21,9 @@ class HendelseMediatorTest {
     @Test
     fun foobar() {
         val mediator = HendelseMediator(rapid)
-        val søknadId = UUID.randomUUID()
+        val søknadId = UUIDv7.ny()
         val gjelderDato = LocalDate.now()
-        val hendelse = SøknadInnsendtHendelse(UUID.randomUUID(), "ident", søknadId, gjelderDato, 1)
+        val hendelse = SøknadInnsendtHendelse(UUIDv7.ny(), "ident", søknadId, gjelderDato, 1)
         val observer = TestObserver()
         hendelse.registrer(observer)
         hendelse.kontekst(hendelse)
