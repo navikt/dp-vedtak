@@ -309,6 +309,7 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: PersonHendelse,
         ) {
+            hendelse.hendelse(BehandlingHendelser.AvbrytBehandlingHendelse, "Behandling avbrutt")
             behandling.observatører.forEach { it.avbrutt() }
         }
 
@@ -381,4 +382,6 @@ sealed class BehandlingHendelser(override val name: String) : Hendelse.Hendelset
     data object ForslagTilVedtakHendelse : BehandlingHendelser("forslag_til_vedtak")
 
     data object VedtakFattetHendelse : BehandlingHendelser("vedtak_fattet")
+
+    data object AvbrytBehandlingHendelse : BehandlingHendelser("behandling_avbrutt")
 }
