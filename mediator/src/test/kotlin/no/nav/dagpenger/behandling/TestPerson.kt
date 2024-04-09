@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling
 
+import no.nav.dagpenger.behandling.modell.BehandlingBehov.AvklaringManuellBehandling
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
@@ -54,6 +55,7 @@ class TestPerson(
                 "behandlingId" to behandlingId,
                 "søknadId" to søknadId,
                 "@opplysningsbehov" to true,
+                "@behov" to løsninger.keys.toList(),
                 "@final" to true,
                 "@løsning" to løsninger,
             ),
@@ -80,5 +82,6 @@ class TestPerson(
             Permittert to true,
             Lønnsgaranti to false,
             PermittertFiskeforedling to false,
+            AvklaringManuellBehandling.name to false,
         )
 }

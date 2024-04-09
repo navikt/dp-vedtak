@@ -16,6 +16,7 @@ import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
+import no.nav.dagpenger.behandling.modell.BehandlingBehov.AvklaringManuellBehandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.UUIDv7
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
@@ -77,6 +78,12 @@ internal class PersonMediatorTest {
                 )
             testPerson.sendSøknad()
             rapid.harHendelse("behandling_opprettet", offset = 2)
+
+            /**
+             * Avklarer om den krever manuell behandling
+             */
+            rapid.harBehov(AvklaringManuellBehandling.name)
+            testPerson.løsBehov(AvklaringManuellBehandling.name)
 
             /**
              * Fastsetter søknadstidspunkt
@@ -144,6 +151,8 @@ internal class PersonMediatorTest {
 
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
+
+            rapid.inspektør.size shouldBe 11
         }
 
     private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {

@@ -28,6 +28,7 @@ import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
@@ -51,11 +52,13 @@ internal class BehandlingApiTest {
                     fagsakId = 1,
                 ),
             )
+            val behandlingId = it.behandlinger().first().behandlingId
+            it.håndter(ManuellBehandlingAvklartHendelse(UUIDv7.ny(), ident, behandlingId, false))
             it.håndter(
                 OpplysningSvarHendelse(
                     meldingsreferanseId = UUIDv7.ny(),
                     ident = ident,
-                    behandlingId = it.behandlinger().first().behandlingId,
+                    behandlingId = behandlingId,
                     opplysninger =
                         listOf(
                             OpplysningSvar(

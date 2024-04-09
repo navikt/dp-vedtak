@@ -5,11 +5,14 @@ import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.mediator.melding.HendelseRepository
 import no.nav.dagpenger.behandling.mediator.mottak.AvbrytBehandlingMessage
 import no.nav.dagpenger.behandling.mediator.mottak.AvbrytBehandlingMottak
+import no.nav.dagpenger.behandling.mediator.mottak.AvklaringManuellBehandlingMottak
+import no.nav.dagpenger.behandling.mediator.mottak.ManuellBehandlingAvklartMessage
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMottak
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMottak
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
@@ -25,6 +28,7 @@ internal class MessageMediator(
 ) : IMessageMediator {
     init {
         SøknadInnsendtMottak(rapidsConnection, this)
+        AvklaringManuellBehandlingMottak(rapidsConnection, this)
         OpplysningSvarMottak(rapidsConnection, this)
         AvbrytBehandlingMottak(rapidsConnection, this)
     }
@@ -42,6 +46,16 @@ internal class MessageMediator(
     override fun behandle(
         hendelse: AvbrytBehandlingHendelse,
         message: AvbrytBehandlingMessage,
+        context: MessageContext,
+    ) {
+        behandle(hendelse, message) {
+            personMediator.håndter(it)
+        }
+    }
+
+    override fun behandle(
+        hendelse: ManuellBehandlingAvklartHendelse,
+        message: ManuellBehandlingAvklartMessage,
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
@@ -88,6 +102,12 @@ internal interface IMessageMediator {
     fun behandle(
         hendelse: AvbrytBehandlingHendelse,
         message: AvbrytBehandlingMessage,
+        context: MessageContext,
+    )
+
+    fun behandle(
+        hendelse: ManuellBehandlingAvklartHendelse,
+        message: ManuellBehandlingAvklartMessage,
         context: MessageContext,
     )
 }

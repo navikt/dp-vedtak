@@ -8,6 +8,7 @@ import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companio
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
@@ -64,6 +65,11 @@ class Behandling private constructor(
     private fun informasjonsbehov() = regelkjøring.informasjonsbehov(behandler.avklarer())
 
     override fun håndter(hendelse: SøknadInnsendtHendelse) {
+        hendelse.kontekst(this)
+        tilstand.håndter(this, hendelse)
+    }
+
+    override fun håndter(hendelse: ManuellBehandlingAvklartHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
@@ -160,6 +166,15 @@ class Behandling private constructor(
 
         fun håndter(
             behandling: Behandling,
+            hendelse: ManuellBehandlingAvklartHendelse,
+        ) {
+            throw IllegalStateException(
+                "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
+            )
+        }
+
+        fun håndter(
+            behandling: Behandling,
             hendelse: OpplysningSvarHendelse,
         ) {
             throw IllegalStateException(
@@ -199,7 +214,17 @@ class Behandling private constructor(
             hendelse.varsel(Behandlingsvarsler.SØKNAD_MOTTATT)
             hendelse.hendelse(BehandlingHendelser.BehandlingOpprettetHendelse, "Behandling opprettet")
 
-            behandling.hvaTrengerViNå(hendelse)
+            hendelse.behov(BehandlingBehov.AvklaringManuellBehandling, "Trenger informasjon for å avklare manuell behandling")
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: ManuellBehandlingAvklartHendelse,
+        ) {
+            if (hendelse.behandlesManuelt) {
+                behandling.tilstand(Avbrutt, hendelse)
+                return
+            }
             behandling.tilstand(UnderBehandling, hendelse)
         }
     }
@@ -211,19 +236,8 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: PersonHendelse,
         ) {
-            behandling.observatører.forEach { it.behandlingStartet() }
-        }
-
-        override fun håndter(
-            behandling: Behandling,
-            hendelse: SøknadInnsendtHendelse,
-        ) {
-            hendelse.kontekst(this)
-            hendelse.info("Mottatt søknad og startet behandling")
-            hendelse.varsel(Behandlingsvarsler.SØKNAD_MOTTATT)
-            hendelse.hendelse(BehandlingHendelser.BehandlingOpprettetHendelse, "Behandling opprettet")
-
             behandling.hvaTrengerViNå(hendelse)
+            behandling.observatører.forEach { it.behandlingStartet() }
         }
 
         override fun håndter(
