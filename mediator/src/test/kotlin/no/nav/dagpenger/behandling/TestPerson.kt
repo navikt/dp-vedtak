@@ -47,19 +47,28 @@ class TestPerson(
         rapid.sendTestMessage(løstBehov(behovSomLøses))
     }
 
-    private fun løstBehov(løsninger: Map<String, Any>) =
-        JsonMessage.newMessage(
-            "behov",
-            mapOf(
-                "ident" to ident,
-                "behandlingId" to behandlingId,
-                "søknadId" to søknadId,
-                "@opplysningsbehov" to true,
-                "@behov" to løsninger.keys.toList(),
-                "@final" to true,
-                "@løsning" to løsninger,
-            ),
-        ).toJson()
+    fun løsBehov(
+        behov: String,
+        løsning: Any,
+    ) {
+        rapid.sendTestMessage(løstBehov(mapOf(behov to løsning), false))
+    }
+
+    private fun løstBehov(
+        løsninger: Map<String, Any>,
+        opplysningsbehov: Boolean = true,
+    ) = JsonMessage.newMessage(
+        "behov",
+        mapOf(
+            "ident" to ident,
+            "behandlingId" to behandlingId,
+            "søknadId" to søknadId,
+            "@opplysningsbehov" to opplysningsbehov,
+            "@behov" to løsninger.keys.toList(),
+            "@final" to true,
+            "@løsning" to løsninger,
+        ),
+    ).toJson()
 
     private val løsninger =
         mapOf(

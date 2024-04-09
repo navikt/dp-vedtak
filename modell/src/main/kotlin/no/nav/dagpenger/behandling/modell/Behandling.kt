@@ -309,6 +309,7 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: PersonHendelse,
         ) {
+            hendelse.info("Behandling avbrutt")
             hendelse.hendelse(BehandlingHendelser.AvbrytBehandlingHendelse, "Behandling avbrutt")
             behandling.observatører.forEach { it.avbrutt() }
         }
