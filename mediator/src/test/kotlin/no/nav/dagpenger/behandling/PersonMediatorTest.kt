@@ -31,6 +31,7 @@ import no.nav.dagpenger.regel.Behov.Permittert
 import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
+import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -114,6 +115,12 @@ internal class PersonMediatorTest {
             testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
 
             /**
+             * Sjekker om mulig verneplikt
+             */
+            rapid.harBehov(Verneplikt)
+            testPerson.løsBehov(Verneplikt)
+
+            /**
              * Sjekker kravene til reell arbeidssøker
              */
             rapid.harBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
@@ -138,7 +145,7 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 37
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 38
 
                 // Godkjenner forslag til vedtak
                 personMediator.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, it.behandlinger().first().behandlingId))
@@ -152,7 +159,7 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 11
+            rapid.inspektør.size shouldBe 12
         }
 
     @Test

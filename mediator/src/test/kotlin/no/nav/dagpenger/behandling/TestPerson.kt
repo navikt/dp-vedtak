@@ -10,6 +10,7 @@ import no.nav.dagpenger.regel.Behov.Ordinær
 import no.nav.dagpenger.regel.Behov.Permittert
 import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
+import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -92,5 +93,7 @@ class TestPerson(
             Lønnsgaranti to false,
             PermittertFiskeforedling to false,
             AvklaringManuellBehandling.name to false,
+            // Verneplikt
+            Verneplikt to false,
         )
 }

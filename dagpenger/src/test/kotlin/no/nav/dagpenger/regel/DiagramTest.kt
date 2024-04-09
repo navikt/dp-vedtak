@@ -18,6 +18,7 @@ class DiagramTest {
                 RettTilDagpenger.regelsett,
                 Rettighetstype.regelsett,
                 Søknadstidspunkt.regelsett,
+                Verneplikt.regelsett,
             )
 
         val regeltre = bygger.dag()

@@ -1,7 +1,6 @@
 package no.nav.dagpenger.features
 
 import io.cucumber.datatable.DataTable
-import io.cucumber.java.no.Gitt
 import io.cucumber.java8.No
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.features.utils.somLocalDate
@@ -10,6 +9,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.Verneplikt
 import org.junit.jupiter.api.Assertions
 
 class MinsteinntektSteg : No {
@@ -33,6 +33,15 @@ class MinsteinntektSteg : No {
                     søknadsdato.somLocalDate(),
                 ),
             )
+        }
+        Gitt("at verneplikt er {string}") { verneplikt: String ->
+            val verdi =
+                when (verneplikt) {
+                    "Ja" -> true
+                    "Nei" -> false
+                    else -> throw IllegalArgumentException("Ukjent svar på verneplikt: $verneplikt")
+                }
+            opplysninger.leggTil(Faktum(Verneplikt.avtjentVerneplikt, verdi))
         }
         Gitt("at inntekt er") { data: DataTable ->
 
