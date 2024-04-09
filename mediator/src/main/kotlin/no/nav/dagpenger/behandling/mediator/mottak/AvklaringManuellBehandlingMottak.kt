@@ -12,7 +12,6 @@ import no.nav.dagpenger.behandling.modell.BehandlingBehov.AvklaringManuellBehand
 import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHendelse
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import java.util.UUID
@@ -59,13 +58,6 @@ internal class AvklaringManuellBehandlingMottak(
             setAttribute("app.behovId", behovId)
             setAttribute("app.behandlingId", behandlingId.toString())
         }
-    }
-
-    override fun onError(
-        problems: MessageProblems,
-        context: MessageContext,
-    ) {
-        logger.error { problems }
     }
 
     private companion object {
