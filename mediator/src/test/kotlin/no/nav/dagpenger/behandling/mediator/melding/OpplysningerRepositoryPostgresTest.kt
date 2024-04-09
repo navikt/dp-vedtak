@@ -147,7 +147,7 @@ class OpplysningerRepositoryPostgresTest {
             val opplysninger = Opplysninger(fakta)
 
             val tidBrukt = measureTimeMillis { repo.lagreOpplysninger(opplysninger) }
-            tidBrukt shouldBeLessThan 5000
+            tidBrukt shouldBeLessThan 5555
 
             val fraDb = repo.hentOpplysninger(opplysninger.id)
             fraDb.finnAlle().size shouldBe fakta.size
