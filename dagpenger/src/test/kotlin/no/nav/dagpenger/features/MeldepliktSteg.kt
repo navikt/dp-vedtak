@@ -24,19 +24,23 @@ class MeldepliktSteg : No {
             opplysninger.leggTil(Faktum(Søknadstidspunkt.søknadsdato, søknadsdato.somLocalDate()))
             opplysninger.leggTil(Faktum(Søknadstidspunkt.ønsketdato, søknadsdato.somLocalDate()))
         }
-        Gitt("personen registrerte seg {string}") { registrert: String ->
+        Gitt("personen var registrert? {string} på {string}") { svar: String, registrert: String ->
             opplysninger.leggTil(
                 Faktum(
                     Meldeplikt.registrertArbeidssøker,
-                    true,
-                    Gyldighetsperiode(fom = registrert.somLocalDate(), tom = registrert.somLocalDate()),
+                    when (svar) {
+                        "Ja" -> true
+                        "Nei" -> false
+                        else -> throw IllegalArgumentException("Ukjent svar: $svar")
+                    },
+                    Gyldighetsperiode(fom = registrert.somLocalDate()),
                 ),
             )
         }
 
         Så("er kravet til meldeplikt {string}") { utfall: String ->
 
-            withClue("Forventer at opplysninger inneholder '${Meldeplikt.registrertPåSøknadstidspunktet.navn}'") {
+            withClue("Forventer at vi har '${Meldeplikt.registrertPåSøknadstidspunktet.navn}'") {
                 opplysninger.har(Meldeplikt.registrertPåSøknadstidspunktet) shouldBe true
             }
             assertTrue(opplysninger.har(Meldeplikt.registrertPåSøknadstidspunktet))

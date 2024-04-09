@@ -5,6 +5,7 @@ import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.BehovMediator
@@ -22,7 +23,11 @@ import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
+import no.nav.dagpenger.regel.Behov.Lønnsgaranti
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
+import no.nav.dagpenger.regel.Behov.Ordinær
+import no.nav.dagpenger.regel.Behov.Permittert
+import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
@@ -30,6 +35,7 @@ import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 import java.time.Period
 
 internal class PersonMediatorTest {
@@ -76,7 +82,7 @@ internal class PersonMediatorTest {
              * Fastsetter søknadstidspunkt
              */
             rapid.harBehov("Søknadstidspunkt") {
-                medTekst("søknad_uuid") shouldBe testPerson.søknadId
+                medTekst("søknad_uuid") shouldNotBe testPerson.søknadId
                 medNode("InnsendtSøknadsId")["urn"].asText() shouldBe "urn:soknad:${testPerson.søknadId}"
             }
             rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
@@ -112,6 +118,12 @@ internal class PersonMediatorTest {
             rapid.harBehov(RegistrertSomArbeidssøker)
             testPerson.løsBehov(RegistrertSomArbeidssøker)
 
+            /**
+             * Innhenter rettighetstype
+             */
+            rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+            testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe false
             }
@@ -119,7 +131,7 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 32
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 37
 
                 // Godkjenner forslag til vedtak
                 personMediator.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, it.behandlinger().first().behandlingId))
@@ -128,6 +140,9 @@ internal class PersonMediatorTest {
             rapid.harHendelse("vedtak_fattet") {
                 medBoolsk("utfall") shouldBe false
                 medTekst("fagsakId") shouldBe "123"
+                medTekst("søknadId") shouldBe testPerson.søknadId
+
+                medOpplysning<Boolean>("Ordinær") shouldBe false
             }
         }
 
@@ -174,4 +189,15 @@ private class Meldingsinnhold(private val message: JsonNode) {
     fun medDato(navn: String) = message.get(navn)?.asLocalDate()
 
     fun medBoolsk(navn: String) = message.get(navn)?.asBoolean()
+
+    fun medOpplysning(navn: String) = message.get("opplysninger").single { it["opplysningstype"]["id"].asText() == navn }
+
+    inline fun <reified T> medOpplysning(navn: String): T =
+        when (T::class) {
+            Boolean::class -> medOpplysning(navn)["verdi"].asBoolean() as T
+            String::class -> medOpplysning(navn)["verdi"].asText() as T
+            LocalDate::class -> medOpplysning(navn)["verdi"].asLocalDate() as T
+            Int::class -> medOpplysning(navn)["verdi"].asInt() as T
+            else -> throw IllegalArgumentException("Ukjent type")
+        }
 }

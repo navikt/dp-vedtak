@@ -3,7 +3,7 @@ package no.nav.dagpenger.regel
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
-import no.nav.dagpenger.opplysning.regel.alle
+import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 
@@ -15,6 +15,6 @@ object Meldeplikt {
     val regelsett =
         Regelsett("Meldeplikt") {
             regel(registrertArbeidssøker) { innhentMed(søknadstidspunkt) }
-            regel(registrertPåSøknadstidspunktet) { alle(registrertArbeidssøker) }
+            regel(registrertPåSøknadstidspunktet) { erSann(registrertArbeidssøker) }
         }
 }

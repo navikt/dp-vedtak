@@ -8,6 +8,7 @@ import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
@@ -43,6 +44,22 @@ class OpplysningerRepositoryPostgresTest {
             fraDb.finnOpplysning(boolskFaktum.opplysningstype).verdi shouldBe boolskFaktum.verdi
             fraDb.finnOpplysning(datoFaktum.opplysningstype).verdi shouldBe datoFaktum.verdi
             fraDb.finnOpplysning(datoFaktum.opplysningstype).kilde?.id shouldBe kilde.id
+        }
+    }
+
+    @Test
+    fun `lagre opplysningens gyldighetsperiode`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val gyldighetsperiode1 = Gyldighetsperiode(LocalDate.now(), LocalDate.now().plusDays(14))
+            val faktum1 = Faktum(Opplysningstype.somHeltall("Fakum1"), 10, gyldighetsperiode1)
+            val opplysninger = Opplysninger(listOf(faktum1))
+            repo.lagreOpplysninger(opplysninger)
+            val fraDb =
+                repo.hentOpplysninger(opplysninger.id).also {
+                    Regelkjøring(LocalDate.now(), it)
+                }
+            fraDb.finnOpplysning(faktum1.opplysningstype).gyldighetsperiode shouldBe gyldighetsperiode1
         }
     }
 

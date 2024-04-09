@@ -63,6 +63,7 @@ internal class SøknadInnsendtMessage(private val packet: JsonMessage) : Hendels
                 ident,
                 søknadId = packet["søknadsData"]["søknad_uuid"].asUUID(),
                 gjelderDato = java.time.LocalDate.now(),
+                // TODO: Vi burde alltid ha fagsakId, og defaulte til 0 er ikke så lurt
                 fagsakId = packet["fagsakId"].asInt(0),
             ).also {
                 if (it.fagsakId == 0) logger.warn { "Søknad mottatt uten fagsakId" }

@@ -4,10 +4,13 @@ Egenskap: § 4-8. Meldeplikt og møteplikt
 
   Scenariomal: Søker fyller kravene til å være reell arbeidssøker
     Gitt at personen søkte "<søknadstidspunktet>"
-    Og personen registrerte seg "<registreringsdato>"
+    Og personen var registrert? "<var registrert>" på "<registreringsdato>"
     Så er kravet til meldeplikt "<utfall>"
 
     Eksempler:
-      | søknadstidspunktet | registreringsdato | utfall       |
-      | 10.05.2022         | 10.05.2022        | Oppfylt      |
-      | 15.05.2022         | 15.05.2022        | Oppfylt      |
+      | søknadstidspunktet | var registrert | registreringsdato | utfall       |
+      | 10.05.2022         | Ja             | 10.05.2022        | Oppfylt      |
+      | 10.05.2022         | Nei            | 10.05.2022        | Ikke oppfylt |
+#      | 11.05.2022         | Nei            | 01.05.2022        | Ikke oppfylt |
+#      | 10.05.2022         | Nei            | 15.05.2022        | Ikke oppfylt |
+      | 15.05.2022         | Ja             | 15.05.2022        | Oppfylt      |

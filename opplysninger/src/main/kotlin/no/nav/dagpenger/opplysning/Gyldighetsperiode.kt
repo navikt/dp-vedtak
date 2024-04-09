@@ -1,20 +1,15 @@
 package no.nav.dagpenger.opplysning
 
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 data class Gyldighetsperiode(
-    val fom: LocalDateTime = LocalDateTime.MIN,
-    val tom: LocalDateTime = LocalDateTime.MAX,
-    private val range: ClosedRange<LocalDateTime> = fom..tom,
-) : ClosedRange<LocalDateTime> by range {
-    constructor(fom: LocalDate, tom: LocalDate) : this(fom.atStartOfDay(), LocalDateTime.of(tom, LocalTime.MAX))
-    constructor(fom: LocalDate) : this(fom.atStartOfDay())
+    val fom: LocalDate = LocalDate.MIN,
+    val tom: LocalDate = LocalDate.MAX,
+    private val range: ClosedRange<LocalDate> = fom..tom,
+) : ClosedRange<LocalDate> by range {
+    constructor(fom: LocalDate) : this(fom, LocalDate.MAX)
 
-    fun inneholder(dato: LocalDateTime) = dato in range
-
-    fun inneholder(dato: LocalDate) = inneholder(dato.atStartOfDay())
+    fun inneholder(dato: LocalDate) = dato in range
 
     fun overlapp(gyldighetsperiode: Gyldighetsperiode) =
         this.contains(gyldighetsperiode.fom) || this.contains(gyldighetsperiode.fom) ||
@@ -22,10 +17,10 @@ data class Gyldighetsperiode(
 
     override fun toString(): String {
         return when {
-            fom == LocalDateTime.MIN && tom == LocalDateTime.MAX -> "gyldig for alltid"
-            fom == LocalDateTime.MIN -> "gyldig til ${tom.toLocalDate()}"
-            tom == LocalDateTime.MAX -> "gyldig fra ${fom.toLocalDate()}"
-            else -> "gyldig fra ${fom.toLocalDate()} til ${tom.toLocalDate()}"
+            fom == LocalDate.MIN && tom == LocalDate.MAX -> "gyldig for alltid"
+            fom == LocalDate.MIN -> "gyldig til $tom"
+            tom == LocalDate.MAX -> "gyldig fra $fom"
+            else -> "gyldig fra $fom til $tom"
         }
     }
 }

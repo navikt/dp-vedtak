@@ -6,11 +6,18 @@ object Behov {
     val InntektId by StringConstant()
     val OpptjeningsperiodeFraOgMed by StringConstant()
     val SisteAvsluttendeKalenderMåned by StringConstant()
+
     val KanJobbeDeltid by StringConstant()
     val KanJobbeHvorSomHelst by StringConstant()
     val HelseTilAlleTyperJobb by StringConstant()
     val VilligTilÅBytteYrke by StringConstant()
+
     val RegistrertSomArbeidssøker by StringConstant()
+
+    val Ordinær by StringConstant()
+    val Permittert by StringConstant()
+    val Lønnsgaranti by StringConstant()
+    val PermittertFiskeforedling by StringConstant()
 }
 
 class StringConstant {

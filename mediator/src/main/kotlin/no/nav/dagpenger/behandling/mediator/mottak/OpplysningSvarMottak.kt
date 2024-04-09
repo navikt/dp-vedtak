@@ -147,7 +147,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
                 } else if (gyldigFraOgMed != null && gyldigTilOgMed == null) {
                     Gyldighetsperiode(gyldigFraOgMed)
                 } else if (gyldigTilOgMed != null) {
-                    Gyldighetsperiode(tom = gyldigTilOgMed.atStartOfDay())
+                    Gyldighetsperiode(tom = gyldigTilOgMed)
                 } else {
                     null
                 }

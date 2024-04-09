@@ -25,8 +25,8 @@ CREATE TABLE opplysning
     id                 uuid PRIMARY KEY,
     status             TEXT                     NOT NULL,
     opplysningstype_id BIGINT                   NOT NULL REFERENCES opplysningstype (opplysningstype_id),
-    gyldig_fom         TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
-    gyldig_tom         TIMESTAMP WITH TIME ZONE NULL DEFAULT NULL,
+    gyldig_fom         DATE DEFAULT NULL,
+    gyldig_tom         DATE DEFAULT NULL,
     opprettet          TIMESTAMP WITH TIME ZONE NOT NULL
 );
 

@@ -4,6 +4,10 @@ import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
+import no.nav.dagpenger.regel.Behov.Lønnsgaranti
+import no.nav.dagpenger.regel.Behov.Ordinær
+import no.nav.dagpenger.regel.Behov.Permittert
+import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -60,13 +64,21 @@ class TestPerson(
             "Fødselsdato" to søknadstidspunkt.minusYears(alder.toLong()),
             "Søknadstidspunkt" to søknadstidspunkt,
             "ØnskerDagpengerFraDato" to søknadstidspunkt,
+            // Inntekt
             InntektId to mapOf("verdi" to inntektId),
             "InntektSiste12Mnd" to 1234,
             "InntektSiste36Mnd" to 1234,
+            // Reell arbeidssøker
             KanJobbeDeltid to true,
             KanJobbeHvorSomHelst to true,
             HelseTilAlleTyperJobb to true,
             VilligTilÅBytteYrke to true,
+            // Arbeidssøkerregistrering
             RegistrertSomArbeidssøker to LocalDate.now().minusDays(1),
+            // Rettighetsype
+            Ordinær to false,
+            Permittert to true,
+            Lønnsgaranti to false,
+            PermittertFiskeforedling to false,
         )
 }

@@ -22,6 +22,7 @@ import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.autentisert
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.testAzureAdToken
+import no.nav.dagpenger.behandling.mediator.audit.Auditlogg
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
@@ -72,6 +73,7 @@ internal class BehandlingApiTest {
             it.lagre(person)
         }
     private val personMediator = mockk<PersonMediator>(relaxed = true)
+    private val auditlogg = mockk<Auditlogg>(relaxed = true)
 
     @AfterEach
     fun tearDown() {
@@ -110,6 +112,9 @@ internal class BehandlingApiTest {
             val response = autentisert("/behandling", body = """{"ident":"$ident"}""")
             response.status shouldBe HttpStatusCode.OK
             response.bodyAsText().shouldNotBeEmpty()
+            verify {
+                auditlogg.les(any(), any(), any())
+            }
         }
     }
 
@@ -131,6 +136,9 @@ internal class BehandlingApiTest {
             val behandling = shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), BehandlingDTO::class.java) }
             behandling.behandlingId shouldBe behandlingId
             behandling.opplysning.shouldNotBeEmpty()
+            verify {
+                auditlogg.les(any(), any(), any())
+            }
         }
     }
 
@@ -177,7 +185,7 @@ internal class BehandlingApiTest {
     ) {
         TestApplication.withMockAuthServerAndTestApplication(
             moduleFunction = {
-                behandlingApi(personRepository, personMediator)
+                behandlingApi(personRepository, personMediator, auditlogg)
             },
             test,
         )

@@ -84,8 +84,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val opplysningstype = Opplysningstype(string("type_navn").id(string("type_id")), datatype)
             val gyldighetsperiode =
                 Gyldighetsperiode(
-                    localDateTimeOrNull("gyldig_fom") ?: LocalDateTime.MIN,
-                    localDateTimeOrNull("gyldig_tom") ?: LocalDateTime.MAX,
+                    localDateOrNull("gyldig_fom") ?: LocalDate.MIN,
+                    localDateOrNull("gyldig_tom") ?: LocalDate.MAX,
                 )
             val status = this.string("status")
             val verdi = datatype.verdi(this)
@@ -329,8 +329,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         "typeId" to opplysning.opplysningstype.id,
                         "typeNavn" to opplysning.opplysningstype.navn,
                         "datatype" to opplysning.opplysningstype.datatype.javaClass.simpleName,
-                        "fom" to gyldighetsperiode.fom.let { if (it == LocalDateTime.MIN) null else it },
-                        "tom" to gyldighetsperiode.tom.let { if (it == LocalDateTime.MAX) null else it },
+                        "fom" to gyldighetsperiode.fom.let { if (it == LocalDate.MIN) null else it },
+                        "tom" to gyldighetsperiode.tom.let { if (it == LocalDate.MAX) null else it },
                         "opprettet" to opplysning.opprettet,
                     )
                 },
