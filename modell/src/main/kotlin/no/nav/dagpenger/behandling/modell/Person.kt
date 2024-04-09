@@ -32,49 +32,25 @@ class Person(
 
     override fun håndter(hendelse: ManuellBehandlingAvklartHendelse) {
         hendelse.leggTilKontekst(this)
-        val behandling =
-            try {
-                behandlinger.finn(hendelse.behandlingId)
-            } catch (e: NoSuchElementException) {
-                // TODO: Behandlingen mangler - hopp til neste melding - det må vi slutte med
-                return
-            }
+        val behandling = behandlinger.finn(hendelse.behandlingId)
         behandling.håndter(hendelse)
     }
 
     override fun håndter(hendelse: OpplysningSvarHendelse) {
         hendelse.leggTilKontekst(this)
-        val behandling =
-            try {
-                behandlinger.finn(hendelse.behandlingId)
-            } catch (e: NoSuchElementException) {
-                // TODO: Behandlingen mangler - hopp til neste melding - det må vi slutte med
-                return
-            }
+        val behandling = behandlinger.finn(hendelse.behandlingId)
         behandling.håndter(hendelse)
     }
 
     override fun håndter(hendelse: AvbrytBehandlingHendelse) {
         hendelse.leggTilKontekst(this)
-        val behandling =
-            try {
-                behandlinger.finn(hendelse.behandlingId)
-            } catch (e: NoSuchElementException) {
-                // TODO: Behandlingen mangler - hopp til neste melding - det må vi slutte med
-                return
-            }
+        val behandling = behandlinger.finn(hendelse.behandlingId)
         behandling.håndter(hendelse)
     }
 
     override fun håndter(hendelse: ForslagGodkjentHendelse) {
         hendelse.leggTilKontekst(this)
-        val behandling =
-            try {
-                behandlinger.finn(hendelse.behandlingId)
-            } catch (e: NoSuchElementException) {
-                // TODO: Behandlingen mangler - hopp til neste melding - det må vi slutte med
-                return
-            }
+        val behandling = behandlinger.finn(hendelse.behandlingId)
         behandling.håndter(hendelse)
     }
 
