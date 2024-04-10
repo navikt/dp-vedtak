@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS idx_opplysning_utledet_av_opplysning_id ON opplysning_utledet_av(opplysning_id);
