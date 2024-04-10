@@ -1,0 +1,2 @@
+CREATE INDEX IF NOT EXISTS idx_opplysning_kilde_system_kilde_id ON opplysning_kilde_system(kilde_id);
+CREATE INDEX IF NOT EXISTS idx_opplysning_kilde_saksbehandler_kilde_id ON opplysning_kilde_saksbehandler(kilde_id);

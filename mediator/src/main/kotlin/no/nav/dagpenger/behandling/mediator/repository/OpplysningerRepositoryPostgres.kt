@@ -116,6 +116,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                             opplysning_kilde_system ON opplysning_kilde.id = opplysning_kilde_system.kilde_id
                         LEFT JOIN 
                             opplysning_kilde_saksbehandler ON opplysning_kilde.id = opplysning_kilde_saksbehandler.kilde_id
+                        WHERE opplysning_kilde.opplysning_id = :id
                         """.trimIndent(),
                         mapOf("id" to kildeId),
                     ).map { row ->
