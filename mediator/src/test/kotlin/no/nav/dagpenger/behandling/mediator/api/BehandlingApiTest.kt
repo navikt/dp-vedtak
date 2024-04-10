@@ -105,9 +105,15 @@ internal class BehandlingApiTest {
 
             autentisert(
                 token = testAzureAdToken(ADGrupper = listOf("ikke-saksbehandler")),
-                endepunkt = "/behandling/$ident/avbryt",
+                endepunkt = "/behandling",
                 body = """{"ident":"$ident"}""",
             ).status shouldBe HttpStatusCode.Unauthorized
+
+            autentisert(
+                token = testAzureAdToken(ADGrupper = listOf("dagpenger-saksbehandler")),
+                endepunkt = "/behandling",
+                body = """{"ident":"$ident"}""",
+            ).status shouldBe HttpStatusCode.OK
         }
     }
 
