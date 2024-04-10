@@ -90,7 +90,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val status = this.string("status")
             val verdi = datatype.verdi(this)
             val opprettet = this.localDateTime("opprettet")
-            val utledetAv = this.stringOrNull("utledet_av")?.let { UtledningRad(it, utledetAv(id)) }
+            val utledetAvId = this.arrayOrNull<UUID>("utledet_av_id")?.toList() ?: emptyList()
+            val utledetAv = this.stringOrNull("utledet_av")?.let { UtledningRad(it, utledetAvId) }
 
             val kilde = this.uuidOrNull("kilde_id")?.let { kildeId -> hentKilde(kildeId) }
 
@@ -136,19 +137,6 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                             else -> throw IllegalStateException("Ukjent kilde")
                         }
                     }.asSingle,
-                )
-            }
-
-        private fun utledetAv(id: UUID): List<UUID> =
-            sessionOf(dataSource).use {
-                it.run(
-                    queryOf(
-                        //language=PostgreSQL
-                        "SELECT utledet_av FROM opplysning_utledet_av WHERE opplysning_id = :id",
-                        mapOf("id" to id),
-                    ).map { row ->
-                        row.uuid("utledet_av")
-                    }.asList,
                 )
             }
 
