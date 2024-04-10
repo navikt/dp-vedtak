@@ -128,7 +128,7 @@ internal fun Application.behandlingApi(
     }
 }
 
-private val traceId = runCatching { Span.current().spanContext.traceId }.getOrNull()
+private val traceId get() = runCatching { Span.current().spanContext.traceId }.getOrNull()
 
 private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
     return BehandlingDTO(
