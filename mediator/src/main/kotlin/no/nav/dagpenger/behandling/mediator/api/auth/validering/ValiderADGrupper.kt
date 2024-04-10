@@ -15,4 +15,4 @@ internal fun JWTAuthenticationProvider.Config.autoriserADGrupper() {
 }
 
 private fun JWTCredential.måInneholde(ADGruppe: String) =
-    require(this.payload.claims["groups"]?.asList(String::class.java)?.contains(ADGruppe) ?: false)
+    require(this.payload.claims["groups"]?.asList(String::class.java)?.contains(ADGruppe) ?: false) { "Mangler tilgang" }

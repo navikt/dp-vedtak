@@ -97,15 +97,17 @@ internal class BehandlingApiTest {
     @Test
     fun `kall uten saksbehandlingsADgruppe i claims returnerer 401`() {
         medSikretBehandlingApi {
-            val tokenUtenSaksbehandlerGruppe = testAzureAdToken(ADGrupper = emptyList())
+            autentisert(
+                token = testAzureAdToken(ADGrupper = emptyList()),
+                endepunkt = "/behandling",
+                body = """{"ident":"$ident"}""",
+            ).status shouldBe HttpStatusCode.Unauthorized
 
-            val response =
-                autentisert(
-                    token = tokenUtenSaksbehandlerGruppe,
-                    endepunkt = "/behandling",
-                    body = """{"ident":"$ident"}""",
-                )
-            response.status shouldBe HttpStatusCode.Unauthorized
+            autentisert(
+                token = testAzureAdToken(ADGrupper = listOf("ikke-saksbehandler")),
+                endepunkt = "/behandling/$ident/avbryt",
+                body = """{"ident":"$ident"}""",
+            ).status shouldBe HttpStatusCode.Unauthorized
         }
     }
 
@@ -186,12 +188,14 @@ internal class BehandlingApiTest {
         personMediator: PersonMediator = this.personMediator,
         test: suspend ApplicationTestBuilder.() -> Unit,
     ) {
+        System.setProperty("Grupper.saksbehandler", "dagpenger-saksbehandler")
         TestApplication.withMockAuthServerAndTestApplication(
             moduleFunction = {
                 behandlingApi(personRepository, personMediator, auditlogg)
             },
             test,
         )
+        System.clearProperty("Grupper.saksbehandler")
     }
 
     private companion object {
