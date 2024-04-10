@@ -3,6 +3,8 @@ package no.nav.dagpenger.behandling.mediator.api
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
+import io.ktor.server.application.createApplicationPlugin
+import io.ktor.server.application.install
 import io.ktor.server.auth.authenticate
 import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.request.receive
@@ -52,6 +54,7 @@ internal fun Application.behandlingApi(
     auditlogg: Auditlogg,
 ) {
     konfigurerApi()
+    install(OtelTraceIdPlugin)
 
     routing {
         swaggerUI(path = "openapi", swaggerFile = "behandling-api.yaml")
@@ -70,7 +73,6 @@ internal fun Application.behandlingApi(
 
                     auditlogg.les("Listet ut behandlinger", ident, call.saksbehandlerId())
 
-                    traceId?.let { call.response.headers.append("X-Trace-Id", it) }
                     call.respond(HttpStatusCode.OK, person.behandlinger().map { it.tilBehandlingDTO() })
                 }
                 route("{behandlingId}") {
@@ -88,7 +90,6 @@ internal fun Application.behandlingApi(
                         // TODO: hent ident fra behandling
                         auditlogg.les("Så en behandling", "", call.saksbehandlerId())
 
-                        traceId?.let { call.response.headers.append("X-Trace-Id", it) }
                         call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
                     }
                     post("/avbryt") {
@@ -128,7 +129,13 @@ internal fun Application.behandlingApi(
     }
 }
 
-private val traceId get() = runCatching { Span.current().spanContext.traceId }.getOrNull()
+private val OtelTraceIdPlugin =
+    createApplicationPlugin("OtelTraceIdPlugin") {
+        onCallRespond { call, _ ->
+            val traceId = runCatching { Span.current().spanContext.traceId }.getOrNull()
+            traceId?.let { call.response.headers.append("X-Trace-Id", it) }
+        }
+    }
 
 private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
     return BehandlingDTO(
