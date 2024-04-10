@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
@@ -30,5 +31,5 @@ class SøknadInnsendtHendelse(
             Søknadstidspunkt.regelsett,
         )
 
-    override fun avklarer() = RettTilDagpenger.kravPåDagpenger
+    override fun avklarer(): Opplysningstype<Boolean> = RettTilDagpenger.kravPåDagpenger
 }

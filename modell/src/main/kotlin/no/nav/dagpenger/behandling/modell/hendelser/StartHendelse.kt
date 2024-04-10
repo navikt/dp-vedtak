@@ -23,5 +23,5 @@ abstract class StartHendelse(
 
     abstract fun regelsett(): List<Regelsett>
 
-    abstract fun avklarer(): Opplysningstype<*>
+    abstract fun avklarer(): Opplysningstype<Boolean>
 }

@@ -288,13 +288,20 @@ class Behandling private constructor(
                 // TODO: Vi bør sannsynligvis gjøre dette
                 // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
             }
+            // TODO: Flikk ut alle som ikke kan avslås
+            val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
+            if (avklaring.verdi) {
+                hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
+                behandling.tilstand(Avbrutt, hendelse)
+                return
+            }
             // TODO: Dette er vel strengt tatt ikke vedtak fattet?
             hendelse.hendelse(
                 VedtakFattetHendelse,
                 "Vedtak fattet",
                 mapOf(
-                    "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).verdi,
-                    "harAvklart" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).opplysningstype.navn,
+                    "utfall" to avklaring.verdi,
+                    "harAvklart" to avklaring.opplysningstype.navn,
                     "opplysninger" to behandling.opplysninger.finnAlle(),
                 ),
             )
