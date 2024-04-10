@@ -28,9 +28,10 @@ class OpplysningerRepositoryPostgresTest {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
             val heltallFaktum = Faktum(Opplysningstype.somHeltall("Heltall"), 10)
-            val boolskFaktum = Faktum(Opplysningstype.somBoolsk("Boolsk"), true)
-            val kilde = Saksbehandlerkilde("foo")
-            val datoFaktum = Faktum(Opplysningstype.somDato("Dato"), LocalDate.now(), kilde = kilde)
+            val kildeA = Saksbehandlerkilde("foo")
+            val boolskFaktum = Faktum(Opplysningstype.somBoolsk("Boolsk"), true, kilde = kildeA)
+            val kildeB = Saksbehandlerkilde("bar")
+            val datoFaktum = Faktum(Opplysningstype.somDato("Dato"), LocalDate.now(), kilde = kildeB)
 
             val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum))
             repo.lagreOpplysninger(opplysninger)
@@ -42,8 +43,9 @@ class OpplysningerRepositoryPostgresTest {
             fraDb.finnAlle().size shouldBe opplysninger.finnAlle().size
             fraDb.finnOpplysning(heltallFaktum.opplysningstype).verdi shouldBe heltallFaktum.verdi
             fraDb.finnOpplysning(boolskFaktum.opplysningstype).verdi shouldBe boolskFaktum.verdi
+            fraDb.finnOpplysning(boolskFaktum.opplysningstype).kilde?.id shouldBe kildeA.id
             fraDb.finnOpplysning(datoFaktum.opplysningstype).verdi shouldBe datoFaktum.verdi
-            fraDb.finnOpplysning(datoFaktum.opplysningstype).kilde?.id shouldBe kilde.id
+            fraDb.finnOpplysning(datoFaktum.opplysningstype).kilde?.id shouldBe kildeB.id
         }
     }
 
