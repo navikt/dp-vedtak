@@ -11,6 +11,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import io.opentelemetry.api.trace.Span
 import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
@@ -61,13 +62,15 @@ internal fun Application.behandlingApi(
             route("behandling") {
                 post {
                     val identForespørsel = call.receive<IdentForesporselDTO>()
+                    val ident = identForespørsel.ident
                     val person =
                         personRepository.hent(
-                            identForespørsel.ident.tilPersonIdentfikator(),
+                            ident.tilPersonIdentfikator(),
                         ) ?: throw ResourceNotFoundException("Person ikke funnet")
 
-                    auditlogg.les("Listet ut behandlinger", identForespørsel.ident, call.saksbehandlerId())
+                    auditlogg.les("Listet ut behandlinger", ident, call.saksbehandlerId())
 
+                    traceId?.let { call.response.headers.append("X-Trace-Id", it) }
                     call.respond(HttpStatusCode.OK, person.behandlinger().map { it.tilBehandlingDTO() })
                 }
                 route("{behandlingId}") {
@@ -85,6 +88,7 @@ internal fun Application.behandlingApi(
                         // TODO: hent ident fra behandling
                         auditlogg.les("Så en behandling", "", call.saksbehandlerId())
 
+                        traceId?.let { call.response.headers.append("X-Trace-Id", it) }
                         call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
                     }
                     post("/avbryt") {
@@ -123,6 +127,8 @@ internal fun Application.behandlingApi(
         }
     }
 }
+
+private val traceId = runCatching { Span.current().spanContext.traceId }.getOrNull()
 
 private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
     return BehandlingDTO(

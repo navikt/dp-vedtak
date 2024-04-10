@@ -18,3 +18,5 @@ class Multiplikasjon internal constructor(
 }
 
 fun Opplysningstype<Double>.multiplikasjon(vararg opplysningstype: Opplysningstype<Double>) = Multiplikasjon(this, *opplysningstype)
+
+operator fun Opplysningstype<Double>.times(opplysningstype: Opplysningstype<Double>) = Multiplikasjon(this, opplysningstype)
