@@ -3,6 +3,7 @@ package no.nav.dagpenger.behandling
 import com.fasterxml.jackson.databind.JsonNode
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -145,7 +146,7 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 38
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 39
 
                 // Godkjenner forslag til vedtak
                 personMediator.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, it.behandlinger().first().behandlingId))
@@ -153,9 +154,10 @@ internal class PersonMediatorTest {
 
             rapid.harHendelse("vedtak_fattet") {
                 medBoolsk("utfall") shouldBe false
-                medTekst("fagsakId") shouldBe "123"
+                medTekst("fagsakId").shouldBeNull()
                 medTekst("søknadId") shouldBe testPerson.søknadId
 
+                medOpplysning<Int>("fagsakId") shouldBe 123
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 

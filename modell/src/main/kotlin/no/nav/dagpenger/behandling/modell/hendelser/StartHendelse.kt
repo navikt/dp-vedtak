@@ -18,7 +18,6 @@ abstract class StartHendelse(
     override fun kontekstMap() =
         mapOf(
             "gjelderDato" to skjedde.toString(),
-            "fagsakId" to fagsakId.toString(),
         ) + eksternId.kontekstMap()
 
     abstract fun regelsett(): List<Regelsett>

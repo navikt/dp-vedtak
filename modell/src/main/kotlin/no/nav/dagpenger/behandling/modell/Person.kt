@@ -9,6 +9,8 @@ import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHend
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Opplysningstype
 
 class Person(
     val ident: Ident,
@@ -23,7 +25,7 @@ class Person(
         val behandling =
             Behandling(
                 hendelse,
-                emptyList(),
+                listOf(Faktum(Opplysningstype.somHeltall("fagsakId"), hendelse.fagsakId)),
             ).also { behandling ->
                 behandlinger.add(behandling)
             }
