@@ -76,7 +76,16 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         }.asList,
                     )
                 }
-            return rader.somOpplysninger()
+
+            val kilder = hentKilder(rader.mapNotNull { it.kildeId })
+            val raderMedKilde =
+                rader.map {
+                    if (it.kildeId == null) return@map it
+                    val kilde = kilder[it.kildeId] ?: throw IllegalStateException("Mangler kilde")
+
+                    it.copy(kilde = kilde)
+                }
+            return raderMedKilde.somOpplysninger()
         }
 
         private fun <T : Comparable<T>> Row.somOpplysningRad(datatype: Datatype<T>): OpplysningRad<T> {
@@ -93,12 +102,12 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val utledetAvId = this.arrayOrNull<UUID>("utledet_av_id")?.toList() ?: emptyList()
             val utledetAv = this.stringOrNull("utledet_av")?.let { UtledningRad(it, utledetAvId) }
 
-            val kilde = this.uuidOrNull("kilde_id")?.let { kildeId -> hentKilde(kildeId) }
+            val kildeId = this.uuidOrNull("kilde_id")
 
-            return OpplysningRad(id, opplysningstype, verdi, status, gyldighetsperiode, utledetAv, kilde, opprettet)
+            return OpplysningRad(id, opplysningstype, verdi, status, gyldighetsperiode, utledetAv, kildeId, null, opprettet)
         }
 
-        private fun hentKilde(kildeId: UUID) =
+        private fun hentKilder(kilder: List<UUID>) =
             sessionOf(dataSource).use { session ->
                 session.run(
                     queryOf(
@@ -117,10 +126,11 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                             opplysning_kilde_system ON opplysning_kilde.id = opplysning_kilde_system.kilde_id
                         LEFT JOIN 
                             opplysning_kilde_saksbehandler ON opplysning_kilde.id = opplysning_kilde_saksbehandler.kilde_id
-                        WHERE opplysning_kilde.id = :id
+                        WHERE opplysning_kilde.id = ANY(?)
                         """.trimIndent(),
-                        mapOf("id" to kildeId),
+                        kilder.toTypedArray(),
                     ).map { row ->
+                        val kildeId = row.uuid("id")
                         val kildeType = row.string("type")
                         val opprettet = row.localDateTime("opprettet")
                         val registrert = row.localDateTime("registrert")
@@ -136,9 +146,9 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
 
                             else -> throw IllegalStateException("Ukjent kilde")
                         }
-                    }.asSingle,
+                    }.asList,
                 )
-            }
+            }.associateBy { it.id }
 
         @Suppress("UNCHECKED_CAST")
         private fun <T : Comparable<T>> Datatype<T>.verdi(row: Row): T =
@@ -150,6 +160,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         "infinity" -> LocalDate.MAX
                         else -> row.localDate("verdi_dato")
                     }
+
                 Desimaltall -> row.double("verdi_desimaltall")
                 Heltall -> row.int("verdi_heltall")
                 ULID -> Ulid(row.string("verdi_string"))
@@ -364,6 +375,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     "verdi_dato",
                     tilPostgresqlTimestamp(verdi),
                 )
+
             Desimaltall -> Pair("verdi_desimaltall", verdi)
             Heltall -> Pair("verdi_heltall", verdi)
             ULID -> Pair("verdi_string", (verdi as Ulid).verdi)
@@ -435,6 +447,7 @@ private data class OpplysningRad<T : Comparable<T>>(
     val status: String,
     val gyldighetsperiode: Gyldighetsperiode,
     val utledetAv: UtledningRad? = null,
+    val kildeId: UUID? = null,
     val kilde: Kilde? = null,
     val opprettet: LocalDateTime,
 )
