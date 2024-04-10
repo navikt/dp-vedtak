@@ -35,6 +35,7 @@ class TestPerson(
                 "type" to "NySøknad",
                 "fødselsnummer" to ident,
                 "fagsakId" to 123,
+                "bruk-dp-behandling" to true,
                 "søknadsData" to
                     mapOf(
                         "søknad_uuid" to søknadId,
