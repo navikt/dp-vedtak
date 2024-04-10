@@ -24,6 +24,7 @@ internal class SøknadInnsendtMottak(
             validate { it.demandAny("type", listOf("NySøknad")) }
             validate { it.requireKey("fødselsnummer") }
             validate { it.interestedIn("fagsakId") }
+            validate { it.requireValue("bruk-dp-behandling", true) }
             validate {
                 it.require("søknadsData") { data ->
                     data["søknad_uuid"].asUUID()
