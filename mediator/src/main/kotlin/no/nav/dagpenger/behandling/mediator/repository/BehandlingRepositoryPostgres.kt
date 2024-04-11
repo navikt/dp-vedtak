@@ -50,6 +50,7 @@ class BehandlingRepositoryPostgres(
                         aktiveOpplysninger = opplysningRepository.hentOpplysninger(row.uuid("opplysninger_id"))!!,
                         basertPå = basertPåBehandling,
                         tilstand = Behandling.TilstandType.valueOf(row.string("tilstand")),
+                        sistEndretTilstand = row.localDateTime("sist_endret_tilstand"),
                     )
                 }.asSingle,
             )
@@ -110,13 +111,14 @@ class BehandlingRepositoryPostgres(
                 queryOf(
                     // language=PostgreSQL
                     """
-                    INSERT INTO behandling (behandling_id, tilstand)
-                    VALUES (:id, :tilstand)
-                    ON CONFLICT (behandling_id) DO UPDATE SET tilstand = :tilstand
+                    INSERT INTO behandling (behandling_id, tilstand, sist_endret_tilstand)
+                    VALUES (:id, :tilstand, :sisteEndretTilstand)
+                    ON CONFLICT (behandling_id) DO UPDATE SET tilstand = :tilstand, sist_endret_tilstand = :sisteEndretTilstand
                     """.trimIndent(),
                     mapOf(
                         "id" to behandling.behandlingId,
-                        "tilstand" to behandling.tilstand().name,
+                        "tilstand" to behandling.tilstand().first.name,
+                        "sisteEndretTilstand" to behandling.tilstand().second,
                     ),
                 ).asUpdate,
             )

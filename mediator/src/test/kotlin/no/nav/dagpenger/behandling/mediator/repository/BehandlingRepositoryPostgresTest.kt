@@ -12,6 +12,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class BehandlingRepositoryPostgresTest {
     private val ident = "123456789011"
@@ -30,6 +31,7 @@ class BehandlingRepositoryPostgresTest {
             behandler = søknadInnsendtHendelse,
             aktiveOpplysninger = Opplysninger(listOf(Faktum(Opplysningstype.somDesimaltall("tidligere-opplysning"), 1.0))),
             tilstand = Behandling.TilstandType.Ferdig,
+            sistEndretTilstand = LocalDateTime.now(),
         )
     private val opplysning1 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning1"), 1.0)
     private val opplysning2 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning2"), 2.0)

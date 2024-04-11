@@ -19,6 +19,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import java.time.LocalDateTime
 import java.util.UUID
 
 class Behandling private constructor(
@@ -32,10 +33,10 @@ class Behandling private constructor(
         behandler: StartHendelse,
         opplysninger: List<Opplysning<*>>,
         basertPå: List<Behandling> = emptyList(),
-    ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå, UnderOpprettelse)
+    ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå, UnderOpprettelse(LocalDateTime.now()))
 
     init {
-        require(basertPå.none { it.tilstand != Ferdig }) {
+        require(basertPå.all { it.tilstand is Ferdig }) {
             "Kan ikke basere en ny behandling på en som ikke er ferdig"
         }
     }
@@ -54,7 +55,8 @@ class Behandling private constructor(
             aktiveOpplysninger: Opplysninger,
             basertPå: List<Behandling> = emptyList(),
             tilstand: TilstandType,
-        ) = Behandling(behandlingId, behandler, aktiveOpplysninger, basertPå, fraType(tilstand))
+            sistEndretTilstand: LocalDateTime,
+        ) = Behandling(behandlingId, behandler, aktiveOpplysninger, basertPå, fraType(tilstand, sistEndretTilstand))
 
         fun List<Behandling>.finn(behandlingId: UUID) =
             try {
@@ -64,7 +66,7 @@ class Behandling private constructor(
             }
     }
 
-    fun tilstand() = tilstand.type
+    fun tilstand() = Pair(tilstand.type, tilstand.opprettet)
 
     fun opplysninger(): LesbarOpplysninger = opplysninger
 
@@ -143,16 +145,19 @@ class Behandling private constructor(
 
     private sealed interface BehandlingTilstand : Aktivitetskontekst {
         val type: TilstandType
+        val opprettet: LocalDateTime
 
         companion object {
-            fun fraType(type: TilstandType) =
-                when (type) {
-                    TilstandType.UnderOpprettelse -> UnderOpprettelse
-                    TilstandType.UnderBehandling -> UnderBehandling
-                    TilstandType.ForslagTilVedtak -> ForslagTilVedtak
-                    TilstandType.Avbrutt -> Avbrutt
-                    TilstandType.Ferdig -> Ferdig
-                }
+            fun fraType(
+                type: TilstandType,
+                opprettet: LocalDateTime,
+            ) = when (type) {
+                TilstandType.UnderOpprettelse -> UnderOpprettelse(opprettet)
+                TilstandType.UnderBehandling -> UnderBehandling(opprettet)
+                TilstandType.ForslagTilVedtak -> ForslagTilVedtak(opprettet)
+                TilstandType.Avbrutt -> Avbrutt(opprettet)
+                TilstandType.Ferdig -> Ferdig(opprettet)
+            }
         }
 
         fun entering(
@@ -193,7 +198,7 @@ class Behandling private constructor(
             hendelse: AvbrytBehandlingHendelse,
         ) {
             hendelse.info("Avbryter behandlingen")
-            behandling.tilstand(Avbrutt, hendelse)
+            behandling.tilstand(Avbrutt(), hendelse)
         }
 
         fun håndter(
@@ -205,10 +210,16 @@ class Behandling private constructor(
             )
         }
 
-        override fun toSpesifikkKontekst() = SpesifikkKontekst(type.name, emptyMap())
+        override fun toSpesifikkKontekst() =
+            SpesifikkKontekst(
+                type.name,
+                mapOf(
+                    "opprettet" to opprettet.toString(),
+                ),
+            )
     }
 
-    private data object UnderOpprettelse : BehandlingTilstand {
+    private data class UnderOpprettelse(override val opprettet: LocalDateTime = LocalDateTime.now()) : BehandlingTilstand {
         override val type = TilstandType.UnderOpprettelse
 
         override fun håndter(
@@ -228,14 +239,14 @@ class Behandling private constructor(
             hendelse: ManuellBehandlingAvklartHendelse,
         ) {
             if (hendelse.behandlesManuelt) {
-                behandling.tilstand(Avbrutt, hendelse)
+                behandling.tilstand(Avbrutt(), hendelse)
                 return
             }
-            behandling.tilstand(UnderBehandling, hendelse)
+            behandling.tilstand(UnderBehandling(), hendelse)
         }
     }
 
-    private data object UnderBehandling : BehandlingTilstand {
+    private data class UnderBehandling(override val opprettet: LocalDateTime = LocalDateTime.now()) : BehandlingTilstand {
         override val type = TilstandType.UnderBehandling
 
         override fun entering(
@@ -246,7 +257,7 @@ class Behandling private constructor(
             val trenger = behandling.hvaTrengerViNå(hendelse)
 
             if (trenger.isEmpty()) {
-                behandling.tilstand(ForslagTilVedtak, hendelse)
+                behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
 
@@ -261,12 +272,12 @@ class Behandling private constructor(
             val trenger = behandling.hvaTrengerViNå(hendelse)
 
             if (trenger.isEmpty()) {
-                behandling.tilstand(ForslagTilVedtak, hendelse)
+                behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
     }
 
-    private data object ForslagTilVedtak : BehandlingTilstand {
+    private data class ForslagTilVedtak(override val opprettet: LocalDateTime = LocalDateTime.now()) : BehandlingTilstand {
         override val type = TilstandType.ForslagTilVedtak
 
         override fun entering(
@@ -302,24 +313,15 @@ class Behandling private constructor(
             val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
             if (avklaring.verdi) {
                 hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
-                behandling.tilstand(Avbrutt, hendelse)
+                behandling.tilstand(Avbrutt(), hendelse)
                 return
             }
-            // TODO: Dette er vel strengt tatt ikke vedtak fattet?
-            hendelse.hendelse(
-                VedtakFattetHendelse,
-                "Vedtak fattet",
-                mapOf(
-                    "utfall" to avklaring.verdi,
-                    "harAvklart" to avklaring.opplysningstype.navn,
-                    "opplysninger" to behandling.opplysninger.finnAlle(),
-                ),
-            )
-            behandling.tilstand(Ferdig, hendelse)
+
+            behandling.tilstand(Ferdig(), hendelse)
         }
     }
 
-    private data object Avbrutt : BehandlingTilstand {
+    private data class Avbrutt(override val opprettet: LocalDateTime = LocalDateTime.now()) : BehandlingTilstand {
         override val type = TilstandType.Avbrutt
 
         override fun entering(
@@ -346,7 +348,7 @@ class Behandling private constructor(
         }
     }
 
-    private data object Ferdig : BehandlingTilstand {
+    private data class Ferdig(override val opprettet: LocalDateTime = LocalDateTime.now()) : BehandlingTilstand {
         override val type = TilstandType.Ferdig
 
         override fun entering(
@@ -354,6 +356,17 @@ class Behandling private constructor(
             hendelse: PersonHendelse,
         ) {
             behandling.observatører.forEach { it.ferdig() }
+            // TODO: Dette er vel strengt tatt ikke vedtak fattet?
+            val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
+            hendelse.hendelse(
+                VedtakFattetHendelse,
+                "Vedtak fattet",
+                mapOf(
+                    "utfall" to avklaring.verdi,
+                    "harAvklart" to avklaring.opplysningstype.navn,
+                    "opplysninger" to behandling.opplysninger.finnAlle(),
+                ),
+            )
         }
 
         override fun håndter(

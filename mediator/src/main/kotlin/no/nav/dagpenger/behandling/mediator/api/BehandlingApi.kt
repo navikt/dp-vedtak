@@ -139,7 +139,7 @@ private val OtelTraceIdPlugin =
 private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
     return BehandlingDTO(
         behandlingId = this.behandlingId,
-        tilstand = BehandlingDTO.Tilstand.valueOf(tilstand().name),
+        tilstand = BehandlingDTO.Tilstand.valueOf(tilstand().first.name),
         opplysning =
             this.opplysninger().finnAlle().map { opplysning ->
                 opplysning.tilOpplysningDTO()

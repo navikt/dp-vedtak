@@ -12,6 +12,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 internal class BehandlingTest {
     private val ident = "123456789011"
@@ -58,6 +59,7 @@ internal class BehandlingTest {
                         ),
                     basertPå = forrigeBehandling?.let { listOf(it) } ?: emptyList(),
                     tilstand = Ferdig,
+                    sistEndretTilstand = LocalDateTime.now(),
                 )
             forrigeBehandling = behandling
             // TODO: Det burde eksplodere uten denne
