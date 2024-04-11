@@ -14,7 +14,7 @@ internal class AktivitetsloggAuditlogg(private val aktivitetsloggMediator: Aktiv
         ident: String,
         saksbehandler: String,
     ) = aktivitetslogg(ident) {
-        varsel(melding, ident, saksbehandler, AuditOperasjon.READ)
+        info(melding, ident, saksbehandler, AuditOperasjon.READ)
     }
 
     override fun opprett(
@@ -22,7 +22,7 @@ internal class AktivitetsloggAuditlogg(private val aktivitetsloggMediator: Aktiv
         ident: String,
         saksbehandler: String,
     ) = aktivitetslogg(ident) {
-        varsel(melding, ident, saksbehandler, AuditOperasjon.CREATE)
+        info(melding, ident, saksbehandler, AuditOperasjon.CREATE)
     }
 
     override fun oppdater(
@@ -30,7 +30,7 @@ internal class AktivitetsloggAuditlogg(private val aktivitetsloggMediator: Aktiv
         ident: String,
         saksbehandler: String,
     ) = aktivitetslogg(ident) {
-        varsel(melding, ident, saksbehandler, AuditOperasjon.UPDATE)
+        info(melding, ident, saksbehandler, AuditOperasjon.UPDATE)
     }
 
     override fun slett(
@@ -38,7 +38,7 @@ internal class AktivitetsloggAuditlogg(private val aktivitetsloggMediator: Aktiv
         ident: String,
         saksbehandler: String,
     ) = aktivitetslogg(ident) {
-        varsel(melding, ident, saksbehandler, AuditOperasjon.DELETE)
+        info(melding, ident, saksbehandler, AuditOperasjon.DELETE)
     }
 
     private fun aktivitetslogg(
