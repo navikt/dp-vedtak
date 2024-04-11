@@ -88,7 +88,7 @@ internal fun Application.behandlingApi(
                             ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
 
                         // TODO: hent ident fra behandling
-                        auditlogg.les("Så en behandling", "", call.saksbehandlerId())
+                        auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
 
                         call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
                     }
