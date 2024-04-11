@@ -4,9 +4,11 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.Ferdig
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
+import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -41,10 +43,21 @@ internal class BehandlingTest {
         var forrigeBehandling: Behandling? = null
         for (nummer in 1..antall) {
             val behandling =
-                Behandling(
+                Behandling.rehydrer(
+                    behandlingId = UUIDv7.ny(),
                     behandler = hendelse,
-                    opplysninger = listOf(Faktum(tidligereOpplysning, nummer.toDouble(), Gyldighetsperiode(fomTom, fomTom))),
+                    aktiveOpplysninger =
+                        Opplysninger(
+                            listOf(
+                                Faktum(
+                                    tidligereOpplysning,
+                                    nummer.toDouble(),
+                                    Gyldighetsperiode(fomTom, fomTom),
+                                ),
+                            ),
+                        ),
                     basertPå = forrigeBehandling?.let { listOf(it) } ?: emptyList(),
+                    tilstand = Ferdig,
                 )
             forrigeBehandling = behandling
             // TODO: Det burde eksplodere uten denne

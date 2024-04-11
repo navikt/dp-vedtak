@@ -8,6 +8,7 @@ import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.UUIDv7
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -24,9 +25,11 @@ class BehandlingRepositoryPostgresTest {
             fagsakId = 1,
         )
     private val basertPåBehandling =
-        Behandling(
+        Behandling.rehydrer(
+            behandlingId = UUIDv7.ny(),
             behandler = søknadInnsendtHendelse,
-            opplysninger = listOf(Faktum(Opplysningstype.somDesimaltall("tidligere-opplysning"), 1.0)),
+            aktiveOpplysninger = Opplysninger(listOf(Faktum(Opplysningstype.somDesimaltall("tidligere-opplysning"), 1.0))),
+            tilstand = Behandling.TilstandType.Ferdig,
         )
     private val opplysning1 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning1"), 1.0)
     private val opplysning2 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning2"), 2.0)

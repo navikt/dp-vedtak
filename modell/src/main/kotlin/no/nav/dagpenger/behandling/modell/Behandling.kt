@@ -34,6 +34,12 @@ class Behandling private constructor(
         basertPå: List<Behandling> = emptyList(),
     ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå, UnderOpprettelse)
 
+    init {
+        require(basertPå.none { it.tilstand != Ferdig }) {
+            "Kan ikke basere en ny behandling på en som ikke er ferdig"
+        }
+    }
+
     private val observatører = mutableListOf<BehandlingObservatør>()
 
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
@@ -236,8 +242,12 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: PersonHendelse,
         ) {
-            behandling.hvaTrengerViNå(hendelse)
             behandling.observatører.forEach { it.behandlingStartet() }
+            val trenger = behandling.hvaTrengerViNå(hendelse)
+
+            if (trenger.isEmpty()) {
+                behandling.tilstand(ForslagTilVedtak, hendelse)
+            }
         }
 
         override fun håndter(
