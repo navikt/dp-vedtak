@@ -100,10 +100,8 @@ internal fun Application.behandlingApi(
                         val identForespørsel = call.receive<IdentForesporselDTO>()
                         // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
                         val hendelse = AvbrytBehandlingHendelse(UUIDv7.ny(), identForespørsel.ident, behandlingId)
-                        personMediator.håndter(hendelse)
-
                         hendelse.varsel("Avbrøt behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
-
+                        personMediator.håndter(hendelse)
                         call.respond(HttpStatusCode.Created)
                     }
                     post("/godkjenn") {
@@ -115,11 +113,8 @@ internal fun Application.behandlingApi(
                         val identForespørsel = call.receive<IdentForesporselDTO>()
                         // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
                         val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, behandlingId)
-                        hendelse.varsel("Godkjenn forslag til vedtak", identForespørsel.ident, "NAY", AuditOperasjon.UPDATE)
-                        personMediator.håndter(hendelse)
-
                         hendelse.varsel("Godkjente behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
-
+                        personMediator.håndter(hendelse)
                         call.respond(HttpStatusCode.Created)
                     }
                 }

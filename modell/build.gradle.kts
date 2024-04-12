@@ -8,7 +8,7 @@ dependencies {
     implementation(project(":opplysninger"))
     implementation(project(":dagpenger"))
     api("com.fasterxml.uuid:java-uuid-generator:4.3.0")
-    api("no.nav.dagpenger:aktivitetslogg:20240409.28.71ee15")
+    api("no.nav.dagpenger:aktivitetslogg:20240412.29.afd090")
     implementation(libs.kotlin.logging)
     testImplementation("io.cucumber:cucumber-java8:$cucumberVersion")
     testImplementation("io.cucumber:cucumber-junit-platform-engine:$cucumberVersion")
