@@ -72,6 +72,18 @@ class TestPerson(
         ),
     ).toJson()
 
+    fun avbrytBehandling() {
+        rapid.sendTestMessage(
+            JsonMessage.newMessage(
+                "avbryt_behandling",
+                mapOf(
+                    "behandlingId" to behandlingId,
+                    "ident" to ident,
+                ),
+            ).toJson(),
+        )
+    }
+
     private val løsninger =
         mapOf(
             "Fødselsdato" to søknadstidspunkt.minusYears(alder.toLong()),

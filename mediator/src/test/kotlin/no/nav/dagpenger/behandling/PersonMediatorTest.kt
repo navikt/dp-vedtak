@@ -189,6 +189,36 @@ internal class PersonMediatorTest {
             rapid.inspektør.size shouldBe 3
         }
 
+    @Test
+    fun `e2e av søknad som blir avbrutt `() =
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    søknadstidspunkt = 5.mai(2021),
+                )
+            testPerson.sendSøknad()
+            rapid.harHendelse("behandling_opprettet", offset = 2)
+
+            /**
+             * Avklarer om den krever manuell behandling
+             */
+            rapid.harBehov(AvklaringManuellBehandling.name)
+            testPerson.avbrytBehandling()
+
+            rapid.harHendelse("behandling_avbrutt") {
+                medTekst("søknadId") shouldBe testPerson.søknadId
+            }
+
+            /**
+             * Avklarer om den krever manuell behandling kommer etter avbrutt behandling
+             */
+            testPerson.løsBehov(AvklaringManuellBehandling.name, false)
+
+            rapid.inspektør.size shouldBe 3
+        }
+
     private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {
         val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned))
         withClue("Opptjeningsperiode skal være 3 år") { periode.toTotalMonths() shouldBe måneder }
