@@ -205,6 +205,10 @@ internal class PersonMediatorTest {
              * Avklarer om den krever manuell behandling
              */
             rapid.harBehov(AvklaringManuellBehandling.name)
+
+            /**
+             * Avbryter behandlingen før svar på manuell behandling (feks skjerming av person)
+             */
             testPerson.avbrytBehandling()
 
             rapid.harHendelse("behandling_avbrutt") {
