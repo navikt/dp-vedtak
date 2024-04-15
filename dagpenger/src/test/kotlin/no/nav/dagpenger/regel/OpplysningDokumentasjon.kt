@@ -36,7 +36,7 @@ class OpplysningDokumentasjon {
             >
             >Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De publiseres som behov på rapiden.
             >
-            >|Behov|Beskrivelse|Datatype|Datatata|
+            >|Behov|Beskrivelse|Logisk datatype|Datatype|
             >|---|---|---|---|
             ${behov.joinToString("\n") {
                 ">|${it.data.id} | ${it.data.navn} | ${it.data.datatype}|${it.data.datatype.klasse.simpleName}|"

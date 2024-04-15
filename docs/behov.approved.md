@@ -2,7 +2,7 @@
 
 Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De publiseres som behov på rapiden.
 
-|Behov|Beskrivelse|Datatype|Datatata|
+|Behov|Beskrivelse|Logisk datatype|Datatype|
 |---|---|---|---|
 |Fødselsdato | Fødselsdato | Dato|LocalDate|
 |Verneplikt | Avtjent verneplikt | Boolsk|boolean|
