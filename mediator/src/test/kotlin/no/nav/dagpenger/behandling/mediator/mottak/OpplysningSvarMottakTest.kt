@@ -98,7 +98,7 @@ class OpplysningSvarMottakTest {
                 mapOf(
                     "@løsning" to
                         mapOf(
-                            "fjasebengel" to "true",
+                            "fjasebengel" to true,
                         ),
                 ),
         )
@@ -117,7 +117,7 @@ class OpplysningSvarMottakTest {
                         mapOf(
                             "fjasebengel" to
                                 mapOf(
-                                    "verdi" to "true",
+                                    "verdi" to true,
                                 ) +
                                 mapOf(
                                     "gyldigFraOgMed" to gyldigFraOgMed?.toString(),
