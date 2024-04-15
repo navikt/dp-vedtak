@@ -67,7 +67,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: dp-saksbehandling
         - application: dp-saksbehandling-frontend
         {{#if wonderwalled}}
         - application: wonderwalled-idporten
