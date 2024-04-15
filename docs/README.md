@@ -2,6 +2,8 @@
 
 ## Behov for opplysninger
 
+[Komplett liste med behov](./behov.approved.md)
+
 ### Behov
 
 Vi sender ut behov for opplysninger med denne konvolutten:
