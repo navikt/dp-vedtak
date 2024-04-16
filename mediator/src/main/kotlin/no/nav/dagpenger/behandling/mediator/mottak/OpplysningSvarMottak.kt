@@ -111,35 +111,81 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
                     logger.error { "Ukjent opplysningstype: $typeNavn" }
                     return@forEach
                 }
-                // @todo: Forventer at verdi er en nøkkel på alle løsninger men vi må skrive om behovløserne for å få dette til å stemme
+                // @todo: Forventer at verdi er en nøkkel på all løsninger men vi må skrive om behovløserne for å få dette til å stemme
                 val svar =
                     when (jsonVerdi.isObject) {
                         true ->
                             Svar(
                                 jsonVerdi["verdi"],
+                                jsonVerdi["status"]?.asText()?.let { Tilstand.valueOf(it) } ?: Tilstand.Faktum,
                                 jsonVerdi["gyldigFraOgMed"]?.asLocalDate(),
                                 jsonVerdi["gyldigTilOgMed"]?.asLocalDate(),
                             )
 
-                        false -> Svar(jsonVerdi)
+                        false -> Svar(jsonVerdi, Tilstand.Faktum)
                     }
                 val type = Opplysningstype.typer.single { opplysningstype -> opplysningstype.id == typeNavn }
                 val kilde = Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
 
+                Tilstand.Faktum
                 val opplysning =
                     @Suppress("UNCHECKED_CAST")
                     when (type.datatype) {
-                        Dato -> opplysningSvar(type as Opplysningstype<LocalDate>, svar.verdi.asLocalDate(), kilde, svar.gyldighetsperiode)
-                        Heltall -> opplysningSvar(type as Opplysningstype<Int>, svar.verdi.asInt(), kilde, svar.gyldighetsperiode)
-                        Desimaltall -> opplysningSvar(type as Opplysningstype<Double>, svar.verdi.asDouble(), kilde, svar.gyldighetsperiode)
-                        Boolsk -> opplysningSvar(type as Opplysningstype<Boolean>, svar.verdi.asBoolean(), kilde, svar.gyldighetsperiode)
-                        ULID -> opplysningSvar(type as Opplysningstype<Ulid>, Ulid(svar.verdi.asText()), kilde, svar.gyldighetsperiode)
+                        Dato ->
+                            opplysningSvar(
+                                type as Opplysningstype<LocalDate>,
+                                svar.verdi.asLocalDate(),
+                                kilde,
+                                svar.tilstand,
+                                svar.gyldighetsperiode,
+                            )
+
+                        Heltall ->
+                            opplysningSvar(
+                                type as Opplysningstype<Int>,
+                                svar.verdi.asInt(),
+                                kilde,
+                                svar.tilstand,
+                                svar.gyldighetsperiode,
+                            )
+
+                        Desimaltall ->
+                            opplysningSvar(
+                                type as Opplysningstype<Double>,
+                                svar.verdi.asDouble(),
+                                kilde,
+                                svar.tilstand,
+                                svar.gyldighetsperiode,
+                            )
+
+                        Boolsk ->
+                            opplysningSvar(
+                                type as Opplysningstype<Boolean>,
+                                svar.verdi.asBoolean(),
+                                kilde,
+                                svar.tilstand,
+                                svar.gyldighetsperiode,
+                            )
+
+                        ULID ->
+                            opplysningSvar(
+                                type as Opplysningstype<Ulid>,
+                                Ulid(svar.verdi.asText()),
+                                kilde,
+                                svar.tilstand,
+                                svar.gyldighetsperiode,
+                            )
                     }
                 add(opplysning)
             }
         }
 
-    private data class Svar(val verdi: JsonNode, val gyldigFraOgMed: LocalDate? = null, val gyldigTilOgMed: LocalDate? = null) {
+    private data class Svar(
+        val verdi: JsonNode,
+        val tilstand: Tilstand,
+        val gyldigFraOgMed: LocalDate? = null,
+        val gyldigTilOgMed: LocalDate? = null,
+    ) {
         val gyldighetsperiode
             get() =
                 if (gyldigFraOgMed != null && gyldigTilOgMed != null) {
@@ -157,11 +203,12 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
         type: Opplysningstype<T>,
         verdi: T,
         kilde: Kilde,
+        tilstand: Tilstand,
         gyldighetsperiode: Gyldighetsperiode? = null,
     ) = OpplysningSvar(
         opplysningstype = type,
         verdi = verdi,
-        tilstand = Tilstand.Hypotese,
+        tilstand = tilstand,
         kilde = kilde,
         gyldighetsperiode = gyldighetsperiode,
     )
