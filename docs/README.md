@@ -48,6 +48,33 @@ D
 end
 ```
 
+## Systemoversikt 
+
+```mermaid
+graph TD
+    A[dp-soknad]
+    B[dp-behov-journalforing]
+    C[dp-mottak]
+    D[dp-behandling]
+    E[dp-saksbehandling]
+    F[dp-saksbehandling-frontend]
+    G[Joark]
+    H[dp-arena-sink]
+    I[Arena]
+
+    A -->|Behov for å journalføre søknad| B
+    B -->|Journalfører søknad|G
+    G -->|Lytter på dagpenger journalføringer|C
+    C -->|innsending_ferdigstilt|D
+    D -->|Forslag til vedtak|E
+    F -->|Oppgaver|E
+    F -->|Godkjenner/avbryt forslag til vedtak|D
+    D -->|Behandling avbrutt|E
+    D -->|Publisere godkjente vedtak|H
+    H -->|Skriver vedtak til|I
+```
+
+
 ## Behov for opplysninger
 
 [Komplett liste med behov](./behov.approved.md)
