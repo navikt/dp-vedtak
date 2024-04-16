@@ -62,6 +62,7 @@ flowchart TD
     H[dp-arena-sink]
     I[Arena]
     J[Behovløsere for opplysninger]
+    K[dp-manuell-behandling]
 
     click A "https://github.com/navikt/dp-soknad" "dp-soknad"
     click B "https://github.com/navikt/dp-behov-journalforing" "dp-behov-journalforing"
@@ -80,6 +81,9 @@ flowchart TD
 
 subgraph Behandling
     D -->|Opplysningsbehov|J
+    D -->|Manuell behandling avklaring?|K
+    K -->|Manuell behandling avklart|D
+    D -->|behandling_opprettet|E
     D -->|forslag_til_vedtak|E
     F -->|Oppgaver|E
     D -->|behandling_avbrutt|E
