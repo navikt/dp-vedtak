@@ -1,5 +1,49 @@
 # dp-behandling
 
+## Flyt 
+
+```mermaid
+graph TD;
+    A["Søknad mottatt"]
+    B["Behandling opprettet"]
+    D["Forslag fattet"]
+    E["Vedtak skrevet til Arena"]
+
+    A --> Behandling
+    D --> X3
+
+    C["Forslag til vedtak"]
+    C1["Behandling avbrutt"]
+
+    X1{"Må behandles 
+      manuelt?"}
+B --> X1
+X1 -->|Ja| C1
+X1 -->|Nei| C
+
+X2{"Forslag godkjent"}
+C --> X2
+X2 -->|Forkastes| C1
+X2 -->|Godkjennes| D
+X2 -.->|Endringer| B
+
+X3{"Vedtak kan
+skrives"}
+X3 -->|Nei| E1
+X3 -->|Ja| E
+
+E1["Kunne ikke skrives"]
+
+subgraph Behandling
+B
+X1
+X2
+C
+C1
+D
+end
+```
+
 ## Behov for opplysninger
 
 [Komplett liste med behov](./behov.approved.md)
