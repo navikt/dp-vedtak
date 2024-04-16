@@ -70,6 +70,7 @@ Vi sender ut behov for opplysninger med denne konvolutten:
     "opplysning-navn-2"
   ],
   "ident": "12345678901",
+  "søknadId" : "ed7d20ea-24e4-4b06-b796-a9bef6b3b012",
   "behandlingId": "018ee180-deef-7911-a91d-570b2d93a8b1",
   "@opplysningsbehov": true,
   "@opprettet": "2024-04-15T13:25:26.353152"
