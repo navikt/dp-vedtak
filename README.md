@@ -1,6 +1,8 @@
+
+![image.png](docs/rm.png)
+
 # dp-behandling
 
-Behandlingsmodell for Dagpenger
 
 ## Ansvarsområder
 
@@ -11,20 +13,20 @@ Behandlingsmodell for Dagpenger
 - Si ifra når behandling har nok opplysninger til å kunne ferdigstilles. (Bekrefte opplysninger (Gjøre hypoteser til faktum))
 - Har tilstand som vet hva som skal til for å ferdigstille behandling og lage vedtak/forslag til vedtak
 
-### Opplysninger og regelmotor
+## Dokumentasjon
 
-![image.png](docs/rm.png)
+ - [Se dokumentasjon](docs/README.md)
 
-[Opplysninger og regelmotor](docs/opplysning/README.md)
+## Utvikling
 
-
-## Komme i gang
+### Komme i gang
 
 Gradle brukes som byggverktøy og er bundlet inn.
 
 ```
 ./gradlew build
 ```
+
 # Henvendelser
 
 Spørsmål knyttet til koden eller prosjektet kan rettes mot:
