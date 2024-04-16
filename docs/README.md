@@ -1,5 +1,9 @@
 # dp-behandling
 
+## Implementasjonsmodell for behandling
+
+- [Behandling og opplysninger](./opplysning/README.md)
+
 ## Flyt 
 
 ```mermaid
