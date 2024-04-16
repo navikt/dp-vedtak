@@ -51,8 +51,8 @@ end
 ## Systemoversikt 
 
 ```mermaid
-graph TD
-    A[dp-soknad]
+flowchart TD
+    A[dp-soknad] 
     B[dp-behov-journalforing]
     C[dp-mottak]
     D[dp-behandling]
@@ -61,17 +61,35 @@ graph TD
     G[Joark]
     H[dp-arena-sink]
     I[Arena]
+    J[Behovløsere for opplysninger]
 
-    A -->|Behov for å journalføre søknad| B
+    click A "https://github.com/navikt/dp-soknad" "dp-soknad"
+    click B "https://github.com/navikt/dp-behov-journalforing" "dp-behov-journalforing"
+    click C "https://github.com/navikt/dp-mottak" "dp-mottak"
+    click D "https://github.com/navikt/dp-behandling" "dp-behandling"
+    click E "https://github.com/navikt/dp-saksbehandling" "dp-saksbehandling"
+    click F "https://github.com/navikt/dp-saksbehandling-frontend" "dp-saksbehandling-frontend"
+    click H "https://github.com/navikt/dp-arena-sink" "dp-arena-sink"
+    click J "https://github.com/navikt/dp-behandling/blob/main/docs/README.md#behov-for-opplysninger" "Behovløsere for opplysninger"
+
+
+    A -->|Behov for å journalføre søknad|B
     B -->|Journalfører søknad|G
     G -->|Lytter på dagpenger journalføringer|C
-    C -->|innsending_ferdigstilt|D
-    D -->|Forslag til vedtak|E
+    C -->|innsending_ferdigstilt|Behandling
+
+subgraph Behandling
+    D -->|Opplysningsbehov|J
+    D -->|forslag_til_vedtak|E
     F -->|Oppgaver|E
+    D -->|behandling_avbrutt|E
     F -->|Godkjenner/avbryt forslag til vedtak|D
-    D -->|Behandling avbrutt|E
-    D -->|Publisere godkjente vedtak|H
+    D -->|vedtak_fattet|Arena
+end
+
+subgraph Arena
     H -->|Skriver vedtak til|I
+end
 ```
 
 
