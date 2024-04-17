@@ -18,6 +18,7 @@ internal object PostgresDataSourceBuilder {
 
     val dataSource by lazy {
         val url = getOrThrow(DB_URL_KEY).optionalPrefix("jdbc:")
+        DriverManager.registerDriver(org.postgresql.Driver())
         DriverManager.getDrivers().toList().forEach {
             println(
                 """
@@ -30,7 +31,7 @@ internal object PostgresDataSourceBuilder {
         }
         HikariDataSource().apply {
             // driverClassName = org.postgresql.Driver::class.java.name
-            jdbcUrl = jdbcUrl
+            jdbcUrl = getOrThrow(DB_URL_KEY).optionalPrefix("jdbc:")
             username = getOrThrow(DB_USERNAME_KEY)
             password = getOrThrow(DB_PASSWORD_KEY)
             maximumPoolSize = 10
