@@ -27,6 +27,7 @@ internal class AvklaringManuellBehandlingMottak(
             validate { it.requireKey("ident") }
             validate { it.requireKey("@løsning") }
             validate { it.requireKey("behandlingId") }
+            validate { it.requireValue("@final", true) }
             validate { it.interestedIn("@id", "@opprettet", "@behovId") }
         }.register(this)
     }
