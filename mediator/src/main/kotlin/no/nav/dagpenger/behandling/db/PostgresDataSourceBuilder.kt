@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariDataSource
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.configuration.FluentConfiguration
 import org.flywaydb.core.internal.configuration.ConfigUtils
+import java.sql.DriverManager
 
 // Understands how to create a data source from environment variables
 internal object PostgresDataSourceBuilder {
@@ -16,8 +17,20 @@ internal object PostgresDataSourceBuilder {
     private fun getOrThrow(key: String): String = getEnv(key) ?: getSystemProperty(key)
 
     val dataSource by lazy {
+        val url = getOrThrow(DB_URL_KEY).optionalPrefix("jdbc:")
+        DriverManager.getDrivers().toList().forEach {
+            println(
+                """
+                ---
+                Driver: ${it.javaClass.name}
+                JDCB: ${it.jdbcCompliant()}
+                AcceptsURL: ${it.acceptsURL(url)}
+                """.trimIndent(),
+            )
+        }
         HikariDataSource().apply {
-            jdbcUrl = getOrThrow(DB_URL_KEY).optionalPrefix("jdbc:")
+            // driverClassName = org.postgresql.Driver::class.java.name
+            jdbcUrl = jdbcUrl
             username = getOrThrow(DB_USERNAME_KEY)
             password = getOrThrow(DB_PASSWORD_KEY)
             maximumPoolSize = 10
