@@ -264,6 +264,14 @@ class Behandling private constructor(
 
         override fun håndter(
             behandling: Behandling,
+            hendelse: ManuellBehandlingAvklartHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er allerede i gang, ignorerer manuell behandling")
+        }
+
+        override fun håndter(
+            behandling: Behandling,
             hendelse: OpplysningSvarHendelse,
         ) {
             hendelse.kontekst(this)
