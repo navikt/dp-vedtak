@@ -37,24 +37,42 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
                         // TODO: Flat ut alle kontekster rett på root i behovet. Dette er for å være kompatibel med gamle behovløsere
                         behovMap.values.forEach { putAll(it as Map<String, Any>) }
                     }
-                    .let { JsonMessage.newNeed(behovMap.keys, it).also { message -> message.interestedIn("@behovId") } }
+                    .let {
+                        JsonMessage.newNeed(behovMap.keys, it + erFinal(behovMap.size)).also { message -> message.interestedIn("@behovId") }
+                    }
                     .also {
                         val behovId = it["@behovId"].asUUID().toString()
                         withLoggingContext("behovId" to behovId) {
                             sikkerlogg.info { "sender behov for ${behovMap.keys}:\n${it.toJson()}}" }
                             logger.info { "sender behov for ${behovMap.keys}" }
-                            val currentSpan = Span.current()
-                            currentSpan.setAttribute("app.behovId", behovId)
-                            behovMap.keys.forEach { behovNavn ->
-                                currentSpan.addEvent(
-                                    "Publiserer behov",
-                                    Attributes.of(AttributeKey.stringKey("behov"), behovNavn, AttributeKey.stringKey("behovId"), behovId),
-                                )
-                            }
+
+                            leggPåOtelTracing(behovId, behovMap)
+
                             rapidsConnection.publish(hendelse.ident(), it.toJson())
                         }
                     }
             }
+    }
+
+    private fun erFinal(antallBehov: Int) =
+        if (antallBehov == 1) {
+            mapOf("@final" to true)
+        } else {
+            emptyMap()
+        }
+
+    private fun leggPåOtelTracing(
+        behovId: String,
+        behovMap: Map<String, Map<String, Any?>>,
+    ) {
+        val currentSpan = Span.current()
+        currentSpan.setAttribute("app.behovId", behovId)
+        behovMap.keys.forEach { behovNavn ->
+            currentSpan.addEvent(
+                "Publiserer behov",
+                Attributes.of(AttributeKey.stringKey("behov"), behovNavn, AttributeKey.stringKey("behovId"), behovId),
+            )
+        }
     }
 
     private fun Map<Map<String, String>, List<Behov>>.grupperBehovTilDetaljer() =
