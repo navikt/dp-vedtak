@@ -19,6 +19,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import no.nav.dagpenger.regel.Søknadstidspunkt
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -315,6 +316,12 @@ class Behandling private constructor(
             if (avklaring.verdi) {
                 hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
                 behandling.tilstand(Avbrutt(), hendelse)
+                return
+            }
+            val søknadstidspunkt = behandling.opplysninger.finnOpplysning(Søknadstidspunkt.søknadstidspunkt).verdi
+            if (søknadstidspunkt.isAfter(behandling.behandler.skjedde.plusDays(14))) {
+                hendelse.varsel("Virkningstidspunkt ligger mer enn 14 dager fram i tid")
+                // TODO: Hva gjør vi nå? Vedtak kan ikke fattes, men dato kan heller ikke endres?
                 return
             }
 

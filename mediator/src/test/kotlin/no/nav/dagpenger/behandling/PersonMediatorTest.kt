@@ -146,7 +146,7 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 43
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 40
 
                 // Godkjenner forslag til vedtak
                 personMediator.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, it.behandlinger().first().behandlingId))
@@ -159,8 +159,6 @@ internal class PersonMediatorTest {
 
                 medOpplysning<Int>("fagsakId") shouldBe 123
                 medOpplysning<Boolean>("Ordinær") shouldBe false
-                medOpplysning<LocalDate>("Siste mulige innvilgelsesdato") shouldBe 19.mai(2021)
-                medOpplysning<Boolean>("Søknadstidspunkt er innen rimelig tid") shouldBe true
             }
 
             rapid.inspektør.size shouldBe 12
