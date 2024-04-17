@@ -17,7 +17,7 @@ internal object PostgresDataSourceBuilder {
 
     val dataSource by lazy {
         HikariDataSource().apply {
-            driverClassName = "org.postgresql.ds.PGSimpleDataSource"
+            driverClassName = org.postgresql.Driver::class.java.name
             jdbcUrl = getOrThrow(DB_URL_KEY)
             username = getOrThrow(DB_USERNAME_KEY)
             password = getOrThrow(DB_PASSWORD_KEY)
