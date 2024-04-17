@@ -17,7 +17,7 @@ internal object PostgresDataSourceBuilder {
 
     val dataSource by lazy {
         HikariDataSource().apply {
-            jdbcUrl = getOrThrow(DB_URL_KEY).ensurePrefix("jdbc:postgresql://")
+            jdbcUrl = getOrThrow(DB_URL_KEY).ensurePrefix("jdbc:postgresql://").stripCredentials()
             username = getOrThrow(DB_USERNAME_KEY)
             password = getOrThrow(DB_PASSWORD_KEY)
             maximumPoolSize = 10
@@ -56,6 +56,8 @@ internal object PostgresDataSourceBuilder {
             .migrations
             .size
 }
+
+private fun String.stripCredentials() = this.replace(Regex("://.*:.*@"), "://")
 
 private fun String.ensurePrefix(prefix: String) =
     if (this.startsWith(prefix)) {
