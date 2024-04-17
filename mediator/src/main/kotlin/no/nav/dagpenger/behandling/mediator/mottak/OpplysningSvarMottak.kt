@@ -122,7 +122,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
                                 jsonVerdi["gyldigTilOgMed"]?.asLocalDate(),
                             )
 
-                        false -> Svar(jsonVerdi, Tilstand.Faktum)
+                        false -> Svar(jsonVerdi, Tilstand.Faktum, packet["@opprettet"].asLocalDate())
                     }
                 val type = Opplysningstype.typer.single { opplysningstype -> opplysningstype.id == typeNavn }
                 val kilde = Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
