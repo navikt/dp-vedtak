@@ -15,6 +15,7 @@ object RettTilDagpenger {
                     ReellArbeidssøker.kravTilArbeidssøker,
                     Meldeplikt.registrertPåSøknadstidspunktet,
                     Rettighetstype.rettighetstype,
+                    Søknadstidspunkt.innenRimeligTid,
                 )
             }
         }

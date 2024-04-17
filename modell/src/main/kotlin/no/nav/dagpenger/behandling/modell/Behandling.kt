@@ -272,7 +272,7 @@ class Behandling private constructor(
             val trenger = behandling.hvaTrengerViNå(hendelse)
 
             if (trenger.isEmpty()) {
-                // TODO: Vi må sjekke om virkningsdato er for langt frem i tid (14 dager)? Hva gjør vi da?
+                // TODO: requireNotNull(behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())) { "Har ikke klart å avklare behandlingen" }
                 behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
