@@ -9,6 +9,7 @@ import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.RettTilDagpenger
 import no.nav.dagpenger.regel.Rettighetstype
 import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.Virkningstidspunkt
 import java.time.LocalDate
 import java.util.UUID
 
@@ -29,6 +30,7 @@ class SøknadInnsendtHendelse(
             RettTilDagpenger.regelsett,
             Rettighetstype.regelsett,
             Søknadstidspunkt.regelsett,
+            Virkningstidspunkt.regelsett,
         )
 
     override fun avklarer(): Opplysningstype<Boolean> = RettTilDagpenger.kravPåDagpenger

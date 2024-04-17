@@ -16,13 +16,13 @@ object Alderskrav {
     private val sisteMåned = Opplysningstype.somDato("Dato søker når maks alder")
     private val sisteDagIMåned = Opplysningstype.somDato("Siste mulige dag bruker kan oppfylle alderskrav")
 
-    val vilkår = Opplysningstype.somBoolsk("Oppfyller kravet til alder")
+    val oppfyllerKravet = Opplysningstype.somBoolsk("Oppfyller kravet til alder")
 
     val regelsett =
-        Regelsett("alder") {
+        Regelsett("Alder") {
             regel(aldersgrense) { oppslag(virkningsdato) { 67 } }
             regel(sisteMåned) { leggTilÅr(fødselsdato, aldersgrense) }
             regel(sisteDagIMåned) { sisteDagIMåned(sisteMåned) }
-            regel(vilkår) { førEllerLik(virkningsdato, sisteDagIMåned) }
+            regel(oppfyllerKravet) { førEllerLik(virkningsdato, sisteDagIMåned) }
         }
 }

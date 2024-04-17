@@ -10,7 +10,7 @@ object RettTilDagpenger {
         Regelsett("Krav på dagpenger") {
             regel(kravPåDagpenger) {
                 alle(
-                    Alderskrav.vilkår,
+                    Alderskrav.oppfyllerKravet,
                     Minsteinntekt.minsteinntekt,
                     ReellArbeidssøker.kravTilArbeidssøker,
                     Meldeplikt.registrertPåSøknadstidspunktet,
