@@ -160,7 +160,7 @@ internal class PersonMediatorTest {
                 medOpplysning<Int>("fagsakId") shouldBe 123
                 medOpplysning<Boolean>("Ordinær") shouldBe false
                 medOpplysning<LocalDate>("Siste mulige innvilgelsesdato") shouldBe 19.mai(2021)
-                medOpplysning<Boolean>("Innen rimelig tid") shouldBe true
+                medOpplysning<Boolean>("Søknadstidspunkt er innen rimelig tid") shouldBe true
             }
 
             rapid.inspektør.size shouldBe 12

@@ -17,7 +17,7 @@ object Søknadstidspunkt {
 
     val rimeligTid = Opplysningstype.somHeltall("Rimelig tid")
     val sisteMuligeInnvilgelsesdato = Opplysningstype.somDato("Siste mulige innvilgelsesdato")
-    val innenRimeligTid = Opplysningstype.somBoolsk("Innen rimelig tid")
+    val innenRimeligTid = Opplysningstype.somBoolsk("Søknadstidspunkt er innen rimelig tid")
 
     val regelsett =
         Regelsett("Søknadstidspunkt").apply {
@@ -25,7 +25,7 @@ object Søknadstidspunkt {
 
             // TODO: Gjør en vurdering om dette er regel eller avklaring
             regel(rimeligTid) { oppslag(søknadstidspunkt) { 14 } }
-            regel(sisteMuligeInnvilgelsesdato) { leggTilDager(søknadstidspunkt, rimeligTid) }
+            regel(sisteMuligeInnvilgelsesdato) { leggTilDager(søknadsdato, rimeligTid) }
             regel(innenRimeligTid) { førEllerLik(søknadstidspunkt, sisteMuligeInnvilgelsesdato) }
         }
 }
