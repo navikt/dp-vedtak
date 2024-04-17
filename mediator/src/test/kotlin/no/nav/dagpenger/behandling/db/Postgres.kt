@@ -27,22 +27,15 @@ internal object Postgres {
 
     fun setup() {
         System.setProperty(ConfigUtils.CLEAN_DISABLED, "false")
-        System.setProperty(PostgresDataSourceBuilder.DB_HOST_KEY, instance.host)
-        System.setProperty(
-            PostgresDataSourceBuilder.DB_PORT_KEY,
-            instance.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT).toString(),
-        )
-        System.setProperty(PostgresDataSourceBuilder.DB_DATABASE_KEY, instance.databaseName)
-        System.setProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY, instance.password)
+        System.setProperty(PostgresDataSourceBuilder.DB_URL_KEY, instance.jdbcUrl)
         System.setProperty(PostgresDataSourceBuilder.DB_USERNAME_KEY, instance.username)
+        System.setProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY, instance.password)
     }
 
     fun tearDown() {
-        System.clearProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY)
+        System.clearProperty(PostgresDataSourceBuilder.DB_URL_KEY)
         System.clearProperty(PostgresDataSourceBuilder.DB_USERNAME_KEY)
-        System.clearProperty(PostgresDataSourceBuilder.DB_HOST_KEY)
-        System.clearProperty(PostgresDataSourceBuilder.DB_PORT_KEY)
-        System.clearProperty(PostgresDataSourceBuilder.DB_DATABASE_KEY)
+        System.clearProperty(PostgresDataSourceBuilder.DB_PASSWORD_KEY)
         System.clearProperty(ConfigUtils.CLEAN_DISABLED)
     }
 
