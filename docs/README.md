@@ -1,5 +1,7 @@
 # dp-behandling
 
+Behandler alle ulike hendelser på dagpenger.
+
 ## Implementasjonsmodell for behandling
 
 - [Behandling og opplysninger](./opplysning/README.md)
