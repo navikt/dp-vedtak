@@ -49,6 +49,11 @@ internal class OpplysningSvarMottak(
         }.register(this)
     }
 
+    private val skipBehovId =
+        listOf(
+            "517a5891-cb98-4f7b-a9c1-53f58a5c41ab",
+        )
+
     @WithSpan
     override fun onPacket(
         packet: JsonMessage,
@@ -57,10 +62,15 @@ internal class OpplysningSvarMottak(
         val behovId = packet["@behovId"].asText()
         val behandlingId = packet["behandlingId"].asUUID()
         addOtelAttributes(behovId, behandlingId)
+
         withLoggingContext(
             "behovId" to behovId.toString(),
             "behandlingId" to behandlingId.toString(),
         ) {
+            if (skipBehovId.contains(behovId)) {
+                logger.info { "Mottok svar på en opplysning som skal ignoreres" }
+                return
+            }
             logger.info { "Mottok svar på en opplysning" }
             val message = OpplysningSvarMessage(packet)
             message.behandle(messageMediator, context)
