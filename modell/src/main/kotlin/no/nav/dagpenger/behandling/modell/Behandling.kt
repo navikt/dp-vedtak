@@ -268,6 +268,7 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.info("Behandlingen er allerede i gang, ignorerer manuell behandling")
+            // TODO: Kanskje vi faktisk vil avbryte her?
         }
 
         override fun håndter(
