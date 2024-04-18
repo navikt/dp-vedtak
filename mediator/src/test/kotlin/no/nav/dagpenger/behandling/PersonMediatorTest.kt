@@ -102,7 +102,7 @@ internal class PersonMediatorTest {
              */
             rapid.harBehov(InntektId) {
                 medDato(SisteAvsluttendeKalenderMåned) shouldBe 31.mars(2021)
-                medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.mars(2018)
+                medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
                 opptjeningsperiodeEr(måneder = 36)
             }
             testPerson.løsBehov(InntektId)
@@ -224,7 +224,7 @@ internal class PersonMediatorTest {
         }
 
     private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {
-        val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned))
+        val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned)) + Period.ofMonths(1)
         withClue("Opptjeningsperiode skal være 3 år") { periode.toTotalMonths() shouldBe måneder }
     }
 }

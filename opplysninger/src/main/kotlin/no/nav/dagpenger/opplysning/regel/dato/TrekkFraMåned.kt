@@ -14,7 +14,7 @@ class TrekkFraMåned internal constructor(
     override fun kjør(opplysninger: LesbarOpplysninger): LocalDate {
         val utgangspunkt = opplysninger.finnOpplysning(dato).verdi
         val minusMnd = opplysninger.finnOpplysning(antallMnd).verdi.toLong()
-        val minus = utgangspunkt.minusMonths(minusMnd)
+        val minus = utgangspunkt.minusMonths(minusMnd - 1)
 
         return when {
             førsteDagIMåned -> minus.withDayOfMonth(1)
