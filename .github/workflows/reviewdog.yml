@@ -3,6 +3,8 @@ on:
   push:
     branches-ignore:
       - 'dependabot/**'
+    paths-ignore:
+      - 'docs/**'
 jobs:
   code-style-violations:
     name: Check coding style violations
