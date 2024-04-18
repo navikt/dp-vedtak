@@ -240,7 +240,7 @@ class Behandling private constructor(
             hendelse: ManuellBehandlingAvklartHendelse,
         ) {
             if (hendelse.behandlesManuelt) {
-                behandling.tilstand(Avbrutt(), hendelse)
+                behandling.tilstand(Avbrutt(årsak = "Skal behandles manuelt"), hendelse)
                 return
             }
             behandling.tilstand(UnderBehandling(), hendelse)
@@ -287,7 +287,7 @@ class Behandling private constructor(
                 val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
                 if (avklaring.verdi) {
                     hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
-                    behandling.tilstand(Avbrutt(), hendelse)
+                    behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag"), hendelse)
                     return
                 }
 
@@ -332,7 +332,7 @@ class Behandling private constructor(
             val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
             if (avklaring.verdi) {
                 hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
-                behandling.tilstand(Avbrutt(), hendelse)
+                behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag"), hendelse)
                 return
             }
             val søknadstidspunkt = behandling.opplysninger.finnOpplysning(Søknadstidspunkt.søknadstidspunkt).verdi
@@ -346,7 +346,8 @@ class Behandling private constructor(
         }
     }
 
-    private data class Avbrutt(override val opprettet: LocalDateTime = LocalDateTime.now()) : BehandlingTilstand {
+    private data class Avbrutt(override val opprettet: LocalDateTime = LocalDateTime.now(), val årsak: String? = null) :
+        BehandlingTilstand {
         override val type = TilstandType.Avbrutt
 
         override fun entering(
@@ -354,7 +355,11 @@ class Behandling private constructor(
             hendelse: PersonHendelse,
         ) {
             hendelse.info("Behandling avbrutt")
-            hendelse.hendelse(BehandlingHendelser.AvbrytBehandlingHendelse, "Behandling avbrutt")
+            hendelse.hendelse(
+                BehandlingHendelser.AvbrytBehandlingHendelse,
+                "Behandling avbrutt",
+                årsak?.let { mapOf("årsak" to it) } ?: emptyMap(),
+            )
             behandling.observatører.forEach { it.avbrutt() }
         }
 
