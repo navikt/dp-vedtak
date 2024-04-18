@@ -55,7 +55,6 @@ spec:
   gcp:
     sqlInstances:
       - type: POSTGRES_15
-        name: dp-behandling-v2
         highAvailability: true
         diskAutoresize: true
         pointInTimeRecovery: true
