@@ -10,7 +10,7 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 |KanJobbeHvorSomHelst | Kan jobbe i hele Norge | Boolsk|boolean|
 |HelseTilAlleTyperJobb | Kan ta alle typer arbeid | Boolsk|boolean|
 |VilligTilÅBytteYrke | Villig til å bytte yrke | Boolsk|boolean|
-|Ordinær | Har rett til ordinære dagpenger | Boolsk|boolean|
+|Ordinær | Har rett til ordinære dagpenger gjennom arbeidsforhold | Boolsk|boolean|
 |Permittert | Har rett til dagpenger under permittering | Boolsk|boolean|
 |Lønnsgaranti | Har rett til dagpenger etter konkurs | Boolsk|boolean|
 |PermittertFiskeforedling | Har rett til dagpenger under permittering i fiskeforedlingsindustri | Boolsk|boolean|

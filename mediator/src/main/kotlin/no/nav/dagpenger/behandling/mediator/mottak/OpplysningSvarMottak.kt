@@ -232,7 +232,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
         context: MessageContext,
     ) {
         withLoggingContext(hendelse.kontekstMap()) {
-            logger.info { "Behandler svar på opplysning" }
+            logger.info { "Behandler svar på opplysninger: ${hendelse.opplysninger.map { it.opplysningstype.id }}" }
             mediator.behandle(hendelse, this, context)
         }
     }

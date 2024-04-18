@@ -146,7 +146,7 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 40
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 42
 
                 // Godkjenner forslag til vedtak
                 personMediator.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, it.behandlinger().first().behandlingId))

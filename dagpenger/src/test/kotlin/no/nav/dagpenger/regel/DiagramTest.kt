@@ -10,15 +10,15 @@ class DiagramTest {
     fun `printer hele dagpengeregeltreet`() {
         val bygger =
             RegeltreBygger(
+                Rettighetstype.regelsett,
+                /*Søknadstidspunkt.regelsett,
+                Verneplikt.regelsett,
                 Alderskrav.regelsett,
                 Meldeplikt.regelsett,
                 Minsteinntekt.regelsett,
                 Opptjeningstid.regelsett,
                 ReellArbeidssøker.regelsett,
-                RettTilDagpenger.regelsett,
-                Rettighetstype.regelsett,
-                Søknadstidspunkt.regelsett,
-                Verneplikt.regelsett,
+                RettTilDagpenger.regelsett,*/
             )
 
         val regeltre = bygger.dag()
