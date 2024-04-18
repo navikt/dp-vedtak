@@ -283,6 +283,14 @@ class Behandling private constructor(
 
             if (trenger.isEmpty()) {
                 // TODO: requireNotNull(behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())) { "Har ikke klart å avklare behandlingen" }
+
+                val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
+                if (avklaring.verdi) {
+                    hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
+                    behandling.tilstand(Avbrutt(), hendelse)
+                    return
+                }
+
                 behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
