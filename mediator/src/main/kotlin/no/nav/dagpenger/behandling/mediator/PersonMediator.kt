@@ -88,7 +88,6 @@ internal class PersonMediator(
     private fun hentEllerOpprettPerson(hendelse: PersonHendelse): Person {
         val person = personRepository.hent(hendelse.ident().tilPersonIdentfikator())
         return person ?: Person(Ident(hendelse.ident()))
-            .also { logger.error { "Oppretter default person 👨🏽" } } // TODO: Fjern når vi har database
     }
 
     @WithSpan
