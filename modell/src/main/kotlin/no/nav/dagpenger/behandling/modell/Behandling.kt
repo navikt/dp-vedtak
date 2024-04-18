@@ -19,6 +19,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import java.time.LocalDateTime
 import java.util.UUID
@@ -288,6 +289,14 @@ class Behandling private constructor(
                 if (avklaring.verdi) {
                     hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
                     behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag"), hendelse)
+                    return
+                }
+
+                // TODO: Dette burde vel også vært en avklaring-ting
+                val kravTilInntekt = behandling.opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt)
+                if (kravTilInntekt.verdi) {
+                    hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")
+                    behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag på grunn av inntekt"), hendelse)
                     return
                 }
 
