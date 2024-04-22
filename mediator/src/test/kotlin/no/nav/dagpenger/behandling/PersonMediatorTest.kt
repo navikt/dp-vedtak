@@ -98,12 +98,15 @@ internal class PersonMediatorTest {
             testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
             /**
-             * Fastsetter opptjeningsperiode
+             * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
              */
             rapid.harBehov(InntektId) {
-                medDato(SisteAvsluttendeKalenderMåned) shouldBe 31.mars(2021)
-                medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
-                opptjeningsperiodeEr(måneder = 36)
+                medDato("Virkningsdato") shouldBe 5.mai(2021)
+                /**
+                 * TODO: Vi må ta vekk opptjeningsperiode fra dp-inntekt og skive om måten dp-inntekt lagrer inntekt på beregningsdato
+                 * medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
+                 * opptjeningsperiodeEr(måneder = 36)
+                 */
             }
             testPerson.løsBehov(InntektId)
 
