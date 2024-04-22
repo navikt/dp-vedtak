@@ -82,12 +82,6 @@ internal class PersonMediatorTest {
             rapid.harHendelse("behandling_opprettet", offset = 2)
 
             /**
-             * Avklarer om den krever manuell behandling
-             */
-            rapid.harBehov(AvklaringManuellBehandling.name)
-            testPerson.løsBehov(AvklaringManuellBehandling.name)
-
-            /**
              * Fastsetter søknadstidspunkt
              */
             rapid.harBehov("Søknadstidspunkt") {
@@ -142,6 +136,12 @@ internal class PersonMediatorTest {
             rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
             testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
 
+            /**
+             * Avklarer om den krever manuell behandling
+             */
+            rapid.harBehov(AvklaringManuellBehandling.name)
+            testPerson.løsBehov(AvklaringManuellBehandling.name, false)
+
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe false
             }
@@ -164,7 +164,7 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 12
+            rapid.inspektør.size shouldBe 11
         }
 
     @Test
@@ -182,7 +182,6 @@ internal class PersonMediatorTest {
             /**
              * Avklarer om den krever manuell behandling
              */
-            rapid.harBehov(AvklaringManuellBehandling.name)
             testPerson.løsBehov(AvklaringManuellBehandling.name, true)
 
             rapid.harHendelse("behandling_avbrutt") {
@@ -203,11 +202,6 @@ internal class PersonMediatorTest {
                 )
             testPerson.sendSøknad()
             rapid.harHendelse("behandling_opprettet", offset = 2)
-
-            /**
-             * Avklarer om den krever manuell behandling
-             */
-            rapid.harBehov(AvklaringManuellBehandling.name)
 
             /**
              * Avbryter behandlingen før svar på manuell behandling (feks skjerming av person)
