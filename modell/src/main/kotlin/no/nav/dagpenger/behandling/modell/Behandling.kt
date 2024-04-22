@@ -230,20 +230,8 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.info("Mottatt søknad og startet behandling")
-            hendelse.varsel(Behandlingsvarsler.SØKNAD_MOTTATT)
             hendelse.hendelse(BehandlingHendelser.BehandlingOpprettetHendelse, "Behandling opprettet")
 
-            hendelse.behov(BehandlingBehov.AvklaringManuellBehandling, "Trenger informasjon for å avklare manuell behandling")
-        }
-
-        override fun håndter(
-            behandling: Behandling,
-            hendelse: ManuellBehandlingAvklartHendelse,
-        ) {
-            if (hendelse.behandlesManuelt) {
-                behandling.tilstand(Avbrutt(årsak = "Skal behandles manuelt"), hendelse)
-                return
-            }
             behandling.tilstand(UnderBehandling(), hendelse)
         }
     }
@@ -261,15 +249,6 @@ class Behandling private constructor(
             if (trenger.isEmpty()) {
                 behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
-        }
-
-        override fun håndter(
-            behandling: Behandling,
-            hendelse: ManuellBehandlingAvklartHendelse,
-        ) {
-            hendelse.kontekst(this)
-            hendelse.info("Behandlingen er allerede i gang, ignorerer manuell behandling")
-            // TODO: Kanskje vi faktisk vil avbryte her?
         }
 
         override fun håndter(
@@ -300,8 +279,22 @@ class Behandling private constructor(
                     return
                 }
 
-                behandling.tilstand(ForslagTilVedtak(), hendelse)
+                hendelse.behov(BehandlingBehov.AvklaringManuellBehandling, "Trenger informasjon for å avklare manuell behandling")
             }
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: ManuellBehandlingAvklartHendelse,
+        ) {
+            // Her vet vi at det skal være avslag på grunn av minste arbeidsinntekt.
+            // TODO: Bruk dette til ruting mellom automatisk vedtak og manuell behandling
+            if (hendelse.behandlesManuelt) {
+                behandling.tilstand(Avbrutt(årsak = "Skal behandles manuelt"), hendelse)
+                return
+            }
+
+            behandling.tilstand(ForslagTilVedtak(), hendelse)
         }
     }
 
