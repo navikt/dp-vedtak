@@ -279,6 +279,13 @@ class Behandling private constructor(
                     return
                 }
 
+                val søknadstidspunkt = behandling.opplysninger.finnOpplysning(Søknadstidspunkt.søknadstidspunkt).verdi
+                if (søknadstidspunkt.isAfter(behandling.behandler.skjedde.plusDays(14))) {
+                    hendelse.info("Behandling kunne vært automatisk avslag, men ligger for langt fram i tid")
+                    behandling.tilstand(Avbrutt(årsak = "Virkningstidspunkt ligger mer enn 14 dager fram i tid"), hendelse)
+                    return
+                }
+
                 hendelse.behov(BehandlingBehov.AvklaringManuellBehandling, "Trenger informasjon for å avklare manuell behandling")
             }
         }
@@ -328,19 +335,6 @@ class Behandling private constructor(
             if (behandling.opplysninger.finnAlle().any { it is Hypotese<*> }) {
                 // TODO: Vi bør sannsynligvis gjøre dette
                 // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
-            }
-            // TODO: Flikk ut alle som ikke kan avslås
-            val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
-            if (avklaring.verdi) {
-                hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
-                behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag"), hendelse)
-                return
-            }
-            val søknadstidspunkt = behandling.opplysninger.finnOpplysning(Søknadstidspunkt.søknadstidspunkt).verdi
-            if (søknadstidspunkt.isAfter(behandling.behandler.skjedde.plusDays(14))) {
-                hendelse.varsel("Virkningstidspunkt ligger mer enn 14 dager fram i tid")
-                // TODO: Hva gjør vi nå? Vedtak kan ikke fattes, men dato kan heller ikke endres?
-                return
             }
 
             behandling.tilstand(Ferdig(), hendelse)
