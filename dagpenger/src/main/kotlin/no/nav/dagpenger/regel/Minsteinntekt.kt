@@ -43,7 +43,7 @@ object Minsteinntekt {
         Regelsett("Minsteinntekt") {
             regel(maksPeriodeLengde) { oppslag(virkningsdato) { 36 } }
             regel(førsteMånedAvOpptjeningsperiode) { trekkFraMånedTilFørste(sisteAvsluttendendeKalenderMåned, maksPeriodeLengde) }
-            regel(inntektId) { innhentMed(virkningsdato) }
+            regel(inntektId) { innhentMed(virkningsdato, sisteAvsluttendendeKalenderMåned, førsteMånedAvOpptjeningsperiode) }
 
             regel(grunnbeløp) { oppslag(virkningsdato) { grunnbeløpFor(it) } }
 
