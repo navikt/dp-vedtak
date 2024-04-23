@@ -288,13 +288,12 @@ class Behandling private constructor(
             hendelse: ManuellBehandlingAvklartHendelse,
         ) {
             // Her vet vi at det skal være avslag på grunn av minste arbeidsinntekt.
-            // TODO: Bruk dette til ruting mellom automatisk vedtak og manuell behandling
             if (hendelse.behandlesManuelt) {
-                behandling.tilstand(Avbrutt(årsak = "Skal behandles manuelt"), hendelse)
+                behandling.tilstand(ForslagTilVedtak(), hendelse)
                 return
             }
 
-            behandling.tilstand(ForslagTilVedtak(), hendelse)
+            behandling.tilstand(Ferdig(), hendelse)
         }
     }
 
