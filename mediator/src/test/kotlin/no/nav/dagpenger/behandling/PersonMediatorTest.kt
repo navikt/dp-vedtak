@@ -19,8 +19,6 @@ import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPos
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.BehandlingBehov.AvklaringManuellBehandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
-import no.nav.dagpenger.behandling.modell.UUIDv7
-import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
@@ -78,63 +76,7 @@ internal class PersonMediatorTest {
                     rapid,
                     søknadstidspunkt = 5.mai(2021),
                 )
-            testPerson.sendSøknad()
-            rapid.harHendelse("behandling_opprettet", offset = 2)
-
-            /**
-             * Fastsetter søknadstidspunkt
-             */
-            rapid.harBehov("Søknadstidspunkt") {
-                medTekst("søknad_uuid") shouldNotBe testPerson.søknadId
-                medNode("InnsendtSøknadsId")["urn"].asText() shouldBe "urn:soknad:${testPerson.søknadId}"
-            }
-            rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
-            testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
-
-            /**
-             * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
-             */
-            rapid.harBehov(InntektId) {
-                medDato("Virkningsdato") shouldBe 5.mai(2021)
-                /**
-                 * TODO: Vi må ta vekk opptjeningsperiode fra dp-inntekt og skive om måten dp-inntekt lagrer inntekt på beregningsdato
-                 * medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
-                 * opptjeningsperiodeEr(måneder = 36)
-                 */
-            }
-            testPerson.løsBehov(InntektId)
-
-            /**
-             * Sjekker kravene til inntekt
-             */
-            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-
-            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
-
-            /**
-             * Sjekker om mulig verneplikt
-             */
-            rapid.harBehov(Verneplikt)
-            testPerson.løsBehov(Verneplikt)
-
-            /**
-             * Sjekker kravene til reell arbeidssøker
-             */
-            rapid.harBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
-            testPerson.løsBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
-
-            /**
-             * Sjekker kravet til registrering som arbeidssøker
-             */
-            rapid.harBehov(RegistrertSomArbeidssøker)
-            testPerson.løsBehov(RegistrertSomArbeidssøker)
-
-            /**
-             * Innhenter rettighetstype
-             */
-            rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
-            testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+            løsBehandlingFramTilFerdig(testPerson)
 
             /**
              * Avklarer om den krever manuell behandling
@@ -142,17 +84,10 @@ internal class PersonMediatorTest {
             rapid.harBehov(AvklaringManuellBehandling.name)
             testPerson.løsBehov(AvklaringManuellBehandling.name, false)
 
-            rapid.harHendelse("forslag_til_vedtak") {
-                medBoolsk("utfall") shouldBe false
-            }
-
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
                 it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 42
-
-                // Godkjenner forslag til vedtak
-                personMediator.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, it.behandlinger().first().behandlingId))
             }
 
             rapid.harHendelse("vedtak_fattet") {
@@ -164,7 +99,7 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 11
+            rapid.inspektør.size shouldBe 10
         }
 
     @Test
@@ -176,19 +111,19 @@ internal class PersonMediatorTest {
                     rapid,
                     søknadstidspunkt = 5.mai(2021),
                 )
-            testPerson.sendSøknad()
-            rapid.harHendelse("behandling_opprettet", offset = 2)
+
+            løsBehandlingFramTilFerdig(testPerson)
 
             /**
              * Avklarer om den krever manuell behandling
              */
             testPerson.løsBehov(AvklaringManuellBehandling.name, true)
 
-            rapid.harHendelse("behandling_avbrutt") {
+            rapid.harHendelse("forslag_til_vedtak") {
                 medTekst("søknadId") shouldBe testPerson.søknadId
             }
 
-            rapid.inspektør.size shouldBe 3
+            rapid.inspektør.size shouldBe 10
         }
 
     @Test
@@ -219,6 +154,66 @@ internal class PersonMediatorTest {
 
             rapid.inspektør.size shouldBe 3
         }
+
+    private fun løsBehandlingFramTilFerdig(testPerson: TestPerson) {
+        testPerson.sendSøknad()
+        rapid.harHendelse("behandling_opprettet", offset = 2)
+
+        /**
+         * Fastsetter søknadstidspunkt
+         */
+        rapid.harBehov("Søknadstidspunkt") {
+            medTekst("søknad_uuid") shouldNotBe testPerson.søknadId
+            medNode("InnsendtSøknadsId")["urn"].asText() shouldBe "urn:soknad:${testPerson.søknadId}"
+        }
+        rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
+        testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
+
+        /**
+         * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
+         */
+        rapid.harBehov(InntektId) {
+            medDato("Virkningsdato") shouldBe 5.mai(2021)
+            /**
+             * TODO: Vi må ta vekk opptjeningsperiode fra dp-inntekt og skive om måten dp-inntekt lagrer inntekt på beregningsdato
+             * medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
+             * opptjeningsperiodeEr(måneder = 36)
+             */
+        }
+        testPerson.løsBehov(InntektId)
+
+        /**
+         * Sjekker kravene til inntekt
+         */
+        rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+        rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+
+        testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
+
+        /**
+         * Sjekker om mulig verneplikt
+         */
+        rapid.harBehov(Verneplikt)
+        testPerson.løsBehov(Verneplikt)
+
+        /**
+         * Sjekker kravene til reell arbeidssøker
+         */
+        rapid.harBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
+        testPerson.løsBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
+
+        /**
+         * Sjekker kravet til registrering som arbeidssøker
+         */
+        rapid.harBehov(RegistrertSomArbeidssøker)
+        testPerson.løsBehov(RegistrertSomArbeidssøker)
+
+        /**
+         * Innhenter rettighetstype
+         */
+        rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+        testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+    }
 
     private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {
         val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned)) + Period.ofMonths(1)
