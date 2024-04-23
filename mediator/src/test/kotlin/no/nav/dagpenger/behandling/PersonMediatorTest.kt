@@ -35,7 +35,6 @@ import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.Period
@@ -77,63 +76,7 @@ internal class PersonMediatorTest {
                     rapid,
                     søknadstidspunkt = 5.mai(2021),
                 )
-            testPerson.sendSøknad()
-            rapid.harHendelse("behandling_opprettet", offset = 2)
-
-            /**
-             * Fastsetter søknadstidspunkt
-             */
-            rapid.harBehov("Søknadstidspunkt") {
-                medTekst("søknad_uuid") shouldNotBe testPerson.søknadId
-                medNode("InnsendtSøknadsId")["urn"].asText() shouldBe "urn:soknad:${testPerson.søknadId}"
-            }
-            rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
-            testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
-
-            /**
-             * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
-             */
-            rapid.harBehov(InntektId) {
-                medDato("Virkningsdato") shouldBe 5.mai(2021)
-                /**
-                 * TODO: Vi må ta vekk opptjeningsperiode fra dp-inntekt og skive om måten dp-inntekt lagrer inntekt på beregningsdato
-                 * medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
-                 * opptjeningsperiodeEr(måneder = 36)
-                 */
-            }
-            testPerson.løsBehov(InntektId)
-
-            /**
-             * Sjekker kravene til inntekt
-             */
-            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-
-            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
-
-            /**
-             * Sjekker om mulig verneplikt
-             */
-            rapid.harBehov(Verneplikt)
-            testPerson.løsBehov(Verneplikt)
-
-            /**
-             * Sjekker kravene til reell arbeidssøker
-             */
-            rapid.harBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
-            testPerson.løsBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
-
-            /**
-             * Sjekker kravet til registrering som arbeidssøker
-             */
-            rapid.harBehov(RegistrertSomArbeidssøker)
-            testPerson.løsBehov(RegistrertSomArbeidssøker)
-
-            /**
-             * Innhenter rettighetstype
-             */
-            rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
-            testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+            løsBehandlingFramTilFerdig(testPerson)
 
             /**
              * Avklarer om den krever manuell behandling
@@ -160,7 +103,6 @@ internal class PersonMediatorTest {
         }
 
     @Test
-    @Disabled("Mangler implementasjon")
     fun `e2e av søknad innsendt som krever manuell behandling`() =
         withMigratedDb {
             val testPerson =
@@ -169,8 +111,8 @@ internal class PersonMediatorTest {
                     rapid,
                     søknadstidspunkt = 5.mai(2021),
                 )
-            testPerson.sendSøknad()
-            rapid.harHendelse("behandling_opprettet", offset = 2)
+
+            løsBehandlingFramTilFerdig(testPerson)
 
             /**
              * Avklarer om den krever manuell behandling
@@ -181,7 +123,7 @@ internal class PersonMediatorTest {
                 medTekst("søknadId") shouldBe testPerson.søknadId
             }
 
-            rapid.inspektør.size shouldBe 3
+            rapid.inspektør.size shouldBe 10
         }
 
     @Test
@@ -212,6 +154,66 @@ internal class PersonMediatorTest {
 
             rapid.inspektør.size shouldBe 3
         }
+
+    private fun løsBehandlingFramTilFerdig(testPerson: TestPerson) {
+        testPerson.sendSøknad()
+        rapid.harHendelse("behandling_opprettet", offset = 2)
+
+        /**
+         * Fastsetter søknadstidspunkt
+         */
+        rapid.harBehov("Søknadstidspunkt") {
+            medTekst("søknad_uuid") shouldNotBe testPerson.søknadId
+            medNode("InnsendtSøknadsId")["urn"].asText() shouldBe "urn:soknad:${testPerson.søknadId}"
+        }
+        rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
+        testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
+
+        /**
+         * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
+         */
+        rapid.harBehov(InntektId) {
+            medDato("Virkningsdato") shouldBe 5.mai(2021)
+            /**
+             * TODO: Vi må ta vekk opptjeningsperiode fra dp-inntekt og skive om måten dp-inntekt lagrer inntekt på beregningsdato
+             * medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
+             * opptjeningsperiodeEr(måneder = 36)
+             */
+        }
+        testPerson.løsBehov(InntektId)
+
+        /**
+         * Sjekker kravene til inntekt
+         */
+        rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+        rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+
+        testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
+
+        /**
+         * Sjekker om mulig verneplikt
+         */
+        rapid.harBehov(Verneplikt)
+        testPerson.løsBehov(Verneplikt)
+
+        /**
+         * Sjekker kravene til reell arbeidssøker
+         */
+        rapid.harBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
+        testPerson.løsBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
+
+        /**
+         * Sjekker kravet til registrering som arbeidssøker
+         */
+        rapid.harBehov(RegistrertSomArbeidssøker)
+        testPerson.løsBehov(RegistrertSomArbeidssøker)
+
+        /**
+         * Innhenter rettighetstype
+         */
+        rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+        testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+    }
 
     private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {
         val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned)) + Period.ofMonths(1)
