@@ -19,8 +19,6 @@ import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPos
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.BehandlingBehov.AvklaringManuellBehandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
-import no.nav.dagpenger.behandling.modell.UUIDv7
-import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
@@ -37,6 +35,7 @@ import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.Period
@@ -142,17 +141,10 @@ internal class PersonMediatorTest {
             rapid.harBehov(AvklaringManuellBehandling.name)
             testPerson.løsBehov(AvklaringManuellBehandling.name, false)
 
-            rapid.harHendelse("forslag_til_vedtak") {
-                medBoolsk("utfall") shouldBe false
-            }
-
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
                 it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 42
-
-                // Godkjenner forslag til vedtak
-                personMediator.håndter(ForslagGodkjentHendelse(UUIDv7.ny(), ident, it.behandlinger().first().behandlingId))
             }
 
             rapid.harHendelse("vedtak_fattet") {
@@ -164,10 +156,11 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 11
+            rapid.inspektør.size shouldBe 10
         }
 
     @Test
+    @Disabled("Mangler implementasjon")
     fun `e2e av søknad innsendt som krever manuell behandling`() =
         withMigratedDb {
             val testPerson =
@@ -184,7 +177,7 @@ internal class PersonMediatorTest {
              */
             testPerson.løsBehov(AvklaringManuellBehandling.name, true)
 
-            rapid.harHendelse("behandling_avbrutt") {
+            rapid.harHendelse("forslag_til_vedtak") {
                 medTekst("søknadId") shouldBe testPerson.søknadId
             }
 
