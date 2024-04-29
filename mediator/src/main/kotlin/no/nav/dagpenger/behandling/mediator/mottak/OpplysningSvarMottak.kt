@@ -112,6 +112,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
     override val ident get() = packet["ident"].asText()
 
     private val logger = KotlinLogging.logger {}
+    private val sikkerLogger = KotlinLogging.logger("tjenestekall.OpplysningSvarMessage")
 
     private val opplysning =
         mutableListOf<OpplysningSvar<*>>().apply {
@@ -233,6 +234,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
     ) {
         withLoggingContext(hendelse.kontekstMap()) {
             logger.info { "Behandler svar på opplysninger: ${hendelse.opplysninger.map { it.opplysningstype.id }}" }
+            sikkerLogger.info { hendelse.opplysninger.joinToString("\n") { it.opplysningstype.id + ";" + it.verdi } }
             mediator.behandle(hendelse, this, context)
         }
     }
