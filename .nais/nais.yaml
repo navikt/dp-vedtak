@@ -68,7 +68,7 @@ spec:
     pool: "{{ kafka_pool }}"
   accessPolicy:
     outbound:
-      rules:
+      external:
         - host: teamdagpenger-unleash-api.nav.cloud.nais.io
     inbound:
       rules:
