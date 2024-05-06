@@ -30,6 +30,8 @@ spec:
       value: '{{flyway.cleanDisabled}}'
     - name: CLEAN_ON_STARTUP
       value: "false"
+  envFrom:
+    - secret: dp-behandling-unleash-api-token
   {{#if ingresses}}
   ingresses:
     {{#each ingresses as |url|}}
