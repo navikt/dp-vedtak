@@ -68,7 +68,7 @@ spec:
     pool: "{{ kafka_pool }}"
   accessPolicy:
     outbound:
-      - host: teamdagpenger-unleash-api.nav.cloud.nais.io
+        - host: teamdagpenger-unleash-api.nav.cloud.nais.io
     inbound:
       rules:
         - application: dp-saksbehandling-frontend
