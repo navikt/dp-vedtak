@@ -19,6 +19,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.3")
 
+    implementation("io.getunleash:unleash-client-java:9.2.0")
+
     implementation(libs.rapids.and.rivers)
     implementation(libs.konfig)
     implementation(libs.kotlin.logging)

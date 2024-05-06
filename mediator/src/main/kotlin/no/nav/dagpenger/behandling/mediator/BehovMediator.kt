@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator
 
+import io.getunleash.Unleash
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
@@ -11,7 +12,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 
-class BehovMediator(private val rapidsConnection: RapidsConnection) {
+class BehovMediator(private val rapidsConnection: RapidsConnection, private val unleash: Unleash) {
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerlogg = KotlinLogging.logger("tjenestekall.BehovMediator")
@@ -38,7 +39,9 @@ class BehovMediator(private val rapidsConnection: RapidsConnection) {
                         behovMap.values.forEach { putAll(it as Map<String, Any>) }
                     }
                     .let {
-                        JsonMessage.newNeed(behovMap.keys, it + erFinal(behovMap.size)).also { message -> message.interestedIn("@behovId") }
+                        val brukSøknadOrkestrator = mapOf("bruk-søknad-orkestrator" to unleash.isEnabled("bruk-søknad-orkestrator"))
+                        JsonMessage.newNeed(behovMap.keys, it + erFinal(behovMap.size) + brukSøknadOrkestrator)
+                            .also { message -> message.interestedIn("@behovId") }
                     }
                     .also {
                         val behovId = it["@behovId"].asUUID().toString()

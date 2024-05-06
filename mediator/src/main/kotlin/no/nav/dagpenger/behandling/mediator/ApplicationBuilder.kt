@@ -44,7 +44,7 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
         PersonMediator(
             personRepository = personRepository,
             aktivitetsloggMediator = aktivitetsloggMediator,
-            behovMediator = BehovMediator(rapidsConnection),
+            behovMediator = BehovMediator(rapidsConnection, unleash),
             hendelseMediator = HendelseMediator(rapidsConnection),
             observatører = emptySet(),
         )
