@@ -46,11 +46,15 @@ internal class PersonMediatorTest {
 
     private val personRepository = PersonRepositoryPostgres(BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres()))
 
+    private val unleash =
+        FakeUnleash().also {
+            it.enable("bruk-søknad-orkestrator")
+        }
     private val personMediator =
         PersonMediator(
             personRepository = personRepository,
             aktivitetsloggMediator = mockk(relaxed = true),
-            behovMediator = BehovMediator(rapid, FakeUnleash()),
+            behovMediator = BehovMediator(rapid, unleash),
             hendelseMediator = HendelseMediator(rapid),
             observatører = emptySet(),
         )
@@ -167,6 +171,10 @@ internal class PersonMediatorTest {
             medTekst("søknad_uuid") shouldNotBe testPerson.søknadId
             medNode("InnsendtSøknadsId")["urn"].asText() shouldBe "urn:soknad:${testPerson.søknadId}"
         }
+        rapid.harFelt {
+            medBoolsk("bruk-søknad-orkestrator") shouldBe true
+        }
+
         rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
         testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
@@ -249,6 +257,10 @@ private fun TestRapid.harBehov(
 ) {
     harBehov(behov)
     Meldingsinnhold(inspektør.message(inspektør.size - 1)[behov]).apply { block() }
+}
+
+private fun TestRapid.harFelt(block: Meldingsinnhold.() -> Unit) {
+    Meldingsinnhold(inspektør.message(inspektør.size - 1)).apply { block() }
 }
 
 private class Meldingsinnhold(private val message: JsonNode) {
