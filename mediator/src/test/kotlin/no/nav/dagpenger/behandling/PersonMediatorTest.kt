@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.getunleash.FakeUnleash
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.nulls.shouldBeNull
@@ -49,7 +50,7 @@ internal class PersonMediatorTest {
         PersonMediator(
             personRepository = personRepository,
             aktivitetsloggMediator = mockk(relaxed = true),
-            behovMediator = BehovMediator(rapid),
+            behovMediator = BehovMediator(rapid, FakeUnleash()),
             hendelseMediator = HendelseMediator(rapid),
             observatører = emptySet(),
         )
