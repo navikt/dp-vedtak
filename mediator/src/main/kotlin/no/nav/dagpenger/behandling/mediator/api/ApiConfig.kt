@@ -15,10 +15,13 @@ import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.path
+import io.ktor.server.request.uri
 import io.ktor.server.response.respond
+import no.nav.dagpenger.behandling.api.models.HttpProblemDTO
 import no.nav.dagpenger.behandling.mediator.api.auth.AuthFactory.azureAd
 import org.apache.kafka.common.errors.ResourceNotFoundException
 import org.slf4j.event.Level
+import java.net.URI
 
 internal fun Application.konfigurerApi(
     auth: AuthenticationConfig.() -> Unit = {
@@ -44,10 +47,34 @@ internal fun Application.konfigurerApi(
     }
     install(StatusPages) {
         exception<IllegalArgumentException> { call: ApplicationCall, cause: IllegalArgumentException ->
-            call.respond(HttpStatusCode.BadRequest, cause.message ?: "Feil med forespørsel")
+            val problem =
+                HttpProblemDTO(
+                    type = URI.create(call.request.uri),
+                    title = "Ugyldig forespørsel",
+                    status = HttpStatusCode.BadRequest.value,
+                    detail = cause.message ?: "Ugyldig forespørsel",
+                )
+            call.respond(HttpStatusCode.BadRequest, problem)
         }
         exception<ResourceNotFoundException> { call: ApplicationCall, cause: ResourceNotFoundException ->
-            call.respond(HttpStatusCode.NotFound, cause.message ?: "Fant ikke ressurs")
+            val problem =
+                HttpProblemDTO(
+                    type = URI.create(call.request.uri),
+                    title = "Fant ikke ressurs",
+                    status = HttpStatusCode.NotFound.value,
+                    detail = cause.message ?: "Fant ikke ressurs",
+                )
+            call.respond(HttpStatusCode.NotFound, problem)
+        }
+        exception<Throwable> { call: ApplicationCall, cause: Throwable ->
+            val problem =
+                HttpProblemDTO(
+                    type = URI.create(call.request.uri),
+                    title = "Noe gikk galt",
+                    status = HttpStatusCode.InternalServerError.value,
+                    detail = cause.message ?: "Noe gikk galt",
+                )
+            call.respond(HttpStatusCode.InternalServerError, problem)
         }
     }
 }
