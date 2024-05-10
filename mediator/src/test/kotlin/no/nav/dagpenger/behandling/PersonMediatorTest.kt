@@ -122,10 +122,22 @@ internal class PersonMediatorTest {
             /**
              * Avklarer om den krever manuell behandling
              */
-            testPerson.løsBehov(AvklaringManuellBehandling.name, true)
+            testPerson.løsBehov(
+                AvklaringManuellBehandling.name,
+                true,
+                data = mapOf("vurderinger" to listOf(mapOf("type" to "type", "utfall" to "Manuell", "begrunnelse" to "begrunnelse"))),
+            )
 
             rapid.harHendelse("forslag_til_vedtak") {
+                println(this)
                 medTekst("søknadId") shouldBe testPerson.søknadId
+                with(medNode("avklaringer")) {
+                    this.size() shouldBe 1
+                    val avklaring = this.first()
+                    avklaring["type"].asText() shouldBe "type"
+                    avklaring["begrunnelse"].asText() shouldBe "begrunnelse"
+                    avklaring["utfall"].asText() shouldBe "Manuell"
+                }
             }
 
             rapid.inspektør.size shouldBe 10

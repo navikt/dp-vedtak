@@ -28,7 +28,7 @@ internal class AvklaringManuellBehandlingMottak(
             validate { it.requireKey("@løsning") }
             validate { it.requireKey("behandlingId") }
             validate { it.requireValue("@final", true) }
-            validate { it.interestedIn("@id", "@opprettet", "@behovId") }
+            validate { it.interestedIn("@id", "@opprettet", "@behovId", "vurderinger") }
         }.register(this)
     }
 
@@ -74,6 +74,10 @@ internal class ManuellBehandlingAvklartMessage(private val packet: JsonMessage) 
                 ident,
                 behandlingId = packet["behandlingId"].asUUID(),
                 behandlesManuelt = packet["@løsning"]["AvklaringManuellBehandling"].asBoolean(),
+                avklaringer =
+                    packet["vurderinger"].map {
+                        ManuellBehandlingAvklartHendelse.Avklaring(it["type"].asText(), it["utfall"].asText(), it["begrunnelse"].asText())
+                    },
             )
     override val ident get() = packet["ident"].asText()
 

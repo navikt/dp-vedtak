@@ -313,12 +313,27 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.info("Alle opplysninger mottatt, lager forslag til vedtak")
+
+            // @todo: PoC for å sende avklaringer til STBS gjengen. Vi burde lage en mekanisme som tar vare på avklaringer gitt en behandling.
+            val avklaringer =
+                if (hendelse is ManuellBehandlingAvklartHendelse) {
+                    hendelse.avklaringer.filter { it.utfall == "Manuell" }.map {
+                        mapOf(
+                            "type" to it.type,
+                            "utfall" to it.utfall,
+                            "begrunnelse" to it.begrunnelse,
+                        )
+                    }
+                } else {
+                    emptyList()
+                }
             hendelse.hendelse(
                 BehandlingHendelser.ForslagTilVedtakHendelse,
                 "Foreslår vedtak",
                 mapOf(
                     "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).verdi,
                     "harAvklart" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).opplysningstype.navn,
+                    "avklaringer" to avklaringer,
                 ),
             )
             behandling.observatører.forEach { it.forslagTilVedtak() }

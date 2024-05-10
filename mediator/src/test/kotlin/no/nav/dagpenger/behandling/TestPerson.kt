@@ -52,13 +52,15 @@ class TestPerson(
     fun løsBehov(
         behov: String,
         løsning: Any,
+        data: Map<String, Any> = emptyMap(),
     ) {
-        rapid.sendTestMessage(løstBehov(mapOf(behov to løsning), false))
+        rapid.sendTestMessage(løstBehov(mapOf(behov to løsning), false, data))
     }
 
     private fun løstBehov(
         løsninger: Map<String, Any>,
         opplysningsbehov: Boolean = true,
+        data: Map<String, Any> = emptyMap(),
     ) = JsonMessage.newMessage(
         "behov",
         mapOf(
@@ -69,7 +71,7 @@ class TestPerson(
             "@behov" to løsninger.keys.toList(),
             "@final" to true,
             "@løsning" to løsninger,
-        ),
+        ) + data,
     ).toJson()
 
     fun avbrytBehandling() {

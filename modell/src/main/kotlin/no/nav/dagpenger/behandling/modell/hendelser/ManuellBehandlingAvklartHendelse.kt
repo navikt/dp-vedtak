@@ -7,4 +7,11 @@ class ManuellBehandlingAvklartHendelse(
     ident: String,
     val behandlingId: UUID,
     val behandlesManuelt: Boolean,
-) : PersonHendelse(meldingsreferanseId, ident)
+    val avklaringer: List<Avklaring>,
+) : PersonHendelse(meldingsreferanseId, ident) {
+    data class Avklaring(
+        val type: String,
+        val utfall: String,
+        val begrunnelse: String,
+    )
+}
