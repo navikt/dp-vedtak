@@ -99,7 +99,7 @@ paths:
             schema:
               $ref: '#/components/schemas/IdentForesporsel'
       responses:
-        204:
+        201:
           description: OK
         default:
           description: Feil ved henting av behandlinger
@@ -129,94 +129,7 @@ paths:
             schema:
               $ref: '#/components/schemas/IdentForesporsel'
       responses:
-        204:
-          description: OK
-        default:
-          description: Feil ved henting av behandlinger
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/HttpProblem'
-  /behandling/{behandlingId}/opplysning/{opplysningId}:
-    parameters:
-      - name: behandlingId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: Behandlingens id
-      - name: opplysningId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: Opplysningens id
-    put:
-      summary: Overskriv en opplysning
-      operationId: oppdaterOpplysning
-      security:
-        - azureAd: [ ]
-      tags:
-        - Behandling
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - verdi
-                - begrunnelse
-              properties:
-                verdi:
-                  type: string
-                begrunnelse:
-                  type: string
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Behandling'
-          description: OK
-        default:
-          description: Feil ved henting av behandlinger
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/HttpProblem'
-  /behandling/{behandlingId}/opplysning/bekreftelse:
-    parameters:
-      - name: behandlingId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: Behandlingens id
-    post:
-      summary: Bekrefter en eller flere opplysninger
-      security:
-        - azureAd: [ ]
-      tags:
-        - Behandling
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/OpplysningsId'
-      responses:
         201:
-          headers:
-            Location:
-              schema:
-                type: string
-                description: URL til bekreftelsen
           description: OK
         default:
           description: Feil ved henting av behandlinger
@@ -224,42 +137,6 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/HttpProblem'
-  /behandling/{behandlingId}/opplysning/bekreftelse/{bekreftelseId}:
-    parameters:
-      - name: behandlingId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: Behandlingens id
-      - name: bekreftelseId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: Bekreftelsens id
-    get:
-      summary: Hent en bekreftelse
-      security:
-        - azureAd: [ ]
-      tags:
-        - Behandling
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Bekreftelse'
-          description: OK
-        default:
-          description: Feil ved henting av behandlinger
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/HttpProblem'
-
 components:
   schemas:
     IdentForesporsel:
@@ -373,33 +250,6 @@ components:
         - navn
       properties:
         navn:
-          type: string
-
-    Bekreftelse:
-      type: object
-      required:
-        - bekreftelseId
-        - bekreftet
-      properties:
-        bekreftelseId:
-          type: string
-          format: uuid
-        utført:
-          type: string
-          format: date-time
-        saksbehandler:
-          $ref: "#/components/schemas/Saksbehandler"
-        bekreftet:
-          type: array
-          items:
-            $ref: '#/components/schemas/OpplysningsId'
-
-    Saksbehandler:
-      type: object
-      required:
-        - ident
-      properties:
-        ident:
           type: string
 
     DataType:

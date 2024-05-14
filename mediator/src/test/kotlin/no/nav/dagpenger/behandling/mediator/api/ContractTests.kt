@@ -4,7 +4,9 @@ import `in`.specmatic.test.SpecmaticJUnitSupport
 import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.AZUREAD_ISSUER_ID
@@ -21,10 +23,8 @@ import no.nav.dagpenger.opplysning.UUIDv7
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Disabled
 import java.time.LocalDate
 
-@Disabled("Auth ting som ikke fungerer")
 class ContractTests : SpecmaticJUnitSupport() {
     companion object {
         private lateinit var server: ApplicationEngine
@@ -59,8 +59,9 @@ class ContractTests : SpecmaticJUnitSupport() {
                 )
             }
         private val personRepository =
-            InMemoryPersonRepository().also {
+            spyk(InMemoryPersonRepository()).also {
                 it.lagre(person)
+                every { it.hentBehandling(any()) } returns person.behandlinger().first()
             }
 
         @JvmStatic
