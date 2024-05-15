@@ -1,5 +1,6 @@
 package no.nav.dagpenger.features
 
+import io.cucumber.java.BeforeStep
 import io.cucumber.java8.No
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.opplysning.Faktum
@@ -18,8 +19,12 @@ class ReellArbeidssøkerSteg : No {
             regelsett.flatMap { it.startverdier() },
         )
 
-    init {
+    @BeforeStep
+    fun kjørRegler() {
         Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
+    }
+
+    init {
 
         Gitt("at personen søker dagpenger") {
             opplysninger.leggTil(Faktum(Søknadstidspunkt.søknadsdato, 11.mai(2022)))

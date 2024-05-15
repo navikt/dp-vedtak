@@ -24,7 +24,7 @@ class Opplysninger private constructor(
     private lateinit var regelkjøring: Regelkjøring
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
     private val basertPåOpplysninger: List<Opplysning<*>> = basertPå.flatMap { it.basertPåOpplysninger + it.opplysninger }.toList()
-    private val alleOpplysninger: List<Opplysning<*>> get() = basertPåOpplysninger + opplysninger
+    private val alleOpplysninger: List<Opplysning<*>> get() = (basertPåOpplysninger + opplysninger).filterNot { it.erErstattet }
 
     constructor() : this(UUIDv7.ny(), emptyList(), emptyList())
     constructor(id: UUID, opplysninger: List<Opplysning<*>>) : this(id, opplysninger, emptyList())
@@ -35,18 +35,28 @@ class Opplysninger private constructor(
         this.regelkjøring = regelkjøring
     }
 
-    fun leggTil(opplysning: Opplysning<*>) {
-        require(alleOpplysninger.none { it.overlapper(opplysning) }) {
-            """Opplysning ${opplysning.opplysningstype} finnes allerede med overlappende gyldighetsperiode.
-               Opplysning som legges til: ${opplysning.gyldighetsperiode}
-               Opplysning som allerede finnes: ${
-                alleOpplysninger.first {
-                    it.overlapper(
-                        opplysning,
-                    )
-                }.gyldighetsperiode
-            }"""
+    fun <T : Comparable<T>> leggTil(opplysning: Opplysning<T>) {
+        val erstattes: Opplysning<T>? = alleOpplysninger.find { it.overlapper(opplysning) } as Opplysning<T>?
+        if (erstattes !== null) {
+            if (erstattes.gyldighetsperiode.fom.isBefore(opplysning.gyldighetsperiode.fom) &&
+                (
+                    opplysning.gyldighetsperiode.tom.isAfter(
+                        erstattes.gyldighetsperiode.tom,
+                    ) || opplysning.gyldighetsperiode.tom == erstattes.gyldighetsperiode.tom
+                )
+            ) {
+                // Overlapp på halen
+                val forkorttet = erstattes.lagErstatning(opplysning)
+                erstattes.erstattesAv(forkorttet)
+                opplysninger.add(forkorttet)
+            } else if (erstattes.gyldighetsperiode == opplysning.gyldighetsperiode) {
+                // Overlapp for samme periode
+                erstattes.erstattesAv(opplysning)
+            } else {
+                throw IllegalArgumentException("Kan ikke legge til opplysning som overlapper med eksisterende opplysning")
+            }
         }
+
         opplysninger.add(opplysning)
         regelkjøring.evaluer()
     }
@@ -56,23 +66,6 @@ class Opplysninger private constructor(
             opplysninger.remove(it)
         }
         opplysninger.add(opplysning)
-        regelkjøring.evaluer()
-    }
-
-    fun erstatt(
-        opplysning: Opplysning<*>,
-        med: Opplysning<*>,
-    ) {
-        require(alleOpplysninger.contains(opplysning)) {
-            "Opplysning ${opplysning.opplysningstype} finnes ikke. Kan ikke erstatte noe som ikke finnes."
-        }
-        require(opplysning.overlapper(med)) {
-            """Opplysning ${opplysning.opplysningstype} og ${med.opplysningstype} overlapper ikke. 
-                |Kan ikke erstatte med en opplysning som ikke er lik.
-            """.trimMargin()
-        }
-        opplysninger.remove(opplysning)
-        opplysninger.add(med)
         regelkjøring.evaluer()
     }
 

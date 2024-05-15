@@ -28,7 +28,7 @@ class RegelTest {
 
         // Første forsøk på å fastsette A var feil.
         val regelkjøring2 = Regelkjøring(1.mai, opplysninger, regelsett)
-        opplysninger.erstatt(opplysning, Faktum(a, false, Gyldighetsperiode(1.januar, 2.mai)))
+        opplysninger.leggTil(Faktum(a, false, Gyldighetsperiode(1.januar, 2.mai)))
         shouldNotThrow<IllegalArgumentException> { regelkjøring2.evaluer() }
 
         // Endring av A fører til at C blir beregnet på nytt

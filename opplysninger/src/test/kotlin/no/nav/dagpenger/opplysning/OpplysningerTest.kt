@@ -43,6 +43,31 @@ class OpplysningerTest {
     }
 
     @Test
+    fun `opplysninger kan erstattes om de gjelder samme periode`() {
+        val opplysningstype = Opplysningstype.somDesimaltall("Type")
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(1.mai, opplysninger)
+
+        val gyldighetsperiode = Gyldighetsperiode(1.mai, 10.mai)
+        opplysninger.leggTil(Faktum(opplysningstype, 0.5, gyldighetsperiode))
+        opplysninger.leggTil(Faktum(opplysningstype, 1.5, gyldighetsperiode))
+
+        assertEquals(1.5, opplysninger.finnOpplysning(opplysningstype).verdi)
+    }
+
+    @Test
+    fun `opplysninger kan erstattes om de bare overlapper på halen`() {
+        val opplysningstype = Opplysningstype.somDesimaltall("Type")
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(8.mai, opplysninger)
+
+        opplysninger.leggTil(Faktum(opplysningstype, 0.5, Gyldighetsperiode(1.mai, 10.mai)))
+        opplysninger.leggTil(Faktum(opplysningstype, 1.5, Gyldighetsperiode(5.mai, 15.mai)))
+
+        assertEquals(1.5, opplysninger.finnOpplysning(opplysningstype).verdi)
+    }
+
+    @Test
     fun `opplysninger kan arve tidligere opplysninger`() {
         val opplysningstype = Opplysningstype.somDesimaltall("Type")
         val tidligereOpplysninger = Opplysninger(listOf(Faktum(opplysningstype, 0.5, Gyldighetsperiode(1.mai, 20.mai))))
@@ -53,7 +78,7 @@ class OpplysningerTest {
         assertEquals(0.5, opplysninger.finnOpplysning(opplysningstype).verdi)
 
         assertThrows<IllegalArgumentException> {
-            opplysninger.leggTil(Faktum(opplysningstype, 1.5, Gyldighetsperiode(15.mai)))
+            opplysninger.leggTil(Faktum(opplysningstype, 1.5, Gyldighetsperiode(15.mai, 18.mai)))
         }
 
         opplysninger.leggTil(Faktum(opplysningstype, 1.5, Gyldighetsperiode(21.mai)))

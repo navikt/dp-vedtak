@@ -23,4 +23,6 @@ data class Gyldighetsperiode(
             else -> "gyldig fra $fom til $tom"
         }
     }
+
+    fun kopi(tom: LocalDate) = Gyldighetsperiode(fom, tom)
 }

@@ -16,8 +16,11 @@ sealed class Opplysning<T : Comparable<T>>(
     val utledetAv: Utledning?,
     val kilde: Kilde?,
     val opprettet: LocalDateTime,
+    private val erstattetAv: MutableList<Opplysning<T>> = mutableListOf(),
 ) : Klassifiserbart by opplysningstype {
     abstract fun bekreft(): Faktum<T>
+
+    val erErstattet get() = erstattetAv.isNotEmpty()
 
     val kanRedigeres get() = utledetAv == null && opplysningstype.datatype != ULID
 
@@ -29,6 +32,12 @@ sealed class Opplysning<T : Comparable<T>>(
     override fun hashCode() = id.hashCode()
 
     override fun toString() = "${javaClass.simpleName} om ${opplysningstype.navn} har verdi: $verdi som er $gyldighetsperiode"
+
+    fun erstattesAv(opplysning: Opplysning<T>) {
+        erstattetAv.add(opplysning)
+    }
+
+    abstract fun lagErstatning(opplysning: Opplysning<T>): Opplysning<T>
 }
 
 class Hypotese<T : Comparable<T>>(
@@ -50,6 +59,17 @@ class Hypotese<T : Comparable<T>>(
     ) : this(UUIDv7.ny(), opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet)
 
     override fun bekreft() = Faktum(id, super.opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet)
+
+    override fun lagErstatning(opplysning: Opplysning<T>) =
+        Hypotese(
+            id,
+            opplysningstype,
+            verdi,
+            gyldighetsperiode.kopi(tom = opplysning.gyldighetsperiode.fom.minusDays(1)),
+            utledetAv,
+            kilde,
+            opplysning.opprettet,
+        )
 }
 
 class Faktum<T : Comparable<T>>(
@@ -71,4 +91,15 @@ class Faktum<T : Comparable<T>>(
     ) : this(UUIDv7.ny(), opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet)
 
     override fun bekreft() = this
+
+    override fun lagErstatning(opplysning: Opplysning<T>) =
+        Faktum(
+            id,
+            opplysningstype,
+            verdi,
+            gyldighetsperiode.kopi(tom = opplysning.gyldighetsperiode.fom.minusDays(1)),
+            utledetAv,
+            kilde,
+            opplysning.opprettet,
+        )
 }

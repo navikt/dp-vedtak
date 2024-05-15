@@ -164,12 +164,13 @@ class OpplysningerRepositoryPostgresTest {
             val opplysningstype = Opplysningstype.somHeltall("Heltall")
             val opplysning = Faktum(opplysningstype, 10)
             val opplysningErstattet = Faktum(opplysningstype, 20)
+            opplysning.erstattesAv(opplysning)
             val opplysninger =
                 Opplysninger(listOf(opplysning)).also {
                     Regelkjøring(LocalDate.now(), it)
                 }
             repo.lagreOpplysninger(opplysninger)
-            opplysninger.erstatt(opplysning, opplysningErstattet)
+            opplysninger.leggTil(opplysningErstattet)
             repo.lagreOpplysninger(opplysninger)
             val fraDb =
                 repo.hentOpplysninger(opplysninger.id).also {
