@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import java.time.LocalDate
@@ -23,4 +24,6 @@ abstract class StartHendelse(
     abstract fun regelsett(): List<Regelsett>
 
     abstract fun avklarer(): Opplysningstype<Boolean>
+
+    abstract fun behandling(): Behandling
 }

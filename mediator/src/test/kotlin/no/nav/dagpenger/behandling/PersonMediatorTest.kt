@@ -92,7 +92,7 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 42
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 44
             }
 
             rapid.harHendelse("vedtak_fattet") {

@@ -6,8 +6,9 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 |---|---|---|---|
 |Fødselsdato | Fødselsdato | Dato|LocalDate|
 |Verneplikt | Avtjent verneplikt | Boolsk|boolean|
-|KanJobbeDeltid | Kan jobbe heltid og deltid | Boolsk|boolean|
 |KanJobbeHvorSomHelst | Kan jobbe i hele Norge | Boolsk|boolean|
+|Bruker oppfyller kravet om unntak til mobilitet | Bruker oppfyller kravet om unntak til mobilitet | Boolsk|boolean|
+|KanJobbeDeltid | Kan jobbe heltid og deltid | Boolsk|boolean|
 |HelseTilAlleTyperJobb | Kan ta alle typer arbeid | Boolsk|boolean|
 |VilligTilÅBytteYrke | Villig til å bytte yrke | Boolsk|boolean|
 |Ordinær | Har rett til ordinære dagpenger gjennom arbeidsforhold | Boolsk|boolean|

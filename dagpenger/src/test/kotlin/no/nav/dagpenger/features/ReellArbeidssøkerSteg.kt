@@ -13,7 +13,10 @@ import org.junit.jupiter.api.Assertions.assertTrue
 class ReellArbeidssøkerSteg : No {
     private val fraDato = 10.mai(2022)
     private val regelsett = listOf(ReellArbeidssøker.regelsett, Søknadstidspunkt.regelsett)
-    private val opplysninger: Opplysninger = Opplysninger()
+    private val opplysninger: Opplysninger =
+        Opplysninger(
+            regelsett.flatMap { it.startVerdier() },
+        )
 
     init {
         Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
@@ -39,6 +42,9 @@ class ReellArbeidssøkerSteg : No {
         }
         Gitt("kan ikke ta alle typer arbeid") {
             opplysninger.leggTil(Faktum(ReellArbeidssøker.helseTilAlleTyperJobb, false))
+        }
+        Gitt("oppfyller kravet til unntak for mobilitet") {
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.unntakMobilitet, true))
         }
         Gitt("er villig til å bytte yrke eller gå ned i lønn") {
             opplysninger.leggTil(Faktum(ReellArbeidssøker.villigTilÅBytteYrke, true))

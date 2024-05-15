@@ -1,5 +1,7 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import no.nav.dagpenger.behandling.modell.Behandling
+import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Meldeplikt
@@ -34,4 +36,12 @@ class SøknadInnsendtHendelse(
         )
 
     override fun avklarer(): Opplysningstype<Boolean> = RettTilDagpenger.kravPåDagpenger
+
+    override fun behandling() =
+        Behandling(
+            this,
+            listOf(
+                Faktum(Opplysningstype.somHeltall("fagsakId"), fagsakId),
+            ) + regelsett().flatMap { it.startVerdier() },
+        )
 }
