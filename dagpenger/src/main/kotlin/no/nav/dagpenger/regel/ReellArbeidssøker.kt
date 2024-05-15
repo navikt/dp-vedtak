@@ -21,8 +21,14 @@ object ReellArbeidssøker {
 
     val kravTilArbeidssøker = Opplysningstype.somBoolsk("Krav til arbeidssøker")
 
+    private val startverdier = {
+        listOf(
+            Hypotese(unntakMobilitet, false),
+        )
+    }
+
     val regelsett =
-        Regelsett("Reell arbeidssøker") {
+        Regelsett("Reell arbeidssøker", startverdier) {
             regel(oppfyllerKravTilMobilitet) { enAv(kanJobbeHvorSomHelst, unntakMobilitet) }
             regel(kravTilArbeidssøker) {
                 alle(
@@ -31,10 +37,6 @@ object ReellArbeidssøker {
                     helseTilAlleTyperJobb,
                     villigTilÅBytteYrke,
                 )
-            }
-        }.also {
-            it.startVerdier {
-                add(Hypotese(unntakMobilitet, false))
             }
         }
 }

@@ -3,7 +3,7 @@ package no.nav.dagpenger.opplysning
 import no.nav.dagpenger.opplysning.regel.Regel
 import java.time.LocalDate
 
-class Regelsett(val navn: String, var startVerdier: () -> List<Opplysning<*>> = { emptyList() }, block: Regelsett.() -> Unit = {}) {
+class Regelsett(val navn: String, val startverdier: Startverdier = { emptyList() }, block: Regelsett.() -> Unit = {}) {
     private val regler: MutableMap<Opplysningstype<*>, TemporalCollection<Regel<*>>> = mutableMapOf()
 
     init {
@@ -22,8 +22,6 @@ class Regelsett(val navn: String, var startVerdier: () -> List<Opplysning<*>> = 
         gjelderFraOgMed: LocalDate = LocalDate.MIN,
         block: Opplysningstype<T>.() -> Regel<*>,
     ) = leggTil(gjelderFraOgMed, produserer.block())
-
-    fun startVerdier(block: MutableList<Opplysning<*>>.() -> Unit) {
-        startVerdier = { mutableListOf<Opplysning<*>>().apply(block) }
-    }
 }
+
+typealias Startverdier = () -> List<Opplysning<*>>
