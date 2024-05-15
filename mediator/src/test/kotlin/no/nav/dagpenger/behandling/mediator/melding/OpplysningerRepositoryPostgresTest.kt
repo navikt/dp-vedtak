@@ -157,14 +157,12 @@ class OpplysningerRepositoryPostgresTest {
     }
 
     @Test
-    @Disabled("Databasen støtter ikke å erstatte opplysninger")
     fun `lagre erstattet opplysning`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
             val opplysningstype = Opplysningstype.somHeltall("Heltall")
             val opplysning = Faktum(opplysningstype, 10)
             val opplysningErstattet = Faktum(opplysningstype, 20)
-            opplysning.erstattesAv(opplysning)
             val opplysninger =
                 Opplysninger(listOf(opplysning)).also {
                     Regelkjøring(LocalDate.now(), it)

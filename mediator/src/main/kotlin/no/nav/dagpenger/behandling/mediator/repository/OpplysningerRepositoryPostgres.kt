@@ -101,10 +101,22 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val opprettet = this.localDateTime("opprettet")
             val utledetAvId = this.arrayOrNull<UUID>("utledet_av_id")?.toList() ?: emptyList()
             val utledetAv = this.stringOrNull("utledet_av")?.let { UtledningRad(it, utledetAvId) }
+            val erstattetAvId = this.arrayOrNull<UUID>("erstattet_av_id")?.toList() ?: emptyList()
 
             val kildeId = this.uuidOrNull("kilde_id")
 
-            return OpplysningRad(id, opplysningstype, verdi, status, gyldighetsperiode, utledetAv, kildeId, null, opprettet)
+            return OpplysningRad(
+                id,
+                opplysningstype = opplysningstype,
+                verdi = verdi,
+                status = status,
+                gyldighetsperiode = gyldighetsperiode,
+                utledetAv = utledetAv,
+                kildeId = kildeId,
+                kilde = null,
+                opprettet = opprettet,
+                erstattetAv = erstattetAvId,
+            )
         }
 
         private fun hentKilder(kilder: List<UUID>) =
@@ -169,6 +181,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
             batchOpplysningstyper(opplysninger.map { it.opplysningstype }).run(tx)
             batchOpplysninger(opplysninger).run(tx)
+            lagreErstattetAv(opplysninger).run(tx)
             batchVerdi(opplysninger).run(tx)
             batchOpplysningLink(opplysninger).run(tx)
             lagreUtledetAv(opplysninger)
@@ -336,6 +349,24 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 },
             )
 
+        private fun lagreErstattetAv(opplysninger: List<Opplysning<*>>) =
+            BatchStatement(
+                //language=PostgreSQL
+                """
+                INSERT INTO opplysning_erstattet_av (opplysning_id, erstattet_av) 
+                VALUES (:opplysning_id, :erstattet_av)
+                ON CONFLICT DO NOTHING
+                """.trimIndent(),
+                opplysninger.flatMap { opplysning ->
+                    opplysning.erstattetAv.map { erstattetAv ->
+                        mapOf(
+                            "opplysning_id" to opplysning.id,
+                            "erstattet_av" to erstattetAv.id,
+                        )
+                    }
+                },
+            )
+
         private fun batchVerdi(opplysninger: List<Opplysning<*>>): BatchStatement {
             val defaultVerdi =
                 mapOf(
@@ -418,12 +449,19 @@ private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
                 )
             }
 
+        val erstattetAv =
+            erstattetAv.map { opplysningId ->
+                (opplysningMap[opplysningId] ?: this@somOpplysninger.find { it.id == opplysningId }?.toOpplysning()) as Opplysning<T>
+            }
+
         // Create the Opplysning instance
         val opplysning =
             when (status) {
                 "Hypotese" -> Hypotese(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet)
                 "Faktum" -> Faktum(id, opplysningstype, verdi, gyldighetsperiode, utledetAv, kilde, opprettet)
                 else -> throw IllegalStateException("Ukjent opplysningstype")
+            }.also {
+                it.erstattesAv(*erstattetAv.toTypedArray())
             }
 
         // Add the Opplysning instance to the map and return it
@@ -450,4 +488,5 @@ private data class OpplysningRad<T : Comparable<T>>(
     val kildeId: UUID? = null,
     val kilde: Kilde? = null,
     val opprettet: LocalDateTime,
+    val erstattetAv: List<UUID>,
 )

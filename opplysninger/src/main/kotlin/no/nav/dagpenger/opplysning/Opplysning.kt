@@ -16,11 +16,13 @@ sealed class Opplysning<T : Comparable<T>>(
     val utledetAv: Utledning?,
     val kilde: Kilde?,
     val opprettet: LocalDateTime,
-    private val erstattetAv: MutableList<Opplysning<T>> = mutableListOf(),
+    private val _erstattetAv: MutableList<Opplysning<T>> = mutableListOf(),
 ) : Klassifiserbart by opplysningstype {
     abstract fun bekreft(): Faktum<T>
 
-    val erErstattet get() = erstattetAv.isNotEmpty()
+    val erErstattet get() = _erstattetAv.isNotEmpty()
+
+    val erstattetAv get() = _erstattetAv.toList()
 
     val kanRedigeres get() = utledetAv == null && opplysningstype.datatype != ULID
 
@@ -33,8 +35,8 @@ sealed class Opplysning<T : Comparable<T>>(
 
     override fun toString() = "${javaClass.simpleName} om ${opplysningstype.navn} har verdi: $verdi som er $gyldighetsperiode"
 
-    fun erstattesAv(opplysning: Opplysning<T>) {
-        erstattetAv.add(opplysning)
+    fun erstattesAv(vararg opplysning: Opplysning<T>) {
+        _erstattetAv.addAll(opplysning.toList())
     }
 
     abstract fun lagErstatning(opplysning: Opplysning<T>): Opplysning<T>
@@ -62,7 +64,6 @@ class Hypotese<T : Comparable<T>>(
 
     override fun lagErstatning(opplysning: Opplysning<T>) =
         Hypotese(
-            id,
             opplysningstype,
             verdi,
             gyldighetsperiode.kopi(tom = opplysning.gyldighetsperiode.fom.minusDays(1)),
@@ -94,7 +95,6 @@ class Faktum<T : Comparable<T>>(
 
     override fun lagErstatning(opplysning: Opplysning<T>) =
         Faktum(
-            id,
             opplysningstype,
             verdi,
             gyldighetsperiode.kopi(tom = opplysning.gyldighetsperiode.fom.minusDays(1)),
