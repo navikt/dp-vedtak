@@ -9,6 +9,7 @@ import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.asUUID
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
+import no.nav.dagpenger.behandling.mediator.mottak.SvarStrategi.Svar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar.Tilstand
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
@@ -116,33 +117,18 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
 
     private val opplysning =
         mutableListOf<OpplysningSvar<*>>().apply {
-            packet["@løsning"].fields().forEach { (typeNavn, jsonVerdi) ->
+            packet["@løsning"].fields().forEach { (typeNavn, løsning) ->
                 logger.info { "Tok i mot opplysning av $typeNavn" }
 
                 if (Opplysningstype.typer.find { it.id == typeNavn } == null) {
                     logger.error { "Ukjent opplysningstype: $typeNavn" }
                     return@forEach
                 }
-                // @todo: Forventer at verdi er en nøkkel på all løsninger men vi må skrive om behovløserne for å få dette til å stemme
-                val svar =
-                    when (jsonVerdi.isObject) {
-                        true ->
-                            Svar(
-                                jsonVerdi["verdi"],
-                                jsonVerdi["status"]?.asText()?.let { Tilstand.valueOf(it) } ?: Tilstand.Faktum,
-                                jsonVerdi["gyldigFraOgMed"]?.asLocalDate(),
-                                jsonVerdi["gyldigTilOgMed"]?.asLocalDate(),
-                            )
 
-                        false ->
-                            Svar(jsonVerdi, Tilstand.Faktum).also {
-                                logger.warn { "Mangler gyldigFraOgMed for løsning på opplysningstype $typeNavn" }
-                            }
-                    }
+                val svar = løsning.somSvar()
                 val type = Opplysningstype.typer.single { opplysningstype -> opplysningstype.id == typeNavn }
                 val kilde = Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
 
-                Tilstand.Faktum
                 val opplysning =
                     @Suppress("UNCHECKED_CAST")
                     when (type.datatype) {
@@ -195,25 +181,6 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
             }
         }
 
-    private data class Svar(
-        val verdi: JsonNode,
-        val tilstand: Tilstand,
-        val gyldigFraOgMed: LocalDate? = null,
-        val gyldigTilOgMed: LocalDate? = null,
-    ) {
-        val gyldighetsperiode
-            get() =
-                if (gyldigFraOgMed != null && gyldigTilOgMed != null) {
-                    Gyldighetsperiode(gyldigFraOgMed, gyldigTilOgMed)
-                } else if (gyldigFraOgMed != null && gyldigTilOgMed == null) {
-                    Gyldighetsperiode(gyldigFraOgMed)
-                } else if (gyldigTilOgMed != null) {
-                    Gyldighetsperiode(tom = gyldigTilOgMed)
-                } else {
-                    Gyldighetsperiode()
-                }
-    }
-
     private fun <T : Comparable<T>> opplysningSvar(
         type: Opplysningstype<T>,
         verdi: T,
@@ -237,5 +204,53 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
             sikkerLogger.info { hendelse.opplysninger.joinToString("\n") { it.opplysningstype.id + ";" + it.verdi } }
             mediator.behandle(hendelse, this, context)
         }
+    }
+
+    private companion object {
+        private val svarStrategier = listOf(KomplekstSvar, EnkeltSvar)
+
+        fun JsonNode.somSvar(): Svar = svarStrategier.firstNotNullOf { it.svar(this) }
+    }
+}
+
+private fun interface SvarStrategi {
+    fun svar(svar: JsonNode): Svar?
+
+    data class Svar(
+        val verdi: JsonNode,
+        val tilstand: Tilstand,
+        val gyldigFraOgMed: LocalDate? = null,
+        val gyldigTilOgMed: LocalDate? = null,
+    ) {
+        val gyldighetsperiode
+            get() =
+                if (gyldigFraOgMed != null && gyldigTilOgMed != null) {
+                    Gyldighetsperiode(gyldigFraOgMed, gyldigTilOgMed)
+                } else if (gyldigFraOgMed != null && gyldigTilOgMed == null) {
+                    Gyldighetsperiode(gyldigFraOgMed)
+                } else if (gyldigTilOgMed != null) {
+                    Gyldighetsperiode(tom = gyldigTilOgMed)
+                } else {
+                    Gyldighetsperiode()
+                }
+    }
+}
+
+private object KomplekstSvar : SvarStrategi {
+    override fun svar(svar: JsonNode): Svar? {
+        if (!svar.isObject) return null
+        return Svar(
+            svar["verdi"],
+            svar["status"]?.asText()?.let { Tilstand.valueOf(it) } ?: Tilstand.Faktum,
+            svar["gyldigFraOgMed"]?.asLocalDate(),
+            svar["gyldigTilOgMed"]?.asLocalDate(),
+        )
+    }
+}
+
+private object EnkeltSvar : SvarStrategi {
+    override fun svar(svar: JsonNode): Svar? {
+        if (svar.isObject) return null
+        return Svar(svar, Tilstand.Faktum)
     }
 }
