@@ -11,14 +11,14 @@ class DiagramTest {
         val bygger =
             RegeltreBygger(
                 Rettighetstype.regelsett,
-                /*Søknadstidspunkt.regelsett,
+                Søknadstidspunkt.regelsett,
                 Verneplikt.regelsett,
                 Alderskrav.regelsett,
                 Meldeplikt.regelsett,
                 Minsteinntekt.regelsett,
                 Opptjeningstid.regelsett,
                 ReellArbeidssøker.regelsett,
-                RettTilDagpenger.regelsett,*/
+                RettTilDagpenger.regelsett,
             )
 
         val regeltre = bygger.dag()

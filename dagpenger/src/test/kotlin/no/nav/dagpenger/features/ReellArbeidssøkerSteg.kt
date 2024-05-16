@@ -16,7 +16,7 @@ class ReellArbeidssøkerSteg : No {
     private val regelsett = listOf(ReellArbeidssøker.regelsett, Søknadstidspunkt.regelsett)
     private val opplysninger: Opplysninger =
         Opplysninger(
-            regelsett.flatMap { it.startverdier() },
+            regelsett.flatMap { it.lagStartverdier() },
         )
 
     @BeforeStep

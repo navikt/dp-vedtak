@@ -14,21 +14,17 @@ import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 object ReellArbeidssøker {
     internal val kanJobbeDeltid = Opplysningstype.somBoolsk("Kan jobbe heltid og deltid".id(KanJobbeDeltid))
     internal val kanJobbeHvorSomHelst = Opplysningstype.somBoolsk("Kan jobbe i hele Norge".id(KanJobbeHvorSomHelst))
-    val unntakMobilitet = Opplysningstype.somBoolsk("Bruker oppfyller kravet om unntak til mobilitet")
+    internal val unntakMobilitet = Opplysningstype.somBoolsk("Bruker oppfyller kravet om unntak til mobilitet")
     private val oppfyllerKravTilMobilitet = Opplysningstype.somBoolsk("Bruker oppfyller kravet til mobilitet")
     internal val helseTilAlleTyperJobb = Opplysningstype.somBoolsk("Kan ta alle typer arbeid".id(HelseTilAlleTyperJobb))
     internal val villigTilÅBytteYrke = Opplysningstype.somBoolsk("Villig til å bytte yrke".id(VilligTilÅBytteYrke))
 
     val kravTilArbeidssøker = Opplysningstype.somBoolsk("Krav til arbeidssøker")
 
-    private val startverdier = {
-        listOf(
-            Hypotese(unntakMobilitet, false),
-        )
-    }
-
     val regelsett =
-        Regelsett("Reell arbeidssøker", startverdier) {
+        Regelsett("Reell arbeidssøker") {
+            startverdi { Hypotese(unntakMobilitet, false) }
+
             regel(oppfyllerKravTilMobilitet) { enAv(kanJobbeHvorSomHelst, unntakMobilitet) }
             regel(kravTilArbeidssøker) {
                 alle(
