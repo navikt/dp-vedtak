@@ -4,6 +4,7 @@ plugins {
     id("common")
     id("com.github.johnrengelman.shadow") version "8.1.1"
     application
+    kotlin("plugin.serialization") version "1.9.22"
 }
 
 dependencies {
@@ -31,6 +32,7 @@ dependencies {
     implementation(libs.bundles.ktor.server)
     implementation("io.ktor:ktor-server-core-jvm:${libs.versions.ktor.get()}")
     implementation("io.ktor:ktor-server-swagger:${libs.versions.ktor.get()}")
+    implementation("io.ktor:ktor-server-resources:${libs.versions.ktor.get()}")
 
     testImplementation("io.kotest:kotest-assertions-core-jvm:${libs.versions.kotest.get()}")
 
