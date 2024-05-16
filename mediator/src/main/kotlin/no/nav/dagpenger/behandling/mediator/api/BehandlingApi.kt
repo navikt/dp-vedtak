@@ -23,6 +23,7 @@ import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
+import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.VerdiMapper
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.api.auth.saksbehandlerId
 import no.nav.dagpenger.behandling.mediator.audit.Auditlogg
@@ -33,6 +34,7 @@ import no.nav.dagpenger.behandling.modell.UUIDv7
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.opplysning.Boolsk
+import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Faktum
@@ -186,3 +188,8 @@ private fun LocalDate.tilApiDato(): LocalDate? {
 }
 
 private fun LocalDateTime.tilOffsetTime(): OffsetDateTime = this.atZone(ZoneId.systemDefault()).toOffsetDateTime()
+
+@Suppress("UNCHECKED_CAST")
+class HttpVerdiMapper(private val verdi: Any) : VerdiMapper {
+    override fun <T : Comparable<T>> map(datatype: Datatype<T>) = verdi as T
+}

@@ -7,6 +7,8 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
+import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger
+import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.Companion.somOpplysningstype
 import no.nav.dagpenger.behandling.mediator.asUUID
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SvarStrategi.Svar
@@ -14,11 +16,11 @@ import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar.Tilstand
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.opplysning.Boolsk
+import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Heltall
-import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
@@ -125,75 +127,21 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
                     return@forEach
                 }
 
-                val svar = løsning.somSvar()
-                val type = Opplysningstype.typer.single { opplysningstype -> opplysningstype.id == typeNavn }
+                val svar = lagSvar(løsning)
                 val kilde = Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
 
-                val opplysning =
-                    @Suppress("UNCHECKED_CAST")
-                    when (type.datatype) {
-                        Dato ->
-                            opplysningSvar(
-                                type as Opplysningstype<LocalDate>,
-                                svar.verdi.asLocalDate(),
-                                kilde,
-                                svar.tilstand,
-                                svar.gyldighetsperiode,
-                            )
-
-                        Heltall ->
-                            opplysningSvar(
-                                type as Opplysningstype<Int>,
-                                svar.verdi.asInt(),
-                                kilde,
-                                svar.tilstand,
-                                svar.gyldighetsperiode,
-                            )
-
-                        Desimaltall ->
-                            opplysningSvar(
-                                type as Opplysningstype<Double>,
-                                svar.verdi.asDouble(),
-                                kilde,
-                                svar.tilstand,
-                                svar.gyldighetsperiode,
-                            )
-
-                        Boolsk ->
-                            opplysningSvar(
-                                type as Opplysningstype<Boolean>,
-                                svar.verdi.asBoolean(),
-                                kilde,
-                                svar.tilstand,
-                                svar.gyldighetsperiode,
-                            )
-
-                        ULID ->
-                            opplysningSvar(
-                                type as Opplysningstype<Ulid>,
-                                Ulid(svar.verdi.asText()),
-                                kilde,
-                                svar.tilstand,
-                                svar.gyldighetsperiode,
-                            )
-                    }
+                val opplysningSvarBygger =
+                    OpplysningSvarBygger(
+                        typeNavn.somOpplysningstype(),
+                        JsonMapper(svar.verdi),
+                        kilde,
+                        svar.tilstand,
+                        svar.gyldighetsperiode,
+                    )
+                val opplysning = opplysningSvarBygger.opplysningSvar()
                 add(opplysning)
             }
         }
-
-    private fun <T : Comparable<T>> opplysningSvar(
-        type: Opplysningstype<T>,
-        verdi: T,
-        kilde: Kilde,
-        tilstand: Tilstand,
-        gyldighetsperiode: Gyldighetsperiode? = null,
-    ) = OpplysningSvar(
-        opplysningstype = type,
-        verdi = verdi,
-        tilstand = tilstand,
-        kilde = kilde,
-        gyldighetsperiode = gyldighetsperiode,
-    )
 
     override fun behandle(
         mediator: IMessageMediator,
@@ -209,7 +157,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
     private companion object {
         private val svarStrategier = listOf(KomplekstSvar, EnkeltSvar)
 
-        fun JsonNode.somSvar(): Svar = svarStrategier.firstNotNullOf { it.svar(this) }
+        fun lagSvar(jsonNode: JsonNode): Svar = svarStrategier.firstNotNullOf { it.svar(jsonNode) }
     }
 }
 
@@ -253,4 +201,16 @@ private object EnkeltSvar : SvarStrategi {
         if (svar.isObject) return null
         return Svar(svar, Tilstand.Faktum)
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+private class JsonMapper(private val verdi: JsonNode) : OpplysningSvarBygger.VerdiMapper {
+    override fun <T : Comparable<T>> map(datatype: Datatype<T>) =
+        when (datatype) {
+            Dato -> verdi.asLocalDate() as T
+            Heltall -> verdi.asInt() as T
+            Desimaltall -> verdi.asDouble() as T
+            Boolsk -> verdi.asBoolean() as T
+            ULID -> Ulid(verdi.asText()) as T
+        }
 }
