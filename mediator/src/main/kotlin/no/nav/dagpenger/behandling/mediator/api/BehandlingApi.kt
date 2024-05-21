@@ -105,16 +105,20 @@ internal fun Application.behandlingApi(
                 val identForespørsel = call.receive<IdentForesporselDTO>()
                 // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
                 val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, request.behandling.id)
-                hendelse.varsel("Godkjente behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+                hendelse.info("Godkjente behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+
                 personMediator.håndter(hendelse)
+
                 call.respond(HttpStatusCode.Created)
             }
             post<BehandlingRoute.Id.Avbryt> { request ->
                 val identForespørsel = call.receive<IdentForesporselDTO>()
                 // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
                 val hendelse = AvbrytBehandlingHendelse(UUIDv7.ny(), identForespørsel.ident, request.behandling.id)
-                hendelse.varsel("Avbrøt behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+                hendelse.info("Avbrøt behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+
                 personMediator.håndter(hendelse)
+
                 call.respond(HttpStatusCode.Created)
             }
         }
