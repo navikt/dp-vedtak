@@ -27,7 +27,6 @@ class Opplysninger private constructor(
             if (erstattes.erFør(opplysning) && opplysning.etterEllerLik(erstattes)) {
                 // Overlapp på halen
                 opplysninger.addAll(erstattes.erstattesAv(opplysning))
-                // opplysninger.add(opplysning)
             } else if (erstattes.harSammegyldighetsperiode(opplysning)) {
                 // Overlapp for samme periode
                 opplysninger.addAll(erstattes.erstattesAv(opplysning))
