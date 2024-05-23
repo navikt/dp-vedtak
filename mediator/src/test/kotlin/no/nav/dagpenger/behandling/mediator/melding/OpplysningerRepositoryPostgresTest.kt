@@ -235,20 +235,38 @@ class OpplysningerRepositoryPostgresTest {
             repo.lagreOpplysninger(nyeOpplysninger)
 
             val fraDb = repo.hentOpplysninger(nyeOpplysninger.id).also { Regelkjøring(LocalDate.now(), it) }
-            fraDb.finnAlle().size shouldBe nyeOpplysninger.finnAlle().size
+            fraDb.finnAlle().size shouldBe 2
 
             with(fraDb.finnOpplysning(utledetOpplysningstype)) {
                 verdi shouldBe 5
                 utledetAv.shouldNotBeNull()
                 utledetAv!!.regel shouldBe "Oppslag"
-                utledetAv!!.opplysninger shouldContainExactly listOf(baseOpplysning)
+                utledetAv!!.opplysninger shouldContainExactly listOf(endretBaseOpplysningstype)
             }
-            with(fraDb.finnOpplysning(baseOpplysning.id)) {
+            with(fraDb.finnOpplysning(endretBaseOpplysningstype.id)) {
+                id shouldBe endretBaseOpplysningstype.id
+                verdi shouldBe endretBaseOpplysningstype.verdi
+                gyldighetsperiode shouldBe endretBaseOpplysningstype.gyldighetsperiode
+                opplysningstype shouldBe endretBaseOpplysningstype.opplysningstype
+                utledetAv.shouldBeNull()
+            }
+
+            val tidligereOpplysningerFraDb = repo.hentOpplysninger(tidligereOpplysninger.id).also { Regelkjøring(LocalDate.now(), it) }
+            tidligereOpplysningerFraDb.finnAlle().size shouldBe 2
+            with(tidligereOpplysningerFraDb.finnOpplysning(baseOpplysning.id)) {
                 id shouldBe baseOpplysning.id
                 verdi shouldBe baseOpplysning.verdi
                 gyldighetsperiode shouldBe baseOpplysning.gyldighetsperiode
                 opplysningstype shouldBe baseOpplysning.opplysningstype
                 utledetAv.shouldBeNull()
+                erErstattet shouldBe true
+                erstattetAv shouldBe listOf(endretBaseOpplysningstype)
+            }
+            with(tidligereOpplysningerFraDb.finnOpplysning(utledetOpplysningstype)) {
+                verdi shouldBe 5
+                utledetAv.shouldNotBeNull()
+                utledetAv!!.regel shouldBe "Oppslag"
+                utledetAv!!.opplysninger shouldContainExactly listOf(baseOpplysning)
             }
         }
     }
