@@ -21,6 +21,7 @@ class Opplysninger private constructor(
         this.regelkjøring = regelkjøring
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Comparable<T>> leggTil(opplysning: Opplysning<T>) {
         val erstattes: Opplysning<T>? = alleOpplysninger.find { it.overlapper(opplysning) } as Opplysning<T>?
         if (erstattes !== null) {
