@@ -2,20 +2,6 @@ package no.nav.dagpenger.opplysning
 
 import java.util.UUID
 
-interface LesbarOpplysninger {
-    val id: UUID
-
-    fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>
-
-    fun har(opplysningstype: Opplysningstype<*>): Boolean
-
-    fun finnAlle(opplysningstyper: List<Opplysningstype<*>>): List<Opplysning<*>>
-
-    fun finnAlle(): List<Opplysning<*>>
-
-    fun finnOpplysning(opplysningId: UUID): Opplysning<*>
-}
-
 class Opplysninger private constructor(
     override val id: UUID,
     opplysninger: List<Opplysning<*>> = emptyList(),
@@ -38,22 +24,13 @@ class Opplysninger private constructor(
     fun <T : Comparable<T>> leggTil(opplysning: Opplysning<T>) {
         val erstattes: Opplysning<T>? = alleOpplysninger.find { it.overlapper(opplysning) } as Opplysning<T>?
         if (erstattes !== null) {
-            if (erstattes.gyldighetsperiode.fom.isBefore(opplysning.gyldighetsperiode.fom) &&
-                (
-                    opplysning.gyldighetsperiode.tom.isAfter(
-                        erstattes.gyldighetsperiode.tom,
-                    ) || opplysning.gyldighetsperiode.tom == erstattes.gyldighetsperiode.tom
-                )
-            ) {
+            if (erstattes.erFør(opplysning) && opplysning.etterEllerLik(erstattes)) {
                 // Overlapp på halen
-                // val forkorttet = erstattes.lagErstatning(opplysning)
                 opplysninger.addAll(erstattes.erstattesAv(opplysning))
                 // opplysninger.add(opplysning)
-            } else if (erstattes.gyldighetsperiode == opplysning.gyldighetsperiode) {
+            } else if (erstattes.harSammegyldighetsperiode(opplysning)) {
                 // Overlapp for samme periode
                 opplysninger.addAll(erstattes.erstattesAv(opplysning))
-
-                // opplysninger.add(opplysning)
             } else {
                 throw IllegalArgumentException("Kan ikke legge til opplysning som overlapper med eksisterende opplysning")
             }
@@ -63,6 +40,15 @@ class Opplysninger private constructor(
 
         regelkjøring.evaluer()
     }
+
+    private fun <T : Comparable<T>> Opplysning<T>.erFør(opplysning: Opplysning<T>) =
+        this.gyldighetsperiode.fom.isBefore(opplysning.gyldighetsperiode.fom)
+
+    private fun <T : Comparable<T>> Opplysning<T>.etterEllerLik(opplysning: Opplysning<T>) =
+        this.gyldighetsperiode.tom >= opplysning.gyldighetsperiode.tom
+
+    private fun <T : Comparable<T>> Opplysning<T>.harSammegyldighetsperiode(opplysning: Opplysning<T>) =
+        this.gyldighetsperiode.tom == opplysning.gyldighetsperiode.tom
 
     internal fun leggTilUtledet(opplysning: Opplysning<*>) {
         alleOpplysninger.find { it.overlapper(opplysning) }?.let {

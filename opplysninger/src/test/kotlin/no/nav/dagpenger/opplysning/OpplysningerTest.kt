@@ -12,8 +12,10 @@ class OpplysningerTest {
         val minsteinntekt = Opplysningstype.somBoolsk("Minsteinntekt", vilkår)
         val alder = Opplysningstype.somBoolsk("Alder", vilkår)
 
-        val opplysninger = Opplysninger()
-        val regelkjøring = Regelkjøring(1.mai, opplysninger)
+        val opplysninger =
+            Opplysninger().also {
+                Regelkjøring(1.mai, it)
+            }
 
         opplysninger.leggTil(Faktum(minsteinntekt, true))
         opplysninger.leggTil(Faktum(alder, true))
@@ -27,8 +29,10 @@ class OpplysningerTest {
     @Test
     fun `tillater ikke overlappende opplysninger av samme type`() {
         val opplysningstype = Opplysningstype.somDesimaltall("Type")
-        val opplysninger = Opplysninger()
-        val regelkjøring = Regelkjøring(1.mai, opplysninger)
+        val opplysninger =
+            Opplysninger().also {
+                Regelkjøring(1.mai, it)
+            }
 
         opplysninger.leggTil(Faktum(opplysningstype, 0.5, Gyldighetsperiode(1.mai, 10.mai)))
         assertThrows<IllegalArgumentException> {
@@ -45,8 +49,10 @@ class OpplysningerTest {
     @Test
     fun `opplysninger kan erstattes om de gjelder samme periode`() {
         val opplysningstype = Opplysningstype.somDesimaltall("Type")
-        val opplysninger = Opplysninger()
-        val regelkjøring = Regelkjøring(1.mai, opplysninger)
+        val opplysninger =
+            Opplysninger().also {
+                Regelkjøring(1.mai, it)
+            }
 
         val gyldighetsperiode = Gyldighetsperiode(1.mai, 10.mai)
         opplysninger.leggTil(Faktum(opplysningstype, 0.5, gyldighetsperiode))
@@ -58,8 +64,10 @@ class OpplysningerTest {
     @Test
     fun `opplysninger kan erstattes om de bare overlapper på halen`() {
         val opplysningstype = Opplysningstype.somDesimaltall("Type")
-        val opplysninger = Opplysninger()
-        val regelkjøring = Regelkjøring(8.mai, opplysninger)
+        val opplysninger =
+            Opplysninger().also {
+                Regelkjøring(8.mai, it)
+            }
 
         opplysninger.leggTil(Faktum(opplysningstype, 0.5, Gyldighetsperiode(1.mai, 10.mai)))
         opplysninger.leggTil(Faktum(opplysningstype, 1.5, Gyldighetsperiode(5.mai, 15.mai)))
@@ -71,8 +79,10 @@ class OpplysningerTest {
     fun `opplysninger kan arve tidligere opplysninger`() {
         val opplysningstype = Opplysningstype.somDesimaltall("Type")
         val tidligereOpplysninger = Opplysninger(listOf(Faktum(opplysningstype, 0.5, Gyldighetsperiode(1.mai, 20.mai))))
-        val opplysninger = Opplysninger(tidligereOpplysninger)
-        val regelkjøring = Regelkjøring(15.mai, opplysninger)
+        val opplysninger =
+            Opplysninger(tidligereOpplysninger).also {
+                Regelkjøring(15.mai, it)
+            }
 
         // Vi får hentet ut opplysning fra tidligere behandlinger
         assertEquals(0.5, opplysninger.finnOpplysning(opplysningstype).verdi)
