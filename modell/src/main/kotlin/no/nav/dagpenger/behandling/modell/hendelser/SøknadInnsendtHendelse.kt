@@ -42,6 +42,6 @@ class SøknadInnsendtHendelse(
             this,
             listOf(
                 Faktum(Opplysningstype.somHeltall("fagsakId"), fagsakId),
-            ) + regelsett().flatMap { it.lagStartverdier() },
+            ),
         )
 }

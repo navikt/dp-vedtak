@@ -73,7 +73,7 @@ internal class PersonMediatorTest {
     }
 
     @Test
-    fun `e2e av søknad innsendt`() =
+    fun `søknad med for lite inntekt skal automatisk avslås`() =
         withMigratedDb {
             val testPerson =
                 TestPerson(
@@ -92,7 +92,7 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 44
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 46
             }
 
             rapid.harHendelse("vedtak_fattet") {
@@ -108,7 +108,7 @@ internal class PersonMediatorTest {
         }
 
     @Test
-    fun `e2e av søknad innsendt som krever manuell behandling`() =
+    fun `søknad som slår ut på manuelle behandling må føre til forslag til vedtak`() =
         withMigratedDb {
             val testPerson =
                 TestPerson(

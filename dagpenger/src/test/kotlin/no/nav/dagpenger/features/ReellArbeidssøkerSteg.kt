@@ -14,10 +14,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 class ReellArbeidssøkerSteg : No {
     private val fraDato = 10.mai(2022)
     private val regelsett = listOf(ReellArbeidssøker.regelsett, Søknadstidspunkt.regelsett)
-    private val opplysninger: Opplysninger =
-        Opplysninger(
-            regelsett.flatMap { it.lagStartverdier() },
-        )
+    private val opplysninger: Opplysninger = Opplysninger()
 
     @BeforeStep
     fun kjørRegler() {
@@ -43,19 +40,22 @@ class ReellArbeidssøkerSteg : No {
             opplysninger.leggTil(Faktum(ReellArbeidssøker.kanJobbeHvorSomHelst, false))
         }
         Gitt("kan ta alle typer arbeid") {
-            opplysninger.leggTil(Faktum(ReellArbeidssøker.helseTilAlleTyperJobb, true))
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.helseTilAlleTyperArbeid, true))
         }
         Gitt("kan ikke ta alle typer arbeid") {
-            opplysninger.leggTil(Faktum(ReellArbeidssøker.helseTilAlleTyperJobb, false))
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.helseTilAlleTyperArbeid, false))
         }
-        Gitt("oppfyller kravet til unntak for mobilitet") {
-            opplysninger.leggTil(Faktum(ReellArbeidssøker.unntakMobilitet, true))
+        Men("oppfyller kravet å kun søke lokalt arbeid") {
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.godkjentLokalArbeidssøker, true))
+        }
+        Men("oppfyller kravet til å kun søke deltidssarbeid") {
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.godkjentDeltidssøker, true))
         }
         Gitt("er villig til å bytte yrke eller gå ned i lønn") {
-            opplysninger.leggTil(Faktum(ReellArbeidssøker.villigTilÅBytteYrke, true))
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.villigTilEthvertArbeid, true))
         }
         Gitt("er ikke villig til å bytte yrke eller gå ned i lønn") {
-            opplysninger.leggTil(Faktum(ReellArbeidssøker.villigTilÅBytteYrke, false))
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.villigTilEthvertArbeid, false))
         }
 
         Så("skal kravet til reell arbeidssøker være oppfylt") {
