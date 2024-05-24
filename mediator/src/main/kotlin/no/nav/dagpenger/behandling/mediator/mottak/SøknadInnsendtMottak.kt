@@ -39,14 +39,17 @@ internal class SøknadInnsendtMottak(
         packet: JsonMessage,
         context: MessageContext,
     ) {
-        Span.current().apply {
-            setAttribute("app.river", name())
-            setAttribute("app.søknadId", packet["søknadsData"]["søknad_uuid"].asUUID().toString())
+        val søknadId = packet["søknadsData"]["søknad_uuid"].asUUID().toString()
+        withLoggingContext("søknadId" to søknadId) {
+            Span.current().apply {
+                setAttribute("app.river", name())
+                setAttribute("app.søknadId", søknadId)
+            }
+            logger.info { "Mottok søknad innsendt hendelse" }
+            sikkerlogg.info { "Mottok søknad innsendt hendelse: ${packet.toJson()}" }
+            val message = SøknadInnsendtMessage(packet)
+            message.behandle(messageMediator, context)
         }
-        logger.info { "Mottok søknad innsendt hendelse" }
-        sikkerlogg.info { "Mottok søknad innsendt hendelse: ${packet.toJson()}" }
-        val message = SøknadInnsendtMessage(packet)
-        message.behandle(messageMediator, context)
     }
 
     private companion object {
