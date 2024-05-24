@@ -1,17 +1,20 @@
 package no.nav.dagpenger.behandling.mediator.mottak
 
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.mockk.clearMocks
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import no.nav.dagpenger.behandling.TestOpplysningstyper.boolsk
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
-import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.UUIDv7
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
@@ -19,10 +22,16 @@ class OpplysningSvarMottakTest {
     private val rapid = TestRapid()
     private val messageMediator = mockk<MessageMediator>(relaxed = true)
 
-    private val opplysningstype = Opplysningstype.somBoolsk("fjasebengel")
+    private val opplysningstype = boolsk // må registrere opplysningstype først
 
     init {
         OpplysningSvarMottak(rapid, messageMediator)
+    }
+
+    @BeforeEach
+    fun setup() {
+        rapid.reset()
+        clearMocks(messageMediator)
     }
 
     @Test
@@ -56,6 +65,19 @@ class OpplysningSvarMottakTest {
         hendelse.captured.opplysninger.first().opplysning().verdi shouldBe true
         hendelse.captured.opplysninger.first().opplysning().gyldighetsperiode shouldBe
             Gyldighetsperiode(gyldigFraOgMed, gyldigTilOgMed)
+    }
+
+    @Test
+    fun `Kan ikke besvare opplysning en ikke kjenner til`() {
+        rapid.sendTestMessage(
+            løsningMedMetadata(gyldigFraOgMed, gyldigTilOgMed, "ukjentOpplysning").toJson(),
+        )
+        val hendelse = slot<OpplysningSvarHendelse>()
+        verify(exactly = 1) {
+            messageMediator.behandle(capture(hendelse), any(), any())
+        }
+        hendelse.isCaptured shouldBe true
+        hendelse.captured.opplysninger.shouldBeEmpty()
     }
 
     @Test
@@ -93,12 +115,12 @@ class OpplysningSvarMottakTest {
         )
     private val løsningUtenMetadata =
         JsonMessage.newNeed(
-            listOf("fjasebengel"),
+            listOf("boolsk"),
             konvolutt +
                 mapOf(
                     "@løsning" to
                         mapOf(
-                            "fjasebengel" to true,
+                            "boolsk" to true,
                         ),
                 ),
         )
@@ -108,14 +130,15 @@ class OpplysningSvarMottakTest {
     private fun løsningMedMetadata(
         gyldigFraOgMed: LocalDate?,
         gyldigTilOgMed: LocalDate?,
+        opplysningstype: String = "boolsk",
     ): JsonMessage {
         return JsonMessage.newNeed(
-            listOf("fjasebengel"),
+            listOf(opplysningstype),
             konvolutt +
                 mapOf(
                     "@løsning" to
                         mapOf(
-                            "fjasebengel" to
+                            opplysningstype to
                                 mapOf(
                                     "verdi" to true,
                                 ) +

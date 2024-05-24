@@ -5,6 +5,14 @@ import io.kotest.matchers.longs.shouldBeLessThan
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.behandling.TestOpplysningstyper.baseOpplysningstype
+import no.nav.dagpenger.behandling.TestOpplysningstyper.boolsk
+import no.nav.dagpenger.behandling.TestOpplysningstyper.dato
+import no.nav.dagpenger.behandling.TestOpplysningstyper.desimal
+import no.nav.dagpenger.behandling.TestOpplysningstyper.heltall
+import no.nav.dagpenger.behandling.TestOpplysningstyper.maksdato
+import no.nav.dagpenger.behandling.TestOpplysningstyper.mindato
+import no.nav.dagpenger.behandling.TestOpplysningstyper.utledetOpplysningstype
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.opplysning.Faktum
@@ -14,7 +22,6 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import org.junit.jupiter.api.Disabled
@@ -27,11 +34,11 @@ class OpplysningerRepositoryPostgresTest {
     fun `lagrer enkle opplysninger`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
-            val heltallFaktum = Faktum(Opplysningstype.somHeltall("Heltall"), 10)
+            val heltallFaktum = Faktum(heltall, 10)
             val kildeA = Saksbehandlerkilde("foo")
-            val boolskFaktum = Faktum(Opplysningstype.somBoolsk("Boolsk"), true, kilde = kildeA)
+            val boolskFaktum = Faktum(boolsk, true, kilde = kildeA)
             val kildeB = Saksbehandlerkilde("bar")
-            val datoFaktum = Faktum(Opplysningstype.somDato("Dato"), LocalDate.now(), kilde = kildeB)
+            val datoFaktum = Faktum(dato, LocalDate.now(), kilde = kildeB)
 
             val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum))
             repo.lagreOpplysninger(opplysninger)
@@ -54,7 +61,7 @@ class OpplysningerRepositoryPostgresTest {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
             val gyldighetsperiode1 = Gyldighetsperiode(LocalDate.now(), LocalDate.now().plusDays(14))
-            val faktum1 = Faktum(Opplysningstype.somHeltall("Fakum1"), 10, gyldighetsperiode1)
+            val faktum1 = Faktum(heltall, 10, gyldighetsperiode1)
             val opplysninger = Opplysninger(listOf(faktum1))
             repo.lagreOpplysninger(opplysninger)
             val fraDb =
@@ -70,8 +77,8 @@ class OpplysningerRepositoryPostgresTest {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
             val kilde = Saksbehandlerkilde("foo")
-            val maksDatoFaktum = Faktum(Opplysningstype.somDato("MaksDato"), LocalDate.MAX, kilde = kilde)
-            val minDatoFaktum = Faktum(Opplysningstype.somDato("MinDato"), LocalDate.MIN, kilde = kilde)
+            val maksDatoFaktum = Faktum(maksdato, LocalDate.MAX, kilde = kilde)
+            val minDatoFaktum = Faktum(mindato, LocalDate.MIN, kilde = kilde)
             val opplysninger = Opplysninger(listOf(maksDatoFaktum, minDatoFaktum))
             repo.lagreOpplysninger(opplysninger)
 
@@ -111,8 +118,6 @@ class OpplysningerRepositoryPostgresTest {
     fun `lagrer opplysninger med utledning`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
-            val baseOpplysningstype = Opplysningstype.somDato("Dato")
-            val utledetOpplysningstype = Opplysningstype.somHeltall("Utledet")
 
             val baseOpplysning = Faktum(baseOpplysningstype, LocalDate.now())
 
@@ -145,7 +150,7 @@ class OpplysningerRepositoryPostgresTest {
     fun `Klarer å lagre store mengder opplysninger effektivt`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
-            val fakta = (1..50000).map { Faktum(Opplysningstype.somHeltall("Desimal".id("desitall")), it) }
+            val fakta = (1..50000).map { Faktum(desimal, it) }
             val opplysninger = Opplysninger(fakta)
 
             val tidBrukt = measureTimeMillis { repo.lagreOpplysninger(opplysninger) }
@@ -160,9 +165,8 @@ class OpplysningerRepositoryPostgresTest {
     fun `lagre erstattet opplysning i samme Opplysninger`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
-            val opplysningstype = Opplysningstype.somHeltall("Heltall")
-            val opplysning = Faktum(opplysningstype, 10)
-            val opplysningErstattet = Faktum(opplysningstype, 20)
+            val opplysning = Faktum(heltall, 10)
+            val opplysningErstattet = Faktum(heltall, 20)
             val opplysninger =
                 Opplysninger(listOf(opplysning)).also {
                     Regelkjøring(LocalDate.now(), it)
@@ -175,7 +179,7 @@ class OpplysningerRepositoryPostgresTest {
                     Regelkjøring(LocalDate.now(), it)
                 }
             fraDb.aktiveOpplysninger() shouldContainExactly opplysninger.aktiveOpplysninger()
-            fraDb.finnOpplysning(opplysningstype).verdi shouldBe opplysningErstattet.verdi
+            fraDb.finnOpplysning(heltall).verdi shouldBe opplysningErstattet.verdi
         }
     }
 
@@ -185,8 +189,7 @@ class OpplysningerRepositoryPostgresTest {
             val repo = OpplysningerRepositoryPostgres()
 
             // Lag opplysninger med opprinnelig opplysning
-            val opplysningstype = Opplysningstype.somHeltall("Heltall")
-            val opplysning = Faktum(opplysningstype, 10)
+            val opplysning = Faktum(heltall, 10)
             val opprinneligOpplysninger =
                 Opplysninger(listOf(opplysning)).also {
                     Regelkjøring(LocalDate.now(), it)
@@ -194,7 +197,7 @@ class OpplysningerRepositoryPostgresTest {
             repo.lagreOpplysninger(opprinneligOpplysninger)
 
             // Lag ny opplysninger med erstattet opplysning
-            val opplysningErstattet = Faktum(opplysningstype, 20)
+            val opplysningErstattet = Faktum(heltall, 20)
             val erstattetOpplysninger = Opplysninger(opprinneligOpplysninger).also { Regelkjøring(LocalDate.now(), it) }
             erstattetOpplysninger.leggTil(opplysningErstattet)
             repo.lagreOpplysninger(erstattetOpplysninger)
@@ -205,9 +208,9 @@ class OpplysningerRepositoryPostgresTest {
                 repo.hentOpplysninger(erstattetOpplysninger.id) + repo.hentOpplysninger(opprinneligOpplysninger.id)
             Regelkjøring(LocalDate.now(), fraDb)
             fraDb.aktiveOpplysninger() shouldContainExactly erstattetOpplysninger.aktiveOpplysninger()
-            fraDb.finnOpplysning(opplysningstype).verdi shouldBe opplysningErstattet.verdi
+            fraDb.finnOpplysning(heltall).verdi shouldBe opplysningErstattet.verdi
 
-            fraDb.finnOpplysning(opplysningstype).erstatter shouldBe opplysning
+            fraDb.finnOpplysning(heltall).erstatter shouldBe opplysning
         }
     }
 
@@ -215,8 +218,6 @@ class OpplysningerRepositoryPostgresTest {
     fun `lagrer opplysninger med utledning fra tidligere opplysninger`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
-            val baseOpplysningstype = Opplysningstype.somDato("Dato")
-            val utledetOpplysningstype = Opplysningstype.somHeltall("Utledet")
 
             val baseOpplysning = Faktum(baseOpplysningstype, LocalDate.now())
 

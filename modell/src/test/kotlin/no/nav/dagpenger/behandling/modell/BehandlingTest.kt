@@ -25,7 +25,10 @@ internal class BehandlingTest {
             gjelderDato = LocalDate.now(),
             fagsakId = 1,
         )
-    private val tidligereOpplysning = Opplysningstype.somDesimaltall("opplysning-fra-tidligere-behandling")
+
+    private companion object {
+        val tidligereOpplysning = Opplysningstype.somDesimaltall("opplysning-fra-tidligere-behandling")
+    }
 
     @Test
     fun `Behandling basert på tidligere behandlinger`() {

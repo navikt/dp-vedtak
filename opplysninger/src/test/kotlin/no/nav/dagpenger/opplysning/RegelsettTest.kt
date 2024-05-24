@@ -1,15 +1,15 @@
 package no.nav.dagpenger.opplysning
 
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorA
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorB
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.grunntall
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.produserer
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class RegelsettTest {
-    private val grunntall = Opplysningstype.somDesimaltall("A")
-    private val faktorA = Opplysningstype.somDesimaltall("FaktorA")
-    private val faktorB = Opplysningstype.somDesimaltall("FaktorB")
-    private val produserer = Opplysningstype.somDesimaltall("Output")
     private val regelsett
         get() =
             Regelsett("regelsett") {

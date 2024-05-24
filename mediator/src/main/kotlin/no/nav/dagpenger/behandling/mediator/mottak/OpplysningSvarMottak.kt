@@ -122,7 +122,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
             packet["@løsning"].fields().forEach { (typeNavn, løsning) ->
                 logger.info { "Tok i mot opplysning av $typeNavn" }
 
-                if (Opplysningstype.typer.find { it.id == typeNavn } == null) {
+                if (runCatching { Opplysningstype.finn(typeNavn) }.isFailure) {
                     logger.error { "Ukjent opplysningstype: $typeNavn" }
                     return@forEach
                 }
