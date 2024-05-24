@@ -2,32 +2,30 @@ package no.nav.dagpenger.opplysning
 
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.equals.shouldNotBeEqual
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.dato1
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.foreldrevilkår
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.undervilkår1
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class OpplysningstypeTest {
     @Test
     fun `likhet test`() {
-        val fødselsdato = Opplysningstype.somDato("Fødselsdato")
-        fødselsdato shouldBeEqual fødselsdato
-        fødselsdato.hashCode() shouldBeEqual fødselsdato.hashCode()
-        Opplysningstype.somDato("Fødselsdato") shouldBeEqual fødselsdato
-        fødselsdato shouldNotBeEqual Any()
+        dato1 shouldBeEqual dato1
+        dato1.hashCode() shouldBeEqual dato1.hashCode()
+        dato1 shouldBeEqual dato1
+        dato1 shouldNotBeEqual Any()
     }
 
     @Test
     fun `enkle opplysningstyper`() {
-        val fødselsdato = Opplysningstype.somDato("Fødselsdato")
-        assertTrue(fødselsdato.er(fødselsdato))
+        assertTrue(dato1.er(dato1))
     }
 
     @Test
     fun `hierarkiske opplysningstyper`() {
-        val vilkår = Opplysningstype.somDato("Vilkår")
-        val minsteinntekt = Opplysningstype.somDato("Minsteinntekt", vilkår)
-
-        assertTrue(minsteinntekt.er(minsteinntekt))
-        assertTrue(minsteinntekt.er(vilkår))
+        assertTrue(undervilkår1.er(foreldrevilkår))
+        assertTrue(undervilkår1.er(foreldrevilkår))
 
 //        assertEquals(listOf(minsteinntekt), vilkår.bestårAv())
     }

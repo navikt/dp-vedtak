@@ -32,11 +32,25 @@ class Opplysningstype<T : Comparable<T>>(
     }
 
     companion object {
-        val typer = mutableSetOf<Opplysningstype<*>>()
+        private val typer = mutableSetOf<Opplysningstype<*>>()
+
+        fun finn(predikat: (Opplysningstype<*>) -> Boolean): Opplysningstype<*> {
+            return typer.single { predikat(it) }
+        }
+
+        fun finn(id: String): Opplysningstype<*> {
+            return finn { it.id == id }
+        }
+
+        fun <T : Comparable<T>> finn(opplysningTypeId: OpplysningTypeId): Opplysningstype<T> {
+            return (
+                typer.find { it.opplysningTypeId == opplysningTypeId }
+                    ?: throw IllegalArgumentException("Fant ikke opplysningstype $opplysningTypeId")
+            ) as Opplysningstype<T>
+        }
 
         private fun registrer(opplysningstype: Opplysningstype<*>) {
-            // @todo: Vi trenger denne sjekken men krever en del refaktorering av testene
-            // require(!typer.contains(opplysningstype)) { "Opplysningstype $opplysningstype er allerede registrert" }
+            require(!typer.contains(opplysningstype)) { "Opplysningstype $opplysningstype er allerede registrert" }
             typer.add(opplysningstype)
         }
 

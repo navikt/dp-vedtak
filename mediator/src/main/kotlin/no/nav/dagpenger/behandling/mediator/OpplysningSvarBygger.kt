@@ -14,7 +14,7 @@ class OpplysningSvarBygger<T : Comparable<T>>(
     private val gyldighetsperiode: Gyldighetsperiode,
 ) {
     companion object {
-        fun String.somOpplysningstype() = Opplysningstype.typer.single { opplysningstype -> opplysningstype.id == this }
+        fun String.somOpplysningstype() = Opplysningstype.finn { it.id == this }
     }
 
     fun opplysningSvar() =

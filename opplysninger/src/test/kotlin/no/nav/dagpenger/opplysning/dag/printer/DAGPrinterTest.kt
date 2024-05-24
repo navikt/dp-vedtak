@@ -1,7 +1,9 @@
 package no.nav.dagpenger.opplysning.dag.printer
 
-import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorA
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorB
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.produserer
 import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -9,10 +11,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class DAGPrinterTest {
-    private val a = Opplysningstype.somDesimaltall("A")
-    private val b = Opplysningstype.somDesimaltall("B")
-    private val c = Opplysningstype.somDesimaltall("A * B")
-    private val regelsett = Regelsett("regelsett") { regel(c) { multiplikasjon(a, b) } }
+    private val regelsett = Regelsett("regelsett") { regel(produserer) { multiplikasjon(faktorA, faktorB) } }
 
     private val regeltre = RegeltreBygger(regelsett.regler()).dag()
 
@@ -23,13 +22,13 @@ class DAGPrinterTest {
         assertEquals(
             expected =
                 """
-                A * B: opplysning om A * B
+                Resultat: opplysning om Resultat
                   | Multiplikasjon
-                  A: opplysning om A
+                  FaktorA: opplysning om FaktorA
                   | Multiplikasjon
-                  B: opplysning om B
+                  FaktorB: opplysning om FaktorB
                 """.trimIndent(),
-            actual = prettyPrinter.toPrint { it.data == c },
+            actual = prettyPrinter.toPrint { it.data == produserer },
         )
     }
 

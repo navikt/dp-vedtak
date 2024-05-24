@@ -118,7 +118,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         private fun <T : Comparable<T>> Row.somOpplysningRad(datatype: Datatype<T>): OpplysningRad<T> {
             val opplysingerId = uuid("opplysninger_id")
             val id = uuid("id")
-            val opplysningstype = Opplysningstype(string("type_navn").id(string("type_id")), datatype)
+
+            val opplysningstype: Opplysningstype<T> = Opplysningstype.finn(string("type_navn").id(string("type_id")))
             val gyldighetsperiode =
                 Gyldighetsperiode(
                     localDateOrNull("gyldig_fom") ?: LocalDate.MIN,

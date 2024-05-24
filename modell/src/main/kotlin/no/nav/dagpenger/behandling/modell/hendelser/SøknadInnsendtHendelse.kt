@@ -37,11 +37,15 @@ class SøknadInnsendtHendelse(
 
     override fun avklarer(): Opplysningstype<Boolean> = RettTilDagpenger.kravPåDagpenger
 
+    private companion object {
+        val fagsakIdOpplysningstype = Opplysningstype.somHeltall("fagsakId")
+    }
+
     override fun behandling() =
         Behandling(
             this,
             listOf(
-                Faktum(Opplysningstype.somHeltall("fagsakId"), fagsakId),
+                Faktum(fagsakIdOpplysningstype, fagsakId),
             ),
         )
 }

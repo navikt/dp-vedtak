@@ -2,36 +2,36 @@ package no.nav.dagpenger.opplysning
 
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.boolskA
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.boolskB
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.boolskC
 import no.nav.dagpenger.opplysning.regel.alle
 import kotlin.test.Test
 
 class RegelTest {
     @Test
     fun `Regel produserer bare nye opplysningen hvis det den avhenger av er nyere enn det den har produsert`() {
-        val a = Opplysningstype.somBoolsk("A")
-        val b = Opplysningstype.somBoolsk("B")
-        val c = Opplysningstype.somBoolsk("C")
         val regelsett =
             Regelsett("regelsett") {
-                regel(c) {
-                    alle(a, b)
+                regel(boolskC) {
+                    alle(boolskA, boolskB)
                 }
             }
 
         val opplysninger = Opplysninger()
         val regelkjøring1 = Regelkjøring(1.mai, opplysninger, regelsett)
-        val opplysning = Faktum(a, true, Gyldighetsperiode(1.januar, 2.mai))
+        val opplysning = Faktum(boolskA, true, Gyldighetsperiode(1.januar, 2.mai))
         opplysninger.leggTil(opplysning)
-        opplysninger.leggTil(Faktum(b, true))
+        opplysninger.leggTil(Faktum(boolskB, true))
         regelkjøring1.evaluer()
-        opplysninger.finnOpplysning(c).verdi shouldBe true
+        opplysninger.finnOpplysning(boolskC).verdi shouldBe true
 
         // Første forsøk på å fastsette A var feil.
         val regelkjøring2 = Regelkjøring(1.mai, opplysninger, regelsett)
-        opplysninger.leggTil(Faktum(a, false, Gyldighetsperiode(1.januar, 2.mai)))
+        opplysninger.leggTil(Faktum(boolskA, false, Gyldighetsperiode(1.januar, 2.mai)))
         shouldNotThrow<IllegalArgumentException> { regelkjøring2.evaluer() }
 
         // Endring av A fører til at C blir beregnet på nytt
-        opplysninger.finnOpplysning(c).verdi shouldBe false
+        opplysninger.finnOpplysning(boolskC).verdi shouldBe false
     }
 }
