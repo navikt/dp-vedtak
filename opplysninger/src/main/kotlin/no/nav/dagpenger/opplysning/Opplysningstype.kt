@@ -50,7 +50,6 @@ class Opplysningstype<T : Comparable<T>>(
         }
 
         private fun registrer(opplysningstype: Opplysningstype<*>) {
-            // @todo: Vi trenger denne sjekken men krever en del refaktorering av testene
             require(!typer.contains(opplysningstype)) { "Opplysningstype $opplysningstype er allerede registrert" }
             typer.add(opplysningstype)
         }
