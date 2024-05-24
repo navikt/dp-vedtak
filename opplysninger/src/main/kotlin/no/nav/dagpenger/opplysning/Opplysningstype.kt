@@ -27,13 +27,18 @@ class Opplysningstype<T : Comparable<T>>(
     val navn = opplysningTypeId.beskrivelse
 
     init {
-        // TODO: Vi bør gjøre noe slikt, men det brekker mye tester
-        typer.add(this)
+        registrer(this)
         parent?.child?.add(this)
     }
 
     companion object {
         val typer = mutableSetOf<Opplysningstype<*>>()
+
+        private fun registrer(opplysningstype: Opplysningstype<*>) {
+            // @todo: Vi trenger denne sjekken men krever en del refaktorering av testene
+            // require(!typer.contains(opplysningstype)) { "Opplysningstype $opplysningstype er allerede registrert" }
+            typer.add(opplysningstype)
+        }
 
         fun somHeltall(
             opplysningTypeId: OpplysningTypeId,
