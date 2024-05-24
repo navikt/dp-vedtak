@@ -119,7 +119,12 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val opplysingerId = uuid("opplysninger_id")
             val id = uuid("id")
 
-            val opplysningstype: Opplysningstype<T> = Opplysningstype.finn(string("type_navn").id(string("type_id")))
+            val opplysningstype: Opplysningstype<T> =
+                when (Opplysningstype.eksisterer(string("type_id"))) {
+                    true -> Opplysningstype.finn(string("type_navn").id(string("type_id")))
+                    false -> Opplysningstype(string("type_navn").id(string("type_id")), datatype)
+                }
+
             val gyldighetsperiode =
                 Gyldighetsperiode(
                     localDateOrNull("gyldig_fom") ?: LocalDate.MIN,

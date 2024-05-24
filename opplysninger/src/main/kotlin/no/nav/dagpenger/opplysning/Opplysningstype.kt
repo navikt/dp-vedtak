@@ -42,6 +42,10 @@ class Opplysningstype<T : Comparable<T>>(
             return finn { it.id == id }
         }
 
+        fun eksisterer(id: String): Boolean {
+            return typer.any { it.id == id }
+        }
+
         fun <T : Comparable<T>> finn(opplysningTypeId: OpplysningTypeId): Opplysningstype<T> {
             return (
                 typer.find { it.opplysningTypeId == opplysningTypeId }
