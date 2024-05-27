@@ -16,11 +16,15 @@ class Regelsett(val navn: String, block: Regelsett.() -> Unit = {}) {
         forDato: LocalDate = LocalDate.MIN,
         opplysninger: Opplysninger? = null,
     ): List<Regel<*>> {
-        // TODO: Rydd opp i rekursiviteten her
+        // Sjekk om reglene skal vurderes
         if (opplysninger != null && !skalVurderes(opplysninger)) return emptyList()
-        return regler.map { it.value.get(forDato) }.toList() +
-            regelsett.filter { opplysninger == null || it.skalVurderes(opplysninger) }
-                .flatMap { it.regler(forDato) }
+        val egneRegler = regler.values.map { it.get(forDato) }
+
+        // Finn regler fra barn rekursivt
+        val barnRegler = regelsett.flatMap { it.regler(forDato, opplysninger) }
+
+        // Slå sammen egne og barnas regler
+        return egneRegler + barnRegler
     }
 
     private fun leggTil(
