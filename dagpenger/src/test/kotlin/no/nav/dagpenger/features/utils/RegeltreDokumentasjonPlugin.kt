@@ -14,6 +14,7 @@ import no.nav.dagpenger.opplysning.dag.printer.MermaidPrinter
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.Opphold
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.ReellArbeidssøker
 import org.approvaltests.Approvals
@@ -32,6 +33,7 @@ fun dokumentasjon(scenario: Scenario) {
             "@regel-opptjeningstid" to Opptjeningstid.regelsett,
             "@regel-reell-arbeidssøker" to ReellArbeidssøker.regelsett,
             "@regel-meldeplikt" to Meldeplikt.regelsett,
+            "@regel-opphold" to Opphold.regelsett,
         )
     println("Lager dokumentasjon for $test")
     val regelsett = regler[test]
