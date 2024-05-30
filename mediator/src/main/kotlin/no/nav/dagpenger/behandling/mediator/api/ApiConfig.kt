@@ -18,11 +18,14 @@ import io.ktor.server.request.path
 import io.ktor.server.request.uri
 import io.ktor.server.resources.Resources
 import io.ktor.server.response.respond
+import mu.KotlinLogging
 import no.nav.dagpenger.behandling.api.models.HttpProblemDTO
 import no.nav.dagpenger.behandling.mediator.api.auth.AuthFactory.azureAd
 import org.apache.kafka.common.errors.ResourceNotFoundException
 import org.slf4j.event.Level
 import java.net.URI
+
+private val logger = KotlinLogging.logger {}
 
 internal fun Application.konfigurerApi(
     auth: AuthenticationConfig.() -> Unit = {
@@ -56,6 +59,7 @@ internal fun Application.konfigurerApi(
                     status = HttpStatusCode.BadRequest.value,
                     detail = cause.message ?: "Ugyldig forespørsel",
                 )
+            logger.error(cause) { "Noe gikk galt på ${call.request.uri}" }
             call.respond(HttpStatusCode.BadRequest, problem)
         }
         exception<ResourceNotFoundException> { call: ApplicationCall, cause: ResourceNotFoundException ->
@@ -66,6 +70,7 @@ internal fun Application.konfigurerApi(
                     status = HttpStatusCode.NotFound.value,
                     detail = cause.message ?: "Fant ikke ressurs",
                 )
+            logger.error(cause) { "Noe gikk galt på ${call.request.uri}" }
             call.respond(HttpStatusCode.NotFound, problem)
         }
         exception<Throwable> { call: ApplicationCall, cause: Throwable ->
@@ -76,6 +81,7 @@ internal fun Application.konfigurerApi(
                     status = HttpStatusCode.InternalServerError.value,
                     detail = cause.message ?: "Noe gikk galt",
                 )
+            logger.error(cause) { "Noe gikk galt på ${call.request.uri}" }
             call.respond(HttpStatusCode.InternalServerError, problem)
         }
     }
