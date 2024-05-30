@@ -1,6 +1,6 @@
 package no.nav.dagpenger.regel
 
-object SøknadinnsendtRegelsett {
+object SøknadInnsendtRegelsett {
     val regelsett =
         listOf(
             Alderskrav.regelsett,

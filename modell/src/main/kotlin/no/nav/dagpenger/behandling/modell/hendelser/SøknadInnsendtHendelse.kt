@@ -4,7 +4,7 @@ import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.RettTilDagpenger
-import no.nav.dagpenger.regel.SøknadinnsendtRegelsett
+import no.nav.dagpenger.regel.SøknadInnsendtRegelsett
 import java.time.LocalDate
 import java.util.UUID
 
@@ -15,7 +15,7 @@ class SøknadInnsendtHendelse(
     gjelderDato: LocalDate,
     fagsakId: Int,
 ) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId) {
-    override fun regelsett() = SøknadinnsendtRegelsett.regelsett
+    override fun regelsett() = SøknadInnsendtRegelsett.regelsett
 
     override fun avklarer(): Opplysningstype<Boolean> = RettTilDagpenger.kravPåDagpenger
 
