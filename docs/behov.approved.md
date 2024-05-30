@@ -17,6 +17,7 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 |PermittertFiskeforedling | Har rett til dagpenger under permittering i fiskeforedlingsindustri | Boolsk|boolean|
 |RegistrertSomArbeidssøker | Registrert som arbeidssøker | Boolsk|boolean|
 |Søknadstidspunkt | Søknadsdato | Dato|LocalDate|
+|TarUtdanningEllerOpplæring | Tar utdanning eller opplæring? | Boolsk|boolean|
 |Verneplikt | Avtjent verneplikt | Boolsk|boolean|
 |VilligTilÅBytteYrke | Villig til å bytte yrke | Boolsk|boolean|
 |ØnskerDagpengerFraDato | Ønsker dagpenger fra dato | Dato|LocalDate|

@@ -44,6 +44,7 @@ import no.nav.dagpenger.regel.Behov.Permittert
 import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
+import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
 import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.RegelverkDagpenger
@@ -87,7 +88,7 @@ internal class PersonMediatorTest {
         )
     }
 
-    private val forventetAntallOpplysninger = 47
+    private val forventetAntallOpplysninger = 59
 
     @BeforeEach
     fun setUp() {
@@ -111,6 +112,7 @@ internal class PersonMediatorTest {
                 it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe forventetAntallOpplysninger
 
                 it.aktivBehandling.aktivAvklaringer.shouldHaveSize(6)
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe forventetAntallOpplysninger
             }
 
             listOf(
@@ -141,7 +143,7 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 25
+            rapid.inspektør.size shouldBe 26
 
             testObservatør.tilstandsendringer.size shouldBe 6
         }
@@ -169,6 +171,7 @@ internal class PersonMediatorTest {
                 medTekst("søknadId") shouldBe testPerson.søknadId
                 medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
             }
+            rapid.inspektør.size shouldBe 18
         }
 
     @Test
@@ -197,7 +200,7 @@ internal class PersonMediatorTest {
             rapid.inspektør.size shouldBe
                 listOf(
                     "opprettet" to 1,
-                    "behov" to 7,
+                    "behov" to 8,
                     "avklaring" to 6,
                     "forslag" to 1,
                     "event" to 2,
@@ -353,6 +356,12 @@ internal class PersonMediatorTest {
          */
         rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
         testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+
+        /**
+         * Innhenter tar utdanning eller opplæring
+         */
+        rapid.harBehov(TarUtdanningEllerOpplæring)
+        testPerson.løsBehov(TarUtdanningEllerOpplæring)
     }
 
     private val Person.aktivBehandling get() = this.behandlinger().first()
