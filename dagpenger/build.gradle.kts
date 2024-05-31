@@ -7,7 +7,7 @@ val cucumberVersion = "7.15.0"
 dependencies {
     implementation(project(path = ":opplysninger"))
     implementation(project(path = ":dato"))
-    implementation("com.github.navikt:dp-grunnbelop:2023.05.24-15.26.f42064d9fdc8")
+    implementation("com.github.navikt:dp-grunnbelop:2024.05.30-13.38.6e9169eb05d1")
 
     testImplementation("io.cucumber:cucumber-java:$cucumberVersion")
     testImplementation("io.cucumber:cucumber-java8:$cucumberVersion")

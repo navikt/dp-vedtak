@@ -94,7 +94,6 @@ internal class PersonMediatorTest {
                 it.behandlinger().size shouldBe 1
                 it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 46
             }
-
             rapid.harHendelse("vedtak_fattet") {
                 medBoolsk("utfall") shouldBe false
                 medTekst("fagsakId").shouldBeNull()
