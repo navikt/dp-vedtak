@@ -20,6 +20,9 @@ object Behov {
     val PermittertFiskeforedling by StringConstant()
 
     val Verneplikt by StringConstant()
+
+    val HarTaptArbeid by StringConstant()
+    val KravPåLønn by StringConstant()
 }
 
 class StringConstant {

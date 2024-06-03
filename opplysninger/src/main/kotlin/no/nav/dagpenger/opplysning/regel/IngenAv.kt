@@ -15,3 +15,5 @@ class IngenAv internal constructor(
 }
 
 fun Opplysningstype<Boolean>.ingenAv(vararg opplysningstype: Opplysningstype<Boolean>) = IngenAv(this, *opplysningstype)
+
+fun Opplysningstype<Boolean>.ikke(opplysningstype: Opplysningstype<Boolean>) = IngenAv(this, opplysningstype)

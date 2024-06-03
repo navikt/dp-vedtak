@@ -17,6 +17,7 @@ import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Opphold
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.ReellArbeidssøker
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import org.approvaltests.Approvals
 import org.approvaltests.core.Options
 import org.approvaltests.namer.NamerWrapper
@@ -34,6 +35,7 @@ fun dokumentasjon(scenario: Scenario) {
             "@regel-reell-arbeidssøker" to ReellArbeidssøker.regelsett,
             "@regel-meldeplikt" to Meldeplikt.regelsett,
             "@regel-opphold" to Opphold.regelsett,
+            "@regel-tap-arbeidsinntekt-og-arbeidstid" to TapAvArbeidsinntektOgArbeidstid.regelsett,
         )
     println("Lager dokumentasjon for $test")
     val regelsett = regler[test]
