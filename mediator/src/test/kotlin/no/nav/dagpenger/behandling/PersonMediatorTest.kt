@@ -48,7 +48,7 @@ internal class PersonMediatorTest {
 
     private val unleash =
         FakeUnleash().also {
-            it.enable("bruk-søknad-orkestrator")
+            it.enable("bruk-soknad-orkestrator")
         }
     private val personMediator =
         PersonMediator(
