@@ -41,5 +41,9 @@ object ReellArbeidssøker {
                     villigTilEthvertArbeid,
                 )
             }
+
+            kontroll("Bruker kan jobbe hvor som helst", "KAN_JOBBE_HELTID_DELTID") {
+                if (verdi(kanJobbeHvorSomHelst) == true) return@kontroll null
+            }
         }
 }
