@@ -33,6 +33,7 @@ import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.UUID
 
 internal class OpplysningSvarMottak(
@@ -207,10 +208,21 @@ private object EnkeltSvar : SvarStrategi {
 private class JsonMapper(private val verdi: JsonNode) : OpplysningSvarBygger.VerdiMapper {
     override fun <T : Comparable<T>> map(datatype: Datatype<T>) =
         when (datatype) {
-            Dato -> runCatching { verdi.asLocalDate() }.getOrElse { verdi.asLocalDateTime().toLocalDate() } as T
+            Dato -> dato() as T
             Heltall -> verdi.asInt() as T
             Desimaltall -> verdi.asDouble() as T
             Boolsk -> verdi.asBoolean() as T
             ULID -> Ulid(verdi.asText()) as T
         }
+
+    private fun <T : Comparable<T>> dato(): T {
+        return when (kotlin.runCatching { verdi.asLocalDate() }.isSuccess) {
+            true -> verdi.asLocalDate() as T
+            else ->
+                when (kotlin.runCatching { verdi.asLocalDateTime() }.isSuccess) {
+                    true -> verdi.asLocalDateTime().toLocalDate() as T
+                    else -> ZonedDateTime.parse(verdi.asText()).toLocalDate() as T
+                }
+        }
+    }
 }
