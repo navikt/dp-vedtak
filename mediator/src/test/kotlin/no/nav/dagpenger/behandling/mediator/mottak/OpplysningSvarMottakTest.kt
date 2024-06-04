@@ -8,7 +8,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.dagpenger.behandling.TestOpplysningstyper.boolsk
-import no.nav.dagpenger.behandling.TestOpplysningstyper.dato
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
@@ -18,7 +17,6 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class OpplysningSvarMottakTest {
     private val rapid = TestRapid()
@@ -72,7 +70,7 @@ class OpplysningSvarMottakTest {
     @Test
     fun `Kan ikke besvare opplysning en ikke kjenner til`() {
         rapid.sendTestMessage(
-            løsningMedMetadata(gyldigFraOgMed, gyldigTilOgMed, "ukjentOpplysning" to "bla").toJson(),
+            løsningMedMetadata(gyldigFraOgMed, gyldigTilOgMed, "ukjentOpplysning").toJson(),
         )
         val hendelse = slot<OpplysningSvarHendelse>()
         verify(exactly = 1) {
@@ -106,31 +104,6 @@ class OpplysningSvarMottakTest {
             Gyldighetsperiode(LocalDate.MIN, gyldigFraOgMed)
     }
 
-    @Test
-    fun `midlertidig godta LocalDateTime`() {
-        val svar = dato.id to LocalDate.now()
-        rapid.sendTestMessage(løsningMedMetadata(null, gyldigFraOgMed, svar).toJson())
-        val hendelse = slot<OpplysningSvarHendelse>()
-        verify {
-            messageMediator.behandle(capture(hendelse), any(), any())
-        }
-
-        with(hendelse.captured.opplysninger.first().opplysning()) {
-            gyldighetsperiode shouldBe
-                Gyldighetsperiode(LocalDate.MIN, gyldigFraOgMed)
-            verdi shouldBe LocalDate.now()
-        }
-
-        val svar2 = dato.id to LocalDateTime.now()
-        rapid.sendTestMessage(løsningMedMetadata(null, gyldigFraOgMed, svar2).toJson())
-
-        with(hendelse.captured.opplysninger.first().opplysning()) {
-            gyldighetsperiode shouldBe
-                Gyldighetsperiode(LocalDate.MIN, gyldigFraOgMed)
-            verdi shouldBe LocalDate.now()
-        }
-    }
-
     private val behandlingId = UUIDv7.ny()
     private val konvolutt =
         mapOf(
@@ -157,17 +130,17 @@ class OpplysningSvarMottakTest {
     private fun løsningMedMetadata(
         gyldigFraOgMed: LocalDate?,
         gyldigTilOgMed: LocalDate?,
-        opplysning: Pair<String, Any> = Pair("boolsk", true),
+        opplysningstype: String = "boolsk",
     ): JsonMessage {
         return JsonMessage.newNeed(
-            listOf(opplysning.first),
+            listOf(opplysningstype),
             konvolutt +
                 mapOf(
                     "@løsning" to
                         mapOf(
-                            opplysning.first to
+                            opplysningstype to
                                 mapOf(
-                                    "verdi" to opplysning.second,
+                                    "verdi" to true,
                                 ) +
                                 mapOf(
                                     "gyldigFraOgMed" to gyldigFraOgMed?.toString(),
