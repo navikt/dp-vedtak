@@ -1,6 +1,11 @@
 package no.nav.dagpenger.avklaring
 
+import no.nav.dagpenger.avklaring.Avklaring.Endring.Avbrutt
+import no.nav.dagpenger.avklaring.Avklaring.Endring.Avklart
+import no.nav.dagpenger.avklaring.Avklaring.Endring.UnderBehandling
+import no.nav.dagpenger.opplysning.UUIDv7
 import java.time.LocalDateTime
+import java.util.UUID
 
 interface Avklaringkode {
     val kode: String
@@ -9,35 +14,33 @@ interface Avklaringkode {
 }
 
 data class Avklaring(
+    val id: UUID,
     val kode: Avklaringkode,
-    private val historikk: MutableList<Endring> = mutableListOf(Endring.Opprettet()),
+    private val historikk: MutableList<Endring> = mutableListOf(UnderBehandling()),
 ) {
-    val tilstand =
-        when (historikk.last()) {
-            is Endring.Opprettet -> Avklaringtilstand.Opprettet
-            is Endring.UnderBehandling -> Avklaringtilstand.UnderBehandling
-            is Endring.Avklart -> Avklaringtilstand.Avklart
-            is Endring.Avbrutt -> Avklaringtilstand.Avbrutt
-        }
+    constructor(kode: Avklaringkode) : this(UUIDv7.ny(), kode)
 
-    fun erAvklart() = tilstand == Avklaringtilstand.Avklart
+    private val tilstand get() = historikk.last()
 
-    fun måAvklares() = tilstand != Avklaringtilstand.Avklart && tilstand != Avklaringtilstand.Avbrutt
-
-    enum class Avklaringtilstand {
-        Opprettet,
-        UnderBehandling,
-        Avklart,
-        Avbrutt,
-    }
+    fun måAvklares() = tilstand is UnderBehandling
 
     sealed class Endring(val endret: LocalDateTime = LocalDateTime.now()) {
-        class Opprettet : Endring()
-
         class UnderBehandling : Endring()
 
         class Avklart(val saksbehandler: String) : Endring()
 
         class Avbrutt : Endring()
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Avklaring) return false
+        return kode == other.kode
+    }
+
+    override fun hashCode() = kode.hashCode()
+
+    fun avbryt() = historikk.add(Avbrutt())
+
+    fun kvittering() = historikk.add(Avklart("saksbehandler"))
 }

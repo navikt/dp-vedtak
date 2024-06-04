@@ -3,25 +3,17 @@ package no.nav.dagpenger.avklaring
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import no.nav.dagpenger.avklaring.Kontrollpunkt.Kontrollresultat
-import no.nav.dagpenger.avklaring.KontrollpunktTest.TestAvklaringer.ArbeidIEØS
-import no.nav.dagpenger.avklaring.KontrollpunktTest.TestAvklaringer.TestIkke123
+import no.nav.dagpenger.avklaring.TestAvklaringer.ArbeidIEØS
+import no.nav.dagpenger.avklaring.TestAvklaringer.TestIkke123
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import org.junit.jupiter.api.Test
 
 class KontrollpunktTest {
-    enum class TestAvklaringer(
-        override val kode: String,
-        override val tittel: String,
-        override val beskrivelse: String,
-    ) : Avklaringkode {
-        ArbeidIEØS("ArbeidIEØS", "Arbeid i EØS", "Krever avklaring om arbeid i EØS"),
-        TestIkke123("TestIkke123", "Test må være 123", "Krever avklaring om hvorfor test ikke er 123"),
-    }
-
     private val opplysningstype = Opplysningstype.somHeltall("test")
 
     private fun getOpplysning(verdi: Int) = Faktum(opplysningstype, verdi)
@@ -29,11 +21,8 @@ class KontrollpunktTest {
     @Test
     fun `lager kontroller`() {
         val kontrollpunkt =
-            Kontrollpunkt { opplysninger ->
-                when (opplysninger.finnAlle().isEmpty()) {
-                    true -> Kontrollresultat.OK
-                    false -> Kontrollresultat.KreverAvklaring(ArbeidIEØS)
-                }
+            Kontrollpunkt(ArbeidIEØS) { opplysninger ->
+                opplysninger.finnAlle().isEmpty()
             }
 
         val opplysninger = Opplysninger().also { Regelkjøring(1.mai(2024), it) }
@@ -53,11 +42,8 @@ class KontrollpunktTest {
     fun `avklaringer avklares`() {
         val kontrollpunkter =
             listOf(
-                Kontrollpunkt { opplysninger ->
-                    when (opplysninger.finnOpplysning(opplysningstype).verdi) {
-                        123 -> Kontrollresultat.OK
-                        else -> Kontrollresultat.KreverAvklaring(TestIkke123)
-                    }
+                Kontrollpunkt(TestIkke123) { opplysninger ->
+                    opplysninger.finnOpplysning(opplysningstype).verdi == 123
                 },
             )
 
@@ -66,26 +52,36 @@ class KontrollpunktTest {
 
         val ding = Dingseboms(kontrollpunkter)
         ding.avklaringer(opplysninger).also { avklaringer ->
-            avklaringer.all { it.måAvklares() } shouldBe true
             avklaringer.size shouldBe 1
+            avklaringer.all { it.måAvklares() } shouldBe true
         }
 
         opplysninger.leggTil(getOpplysning(123))
         ding.avklaringer(opplysninger).also { avklaringer ->
-            avklaringer.size shouldBe 0
-            // TODO: Bør returnere også avklarte/avbrutte
-            // avklaringer.all { it.måAvklares() } shouldBe false
+            avklaringer.size shouldBe 1
+            avklaringer.all { it.måAvklares() } shouldBe false
         }
     }
 }
 
-class Dingseboms(private val kontrollpunkter: List<Kontrollpunkt>) {
-    fun avklaringer(opplysninger: Opplysninger): List<Avklaring> {
-        return kontrollpunkter.mapNotNull { kontrollpunkt ->
-            when (val resultat = kontrollpunkt.evaluer(opplysninger)) {
-                is Kontrollresultat.KreverAvklaring -> resultat.avklaring
-                else -> null
-            }
-        }
+class Dingseboms(private val kontrollpunkter: List<Kontrollpunkt>, avklaringer: List<Avklaring> = emptyList()) {
+    private val avklaringer = avklaringer.toMutableSet()
+
+    fun avklaringer(opplysninger: LesbarOpplysninger): List<Avklaring> {
+        val aktiveAvklaringer =
+            kontrollpunkter
+                .map { it.evaluer(opplysninger) }
+                .filterIsInstance<Kontrollresultat.KreverAvklaring>()
+                .map { it.avklaring }
+
+        // Avbryt alle avklaringer som ikke lenger er aktive
+        avklaringer
+            .filter { it.måAvklares() }
+            .filterNot { avklaring: Avklaring -> aktiveAvklaringer.contains(avklaring) }
+            .forEach { it.avbryt() }
+
+        avklaringer.addAll(aktiveAvklaringer)
+
+        return avklaringer.toList()
     }
 }
