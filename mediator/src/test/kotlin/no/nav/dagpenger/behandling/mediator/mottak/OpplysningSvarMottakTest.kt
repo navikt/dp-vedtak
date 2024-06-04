@@ -18,6 +18,7 @@ import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class OpplysningSvarMottakTest {
     private val rapid = TestRapid()
@@ -106,7 +107,7 @@ class OpplysningSvarMottakTest {
     }
 
     @Test
-    fun `midlertidig godta ZonedDateTime`() {
+    fun `midlertidig godta LocalDateTime`() {
         val svar = dato.id to LocalDate.now()
         rapid.sendTestMessage(løsningMedMetadata(null, gyldigFraOgMed, svar).toJson())
         val hendelse = slot<OpplysningSvarHendelse>()
@@ -120,13 +121,13 @@ class OpplysningSvarMottakTest {
             verdi shouldBe LocalDate.now()
         }
 
-        val svar2 = dato.id to "2024-06-03T15:14:36+02:00"
+        val svar2 = dato.id to LocalDateTime.now()
         rapid.sendTestMessage(løsningMedMetadata(null, gyldigFraOgMed, svar2).toJson())
 
         with(hendelse.captured.opplysninger.first().opplysning()) {
             gyldighetsperiode shouldBe
                 Gyldighetsperiode(LocalDate.MIN, gyldigFraOgMed)
-            verdi shouldBe LocalDate.parse("2024-06-03")
+            verdi shouldBe LocalDate.now()
         }
     }
 
