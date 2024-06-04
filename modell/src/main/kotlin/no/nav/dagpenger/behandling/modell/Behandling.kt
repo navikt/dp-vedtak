@@ -20,6 +20,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import java.time.LocalDateTime
 import java.util.UUID
@@ -283,6 +284,16 @@ class Behandling private constructor(
                 if (søknadstidspunkt.isAfter(behandling.behandler.skjedde.plusDays(14))) {
                     hendelse.info("Behandling kunne vært automatisk avslag, men ligger for langt fram i tid")
                     behandling.tilstand(Avbrutt(årsak = "Virkningstidspunkt ligger mer enn 14 dager fram i tid"), hendelse)
+                    return
+                }
+
+                // Når søknadstidspunktet ligger etter rapporteringsfristen for A-ordningen så bør det vurderes om avslaget er riktig, eller om
+                // saken bør ligge på vent.
+                // TODO: Avklaring
+                val rapporteringsfrist = behandling.opplysninger.finnOpplysning(Opptjeningstid.justertRapporteringsfrist).verdi
+                if (søknadstidspunkt.isAfter(rapporteringsfrist)) {
+                    hendelse.info("Virkningstidspunkt ligger etter rapporteringsfristen, bør vurderes manuelt")
+                    behandling.tilstand(Avbrutt(årsak = "Virkningstidspunkt ligger etter rapporteringsfristen"), hendelse)
                     return
                 }
 
