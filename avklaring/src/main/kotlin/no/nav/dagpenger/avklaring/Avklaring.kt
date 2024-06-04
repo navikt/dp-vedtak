@@ -17,19 +17,27 @@ data class Avklaring(
             is Endring.Opprettet -> Avklaringtilstand.Opprettet
             is Endring.UnderBehandling -> Avklaringtilstand.UnderBehandling
             is Endring.Avklart -> Avklaringtilstand.Avklart
+            is Endring.Avbrutt -> Avklaringtilstand.Avbrutt
         }
+
+    fun erAvklart() = tilstand == Avklaringtilstand.Avklart
+
+    fun måAvklares() = tilstand != Avklaringtilstand.Avklart && tilstand != Avklaringtilstand.Avbrutt
 
     enum class Avklaringtilstand {
         Opprettet,
         UnderBehandling,
         Avklart,
+        Avbrutt,
     }
 
     sealed class Endring(val endret: LocalDateTime = LocalDateTime.now()) {
-        class Opprettet() : Endring()
+        class Opprettet : Endring()
 
-        class UnderBehandling() : Endring()
+        class UnderBehandling : Endring()
 
         class Avklart(val saksbehandler: String) : Endring()
+
+        class Avbrutt : Endring()
     }
 }
