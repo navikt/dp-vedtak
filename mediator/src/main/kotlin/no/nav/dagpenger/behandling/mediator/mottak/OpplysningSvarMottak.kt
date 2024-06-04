@@ -130,6 +130,7 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
                 val svar = lagSvar(løsning)
                 val kilde = Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
 
+                sikkerLogger.info { "Opplysningstype: $typeNavn, verdi: ${svar.verdi}" }
                 val opplysningSvarBygger =
                     OpplysningSvarBygger(
                         typeNavn.somOpplysningstype(),
@@ -207,7 +208,7 @@ private object EnkeltSvar : SvarStrategi {
 private class JsonMapper(private val verdi: JsonNode) : OpplysningSvarBygger.VerdiMapper {
     override fun <T : Comparable<T>> map(datatype: Datatype<T>) =
         when (datatype) {
-            Dato -> runCatching { verdi.asLocalDate() }.getOrElse { verdi.asLocalDateTime().toLocalDate() } as T
+            Dato -> verdi.asLocalDate() as T
             Heltall -> verdi.asInt() as T
             Desimaltall -> verdi.asDouble() as T
             Boolsk -> verdi.asBoolean() as T
