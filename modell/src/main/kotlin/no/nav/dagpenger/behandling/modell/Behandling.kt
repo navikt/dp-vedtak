@@ -1,6 +1,5 @@
 package no.nav.dagpenger.behandling.modell
 
-import DagpengerUtredningStoppÅrsak
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
@@ -21,6 +20,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import no.nav.dagpenger.regel.DagpengerKonklusjoner
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.Søknadstidspunkt
@@ -267,7 +267,7 @@ class Behandling private constructor(
             val konklusjoner: List<Konklusjon> = behandling.behandler.konklusjoner(behandling.opplysninger)
             if (konklusjoner.isNotEmpty()) {
                 if (måAvklares.isEmpty()) {
-                    if (konklusjoner.any { it.årsak == DagpengerUtredningStoppÅrsak.Innvilgelse.årsak }) {
+                    if (konklusjoner.any { it.årsak == DagpengerKonklusjoner.Innvilgelse.årsak }) {
                         hendelse.info("(Konklusjon) Behandling fører ikke til avslag, det støtter vi ikke enda")
                     }
 

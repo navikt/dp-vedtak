@@ -1,5 +1,6 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.behandling.konklusjon.KonklusjonsStrategi
 import no.nav.dagpenger.grunnbelop.Regel
 import no.nav.dagpenger.grunnbelop.forDato
 import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
@@ -64,4 +65,14 @@ object Minsteinntekt {
         getGrunnbeløpForRegel(Regel.Minsteinntekt).forDato(it).verdi
             // TODO: Bli enige med oss selv hva som er Double og BigDecimal
             .toDouble()
+
+    val AvslagInntektKonklusjon =
+        KonklusjonsStrategi(DagpengerKonklusjoner.Minsteinntekt) { opplysninger ->
+            if (!opplysninger.har(minsteinntekt)) return@KonklusjonsStrategi false
+            if (opplysninger.finnOpplysning(minsteinntekt).verdi) {
+                return@KonklusjonsStrategi true
+            } else {
+                false
+            }
+        }
 }

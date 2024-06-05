@@ -1,5 +1,6 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.behandling.konklusjon.KonklusjonsStrategi
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.alle
@@ -16,6 +17,16 @@ object KravPåDagpenger {
                     Meldeplikt.registrertPåSøknadstidspunktet,
                     Rettighetstype.rettighetstype,
                 )
+            }
+        }
+
+    val Innvilgelse =
+        KonklusjonsStrategi(DagpengerKonklusjoner.Innvilgelse) { opplysninger ->
+            if (!opplysninger.har(kravPåDagpenger)) return@KonklusjonsStrategi false
+            if (opplysninger.finnOpplysning(kravPåDagpenger).verdi) {
+                return@KonklusjonsStrategi true
+            } else {
+                false
             }
         }
 }

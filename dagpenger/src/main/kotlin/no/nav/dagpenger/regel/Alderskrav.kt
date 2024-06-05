@@ -1,5 +1,6 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.behandling.konklusjon.KonklusjonsStrategi
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
@@ -24,5 +25,15 @@ object Alderskrav {
             regel(sisteMåned) { leggTilÅr(fødselsdato, aldersgrense) }
             regel(sisteDagIMåned) { sisteDagIMåned(sisteMåned) }
             regel(oppfyllerKravet) { førEllerLik(virkningsdato, sisteDagIMåned) }
+        }
+
+    val AvslagAlder =
+        KonklusjonsStrategi(DagpengerKonklusjoner.Alder) { opplysninger ->
+            if (!opplysninger.har(oppfyllerKravet)) return@KonklusjonsStrategi false
+            if (opplysninger.finnOpplysning(oppfyllerKravet).verdi) {
+                return@KonklusjonsStrategi true
+            } else {
+                false
+            }
         }
 }
