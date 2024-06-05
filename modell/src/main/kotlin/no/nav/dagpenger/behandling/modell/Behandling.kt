@@ -20,7 +20,9 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import no.nav.dagpenger.regel.Alderskrav.oppfyllerKravet
 import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import java.time.LocalDateTime
@@ -274,6 +276,57 @@ class Behandling private constructor(
                 // Gå til vedtak
             }
 
+            interface ÅrsakTilÅStoppeBehandlingen {
+                val årsak: String
+            }
+
+            enum class DagpengerÅrsakTilÅStoppeBehandlingen(override val årsak: String) : ÅrsakTilÅStoppeBehandlingen {
+                Minsteinntekt("Minsteinntekt"),
+                Alder("Personen er for gammel rett og slett"),
+            }
+
+            fun interface BehandlingsstrategiFaktiskDingsenSomSjekker {
+                fun skalViGiossNå(opplysninger: LesbarOpplysninger): Boolean
+            }
+
+            class Behandlingsstrategi(
+                private val årsak: ÅrsakTilÅStoppeBehandlingen,
+                private val kontroll: BehandlingsstrategiFaktiskDingsenSomSjekker,
+            ) {
+                fun evaluer(opplysninger: LesbarOpplysninger) =
+                    when {
+                        kontroll.skalViGiossNå(opplysninger) -> årsak
+                        else -> null
+                    }
+            }
+
+            val AvslagInntekt =
+                Behandlingsstrategi(DagpengerÅrsakTilÅStoppeBehandlingen.Minsteinntekt) { opplysninger ->
+                    if (!opplysninger.har(minsteinntekt)) return false
+                    if (opplysninger.finnOpplysning(minsteinntekt).verdi) return true
+                }
+
+            val AvslagAlder =
+                Behandlingsstrategi(DagpengerÅrsakTilÅStoppeBehandlingen.Alder) { opplysninger ->
+                    if (!opplysninger.har(oppfyllerKravet)) return false
+                    if (opplysninger.finnOpplysning(oppfyllerKravet).verdi) return true
+                }
+
+            val strategier: List<Behandlingsstrategi> = emptyList()
+            val grunnerTilåStoppe: List<ÅrsakTilÅStoppeBehandlingen> =
+                strategier.mapNotNull {
+                    it.evaluer(behandling.opplysninger)
+                }
+            if (grunnerTilåStoppe.isNotEmpty()) {
+                if (avklaringer2.isEmpty()) {
+                    // Gå til Vedtak
+                } else {
+                    // Gå til Forslag
+                }
+            } else {
+                // Fortsett
+            }
+
             // TODO: Lag strategier for når vi kan lage vedtak
             if (trenger.isEmpty()) {
                 val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
@@ -283,7 +336,7 @@ class Behandling private constructor(
                     return
                 }
 
-                val kravTilInntekt = behandling.opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt)
+                val kravTilInntekt = behandling.opplysninger.finnOpplysning(minsteinntekt)
                 if (kravTilInntekt.verdi) {
                     hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")
                     behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag på grunn av inntekt"), hendelse)
