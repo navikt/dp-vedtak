@@ -130,7 +130,6 @@ internal class OpplysningSvarMessage(private val packet: JsonMessage) : Hendelse
                 val svar = lagSvar(løsning)
                 val kilde = Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
 
-                sikkerLogger.info { "Opplysningstype: $typeNavn, verdi: ${svar.verdi}" }
                 val opplysningSvarBygger =
                     OpplysningSvarBygger(
                         typeNavn.somOpplysningstype(),
