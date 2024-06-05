@@ -273,6 +273,9 @@ class Behandling private constructor(
 
                     hendelse.info("Vi tror vi kan lage vedtak")
                 } else {
+                    måAvklares.forEach { avklaring ->
+                        hendelse.info("Må avklare $avklaring")
+                    }
                     hendelse.info("Vi tror vi kan lage forslag til vedtak")
                 }
             } else {

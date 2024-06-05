@@ -9,6 +9,7 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.KravPåDagpenger
 import no.nav.dagpenger.regel.SøknadInnsendtRegelsett
+import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
 import java.time.LocalDate
 import java.util.UUID
 
@@ -38,6 +39,6 @@ class SøknadInnsendtHendelse(
     override fun konklusjonStrategier() = listOf(AvslagAlder, AvslagInntekt, Innvilgelse)
 
     override fun kontrollpunkter(): List<Kontrollpunkt> {
-        return emptyList()
+        return listOf(VernepliktKontroll)
     }
 }
