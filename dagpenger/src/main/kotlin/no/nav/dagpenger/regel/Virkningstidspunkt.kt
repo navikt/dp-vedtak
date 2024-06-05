@@ -9,6 +9,6 @@ object Virkningstidspunkt {
 
     val regelsett =
         Regelsett("Virkningstidspunkt").apply {
-            regel(virkningstidspunkt) { fraOgMed(RettTilDagpenger.kravPåDagpenger) }
+            regel(virkningstidspunkt) { fraOgMed(KravPåDagpenger.kravPåDagpenger) }
         }
 }

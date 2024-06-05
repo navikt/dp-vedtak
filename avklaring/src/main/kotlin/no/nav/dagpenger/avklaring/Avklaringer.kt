@@ -5,7 +5,7 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 class Avklaringer(private val kontrollpunkter: List<Kontrollpunkt>, avklaringer: List<Avklaring> = emptyList()) {
     internal val avklaringer = avklaringer.toMutableSet()
 
-    fun avklaringer(opplysninger: LesbarOpplysninger): List<Avklaring> {
+    fun måAvklares(opplysninger: LesbarOpplysninger): List<Avklaring> {
         val aktiveAvklaringer =
             kontrollpunkter
                 .map { it.evaluer(opplysninger) }

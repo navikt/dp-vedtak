@@ -19,7 +19,7 @@ class OpplysningDokumentasjon {
                 Minsteinntekt.regelsett,
                 Opptjeningstid.regelsett,
                 ReellArbeidssøker.regelsett,
-                RettTilDagpenger.regelsett,
+                KravPåDagpenger.regelsett,
                 Rettighetstype.regelsett,
                 Søknadstidspunkt.regelsett,
                 Verneplikt.regelsett,

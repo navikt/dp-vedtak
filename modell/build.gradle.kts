@@ -8,6 +8,7 @@ dependencies {
     implementation(project(":opplysninger"))
     implementation(project(":dagpenger"))
     implementation(project(":avklaring"))
+    implementation(project(":konklusjon"))
 
     api("com.fasterxml.uuid:java-uuid-generator:4.3.0")
     api("no.nav.dagpenger:aktivitetslogg:20240412.29.afd090")

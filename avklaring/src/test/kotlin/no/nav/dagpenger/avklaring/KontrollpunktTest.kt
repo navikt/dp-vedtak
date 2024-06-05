@@ -54,7 +54,7 @@ class KontrollpunktTest {
         opplysninger.leggTil(getOpplysning(321))
 
         val ding = Avklaringer(kontrollpunkter)
-        ding.avklaringer(opplysninger).also { avklaringer ->
+        ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe true
             avklaringer.all { it.kode == TestIkke123 } shouldBe true
@@ -63,7 +63,7 @@ class KontrollpunktTest {
         // Saksbehandler endrer opplysningen
         opplysninger.leggTil(getOpplysning(123))
 
-        ding.avklaringer(opplysninger).also { avklaringer ->
+        ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe false
             avklaringer.all { it.kode == TestIkke123 } shouldBe true
@@ -72,7 +72,7 @@ class KontrollpunktTest {
         // Opplysningen endres tilbake til tilstand som krever avklaring
         opplysninger.leggTil(getOpplysning(321))
 
-        ding.avklaringer(opplysninger).also { avklaringer ->
+        ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe true
             avklaringer.all { it.kode == TestIkke123 } shouldBe true
@@ -93,7 +93,7 @@ class KontrollpunktTest {
         opplysninger.leggTil(Faktum(inntekterInneholderSykepenger, true))
 
         val ding = Avklaringer(kontrollpunkter)
-        ding.avklaringer(opplysninger).also { avklaringer ->
+        ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe true
             avklaringer.all { it.kode == SvangerskapsrelaterteSykepenger } shouldBe true
@@ -103,7 +103,7 @@ class KontrollpunktTest {
         ding.avklaringer.first().kvittering()
 
         // Nå skal det ikke være avklaringer som må avklares
-        ding.avklaringer(opplysninger).also { avklaringer ->
+        ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe false
             avklaringer.all { it.kode == SvangerskapsrelaterteSykepenger } shouldBe true
@@ -134,7 +134,7 @@ class KontrollpunktTest {
         opplysninger.leggTil(Faktum(regel3, false))
 
         val ding = Avklaringer(kontrollpunkter)
-        ding.avklaringer(opplysninger).also { avklaringer ->
+        ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe true
             avklaringer.all { it.kode == BeregningsregelForFVA } shouldBe true
@@ -148,7 +148,7 @@ class KontrollpunktTest {
         }
 
         // Nå skal det ikke være avklaringer som må avklares
-        ding.avklaringer(opplysninger).also { avklaringer ->
+        ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe false
             avklaringer.all { it.kode == BeregningsregelForFVA } shouldBe true

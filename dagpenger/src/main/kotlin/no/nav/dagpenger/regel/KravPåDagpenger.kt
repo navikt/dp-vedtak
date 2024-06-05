@@ -4,7 +4,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.alle
 
-object RettTilDagpenger {
+object KravPåDagpenger {
     val kravPåDagpenger = Opplysningstype.somBoolsk("Krav på dagpenger")
     val regelsett =
         Regelsett("Krav på dagpenger") {

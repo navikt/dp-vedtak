@@ -1,10 +1,11 @@
 package no.nav.dagpenger.behandling.modell
 
+import DagpengerUtredningStoppÅrsak
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
-import no.nav.dagpenger.avklaring.Avklaringer
+import no.nav.dagpenger.behandling.konklusjon.Konklusjon
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
@@ -20,8 +21,6 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Ulid
-import no.nav.dagpenger.regel.Alderskrav.oppfyllerKravet
-import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.Søknadstidspunkt
@@ -264,67 +263,20 @@ class Behandling private constructor(
                 behandling.opplysninger.leggTil(opplysning.opplysning())
             }
             val trenger = behandling.hvaTrengerViNå(hendelse)
-
-            // TODO: Kommer inn via constructor
-            val avklaringer = Avklaringer(emptyList())
-
-            val avklaringer2 = avklaringer.avklaringer(behandling.opplysninger)
-
-            if (avklaringer2.any { it.måAvklares() }) {
-                // Gå til ForslagTilVedtak
-            } else {
-                // Gå til vedtak
-            }
-
-            interface ÅrsakTilÅStoppeBehandlingen {
-                val årsak: String
-            }
-
-            enum class DagpengerÅrsakTilÅStoppeBehandlingen(override val årsak: String) : ÅrsakTilÅStoppeBehandlingen {
-                Minsteinntekt("Minsteinntekt"),
-                Alder("Personen er for gammel rett og slett"),
-            }
-
-            fun interface BehandlingsstrategiFaktiskDingsenSomSjekker {
-                fun skalViGiossNå(opplysninger: LesbarOpplysninger): Boolean
-            }
-
-            class Behandlingsstrategi(
-                private val årsak: ÅrsakTilÅStoppeBehandlingen,
-                private val kontroll: BehandlingsstrategiFaktiskDingsenSomSjekker,
-            ) {
-                fun evaluer(opplysninger: LesbarOpplysninger) =
-                    when {
-                        kontroll.skalViGiossNå(opplysninger) -> årsak
-                        else -> null
+            val måAvklares = behandling.behandler.avklaringer(behandling.opplysninger)
+            val konklusjoner: List<Konklusjon> = behandling.behandler.konklusjoner(behandling.opplysninger)
+            if (konklusjoner.isNotEmpty()) {
+                if (måAvklares.isEmpty()) {
+                    if (konklusjoner.any { it.årsak == DagpengerUtredningStoppÅrsak.Innvilgelse.årsak }) {
+                        hendelse.info("(Konklusjon) Behandling fører ikke til avslag, det støtter vi ikke enda")
                     }
-            }
 
-            val AvslagInntekt =
-                Behandlingsstrategi(DagpengerÅrsakTilÅStoppeBehandlingen.Minsteinntekt) { opplysninger ->
-                    if (!opplysninger.har(minsteinntekt)) return false
-                    if (opplysninger.finnOpplysning(minsteinntekt).verdi) return true
-                }
-
-            val AvslagAlder =
-                Behandlingsstrategi(DagpengerÅrsakTilÅStoppeBehandlingen.Alder) { opplysninger ->
-                    if (!opplysninger.har(oppfyllerKravet)) return false
-                    if (opplysninger.finnOpplysning(oppfyllerKravet).verdi) return true
-                }
-
-            val strategier: List<Behandlingsstrategi> = emptyList()
-            val grunnerTilåStoppe: List<ÅrsakTilÅStoppeBehandlingen> =
-                strategier.mapNotNull {
-                    it.evaluer(behandling.opplysninger)
-                }
-            if (grunnerTilåStoppe.isNotEmpty()) {
-                if (avklaringer2.isEmpty()) {
-                    // Gå til Vedtak
+                    hendelse.info("Vi tror vi kan lage vedtak")
                 } else {
-                    // Gå til Forslag
+                    hendelse.info("Vi tror vi kan lage forslag til vedtak")
                 }
             } else {
-                // Fortsett
+                hendelse.info("Vi må fortsette å behandle")
             }
 
             // TODO: Lag strategier for når vi kan lage vedtak
