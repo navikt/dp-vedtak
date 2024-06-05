@@ -16,8 +16,6 @@ class Kontrollpunkt(private val sjekker: Avklaringkode, private val kontroll: Ko
     sealed class Kontrollresultat {
         data object OK : Kontrollresultat()
 
-        data class KreverAvklaring(val avklaringkode: Avklaringkode) : Kontrollresultat() {
-            val avklaring = Avklaring(avklaringkode)
-        }
+        data class KreverAvklaring(val avklaringkode: Avklaringkode) : Kontrollresultat()
     }
 }

@@ -13,7 +13,6 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class KontrollpunktTest {
@@ -24,11 +23,11 @@ class KontrollpunktTest {
 
     private fun getOpplysning(verdi: Int) = Faktum(opplysningstype, verdi)
 
-    @Test @Disabled
+    @Test
     fun `lager kontroller`() {
         val kontrollpunkt =
             Kontrollpunkt(ArbeidIEØS) { opplysninger ->
-                opplysninger.finnAlle().isEmpty()
+                opplysninger.har(opplysningstype) && opplysninger.finnOpplysning(opplysningstype).verdi == 123
             }
 
         val opplysninger = Opplysninger().also { Regelkjøring(1.mai(2024), it) }
@@ -40,16 +39,16 @@ class KontrollpunktTest {
         with(kontrollpunkt.evaluer(opplysninger)) {
             this.shouldBeInstanceOf<Kontrollresultat.KreverAvklaring>()
 
-            this.avklaring.kode shouldBe ArbeidIEØS
+            this.avklaringkode shouldBe ArbeidIEØS
         }
     }
 
-    @Test @Disabled
+    @Test
     fun `avklaringer avklares`() {
         val kontrollpunkter =
             listOf(
                 Kontrollpunkt(TestIkke123) { opplysninger ->
-                    opplysninger.finnOpplysning(opplysningstype).verdi == 123
+                    opplysninger.har(opplysningstype) && opplysninger.finnOpplysning(opplysningstype).verdi == 321
                 },
             )
 

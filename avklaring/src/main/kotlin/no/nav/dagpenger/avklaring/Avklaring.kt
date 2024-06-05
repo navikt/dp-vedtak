@@ -25,6 +25,8 @@ data class Avklaring(
 
     fun måAvklares() = tilstand is UnderBehandling
 
+    fun erAvklart() = tilstand is Avklart
+
     fun avbryt() = historikk.add(Avbrutt())
 
     fun kvittering() {

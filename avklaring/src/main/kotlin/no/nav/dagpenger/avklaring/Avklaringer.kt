@@ -10,19 +10,22 @@ class Avklaringer(private val kontrollpunkter: List<Kontrollpunkt>, avklaringer:
             kontrollpunkter
                 .map { it.evaluer(opplysninger) }
                 .filterIsInstance<Kontrollpunkt.Kontrollresultat.KreverAvklaring>()
-                .map { it.avklaring }
+                .map { it.avklaringkode }
 
         // Avbryt alle avklaringer som ikke lenger er aktive
         avklaringer
             .filter { it.måAvklares() }
-            .filterNot { avklaring: Avklaring -> aktiveAvklaringer.contains(avklaring) }
+            .filterNot { avklaring: Avklaring -> aktiveAvklaringer.contains(avklaring.kode) }
             .forEach { it.avbryt() }
 
-        // Legg til nye avklaringer
-        avklaringer.addAll(aktiveAvklaringer)
+        // Gjenåpne avklaringer som ikke er avklart og er aktive igjen
+        aktiveAvklaringer
+            .filter { avklaringskode -> avklaringer.find { it.kode == avklaringskode } != null }
+            .filterNot { avklaringskode -> avklaringer.find { it.kode == avklaringskode }?.erAvklart() == true }
+            .map { avklaringskode -> avklaringer.find { it.kode == avklaringskode } }.forEach { it?.gjenåpne() }
 
-        // Gjenåpne avklaringer som er avklart
-        avklaringer.filter { it.måAvklares() }.forEach { it.gjenåpne() }
+        // Legg til nye avklaringer
+        avklaringer.addAll(aktiveAvklaringer.map { Avklaring(it) })
 
         return avklaringer.toList()
     }
