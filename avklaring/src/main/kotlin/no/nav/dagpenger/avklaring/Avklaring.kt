@@ -11,6 +11,7 @@ interface Avklaringkode {
     val kode: String
     val tittel: String
     val beskrivelse: String
+    val kanKvitteres: Boolean
 }
 
 data class Avklaring(
@@ -23,6 +24,15 @@ data class Avklaring(
     private val tilstand get() = historikk.last()
 
     fun måAvklares() = tilstand is UnderBehandling
+
+    fun avbryt() = historikk.add(Avbrutt())
+
+    fun kvittering() {
+        require(kode.kanKvitteres) { "Avklaring $kode kan ikke kvitteres ut, krever endring i behandlingen" }
+        historikk.add(Avklart("saksbehandler"))
+    }
+
+    fun gjenåpne() = historikk.add(UnderBehandling())
 
     sealed class Endring(val endret: LocalDateTime = LocalDateTime.now()) {
         class UnderBehandling : Endring()
@@ -39,8 +49,4 @@ data class Avklaring(
     }
 
     override fun hashCode() = kode.hashCode()
-
-    fun avbryt() = historikk.add(Avbrutt())
-
-    fun kvittering() = historikk.add(Avklart("saksbehandler"))
 }

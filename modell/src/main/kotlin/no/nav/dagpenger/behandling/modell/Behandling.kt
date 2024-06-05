@@ -4,6 +4,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
+import no.nav.dagpenger.avklaring.Avklaringer
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
@@ -262,9 +263,19 @@ class Behandling private constructor(
             }
             val trenger = behandling.hvaTrengerViNå(hendelse)
 
-            if (trenger.isEmpty()) {
-                // TODO: requireNotNull(behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())) { "Har ikke klart å avklare behandlingen" }
+            // TODO: Kommer inn via constructor
+            val avklaringer = Avklaringer(emptyList())
 
+            val avklaringer2 = avklaringer.avklaringer(behandling.opplysninger)
+
+            if (avklaringer2.any { it.måAvklares() }) {
+                // Gå til ForslagTilVedtak
+            } else {
+                // Gå til vedtak
+            }
+
+            // TODO: Lag strategier for når vi kan lage vedtak
+            if (trenger.isEmpty()) {
                 val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
                 if (avklaring.verdi) {
                     hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
@@ -272,7 +283,6 @@ class Behandling private constructor(
                     return
                 }
 
-                // TODO: Dette burde vel også vært en avklaring-ting
                 val kravTilInntekt = behandling.opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt)
                 if (kravTilInntekt.verdi) {
                     hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")

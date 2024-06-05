@@ -1,13 +1,15 @@
 package no.nav.dagpenger.avklaring
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import no.nav.dagpenger.avklaring.Kontrollpunkt.Kontrollresultat
 import no.nav.dagpenger.avklaring.TestAvklaringer.ArbeidIEØS
+import no.nav.dagpenger.avklaring.TestAvklaringer.BeregningsregelForFVA
+import no.nav.dagpenger.avklaring.TestAvklaringer.SvangerskapsrelaterteSykepenger
 import no.nav.dagpenger.avklaring.TestAvklaringer.TestIkke123
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.opplysning.Faktum
-import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Test
 
 class KontrollpunktTest {
     private val opplysningstype = Opplysningstype.somHeltall("test")
+    private val inntekterInneholderSykepenger = Opplysningstype.somBoolsk("Inntektene innholder sykepenger")
 
     private fun getOpplysning(verdi: Int) = Faktum(opplysningstype, verdi)
 
@@ -50,38 +53,105 @@ class KontrollpunktTest {
         val opplysninger = Opplysninger().also { Regelkjøring(1.mai(2024), it) }
         opplysninger.leggTil(getOpplysning(321))
 
-        val ding = Dingseboms(kontrollpunkter)
+        val ding = Avklaringer(kontrollpunkter)
         ding.avklaringer(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe true
+            avklaringer.all { it.kode == TestIkke123 } shouldBe true
         }
 
+        // Saksbehandler endrer opplysningen
         opplysninger.leggTil(getOpplysning(123))
+
         ding.avklaringer(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe false
+            avklaringer.all { it.kode == TestIkke123 } shouldBe true
+        }
+
+        // Opplysningen endres tilbake til tilstand som krever avklaring
+        opplysninger.leggTil(getOpplysning(321))
+
+        ding.avklaringer(opplysninger).also { avklaringer ->
+            avklaringer.size shouldBe 1
+            avklaringer.all { it.måAvklares() } shouldBe true
+            avklaringer.all { it.kode == TestIkke123 } shouldBe true
         }
     }
-}
 
-class Dingseboms(private val kontrollpunkter: List<Kontrollpunkt>, avklaringer: List<Avklaring> = emptyList()) {
-    private val avklaringer = avklaringer.toMutableSet()
+    @Test
+    fun `avklaringer av sykepenger i inntekt`() {
+        val kontrollpunkter =
+            listOf(
+                // Om inntektene inneholder sykepenger, må det avklares om de er svangerskapsrelaterte
+                Kontrollpunkt(SvangerskapsrelaterteSykepenger) { opplysninger ->
+                    opplysninger.finnOpplysning(inntekterInneholderSykepenger).verdi
+                },
+            )
 
-    fun avklaringer(opplysninger: LesbarOpplysninger): List<Avklaring> {
-        val aktiveAvklaringer =
-            kontrollpunkter
-                .map { it.evaluer(opplysninger) }
-                .filterIsInstance<Kontrollresultat.KreverAvklaring>()
-                .map { it.avklaring }
+        val opplysninger = Opplysninger().also { Regelkjøring(1.mai(2024), it) }
+        opplysninger.leggTil(Faktum(inntekterInneholderSykepenger, true))
 
-        // Avbryt alle avklaringer som ikke lenger er aktive
-        avklaringer
-            .filter { it.måAvklares() }
-            .filterNot { avklaring: Avklaring -> aktiveAvklaringer.contains(avklaring) }
-            .forEach { it.avbryt() }
+        val ding = Avklaringer(kontrollpunkter)
+        ding.avklaringer(opplysninger).also { avklaringer ->
+            avklaringer.size shouldBe 1
+            avklaringer.all { it.måAvklares() } shouldBe true
+            avklaringer.all { it.kode == SvangerskapsrelaterteSykepenger } shouldBe true
+        }
 
-        avklaringer.addAll(aktiveAvklaringer)
+        // Saksbehandler kvittererer ut avklaringen fordi sykepengene ikke er svangerskapsrelaterte
+        ding.avklaringer.first().kvittering()
 
-        return avklaringer.toList()
+        // Nå skal det ikke være avklaringer som må avklares
+        ding.avklaringer(opplysninger).also { avklaringer ->
+            avklaringer.size shouldBe 1
+            avklaringer.all { it.måAvklares() } shouldBe false
+            avklaringer.all { it.kode == SvangerskapsrelaterteSykepenger } shouldBe true
+        }
+    }
+
+    @Test
+    fun `avklaringer av beregningsregel for fastsatt vanlig arbeidstid`() {
+        val regel1 = Opplysningstype.somBoolsk("6mnd")
+        val regel2 = Opplysningstype.somBoolsk("12mnd")
+        val regel3 = Opplysningstype.somBoolsk("36mnd")
+
+        val kontrollpunkter =
+            listOf(
+                // Minst en beregningsregel må settes for fastsatt vanlig arbeidstid
+                Kontrollpunkt(BeregningsregelForFVA) { opplysninger ->
+                    listOf(
+                        opplysninger.finnOpplysning(regel1),
+                        opplysninger.finnOpplysning(regel2),
+                        opplysninger.finnOpplysning(regel3),
+                    ).count { it.verdi } != 1
+                },
+            )
+
+        val opplysninger = Opplysninger().also { Regelkjøring(1.mai(2024), it) }
+        opplysninger.leggTil(Faktum(regel1, false))
+        opplysninger.leggTil(Faktum(regel2, false))
+        opplysninger.leggTil(Faktum(regel3, false))
+
+        val ding = Avklaringer(kontrollpunkter)
+        ding.avklaringer(opplysninger).also { avklaringer ->
+            avklaringer.size shouldBe 1
+            avklaringer.all { it.måAvklares() } shouldBe true
+            avklaringer.all { it.kode == BeregningsregelForFVA } shouldBe true
+        }
+
+        opplysninger.leggTil(Faktum(regel1, true))
+
+        // Denne avklaringen skal ikke kunne kvitteres ut, den krever endring
+        shouldThrow<IllegalArgumentException> {
+            ding.avklaringer.first().kvittering()
+        }
+
+        // Nå skal det ikke være avklaringer som må avklares
+        ding.avklaringer(opplysninger).also { avklaringer ->
+            avklaringer.size shouldBe 1
+            avklaringer.all { it.måAvklares() } shouldBe false
+            avklaringer.all { it.kode == BeregningsregelForFVA } shouldBe true
+        }
     }
 }

@@ -9,8 +9,8 @@ fun interface Kontroll {
 class Kontrollpunkt(private val sjekker: Avklaringkode, private val kontroll: Kontroll) {
     fun evaluer(opplysninger: LesbarOpplysninger) =
         when {
-            kontroll.kjør(opplysninger) -> Kontrollresultat.OK
-            else -> Kontrollresultat.KreverAvklaring(sjekker)
+            kontroll.kjør(opplysninger) -> Kontrollresultat.KreverAvklaring(sjekker)
+            else -> Kontrollresultat.OK
         }
 
     sealed class Kontrollresultat {
