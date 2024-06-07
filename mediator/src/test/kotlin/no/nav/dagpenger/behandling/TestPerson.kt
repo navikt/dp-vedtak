@@ -15,12 +15,14 @@ import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class TestPerson(
     private val ident: String,
     private val rapid: TestRapid,
-    private val søknadstidspunkt: LocalDate = 5.mai(2021),
+    internal val søknadstidspunkt: LocalDate = 5.mai(2021),
     private val alder: Int = 30,
+    private val innsendt: LocalDateTime = LocalDateTime.now(),
 ) {
     val inntektId = "01HQTE3GBWCSVYH6S436DYFREN"
     internal val søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"
@@ -32,6 +34,7 @@ class TestPerson(
         JsonMessage.newMessage(
             "innsending_ferdigstilt",
             mapOf(
+                "@opprettet" to innsendt,
                 "type" to "NySøknad",
                 "fødselsnummer" to ident,
                 "fagsakId" to 123,

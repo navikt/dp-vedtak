@@ -79,7 +79,7 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    søknadstidspunkt = 5.mai(2021),
+                    søknadstidspunkt = 6.mai(2021),
                 )
             løsBehandlingFramTilFerdig(testPerson)
 
@@ -113,7 +113,7 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    søknadstidspunkt = 5.mai(2021),
+                    søknadstidspunkt = 6.mai(2021),
                 )
 
             løsBehandlingFramTilFerdig(testPerson)
@@ -149,7 +149,7 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    søknadstidspunkt = 5.mai(2021),
+                    søknadstidspunkt = 6.mai(2021),
                 )
             testPerson.sendSøknad()
             rapid.harHendelse("behandling_opprettet", offset = 2)
@@ -169,6 +169,38 @@ internal class PersonMediatorTest {
             testPerson.løsBehov(AvklaringManuellBehandling.name, false)
 
             rapid.inspektør.size shouldBe 3
+        }
+
+    @Test
+    fun `søker i overgangen til ny rapporteringsfrist`() =
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    søknadstidspunkt = 5.juni(2024),
+                    innsendt = 5.juni(2024).atTime(12, 0),
+                )
+            løsBehandlingFramTilFerdig(testPerson)
+
+            rapid.harHendelse("behandling_avbrutt") {
+                medTekst("søknadId") shouldBe testPerson.søknadId
+            }
+        }
+
+    @Test
+    fun `søker etter overgang til ny rapporteringsfrist`() =
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    søknadstidspunkt = 7.juni(2024),
+                    innsendt = 7.juni(2024).atTime(12, 0),
+                )
+            løsBehandlingFramTilFerdig(testPerson)
+
+            rapid.harHendelse("behov")
         }
 
     private fun løsBehandlingFramTilFerdig(testPerson: TestPerson) {
@@ -193,7 +225,7 @@ internal class PersonMediatorTest {
          * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
          */
         rapid.harBehov(InntektId) {
-            medDato("Virkningsdato") shouldBe 5.mai(2021)
+            medDato("Virkningsdato") shouldBe testPerson.søknadstidspunkt
             /**
              * TODO: Vi må ta vekk opptjeningsperiode fra dp-inntekt og skive om måten dp-inntekt lagrer inntekt på beregningsdato
              * medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
