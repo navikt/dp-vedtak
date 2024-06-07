@@ -1,5 +1,7 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.IkkeKonkludert
+import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.Konkludert
 import no.nav.dagpenger.behandling.konklusjon.KonklusjonsStrategi
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
@@ -11,7 +13,7 @@ object KravPåDagpenger {
         Regelsett("Krav på dagpenger") {
             regel(kravPåDagpenger) {
                 alle(
-                    Alderskrav.oppfyllerKravet,
+                    Alderskrav.kravTilAlder,
                     Minsteinntekt.minsteinntekt,
                     ReellArbeidssøker.kravTilArbeidssøker,
                     Meldeplikt.registrertPåSøknadstidspunktet,
@@ -22,11 +24,11 @@ object KravPåDagpenger {
 
     val Innvilgelse =
         KonklusjonsStrategi(DagpengerKonklusjoner.Innvilgelse) { opplysninger ->
-            if (!opplysninger.har(kravPåDagpenger)) return@KonklusjonsStrategi false
+            if (opplysninger.mangler(kravPåDagpenger)) return@KonklusjonsStrategi IkkeKonkludert
             if (opplysninger.finnOpplysning(kravPåDagpenger).verdi) {
-                return@KonklusjonsStrategi true
+                return@KonklusjonsStrategi Konkludert
             } else {
-                false
+                IkkeKonkludert
             }
         }
 }

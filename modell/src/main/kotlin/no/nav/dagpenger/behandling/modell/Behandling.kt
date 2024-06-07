@@ -268,15 +268,19 @@ class Behandling private constructor(
             if (konklusjoner.isNotEmpty()) {
                 if (måAvklares.isEmpty()) {
                     if (konklusjoner.any { it.årsak == DagpengerKonklusjoner.Innvilgelse.årsak }) {
-                        hendelse.info("(Konklusjon) Behandling fører ikke til avslag, det støtter vi ikke enda")
+                        hendelse.info("(Konklusjon) Behandling fører til innvilgelse, det støtter vi ikke enda")
                     }
 
-                    hendelse.info("Vi tror vi kan lage vedtak")
+                    if (konklusjoner.any {
+                            it.årsak == DagpengerKonklusjoner.AvslagAlder.årsak
+                        } || konklusjoner.any { it.årsak == DagpengerKonklusjoner.AvslagMinsteinntekt.årsak }
+                    ) {
+                        hendelse.info("(Konklusjon) Behandling fører til avslag. Vi kan fatte vedtak")
+                    }
                 } else {
                     måAvklares.forEach { avklaring ->
                         hendelse.info("Må avklare $avklaring")
                     }
-                    hendelse.info("Vi tror vi kan lage forslag til vedtak")
                 }
             } else {
                 hendelse.info("Vi må fortsette å behandle")

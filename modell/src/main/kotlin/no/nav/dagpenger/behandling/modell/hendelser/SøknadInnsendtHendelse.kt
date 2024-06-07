@@ -7,7 +7,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.Alderskrav.AvslagAlder
 import no.nav.dagpenger.regel.KravPåDagpenger
 import no.nav.dagpenger.regel.KravPåDagpenger.Innvilgelse
-import no.nav.dagpenger.regel.Minsteinntekt.AvslagInntektKonklusjon
+import no.nav.dagpenger.regel.Minsteinntekt.AvslagInntekt
 import no.nav.dagpenger.regel.SøknadInnsendtRegelsett
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
 import java.time.LocalDate
@@ -36,7 +36,7 @@ class SøknadInnsendtHendelse(
             ),
         )
 
-    override fun konklusjonStrategier() = listOf(AvslagAlder, AvslagInntektKonklusjon, Innvilgelse)
+    override fun konklusjonStrategier() = listOf(AvslagAlder, AvslagInntekt, Innvilgelse)
 
     override fun kontrollpunkter(): List<Kontrollpunkt> {
         return listOf(VernepliktKontroll)

@@ -1,5 +1,7 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.IkkeKonkludert
+import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.Konkludert
 import no.nav.dagpenger.behandling.konklusjon.KonklusjonsStrategi
 import no.nav.dagpenger.grunnbelop.Regel
 import no.nav.dagpenger.grunnbelop.forDato
@@ -66,13 +68,13 @@ object Minsteinntekt {
             // TODO: Bli enige med oss selv hva som er Double og BigDecimal
             .toDouble()
 
-    val AvslagInntektKonklusjon =
-        KonklusjonsStrategi(DagpengerKonklusjoner.Minsteinntekt) { opplysninger ->
-            if (!opplysninger.har(minsteinntekt)) return@KonklusjonsStrategi false
-            if (opplysninger.finnOpplysning(minsteinntekt).verdi) {
-                return@KonklusjonsStrategi true
+    val AvslagInntekt =
+        KonklusjonsStrategi(DagpengerKonklusjoner.AvslagMinsteinntekt) { opplysninger ->
+            if (opplysninger.mangler(minsteinntekt)) return@KonklusjonsStrategi IkkeKonkludert
+            if (!opplysninger.finnOpplysning(minsteinntekt).verdi) {
+                return@KonklusjonsStrategi Konkludert
             } else {
-                false
+                IkkeKonkludert
             }
         }
 }

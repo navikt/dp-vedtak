@@ -1,5 +1,7 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.IkkeKonkludert
+import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.Konkludert
 import no.nav.dagpenger.behandling.konklusjon.KonklusjonsStrategi
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
@@ -17,23 +19,23 @@ object Alderskrav {
     private val sisteMåned = Opplysningstype.somDato("Dato søker når maks alder")
     private val sisteDagIMåned = Opplysningstype.somDato("Siste mulige dag bruker kan oppfylle alderskrav")
 
-    val oppfyllerKravet = Opplysningstype.somBoolsk("Oppfyller kravet til alder")
+    val kravTilAlder = Opplysningstype.somBoolsk("Oppfyller kravet til alder")
 
     val regelsett =
         Regelsett("Alder") {
             regel(aldersgrense) { oppslag(virkningsdato) { 67 } }
             regel(sisteMåned) { leggTilÅr(fødselsdato, aldersgrense) }
             regel(sisteDagIMåned) { sisteDagIMåned(sisteMåned) }
-            regel(oppfyllerKravet) { førEllerLik(virkningsdato, sisteDagIMåned) }
+            regel(kravTilAlder) { førEllerLik(virkningsdato, sisteDagIMåned) }
         }
 
     val AvslagAlder =
-        KonklusjonsStrategi(DagpengerKonklusjoner.Alder) { opplysninger ->
-            if (!opplysninger.har(oppfyllerKravet)) return@KonklusjonsStrategi false
-            if (opplysninger.finnOpplysning(oppfyllerKravet).verdi) {
-                return@KonklusjonsStrategi true
+        KonklusjonsStrategi(DagpengerKonklusjoner.AvslagAlder) { opplysninger ->
+            if (opplysninger.mangler(kravTilAlder)) return@KonklusjonsStrategi IkkeKonkludert
+            if (!opplysninger.finnOpplysning(kravTilAlder).verdi) {
+                return@KonklusjonsStrategi Konkludert
             } else {
-                false
+                IkkeKonkludert
             }
         }
 }

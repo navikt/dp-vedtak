@@ -6,48 +6,104 @@ Behandler alle ulike hendelser på dagpenger.
 
 - [Behandling og opplysninger](./opplysning/README.md)
 
+## Avklaring og konklusjon
+
+### Avklaringer
+
+I behandlingen kan det være behov for å avklare informasjon. Dette er en indikasjon på at opplysninger må sjekkes manuelt av en saksbehandler.
+
+dp-behandling har en mekanisme for å lage avklaring ved å lage kontrollpunkter. 
+
+Et kontrollpunkt er en indikasjon på at det er behov for å avklare informasjon. Feks. om en indikasjon på at søker har avtjent verneplikt.
+
+```kotlin
+val VernepliktKontroll =
+        Kontrollpunkt(sjekker = Avklaringspunkter.Verneplikt) { opplysninger ->
+            opplysninger.har(avtjentVerneplikt) && opplysninger.finnOpplysning(avtjentVerneplikt).verdi
+        }
+```
+
+Kontrollpunktet kan brukes i en behandling for å avklare informasjon.
+
+Hvis kontrollpunktet er sann vil det lages en Avklaring som legges til behandlingen. 
+
+
+### Konklusjoner
+
+Konklusjoner er en indikasjon på at behandlingen er ferdig utredet. 
+
+dp-behandling har en mekanisme for å lage konklusjoner ved å lage Konklusjonsstrategier.
+
+Feks - en konklusjon på at søker har avslag minsteinntekt.
+```kotlin
+ val AvslagInntekt =
+    KonklusjonsStrategi(DagpengerKonklusjoner.AvslagMinsteinntekt) { opplysninger ->
+        if (opplysninger.mangler(minsteinntekt)) return@KonklusjonsStrategi IkkeKonkludert
+        if (!opplysninger.finnOpplysning(minsteinntekt).verdi) {
+            return@KonklusjonsStrategi Konkludert
+        } else {
+            IkkeKonkludert
+        }
+    }
+```
+
+Konklusjonsstrategien kan brukes i en behandling for å konkludere behandlingen. 
+
+
 ## Flyt 
 
 ```mermaid
 graph TD;
-    A["Søknad mottatt"]
-    B["Behandling opprettet"]
-    D["Forslag fattet"]
-    E["Vedtak skrevet til Arena"]
+    Mottatt["Søknad mottatt"]
+    Opprettet["Behandling opprettet"]
+    ForslagFattet["Forslag fattet"]
+    SkrevetTilArena["Vedtak skrevet til Arena"]
 
-    A --> Behandling
-    D --> X3
+    Mottatt --> Behandling
+    ForslagFattet --> VedtakKanSkrive
 
-    C["Forslag til vedtak"]
-    C1["Behandling avbrutt"]
+    ForslagTilVedtak["Forslag til vedtak"]
+    BehandlingAvbrutt["Behandling avbrutt"]
 
-    X1{"Må behandles 
-      manuelt?"}
-B --> X1
-X1 -->|Ja| C1
-X1 -->|Nei| C
+    Konklusjon{"Har konklusjon?"}
+    Opprettet --> Konklusjon
+    Konklusjon -->|Ja| Avklaring
+    Konklusjon -.->|Endringer| Opprettet
+    
+    Avklaring{"Har avklaringer?"}
+    Avklaring -->|Ja| ForslagTilVedtak
+    Avklaring -->|Nei| KanFatteVedtak
+    
+    
+    Forslag{"Forslag godkjent"}
+    ForslagTilVedtak --> Forslag
+    Forslag -->|Forkastes| BehandlingAvbrutt
+    Forslag -->|Godkjennes| ForslagFattet
+    Forslag -.->|Endringer| Opprettet
+    
+    VedtakKanSkrive{"Vedtak kan skrives"}
+    VedtakKanSkrive -->|Nei| KunneIkkeSkrive
+    VedtakKanSkrive -->|Ja| SkrevetTilArena
+    
+    KanFatteVedtak{"Kan fatte vedtak automatisk?"}
+    KanFatteVedtak -->|Ja| VedtakKanSkrive
+    KanFatteVedtak -->|Nei| Avbryt
+    
+    Avbryt["Avbryt behandling"]
 
-X2{"Forslag godkjent"}
-C --> X2
-X2 -->|Forkastes| C1
-X2 -->|Godkjennes| D
-X2 -.->|Endringer| B
-
-X3{"Vedtak kan
-skrives"}
-X3 -->|Nei| E1
-X3 -->|Ja| E
-
-E1["Kunne ikke skrives"]
-
-subgraph Behandling
-B
-X1
-X2
-C
-C1
-D
-end
+    KunneIkkeSkrive["Kunne ikke skrives"]
+    
+    subgraph Behandling
+        Opprettet
+        Avklaring
+        Forslag
+        Konklusjon
+        ForslagTilVedtak
+        BehandlingAvbrutt
+        ForslagFattet
+        KanFatteVedtak
+        Avbryt
+    end
 ```
 
 ## Systemoversikt 

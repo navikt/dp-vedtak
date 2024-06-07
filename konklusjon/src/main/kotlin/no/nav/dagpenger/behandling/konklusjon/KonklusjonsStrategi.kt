@@ -11,12 +11,17 @@ class KonklusjonsStrategi(
     private val konklusjonsSjekk: KonklusjonsSjekk,
 ) {
     fun evaluer(opplysninger: LesbarOpplysninger) =
-        when {
-            konklusjonsSjekk.kanKonkludere(opplysninger) -> årsak
-            else -> null
+        when (konklusjonsSjekk.kanKonkludere(opplysninger)) {
+            KonklusjonsSjekk.Resultat.Konkludert -> årsak
+            KonklusjonsSjekk.Resultat.IkkeKonkludert -> null
         }
 }
 
 fun interface KonklusjonsSjekk {
-    fun kanKonkludere(opplysninger: LesbarOpplysninger): Boolean
+    fun kanKonkludere(opplysninger: LesbarOpplysninger): Resultat
+
+    enum class Resultat {
+        Konkludert,
+        IkkeKonkludert,
+    }
 }

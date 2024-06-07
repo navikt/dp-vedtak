@@ -47,10 +47,10 @@ class AlderskravSteg : No {
                     "Nei" -> false
                     else -> throw IllegalArgumentException("Ukjent utfall: $utfall")
                 }
-            Assertions.assertTrue(opplysninger.har(Alderskrav.oppfyllerKravet))
+            Assertions.assertTrue(opplysninger.har(Alderskrav.kravTilAlder))
             Assertions.assertEquals(
                 verdi,
-                opplysninger.finnOpplysning(Alderskrav.oppfyllerKravet).verdi,
+                opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi,
             )
         }
     }
