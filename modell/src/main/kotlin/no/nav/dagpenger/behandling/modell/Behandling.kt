@@ -313,7 +313,8 @@ class Behandling private constructor(
                 // saken bør ligge på vent.
                 // TODO: Avklaring
                 val rapporteringsfrist = behandling.opplysninger.finnOpplysning(Opptjeningstid.justertRapporteringsfrist).verdi
-                if (søknadstidspunkt.isAfter(rapporteringsfrist)) {
+                val mellomBehandlingsDatoOgSøknadstidspunkt = søknadstidspunkt..behandling.behandler.skjedde
+                if (rapporteringsfrist in mellomBehandlingsDatoOgSøknadstidspunkt) {
                     hendelse.info("Virkningstidspunkt ligger etter rapporteringsfristen, bør vurderes manuelt")
                     behandling.tilstand(Avbrutt(årsak = "Virkningstidspunkt ligger etter rapporteringsfristen"), hendelse)
                     return
