@@ -39,6 +39,12 @@ object Minsteinntekt {
     private val over12mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 12 mnd")
     private val over36mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 36 mnd")
 
+    // Avklaringssjekker
+    private val eøsArbeid = Opplysningstype.somBoolsk("Arbeid i EØS".id("EØSArbeid"))
+    private val inntektNesteMåned = Opplysningstype.somBoolsk("Har innrapport inntekt for neste måned".id("HarRapportertInntektNesteMåned"))
+    private val svangerskapsRelaterteSykepenger =
+        Opplysningstype.somBoolsk("Har hatt sykepenger som kan være svangerskapsrelatert".id("SykepengerSiste36Måneder"))
+
     private val verneplikt = Verneplikt.avtjentVerneplikt
     val minsteinntekt = Opplysningstype.somBoolsk("Krav til minsteinntekt")
 
@@ -61,6 +67,13 @@ object Minsteinntekt {
             regel(over36mndTerskel) { størreEnnEllerLik(inntekt36, `36mndTerskel`) }
 
             regel(minsteinntekt) { enAv(over12mndTerskel, over36mndTerskel, verneplikt) }
+
+//            regelsett("Grunner til å vurdere avslagsgrunner manuelt") {
+//                skalVurderes { har(minsteinntekt) && !finnOpplysning(minsteinntekt).verdi }
+//                regel(eøsArbeid) { innhentMed() }
+//                regel(inntektNesteMåned) { innhentMed() }
+//                regel(svangerskapsRelaterteSykepenger) { innhentMed() }
+//            }
         }
 
     private fun grunnbeløpFor(it: LocalDate) =

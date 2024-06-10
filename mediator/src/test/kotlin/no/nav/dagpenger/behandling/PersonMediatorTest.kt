@@ -107,6 +107,31 @@ internal class PersonMediatorTest {
         }
 
     @Test
+    fun `Søknad med nok inntekt skal ikke avslås - men avbrytes`() =
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    søknadstidspunkt = 6.mai(2021),
+                    InntektSiste12Mnd = 500000,
+                )
+
+            løsBehandlingFramTilFerdig(testPerson)
+
+            personRepository.hent(ident.tilPersonIdentfikator()).also {
+                it.shouldNotBeNull()
+                it.behandlinger().size shouldBe 1
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 46
+            }
+
+            rapid.harHendelse("behandling_avbrutt") {
+                medTekst("søknadId") shouldBe testPerson.søknadId
+                medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
+            }
+        }
+
+    @Test
     fun `søknad som slår ut på manuelle behandling må føre til forslag til vedtak`() =
         withMigratedDb {
             val testPerson =
