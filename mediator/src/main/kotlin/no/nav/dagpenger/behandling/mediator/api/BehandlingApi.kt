@@ -21,6 +21,7 @@ import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
+import no.nav.dagpenger.behandling.api.models.OpplysningstypeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
 import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.VerdiMapper
@@ -41,6 +42,7 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Opplysning
+import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
@@ -54,14 +56,21 @@ import java.util.UUID
 @Resource("/behandling")
 private class BehandlingRoute {
     @Resource("{behandlingId}")
-    class Id(val behandlinger: BehandlingRoute = BehandlingRoute(), private val behandlingId: String) {
+    class Id(
+        val behandlinger: BehandlingRoute = BehandlingRoute(),
+        private val behandlingId: String,
+    ) {
         val id: UUID get() = UUID.fromString(behandlingId)
 
         @Resource("/avbryt")
-        class Avbryt(val behandling: Id)
+        class Avbryt(
+            val behandling: Id,
+        )
 
         @Resource("/godkjenn")
-        class Godkjenn(val behandling: Id)
+        class Godkjenn(
+            val behandling: Id,
+        )
     }
 }
 
@@ -77,6 +86,23 @@ internal fun Application.behandlingApi(
         swaggerUI(path = "openapi", swaggerFile = "behandling-api.yaml")
 
         get("/") { call.respond(HttpStatusCode.OK) }
+        get("/opplysningstyper") {
+            val typer =
+                Opplysningstype.opplysningstyper.map {
+                    OpplysningstypeDTO(
+                        it.id,
+                        it.navn,
+                        when (it.datatype) {
+                            Boolsk -> DataTypeDTO.boolsk
+                            Dato -> DataTypeDTO.dato
+                            Desimaltall -> DataTypeDTO.desimaltall
+                            Heltall -> DataTypeDTO.heltall
+                            ULID -> DataTypeDTO.ulid
+                        },
+                    )
+                }
+            call.respond(HttpStatusCode.OK, typer)
+        }
 
         authenticate("azureAd") {
             post<BehandlingRoute> {
@@ -133,8 +159,8 @@ private val OtelTraceIdPlugin =
         }
     }
 
-private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
-    return BehandlingDTO(
+private fun Behandling.tilBehandlingDTO(): BehandlingDTO =
+    BehandlingDTO(
         behandlingId = this.behandlingId,
         tilstand = BehandlingDTO.Tilstand.valueOf(tilstand().first.name),
         opplysning =
@@ -142,10 +168,9 @@ private fun Behandling.tilBehandlingDTO(): BehandlingDTO {
                 opplysning.tilOpplysningDTO()
             },
     )
-}
 
-private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
-    return OpplysningDTO(
+private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
+    OpplysningDTO(
         id = this.id,
         navn = this.opplysningstype.navn,
         verdi = this.verdi.toString(),
@@ -181,19 +206,19 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO {
             },
         redigerbar = this.kanRedigeres,
     )
-}
 
-private fun LocalDate.tilApiDato(): LocalDate? {
-    return when (this) {
+private fun LocalDate.tilApiDato(): LocalDate? =
+    when (this) {
         LocalDate.MIN -> null
         LocalDate.MAX -> null
         else -> this
     }
-}
 
 private fun LocalDateTime.tilOffsetTime(): OffsetDateTime = this.atZone(ZoneId.systemDefault()).toOffsetDateTime()
 
 @Suppress("UNCHECKED_CAST")
-class HttpVerdiMapper(private val verdi: Any) : VerdiMapper {
+class HttpVerdiMapper(
+    private val verdi: Any,
+) : VerdiMapper {
     override fun <T : Comparable<T>> map(datatype: Datatype<T>) = verdi as T
 }

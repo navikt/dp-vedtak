@@ -11,9 +11,25 @@ servers:
   - url: https://dp-behandling.intern.nav.no
     description: prod
 tags:
+  - name: Opplysingstype
+    description: Operasjoner på opplysningstyper
   - name: Behandling
     description: Operasjoner på behandlinger
 paths:
+  /opplysningstyper:
+    get:
+      description: Lister ut alle registrerte opplysningstyper
+      tags:
+        - Opplysningstype
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Opplysningstype'
   /behandling:
     post:
       description: Hent alle behandlinger for en gitt person
@@ -280,6 +296,20 @@ components:
           items:
             $ref: '#/components/schemas/Opplysning'
 
+    Opplysningstype:
+      type: object
+      required:
+        - id
+        - navn
+        - datatype
+      properties:
+        id:
+          type: string
+        navn:
+          type: string
+        datatype:
+          $ref: '#/components/schemas/DataType'
+
     OpplysningsId:
       type: string
       format: uuid
@@ -395,7 +425,7 @@ components:
       enum: [ "dato", "desimaltall", "heltall", "boolsk", "ulid" ]
       description: |
         Hvilken datatype opplysningen har, for å kunne validere at verdi er riktig format
-  
+    
 
     HttpProblem:
       type: object

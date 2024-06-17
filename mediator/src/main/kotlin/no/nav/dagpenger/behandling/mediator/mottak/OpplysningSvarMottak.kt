@@ -40,16 +40,17 @@ internal class OpplysningSvarMottak(
     private val messageMediator: MessageMediator,
 ) : River.PacketListener {
     init {
-        River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "behov") }
-            validate { it.demandValue("@final", true) }
-            validate { it.demandValue("@opplysningsbehov", true) }
-            validate { it.requireKey("ident") }
-            validate { it.requireKey("@løsning") }
-            validate { it.requireKey("behandlingId") }
-            validate { it.requireValue("@final", true) }
-            validate { it.interestedIn("@id", "@opprettet", "@behovId") }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                validate { it.demandValue("@event_name", "behov") }
+                validate { it.demandValue("@final", true) }
+                validate { it.demandValue("@opplysningsbehov", true) }
+                validate { it.requireKey("ident") }
+                validate { it.requireKey("@løsning") }
+                validate { it.requireKey("behandlingId") }
+                validate { it.requireValue("@final", true) }
+                validate { it.interestedIn("@id", "@opprettet", "@behovId") }
+            }.register(this)
     }
 
     private val skipBehovId =
@@ -103,7 +104,9 @@ internal class OpplysningSvarMottak(
     }
 }
 
-internal class OpplysningSvarMessage(private val packet: JsonMessage) : HendelseMessage(packet) {
+internal class OpplysningSvarMessage(
+    private val packet: JsonMessage,
+) : HendelseMessage(packet) {
     private val hendelse
         get() =
             OpplysningSvarHendelse(
@@ -204,7 +207,9 @@ private object EnkeltSvar : SvarStrategi {
 }
 
 @Suppress("UNCHECKED_CAST")
-private class JsonMapper(private val verdi: JsonNode) : OpplysningSvarBygger.VerdiMapper {
+private class JsonMapper(
+    private val verdi: JsonNode,
+) : OpplysningSvarBygger.VerdiMapper {
     override fun <T : Comparable<T>> map(datatype: Datatype<T>) =
         when (datatype) {
             Dato -> verdi.asLocalDate() as T

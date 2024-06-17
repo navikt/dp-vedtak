@@ -37,6 +37,8 @@ class Opplysningstype<T : Comparable<T>>(
     companion object {
         private val typer = mutableSetOf<Opplysningstype<*>>()
 
+        val opplysningstyper get() = typer.toList()
+
         fun finn(predikat: (Opplysningstype<*>) -> Boolean): Opplysningstype<*> = typer.single { predikat(it) }
 
         fun finn(id: String): Opplysningstype<*> = finn { it.id == id }
