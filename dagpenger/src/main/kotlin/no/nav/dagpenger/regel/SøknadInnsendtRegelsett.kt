@@ -4,13 +4,14 @@ object SøknadInnsendtRegelsett {
     val regelsett =
         listOf(
             Alderskrav.regelsett,
+            KravPåDagpenger.regelsett,
             Meldeplikt.regelsett,
             Minsteinntekt.regelsett,
             Opptjeningstid.regelsett,
             ReellArbeidssøker.regelsett,
-            KravPåDagpenger.regelsett,
             Rettighetstype.regelsett,
             Søknadstidspunkt.regelsett,
+            Verneplikt.regelsett,
             Virkningstidspunkt.regelsett,
         )
 }

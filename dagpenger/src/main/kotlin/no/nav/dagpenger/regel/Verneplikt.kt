@@ -4,14 +4,14 @@ import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
-import no.nav.dagpenger.opplysning.regel.innhentMed
+import no.nav.dagpenger.opplysning.regel.innhentes
 
 object Verneplikt {
     val avtjentVerneplikt = Opplysningstype.somBoolsk("Avtjent verneplikt".id("Verneplikt"))
 
     val regelsett =
         Regelsett("Verneplikt") {
-            regel(avtjentVerneplikt) { innhentMed() }
+            regel(avtjentVerneplikt) { innhentes }
         }
 
     val VernepliktKontroll =

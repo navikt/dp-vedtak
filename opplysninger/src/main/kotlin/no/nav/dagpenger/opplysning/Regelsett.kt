@@ -25,4 +25,6 @@ class Regelsett(
         gjelderFraOgMed: LocalDate = LocalDate.MIN,
         block: Opplysningstype<T>.() -> Regel<*>,
     ) = leggTil(gjelderFraOgMed, produserer.block())
+
+    fun produserer(): List<Opplysningstype<*>> = regler.map { it.key }
 }

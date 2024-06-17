@@ -16,6 +16,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHend
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.withMDC
@@ -25,11 +26,12 @@ internal class MessageMediator(
     rapidsConnection: RapidsConnection,
     private val personMediator: PersonMediator,
     private val hendelseRepository: HendelseRepository,
+    private val opplysningstyper: Set<Opplysningstype<*>>,
 ) : IMessageMediator {
     init {
         SøknadInnsendtMottak(rapidsConnection, this)
         AvklaringManuellBehandlingMottak(rapidsConnection, this)
-        OpplysningSvarMottak(rapidsConnection, this)
+        OpplysningSvarMottak(rapidsConnection, this, opplysningstyper)
         AvbrytBehandlingMottak(rapidsConnection, this)
     }
 

@@ -8,7 +8,6 @@ import mu.withLoggingContext
 import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger
-import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.Companion.somOpplysningstype
 import no.nav.dagpenger.behandling.mediator.asUUID
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SvarStrategi.Svar
@@ -38,6 +37,7 @@ import java.util.UUID
 internal class OpplysningSvarMottak(
     rapidsConnection: RapidsConnection,
     private val messageMediator: MessageMediator,
+    private val opplysningstyper: Set<Opplysningstype<*>>,
 ) : River.PacketListener {
     init {
         River(rapidsConnection)
@@ -76,7 +76,7 @@ internal class OpplysningSvarMottak(
                 return
             }
             logger.info { "Mottok svar på en opplysning" }
-            val message = OpplysningSvarMessage(packet)
+            val message = OpplysningSvarMessage(packet, opplysningstyper)
             message.behandle(messageMediator, context)
         }
     }
@@ -106,6 +106,7 @@ internal class OpplysningSvarMottak(
 
 internal class OpplysningSvarMessage(
     private val packet: JsonMessage,
+    private val opplysningstyper: Set<Opplysningstype<*>>,
 ) : HendelseMessage(packet) {
     private val hendelse
         get() =
@@ -125,17 +126,18 @@ internal class OpplysningSvarMessage(
             packet["@løsning"].fields().forEach { (typeNavn, løsning) ->
                 logger.info { "Tok i mot opplysning av $typeNavn" }
 
-                if (runCatching { Opplysningstype.finn(typeNavn) }.isFailure) {
-                    logger.error { "Ukjent opplysningstype: $typeNavn" }
-                    return@forEach
-                }
+                val opplysningstype =
+                    runCatching { opplysningstyper.single { it.id == typeNavn } }.getOrElse {
+                        throw IllegalArgumentException("Ukjent opplysningstype: $typeNavn")
+                    }
 
                 val svar = lagSvar(løsning)
-                val kilde = Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
+                val kilde =
+                    Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
 
                 val opplysningSvarBygger =
                     OpplysningSvarBygger(
-                        typeNavn.somOpplysningstype(),
+                        opplysningstype,
                         JsonMapper(svar.verdi),
                         kilde,
                         svar.tilstand,

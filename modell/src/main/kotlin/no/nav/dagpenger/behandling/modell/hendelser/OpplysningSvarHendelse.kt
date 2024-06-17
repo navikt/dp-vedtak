@@ -13,7 +13,12 @@ class OpplysningSvarHendelse(
     ident: String,
     override val behandlingId: UUID,
     val opplysninger: List<OpplysningSvar<*>>,
-) : PersonHendelse(meldingsreferanseId, ident), BehandlingHendelse
+) : PersonHendelse(meldingsreferanseId, ident),
+    BehandlingHendelse {
+    init {
+        require(opplysninger.isNotEmpty()) { "Må ha minst én opplysning" }
+    }
+}
 
 data class OpplysningSvar<T : Comparable<T>>(
     val opplysningstype: Opplysningstype<T>,

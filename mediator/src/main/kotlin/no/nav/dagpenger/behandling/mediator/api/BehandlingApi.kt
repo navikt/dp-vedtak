@@ -78,6 +78,7 @@ internal fun Application.behandlingApi(
     personRepository: PersonRepository,
     personMediator: PersonMediator,
     auditlogg: Auditlogg,
+    opplysningstyper: Set<Opplysningstype<*>>,
 ) {
     konfigurerApi()
     install(OtelTraceIdPlugin)
@@ -88,7 +89,7 @@ internal fun Application.behandlingApi(
         get("/") { call.respond(HttpStatusCode.OK) }
         get("/opplysningstyper") {
             val typer =
-                Opplysningstype.opplysningstyper.map {
+                opplysningstyper.map {
                     OpplysningstypeDTO(
                         it.id,
                         it.navn,

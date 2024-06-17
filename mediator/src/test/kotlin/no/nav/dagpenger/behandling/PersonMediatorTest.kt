@@ -33,6 +33,7 @@ import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
 import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
+import no.nav.dagpenger.regel.SøknadInnsendtRegelsett
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
@@ -64,6 +65,7 @@ internal class PersonMediatorTest {
             rapidsConnection = rapid,
             personMediator = personMediator,
             hendelseRepository = PostgresHendelseRepository(),
+            SøknadInnsendtRegelsett.regelsett.flatMap { it.produserer() }.toSet(),
         )
     }
 
@@ -306,7 +308,9 @@ private fun TestRapid.harFelt(block: Meldingsinnhold.() -> Unit) {
     Meldingsinnhold(inspektør.message(inspektør.size - 1)).apply { block() }
 }
 
-private class Meldingsinnhold(private val message: JsonNode) {
+private class Meldingsinnhold(
+    private val message: JsonNode,
+) {
     fun medNode(navn: String) = message.get(navn)
 
     fun medTekst(navn: String) = message.get(navn)?.asText()

@@ -195,7 +195,7 @@ internal class BehandlingApiTest {
         System.setProperty("Grupper.saksbehandler", "dagpenger-saksbehandler")
         TestApplication.withMockAuthServerAndTestApplication(
             moduleFunction = {
-                behandlingApi(personRepository, personMediator, auditlogg)
+                behandlingApi(personRepository, personMediator, auditlogg, emptySet())
             },
             test,
         )
@@ -204,7 +204,9 @@ internal class BehandlingApiTest {
 
     private companion object {
         private val objectMapper =
-            jacksonObjectMapper().registerModule(JavaTimeModule()).disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            jacksonObjectMapper()
+                .registerModule(JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 }

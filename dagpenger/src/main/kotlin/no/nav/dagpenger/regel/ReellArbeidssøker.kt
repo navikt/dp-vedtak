@@ -5,6 +5,7 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.enAv
+import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
@@ -28,6 +29,11 @@ object ReellArbeidssøker {
 
     val regelsett =
         Regelsett("Reell arbeidssøker") {
+            regel(kanJobbeDeltid) { innhentes }
+            regel(kanJobbeHvorSomHelst) { innhentes }
+            regel(helseTilAlleTyperArbeid) { innhentes }
+            regel(villigTilEthvertArbeid) { innhentes }
+
             regel(godkjentLokalArbeidssøker) { oppslag(søknadstidspunkt) { false } }
             regel(godkjentDeltidssøker) { oppslag(søknadstidspunkt) { false } }
 

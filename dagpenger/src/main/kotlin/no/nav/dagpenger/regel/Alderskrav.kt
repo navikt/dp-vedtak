@@ -9,6 +9,7 @@ import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.førEllerLik
 import no.nav.dagpenger.opplysning.regel.dato.leggTilÅr
 import no.nav.dagpenger.opplysning.regel.dato.sisteDagIMåned
+import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
 
 object Alderskrav {
@@ -23,6 +24,7 @@ object Alderskrav {
 
     val regelsett =
         Regelsett("Alder") {
+            regel(fødselsdato) { innhentes }
             regel(aldersgrense) { oppslag(virkningsdato) { 67 } }
             regel(sisteMåned) { leggTilÅr(fødselsdato, aldersgrense) }
             regel(sisteDagIMåned) { sisteDagIMåned(sisteMåned) }

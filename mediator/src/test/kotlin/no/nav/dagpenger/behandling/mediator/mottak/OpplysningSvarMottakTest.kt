@@ -1,6 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.mottak
 
-import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.clearMocks
@@ -25,7 +25,7 @@ class OpplysningSvarMottakTest {
     private val opplysningstype = boolsk // må registrere opplysningstype først
 
     init {
-        OpplysningSvarMottak(rapid, messageMediator)
+        OpplysningSvarMottak(rapid, messageMediator, setOf(opplysningstype))
     }
 
     @BeforeEach
@@ -45,9 +45,17 @@ class OpplysningSvarMottakTest {
         hendelse.isCaptured shouldBe true
         hendelse.captured.behandlingId shouldBe behandlingId
         hendelse.captured.opplysninger shouldHaveSize 1
-        hendelse.captured.opplysninger.first().verdi shouldBe true
-        hendelse.captured.opplysninger.first().opplysning().verdi shouldBe true
-        hendelse.captured.opplysninger.first().opplysning().gyldighetsperiode shouldBe Gyldighetsperiode()
+        hendelse.captured.opplysninger
+            .first()
+            .verdi shouldBe true
+        hendelse.captured.opplysninger
+            .first()
+            .opplysning()
+            .verdi shouldBe true
+        hendelse.captured.opplysninger
+            .first()
+            .opplysning()
+            .gyldighetsperiode shouldBe Gyldighetsperiode()
     }
 
     @Test
@@ -61,23 +69,27 @@ class OpplysningSvarMottakTest {
         hendelse.isCaptured shouldBe true
         hendelse.captured.behandlingId shouldBe behandlingId
         hendelse.captured.opplysninger shouldHaveSize 1
-        hendelse.captured.opplysninger.first().verdi shouldBe true
-        hendelse.captured.opplysninger.first().opplysning().verdi shouldBe true
-        hendelse.captured.opplysninger.first().opplysning().gyldighetsperiode shouldBe
+        hendelse.captured.opplysninger
+            .first()
+            .verdi shouldBe true
+        hendelse.captured.opplysninger
+            .first()
+            .opplysning()
+            .verdi shouldBe true
+        hendelse.captured.opplysninger
+            .first()
+            .opplysning()
+            .gyldighetsperiode shouldBe
             Gyldighetsperiode(gyldigFraOgMed, gyldigTilOgMed)
     }
 
     @Test
     fun `Kan ikke besvare opplysning en ikke kjenner til`() {
-        rapid.sendTestMessage(
-            løsningMedMetadata(gyldigFraOgMed, gyldigTilOgMed, "ukjentOpplysning").toJson(),
-        )
-        val hendelse = slot<OpplysningSvarHendelse>()
-        verify(exactly = 1) {
-            messageMediator.behandle(capture(hendelse), any(), any())
+        shouldThrow<IllegalArgumentException> {
+            rapid.sendTestMessage(
+                løsningMedMetadata(gyldigFraOgMed, gyldigTilOgMed, "ukjentOpplysning").toJson(),
+            )
         }
-        hendelse.isCaptured shouldBe true
-        hendelse.captured.opplysninger.shouldBeEmpty()
     }
 
     @Test
@@ -88,7 +100,10 @@ class OpplysningSvarMottakTest {
             messageMediator.behandle(capture(hendelse), any(), any())
         }
 
-        hendelse.captured.opplysninger.first().opplysning().gyldighetsperiode shouldBe
+        hendelse.captured.opplysninger
+            .first()
+            .opplysning()
+            .gyldighetsperiode shouldBe
             Gyldighetsperiode(gyldigFraOgMed, LocalDate.MAX)
     }
 
@@ -100,7 +115,10 @@ class OpplysningSvarMottakTest {
             messageMediator.behandle(capture(hendelse), any(), any())
         }
 
-        hendelse.captured.opplysninger.first().opplysning().gyldighetsperiode shouldBe
+        hendelse.captured.opplysninger
+            .first()
+            .opplysning()
+            .gyldighetsperiode shouldBe
             Gyldighetsperiode(LocalDate.MIN, gyldigFraOgMed)
     }
 
@@ -131,8 +149,8 @@ class OpplysningSvarMottakTest {
         gyldigFraOgMed: LocalDate?,
         gyldigTilOgMed: LocalDate?,
         opplysningstype: String = "boolsk",
-    ): JsonMessage {
-        return JsonMessage.newNeed(
+    ): JsonMessage =
+        JsonMessage.newNeed(
             listOf(opplysningstype),
             konvolutt +
                 mapOf(
@@ -149,5 +167,4 @@ class OpplysningSvarMottakTest {
                         ),
                 ),
         )
-    }
 }

@@ -5,7 +5,7 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.ingenAv
-import no.nav.dagpenger.opplysning.regel.innhentMed
+import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.regel.Behov.Lønnsgaranti
 import no.nav.dagpenger.regel.Behov.Ordinær
 import no.nav.dagpenger.regel.Behov.Permittert
@@ -27,10 +27,10 @@ object Rettighetstype {
 
     val regelsett =
         Regelsett("Rettighetstype") {
-            regel(ordinærArbeid) { innhentMed() }
-            regel(permittering) { innhentMed() }
-            regel(lønnsgaranti) { innhentMed() }
-            regel(permitteringFiskeforedling) { innhentMed() }
+            regel(ordinærArbeid) { innhentes }
+            regel(permittering) { innhentes }
+            regel(lønnsgaranti) { innhentes }
+            regel(permitteringFiskeforedling) { innhentes }
 
             regel(ingenArbeid) { ingenAv(ordinærArbeid, permittering, lønnsgaranti, permitteringFiskeforedling) }
             regel(ordinær) { enAv(ordinærArbeid, ingenArbeid) }

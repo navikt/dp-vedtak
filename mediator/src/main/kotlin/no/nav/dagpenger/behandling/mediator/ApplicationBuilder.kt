@@ -10,11 +10,14 @@ import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
+import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.SøknadInnsendtRegelsett
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
-internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnection.StatusListener {
+internal class ApplicationBuilder(
+    config: Map<String, String>,
+) : RapidsConnection.StatusListener {
     companion object {
         private val logger = KotlinLogging.logger { }
     }
@@ -23,12 +26,14 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
     private val behandlingRepository = BehandlingRepositoryPostgres(opplysningRepository)
     private val personRepository = PersonRepositoryPostgres(behandlingRepository)
     private val rapidsConnection: RapidsConnection =
-        RapidApplication.Builder(RapidApplication.RapidApplicationConfig.fromEnv(config))
+        RapidApplication
+            .Builder(RapidApplication.RapidApplicationConfig.fromEnv(config))
             .withKtorModule {
                 behandlingApi(
                     personRepository = personRepository,
                     personMediator,
                     AktivitetsloggAuditlogg(aktivitetsloggMediator),
+                    opplysningstyper,
                 )
             }.build()
 
@@ -42,18 +47,19 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
             observatører = emptySet(),
         )
 
+    // TODO: Last alle regler ved startup. Dette må inn i ett register.
+    private val opplysningstyper: Set<Opplysningstype<*>> = SøknadInnsendtRegelsett.regelsett.flatMap { it.produserer() }.toSet()
+
     init {
         MessageMediator(
             rapidsConnection = rapidsConnection,
             personMediator = personMediator,
             hendelseRepository = PostgresHendelseRepository(),
+            opplysningstyper = opplysningstyper,
         )
 
         rapidsConnection.register(this)
     }
-
-    // TODO: Last alle regler ved startup. Dette må inn i ett register.
-    val regler = SøknadInnsendtRegelsett.regelsett
 
     fun start() = rapidsConnection.start()
 

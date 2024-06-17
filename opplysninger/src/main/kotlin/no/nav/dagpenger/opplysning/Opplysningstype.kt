@@ -30,30 +30,10 @@ class Opplysningstype<T : Comparable<T>>(
     val navn = opplysningTypeId.beskrivelse
 
     init {
-        registrer(this)
         parent?.child?.add(this)
     }
 
     companion object {
-        private val typer = mutableSetOf<Opplysningstype<*>>()
-
-        val opplysningstyper get() = typer.toList()
-
-        fun finn(predikat: (Opplysningstype<*>) -> Boolean): Opplysningstype<*> = typer.single { predikat(it) }
-
-        fun finn(id: String): Opplysningstype<*> = finn { it.id == id }
-
-        fun eksisterer(opplysningTypeId: OpplysningTypeId) = typer.any { it.opplysningTypeId == opplysningTypeId }
-
-        fun finn(opplysningTypeId: OpplysningTypeId) =
-            typer.find { it.opplysningTypeId == opplysningTypeId }
-                ?: throw IllegalArgumentException("Fant ikke opplysningstype $opplysningTypeId")
-
-        private fun registrer(opplysningstype: Opplysningstype<*>) {
-            require(!typer.contains(opplysningstype)) { "Opplysningstype $opplysningstype er allerede registrert" }
-            typer.add(opplysningstype)
-        }
-
         fun somHeltall(
             opplysningTypeId: OpplysningTypeId,
             parent: Opplysningstype<Int>? = null,

@@ -13,10 +13,6 @@ class OpplysningSvarBygger<T : Comparable<T>>(
     private val tilstand: OpplysningSvar.Tilstand,
     private val gyldighetsperiode: Gyldighetsperiode,
 ) {
-    companion object {
-        fun String.somOpplysningstype() = Opplysningstype.finn { it.id == this }
-    }
-
     fun opplysningSvar() =
         OpplysningSvar(
             opplysningstype = type,

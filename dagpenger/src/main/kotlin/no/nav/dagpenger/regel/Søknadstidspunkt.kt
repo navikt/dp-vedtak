@@ -4,6 +4,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.sisteAv
+import no.nav.dagpenger.opplysning.regel.innhentes
 
 object Søknadstidspunkt {
     val søknadsdato = Opplysningstype.somDato("Søknadsdato".id("Søknadstidspunkt"))
@@ -14,6 +15,8 @@ object Søknadstidspunkt {
 
     val regelsett =
         Regelsett("Søknadstidspunkt").apply {
+            regel(søknadsdato) { innhentes }
+            regel(ønsketdato) { innhentes }
             regel(søknadstidspunkt) { sisteAv(søknadsdato, ønsketdato) }
         }
 }

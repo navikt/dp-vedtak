@@ -15,3 +15,5 @@ class Ekstern<T : Comparable<T>> internal constructor(
 }
 
 fun <T : Comparable<T>> Opplysningstype<T>.innhentMed(vararg opplysninger: Opplysningstype<*>) = Ekstern(this, opplysninger.toList())
+
+val <T : Comparable<T>> Opplysningstype<T>.innhentes get() = Ekstern(this, emptyList())

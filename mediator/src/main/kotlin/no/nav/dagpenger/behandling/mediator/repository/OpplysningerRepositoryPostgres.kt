@@ -124,12 +124,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val opplysingerId = uuid("opplysninger_id")
             val id = uuid("id")
 
-            val opplysningTypeId = string("type_navn").id(string("type_id"))
-            val opplysningstype: Opplysningstype<T> =
-                when (Opplysningstype.eksisterer(opplysningTypeId)) {
-                    true -> Opplysningstype.finn(opplysningTypeId) as Opplysningstype<T>
-                    false -> Opplysningstype(opplysningTypeId, datatype)
-                }
+            val opplysningstype: Opplysningstype<T> = Opplysningstype(string("type_navn").id(string("type_id")), datatype)
 
             val gyldighetsperiode =
                 Gyldighetsperiode(
@@ -196,6 +191,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                                         kildeId,
                                         registrert,
                                     )
+
                                 Saksbehandlerkilde::class.java.simpleName ->
                                     Saksbehandlerkilde(
                                         row.string("saksbehandler_ident"),
