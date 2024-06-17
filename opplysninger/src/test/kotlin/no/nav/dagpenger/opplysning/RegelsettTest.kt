@@ -1,12 +1,10 @@
 package no.nav.dagpenger.opplysning
 
 import io.kotest.matchers.shouldBe
-import no.nav.dagpenger.opplysning.TestOpplysningstyper.a
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorA
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorB
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.grunntall
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.produserer
-import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -48,20 +46,5 @@ class RegelsettTest {
             assertEquals(0, regelkjøring.trenger(produserer).size)
             finnOpplysning(produserer).verdi shouldBe 3.0
         }
-    }
-
-    @Test
-    fun `regelsett kan være rekursive`() {
-        val regelsett =
-            Regelsett("Utdanning") {
-                regel(a) { enAv(a) }
-
-                regelsett("Oppfyller personen noen av unntakene til å kombinere dagpenger og utdanning?") {
-                    skalVurderes { har(a) && finnOpplysning(a).verdi }
-                    regel(grunntall) { multiplikasjon(faktorA, faktorB) }
-                }
-            }
-
-        regelsett.regler(1.januar).size shouldBe 2
     }
 }

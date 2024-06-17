@@ -5,27 +5,12 @@ import java.time.LocalDate
 
 class Regelsett(val navn: String, block: Regelsett.() -> Unit = {}) {
     private val regler: MutableMap<Opplysningstype<*>, TemporalCollection<Regel<*>>> = mutableMapOf()
-    private var kriterie: Kriterie = { true }
-    private val regelsett: MutableList<Regelsett> = mutableListOf()
 
     init {
         block()
     }
 
-    fun regler(
-        forDato: LocalDate = LocalDate.MIN,
-        opplysninger: Opplysninger? = null,
-    ): List<Regel<*>> {
-        // Sjekk om reglene skal vurderes
-        if (opplysninger != null && !skalVurderes(opplysninger)) return emptyList()
-        val egneRegler = regler.values.map { it.get(forDato) }
-
-        // Finn regler fra barn rekursivt
-        val barnRegler = regelsett.flatMap { it.regler(forDato, opplysninger) }
-
-        // Slå sammen egne og barnas regler
-        return egneRegler + barnRegler
-    }
+    fun regler(forDato: LocalDate = LocalDate.MIN) = regler.map { it.value.get(forDato) }.toList()
 
     private fun leggTil(
         gjelderFra: LocalDate,
@@ -37,19 +22,4 @@ class Regelsett(val navn: String, block: Regelsett.() -> Unit = {}) {
         gjelderFraOgMed: LocalDate = LocalDate.MIN,
         block: Opplysningstype<T>.() -> Regel<*>,
     ) = leggTil(gjelderFraOgMed, produserer.block())
-
-    fun skalVurderes(block: Kriterie) {
-        kriterie = block
-    }
-
-    fun skalVurderes(opplysninger: Opplysninger): Boolean = kriterie(opplysninger)
-
-    fun regelsett(
-        navn: String,
-        block: Regelsett.() -> Unit,
-    ) {
-        regelsett.add(Regelsett(navn, block))
-    }
 }
-
-typealias Kriterie = Opplysninger.() -> Boolean

@@ -10,7 +10,7 @@ class Regelkjøring(
     private val opplysninger: Opplysninger,
     vararg regelsett: Regelsett,
 ) {
-    private val alleRegler: List<Regel<*>> = regelsett.flatMap { it.regler(forDato, opplysninger) }
+    private val alleRegler: List<Regel<*>> = regelsett.flatMap { it.regler(forDato) }
     private val muligeRegler: MutableList<Regel<*>> = alleRegler.toMutableList()
     private val plan: MutableList<Regel<*>> = mutableListOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
