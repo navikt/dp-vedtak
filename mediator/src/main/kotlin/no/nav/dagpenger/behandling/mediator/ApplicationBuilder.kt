@@ -7,6 +7,7 @@ import no.nav.dagpenger.behandling.mediator.Configuration.config
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.audit.AktivitetsloggAuditlogg
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
+import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepository
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
@@ -14,16 +15,16 @@ import no.nav.dagpenger.regel.SøknadInnsendtRegelsett
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
-internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnection.StatusListener {
+internal class ApplicationBuilder(
+    config: Map<String, String>,
+) : RapidsConnection.StatusListener {
     companion object {
         private val logger = KotlinLogging.logger { }
     }
 
-    private val opplysningRepository = OpplysningerRepositoryPostgres()
-    private val behandlingRepository = BehandlingRepositoryPostgres(opplysningRepository)
-    private val personRepository = PersonRepositoryPostgres(behandlingRepository)
     private val rapidsConnection: RapidsConnection =
-        RapidApplication.Builder(RapidApplication.RapidApplicationConfig.fromEnv(config))
+        RapidApplication
+            .Builder(RapidApplication.RapidApplicationConfig.fromEnv(config))
             .withKtorModule {
                 behandlingApi(
                     personRepository = personRepository,
@@ -31,6 +32,10 @@ internal class ApplicationBuilder(config: Map<String, String>) : RapidsConnectio
                     AktivitetsloggAuditlogg(aktivitetsloggMediator),
                 )
             }.build()
+
+    private val opplysningRepository = OpplysningerRepositoryPostgres()
+    private val behandlingRepository = BehandlingRepositoryPostgres(opplysningRepository, AvklaringRepository(rapidsConnection))
+    private val personRepository = PersonRepositoryPostgres(behandlingRepository)
 
     private val aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection)
     private val personMediator: PersonMediator =

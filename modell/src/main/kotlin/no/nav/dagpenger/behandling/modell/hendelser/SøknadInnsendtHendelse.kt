@@ -1,6 +1,5 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
-import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysningstype
@@ -44,8 +43,8 @@ class SøknadInnsendtHendelse(
 
     override fun konklusjonStrategier() = listOf(AvslagAlder, AvslagInntekt, Innvilgelse)
 
-    override fun kontrollpunkter(): List<Kontrollpunkt> {
-        return listOf(
+    override fun kontrollpunkter() =
+        listOf(
             VernepliktKontroll,
             SvangerskapsrelaterteSykepengerKontroll,
             EØSArbeidKontroll,
@@ -54,5 +53,4 @@ class SøknadInnsendtHendelse(
             HattLukkedeSakerSiste8UkerKontroll,
             MuligGjenopptakKontroll,
         )
-    }
 }

@@ -11,9 +11,10 @@ import java.util.UUID
 
 class BehandlingRepositoryPostgres(
     private val opplysningRepository: OpplysningerRepository,
+    private var avklaringRepository: AvklaringRepository,
 ) : BehandlingRepository {
-    override fun hentBehandling(behandlingId: UUID): Behandling? {
-        return sessionOf(dataSource).use { session ->
+    override fun hentBehandling(behandlingId: UUID): Behandling? =
+        sessionOf(dataSource).use { session ->
             session.run(
                 queryOf(
                     // language=PostgreSQL
@@ -55,7 +56,6 @@ class BehandlingRepositoryPostgres(
                 }.asSingle,
             )
         }
-    }
 
     private fun Session.hentBasertPåFor(behandlingId: UUID) =
         this.run(
@@ -167,6 +167,8 @@ class BehandlingRepositoryPostgres(
                     ).asUpdate,
                 )
             }
+
+            avklaringRepository.lagre(behandling)
         }
     }
 }

@@ -2,6 +2,7 @@ package no.nav.dagpenger.behandling.mediator.repository
 
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
+import io.mockk.mockk
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident
@@ -23,6 +24,7 @@ class PersonRepositoryPostgresTest {
             PersonRepositoryPostgres(
                 BehandlingRepositoryPostgres(
                     OpplysningerRepositoryPostgres(),
+                    mockk(relaxed = true),
                 ),
             )
     private val søknadInnsendtHendelse =
@@ -73,8 +75,13 @@ class PersonRepositoryPostgresTest {
                 it.ident shouldBe person.ident
                 it.behandlinger() shouldContain behandling
                 it.behandlinger().first().behandlingId shouldBe behandling.behandlingId
-                it.behandlinger().first().opplysninger().id shouldBe behandling.opplysninger().id
-                it.behandlinger()
+                it
+                    .behandlinger()
+                    .first()
+                    .opplysninger()
+                    .id shouldBe behandling.opplysninger().id
+                it
+                    .behandlinger()
                     .flatMap { behandling -> behandling.opplysninger().finnAlle() } shouldContain opplysning
             }
         }
