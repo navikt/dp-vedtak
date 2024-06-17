@@ -30,9 +30,10 @@ import java.util.UUID
 
 class OpplysningerRepositoryPostgres : OpplysningerRepository {
     override fun hentOpplysninger(opplysningerId: UUID) =
-        sessionOf(dataSource).use { session ->
-            OpplysningRepository(opplysningerId, session).hentOpplysninger()
-        }.let { Opplysninger(opplysningerId, it) }
+        sessionOf(dataSource)
+            .use { session ->
+                OpplysningRepository(opplysningerId, session).hentOpplysninger()
+            }.let { Opplysninger(opplysningerId, it) }
 
     override fun lagreOpplysninger(opplysninger: Opplysninger) {
         val unitOfWork = PostgresUnitOfWork.transaction()
@@ -61,7 +62,10 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         OpplysningRepository(opplysninger.id, tx).lagreOpplysninger(opplysninger.aktiveOpplysninger())
     }
 
-    private class OpplysningRepository(private val opplysningerId: UUID, private val tx: Session) {
+    private class OpplysningRepository(
+        private val opplysningerId: UUID,
+        private val tx: Session,
+    ) {
         fun hentOpplysninger(): List<Opplysning<*>> {
             val rader: List<OpplysningRad<*>> =
                 sessionOf(dataSource).use { session ->
@@ -79,9 +83,10 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
 
             val kilder = hentKilder(rader.mapNotNull { it.kildeId })
             val erstattetAv =
-                rader.map {
-                    it.erstattetAv.filterNot(eksisterer(rader)).mapNotNull { uuid -> hentOpplysning(uuid) }
-                }.flatten()
+                rader
+                    .map {
+                        it.erstattetAv.filterNot(eksisterer(rader)).mapNotNull { uuid -> hentOpplysning(uuid) }
+                    }.flatten()
             val raderMedKilde =
                 rader.map {
                     if (it.kildeId == null) return@map it
@@ -119,10 +124,11 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val opplysingerId = uuid("opplysninger_id")
             val id = uuid("id")
 
+            val opplysningTypeId = string("type_navn").id(string("type_id"))
             val opplysningstype: Opplysningstype<T> =
-                when (Opplysningstype.eksisterer(string("type_id"))) {
-                    true -> Opplysningstype.finn(string("type_navn").id(string("type_id")))
-                    false -> Opplysningstype(string("type_navn").id(string("type_id")), datatype)
+                when (Opplysningstype.eksisterer(opplysningTypeId)) {
+                    true -> Opplysningstype.finn(opplysningTypeId) as Opplysningstype<T>
+                    false -> Opplysningstype(opplysningTypeId, datatype)
                 }
 
             val gyldighetsperiode =
@@ -155,47 +161,54 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         }
 
         private fun hentKilder(kilder: List<UUID>) =
-            sessionOf(dataSource).use { session ->
-                session.run(
-                    queryOf(
-                        //language=PostgreSQL
-                        """
-                        SELECT 
-                            opplysning_kilde.id, 
-                            opplysning_kilde.type, 
-                            opplysning_kilde.opprettet, 
-                            opplysning_kilde.registrert, 
-                            opplysning_kilde_system.melding_id AS system_melding_id, 
-                            opplysning_kilde_saksbehandler.ident AS saksbehandler_ident
-                        FROM 
-                            opplysning_kilde 
-                        LEFT JOIN 
-                            opplysning_kilde_system ON opplysning_kilde.id = opplysning_kilde_system.kilde_id
-                        LEFT JOIN 
-                            opplysning_kilde_saksbehandler ON opplysning_kilde.id = opplysning_kilde_saksbehandler.kilde_id
-                        WHERE opplysning_kilde.id = ANY(?)
-                        """.trimIndent(),
-                        kilder.toTypedArray(),
-                    ).map { row ->
-                        val kildeId = row.uuid("id")
-                        val kildeType = row.string("type")
-                        val opprettet = row.localDateTime("opprettet")
-                        val registrert = row.localDateTime("registrert")
-                        when (kildeType) {
-                            Systemkilde::class.java.simpleName -> Systemkilde(row.uuid("system_melding_id"), opprettet, kildeId, registrert)
-                            Saksbehandlerkilde::class.java.simpleName ->
-                                Saksbehandlerkilde(
-                                    row.string("saksbehandler_ident"),
-                                    opprettet,
-                                    kildeId,
-                                    registrert,
-                                )
+            sessionOf(dataSource)
+                .use { session ->
+                    session.run(
+                        queryOf(
+                            //language=PostgreSQL
+                            """
+                            SELECT 
+                                opplysning_kilde.id, 
+                                opplysning_kilde.type, 
+                                opplysning_kilde.opprettet, 
+                                opplysning_kilde.registrert, 
+                                opplysning_kilde_system.melding_id AS system_melding_id, 
+                                opplysning_kilde_saksbehandler.ident AS saksbehandler_ident
+                            FROM 
+                                opplysning_kilde 
+                            LEFT JOIN 
+                                opplysning_kilde_system ON opplysning_kilde.id = opplysning_kilde_system.kilde_id
+                            LEFT JOIN 
+                                opplysning_kilde_saksbehandler ON opplysning_kilde.id = opplysning_kilde_saksbehandler.kilde_id
+                            WHERE opplysning_kilde.id = ANY(?)
+                            """.trimIndent(),
+                            kilder.toTypedArray(),
+                        ).map { row ->
+                            val kildeId = row.uuid("id")
+                            val kildeType = row.string("type")
+                            val opprettet = row.localDateTime("opprettet")
+                            val registrert = row.localDateTime("registrert")
+                            when (kildeType) {
+                                Systemkilde::class.java.simpleName ->
+                                    Systemkilde(
+                                        row.uuid("system_melding_id"),
+                                        opprettet,
+                                        kildeId,
+                                        registrert,
+                                    )
+                                Saksbehandlerkilde::class.java.simpleName ->
+                                    Saksbehandlerkilde(
+                                        row.string("saksbehandler_ident"),
+                                        opprettet,
+                                        kildeId,
+                                        registrert,
+                                    )
 
-                            else -> throw IllegalStateException("Ukjent kilde")
-                        }
-                    }.asList,
-                )
-            }.associateBy { it.id }
+                                else -> throw IllegalStateException("Ukjent kilde")
+                            }
+                        }.asList,
+                    )
+                }.associateBy { it.id }
 
         @Suppress("UNCHECKED_CAST")
         private fun <T : Comparable<T>> Datatype<T>.verdi(row: Row): T =

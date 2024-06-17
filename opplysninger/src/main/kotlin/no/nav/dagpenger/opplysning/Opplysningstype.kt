@@ -9,7 +9,10 @@ interface Klassifiserbart {
 
 fun String.id(id: String) = OpplysningTypeId(id, this)
 
-data class OpplysningTypeId(val id: String, val beskrivelse: String)
+data class OpplysningTypeId(
+    val id: String,
+    val beskrivelse: String,
+)
 
 class Opplysningstype<T : Comparable<T>>(
     private val opplysningTypeId: OpplysningTypeId,
@@ -34,24 +37,15 @@ class Opplysningstype<T : Comparable<T>>(
     companion object {
         private val typer = mutableSetOf<Opplysningstype<*>>()
 
-        fun finn(predikat: (Opplysningstype<*>) -> Boolean): Opplysningstype<*> {
-            return typer.single { predikat(it) }
-        }
+        fun finn(predikat: (Opplysningstype<*>) -> Boolean): Opplysningstype<*> = typer.single { predikat(it) }
 
-        fun finn(id: String): Opplysningstype<*> {
-            return finn { it.id == id }
-        }
+        fun finn(id: String): Opplysningstype<*> = finn { it.id == id }
 
-        fun eksisterer(id: String): Boolean {
-            return typer.any { it.id == id }
-        }
+        fun eksisterer(opplysningTypeId: OpplysningTypeId) = typer.any { it.opplysningTypeId == opplysningTypeId }
 
-        fun <T : Comparable<T>> finn(opplysningTypeId: OpplysningTypeId): Opplysningstype<T> {
-            return (
-                typer.find { it.opplysningTypeId == opplysningTypeId }
-                    ?: throw IllegalArgumentException("Fant ikke opplysningstype $opplysningTypeId")
-            ) as Opplysningstype<T>
-        }
+        fun finn(opplysningTypeId: OpplysningTypeId) =
+            typer.find { it.opplysningTypeId == opplysningTypeId }
+                ?: throw IllegalArgumentException("Fant ikke opplysningstype $opplysningTypeId")
 
         private fun registrer(opplysningstype: Opplysningstype<*>) {
             require(!typer.contains(opplysningstype)) { "Opplysningstype $opplysningstype er allerede registrert" }
@@ -109,9 +103,7 @@ class Opplysningstype<T : Comparable<T>>(
         ) = somBoolsk(navn.id(navn), parent)
     }
 
-    override infix fun er(type: Opplysningstype<*>): Boolean {
-        return opplysningTypeId == type.opplysningTypeId || parent?.er(type) ?: false
-    }
+    override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId || parent?.er(type) ?: false
 
     override fun toString() = "opplysning om $navn"
 
