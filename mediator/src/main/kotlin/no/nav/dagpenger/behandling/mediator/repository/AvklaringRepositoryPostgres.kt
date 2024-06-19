@@ -38,6 +38,7 @@ internal class AvklaringRepositoryPostgres(
                 ).map { row ->
                     Avklaring(
                         id = row.uuid("id"),
+                        // TODO: Det burde ikke være nødvendig å rehydrer via Avklaringspunkter, Avklaringkode burde holde
                         kode =
                             Avklaringspunkter.valueOf(
                                 row.string("avklaring_kode"),
