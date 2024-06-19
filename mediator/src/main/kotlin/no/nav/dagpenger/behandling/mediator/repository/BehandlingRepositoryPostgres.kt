@@ -11,8 +11,9 @@ import java.util.UUID
 
 class BehandlingRepositoryPostgres(
     private val opplysningRepository: OpplysningerRepository,
-    private var avklaringRepository: AvklaringRepository,
-) : BehandlingRepository {
+    private val avklaringRepository: AvklaringRepository,
+) : BehandlingRepository,
+    AvklaringRepository by avklaringRepository {
     override fun hentBehandling(behandlingId: UUID): Behandling? =
         sessionOf(dataSource).use { session ->
             session.run(
@@ -46,12 +47,13 @@ class BehandlingRepositoryPostgres(
                                         fagsakId = row.int("fagsak_id"),
                                     )
 
-                                else -> throw IllegalArgumentException("Ukjent hendelse type")
+                                else -> throw IllegalArgumentException("Ukjent hendelse type ${row.string("hendelse_type")}")
                             },
                         gjeldendeOpplysninger = opplysningRepository.hentOpplysninger(row.uuid("opplysninger_id"))!!,
                         basertPå = basertPåBehandling,
                         tilstand = Behandling.TilstandType.valueOf(row.string("tilstand")),
                         sistEndretTilstand = row.localDateTime("sist_endret_tilstand"),
+                        avklaringer = hentAvklaringer(behandlingId),
                     )
                 }.asSingle,
             )
@@ -168,7 +170,7 @@ class BehandlingRepositoryPostgres(
                 )
             }
 
-            avklaringRepository.lagre(behandling)
+            avklaringRepository.lagreAvklaringer(behandling, unitOfWork)
         }
     }
 }

@@ -63,6 +63,7 @@ internal class BehandlingTest {
                     basertPå = forrigeBehandling?.let { listOf(it) } ?: emptyList(),
                     tilstand = Ferdig,
                     sistEndretTilstand = LocalDateTime.now(),
+                    avklaringer = emptyList(),
                 )
             forrigeBehandling = behandling
             // TODO: Det burde eksplodere uten denne

@@ -4,6 +4,8 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
+import no.nav.dagpenger.avklaring.Avklaring
+import no.nav.dagpenger.avklaring.Avklaringer
 import no.nav.dagpenger.behandling.konklusjon.Konklusjon
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
@@ -33,6 +35,7 @@ class Behandling private constructor(
     gjeldendeOpplysninger: Opplysninger,
     val basertPå: List<Behandling> = emptyList(),
     private var tilstand: BehandlingTilstand,
+    private val avklaringer: List<Avklaring> = emptyList(),
 ) : Aktivitetskontekst,
     BehandlingHåndter {
     constructor(
@@ -54,7 +57,7 @@ class Behandling private constructor(
 
     private val regelkjøring = Regelkjøring(behandler.skjedde, opplysninger, *behandler.regelsett().toTypedArray())
 
-    val aktiveAvklaringer get() = behandler.avklaringer(opplysninger)
+    val aktiveAvklaringer get() = Avklaringer(behandler.kontrollpunkter(), avklaringer).måAvklares(opplysninger)
 
     companion object {
         fun rehydrer(
@@ -64,7 +67,8 @@ class Behandling private constructor(
             basertPå: List<Behandling> = emptyList(),
             tilstand: TilstandType,
             sistEndretTilstand: LocalDateTime,
-        ) = Behandling(behandlingId, behandler, gjeldendeOpplysninger, basertPå, fraType(tilstand, sistEndretTilstand))
+            avklaringer: List<Avklaring>,
+        ) = Behandling(behandlingId, behandler, gjeldendeOpplysninger, basertPå, fraType(tilstand, sistEndretTilstand, avklaringer))
 
         fun List<Behandling>.finn(behandlingId: UUID) =
             try {
@@ -162,6 +166,7 @@ class Behandling private constructor(
             fun fraType(
                 type: TilstandType,
                 opprettet: LocalDateTime,
+                avklaringer: List<Avklaring>,
             ) = when (type) {
                 TilstandType.UnderOpprettelse -> UnderOpprettelse(opprettet)
                 TilstandType.UnderBehandling -> UnderBehandling(opprettet)

@@ -7,7 +7,7 @@ import no.nav.dagpenger.behandling.mediator.Configuration.config
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.audit.AktivitetsloggAuditlogg
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
-import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepository
+import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
@@ -34,7 +34,7 @@ internal class ApplicationBuilder(
             }.build()
 
     private val opplysningRepository = OpplysningerRepositoryPostgres()
-    private val behandlingRepository = BehandlingRepositoryPostgres(opplysningRepository, AvklaringRepository(rapidsConnection))
+    private val behandlingRepository = BehandlingRepositoryPostgres(opplysningRepository, AvklaringRepositoryPostgres(rapidsConnection))
     private val personRepository = PersonRepositoryPostgres(behandlingRepository)
 
     private val aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection)

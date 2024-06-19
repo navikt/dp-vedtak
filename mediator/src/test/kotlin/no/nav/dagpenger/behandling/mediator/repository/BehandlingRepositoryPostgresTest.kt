@@ -4,6 +4,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
+import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.UUIDv7
@@ -11,6 +12,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.regel.Avklaringspunkter
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -34,21 +36,30 @@ class BehandlingRepositoryPostgresTest {
             gjeldendeOpplysninger = Opplysninger(listOf(tidligereOpplysning)),
             tilstand = Behandling.TilstandType.Ferdig,
             sistEndretTilstand = LocalDateTime.now(),
+            avklaringer = emptyList(),
         )
     private val opplysning1 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning1"), 1.0)
     private val opplysning2 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning2"), 2.0)
     private val opplysning3 = Faktum(Opplysningstype.somBoolsk("aktiv-opplysning3"), false)
+
+    private val avklaring = Avklaring(UUIDv7.ny(), Avklaringspunkter.JobbetUtenforNorge)
+
     private val behandling =
-        Behandling(
+        Behandling.rehydrer(
+            behandlingId = UUIDv7.ny(),
             behandler = søknadInnsendtHendelse,
-            opplysninger = listOf(opplysning1, opplysning2, opplysning3),
+            gjeldendeOpplysninger = Opplysninger(listOf(opplysning1, opplysning2, opplysning3)),
             basertPå = listOf(basertPåBehandling),
+            tilstand = Behandling.TilstandType.UnderBehandling,
+            sistEndretTilstand = LocalDateTime.now(),
+            avklaringer = listOf(avklaring),
         )
 
     @Test
     fun `lagre og hent behandling fra postgres`() {
         withMigratedDb {
-            val behandlingRepositoryPostgres = BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres(), mockk())
+            val avklaringRepository = AvklaringRepositoryPostgres(mockk(relaxed = true))
+            val behandlingRepositoryPostgres = BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres(), avklaringRepository)
             behandlingRepositoryPostgres.lagre(basertPåBehandling)
             behandlingRepositoryPostgres.lagre(behandling)
             val rehydrertBehandling = behandlingRepositoryPostgres.hentBehandling(behandling.behandlingId).shouldNotBeNull()
@@ -58,6 +69,8 @@ class BehandlingRepositoryPostgresTest {
             rehydrertBehandling.basertPå shouldContainExactly behandling.basertPå
             rehydrertBehandling.opplysninger().finnAlle().size shouldBe behandling.opplysninger().finnAlle().size
             rehydrertBehandling.opplysninger().finnAlle() shouldContainExactly behandling.opplysninger().finnAlle()
+
+            avklaringRepository.hentAvklaringer(behandling.behandlingId).size shouldBe 1
         }
     }
 }

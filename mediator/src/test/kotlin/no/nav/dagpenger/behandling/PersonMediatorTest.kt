@@ -15,7 +15,7 @@ import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
-import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepository
+import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
@@ -46,7 +46,7 @@ internal class PersonMediatorTest {
     private val ident = "11109233444"
 
     private val personRepository =
-        PersonRepositoryPostgres(BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres(), AvklaringRepository(rapid)))
+        PersonRepositoryPostgres(BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres(), AvklaringRepositoryPostgres(rapid)))
 
     private val unleash =
         FakeUnleash().also {
