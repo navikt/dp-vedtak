@@ -17,13 +17,16 @@ CREATE TABLE IF NOT EXISTS avklaring
     UNIQUE (behandling_id, avklaring_kode)
 );
 
+CREATE INDEX IF NOT EXISTS avklaring_avklaring_kode_idx ON avklaring (avklaring_kode);
+CREATE INDEX IF NOT EXISTS avklaring_behandling_id_idx ON avklaring (behandling_id);
+
 CREATE TABLE IF NOT EXISTS avklaring_endring
 (
-    id            uuid PRIMARY KEY,
-    avklaring_id  uuid      NOT NULL,
+    avklaring_id  uuid      NOT NULL REFERENCES avklaring (id),
     endret        TIMESTAMP NOT NULL,
     type          TEXT      NOT NULL,
     saksbehandler TEXT,
-    opprettet     TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    FOREIGN KEY (avklaring_id) REFERENCES avklaring (id)
+    opprettet     TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS avklaring_endring_avklaring_id_idx ON avklaring_endring (avklaring_id);

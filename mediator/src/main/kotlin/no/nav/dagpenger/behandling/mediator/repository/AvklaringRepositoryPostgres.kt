@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
+import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import mu.KotlinLogging
@@ -22,14 +23,14 @@ internal class AvklaringRepositoryPostgres(
     }
 
     override fun hentAvklaringer(behandlingId: UUID): List<Avklaring> {
-        sessionOf(dataSource).use {
-            return it.run(
+        sessionOf(dataSource).use { session ->
+            return session.run(
                 queryOf(
                     // language=PostgreSQL
                     """
-                    SELECT * 
+                    SELECT *
                     FROM avklaring
-                    LEFT JOIN avklaringkode ON avklaring.avklaring_kode = avklaringkode.kode                        
+                             LEFT JOIN avklaringkode ON avklaring.avklaring_kode = avklaringkode.kode
                     WHERE behandling_id = :behandling_id
                     """.trimIndent(),
                     mapOf(
@@ -43,11 +44,41 @@ internal class AvklaringRepositoryPostgres(
                             Avklaringspunkter.valueOf(
                                 row.string("avklaring_kode"),
                             ),
+                        historikk =
+                            hentEndringer(row.uuid("id"), session).toMutableList(),
                     )
                 }.asList,
             )
         }
     }
+
+    private enum class EndringType {
+        UnderBehandling,
+        Avklart,
+        Avbrutt,
+    }
+
+    private fun hentEndringer(
+        uuid: UUID,
+        session: Session,
+    ): List<Avklaring.Endring> =
+        session
+            .run(
+                queryOf(
+                    // language=PostgreSQL
+                    """
+                    SELECT * FROM avklaring_endring WHERE avklaring_id = :avklaring_id
+                    """.trimIndent(),
+                    mapOf("avklaring_id" to uuid),
+                ).map {
+                    val endret = it.localDateTime("endret")
+                    when (EndringType.valueOf(it.string("type"))) {
+                        EndringType.UnderBehandling -> Avklaring.Endring.UnderBehandling(endret)
+                        EndringType.Avklart -> Avklaring.Endring.Avklart(it.string("saksbehandler"), endret)
+                        EndringType.Avbrutt -> Avklaring.Endring.Avbrutt(endret)
+                    }
+                }.asList,
+            )
 
     private fun lagre(
         behandling: Behandling,
@@ -91,6 +122,33 @@ internal class AvklaringRepositoryPostgres(
                             ),
                         ).asUpdate,
                     )
+
+                avklaring.endringer.forEach {
+                    tx.run(
+                        queryOf(
+                            // language=PostgreSQL
+                            """
+                            INSERT INTO avklaring_endring (avklaring_id, endret, type, saksbehandler)
+                            VALUES (:avklaring_id, :endret, :endring_type, :saksbehandler)
+                            """.trimIndent(),
+                            mapOf(
+                                "avklaring_id" to avklaring.id,
+                                "endret" to it.endret,
+                                "endring_type" to
+                                    when (it) {
+                                        is Avklaring.Endring.UnderBehandling -> "UnderBehandling"
+                                        is Avklaring.Endring.Avklart -> "Avklart"
+                                        is Avklaring.Endring.Avbrutt -> "Avbrutt"
+                                    },
+                                "saksbehandler" to
+                                    when (it) {
+                                        is Avklaring.Endring.Avklart -> it.saksbehandler
+                                        else -> null
+                                    },
+                            ),
+                        ).asUpdate,
+                    )
+                }
 
                 if (lagret != 0) nyeAvklaringer.add(avklaring)
             }

@@ -23,6 +23,8 @@ data class Avklaring(
 
     private val tilstand get() = historikk.last()
 
+    val endringer get() = historikk.toList()
+
     fun måAvklares() = tilstand is UnderBehandling
 
     fun erAvklart() = tilstand is Avklart
@@ -37,15 +39,22 @@ data class Avklaring(
     fun gjenåpne() = historikk.add(UnderBehandling())
 
     sealed class Endring(
-        val endret: LocalDateTime = LocalDateTime.now(),
-    ) {
-        class UnderBehandling : Endring()
+        open val endret: LocalDateTime,
+    ) : Comparable<Endring> {
+        override fun compareTo(other: Endring) = endret.compareTo(other.endret)
+
+        class UnderBehandling(
+            override val endret: LocalDateTime = LocalDateTime.now(),
+        ) : Endring(endret)
 
         class Avklart(
             val saksbehandler: String,
-        ) : Endring()
+            override val endret: LocalDateTime = LocalDateTime.now(),
+        ) : Endring(endret)
 
-        class Avbrutt : Endring()
+        class Avbrutt(
+            override val endret: LocalDateTime = LocalDateTime.now(),
+        ) : Endring(endret)
     }
 
     override fun equals(other: Any?): Boolean {
