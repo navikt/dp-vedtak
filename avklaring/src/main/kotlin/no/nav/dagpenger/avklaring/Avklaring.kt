@@ -7,11 +7,19 @@ import no.nav.dagpenger.opplysning.UUIDv7
 import java.time.LocalDateTime
 import java.util.UUID
 
-interface Avklaringkode {
-    val name: String
-    val tittel: String
-    val beskrivelse: String
-    val kanKvitteres: Boolean
+data class Avklaringkode(
+    val kode: String,
+    val tittel: String,
+    val beskrivelse: String,
+    val kanKvitteres: Boolean = true,
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Avklaringkode) return false
+        return kode == other.kode
+    }
+
+    override fun hashCode() = kode.hashCode()
 }
 
 data class Avklaring(

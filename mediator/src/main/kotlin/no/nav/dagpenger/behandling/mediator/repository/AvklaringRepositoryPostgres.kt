@@ -5,9 +5,9 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import mu.KotlinLogging
 import no.nav.dagpenger.avklaring.Avklaring
+import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.modell.Behandling
-import no.nav.dagpenger.regel.Avklaringspunkter
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import java.util.UUID
@@ -28,7 +28,7 @@ internal class AvklaringRepositoryPostgres(
                 queryOf(
                     // language=PostgreSQL
                     """
-                    SELECT *
+                    SELECT id, avklaringkode.*
                     FROM avklaring
                              LEFT JOIN avklaringkode ON avklaring.avklaring_kode = avklaringkode.kode
                     WHERE behandling_id = :behandling_id
@@ -39,10 +39,12 @@ internal class AvklaringRepositoryPostgres(
                 ).map { row ->
                     Avklaring(
                         id = row.uuid("id"),
-                        // TODO: Det burde ikke være nødvendig å rehydrer via Avklaringspunkter, Avklaringkode burde holde
                         kode =
-                            Avklaringspunkter.valueOf(
-                                row.string("avklaring_kode"),
+                            Avklaringkode(
+                                kode = row.string("kode"),
+                                tittel = row.string("tittel"),
+                                beskrivelse = row.string("beskrivelse"),
+                                kanKvitteres = row.boolean("kan_kvitteres"),
                             ),
                         historikk =
                             hentEndringer(row.uuid("id"), session).toMutableList(),
@@ -99,7 +101,7 @@ internal class AvklaringRepositoryPostgres(
                         ON CONFLICT (kode) DO UPDATE SET tittel = :tittel, beskrivelse = :beskrivelse, kan_kvitteres = :kanKvitteres
                         """.trimIndent(),
                         mapOf(
-                            "kode" to avklaringskode.name,
+                            "kode" to avklaringskode.kode,
                             "tittel" to avklaringskode.tittel,
                             "beskrivelse" to avklaringskode.beskrivelse,
                             "kanKvitteres" to avklaringskode.kanKvitteres,
@@ -118,7 +120,7 @@ internal class AvklaringRepositoryPostgres(
                             mapOf(
                                 "avklaring_id" to avklaring.id,
                                 "behandling_id" to behandling.behandlingId,
-                                "avklaring_kode" to avklaring.kode.name,
+                                "avklaring_kode" to avklaring.kode.kode,
                             ),
                         ).asUpdate,
                     )
@@ -186,7 +188,7 @@ internal class AvklaringRepositoryPostgres(
                     mapOf<String, Any>(
                         "ident" to ident,
                         "avklaringId" to avklaring.id,
-                        "kode" to avklaring.kode.name,
+                        "kode" to avklaring.kode.kode,
                     ) + kontekst.kontekstMap,
                 ).toJson(),
         )
