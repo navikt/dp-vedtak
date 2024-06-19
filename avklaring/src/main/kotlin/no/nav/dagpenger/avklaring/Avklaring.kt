@@ -47,22 +47,23 @@ data class Avklaring(
     fun gjenåpne() = historikk.add(UnderBehandling())
 
     sealed class Endring(
+        val id: UUID,
         open val endret: LocalDateTime,
     ) : Comparable<Endring> {
         override fun compareTo(other: Endring) = endret.compareTo(other.endret)
 
-        class UnderBehandling(
+        data class UnderBehandling(
             override val endret: LocalDateTime = LocalDateTime.now(),
-        ) : Endring(endret)
+        ) : Endring(UUIDv7.ny(), endret)
 
-        class Avklart(
+        data class Avklart(
             val saksbehandler: String,
             override val endret: LocalDateTime = LocalDateTime.now(),
-        ) : Endring(endret)
+        ) : Endring(UUIDv7.ny(), endret)
 
-        class Avbrutt(
+        data class Avbrutt(
             override val endret: LocalDateTime = LocalDateTime.now(),
-        ) : Endring(endret)
+        ) : Endring(UUIDv7.ny(), endret)
     }
 
     override fun equals(other: Any?): Boolean {

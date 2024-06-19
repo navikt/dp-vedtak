@@ -22,9 +22,9 @@ internal class AvklaringRepositoryPostgres(
         lagre(behandling, unitOfWork as PostgresUnitOfWork)
     }
 
-    override fun hentAvklaringer(behandlingId: UUID): List<Avklaring> {
+    override fun hentAvklaringer(behandlingId: UUID) =
         sessionOf(dataSource).use { session ->
-            return session.run(
+            session.run(
                 queryOf(
                     // language=PostgreSQL
                     """
@@ -46,13 +46,11 @@ internal class AvklaringRepositoryPostgres(
                                 beskrivelse = row.string("beskrivelse"),
                                 kanKvitteres = row.boolean("kan_kvitteres"),
                             ),
-                        historikk =
-                            hentEndringer(row.uuid("id"), session).toMutableList(),
+                        historikk = session.hentEndringer(row.uuid("id")).toMutableList(),
                     )
                 }.asList,
             )
         }
-    }
 
     private enum class EndringType {
         UnderBehandling,
@@ -60,27 +58,23 @@ internal class AvklaringRepositoryPostgres(
         Avbrutt,
     }
 
-    private fun hentEndringer(
-        uuid: UUID,
-        session: Session,
-    ): List<Avklaring.Endring> =
-        session
-            .run(
-                queryOf(
-                    // language=PostgreSQL
-                    """
-                    SELECT * FROM avklaring_endring WHERE avklaring_id = :avklaring_id
-                    """.trimIndent(),
-                    mapOf("avklaring_id" to uuid),
-                ).map {
-                    val endret = it.localDateTime("endret")
-                    when (EndringType.valueOf(it.string("type"))) {
-                        EndringType.UnderBehandling -> Avklaring.Endring.UnderBehandling(endret)
-                        EndringType.Avklart -> Avklaring.Endring.Avklart(it.string("saksbehandler"), endret)
-                        EndringType.Avbrutt -> Avklaring.Endring.Avbrutt(endret)
-                    }
-                }.asList,
-            )
+    private fun Session.hentEndringer(uuid: UUID): List<Avklaring.Endring> =
+        run(
+            queryOf(
+                // language=PostgreSQL
+                """
+                SELECT * FROM avklaring_endring WHERE avklaring_id = :avklaring_id
+                """.trimIndent(),
+                mapOf("avklaring_id" to uuid),
+            ).map {
+                val endret = it.localDateTime("endret")
+                when (EndringType.valueOf(it.string("type"))) {
+                    EndringType.UnderBehandling -> Avklaring.Endring.UnderBehandling(endret)
+                    EndringType.Avklart -> Avklaring.Endring.Avklart(it.string("saksbehandler"), endret)
+                    EndringType.Avbrutt -> Avklaring.Endring.Avbrutt(endret)
+                }
+            }.asList,
+        )
 
     private fun lagre(
         behandling: Behandling,
@@ -125,34 +119,38 @@ internal class AvklaringRepositoryPostgres(
                         ).asUpdate,
                     )
 
-                avklaring.endringer.forEach {
-                    tx.run(
-                        queryOf(
-                            // language=PostgreSQL
-                            """
-                            INSERT INTO avklaring_endring (avklaring_id, endret, type, saksbehandler)
-                            VALUES (:avklaring_id, :endret, :endring_type, :saksbehandler)
-                            """.trimIndent(),
-                            mapOf(
-                                "avklaring_id" to avklaring.id,
-                                "endret" to it.endret,
-                                "endring_type" to
-                                    when (it) {
-                                        is Avklaring.Endring.UnderBehandling -> "UnderBehandling"
-                                        is Avklaring.Endring.Avklart -> "Avklart"
-                                        is Avklaring.Endring.Avbrutt -> "Avbrutt"
-                                    },
-                                "saksbehandler" to
-                                    when (it) {
-                                        is Avklaring.Endring.Avklart -> it.saksbehandler
-                                        else -> null
-                                    },
-                            ),
-                        ).asUpdate,
-                    )
-                }
+                val endringerLagret =
+                    avklaring.endringer.map { endring ->
+                        tx.run(
+                            queryOf(
+                                // language=PostgreSQL
+                                """
+                                INSERT INTO avklaring_endring (endring_id, avklaring_id, endret, type, saksbehandler)
+                                VALUES (:endring_id, :avklaring_id, :endret, :endring_type, :saksbehandler)
+                                ON CONFLICT DO NOTHING
+                                """.trimIndent(),
+                                mapOf(
+                                    "endring_id" to endring.id,
+                                    "avklaring_id" to avklaring.id,
+                                    "endret" to endring.endret,
+                                    "endring_type" to
+                                        when (endring) {
+                                            is Avklaring.Endring.UnderBehandling -> "UnderBehandling"
+                                            is Avklaring.Endring.Avklart -> "Avklart"
+                                            is Avklaring.Endring.Avbrutt -> "Avbrutt"
+                                        },
+                                    "saksbehandler" to
+                                        when (endring) {
+                                            is Avklaring.Endring.Avklart -> endring.saksbehandler
+                                            else -> null
+                                        },
+                                ),
+                            ).asUpdate,
+                        )
+                    }
 
                 if (lagret != 0) nyeAvklaringer.add(avklaring)
+                // if (endringerLagret.any { it == 1 }) TODO("Avklaringen er endret")
             }
         }
 

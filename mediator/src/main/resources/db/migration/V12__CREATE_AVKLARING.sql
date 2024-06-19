@@ -22,6 +22,7 @@ CREATE INDEX IF NOT EXISTS avklaring_behandling_id_idx ON avklaring (behandling_
 
 CREATE TABLE IF NOT EXISTS avklaring_endring
 (
+    endring_id    uuid PRIMARY KEY,
     avklaring_id  uuid      NOT NULL REFERENCES avklaring (id),
     endret        TIMESTAMP NOT NULL,
     type          TEXT      NOT NULL,
