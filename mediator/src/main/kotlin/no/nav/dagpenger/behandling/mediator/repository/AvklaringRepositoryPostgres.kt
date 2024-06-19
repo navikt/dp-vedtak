@@ -2,6 +2,7 @@ package no.nav.dagpenger.behandling.mediator.repository
 
 import kotliquery.queryOf
 import kotliquery.sessionOf
+import mu.KotlinLogging
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.modell.Behandling
@@ -115,16 +116,23 @@ internal class AvklaringRepositoryPostgres(
         kontekst: Behandling.BehandlingKontekst,
         avklaring: Avklaring,
     ) {
-        val newMessage =
-            JsonMessage.newMessage(
-                "NyAvklaring",
-                mapOf(
-                    "ident" to ident,
-                    "avklaringId" to avklaring.id,
-                    "kode" to avklaring.kode.kode,
-                ) + kontekst.kontekstMap,
-            )
+        rapid.publish(
+            ident,
+            JsonMessage
+                .newMessage(
+                    "NyAvklaring",
+                    mapOf<String, Any>(
+                        "ident" to ident,
+                        "avklaringId" to avklaring.id,
+                        "kode" to avklaring.kode.kode,
+                    ) + kontekst.kontekstMap,
+                ).toJson(),
+        )
 
-        rapid.publish(ident, newMessage.toJson())
+        logger.info { "Publisert NyAvklaring for avklaringId=${avklaring.id}" }
+    }
+
+    private companion object {
+        private val logger = KotlinLogging.logger {}
     }
 }
