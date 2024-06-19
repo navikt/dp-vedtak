@@ -105,7 +105,7 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 10
+            rapid.inspektør.size shouldBe 16
         }
 
     @Test
@@ -166,7 +166,13 @@ internal class PersonMediatorTest {
                 }
             }
 
-            rapid.inspektør.size shouldBe 10
+            rapid.inspektør.size shouldBe
+                listOf(
+                    "opprettet" to 1,
+                    "behov" to 8,
+                    "avklaring" to 6,
+                    "forslag" to 1,
+                ).sumOf { it.second }
         }
 
     @Test

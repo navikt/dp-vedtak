@@ -16,7 +16,7 @@ enum class Avklaringspunkter(
         "Personen har lukkede saker i Arena siste 8 uker",
     ),
     InntektNesteKalendermåned(
-        "HattLukkedeSakerSiste8Uker",
+        "InntektNesteKalendermåned",
         "Har innrapport inntekt for neste måned",
         "Personen har inntekter som tilhører neste inntektsperiode",
     ),

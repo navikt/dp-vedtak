@@ -52,49 +52,52 @@ internal class AvklaringRepositoryPostgres(
         behandling: Behandling,
         unitOfWork: PostgresUnitOfWork,
     ) {
-        // TODO: lagre avklaring
         val avklaringer = behandling.aktiveAvklaringer
+        val nyeAvklaringer = mutableListOf<Avklaring>()
 
         unitOfWork.inTransaction { tx ->
             avklaringer.forEach { avklaring ->
-
                 val avklaringskode = avklaring.kode
                 tx.run(
                     queryOf(
                         // language=PostgreSQL
                         """
-                        INSERT INTO avklaringkode (kode, tittel, beskrivelse, kankvitteres)
-                        VALUES (:kode, :tittel, :beskrivelse, :kankvitteres)
-                        ON CONFLICT (kode) DO UPDATE SET tittel = :tittel, beskrivelse = :beskrivelse, kankvitteres = :kankvitteres
+                        INSERT INTO avklaringkode (kode, tittel, beskrivelse, kan_kvitteres)
+                        VALUES (:kode, :tittel, :beskrivelse, :kanKvitteres)
+                        ON CONFLICT (kode) DO UPDATE SET tittel = :tittel, beskrivelse = :beskrivelse, kan_kvitteres = :kanKvitteres
                         """.trimIndent(),
                         mapOf(
                             "kode" to avklaringskode.kode,
                             "tittel" to avklaringskode.tittel,
                             "beskrivelse" to avklaringskode.beskrivelse,
-                            "kankvitteres" to avklaringskode.kanKvitteres,
+                            "kanKvitteres" to avklaringskode.kanKvitteres,
                         ),
                     ).asUpdate,
                 )
-                tx.run(
-                    queryOf(
-                        // language=PostgreSQL
-                        """
-                        INSERT INTO avklaring (id, behandling_id, avklaring_kode)
-                        VALUES (:avklaring_id, :behandling_id, :avklaring_kode)
-                        """.trimIndent(),
-                        mapOf(
-                            "avklaring_id" to avklaring.id,
-                            "behandling_id" to behandling.behandlingId,
-                            "avklaring_kode" to avklaring.kode.kode,
-                        ),
-                    ).asUpdate,
-                )
+                val lagret =
+                    tx.run(
+                        queryOf(
+                            // language=PostgreSQL
+                            """
+                            INSERT INTO avklaring (id, behandling_id, avklaring_kode)
+                            VALUES (:avklaring_id, :behandling_id, :avklaring_kode)
+                            ON CONFLICT (id) DO NOTHING
+                            """.trimIndent(),
+                            mapOf(
+                                "avklaring_id" to avklaring.id,
+                                "behandling_id" to behandling.behandlingId,
+                                "avklaring_kode" to avklaring.kode.kode,
+                            ),
+                        ).asUpdate,
+                    )
+
+                if (lagret != 0) nyeAvklaringer.add(avklaring)
             }
         }
 
         /** TODO
-         * 1. Lagre avklaring
-         * 2. Rehydrere avklaringer
+         * 1. [X] Lagre avklaring
+         * 2. [X] Rehydrere avklaringer
          * 3. Lage AvklaringAvklartHendelse - når en avklaring er avklart
          * 4. Sende AvklaringAvklartHendelse ned modellen til Avklaringer
          * 5. Lage AvklaringAvklartMottak
@@ -102,7 +105,7 @@ internal class AvklaringRepositoryPostgres(
          * 7. Fjerne AvklaringManuellBehandling i Behandling og heller sjekke om det er åpne avklaringer
          */
 
-        avklaringer.forEach {
+        nyeAvklaringer.forEach {
             publiser(
                 behandling.behandler.ident,
                 behandling.toSpesifikkKontekst(),

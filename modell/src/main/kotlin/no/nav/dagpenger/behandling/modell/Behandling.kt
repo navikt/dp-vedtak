@@ -35,7 +35,7 @@ class Behandling private constructor(
     gjeldendeOpplysninger: Opplysninger,
     val basertPå: List<Behandling> = emptyList(),
     private var tilstand: BehandlingTilstand,
-    private val avklaringer: List<Avklaring>,
+    avklaringer: List<Avklaring>,
 ) : Aktivitetskontekst,
     BehandlingHåndter {
     constructor(
@@ -56,8 +56,9 @@ class Behandling private constructor(
     private val opplysninger: Opplysninger = gjeldendeOpplysninger + tidligereOpplysninger
 
     private val regelkjøring = Regelkjøring(behandler.skjedde, opplysninger, *behandler.regelsett().toTypedArray())
+    private val avklaring = Avklaringer(behandler.kontrollpunkter(), avklaringer)
 
-    val aktiveAvklaringer get() = Avklaringer(behandler.kontrollpunkter(), avklaringer).måAvklares(opplysninger)
+    val aktiveAvklaringer get() = avklaring.måAvklares(opplysninger)
 
     companion object {
         fun rehydrer(
