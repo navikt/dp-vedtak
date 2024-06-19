@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 interface Avklaringkode {
-    val kode: String
+    val name: String
     val tittel: String
     val beskrivelse: String
     val kanKvitteres: Boolean
@@ -36,10 +36,14 @@ data class Avklaring(
 
     fun gjenåpne() = historikk.add(UnderBehandling())
 
-    sealed class Endring(val endret: LocalDateTime = LocalDateTime.now()) {
+    sealed class Endring(
+        val endret: LocalDateTime = LocalDateTime.now(),
+    ) {
         class UnderBehandling : Endring()
 
-        class Avklart(val saksbehandler: String) : Endring()
+        class Avklart(
+            val saksbehandler: String,
+        ) : Endring()
 
         class Avbrutt : Endring()
     }

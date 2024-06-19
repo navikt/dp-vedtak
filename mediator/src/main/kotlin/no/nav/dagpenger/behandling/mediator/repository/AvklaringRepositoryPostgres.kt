@@ -68,7 +68,7 @@ internal class AvklaringRepositoryPostgres(
                         ON CONFLICT (kode) DO UPDATE SET tittel = :tittel, beskrivelse = :beskrivelse, kan_kvitteres = :kanKvitteres
                         """.trimIndent(),
                         mapOf(
-                            "kode" to avklaringskode.kode,
+                            "kode" to avklaringskode.name,
                             "tittel" to avklaringskode.tittel,
                             "beskrivelse" to avklaringskode.beskrivelse,
                             "kanKvitteres" to avklaringskode.kanKvitteres,
@@ -87,7 +87,7 @@ internal class AvklaringRepositoryPostgres(
                             mapOf(
                                 "avklaring_id" to avklaring.id,
                                 "behandling_id" to behandling.behandlingId,
-                                "avklaring_kode" to avklaring.kode.kode,
+                                "avklaring_kode" to avklaring.kode.name,
                             ),
                         ).asUpdate,
                     )
@@ -128,7 +128,7 @@ internal class AvklaringRepositoryPostgres(
                     mapOf<String, Any>(
                         "ident" to ident,
                         "avklaringId" to avklaring.id,
-                        "kode" to avklaring.kode.kode,
+                        "kode" to avklaring.kode.name,
                     ) + kontekst.kontekstMap,
                 ).toJson(),
         )
