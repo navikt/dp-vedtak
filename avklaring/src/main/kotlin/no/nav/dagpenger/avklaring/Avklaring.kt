@@ -41,7 +41,7 @@ data class Avklaring(
 
     fun kvittering() {
         require(kode.kanKvitteres) { "Avklaring $kode kan ikke kvitteres ut, krever endring i behandlingen" }
-        historikk.add(Avklart("saksbehandler"))
+        historikk.add(Avklart(saksbehandler = "saksbehandler"))
     }
 
     fun gjenåpne() = historikk.add(UnderBehandling())
@@ -52,18 +52,21 @@ data class Avklaring(
     ) : Comparable<Endring> {
         override fun compareTo(other: Endring) = endret.compareTo(other.endret)
 
-        data class UnderBehandling(
-            override val endret: LocalDateTime = LocalDateTime.now(),
-        ) : Endring(UUIDv7.ny(), endret)
+        class UnderBehandling(
+            id: UUID = UUIDv7.ny(),
+            endret: LocalDateTime = LocalDateTime.now(),
+        ) : Endring(id, endret)
 
-        data class Avklart(
+        class Avklart(
+            id: UUID = UUIDv7.ny(),
             val saksbehandler: String,
-            override val endret: LocalDateTime = LocalDateTime.now(),
-        ) : Endring(UUIDv7.ny(), endret)
+            endret: LocalDateTime = LocalDateTime.now(),
+        ) : Endring(id, endret)
 
-        data class Avbrutt(
-            override val endret: LocalDateTime = LocalDateTime.now(),
-        ) : Endring(UUIDv7.ny(), endret)
+        class Avbrutt(
+            id: UUID = UUIDv7.ny(),
+            endret: LocalDateTime = LocalDateTime.now(),
+        ) : Endring(id, endret)
     }
 
     override fun equals(other: Any?): Boolean {

@@ -67,11 +67,12 @@ internal class AvklaringRepositoryPostgres(
                 """.trimIndent(),
                 mapOf("avklaring_id" to uuid),
             ).map {
+                val id = it.uuid("endring_id")
                 val endret = it.localDateTime("endret")
                 when (EndringType.valueOf(it.string("type"))) {
-                    EndringType.UnderBehandling -> Avklaring.Endring.UnderBehandling(endret)
-                    EndringType.Avklart -> Avklaring.Endring.Avklart(it.string("saksbehandler"), endret)
-                    EndringType.Avbrutt -> Avklaring.Endring.Avbrutt(endret)
+                    EndringType.UnderBehandling -> Avklaring.Endring.UnderBehandling(id, endret)
+                    EndringType.Avklart -> Avklaring.Endring.Avklart(id, it.string("saksbehandler"), endret)
+                    EndringType.Avbrutt -> Avklaring.Endring.Avbrutt(id, endret)
                 }
             }.asList,
         )
