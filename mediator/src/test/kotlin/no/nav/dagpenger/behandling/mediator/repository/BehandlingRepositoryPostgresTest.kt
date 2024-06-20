@@ -15,6 +15,7 @@ import no.nav.dagpenger.regel.Avklaringspunkter
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 class BehandlingRepositoryPostgresTest {
     private val ident = "123456789011"
@@ -85,7 +86,7 @@ class BehandlingRepositoryPostgresTest {
                             .first()
                             .javaClass.simpleName
                     id shouldBe avklaring.endringer.first().id
-                    endret shouldBe avklaring.endringer.first().endret
+                    endret.truncatedTo(ChronoUnit.MICROS) shouldBe avklaring.endringer.first().endret.truncatedTo(ChronoUnit.MICROS)
                 }
 
                 with(sisteEndring) {
@@ -94,7 +95,7 @@ class BehandlingRepositoryPostgresTest {
                             .last()
                             .javaClass.simpleName
                     id shouldBe avklaring.endringer.last().id
-                    endret shouldBe avklaring.endringer.last().endret
+                    endret.truncatedTo(ChronoUnit.MICROS) shouldBe avklaring.endringer.last().endret.truncatedTo(ChronoUnit.MICROS)
                 }
             }
         }
