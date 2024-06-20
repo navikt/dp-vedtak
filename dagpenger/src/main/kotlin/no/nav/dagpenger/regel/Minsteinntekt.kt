@@ -1,11 +1,13 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.IkkeKonkludert
 import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.Konkludert
 import no.nav.dagpenger.behandling.konklusjon.KonklusjonsStrategi
 import no.nav.dagpenger.grunnbelop.Regel
 import no.nav.dagpenger.grunnbelop.forDato
 import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
+import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
@@ -67,6 +69,29 @@ object Minsteinntekt {
         getGrunnbeløpForRegel(Regel.Minsteinntekt).forDato(it).verdi
             // TODO: Bli enige med oss selv hva som er Double og BigDecimal
             .toDouble()
+
+    val SvangerskapsrelaterteSykepengerKontroll =
+        Kontrollpunkt(sjekker = Avklaringspunkter.SvangerskapsrelaterteSykepenger, kontroll = avslagMinsteinntekt())
+
+    val EØSArbeidKontroll =
+        Kontrollpunkt(sjekker = Avklaringspunkter.EØSArbeid, kontroll = avslagMinsteinntekt())
+
+    val JobbetUtenforNorgeKontroll =
+        Kontrollpunkt(sjekker = Avklaringspunkter.JobbetUtenforNorge, kontroll = avslagMinsteinntekt())
+
+    val InntektNesteKalendermånedKontroll =
+        Kontrollpunkt(sjekker = Avklaringspunkter.InntektNesteKalendermåned, kontroll = avslagMinsteinntekt())
+
+    val HattLukkedeSakerSiste8UkerKontroll =
+        Kontrollpunkt(sjekker = Avklaringspunkter.HattLukkedeSakerSiste8Uker, kontroll = avslagMinsteinntekt())
+
+    val MuligGjenopptakKontroll =
+        Kontrollpunkt(sjekker = Avklaringspunkter.MuligGjenopptak, kontroll = avslagMinsteinntekt())
+
+    private fun avslagMinsteinntekt() =
+        { opplysninger: LesbarOpplysninger ->
+            opplysninger.har(minsteinntekt) && !opplysninger.finnOpplysning(minsteinntekt).verdi
+        }
 
     val AvslagInntekt =
         KonklusjonsStrategi(DagpengerKonklusjoner.AvslagMinsteinntekt) { opplysninger ->

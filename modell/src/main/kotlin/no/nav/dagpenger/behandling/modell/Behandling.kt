@@ -4,6 +4,8 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
+import no.nav.dagpenger.avklaring.Avklaring
+import no.nav.dagpenger.avklaring.Avklaringer
 import no.nav.dagpenger.behandling.konklusjon.Konklusjon
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
@@ -33,12 +35,14 @@ class Behandling private constructor(
     gjeldendeOpplysninger: Opplysninger,
     val basertPå: List<Behandling> = emptyList(),
     private var tilstand: BehandlingTilstand,
-) : Aktivitetskontekst, BehandlingHåndter {
+    avklaringer: List<Avklaring>,
+) : Aktivitetskontekst,
+    BehandlingHåndter {
     constructor(
         behandler: StartHendelse,
         opplysninger: List<Opplysning<*>>,
         basertPå: List<Behandling> = emptyList(),
-    ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå, UnderOpprettelse(LocalDateTime.now()))
+    ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå, UnderOpprettelse(LocalDateTime.now()), emptyList())
 
     init {
         require(basertPå.all { it.tilstand is Ferdig }) {
@@ -52,6 +56,9 @@ class Behandling private constructor(
     private val opplysninger: Opplysninger = gjeldendeOpplysninger + tidligereOpplysninger
 
     private val regelkjøring = Regelkjøring(behandler.skjedde, opplysninger, *behandler.regelsett().toTypedArray())
+    private val avklaring = Avklaringer(behandler.kontrollpunkter(), avklaringer)
+
+    val aktiveAvklaringer get() = avklaring.måAvklares(opplysninger)
 
     companion object {
         fun rehydrer(
@@ -61,7 +68,15 @@ class Behandling private constructor(
             basertPå: List<Behandling> = emptyList(),
             tilstand: TilstandType,
             sistEndretTilstand: LocalDateTime,
-        ) = Behandling(behandlingId, behandler, gjeldendeOpplysninger, basertPå, fraType(tilstand, sistEndretTilstand))
+            avklaringer: List<Avklaring>,
+        ) = Behandling(
+            behandlingId,
+            behandler,
+            gjeldendeOpplysninger,
+            basertPå,
+            fraType(tilstand, sistEndretTilstand, avklaringer),
+            avklaringer,
+        )
 
         fun List<Behandling>.finn(behandlingId: UUID) =
             try {
@@ -136,7 +151,10 @@ class Behandling private constructor(
 
     override fun hashCode() = behandlingId.hashCode()
 
-    data class BehandlingKontekst(val behandlingId: UUID, val behandlerKontekst: Map<String, String>) : SpesifikkKontekst("Behandling") {
+    data class BehandlingKontekst(
+        val behandlingId: UUID,
+        val behandlerKontekst: Map<String, String>,
+    ) : SpesifikkKontekst("Behandling") {
         override val kontekstMap = mapOf("behandlingId" to behandlingId.toString()) + behandlerKontekst
     }
 
@@ -156,6 +174,7 @@ class Behandling private constructor(
             fun fraType(
                 type: TilstandType,
                 opprettet: LocalDateTime,
+                avklaringer: List<Avklaring>,
             ) = when (type) {
                 TilstandType.UnderOpprettelse -> UnderOpprettelse(opprettet)
                 TilstandType.UnderBehandling -> UnderBehandling(opprettet)
@@ -174,29 +193,26 @@ class Behandling private constructor(
         fun håndter(
             behandling: Behandling,
             hendelse: SøknadInnsendtHendelse,
-        ) {
+        ): Unit =
             throw IllegalStateException(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
             )
-        }
 
         fun håndter(
             behandling: Behandling,
             hendelse: ManuellBehandlingAvklartHendelse,
-        ) {
+        ): Unit =
             throw IllegalStateException(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
             )
-        }
 
         fun håndter(
             behandling: Behandling,
             hendelse: OpplysningSvarHendelse,
-        ) {
+        ): Unit =
             throw IllegalStateException(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
             )
-        }
 
         fun håndter(
             behandling: Behandling,
@@ -209,11 +225,10 @@ class Behandling private constructor(
         fun håndter(
             behandling: Behandling,
             hendelse: ForslagGodkjentHendelse,
-        ) {
+        ): Unit =
             throw IllegalStateException(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
             )
-        }
 
         override fun toSpesifikkKontekst() =
             SpesifikkKontekst(
@@ -224,7 +239,9 @@ class Behandling private constructor(
             )
     }
 
-    private data class UnderOpprettelse(override val opprettet: LocalDateTime = LocalDateTime.now()) : BehandlingTilstand {
+    private data class UnderOpprettelse(
+        override val opprettet: LocalDateTime = LocalDateTime.now(),
+    ) : BehandlingTilstand {
         override val type = TilstandType.UnderOpprettelse
 
         override fun håndter(
@@ -239,7 +256,9 @@ class Behandling private constructor(
         }
     }
 
-    private data class UnderBehandling(override val opprettet: LocalDateTime = LocalDateTime.now()) : BehandlingTilstand {
+    private data class UnderBehandling(
+        override val opprettet: LocalDateTime = LocalDateTime.now(),
+    ) : BehandlingTilstand {
         override val type = TilstandType.UnderBehandling
 
         override fun entering(
@@ -273,7 +292,8 @@ class Behandling private constructor(
 
                     if (konklusjoner.any {
                             it.årsak == DagpengerKonklusjoner.AvslagAlder.årsak
-                        } || konklusjoner.any { it.årsak == DagpengerKonklusjoner.AvslagMinsteinntekt.årsak }
+                        } ||
+                        konklusjoner.any { it.årsak == DagpengerKonklusjoner.AvslagMinsteinntekt.årsak }
                     ) {
                         hendelse.info("(Konklusjon) Behandling fører til avslag. Vi kan fatte vedtak")
                     }
@@ -338,7 +358,9 @@ class Behandling private constructor(
         }
     }
 
-    private data class ForslagTilVedtak(override val opprettet: LocalDateTime = LocalDateTime.now()) : BehandlingTilstand {
+    private data class ForslagTilVedtak(
+        override val opprettet: LocalDateTime = LocalDateTime.now(),
+    ) : BehandlingTilstand {
         override val type = TilstandType.ForslagTilVedtak
 
         override fun entering(
@@ -366,7 +388,10 @@ class Behandling private constructor(
                 "Foreslår vedtak",
                 mapOf(
                     "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).verdi,
-                    "harAvklart" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).opplysningstype.navn,
+                    "harAvklart" to
+                        behandling.opplysninger
+                            .finnOpplysning(behandling.behandler.avklarer())
+                            .opplysningstype.navn,
                     "avklaringer" to avklaringer,
                 ),
             )
@@ -390,8 +415,10 @@ class Behandling private constructor(
         }
     }
 
-    private data class Avbrutt(override val opprettet: LocalDateTime = LocalDateTime.now(), val årsak: String? = null) :
-        BehandlingTilstand {
+    private data class Avbrutt(
+        override val opprettet: LocalDateTime = LocalDateTime.now(),
+        val årsak: String? = null,
+    ) : BehandlingTilstand {
         override val type = TilstandType.Avbrutt
 
         override fun entering(
@@ -430,7 +457,9 @@ class Behandling private constructor(
         }
     }
 
-    private data class Ferdig(override val opprettet: LocalDateTime = LocalDateTime.now()) : BehandlingTilstand {
+    private data class Ferdig(
+        override val opprettet: LocalDateTime = LocalDateTime.now(),
+    ) : BehandlingTilstand {
         override val type = TilstandType.Ferdig
 
         override fun entering(
@@ -454,9 +483,7 @@ class Behandling private constructor(
         override fun håndter(
             behandling: Behandling,
             hendelse: AvbrytBehandlingHendelse,
-        ) {
-            throw IllegalStateException("Kan ikke avbryte en ferdig behandling")
-        }
+        ): Unit = throw IllegalStateException("Kan ikke avbryte en ferdig behandling")
     }
 
     private fun tilstand(
@@ -489,7 +516,9 @@ object Behandlingsvarsler {
 
 // TODO: Vi bør ha bedre kontroll på navnene og kanskje henge sammen med behov?
 @Suppress("ktlint:standard:enum-entry-name-case")
-sealed class BehandlingHendelser(override val name: String) : Hendelse.Hendelsetype {
+sealed class BehandlingHendelser(
+    override val name: String,
+) : Hendelse.Hendelsetype {
     data object BehandlingOpprettetHendelse : BehandlingHendelser("behandling_opprettet")
 
     data object ForslagTilVedtakHendelse : BehandlingHendelser("forslag_til_vedtak")

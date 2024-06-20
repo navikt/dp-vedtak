@@ -15,6 +15,8 @@ import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
+import no.nav.dagpenger.behandling.mediator.repository.AvklaringKafkaObservatør
+import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
@@ -45,12 +47,15 @@ internal class PersonMediatorTest {
     private val rapid = TestRapid()
     private val ident = "11109233444"
 
-    private val personRepository = PersonRepositoryPostgres(BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres()))
+    private val personRepository =
+        PersonRepositoryPostgres(
+            BehandlingRepositoryPostgres(
+                OpplysningerRepositoryPostgres(),
+                AvklaringRepositoryPostgres(AvklaringKafkaObservatør(rapid)),
+            ),
+        )
 
-    private val unleash =
-        FakeUnleash().also {
-            it.enable("bruk-soknad-orkestrator")
-        }
+    private val unleash = FakeUnleash().also { it.enable("bruk-soknad-orkestrator") }
     private val personMediator =
         PersonMediator(
             personRepository = personRepository,
@@ -105,7 +110,32 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 10
+            rapid.inspektør.size shouldBe 16
+        }
+
+    @Test
+    fun `Søknad med nok inntekt skal ikke avslås - men avbrytes`() =
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    søknadstidspunkt = 6.mai(2021),
+                    InntektSiste12Mnd = 500000,
+                )
+
+            løsBehandlingFramTilFerdig(testPerson)
+
+            personRepository.hent(ident.tilPersonIdentfikator()).also {
+                it.shouldNotBeNull()
+                it.behandlinger().size shouldBe 1
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe 46
+            }
+
+            rapid.harHendelse("behandling_avbrutt") {
+                medTekst("søknadId") shouldBe testPerson.søknadId
+                medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
+            }
         }
 
     @Test
@@ -141,7 +171,13 @@ internal class PersonMediatorTest {
                 }
             }
 
-            rapid.inspektør.size shouldBe 10
+            rapid.inspektør.size shouldBe
+                listOf(
+                    "opprettet" to 1,
+                    "behov" to 8,
+                    "avklaring" to 6,
+                    "forslag" to 1,
+                ).sumOf { it.second }
         }
 
     @Test

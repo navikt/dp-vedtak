@@ -12,6 +12,8 @@ dependencies {
     implementation(project(path = ":openapi"))
     implementation(project(path = ":dagpenger"))
     implementation(project(path = ":opplysninger"))
+    implementation(project(path = ":konklusjon"))
+    implementation(project(path = ":avklaring"))
 
     implementation(libs.bundles.jackson)
     implementation("com.fasterxml.jackson.module:jackson-module-blackbird:${libs.versions.jackson.get()}")

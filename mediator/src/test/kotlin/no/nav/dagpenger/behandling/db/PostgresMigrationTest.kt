@@ -1,8 +1,8 @@
 package no.nav.dagpenger.behandling.db
 
+import io.kotest.matchers.ints.shouldBeExactly
 import no.nav.dagpenger.behandling.db.Postgres.withCleanDb
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class PostgresMigrationTest {
@@ -10,7 +10,7 @@ class PostgresMigrationTest {
     fun `Migration scripts are applied successfully`() {
         withCleanDb {
             val migrations = runMigration()
-            Assertions.assertEquals(10, migrations)
+            migrations shouldBeExactly 11
         }
     }
 }

@@ -21,8 +21,10 @@ class TestPerson(
     private val ident: String,
     private val rapid: TestRapid,
     internal val søknadstidspunkt: LocalDate = 5.mai(2021),
-    private val alder: Int = 30,
+    alder: Int = 30,
     private val innsendt: LocalDateTime = LocalDateTime.now(),
+    InntektSiste12Mnd: Int = 1234,
+    InntektSiste36Mnd: Int = 1234,
 ) {
     val inntektId = "01HQTE3GBWCSVYH6S436DYFREN"
     internal val søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"
@@ -96,8 +98,8 @@ class TestPerson(
             "ØnskerDagpengerFraDato" to søknadstidspunkt,
             // Inntekt
             InntektId to mapOf("verdi" to inntektId),
-            "InntektSiste12Mnd" to 1234,
-            "InntektSiste36Mnd" to 1234,
+            "InntektSiste12Mnd" to InntektSiste12Mnd,
+            "InntektSiste36Mnd" to InntektSiste36Mnd,
             // Reell arbeidssøker
             KanJobbeDeltid to true,
             KanJobbeHvorSomHelst to true,

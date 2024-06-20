@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.db
 
+import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepository
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.mediator.repository.UnitOfWork
@@ -8,14 +9,18 @@ import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Person
 import java.util.UUID
 
-class InMemoryPersonRepository : PersonRepository, BehandlingRepository {
+class InMemoryPersonRepository :
+    PersonRepository,
+    BehandlingRepository {
     private val persondb = mutableMapOf<Ident, Person>()
 
     override fun hent(ident: Ident): Person? = persondb[ident]
 
-    override fun hentBehandling(behandlingId: UUID): Behandling? {
-        return persondb.values.flatMap { it.behandlinger() }.find { it.behandlingId == behandlingId }
-    }
+    override fun hentBehandling(behandlingId: UUID): Behandling? =
+        persondb.values
+            .flatMap {
+                it.behandlinger()
+            }.find { it.behandlingId == behandlingId }
 
     override fun lagre(behandling: Behandling) {
         TODO("Not yet implemented")
@@ -25,6 +30,17 @@ class InMemoryPersonRepository : PersonRepository, BehandlingRepository {
         behandling: Behandling,
         unitOfWork: UnitOfWork<*>,
     ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun lagreAvklaringer(
+        behandling: Behandling,
+        unitOfWork: UnitOfWork<*>,
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun hentAvklaringer(behandlingId: UUID): List<Avklaring> {
         TODO("Not yet implemented")
     }
 

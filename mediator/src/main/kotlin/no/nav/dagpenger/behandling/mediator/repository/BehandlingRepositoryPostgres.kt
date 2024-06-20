@@ -11,9 +11,11 @@ import java.util.UUID
 
 class BehandlingRepositoryPostgres(
     private val opplysningRepository: OpplysningerRepository,
-) : BehandlingRepository {
-    override fun hentBehandling(behandlingId: UUID): Behandling? {
-        return sessionOf(dataSource).use { session ->
+    private val avklaringRepository: AvklaringRepository,
+) : BehandlingRepository,
+    AvklaringRepository by avklaringRepository {
+    override fun hentBehandling(behandlingId: UUID): Behandling? =
+        sessionOf(dataSource).use { session ->
             session.run(
                 queryOf(
                     // language=PostgreSQL
@@ -45,17 +47,17 @@ class BehandlingRepositoryPostgres(
                                         fagsakId = row.int("fagsak_id"),
                                     )
 
-                                else -> throw IllegalArgumentException("Ukjent hendelse type")
+                                else -> throw IllegalArgumentException("Ukjent hendelse type ${row.string("hendelse_type")}")
                             },
                         gjeldendeOpplysninger = opplysningRepository.hentOpplysninger(row.uuid("opplysninger_id"))!!,
                         basertPå = basertPåBehandling,
                         tilstand = Behandling.TilstandType.valueOf(row.string("tilstand")),
                         sistEndretTilstand = row.localDateTime("sist_endret_tilstand"),
+                        avklaringer = hentAvklaringer(behandlingId),
                     )
                 }.asSingle,
             )
         }
-    }
 
     private fun Session.hentBasertPåFor(behandlingId: UUID) =
         this.run(
@@ -167,6 +169,8 @@ class BehandlingRepositoryPostgres(
                     ).asUpdate,
                 )
             }
+
+            avklaringRepository.lagreAvklaringer(behandling, unitOfWork)
         }
     }
 }

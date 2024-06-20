@@ -1,21 +1,27 @@
 package no.nav.dagpenger.avklaring
 
+import no.nav.dagpenger.avklaring.Kontrollpunkt.Kontrollresultat.KreverAvklaring
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 
-class Avklaringer(private val kontrollpunkter: List<Kontrollpunkt>, avklaringer: List<Avklaring> = emptyList()) {
+class Avklaringer(
+    private val kontrollpunkter: List<Kontrollpunkt>,
+    avklaringer: List<Avklaring> = emptyList(),
+) {
     internal val avklaringer = avklaringer.toMutableSet()
 
     fun måAvklares(opplysninger: LesbarOpplysninger): List<Avklaring> {
         val aktiveAvklaringer =
-            kontrollpunkter.map { it.evaluer(opplysninger) }
-                .filterIsInstance<Kontrollpunkt.Kontrollresultat.KreverAvklaring>()
+            kontrollpunkter
+                .map { it.evaluer(opplysninger) }
+                .filterIsInstance<KreverAvklaring>()
                 .map { it.avklaringkode }
 
         // Avbryt alle avklaringer som ikke lenger er aktive
         avklaringer.filter { it.måAvklares() && !aktiveAvklaringer.contains(it.kode) }.forEach { it.avbryt() }
 
         // Gjenåpne avklaringer som ikke er avklart og er aktive igjen
-        aktiveAvklaringer.mapNotNull { avklaringskode -> avklaringer.find { it.kode == avklaringskode && !it.erAvklart() } }
+        aktiveAvklaringer
+            .mapNotNull { avklaringskode -> avklaringer.find { it.kode == avklaringskode && !it.erAvklart() } }
             .forEach { it.gjenåpne() }
 
         // Legg til nye avklaringer
