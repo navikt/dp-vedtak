@@ -74,7 +74,7 @@ class Behandling private constructor(
             behandler,
             gjeldendeOpplysninger,
             basertPå,
-            fraType(tilstand, sistEndretTilstand, avklaringer),
+            fraType(tilstand, sistEndretTilstand),
             avklaringer,
         )
 
@@ -174,7 +174,6 @@ class Behandling private constructor(
             fun fraType(
                 type: TilstandType,
                 opprettet: LocalDateTime,
-                avklaringer: List<Avklaring>,
             ) = when (type) {
                 TilstandType.UnderOpprettelse -> UnderOpprettelse(opprettet)
                 TilstandType.UnderBehandling -> UnderBehandling(opprettet)
