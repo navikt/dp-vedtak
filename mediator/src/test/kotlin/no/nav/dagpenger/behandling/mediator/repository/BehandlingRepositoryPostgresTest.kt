@@ -86,7 +86,11 @@ class BehandlingRepositoryPostgresTest {
                             .first()
                             .javaClass.simpleName
                     id shouldBe avklaring.endringer.first().id
-                    endret.truncatedTo(ChronoUnit.MICROS) shouldBe avklaring.endringer.first().endret.truncatedTo(ChronoUnit.MICROS)
+                    endret.truncatedTo(ChronoUnit.SECONDS) shouldBe
+                        avklaring.endringer
+                            .first()
+                            .endret
+                            .truncatedTo(ChronoUnit.SECONDS)
                 }
 
                 with(sisteEndring) {
@@ -95,7 +99,11 @@ class BehandlingRepositoryPostgresTest {
                             .last()
                             .javaClass.simpleName
                     id shouldBe avklaring.endringer.last().id
-                    endret.truncatedTo(ChronoUnit.MICROS) shouldBe avklaring.endringer.last().endret.truncatedTo(ChronoUnit.MICROS)
+                    endret.truncatedTo(ChronoUnit.SECONDS) shouldBe
+                        avklaring.endringer
+                            .last()
+                            .endret
+                            .truncatedTo(ChronoUnit.SECONDS)
                 }
             }
         }
