@@ -3,18 +3,18 @@ package no.nav.dagpenger.behandling.mediator.repository
 import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import mu.KotlinLogging
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryObserver.NyAvklaringHendelse
 import no.nav.dagpenger.behandling.modell.Behandling
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageContext
 import java.util.UUID
 
-internal class AvklaringRepositoryPostgres(
-    private val rapid: MessageContext,
+internal class AvklaringRepositoryPostgres private constructor(
+    private val observatører: MutableList<AvklaringRepositoryObserver>,
 ) : AvklaringRepository {
+    constructor(vararg observatører: AvklaringRepositoryObserver) : this(observatører.toMutableList())
+
     override fun lagreAvklaringer(
         behandling: Behandling,
         unitOfWork: UnitOfWork<*>,
@@ -166,7 +166,7 @@ internal class AvklaringRepositoryPostgres(
          */
 
         nyeAvklaringer.forEach {
-            publiser(
+            emitNyAvklaring(
                 behandling.behandler.ident,
                 behandling.toSpesifikkKontekst(),
                 it,
@@ -174,28 +174,37 @@ internal class AvklaringRepositoryPostgres(
         }
     }
 
-    private fun publiser(
+    private fun emitNyAvklaring(
         ident: String,
-        kontekst: Behandling.BehandlingKontekst,
+        toSpesifikkKontekst: Behandling.BehandlingKontekst,
         avklaring: Avklaring,
     ) {
-        rapid.publish(
-            ident,
-            JsonMessage
-                .newMessage(
-                    "NyAvklaring",
-                    mapOf<String, Any>(
-                        "ident" to ident,
-                        "avklaringId" to avklaring.id,
-                        "kode" to avklaring.kode.kode,
-                    ) + kontekst.kontekstMap,
-                ).toJson(),
-        )
-
-        logger.info { "Publisert NyAvklaring for avklaringId=${avklaring.id}" }
+        observatører.forEach {
+            it.nyAvklaring(
+                NyAvklaringHendelse(
+                    ident,
+                    toSpesifikkKontekst,
+                    avklaring,
+                ),
+            )
+        }
     }
+}
 
-    private companion object {
-        private val logger = KotlinLogging.logger {}
-    }
+interface AvklaringRepositoryObserver {
+    fun nyAvklaring(nyAvklaringHendelse: NyAvklaringHendelse)
+
+    data class NyAvklaringHendelse(
+        val ident: String,
+        val kontekst: Behandling.BehandlingKontekst,
+        val avklaring: Avklaring,
+    )
+
+    fun endretAvklaring(endretAvklaringHendelse: EndretAvklaringHendelse)
+
+    data class EndretAvklaringHendelse(
+        val ident: String,
+        val kontekst: Behandling.BehandlingKontekst,
+        val avklaring: Avklaring,
+    )
 }

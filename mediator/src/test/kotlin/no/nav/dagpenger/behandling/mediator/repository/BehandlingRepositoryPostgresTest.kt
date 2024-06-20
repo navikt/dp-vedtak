@@ -3,7 +3,6 @@ package no.nav.dagpenger.behandling.mediator.repository
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.mockk.mockk
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
@@ -58,7 +57,7 @@ class BehandlingRepositoryPostgresTest {
     @Test
     fun `lagre og hent behandling fra postgres`() {
         withMigratedDb {
-            val avklaringRepository = AvklaringRepositoryPostgres(mockk(relaxed = true))
+            val avklaringRepository = AvklaringRepositoryPostgres()
             val behandlingRepositoryPostgres = BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres(), avklaringRepository)
             behandlingRepositoryPostgres.lagre(basertPåBehandling)
             behandlingRepositoryPostgres.lagre(behandling)

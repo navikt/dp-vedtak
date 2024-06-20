@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 
 class AvklaringRepositoryPostgresTest {
     private val rapid = TestRapid()
-    private val repository = AvklaringRepositoryPostgres(rapid)
+    private val repository = AvklaringRepositoryPostgres()
 
     @Test
     fun `lagrer og rehydrer avklaringer`() {
