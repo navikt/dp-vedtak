@@ -1,7 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
 import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
@@ -73,7 +72,32 @@ class BehandlingRepositoryPostgresTest {
 
             val avklaringer = avklaringRepository.hentAvklaringer(behandling.behandlingId)
             avklaringer.size shouldBe 1
-            avklaringer.first().endringer.shouldNotBeEmpty()
+            with(avklaringer.first()) {
+                val førsteEndring = endringer.first()
+                val sisteEndring = endringer.last()
+
+                id shouldBe avklaring.id
+                kode shouldBe avklaring.kode
+                endringer.size shouldBe 2
+
+                with(førsteEndring) {
+                    javaClass.simpleName shouldBe
+                        avklaring.endringer
+                            .first()
+                            .javaClass.simpleName
+                    id shouldBe avklaring.endringer.first().id
+                    endret shouldBe avklaring.endringer.first().endret
+                }
+
+                with(sisteEndring) {
+                    javaClass.simpleName shouldBe
+                        avklaring.endringer
+                            .last()
+                            .javaClass.simpleName
+                    id shouldBe avklaring.endringer.last().id
+                    endret shouldBe avklaring.endringer.last().endret
+                }
+            }
         }
     }
 }
