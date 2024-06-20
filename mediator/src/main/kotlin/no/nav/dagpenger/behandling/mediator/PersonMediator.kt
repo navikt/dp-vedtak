@@ -10,6 +10,7 @@ import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonHåndter
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
@@ -36,6 +37,12 @@ internal class PersonMediator(
     }
 
     override fun håndter(hendelse: ManuellBehandlingAvklartHendelse) {
+        behandle(hendelse) { person ->
+            person.håndter(hendelse)
+        }
+    }
+
+    override fun håndter(hendelse: AvklaringIkkeRelevantHendelse) {
         behandle(hendelse) { person ->
             person.håndter(hendelse)
         }

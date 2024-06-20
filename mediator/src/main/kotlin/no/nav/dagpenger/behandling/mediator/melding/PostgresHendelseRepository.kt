@@ -7,13 +7,14 @@ import kotliquery.sessionOf
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.mottak.AvbrytBehandlingMessage
+import no.nav.dagpenger.behandling.mediator.mottak.AvklaringIkkeRelevantMessage
 import no.nav.dagpenger.behandling.mediator.mottak.ManuellBehandlingAvklartMessage
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
 import org.postgresql.util.PGobject
 import java.util.UUID
 
-internal class PostgresHendelseRepository() : HendelseRepository {
+internal class PostgresHendelseRepository : HendelseRepository {
     override fun lagreMelding(
         hendelseMessage: HendelseMessage,
         ident: String,
@@ -83,18 +84,18 @@ internal class PostgresHendelseRepository() : HendelseRepository {
             ) != null
         }
 
-    private fun meldingType(hendelseMessage: HendelseMessage): MeldingTypeDTO? {
-        return when (hendelseMessage) {
+    private fun meldingType(hendelseMessage: HendelseMessage): MeldingTypeDTO? =
+        when (hendelseMessage) {
             is SøknadInnsendtMessage -> MeldingTypeDTO.SØKNAD_INNSENDT
             is ManuellBehandlingAvklartMessage -> MeldingTypeDTO.MANUELL_BEHANDLING_AVKLART
             is OpplysningSvarMessage -> MeldingTypeDTO.OPPLYSNING_SVAR
             is AvbrytBehandlingMessage -> MeldingTypeDTO.AVBRYT_BEHANDLING
+            is AvklaringIkkeRelevantMessage -> MeldingTypeDTO.AVKLARING_IKKE_RELEVANT
             else ->
                 null.also {
                     logger.warn { "ukjent meldingstype ${hendelseMessage::class.simpleName}: melding lagres ikke" }
                 }
         }
-    }
 
     companion object {
         private val logger = KotlinLogging.logger { }
@@ -106,4 +107,5 @@ private enum class MeldingTypeDTO {
     MANUELL_BEHANDLING_AVKLART,
     OPPLYSNING_SVAR,
     AVBRYT_BEHANDLING,
+    AVKLARING_IKKE_RELEVANT,
 }

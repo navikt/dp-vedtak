@@ -5,6 +5,8 @@ import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.mediator.melding.HendelseRepository
 import no.nav.dagpenger.behandling.mediator.mottak.AvbrytBehandlingMessage
 import no.nav.dagpenger.behandling.mediator.mottak.AvbrytBehandlingMottak
+import no.nav.dagpenger.behandling.mediator.mottak.AvklaringIkkeRelevantMessage
+import no.nav.dagpenger.behandling.mediator.mottak.AvklaringIkkeRelevantMottak
 import no.nav.dagpenger.behandling.mediator.mottak.AvklaringManuellBehandlingMottak
 import no.nav.dagpenger.behandling.mediator.mottak.ManuellBehandlingAvklartMessage
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
@@ -12,6 +14,7 @@ import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMottak
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMottak
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
@@ -29,6 +32,7 @@ internal class MessageMediator(
     private val opplysningstyper: Set<Opplysningstype<*>>,
 ) : IMessageMediator {
     init {
+        AvklaringIkkeRelevantMottak(rapidsConnection, this)
         SøknadInnsendtMottak(rapidsConnection, this)
         AvklaringManuellBehandlingMottak(rapidsConnection, this)
         OpplysningSvarMottak(rapidsConnection, this, opplysningstyper)
@@ -58,6 +62,16 @@ internal class MessageMediator(
     override fun behandle(
         hendelse: ManuellBehandlingAvklartHendelse,
         message: ManuellBehandlingAvklartMessage,
+        context: MessageContext,
+    ) {
+        behandle(hendelse, message) {
+            personMediator.håndter(it)
+        }
+    }
+
+    override fun behandle(
+        hendelse: AvklaringIkkeRelevantHendelse,
+        message: AvklaringIkkeRelevantMessage,
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
@@ -110,6 +124,12 @@ internal interface IMessageMediator {
     fun behandle(
         hendelse: ManuellBehandlingAvklartHendelse,
         message: ManuellBehandlingAvklartMessage,
+        context: MessageContext,
+    )
+
+    fun behandle(
+        hendelse: AvklaringIkkeRelevantHendelse,
+        message: AvklaringIkkeRelevantMessage,
         context: MessageContext,
     )
 }

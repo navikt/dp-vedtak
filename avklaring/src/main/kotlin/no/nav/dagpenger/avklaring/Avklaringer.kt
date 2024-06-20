@@ -2,6 +2,7 @@ package no.nav.dagpenger.avklaring
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt.Kontrollresultat.KreverAvklaring
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
+import java.util.UUID
 
 class Avklaringer(
     private val kontrollpunkter: List<Kontrollpunkt>,
@@ -29,4 +30,6 @@ class Avklaringer(
 
         return avklaringer.toList()
     }
+
+    fun avbryt(avklaringId: UUID): Boolean = avklaringer.find { it.id == avklaringId }?.avbryt() ?: false
 }

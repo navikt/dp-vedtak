@@ -4,6 +4,7 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.behandling.modell.Behandling.Companion.finn
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
@@ -13,7 +14,8 @@ import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 class Person(
     val ident: Ident,
     behandlinger: List<Behandling>,
-) : Aktivitetskontekst, PersonHåndter {
+) : Aktivitetskontekst,
+    PersonHåndter {
     private val behandlinger = behandlinger.toMutableList()
 
     constructor(ident: Ident) : this(ident, mutableListOf())
@@ -28,6 +30,12 @@ class Person(
     }
 
     override fun håndter(hendelse: ManuellBehandlingAvklartHendelse) {
+        hendelse.leggTilKontekst(this)
+        val behandling = behandlinger.finn(hendelse.behandlingId)
+        behandling.håndter(hendelse)
+    }
+
+    override fun håndter(hendelse: AvklaringIkkeRelevantHendelse) {
         hendelse.leggTilKontekst(this)
         val behandling = behandlinger.finn(hendelse.behandlingId)
         behandling.håndter(hendelse)
@@ -60,7 +68,9 @@ class Person(
 
     override fun toSpesifikkKontekst(): SpesifikkKontekst = PersonKontekst(ident.identifikator())
 
-    data class PersonKontekst(val ident: String) : SpesifikkKontekst("Person") {
+    data class PersonKontekst(
+        val ident: String,
+    ) : SpesifikkKontekst("Person") {
         override val kontekstMap = mapOf("ident" to ident)
     }
 }

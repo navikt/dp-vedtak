@@ -10,6 +10,7 @@ import no.nav.dagpenger.behandling.konklusjon.Konklusjon
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
@@ -98,6 +99,11 @@ class Behandling private constructor(
     }
 
     override fun håndter(hendelse: ManuellBehandlingAvklartHendelse) {
+        hendelse.kontekst(this)
+        tilstand.håndter(this, hendelse)
+    }
+
+    override fun håndter(hendelse: AvklaringIkkeRelevantHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
@@ -229,6 +235,14 @@ class Behandling private constructor(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
             )
 
+        fun håndter(
+            behandling: Behandling,
+            hendelse: AvklaringIkkeRelevantHendelse,
+        ): Unit =
+            throw IllegalStateException(
+                "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
+            )
+
         override fun toSpesifikkKontekst() =
             SpesifikkKontekst(
                 type.name,
@@ -355,6 +369,16 @@ class Behandling private constructor(
 
             behandling.tilstand(Ferdig(), hendelse)
         }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvklaringIkkeRelevantHendelse,
+        ) {
+            hendelse.kontekst(this)
+            if (behandling.avklaring.avbryt(hendelse.avklaringId)) {
+                hendelse.info("Avklaring er ikke lenger relevant")
+            }
+        }
     }
 
     private data class ForslagTilVedtak(
@@ -412,6 +436,16 @@ class Behandling private constructor(
 
             behandling.tilstand(Ferdig(), hendelse)
         }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvklaringIkkeRelevantHendelse,
+        ) {
+            hendelse.kontekst(this)
+            if (behandling.avklaring.avbryt(hendelse.avklaringId)) {
+                hendelse.info("Avklaring er ikke lenger relevant")
+            }
+        }
     }
 
     private data class Avbrutt(
@@ -453,6 +487,14 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.info("Behandlingen er avbrutt, ignorerer opplysningssvar")
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvklaringIkkeRelevantHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er avbrutt, ignorerer avklaringer")
         }
     }
 
