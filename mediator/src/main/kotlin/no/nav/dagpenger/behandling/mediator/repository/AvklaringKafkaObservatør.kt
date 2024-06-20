@@ -7,21 +7,21 @@ import no.nav.helse.rapids_rivers.MessageContext
 class AvklaringKafkaObservatør(
     private val rapid: MessageContext,
 ) : AvklaringRepositoryObserver {
-    override fun nyAvklaring(hendelse: AvklaringRepositoryObserver.NyAvklaringHendelse) {
+    override fun nyAvklaring(nyAvklaringHendelse: AvklaringRepositoryObserver.NyAvklaringHendelse) {
         rapid.publish(
-            hendelse.ident,
+            nyAvklaringHendelse.ident,
             JsonMessage
                 .newMessage(
                     "NyAvklaring",
                     mapOf<String, Any>(
-                        "ident" to hendelse.ident,
-                        "avklaringId" to hendelse.avklaring.id,
-                        "kode" to hendelse.avklaring.kode.kode,
-                    ) + hendelse.kontekst.kontekstMap,
+                        "ident" to nyAvklaringHendelse.ident,
+                        "avklaringId" to nyAvklaringHendelse.avklaring.id,
+                        "kode" to nyAvklaringHendelse.avklaring.kode.kode,
+                    ) + nyAvklaringHendelse.kontekst.kontekstMap,
                 ).toJson(),
         )
 
-        logger.info { "Publisert NyAvklaring for avklaringId=${hendelse.avklaring.id}" }
+        logger.info { "Publisert NyAvklaring for avklaringId=${nyAvklaringHendelse.avklaring.id}" }
     }
 
     override fun endretAvklaring(endretAvklaringHendelse: AvklaringRepositoryObserver.EndretAvklaringHendelse) {}
