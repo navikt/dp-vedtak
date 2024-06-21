@@ -22,8 +22,11 @@ spec:
     limits:
       memory: 512Mi
     requests:
+      cpu: 50m
       memory: 256Mi
   env:
+    - name: JDK_JAVA_OPTIONS
+      value: -XX:+UseParallelGC -XX:MaxRAMPercentage=50.0 -XX:ActiveProcessorCount=4
     - name: GRUPPER_SAKSBEHANDLER
       value: {{azure.grupper.saksbehandler}}
     - name: flyway.cleanDisabled
