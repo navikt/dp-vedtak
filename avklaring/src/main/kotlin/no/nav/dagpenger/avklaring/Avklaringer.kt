@@ -22,9 +22,11 @@ class Avklaringer(
 
         // Gjenåpne avklaringer som er aktive igjen, men har blitt avbrutt tidligere
         // Avklaringer som er kvittert skal ikke gjenåpnes
-        aktiveAvklaringer
+        // TODO: Vi må fundere mer på når en avklaring skal gjenåpnes. I utgangspunktet kun når forutsetningene (opplysningene) har endret seg
+
+        /*aktiveAvklaringer
             .mapNotNull { avklaringskode -> avklaringer.find { it.kode == avklaringskode && it.erAvbrutt() } }
-            .forEach { it.gjenåpne() }
+            .forEach { it.gjenåpne() }*/
 
         // Legg til nye avklaringer
         avklaringer.addAll(aktiveAvklaringer.map { Avklaring(it) })

@@ -1,5 +1,6 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.avklaring.Kontroll
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.IkkeKonkludert
 import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.Konkludert
@@ -66,7 +67,9 @@ object Minsteinntekt {
         }
 
     private fun grunnbeløpFor(it: LocalDate) =
-        getGrunnbeløpForRegel(Regel.Minsteinntekt).forDato(it).verdi
+        getGrunnbeløpForRegel(Regel.Minsteinntekt)
+            .forDato(it)
+            .verdi
             // TODO: Bli enige med oss selv hva som er Double og BigDecimal
             .toDouble()
 
@@ -89,7 +92,7 @@ object Minsteinntekt {
         Kontrollpunkt(sjekker = Avklaringspunkter.MuligGjenopptak, kontroll = avslagMinsteinntekt())
 
     private fun avslagMinsteinntekt() =
-        { opplysninger: LesbarOpplysninger ->
+        Kontroll { opplysninger: LesbarOpplysninger ->
             opplysninger.har(minsteinntekt) && !opplysninger.finnOpplysning(minsteinntekt).verdi
         }
 
