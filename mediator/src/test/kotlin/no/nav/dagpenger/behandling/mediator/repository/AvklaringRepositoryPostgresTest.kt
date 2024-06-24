@@ -47,6 +47,13 @@ class AvklaringRepositoryPostgresTest {
             val behandling = TestBehandling(avklaring)
             val avklaringer = repository.hentAvklaringer(behandling.behandlingId)
 
+            repository.hentAvklaringer(TestBehandling(avklaring).behandlingId)
+            repository.hentAvklaringer(TestBehandling(avklaring).behandlingId)
+            repository.hentAvklaringer(TestBehandling(avklaring).behandlingId)
+            repository.hentAvklaringer(TestBehandling(avklaring).behandlingId)
+            repository.hentAvklaringer(TestBehandling(avklaring).behandlingId)
+            repository.hentAvklaringer(TestBehandling(avklaring).behandlingId)
+
             avklaringer.single().endringer.map { it::class.simpleName!! } shouldBe forventedeTilstander
         }
     }

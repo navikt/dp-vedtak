@@ -37,6 +37,8 @@ data class Avklaring(
 
     fun erAvklart() = tilstand is Avklart
 
+    fun erAvbrutt() = tilstand is Avbrutt
+
     fun avbryt() = historikk.add(Avbrutt())
 
     fun kvittering() {

@@ -20,9 +20,10 @@ class Avklaringer(
         // Avbryt alle avklaringer som ikke lenger er aktive
         avklaringer.filter { it.måAvklares() && !aktiveAvklaringer.contains(it.kode) }.forEach { it.avbryt() }
 
-        // Gjenåpne avklaringer som ikke er avklart og er aktive igjen
+        // Gjenåpne avklaringer som er aktive igjen, men har blitt avbrutt tidligere
+        // Avklaringer som er kvittert skal ikke gjenåpnes
         aktiveAvklaringer
-            .mapNotNull { avklaringskode -> avklaringer.find { it.kode == avklaringskode && !it.erAvklart() } }
+            .mapNotNull { avklaringskode -> avklaringer.find { it.kode == avklaringskode && it.erAvbrutt() } }
             .forEach { it.gjenåpne() }
 
         // Legg til nye avklaringer
