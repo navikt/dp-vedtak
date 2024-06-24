@@ -299,6 +299,7 @@ class Behandling private constructor(
             val konklusjoner: List<Konklusjon> = behandling.behandler.konklusjoner(behandling.opplysninger)
             if (konklusjoner.isNotEmpty()) {
                 if (måAvklares.isEmpty()) {
+                    // Her fatter vi vedtak
                     if (konklusjoner.any { it.årsak == DagpengerKonklusjoner.Innvilgelse.årsak }) {
                         hendelse.info("(Konklusjon) Behandling fører til innvilgelse, det støtter vi ikke enda")
                     }
@@ -311,6 +312,7 @@ class Behandling private constructor(
                         hendelse.info("(Konklusjon) Behandling fører til avslag. Vi kan fatte vedtak")
                     }
                 } else {
+                    // Her lager vi forslag til vedtak
                     måAvklares.forEach { avklaring ->
                         hendelse.info("Må avklare $avklaring")
                     }
@@ -525,6 +527,14 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: AvbrytBehandlingHendelse,
         ): Unit = throw IllegalStateException("Kan ikke avbryte en ferdig behandling")
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvklaringIkkeRelevantHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er ferdig, ignorerer avklaringer")
+        }
     }
 
     private fun tilstand(
@@ -561,6 +571,8 @@ sealed class BehandlingHendelser(
     override val name: String,
 ) : Hendelse.Hendelsetype {
     data object BehandlingOpprettetHendelse : BehandlingHendelser("behandling_opprettet")
+
+    data object UnderBehandlingHendelse : BehandlingHendelser("under_behandling")
 
     data object ForslagTilVedtakHendelse : BehandlingHendelser("forslag_til_vedtak")
 
