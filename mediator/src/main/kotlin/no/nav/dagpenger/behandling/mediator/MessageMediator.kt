@@ -29,7 +29,7 @@ internal class MessageMediator(
     rapidsConnection: RapidsConnection,
     private val personMediator: PersonMediator,
     private val hendelseRepository: HendelseRepository,
-    private val opplysningstyper: Set<Opplysningstype<*>>,
+    opplysningstyper: Set<Opplysningstype<*>>,
 ) : IMessageMediator {
     init {
         AvklaringIkkeRelevantMottak(rapidsConnection, this)
