@@ -1,6 +1,5 @@
 package no.nav.dagpenger.behandling.mediator
 
-import io.getunleash.Unleash
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
@@ -12,7 +11,9 @@ import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 
-class BehovMediator(private val rapidsConnection: RapidsConnection, private val unleash: Unleash) {
+class BehovMediator(
+    private val rapidsConnection: RapidsConnection,
+) {
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerlogg = KotlinLogging.logger("tjenestekall.BehovMediator")
@@ -37,13 +38,11 @@ class BehovMediator(private val rapidsConnection: RapidsConnection, private val 
                         putAll(behovMap)
                         // TODO: Flat ut alle kontekster rett på root i behovet. Dette er for å være kompatibel med gamle behovløsere
                         behovMap.values.forEach { putAll(it as Map<String, Any>) }
-                    }
-                    .let {
-                        val brukSøknadOrkestrator = mapOf("bruk-søknad-orkestrator" to unleash.isEnabled("bruk-soknad-orkestrator"))
-                        JsonMessage.newNeed(behovMap.keys, it + erFinal(behovMap.size) + brukSøknadOrkestrator)
+                    }.let {
+                        JsonMessage
+                            .newNeed(behovMap.keys, it + erFinal(behovMap.size))
                             .also { message -> message.interestedIn("@behovId") }
-                    }
-                    .also {
+                    }.also {
                         val behovId = it["@behovId"].asUUID().toString()
                         withLoggingContext("behovId" to behovId) {
                             sikkerlogg.info { "sender behov for ${behovMap.keys}:\n${it.toJson()}}" }
@@ -101,7 +100,6 @@ class BehovMediator(private val rapidsConnection: RapidsConnection, private val 
                     "Kan ikke produsere samme behov på samme kontekst med ulike detaljer. " +
                         "Forsøkte å be om ${behovliste.joinToString { it.type.name }}"
                 }
-            }
-            .single()
+            }.single()
     }
 }

@@ -1,7 +1,6 @@
 package no.nav.dagpenger.behandling
 
 import com.fasterxml.jackson.databind.JsonNode
-import io.getunleash.FakeUnleash
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.nulls.shouldBeNull
@@ -55,12 +54,11 @@ internal class PersonMediatorTest {
             ),
         )
 
-    private val unleash = FakeUnleash().also { it.enable("bruk-soknad-orkestrator") }
     private val personMediator =
         PersonMediator(
             personRepository = personRepository,
             aktivitetsloggMediator = mockk(relaxed = true),
-            behovMediator = BehovMediator(rapid, unleash),
+            behovMediator = BehovMediator(rapid),
             hendelseMediator = HendelseMediator(rapid),
             observatører = emptySet(),
         )
@@ -257,9 +255,6 @@ internal class PersonMediatorTest {
         rapid.harBehov("Søknadstidspunkt") {
             medTekst("søknad_uuid") shouldNotBe testPerson.søknadId
             medNode("InnsendtSøknadsId")["urn"].asText() shouldBe "urn:soknad:${testPerson.søknadId}"
-        }
-        rapid.harFelt {
-            medBoolsk("bruk-søknad-orkestrator") shouldBe true
         }
 
         rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")

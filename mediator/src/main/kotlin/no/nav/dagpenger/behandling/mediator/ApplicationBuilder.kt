@@ -46,7 +46,7 @@ internal class ApplicationBuilder(
         PersonMediator(
             personRepository = personRepository,
             aktivitetsloggMediator = aktivitetsloggMediator,
-            behovMediator = BehovMediator(rapidsConnection, unleash),
+            behovMediator = BehovMediator(rapidsConnection),
             hendelseMediator = HendelseMediator(rapidsConnection),
             observatører = emptySet(),
         )
