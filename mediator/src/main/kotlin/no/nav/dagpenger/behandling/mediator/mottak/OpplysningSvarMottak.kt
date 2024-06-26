@@ -154,7 +154,6 @@ internal class OpplysningSvarMessage(
     ) {
         withLoggingContext(hendelse.kontekstMap()) {
             logger.info { "Behandler svar på opplysninger: ${hendelse.opplysninger.map { it.opplysningstype.id }}" }
-            sikkerLogger.info { hendelse.opplysninger.joinToString("\n") { it.opplysningstype.id + ";" + it.verdi } }
             mediator.behandle(hendelse, this, context)
         }
     }
