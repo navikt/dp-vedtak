@@ -11,25 +11,28 @@ class Avklaringer(
     internal val avklaringer = avklaringer.toMutableSet()
 
     fun måAvklares(opplysninger: LesbarOpplysninger): List<Avklaring> {
-        val aktiveAvklaringer =
+        val aktiveAvklaringer: List<KreverAvklaring> =
             kontrollpunkter
                 .map { it.evaluer(opplysninger) }
                 .filterIsInstance<KreverAvklaring>()
-                .map { it.avklaringkode }
 
         // Avbryt alle avklaringer som ikke lenger er aktive
-        avklaringer.filter { it.måAvklares() && !aktiveAvklaringer.contains(it.kode) }.forEach { it.avbryt() }
+        avklaringer.filter { it.måAvklares() && !aktiveAvklaringer.any { aktiv -> aktiv.avklaringkode == it.kode } }.forEach { it.avbryt() }
 
         // Gjenåpne avklaringer som er aktive igjen, men har blitt avbrutt tidligere
         // Avklaringer som er kvittert skal ikke gjenåpnes
-        // TODO: Vi må fundere mer på når en avklaring skal gjenåpnes. I utgangspunktet kun når forutsetningene (opplysningene) har endret seg
-
-        /*aktiveAvklaringer
-            .mapNotNull { avklaringskode -> avklaringer.find { it.kode == avklaringskode && it.erAvbrutt() } }
-            .forEach { it.gjenåpne() }*/
+        aktiveAvklaringer
+            .mapNotNull { aktiv ->
+                avklaringer.find { eksisterendeAvklaring ->
+                    eksisterendeAvklaring.kode == aktiv.avklaringkode &&
+                        eksisterendeAvklaring.sistEndret.isBefore(aktiv.sisteOpplysning) &&
+                        eksisterendeAvklaring.erAvbrutt()
+                }
+            }.forEach { it.gjenåpne() }
 
         // Legg til nye avklaringer
-        avklaringer.addAll(aktiveAvklaringer.map { Avklaring(it) })
+        // TODO: Vi bør nok kun lage nye avklaringer for de som ikke allerede er i listen (her løser Set det for oss)
+        avklaringer.addAll(aktiveAvklaringer.map { Avklaring(it.avklaringkode) })
 
         return avklaringer.toList()
     }

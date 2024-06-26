@@ -1,6 +1,7 @@
 package no.nav.dagpenger.avklaring
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.date.shouldBeAfter
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import no.nav.dagpenger.avklaring.Kontrollpunkt.Kontrollresultat
@@ -13,7 +14,6 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class KontrollpunktTest {
@@ -45,8 +45,7 @@ class KontrollpunktTest {
     }
 
     @Test
-    @Disabled("Vi klarer ikke å gjenåpne avklaringer når forutsetningene endres")
-    fun `avklaringer avklares`() {
+    fun `avklaringer gjenåpnes når grunnlaget endres`() {
         val kontrollpunkter =
             listOf(
                 Kontrollpunkt(TestIkke123) { opplysninger ->
@@ -74,12 +73,14 @@ class KontrollpunktTest {
         }
 
         // Opplysningen endres tilbake til tilstand som krever avklaring
-        opplysninger.leggTil(getOpplysning(321))
+        val endretOpplysning = getOpplysning(321)
+        opplysninger.leggTil(endretOpplysning)
 
         ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe true
             avklaringer.all { it.kode == TestIkke123 } shouldBe true
+            avklaringer.first().sistEndret.shouldBeAfter(endretOpplysning.opprettet)
         }
     }
 

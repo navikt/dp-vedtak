@@ -31,6 +31,8 @@ data class Avklaring(
 
     private val tilstand get() = historikk.last()
 
+    val sistEndret get(): LocalDateTime = historikk.last().endret
+
     val endringer get() = historikk.toList()
 
     fun måAvklares() = tilstand is UnderBehandling
