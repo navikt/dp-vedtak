@@ -21,7 +21,9 @@ class AvklaringKafkaObservatør(
                 ).toJson(),
         )
 
-        logger.info { "Publisert NyAvklaring for avklaringId=${nyAvklaringHendelse.avklaring.id}" }
+        logger.info {
+            "Publisert NyAvklaring med kode ${nyAvklaringHendelse.avklaring.kode} for avklaringId=${nyAvklaringHendelse.avklaring.id}"
+        }
     }
 
     override fun endretAvklaring(endretAvklaringHendelse: AvklaringRepositoryObserver.EndretAvklaringHendelse) {}
