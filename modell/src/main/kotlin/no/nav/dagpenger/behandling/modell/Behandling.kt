@@ -365,11 +365,15 @@ class Behandling private constructor(
         ) {
             if (behandling.aktiveAvklaringer.isEmpty()) {
                 hendelse.info(
-                    "Har ingen aktive avklaringer, kunne gått videre til vedtak. Gammel flyt sier behandlesManuelt=${hendelse.behandlesManuelt} <- skal være false",
+                    """Har ingen aktive avklaringer, kunne gått videre til vedtak. 
+                    |Gammel flyt sier behandlesManuelt=${hendelse.behandlesManuelt} <- skal være false
+                    """.trimMargin(),
                 )
             } else {
                 hendelse.info(
-                    "Har aktive avklaringer, går videre til forslag. Gammel flyt sier behandlesManuelt=${hendelse.behandlesManuelt} <- skal være true",
+                    """Har aktive avklaringer, går videre til forslag. 
+                    |Gammel flyt sier behandlesManuelt=${hendelse.behandlesManuelt} <- skal være true
+                    """.trimMargin(),
                 )
             }
 
