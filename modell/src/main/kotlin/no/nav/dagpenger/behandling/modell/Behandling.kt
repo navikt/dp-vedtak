@@ -363,6 +363,16 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: ManuellBehandlingAvklartHendelse,
         ) {
+            if (behandling.aktiveAvklaringer.isEmpty()) {
+                hendelse.info(
+                    "Har ingen aktive avklaringer, kunne gått videre til vedtak. Gammel flyt sier behandlesManuelt=${hendelse.behandlesManuelt} <- skal være false",
+                )
+            } else {
+                hendelse.info(
+                    "Har aktive avklaringer, går videre til forslag. Gammel flyt sier behandlesManuelt=${hendelse.behandlesManuelt} <- skal være true",
+                )
+            }
+
             // Her vet vi at det skal være avslag på grunn av minste arbeidsinntekt.
             if (hendelse.behandlesManuelt) {
                 behandling.tilstand(ForslagTilVedtak(), hendelse)
@@ -446,6 +456,12 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             if (behandling.avklaring.avbryt(hendelse.avklaringId)) {
                 hendelse.info("Avklaring er ikke lenger relevant")
+            }
+
+            if (behandling.aktiveAvklaringer.isEmpty()) {
+                hendelse.info("Har ingen aktive avklaringer, kunne gått videre til vedtak")
+                // behandling.tilstand(Ferdig(), hendelse)
+                // return
             }
         }
     }
