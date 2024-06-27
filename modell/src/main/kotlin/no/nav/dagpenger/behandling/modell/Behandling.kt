@@ -6,7 +6,6 @@ import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaringer
-import no.nav.dagpenger.behandling.konklusjon.Konklusjon
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
@@ -24,7 +23,6 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.verdier.Ulid
-import no.nav.dagpenger.regel.DagpengerKonklusjoner
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.Søknadstidspunkt
@@ -298,31 +296,6 @@ class Behandling private constructor(
                 behandling.opplysninger.leggTil(opplysning.opplysning())
             }
             val trenger = behandling.hvaTrengerViNå(hendelse)
-            val måAvklares = behandling.behandler.avklaringer(behandling.opplysninger)
-            val konklusjoner: List<Konklusjon> = behandling.behandler.konklusjoner(behandling.opplysninger)
-            if (konklusjoner.isNotEmpty()) {
-                if (måAvklares.isEmpty()) {
-                    // Her fatter vi vedtak
-                    if (konklusjoner.any { it.årsak == DagpengerKonklusjoner.Innvilgelse.årsak }) {
-                        hendelse.info("(Konklusjon) Behandling fører til innvilgelse, det støtter vi ikke enda")
-                    }
-
-                    if (konklusjoner.any {
-                            it.årsak == DagpengerKonklusjoner.AvslagAlder.årsak
-                        } ||
-                        konklusjoner.any { it.årsak == DagpengerKonklusjoner.AvslagMinsteinntekt.årsak }
-                    ) {
-                        hendelse.info("(Konklusjon) Behandling fører til avslag. Vi kan fatte vedtak")
-                    }
-                } else {
-                    // Her lager vi forslag til vedtak
-                    måAvklares.forEach { avklaring ->
-                        hendelse.info("Må avklare $avklaring")
-                    }
-                }
-            } else {
-                hendelse.info("Vi må fortsette å behandle")
-            }
 
             // TODO: Lag strategier for når vi kan lage vedtak
             if (trenger.isEmpty()) {
