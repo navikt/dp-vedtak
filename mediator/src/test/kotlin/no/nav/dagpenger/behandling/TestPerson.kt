@@ -33,20 +33,21 @@ class TestPerson(
     fun sendSøknad() = rapid.sendTestMessage(søknadInnsendt())
 
     private fun søknadInnsendt() =
-        JsonMessage.newMessage(
-            "innsending_ferdigstilt",
-            mapOf(
-                "@opprettet" to innsendt,
-                "type" to "NySøknad",
-                "fødselsnummer" to ident,
-                "fagsakId" to 123,
-                "bruk-dp-behandling" to true,
-                "søknadsData" to
-                    mapOf(
-                        "søknad_uuid" to søknadId,
-                    ),
-            ),
-        ).toJson()
+        JsonMessage
+            .newMessage(
+                "innsending_ferdigstilt",
+                mapOf(
+                    "@opprettet" to innsendt,
+                    "type" to "NySøknad",
+                    "fødselsnummer" to ident,
+                    "fagsakId" to 123,
+                    "bruk-dp-behandling" to true,
+                    "søknadsData" to
+                        mapOf(
+                            "søknad_uuid" to søknadId,
+                        ),
+                ),
+            ).toJson()
 
     fun løsBehov(vararg behov: String) {
         val behovSomLøses = løsninger.filterKeys { it in behov }
@@ -66,28 +67,51 @@ class TestPerson(
         løsninger: Map<String, Any>,
         opplysningsbehov: Boolean = true,
         data: Map<String, Any> = emptyMap(),
-    ) = JsonMessage.newMessage(
-        "behov",
-        mapOf(
-            "ident" to ident,
-            "behandlingId" to behandlingId,
-            "søknadId" to søknadId,
-            "@opplysningsbehov" to opplysningsbehov,
-            "@behov" to løsninger.keys.toList(),
-            "@final" to true,
-            "@løsning" to løsninger,
-        ) + data,
-    ).toJson()
+    ) = JsonMessage
+        .newMessage(
+            "behov",
+            mapOf(
+                "ident" to ident,
+                "behandlingId" to behandlingId,
+                "søknadId" to søknadId,
+                "@opplysningsbehov" to opplysningsbehov,
+                "@behov" to løsninger.keys.toList(),
+                "@final" to true,
+                "@løsning" to løsninger,
+            ) + data,
+        ).toJson()
+
+    fun markerAvklaringIkkeRelevant(
+        avklaringId: String,
+        kode: String,
+    ) {
+        rapid.sendTestMessage(avklaringIkkeRelevant(avklaringId, kode))
+    }
+
+    private fun avklaringIkkeRelevant(
+        avklaringId: String,
+        kode: String,
+    ) = JsonMessage
+        .newMessage(
+            "AvklaringIkkeRelevant",
+            mapOf(
+                "ident" to ident,
+                "behandlingId" to behandlingId,
+                "avklaringId" to avklaringId,
+                "kode" to kode,
+            ),
+        ).toJson()
 
     fun avbrytBehandling() {
         rapid.sendTestMessage(
-            JsonMessage.newMessage(
-                "avbryt_behandling",
-                mapOf(
-                    "behandlingId" to behandlingId,
-                    "ident" to ident,
-                ),
-            ).toJson(),
+            JsonMessage
+                .newMessage(
+                    "avbryt_behandling",
+                    mapOf(
+                        "behandlingId" to behandlingId,
+                        "ident" to ident,
+                    ),
+                ).toJson(),
         )
     }
 

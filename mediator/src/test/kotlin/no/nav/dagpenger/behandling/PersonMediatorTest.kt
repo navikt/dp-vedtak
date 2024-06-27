@@ -8,6 +8,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
+import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.BehovMediator
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
@@ -21,6 +22,7 @@ import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPos
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.BehandlingBehov.AvklaringManuellBehandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.regel.Avklaringspunkter
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
@@ -88,12 +90,6 @@ internal class PersonMediatorTest {
                 )
             løsBehandlingFramTilFerdig(testPerson)
 
-            /**
-             * Avklarer om den krever manuell behandling
-             */
-            rapid.harBehov(AvklaringManuellBehandling.name)
-            testPerson.løsBehov(AvklaringManuellBehandling.name, false)
-
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
@@ -102,9 +98,39 @@ internal class PersonMediatorTest {
                 it
                     .behandlinger()
                     .first()
-                    .aktiveAvklaringer
+                    .aktiveAvklaringer()
                     .sumOf { avklaring -> avklaring.endringer.size } shouldBe 6
             }
+
+            listOf(
+                Avklaringspunkter.EØSArbeid,
+                Avklaringspunkter.HattLukkedeSakerSiste8Uker,
+                Avklaringspunkter.InntektNesteKalendermåned,
+                Avklaringspunkter.JobbetUtenforNorge,
+                Avklaringspunkter.MuligGjenopptak,
+                Avklaringspunkter.SvangerskapsrelaterteSykepenger,
+            ).forEach { avklaringkode: Avklaringkode ->
+                rapid.harAvklaring(avklaringkode) {
+                    val avklaringId = medTekst("avklaringId")!!
+                    testPerson.markerAvklaringIkkeRelevant(avklaringId, avklaringkode.kode)
+                }
+            }
+
+            personRepository.hent(ident.tilPersonIdentfikator()).also {
+                it.shouldNotBeNull()
+                it
+                    .behandlinger()
+                    .first()
+                    .aktiveAvklaringer()
+                    .sumOf { avklaring -> avklaring.endringer.size } shouldBe 0
+            }
+
+            /**
+             * Avklarer om den krever manuell behandling
+             */
+            rapid.harBehov(AvklaringManuellBehandling.name)
+            testPerson.løsBehov(AvklaringManuellBehandling.name, false)
+
             rapid.harHendelse("vedtak_fattet") {
                 medBoolsk("utfall") shouldBe false
                 medTekst("fagsakId").shouldBeNull()
@@ -310,6 +336,27 @@ internal class PersonMediatorTest {
         val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned)) + Period.ofMonths(1)
         withClue("Opptjeningsperiode skal være 3 år") { periode.toTotalMonths() shouldBe måneder }
     }
+}
+
+private fun TestRapid.harAvklaring(
+    avklaringkode: Avklaringkode,
+    block: Meldingsinnhold.() -> Unit,
+) {
+    val melding = finnAvklaringMelding(avklaringkode)
+    block(melding)
+}
+
+private fun TestRapid.finnAvklaringMelding(avklaringkode: Avklaringkode): Meldingsinnhold {
+    for (i in inspektør.size - 1 downTo 0 step 1) {
+        val message = inspektør.message(i)
+        if (message["@event_name"].asText() == "NyAvklaring") {
+            if (message["kode"].asText() == avklaringkode.kode) {
+                return Meldingsinnhold(message)
+            }
+        }
+    }
+
+    throw IllegalStateException("Fant ikke avklaring med kode $avklaringkode")
 }
 
 private fun TestRapid.harHendelse(
