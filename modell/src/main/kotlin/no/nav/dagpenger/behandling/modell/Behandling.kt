@@ -363,7 +363,8 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: ManuellBehandlingAvklartHendelse,
         ) {
-            if (behandling.aktiveAvklaringer.isEmpty()) {
+            val aktiveAvklaringer = behandling.aktiveAvklaringer
+            if (aktiveAvklaringer.isEmpty()) {
                 hendelse.info(
                     """Har ingen aktive avklaringer, kunne gått videre til vedtak. 
                     |Gammel flyt sier behandlesManuelt=${hendelse.behandlesManuelt} <- skal være false
@@ -371,7 +372,7 @@ class Behandling private constructor(
                 )
             } else {
                 hendelse.info(
-                    """Har aktive avklaringer, går videre til forslag. 
+                    """Har aktive avklaringer (${aktiveAvklaringer.joinToString { it.kode.kode }}), går videre til forslag. 
                     |Gammel flyt sier behandlesManuelt=${hendelse.behandlesManuelt} <- skal være true
                     """.trimMargin(),
                 )
