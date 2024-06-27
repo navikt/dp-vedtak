@@ -81,7 +81,7 @@ internal class AvklaringRepositoryPostgres private constructor(
         behandling: Behandling,
         unitOfWork: PostgresUnitOfWork,
     ) {
-        val avklaringer = behandling.aktiveAvklaringer
+        val avklaringer = behandling.avklaringer()
         val nyeAvklaringer = mutableListOf<Avklaring>()
 
         unitOfWork.inTransaction { tx ->

@@ -57,9 +57,11 @@ class Behandling private constructor(
     private val opplysninger: Opplysninger = gjeldendeOpplysninger + tidligereOpplysninger
 
     private val regelkjøring = Regelkjøring(behandler.skjedde, opplysninger, *behandler.regelsett().toTypedArray())
-    private val avklaring = Avklaringer(behandler.kontrollpunkter(), avklaringer)
+    private val avklaringer = Avklaringer(behandler.kontrollpunkter(), avklaringer)
 
-    val aktiveAvklaringer get() = avklaring.måAvklares(opplysninger)
+    fun avklaringer() = avklaringer.avklaringer(opplysninger)
+
+    fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger)
 
     companion object {
         fun rehydrer(
@@ -363,7 +365,7 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: ManuellBehandlingAvklartHendelse,
         ) {
-            val aktiveAvklaringer = behandling.aktiveAvklaringer
+            val aktiveAvklaringer = behandling.aktiveAvklaringer()
             if (aktiveAvklaringer.isEmpty()) {
                 hendelse.info(
                     """Har ingen aktive avklaringer, kunne gått videre til vedtak. 
@@ -392,7 +394,7 @@ class Behandling private constructor(
             hendelse: AvklaringIkkeRelevantHendelse,
         ) {
             hendelse.kontekst(this)
-            if (behandling.avklaring.avbryt(hendelse.avklaringId)) {
+            if (behandling.avklaringer.avbryt(hendelse.avklaringId)) {
                 hendelse.info("Avklaring er ikke lenger relevant")
             }
         }
@@ -459,11 +461,11 @@ class Behandling private constructor(
             hendelse: AvklaringIkkeRelevantHendelse,
         ) {
             hendelse.kontekst(this)
-            if (behandling.avklaring.avbryt(hendelse.avklaringId)) {
+            if (behandling.avklaringer.avbryt(hendelse.avklaringId)) {
                 hendelse.info("Avklaring er ikke lenger relevant")
             }
 
-            if (behandling.aktiveAvklaringer.isEmpty()) {
+            if (behandling.aktiveAvklaringer().isEmpty()) {
                 hendelse.info("Har ingen aktive avklaringer, kunne gått videre til vedtak")
                 // behandling.tilstand(Ferdig(), hendelse)
                 // return

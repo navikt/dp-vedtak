@@ -67,9 +67,7 @@ class KontrollpunktTest {
         opplysninger.leggTil(getOpplysning(123))
 
         ding.måAvklares(opplysninger).also { avklaringer ->
-            avklaringer.size shouldBe 1
-            avklaringer.all { it.måAvklares() } shouldBe false
-            avklaringer.all { it.kode == TestIkke123 } shouldBe true
+            avklaringer.size shouldBe 0
         }
 
         // Opplysningen endres tilbake til tilstand som krever avklaring
@@ -109,9 +107,7 @@ class KontrollpunktTest {
 
         // Nå skal det ikke være avklaringer som må avklares
         ding.måAvklares(opplysninger).also { avklaringer ->
-            avklaringer.size shouldBe 1
-            avklaringer.all { it.måAvklares() } shouldBe false
-            avklaringer.all { it.kode == SvangerskapsrelaterteSykepenger } shouldBe true
+            avklaringer.size shouldBe 0
         }
     }
 
@@ -154,9 +150,7 @@ class KontrollpunktTest {
 
         // Nå skal det ikke være avklaringer som må avklares
         ding.måAvklares(opplysninger).also { avklaringer ->
-            avklaringer.size shouldBe 1
-            avklaringer.all { it.måAvklares() } shouldBe false
-            avklaringer.all { it.kode == BeregningsregelForFVA } shouldBe true
+            avklaringer.size shouldBe 0
         }
     }
 }

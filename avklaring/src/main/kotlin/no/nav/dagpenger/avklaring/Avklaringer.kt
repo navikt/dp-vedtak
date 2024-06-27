@@ -10,7 +10,11 @@ class Avklaringer(
 ) {
     internal val avklaringer = avklaringer.toMutableSet()
 
-    fun måAvklares(opplysninger: LesbarOpplysninger): List<Avklaring> {
+    fun avklaringer(opplysninger: LesbarOpplysninger) = vurderAvklaringer(opplysninger)
+
+    fun måAvklares(opplysninger: LesbarOpplysninger) = vurderAvklaringer(opplysninger).filter { it.måAvklares() }
+
+    private fun vurderAvklaringer(opplysninger: LesbarOpplysninger): List<Avklaring> {
         val aktiveAvklaringer: List<KreverAvklaring> =
             kontrollpunkter
                 .map { it.evaluer(opplysninger) }
