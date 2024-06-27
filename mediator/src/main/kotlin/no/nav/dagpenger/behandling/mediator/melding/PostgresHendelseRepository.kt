@@ -8,7 +8,6 @@ import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.mottak.AvbrytBehandlingMessage
 import no.nav.dagpenger.behandling.mediator.mottak.AvklaringIkkeRelevantMessage
-import no.nav.dagpenger.behandling.mediator.mottak.ManuellBehandlingAvklartMessage
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
 import org.postgresql.util.PGobject
@@ -87,7 +86,6 @@ internal class PostgresHendelseRepository : HendelseRepository {
     private fun meldingType(hendelseMessage: HendelseMessage): MeldingTypeDTO? =
         when (hendelseMessage) {
             is SøknadInnsendtMessage -> MeldingTypeDTO.SØKNAD_INNSENDT
-            is ManuellBehandlingAvklartMessage -> MeldingTypeDTO.MANUELL_BEHANDLING_AVKLART
             is OpplysningSvarMessage -> MeldingTypeDTO.OPPLYSNING_SVAR
             is AvbrytBehandlingMessage -> MeldingTypeDTO.AVBRYT_BEHANDLING
             is AvklaringIkkeRelevantMessage -> MeldingTypeDTO.AVKLARING_IKKE_RELEVANT
