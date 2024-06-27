@@ -39,7 +39,7 @@ internal class AvklaringIkkeRelevantMottak(
             "behandlingId" to packet["behandlingId"].asText(),
             "avklaringId" to packet["avklaringId"].asText(),
         ) {
-            logger.info { "Mottok avklaring " }
+            logger.info { "Mottok avklaring for ${packet["kode"].asText()}" }
             val message = AvklaringIkkeRelevantMessage(packet)
             message.behandle(messageMediator, context)
         }
