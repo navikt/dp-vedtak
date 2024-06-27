@@ -22,7 +22,7 @@ class AvklaringKafkaObservatør(
         )
 
         logger.info {
-            "Publisert NyAvklaring med kode ${nyAvklaringHendelse.avklaring.kode} for avklaringId=${nyAvklaringHendelse.avklaring.id}"
+            "Publisert NyAvklaring med kode ${nyAvklaringHendelse.avklaring.kode.kode} for avklaringId=${nyAvklaringHendelse.avklaring.id}"
         }
     }
 
