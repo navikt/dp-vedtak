@@ -125,12 +125,6 @@ internal class PersonMediatorTest {
                     .sumOf { avklaring -> avklaring.endringer.size } shouldBe 0
             }
 
-            /**
-             * Avklarer om den krever manuell behandling
-             */
-            rapid.harBehov(AvklaringManuellBehandling.name)
-            testPerson.løsBehov(AvklaringManuellBehandling.name, false)
-
             rapid.harHendelse("vedtak_fattet") {
                 medBoolsk("utfall") shouldBe false
                 medTekst("fagsakId").shouldBeNull()
@@ -180,23 +174,14 @@ internal class PersonMediatorTest {
 
             løsBehandlingFramTilFerdig(testPerson)
 
-            /**
-             * Avklarer om den krever manuell behandling
-             */
-            testPerson.løsBehov(
-                AvklaringManuellBehandling.name,
-                true,
-                data = mapOf("vurderinger" to listOf(mapOf("type" to "type", "utfall" to "Manuell", "begrunnelse" to "begrunnelse"))),
-            )
-
             rapid.harHendelse("forslag_til_vedtak") {
                 println(this)
                 medTekst("søknadId") shouldBe testPerson.søknadId
                 with(medNode("avklaringer")) {
-                    this.size() shouldBe 1
+                    this.size() shouldBe 6
                     val avklaring = this.first()
-                    avklaring["type"].asText() shouldBe "type"
-                    avklaring["begrunnelse"].asText() shouldBe "begrunnelse"
+                    avklaring["type"].asText() shouldBe "SvangerskapsrelaterteSykepenger"
+                    avklaring["begrunnelse"].asText() shouldBe "Personen har sykepenger som kan være svangerskapsrelaterte"
                     avklaring["utfall"].asText() shouldBe "Manuell"
                 }
             }
@@ -204,7 +189,7 @@ internal class PersonMediatorTest {
             rapid.inspektør.size shouldBe
                 listOf(
                     "opprettet" to 1,
-                    "behov" to 8,
+                    "behov" to 7,
                     "avklaring" to 6,
                     "forslag" to 1,
                 ).sumOf { it.second }
@@ -268,7 +253,7 @@ internal class PersonMediatorTest {
                 )
             løsBehandlingFramTilFerdig(testPerson)
 
-            rapid.harHendelse("behov")
+            rapid.harHendelse("forslag_til_vedtak")
         }
 
     private fun løsBehandlingFramTilFerdig(testPerson: TestPerson) {

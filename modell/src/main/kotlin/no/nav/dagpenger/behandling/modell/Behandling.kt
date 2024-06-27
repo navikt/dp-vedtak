@@ -22,6 +22,7 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.DagpengerKonklusjoner
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
@@ -357,7 +358,15 @@ class Behandling private constructor(
                     return
                 }
 
-                hendelse.behov(BehandlingBehov.AvklaringManuellBehandling, "Trenger informasjon for å avklare manuell behandling")
+                if (behandling.aktiveAvklaringer().isEmpty()) {
+                    hendelse.info("Har ingen aktive avklaringer, går videre til vedtak.")
+                    behandling.tilstand(Ferdig(), hendelse)
+                    return
+                }
+
+                // Her vet vi at det skal være avslag på grunn av minste arbeidsinntekt.
+                hendelse.info("Har aktive avklaringer, går videre til forslag til vedtak.")
+                behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
 
@@ -412,18 +421,14 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             hendelse.info("Alle opplysninger mottatt, lager forslag til vedtak")
 
-            // @todo: PoC for å sende avklaringer til STBS gjengen. Vi burde lage en mekanisme som tar vare på avklaringer gitt en behandling.
+            // TODO: Shim for å gi STSB avklaringer på lik måte osm før
             val avklaringer =
-                if (hendelse is ManuellBehandlingAvklartHendelse) {
-                    hendelse.avklaringer.filter { it.utfall == "Manuell" }.map {
-                        mapOf(
-                            "type" to it.type,
-                            "utfall" to it.utfall,
-                            "begrunnelse" to it.begrunnelse,
-                        )
-                    }
-                } else {
-                    emptyList()
+                behandling.aktiveAvklaringer().map {
+                    mapOf(
+                        "type" to it.kode.kode,
+                        "utfall" to "Manuell",
+                        "begrunnelse" to it.kode.beskrivelse,
+                    )
                 }
             hendelse.hendelse(
                 BehandlingHendelser.ForslagTilVedtakHendelse,
@@ -466,9 +471,18 @@ class Behandling private constructor(
             }
 
             if (behandling.aktiveAvklaringer().isEmpty()) {
-                hendelse.info("Har ingen aktive avklaringer, kunne gått videre til vedtak")
-                // behandling.tilstand(Ferdig(), hendelse)
-                // return
+                if (behandling.opplysninger.finnAlle().any { it.kilde is Saksbehandlerkilde }) {
+                    hendelse.info(
+                        """Har ingen aktive avklaringer, men saksbehandler har lagt til opplysninger, 
+                        |så vi kan ikke automatisk fatte vedtak
+                        """.trimMargin(),
+                    )
+                    return
+                }
+
+                hendelse.info("Har ingen aktive avklaringer, går videre til vedtak")
+                behandling.tilstand(Ferdig(), hendelse)
+                return
             }
         }
     }
