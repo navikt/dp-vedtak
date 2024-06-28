@@ -41,7 +41,7 @@ class AvklaringRepositoryPostgresTest {
             avklaring.gjenåpne()
             avklaring.avbryt()
 
-            val forventedeTilstander = listOf("UnderBehandling", "Avklart", "UnderBehandling", "Avbrutt")
+            val forventedeTilstander = listOf("Utredes", "Avklart", "UnderBehandling", "Avbrutt")
             avklaring.endringer.map { it::class.simpleName!! } shouldBe forventedeTilstander
 
             val behandling = TestBehandling(avklaring)

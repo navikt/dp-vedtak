@@ -57,6 +57,8 @@ class KontrollpunktTest {
         opplysninger.leggTil(getOpplysning(321))
 
         val ding = Avklaringer(kontrollpunkter)
+        // TODO: Fjern når vi rydder opp i avklaring
+        ding.avklaringer(opplysninger).forEach { it.bekreft() }
         ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe true
@@ -96,6 +98,8 @@ class KontrollpunktTest {
         opplysninger.leggTil(Faktum(inntekterInneholderSykepenger, true))
 
         val ding = Avklaringer(kontrollpunkter)
+        // TODO: Fjern når vi rydder opp i avklaring
+        ding.avklaringer(opplysninger).forEach { it.bekreft() }
         ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe true
@@ -135,6 +139,8 @@ class KontrollpunktTest {
         opplysninger.leggTil(Faktum(regel3, false))
 
         val ding = Avklaringer(kontrollpunkter)
+        // TODO: Fjern når vi rydder opp i avklaring
+        ding.avklaringer(opplysninger).forEach { it.bekreft() }
         ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
             avklaringer.all { it.måAvklares() } shouldBe true

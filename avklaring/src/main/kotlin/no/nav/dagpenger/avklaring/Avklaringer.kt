@@ -42,4 +42,6 @@ class Avklaringer(
     }
 
     fun avbryt(avklaringId: UUID): Boolean = avklaringer.find { it.id == avklaringId }?.avbryt() ?: false
+
+    fun bekreft(avklaringId: UUID): Boolean = avklaringer.find { it.id == avklaringId }?.bekreft() ?: false
 }

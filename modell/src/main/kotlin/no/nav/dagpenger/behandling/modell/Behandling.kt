@@ -324,8 +324,8 @@ class Behandling private constructor(
                 }
 
                 // Her vet vi at det skal være avslag på grunn av minste arbeidsinntekt.
-                hendelse.info("Har aktive avklaringer, går videre til forslag til vedtak.")
-                behandling.tilstand(ForslagTilVedtak(), hendelse)
+                hendelse.info("Har aktive avklaringer, kunne gått til forslag") // går videre til forslag til vedtak.")
+                // TODO: behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
 
@@ -334,8 +334,30 @@ class Behandling private constructor(
             hendelse: AvklaringIkkeRelevantHendelse,
         ) {
             hendelse.kontekst(this)
-            if (behandling.avklaringer.avbryt(hendelse.avklaringId)) {
-                hendelse.info("Avklaring er ikke lenger relevant")
+            when (hendelse.utfall) {
+                "Manuell" -> {
+                    if (behandling.avklaringer.bekreft(hendelse.avklaringId)) {
+                        hendelse.info("Avklaring er bekreftet som relevant")
+                    }
+                }
+
+                "Automatisk" -> {
+                    if (behandling.avklaringer.avbryt(hendelse.avklaringId)) {
+                        hendelse.info("Avklaring er ikke lenger relevant")
+                    }
+                }
+            }
+
+            if (behandling.aktiveAvklaringer().isNotEmpty() && behandling.aktiveAvklaringer().all { it.måAvklaresManuelt() }) {
+                hendelse.info("Har aktive avklaringer, går videre til forslag til vedtak.")
+                behandling.tilstand(ForslagTilVedtak(), hendelse)
+                return
+            }
+
+            if (behandling.aktiveAvklaringer().isEmpty()) {
+                hendelse.info("Har ingen åpne avklaringer, går videre til vedtak.")
+                behandling.tilstand(Ferdig(), hendelse)
+                return
             }
         }
     }

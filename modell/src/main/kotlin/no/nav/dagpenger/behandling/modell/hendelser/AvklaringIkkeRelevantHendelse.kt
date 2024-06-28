@@ -8,6 +8,7 @@ class AvklaringIkkeRelevantHendelse(
     val avklaringId: UUID,
     val kode: String,
     override val behandlingId: UUID,
+    val utfall: String,
 ) : PersonHendelse(meldingsreferanseId, ident),
     BehandlingHendelse {
     override fun kontekstMap(): Map<String, String> =

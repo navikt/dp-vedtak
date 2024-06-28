@@ -84,13 +84,15 @@ class TestPerson(
     fun markerAvklaringIkkeRelevant(
         avklaringId: String,
         kode: String,
+        utfall: String,
     ) {
-        rapid.sendTestMessage(avklaringIkkeRelevant(avklaringId, kode))
+        rapid.sendTestMessage(avklaringIkkeRelevant(avklaringId, kode, utfall))
     }
 
     private fun avklaringIkkeRelevant(
         avklaringId: String,
         kode: String,
+        utfall: String,
     ) = JsonMessage
         .newMessage(
             "AvklaringIkkeRelevant",
@@ -99,6 +101,7 @@ class TestPerson(
                 "behandlingId" to behandlingId,
                 "avklaringId" to avklaringId,
                 "kode" to kode,
+                "utfall" to utfall,
             ),
         ).toJson()
 

@@ -34,9 +34,10 @@ class AvklaringIkkeRelevantMottakTest {
         {
             "@event_name": "AvklaringIkkeRelevant",
             "ident": "12345678910",
+            "behandlingId": "123e4567-e89b-12d3-a456-426614174000",
             "avklaringId": "123e4567-e89b-12d3-a456-426614174000",
             "kode": "AVKLARING_KODE",
-            "behandlingId": "123e4567-e89b-12d3-a456-426614174000"
+            "utfall": "Automatisk"
         }
         """.trimIndent()
 }

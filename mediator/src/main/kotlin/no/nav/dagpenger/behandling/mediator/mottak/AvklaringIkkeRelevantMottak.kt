@@ -24,7 +24,7 @@ internal class AvklaringIkkeRelevantMottak(
             .apply {
                 validate { it.demandValue("@event_name", "AvklaringIkkeRelevant") }
                 validate { it.requireKey("ident") }
-                validate { it.requireKey("avklaringId", "kode") }
+                validate { it.requireKey("avklaringId", "kode", "utfall") }
                 validate { it.requireKey("behandlingId") }
                 validate { it.interestedIn("@id", "@opprettet", "@behovId") }
             }.register(this)
@@ -52,11 +52,12 @@ internal class AvklaringIkkeRelevantMessage(
     override val ident = packet["ident"].asText()
 
     private val hendelse
-        get() = AvklaringIkkeRelevantHendelse(id, ident, avklaringId, kode, behandlingId)
+        get() = AvklaringIkkeRelevantHendelse(id, ident, avklaringId, kode, behandlingId, utfall)
 
     private val avklaringId = packet["avklaringId"].asUUID()
     private val behandlingId = packet["behandlingId"].asUUID()
     private val kode = packet["kode"].asText()
+    private val utfall = packet["utfall"].asText()
 
     override fun behandle(
         mediator: IMessageMediator,

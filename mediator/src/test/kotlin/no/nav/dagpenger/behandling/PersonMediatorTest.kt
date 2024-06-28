@@ -102,19 +102,7 @@ internal class PersonMediatorTest {
                     .sumOf { avklaring -> avklaring.endringer.size } shouldBe 6
             }
 
-            listOf(
-                Avklaringspunkter.EØSArbeid,
-                Avklaringspunkter.HattLukkedeSakerSiste8Uker,
-                Avklaringspunkter.InntektNesteKalendermåned,
-                Avklaringspunkter.JobbetUtenforNorge,
-                Avklaringspunkter.MuligGjenopptak,
-                Avklaringspunkter.SvangerskapsrelaterteSykepenger,
-            ).forEach { avklaringkode: Avklaringkode ->
-                rapid.harAvklaring(avklaringkode) {
-                    val avklaringId = medTekst("avklaringId")!!
-                    testPerson.markerAvklaringIkkeRelevant(avklaringId, avklaringkode.kode)
-                }
-            }
+            testPerson.løsAlleAvklaringer()
 
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
@@ -134,8 +122,24 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 16
+            rapid.inspektør.size shouldBe 15
         }
+
+    private fun TestPerson.løsAlleAvklaringer(utfall: String = "Automatisk") {
+        listOf(
+            Avklaringspunkter.EØSArbeid,
+            Avklaringspunkter.HattLukkedeSakerSiste8Uker,
+            Avklaringspunkter.InntektNesteKalendermåned,
+            Avklaringspunkter.JobbetUtenforNorge,
+            Avklaringspunkter.MuligGjenopptak,
+            Avklaringspunkter.SvangerskapsrelaterteSykepenger,
+        ).forEach { avklaringkode: Avklaringkode ->
+            rapid.harAvklaring(avklaringkode) {
+                val avklaringId = medTekst("avklaringId")!!
+                markerAvklaringIkkeRelevant(avklaringId, avklaringkode.kode, utfall)
+            }
+        }
+    }
 
     @Test
     fun `Søknad med nok inntekt skal ikke avslås - men avbrytes`() =
@@ -174,14 +178,16 @@ internal class PersonMediatorTest {
 
             løsBehandlingFramTilFerdig(testPerson)
 
+            testPerson.løsAlleAvklaringer("Manuell")
+
             rapid.harHendelse("forslag_til_vedtak") {
                 println(this)
                 medTekst("søknadId") shouldBe testPerson.søknadId
                 with(medNode("avklaringer")) {
                     this.size() shouldBe 6
                     val avklaring = this.first()
-                    avklaring["type"].asText() shouldBe "SvangerskapsrelaterteSykepenger"
-                    avklaring["begrunnelse"].asText() shouldBe "Personen har sykepenger som kan være svangerskapsrelaterte"
+                    avklaring["type"].asText() shouldBe "HattLukkedeSakerSiste8Uker"
+                    avklaring["begrunnelse"].asText() shouldBe "Personen har lukkede saker i Arena siste 8 uker"
                     avklaring["utfall"].asText() shouldBe "Manuell"
                 }
             }
@@ -253,7 +259,7 @@ internal class PersonMediatorTest {
                 )
             løsBehandlingFramTilFerdig(testPerson)
 
-            rapid.harHendelse("forslag_til_vedtak")
+            rapid.harHendelse("behov")
         }
 
     private fun løsBehandlingFramTilFerdig(testPerson: TestPerson) {

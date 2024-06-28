@@ -3,6 +3,7 @@ package no.nav.dagpenger.avklaring
 import no.nav.dagpenger.avklaring.Avklaring.Endring.Avbrutt
 import no.nav.dagpenger.avklaring.Avklaring.Endring.Avklart
 import no.nav.dagpenger.avklaring.Avklaring.Endring.UnderBehandling
+import no.nav.dagpenger.avklaring.Avklaring.Endring.Utredes
 import no.nav.dagpenger.opplysning.UUIDv7
 import java.time.LocalDateTime
 import java.util.UUID
@@ -25,7 +26,7 @@ data class Avklaringkode(
 data class Avklaring(
     val id: UUID,
     val kode: Avklaringkode,
-    private val historikk: MutableList<Endring> = mutableListOf(UnderBehandling()),
+    private val historikk: MutableList<Endring> = mutableListOf(Utredes()),
 ) {
     constructor(kode: Avklaringkode) : this(UUIDv7.ny(), kode)
 
@@ -35,7 +36,10 @@ data class Avklaring(
 
     val endringer get() = historikk.toList()
 
-    fun måAvklares() = tilstand is UnderBehandling
+    // TODO: Vi vil ikke vite om det er automatisk eller manuell
+    fun måAvklares() = tilstand is UnderBehandling || tilstand is Utredes
+
+    fun måAvklaresManuelt() = tilstand is UnderBehandling
 
     fun erAvklart() = tilstand is Avklart
 
@@ -50,11 +54,19 @@ data class Avklaring(
 
     fun gjenåpne() = historikk.add(UnderBehandling())
 
+    fun bekreft() = historikk.add(UnderBehandling())
+
     sealed class Endring(
         val id: UUID,
         open val endret: LocalDateTime,
     ) : Comparable<Endring> {
         override fun compareTo(other: Endring) = endret.compareTo(other.endret)
+
+        // TODO: Denne vil vi egentlig fase ut igjen
+        class Utredes(
+            id: UUID = UUIDv7.ny(),
+            endret: LocalDateTime = LocalDateTime.now(),
+        ) : Endring(id, endret)
 
         class UnderBehandling(
             id: UUID = UUIDv7.ny(),

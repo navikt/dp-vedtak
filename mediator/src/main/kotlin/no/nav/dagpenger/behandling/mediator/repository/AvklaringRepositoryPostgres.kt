@@ -56,6 +56,7 @@ internal class AvklaringRepositoryPostgres private constructor(
         UnderBehandling,
         Avklart,
         Avbrutt,
+        Utredes,
     }
 
     private fun Session.hentEndringer(uuid: UUID): List<Avklaring.Endring> =
@@ -73,6 +74,7 @@ internal class AvklaringRepositoryPostgres private constructor(
                     EndringType.UnderBehandling -> Avklaring.Endring.UnderBehandling(id, endret)
                     EndringType.Avklart -> Avklaring.Endring.Avklart(id, it.string("saksbehandler"), endret)
                     EndringType.Avbrutt -> Avklaring.Endring.Avbrutt(id, endret)
+                    EndringType.Utredes -> Avklaring.Endring.Utredes(id, endret)
                 }
             }.asList,
         )
@@ -139,6 +141,7 @@ internal class AvklaringRepositoryPostgres private constructor(
                                             is Avklaring.Endring.UnderBehandling -> "UnderBehandling"
                                             is Avklaring.Endring.Avklart -> "Avklart"
                                             is Avklaring.Endring.Avbrutt -> "Avbrutt"
+                                            is Avklaring.Endring.Utredes -> "Utredes"
                                         },
                                     "saksbehandler" to
                                         when (endring) {
