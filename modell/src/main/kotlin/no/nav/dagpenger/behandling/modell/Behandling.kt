@@ -11,7 +11,6 @@ import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendel
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
@@ -95,11 +94,6 @@ class Behandling private constructor(
     private fun informasjonsbehov() = regelkjøring.informasjonsbehov(behandler.avklarer())
 
     override fun håndter(hendelse: SøknadInnsendtHendelse) {
-        hendelse.kontekst(this)
-        tilstand.håndter(this, hendelse)
-    }
-
-    override fun håndter(hendelse: ManuellBehandlingAvklartHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
@@ -199,14 +193,6 @@ class Behandling private constructor(
         fun håndter(
             behandling: Behandling,
             hendelse: SøknadInnsendtHendelse,
-        ): Unit =
-            throw IllegalStateException(
-                "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
-            )
-
-        fun håndter(
-            behandling: Behandling,
-            hendelse: ManuellBehandlingAvklartHendelse,
         ): Unit =
             throw IllegalStateException(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
@@ -345,34 +331,6 @@ class Behandling private constructor(
 
         override fun håndter(
             behandling: Behandling,
-            hendelse: ManuellBehandlingAvklartHendelse,
-        ) {
-            val aktiveAvklaringer = behandling.aktiveAvklaringer()
-            if (aktiveAvklaringer.isEmpty()) {
-                hendelse.info(
-                    """Har ingen aktive avklaringer, kunne gått videre til vedtak. 
-                    |Gammel flyt sier behandlesManuelt=${hendelse.behandlesManuelt} <- skal være false
-                    """.trimMargin(),
-                )
-            } else {
-                hendelse.info(
-                    """Har aktive avklaringer (${aktiveAvklaringer.joinToString { it.kode.kode }}), går videre til forslag. 
-                    |Gammel flyt sier behandlesManuelt=${hendelse.behandlesManuelt} <- skal være true
-                    """.trimMargin(),
-                )
-            }
-
-            // Her vet vi at det skal være avslag på grunn av minste arbeidsinntekt.
-            if (hendelse.behandlesManuelt) {
-                behandling.tilstand(ForslagTilVedtak(), hendelse)
-                return
-            }
-
-            behandling.tilstand(Ferdig(), hendelse)
-        }
-
-        override fun håndter(
-            behandling: Behandling,
             hendelse: AvklaringIkkeRelevantHendelse,
         ) {
             hendelse.kontekst(this)
@@ -483,14 +441,6 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: AvbrytBehandlingHendelse,
         ) { // No-op
-        }
-
-        override fun håndter(
-            behandling: Behandling,
-            hendelse: ManuellBehandlingAvklartHendelse,
-        ) {
-            hendelse.kontekst(this)
-            hendelse.info("Behandlingen er avbrutt, ignorerer manuell behandling")
         }
 
         override fun håndter(

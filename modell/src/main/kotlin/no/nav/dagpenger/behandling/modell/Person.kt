@@ -6,7 +6,6 @@ import no.nav.dagpenger.behandling.modell.Behandling.Companion.finn
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.ManuellBehandlingAvklartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
@@ -26,12 +25,6 @@ class Person(
             hendelse.behandling().also { behandling ->
                 behandlinger.add(behandling)
             }
-        behandling.håndter(hendelse)
-    }
-
-    override fun håndter(hendelse: ManuellBehandlingAvklartHendelse) {
-        hendelse.leggTilKontekst(this)
-        val behandling = behandlinger.finn(hendelse.behandlingId)
         behandling.håndter(hendelse)
     }
 
