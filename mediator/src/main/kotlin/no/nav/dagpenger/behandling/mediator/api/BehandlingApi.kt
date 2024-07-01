@@ -141,7 +141,8 @@ internal fun Application.behandlingApi(
             post<BehandlingRoute.Id.Avbryt> { request ->
                 val identForespørsel = call.receive<IdentForesporselDTO>()
                 // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
-                val hendelse = AvbrytBehandlingHendelse(UUIDv7.ny(), identForespørsel.ident, request.behandling.id)
+                val hendelse =
+                    AvbrytBehandlingHendelse(UUIDv7.ny(), identForespørsel.ident, request.behandling.id, "Avbrutt av saksbehandler")
                 hendelse.info("Avbrøt behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
 
                 personMediator.håndter(hendelse)

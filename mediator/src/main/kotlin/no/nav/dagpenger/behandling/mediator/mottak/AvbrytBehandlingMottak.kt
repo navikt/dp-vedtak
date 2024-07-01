@@ -20,12 +20,13 @@ internal class AvbrytBehandlingMottak(
     private val messageMediator: MessageMediator,
 ) : River.PacketListener {
     init {
-        River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "avbryt_behandling") }
-            validate { it.requireKey("ident") }
-            validate { it.requireKey("behandlingId") }
-            validate { it.interestedIn("@id", "@opprettet") }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                validate { it.demandValue("@event_name", "avbryt_behandling") }
+                validate { it.requireKey("ident") }
+                validate { it.requireKey("behandlingId") }
+                validate { it.interestedIn("@id", "@opprettet") }
+            }.register(this)
     }
 
     @WithSpan
@@ -59,9 +60,11 @@ internal class AvbrytBehandlingMottak(
     }
 }
 
-internal class AvbrytBehandlingMessage(private val packet: JsonMessage) : HendelseMessage(packet) {
+internal class AvbrytBehandlingMessage(
+    packet: JsonMessage,
+) : HendelseMessage(packet) {
     private val hendelse
-        get() = AvbrytBehandlingHendelse(id, ident, behandlingId)
+        get() = AvbrytBehandlingHendelse(id, ident, behandlingId, "Avbrutt av datamaskinen")
     override val ident = packet["ident"].asText()
 
     private val behandlingId = packet["behandlingId"].asUUID()

@@ -6,4 +6,6 @@ class AvbrytBehandlingHendelse(
     meldingsreferanseId: UUID,
     ident: String,
     override val behandlingId: UUID,
-) : PersonHendelse(meldingsreferanseId, ident), BehandlingHendelse
+    val årsak: String,
+) : PersonHendelse(meldingsreferanseId, ident),
+    BehandlingHendelse

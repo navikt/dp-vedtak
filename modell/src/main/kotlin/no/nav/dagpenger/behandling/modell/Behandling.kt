@@ -211,7 +211,7 @@ class Behandling private constructor(
             hendelse: AvbrytBehandlingHendelse,
         ) {
             hendelse.info("Avbryter behandlingen")
-            behandling.tilstand(Avbrutt(), hendelse)
+            behandling.tilstand(Avbrutt(årsak = hendelse.årsak), hendelse)
         }
 
         fun håndter(
