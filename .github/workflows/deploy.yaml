@@ -81,7 +81,7 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          RESOURCE: .nais/nais.yaml,.nais/unleash.yaml
+          RESOURCE: .nais/nais.yaml,.nais/unleash.yaml,.nais/alerts.yaml
           VARS: .nais/vars-prod.yaml
           VAR: image=${{ needs.build.outputs.image }},unleashEnvironment=production
           PRINT_PAYLOAD: true
