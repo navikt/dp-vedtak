@@ -13,7 +13,7 @@ spec:
         - alert: FlytAvvik
           expr: |
             abs(
-              avg_over_time((sum(rate(dp_behandling_status_total[1h] offset 1w)) by (status)*60*60)[3h:]) 
+              avg_over_time((sum(rate(dp_behandling_status_total[1h])) by (status)*60*60)[3h:]) 
               - (
                 avg_over_time((sum(rate(dp_behandling_status_total[1h] offset 1w)) by (status) * 60 * 60) [3h:]) + 
                 avg_over_time((sum(rate(dp_behandling_status_total[1h] offset 2w)) by (status) * 60 * 60) [3h:]) + 
@@ -23,6 +23,7 @@ spec:
           for: 5m
           annotations:
             consequence: 'For stort avvik fra trend siste 3 uker for behandlingsstatus *{{ $labels.status }}*'
+            action: 'Sjekk grafene https://grafana.nav.cloud.nais.io/goto/gKEIg_QIR?orgId=1 om det er noe muffens'
           labels:
             namespace: teamdagpenger
             severity: warning
