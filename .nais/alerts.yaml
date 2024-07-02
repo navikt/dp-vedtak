@@ -13,7 +13,7 @@ spec:
         - alert: FlytAvvik
           expr: |
             abs(
-              avg_over_time((sum(rate(dp_behandling_status_total[1h])) by (status)*60*60)[3h:]) 
+              avg_over_time((sum(rate(dp_behandling_status_total[1h])) by (status) * 60 * 60) [3h:]) 
               - (
                 avg_over_time((sum(rate(dp_behandling_status_total[1h] offset 1w)) by (status) * 60 * 60) [3h:]) + 
                 avg_over_time((sum(rate(dp_behandling_status_total[1h] offset 2w)) by (status) * 60 * 60) [3h:]) + 
