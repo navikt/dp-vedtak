@@ -3,6 +3,7 @@ package no.nav.dagpenger.behandling
 import com.fasterxml.jackson.databind.JsonNode
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -15,13 +16,15 @@ import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
+import no.nav.dagpenger.behandling.mediator.observatør.KafkaBehandlingObservatør
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringKafkaObservatør
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
+import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderOpprettelse
 import no.nav.dagpenger.behandling.modell.BehandlingBehov.AvklaringManuellBehandling
-import no.nav.dagpenger.behandling.modell.BehandlingObservatør.EndretTilstandEvent
+import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEndretTilstand
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.regel.Avklaringspunkter
@@ -43,6 +46,7 @@ import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.Duration
 import java.time.LocalDate
 import java.time.Period
 
@@ -58,14 +62,15 @@ internal class PersonMediatorTest {
             ),
         )
 
-    private val behandlingObservatør = TestObservatør()
+    private val testObservatør = TestObservatør()
+    private val kafkaObservatør = KafkaBehandlingObservatør(rapid)
     private val personMediator =
         PersonMediator(
             personRepository = personRepository,
             aktivitetsloggMediator = mockk(relaxed = true),
             behovMediator = BehovMediator(rapid),
             hendelseMediator = HendelseMediator(rapid),
-            observatører = setOf(behandlingObservatør),
+            observatører = setOf(testObservatør, kafkaObservatør),
         )
 
     init {
@@ -137,9 +142,9 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 16
+            rapid.inspektør.size shouldBe 19
 
-            behandlingObservatør.tilstandsendringer.size shouldBe 2
+            testObservatør.tilstandsendringer.size shouldBe 6
         }
 
     @Test
@@ -197,6 +202,7 @@ internal class PersonMediatorTest {
                     "behov" to 7,
                     "avklaring" to 6,
                     "forslag" to 1,
+                    "event" to 2,
                 ).sumOf { it.second }
         }
 
@@ -226,7 +232,7 @@ internal class PersonMediatorTest {
              */
             testPerson.løsBehov(AvklaringManuellBehandling.name, false)
 
-            rapid.inspektør.size shouldBe 3
+            rapid.inspektør.size shouldBe 5
         }
 
     @Test
@@ -322,16 +328,35 @@ internal class PersonMediatorTest {
         testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
     }
 
+    @Test
+    fun `publiserer tilstandsendinger`() =
+        withMigratedDb {
+            val person = TestPerson(ident, rapid)
+
+            person.sendSøknad()
+
+            rapid.inspektør.message(0).run {
+                this["@event_name"].asText() shouldBe "behandling_endret_tilstand"
+                this["ident"].asText() shouldBe ident
+                this["forrigeTilstand"].asText() shouldBe UnderOpprettelse.name
+                Duration.parse(this["tidBrukt"].asText()).shouldBeGreaterThan(Duration.ZERO)
+            }
+        }
+
     private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {
         val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned)) + Period.ofMonths(1)
         withClue("Opptjeningsperiode skal være 3 år") { periode.toTotalMonths() shouldBe måneder }
     }
 
     private class TestObservatør : PersonObservatør {
-        val tilstandsendringer = mutableListOf<EndretTilstandEvent>()
+        val tilstandsendringer = mutableListOf<BehandlingEndretTilstand>()
 
-        override fun endretTilstand(event: EndretTilstandEvent) {
+        override fun endretTilstand(event: BehandlingEndretTilstand) {
             tilstandsendringer.add(event)
+        }
+
+        override fun endretTilstand(event: PersonObservatør.PersonEvent<BehandlingEndretTilstand>) {
+            tilstandsendringer.add(event.wrappedEvent)
         }
     }
 }

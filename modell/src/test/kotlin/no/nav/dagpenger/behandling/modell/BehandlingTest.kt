@@ -120,9 +120,9 @@ internal class BehandlingTest {
     }
 
     private class TestObservatør : BehandlingObservatør {
-        val endretTilstandEventer = mutableListOf<BehandlingObservatør.EndretTilstandEvent>()
+        val endretTilstandEventer = mutableListOf<BehandlingObservatør.BehandlingEndretTilstand>()
 
-        override fun endretTilstand(event: BehandlingObservatør.EndretTilstandEvent) {
+        override fun endretTilstand(event: BehandlingObservatør.BehandlingEndretTilstand) {
             endretTilstandEventer.add(event)
         }
     }

@@ -7,6 +7,7 @@ import no.nav.dagpenger.behandling.mediator.Configuration.config
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.audit.AktivitetsloggAuditlogg
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
+import no.nav.dagpenger.behandling.mediator.observatør.KafkaBehandlingObservatør
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringKafkaObservatør
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
@@ -48,7 +49,7 @@ internal class ApplicationBuilder(
             aktivitetsloggMediator = aktivitetsloggMediator,
             behovMediator = BehovMediator(rapidsConnection),
             hendelseMediator = HendelseMediator(rapidsConnection),
-            observatører = emptySet(),
+            observatører = setOf(KafkaBehandlingObservatør(rapidsConnection)),
         )
 
     // TODO: Last alle regler ved startup. Dette må inn i ett register.

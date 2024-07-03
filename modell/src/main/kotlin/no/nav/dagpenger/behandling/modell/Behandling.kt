@@ -25,6 +25,7 @@ import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.Søknadstidspunkt
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -525,11 +526,12 @@ class Behandling private constructor(
 
     private fun emitVedtaksperiodeEndret(forrigeTilstand: BehandlingTilstand) {
         val event =
-            BehandlingObservatør.EndretTilstandEvent(
+            BehandlingObservatør.BehandlingEndretTilstand(
                 behandlingId = behandlingId,
                 gjeldendeTilstand = tilstand.type,
                 forrigeTilstand = forrigeTilstand.type,
                 forventetFerdig = tilstand.forventetFerdig,
+                tidBrukt = Duration.between(forrigeTilstand.opprettet, tilstand.opprettet),
             )
 
         observatører.forEach { it.endretTilstand(event) }
@@ -537,11 +539,12 @@ class Behandling private constructor(
 }
 
 interface BehandlingObservatør {
-    data class EndretTilstandEvent(
+    data class BehandlingEndretTilstand(
         val behandlingId: UUID,
         val gjeldendeTilstand: Behandling.TilstandType,
         val forrigeTilstand: Behandling.TilstandType,
         val forventetFerdig: LocalDateTime,
+        val tidBrukt: Duration,
     )
 
     fun behandlingStartet() {}
@@ -552,7 +555,7 @@ interface BehandlingObservatør {
 
     fun ferdig() {}
 
-    fun endretTilstand(event: EndretTilstandEvent) {}
+    fun endretTilstand(event: BehandlingEndretTilstand) {}
 }
 
 @Suppress("ktlint:standard:class-naming")

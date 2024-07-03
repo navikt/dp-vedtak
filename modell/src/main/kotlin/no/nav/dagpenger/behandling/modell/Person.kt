@@ -3,6 +3,7 @@ package no.nav.dagpenger.behandling.modell
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.behandling.modell.Behandling.Companion.finn
+import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEndretTilstand
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
@@ -15,6 +16,7 @@ class Person(
     behandlinger: List<Behandling>,
 ) : Aktivitetskontekst,
     PersonHåndter {
+    private val observatører = mutableSetOf<PersonObservatør>()
     private val behandlinger = behandlinger.toMutableList()
 
     constructor(ident: Ident) : this(ident, mutableListOf())
@@ -24,6 +26,11 @@ class Person(
         val behandling =
             hendelse.behandling().also { behandling ->
                 behandlinger.add(behandling)
+                observatører.forEach {
+                    behandling.registrer(
+                        PersonObservatørAdapter(ident.identifikator(), it),
+                    )
+                }
             }
         behandling.håndter(hendelse)
     }
@@ -55,7 +62,8 @@ class Person(
     fun behandlinger() = behandlinger.toList()
 
     fun registrer(observatør: PersonObservatør) {
-        behandlinger.forEach { it.registrer(observatør) }
+        observatører.add(observatør)
+        behandlinger.forEach { it.registrer(PersonObservatørAdapter(ident.identifikator(), observatør)) }
     }
 
     private fun PersonHendelse.leggTilKontekst(kontekst: Aktivitetskontekst) {
@@ -70,6 +78,23 @@ class Person(
     ) : SpesifikkKontekst("Person") {
         override val kontekstMap = mapOf("ident" to ident)
     }
+
+    private class PersonObservatørAdapter(
+        private val ident: String,
+        private val delegate: PersonObservatør,
+    ) : PersonObservatør {
+        override fun endretTilstand(event: BehandlingEndretTilstand) {
+            delegate.endretTilstand(event)
+            delegate.endretTilstand(PersonObservatør.PersonEvent(ident, event))
+        }
+    }
 }
 
-interface PersonObservatør : BehandlingObservatør
+interface PersonObservatør : BehandlingObservatør {
+    fun endretTilstand(event: PersonEvent<BehandlingEndretTilstand>) {}
+
+    data class PersonEvent<T>(
+        val ident: String,
+        val wrappedEvent: T,
+    )
+}
