@@ -3,12 +3,12 @@ package no.nav.dagpenger.behandling.mediator
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
-import no.nav.dagpenger.aktivitetslogg.AktivitetsloggObserver
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonHåndter
+import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
@@ -22,7 +22,7 @@ internal class PersonMediator(
     private val aktivitetsloggMediator: AktivitetsloggMediator,
     private val behovMediator: BehovMediator,
     private val hendelseMediator: HendelseMediator,
-    private val observatører: Set<AktivitetsloggObserver> = emptySet(),
+    private val observatører: Set<PersonObservatør> = emptySet(),
 ) : PersonHåndter {
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -65,7 +65,7 @@ internal class PersonMediator(
         håndter: (Person) -> Unit,
     ) = try {
         val person = hentEllerOpprettPerson(hendelse)
-        observatører.forEach { hendelse.registrer(it) }
+        observatører.forEach { person.registrer(it) }
         håndter(person)
         lagre(person)
         ferdigstill(hendelse)

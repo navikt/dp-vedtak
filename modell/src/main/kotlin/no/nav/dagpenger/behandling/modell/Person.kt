@@ -54,6 +54,10 @@ class Person(
 
     fun behandlinger() = behandlinger.toList()
 
+    fun registrer(observatør: PersonObservatør) {
+        behandlinger.forEach { it.registrer(observatør) }
+    }
+
     private fun PersonHendelse.leggTilKontekst(kontekst: Aktivitetskontekst) {
         kontekst(this)
         kontekst(kontekst)
@@ -67,3 +71,5 @@ class Person(
         override val kontekstMap = mapOf("ident" to ident)
     }
 }
+
+interface PersonObservatør : BehandlingObservatør

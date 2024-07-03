@@ -21,7 +21,9 @@ import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostg
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.BehandlingBehov.AvklaringManuellBehandling
+import no.nav.dagpenger.behandling.modell.BehandlingObservatør.EndretTilstandEvent
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
+import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.regel.Avklaringspunkter
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
@@ -56,13 +58,14 @@ internal class PersonMediatorTest {
             ),
         )
 
+    private val behandlingObservatør = TestObservatør()
     private val personMediator =
         PersonMediator(
             personRepository = personRepository,
             aktivitetsloggMediator = mockk(relaxed = true),
             behovMediator = BehovMediator(rapid),
             hendelseMediator = HendelseMediator(rapid),
-            observatører = emptySet(),
+            observatører = setOf(behandlingObservatør),
         )
 
     init {
@@ -135,6 +138,8 @@ internal class PersonMediatorTest {
             }
 
             rapid.inspektør.size shouldBe 16
+
+            behandlingObservatør.tilstandsendringer.size shouldBe 2
         }
 
     @Test
@@ -320,6 +325,14 @@ internal class PersonMediatorTest {
     private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {
         val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned)) + Period.ofMonths(1)
         withClue("Opptjeningsperiode skal være 3 år") { periode.toTotalMonths() shouldBe måneder }
+    }
+
+    private class TestObservatør : PersonObservatør {
+        val tilstandsendringer = mutableListOf<EndretTilstandEvent>()
+
+        override fun endretTilstand(event: EndretTilstandEvent) {
+            tilstandsendringer.add(event)
+        }
     }
 }
 
