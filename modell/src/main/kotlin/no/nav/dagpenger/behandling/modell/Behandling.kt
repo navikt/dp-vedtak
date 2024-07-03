@@ -171,6 +171,8 @@ class Behandling private constructor(
         val type: TilstandType
         val opprettet: LocalDateTime
 
+        val forventetFerdig: LocalDateTime get() = LocalDateTime.MAX
+
         companion object {
             fun fraType(
                 type: TilstandType,
@@ -237,6 +239,12 @@ class Behandling private constructor(
                     "opprettet" to opprettet.toString(),
                 ),
             )
+
+        fun leaving(
+            behandling: Behandling,
+            hendelse: PersonHendelse,
+        ) {
+        }
     }
 
     private data class UnderOpprettelse(
@@ -260,6 +268,7 @@ class Behandling private constructor(
         override val opprettet: LocalDateTime = LocalDateTime.now(),
     ) : BehandlingTilstand {
         override val type = TilstandType.UnderBehandling
+        override val forventetFerdig: LocalDateTime get() = opprettet.plusHours(1)
 
         override fun entering(
             behandling: Behandling,
@@ -503,15 +512,38 @@ class Behandling private constructor(
         hendelse: PersonHendelse,
     ) {
         if (tilstand.type == nyTilstand.type) return
+        tilstand.leaving(this, hendelse)
 
         val forrigeTilstand = tilstand
         tilstand = nyTilstand
+
         hendelse.kontekst(tilstand)
+        emitVedtaksperiodeEndret(forrigeTilstand)
+
         tilstand.entering(this, hendelse)
+    }
+
+    private fun emitVedtaksperiodeEndret(forrigeTilstand: BehandlingTilstand) {
+        val event =
+            BehandlingObservatør.EndretTilstandEvent(
+                behandlingId = behandlingId,
+                gjeldendeTilstand = tilstand.type,
+                forrigeTilstand = forrigeTilstand.type,
+                forventetFerdig = tilstand.forventetFerdig,
+            )
+
+        observatører.forEach { it.endretTilstand(event) }
     }
 }
 
 interface BehandlingObservatør {
+    data class EndretTilstandEvent(
+        val behandlingId: UUID,
+        val gjeldendeTilstand: Behandling.TilstandType,
+        val forrigeTilstand: Behandling.TilstandType,
+        val forventetFerdig: LocalDateTime,
+    )
+
     fun behandlingStartet() {}
 
     fun forslagTilVedtak() {}
@@ -519,6 +551,8 @@ interface BehandlingObservatør {
     fun avbrutt() {}
 
     fun ferdig() {}
+
+    fun endretTilstand(event: EndretTilstandEvent) {}
 }
 
 @Suppress("ktlint:standard:class-naming")

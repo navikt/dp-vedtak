@@ -2,15 +2,19 @@ package no.nav.dagpenger.behandling.modell
 
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.date.shouldBeWithin
 import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.Ferdig
+import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderBehandling
+import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderOpprettelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import org.junit.jupiter.api.Test
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -91,5 +95,35 @@ internal class BehandlingTest {
         kontekst.shouldContain("behandlingId", behandling.behandlingId.toString())
         kontekst.shouldContain("søknadId", søknadId.toString())
         kontekst.shouldContain("ident", ident)
+    }
+
+    @Test
+    fun `behandling varsler om endret tilstand`() {
+        val behandling =
+            Behandling(
+                behandler =
+                    søknadInnsendtHendelse.also {
+                        søknadInnsendtHendelse.kontekst(it)
+                    },
+                opplysninger = emptyList(),
+            )
+
+        val observatør = TestObservatør().also { behandling.registrer(it) }
+        behandling.håndter(søknadInnsendtHendelse)
+
+        observatør.endretTilstandEventer shouldHaveSize 1
+        observatør.endretTilstandEventer.first().run {
+            forrigeTilstand shouldBe UnderOpprettelse
+            gjeldendeTilstand shouldBe UnderBehandling
+            forventetFerdig.shouldBeWithin(Duration.ofHours(5), LocalDateTime.now())
+        }
+    }
+
+    private class TestObservatør : BehandlingObservatør {
+        val endretTilstandEventer = mutableListOf<BehandlingObservatør.EndretTilstandEvent>()
+
+        override fun endretTilstand(event: BehandlingObservatør.EndretTilstandEvent) {
+            endretTilstandEventer.add(event)
+        }
     }
 }
