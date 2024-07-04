@@ -282,7 +282,7 @@ class Behandling private constructor(
         override val opprettet: LocalDateTime = LocalDateTime.now(),
     ) : BehandlingTilstand {
         override val type = TilstandType.UnderBehandling
-        override val forventetFerdig: LocalDateTime get() = opprettet.plusMinutes(1)
+        override val forventetFerdig: LocalDateTime get() = opprettet.plusHours(1)
 
         override fun entering(
             behandling: Behandling,
