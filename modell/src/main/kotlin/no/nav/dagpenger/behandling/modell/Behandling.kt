@@ -447,6 +447,15 @@ class Behandling private constructor(
                 return
             }
         }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: OpplysningSvarHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Fikk svar på opplysning i ForslagTilVedtak. Vi vet ikke hva vi skal gjøre")
+            // TODO: Håndter svar på opplysninger
+        }
     }
 
     private data class Avbrutt(
