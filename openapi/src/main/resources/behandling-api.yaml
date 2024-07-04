@@ -108,7 +108,7 @@ paths:
             schema:
               $ref: '#/components/schemas/IdentForesporsel'
       responses:
-        204:
+        201:
           description: OK
         default:
           description: Feil ved henting av behandlinger
@@ -138,7 +138,7 @@ paths:
             schema:
               $ref: '#/components/schemas/IdentForesporsel'
       responses:
-        204:
+        201:
           description: OK
         default:
           description: Feil ved henting av behandlinger
