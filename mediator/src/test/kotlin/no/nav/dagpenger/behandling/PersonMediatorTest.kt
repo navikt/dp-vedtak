@@ -187,13 +187,12 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilFerdig(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
-                println(this)
                 medTekst("søknadId") shouldBe testPerson.søknadId
                 with(medNode("avklaringer")) {
                     this.size() shouldBe 6
                     val avklaring = this.first()
-                    avklaring["type"].asText() shouldBe "MuligGjenopptak"
-                    avklaring["begrunnelse"].asText() shouldBe "Personen har åpne saker i Arena som kan være gjenopptak"
+                    avklaring["type"].asText() shouldBe Avklaringspunkter.HattLukkedeSakerSiste8Uker.kode
+                    avklaring["begrunnelse"].asText() shouldBe Avklaringspunkter.HattLukkedeSakerSiste8Uker.beskrivelse
                     avklaring["utfall"].asText() shouldBe "Manuell"
                 }
             }

@@ -45,12 +45,12 @@ class SøknadInnsendtHendelse(
 
     override fun kontrollpunkter() =
         listOf(
-            VernepliktKontroll,
-            SvangerskapsrelaterteSykepengerKontroll,
             EØSArbeidKontroll,
-            JobbetUtenforNorgeKontroll,
-            InntektNesteKalendermånedKontroll,
             HattLukkedeSakerSiste8UkerKontroll,
+            InntektNesteKalendermånedKontroll,
+            JobbetUtenforNorgeKontroll,
             MuligGjenopptakKontroll,
+            SvangerskapsrelaterteSykepengerKontroll,
+            VernepliktKontroll,
         )
 }
