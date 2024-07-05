@@ -51,4 +51,11 @@ object Avklaringspunkter {
             tittel = "Har hatt sykepenger som kan være svangerskapsrelatert",
             beskrivelse = "Personen har sykepenger som kan være svangerskapsrelaterte",
         )
+
+    val ØnskerEtterRapporteringsfrist =
+        Avklaringkode(
+            kode = "ØnskerEtterRapporteringsfrist",
+            tittel = "Ønsker dagpenger etter rapporteringsfrist",
+            beskrivelse = "Personen ønsker dagpenger etter rapporteringsfrist",
+        )
 }

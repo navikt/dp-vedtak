@@ -19,6 +19,9 @@ import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
+import no.nav.dagpenger.regel.Opptjeningstid.justertRapporteringsfrist
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import java.time.LocalDate
 
 object Minsteinntekt {
@@ -82,6 +85,20 @@ object Minsteinntekt {
 
     val InntektNesteKalendermånedKontroll =
         Kontrollpunkt(Avklaringspunkter.InntektNesteKalendermåned) { it.har(inntektId) }
+
+    val ØnskerEtterRapporteringsfristKontroll =
+        Kontrollpunkt(Avklaringspunkter.ØnskerEtterRapporteringsfrist) {
+            if (!it.har(justertRapporteringsfrist)) return@Kontrollpunkt false
+            if (!it.har(søknadstidspunkt)) return@Kontrollpunkt false
+            if (!it.har(søknadsdato)) return@Kontrollpunkt false
+
+            val rapporteringsfrist = it.finnOpplysning(justertRapporteringsfrist).verdi
+            val søknadstidspunkt = it.finnOpplysning(søknadstidspunkt).verdi
+            val søknadsdato = it.finnOpplysning(søknadsdato).verdi
+            val mellomBehandlingsDatoOgSøknadstidspunkt = søknadsdato..søknadstidspunkt
+
+            return@Kontrollpunkt rapporteringsfrist in mellomBehandlingsDatoOgSøknadstidspunkt
+        }
 
     val AvslagInntekt =
         KonklusjonsStrategi(DagpengerKonklusjoner.AvslagMinsteinntekt) { opplysninger ->
