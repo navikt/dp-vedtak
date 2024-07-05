@@ -25,6 +25,7 @@ class TestPerson(
     private val innsendt: LocalDateTime = LocalDateTime.now(),
     InntektSiste12Mnd: Int = 1234,
     InntektSiste36Mnd: Int = 1234,
+    internal val ønskerFraDato: LocalDate = søknadstidspunkt,
 ) {
     val inntektId = "01HQTE3GBWCSVYH6S436DYFREN"
     internal val søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"
@@ -60,7 +61,7 @@ class TestPerson(
         løsning: Any,
         data: Map<String, Any> = emptyMap(),
     ) {
-        rapid.sendTestMessage(løstBehov(mapOf(behov to løsning), false, data))
+        rapid.sendTestMessage(løstBehov(mapOf(behov to løsning), true, data))
     }
 
     private fun løstBehov(
@@ -119,7 +120,7 @@ class TestPerson(
         mapOf(
             "Fødselsdato" to søknadstidspunkt.minusYears(alder.toLong()),
             "Søknadstidspunkt" to søknadstidspunkt,
-            "ØnskerDagpengerFraDato" to søknadstidspunkt,
+            "ØnskerDagpengerFraDato" to ønskerFraDato,
             // Inntekt
             InntektId to mapOf("verdi" to inntektId),
             "InntektSiste12Mnd" to InntektSiste12Mnd,

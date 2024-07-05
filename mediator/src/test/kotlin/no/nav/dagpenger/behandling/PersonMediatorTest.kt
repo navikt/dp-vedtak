@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldBeNull
@@ -237,7 +238,7 @@ internal class PersonMediatorTest {
         }
 
     @Test
-    fun `søker i overgangen til ny rapporteringsfrist`() =
+    fun `søker før ny rapporteringsfrist, men ønsker etter`() =
         withMigratedDb {
             val testPerson =
                 TestPerson(
@@ -245,14 +246,14 @@ internal class PersonMediatorTest {
                     rapid,
                     søknadstidspunkt = 5.juni(2024),
                     innsendt = 5.juni(2024).atTime(12, 0),
+                    ønskerFraDato = 10.juni(2024),
                 )
             løsBehandlingFramTilFerdig(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
-                medTekst("søknadId") shouldBe testPerson.søknadId
                 with(medNode("avklaringer")) {
-                    this.size() shouldBe 6
-                    // this.any { it["type"].asText() == Avklaringspunkter.ØnskerEtterRapporteringsfrist.kode } shouldBe true
+                    this.size() shouldBe 7
+                    this.shouldHaveSingleElement { it["type"].asText() == Avklaringspunkter.ØnskerEtterRapporteringsfrist.kode }
                 }
             }
         }
@@ -266,10 +267,15 @@ internal class PersonMediatorTest {
                     rapid,
                     søknadstidspunkt = 7.juni(2024),
                     innsendt = 7.juni(2024).atTime(12, 0),
+                    ønskerFraDato = 10.juni(2024),
                 )
             løsBehandlingFramTilFerdig(testPerson)
 
-            rapid.harHendelse("forslag_til_vedtak")
+            rapid.harHendelse("forslag_til_vedtak") {
+                with(medNode("avklaringer")) {
+                    this.size() shouldBe 6
+                }
+            }
         }
 
     private fun løsBehandlingFramTilFerdig(testPerson: TestPerson) {
@@ -291,7 +297,7 @@ internal class PersonMediatorTest {
          * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
          */
         rapid.harBehov(InntektId) {
-            medDato("Virkningsdato") shouldBe testPerson.søknadstidspunkt
+            medDato("Virkningsdato") shouldBe maxOf(testPerson.søknadstidspunkt, testPerson.ønskerFraDato)
             /**
              * TODO: Vi må ta vekk opptjeningsperiode fra dp-inntekt og skive om måten dp-inntekt lagrer inntekt på beregningsdato
              * medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
