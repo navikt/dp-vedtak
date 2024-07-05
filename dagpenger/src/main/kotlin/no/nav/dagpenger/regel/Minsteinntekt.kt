@@ -95,9 +95,8 @@ object Minsteinntekt {
             val rapporteringsfrist = it.finnOpplysning(justertRapporteringsfrist).verdi
             val søknadstidspunkt = it.finnOpplysning(søknadstidspunkt).verdi
             val søknadsdato = it.finnOpplysning(søknadsdato).verdi
-            val mellomBehandlingsDatoOgSøknadstidspunkt = søknadsdato..søknadstidspunkt
 
-            return@Kontrollpunkt rapporteringsfrist in mellomBehandlingsDatoOgSøknadstidspunkt
+            return@Kontrollpunkt søknadstidspunkt > rapporteringsfrist && søknadsdato <= rapporteringsfrist
         }
 
     val AvslagInntekt =
