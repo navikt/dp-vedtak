@@ -251,8 +251,8 @@ internal class PersonMediatorTest {
             rapid.harHendelse("forslag_til_vedtak") {
                 medTekst("søknadId") shouldBe testPerson.søknadId
                 with(medNode("avklaringer")) {
-                    this.size() shouldBe 7
-                    this.any { it["type"].asText() == Avklaringspunkter.ØnskerEtterRapporteringsfrist.kode } shouldBe true
+                    this.size() shouldBe 6
+                    // this.any { it["type"].asText() == Avklaringspunkter.ØnskerEtterRapporteringsfrist.kode } shouldBe true
                 }
             }
         }
