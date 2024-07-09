@@ -1,8 +1,11 @@
-package no.nav.dagpenger.opplysning.dag.printer
+package no.nav.dagpenger.dag.printer
 
-import no.nav.dagpenger.opplysning.dag.DAG
+import no.nav.dagpenger.dag.DAG
 
-class MermaidPrinter(private val dag: DAG<*, Any?>, private val retning: String = "RL") : DAGPrinter {
+class MermaidPrinter(
+    private val dag: DAG<*, Any?>,
+    private val retning: String = "RL",
+) : DAGPrinter {
     private val nodeIds = NodeIds()
 
     override fun toPrint(block: RootNodeFinner?): String {
@@ -33,7 +36,9 @@ private class NodeIds(
     private fun nextId() = idGenerator.getNextId()
 }
 
-private class AlphabetIdGenerator(startingId: String = "A") {
+private class AlphabetIdGenerator(
+    startingId: String = "A",
+) {
     private var currentId = startingId
 
     fun getNextId(): String {

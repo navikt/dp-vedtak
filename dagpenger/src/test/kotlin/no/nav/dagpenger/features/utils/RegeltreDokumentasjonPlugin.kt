@@ -9,8 +9,8 @@ import io.cucumber.plugin.event.EventPublisher
 import io.cucumber.plugin.event.TestRunFinished
 import io.cucumber.plugin.event.TestSourceParsed
 import io.cucumber.plugin.event.TestSourceRead
+import no.nav.dagpenger.dag.printer.MermaidPrinter
 import no.nav.dagpenger.opplysning.dag.RegeltreBygger
-import no.nav.dagpenger.opplysning.dag.printer.MermaidPrinter
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
@@ -52,14 +52,15 @@ class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
 
     override fun setEventPublisher(publisher: EventPublisher) {
         publisher.registerHandlerFor(TestRunFinished::class.java) { _ ->
-            regeltrær.map { (uri, regeltre) ->
-                val navn = tester[uri]
-                val gherkinSource = dokumenter[uri]
-                Regeldokumentasjon(navn!!, regeltre, gherkinSource!!)
-            }.forEach { (navn, regeltreDiagram, gherkinSource) ->
-                @Language("Markdown")
-                val markdown =
-                    """
+            regeltrær
+                .map { (uri, regeltre) ->
+                    val navn = tester[uri]
+                    val gherkinSource = dokumenter[uri]
+                    Regeldokumentasjon(navn!!, regeltre, gherkinSource!!)
+                }.forEach { (navn, regeltreDiagram, gherkinSource) ->
+                    @Language("Markdown")
+                    val markdown =
+                        """
                     ># $navn
                     >
                     >## Regeltre
@@ -74,18 +75,22 @@ class RegeltreDokumentasjonPlugin : ConcurrentEventListener {
                     >${gherkinSource.trim()}
                     >``` 
                     """.trimMargin(">")
-                skriv(
-                    navn,
-                    markdown,
-                )
-            }
+                    skriv(
+                        navn,
+                        markdown,
+                    )
+                }
         }
 
         publisher.registerHandlerFor(TestSourceRead::class.java) { event ->
             dokumenter[event.uri.toString()] = event.source
         }
         publisher.registerHandlerFor(TestSourceParsed::class.java) { event ->
-            tester[event.uri.toString()] = event.nodes.first().name.get()
+            tester[event.uri.toString()] =
+                event.nodes
+                    .first()
+                    .name
+                    .get()
         }
         publisher.registerHandlerFor(EmbedEvent::class.java) { event ->
             regeltrær[event.testCase.uri.toString()] = String(event.data)

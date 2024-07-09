@@ -5,6 +5,7 @@ plugins {
 val cucumberVersion = "7.15.0"
 
 dependencies {
+    implementation(project(path = ":dag"))
     implementation(project(path = ":opplysninger"))
     implementation(project(path = ":dato"))
     implementation(project(path = ":konklusjon"))

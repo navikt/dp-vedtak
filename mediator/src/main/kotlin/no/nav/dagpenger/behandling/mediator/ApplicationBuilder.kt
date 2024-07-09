@@ -53,7 +53,7 @@ internal class ApplicationBuilder(
         )
 
     // TODO: Last alle regler ved startup. Dette må inn i ett register.
-    private val opplysningstyper: Set<Opplysningstype<*>> = SøknadInnsendtRegelsett.regelsett.flatMap { it.produserer() }.toSet()
+    private val opplysningstyper: Set<Opplysningstype<*>> = SøknadInnsendtRegelsett.regelsett.flatMap { it.produserer }.toSet()
 
     init {
         MessageMediator(

@@ -1,4 +1,4 @@
-package no.nav.dagpenger.opplysning.dag
+package no.nav.dagpenger.dag
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

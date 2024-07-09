@@ -1,9 +1,11 @@
-package no.nav.dagpenger.opplysning.dag.printer
+package no.nav.dagpenger.dag.printer
 
-import no.nav.dagpenger.opplysning.dag.DAG
-import no.nav.dagpenger.opplysning.dag.Node
+import no.nav.dagpenger.dag.DAG
+import no.nav.dagpenger.dag.Node
 
-class PrettyPrinter(private val dag: DAG<*, Any?>) : DAGPrinter {
+class PrettyPrinter(
+    private val dag: DAG<*, Any?>,
+) : DAGPrinter {
     override fun toPrint(block: RootNodeFinner?): String {
         val adjacencyList = dag.edges.groupBy { it.from }
         val visitedNodes = mutableSetOf<Node<*>>()

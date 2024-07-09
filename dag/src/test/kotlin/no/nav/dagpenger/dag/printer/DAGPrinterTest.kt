@@ -1,9 +1,9 @@
-package no.nav.dagpenger.opplysning.dag.printer
+package no.nav.dagpenger.dag.printer
 
+import no.nav.dagpenger.dag.TestOpplysningstyper.faktorA
+import no.nav.dagpenger.dag.TestOpplysningstyper.faktorB
+import no.nav.dagpenger.dag.TestOpplysningstyper.produkt
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorA
-import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorB
-import no.nav.dagpenger.opplysning.TestOpplysningstyper.produserer
 import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class DAGPrinterTest {
-    private val regelsett = Regelsett("regelsett") { regel(produserer) { multiplikasjon(faktorA, faktorB) } }
+    private val regelsett = Regelsett("regelsett") { regel(produkt) { multiplikasjon(faktorA, faktorB) } }
 
     private val regeltre = RegeltreBygger(regelsett.regler()).dag()
 
@@ -28,7 +28,7 @@ class DAGPrinterTest {
                   | Multiplikasjon
                   FaktorB: opplysning om FaktorB
                 """.trimIndent(),
-            actual = prettyPrinter.toPrint { it.data == produserer },
+            actual = prettyPrinter.toPrint { it.data == produkt },
         )
     }
 

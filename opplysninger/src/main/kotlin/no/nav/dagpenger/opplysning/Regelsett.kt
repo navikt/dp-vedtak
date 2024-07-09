@@ -26,5 +26,17 @@ class Regelsett(
         block: Opplysningstype<T>.() -> Regel<*>,
     ) = leggTil(gjelderFraOgMed, produserer.block())
 
-    fun produserer(): List<Opplysningstype<*>> = regler.map { it.key }
+    val produserer: Set<Opplysningstype<*>>
+        by lazy { regler.map { it.key }.toSet() }
+
+    fun produserer(opplysningstype: Opplysningstype<*>) = produserer.contains(opplysningstype)
+
+    val avhengerAv: Set<Opplysningstype<*>>
+        by lazy {
+            regler.flatMap { it.value.getAll().flatMap { regel -> regel.avhengerAv } }.toSet().minus(produserer)
+        }
+
+    fun avhengerAv(opplysningstype: Opplysningstype<*>) = avhengerAv.contains(opplysningstype)
+
+    override fun toString() = "Regelsett(navn=$navn)"
 }

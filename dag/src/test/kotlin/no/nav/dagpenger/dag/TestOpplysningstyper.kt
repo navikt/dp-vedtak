@@ -1,4 +1,6 @@
-package no.nav.dagpenger.opplysning
+package no.nav.dagpenger.dag
+
+import no.nav.dagpenger.opplysning.Opplysningstype
 
 internal object TestOpplysningstyper {
     val dato1 by lazy { Opplysningstype.somDato("dato1") }

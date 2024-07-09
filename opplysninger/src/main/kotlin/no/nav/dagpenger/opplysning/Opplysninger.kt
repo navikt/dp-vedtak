@@ -5,7 +5,7 @@ import java.util.UUID
 class Opplysninger private constructor(
     override val id: UUID,
     opplysninger: List<Opplysning<*>> = emptyList(),
-    val basertPå: List<Opplysninger> = emptyList(),
+    basertPå: List<Opplysninger> = emptyList(),
 ) : LesbarOpplysninger {
     private lateinit var regelkjøring: Regelkjøring
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
@@ -58,10 +58,9 @@ class Opplysninger private constructor(
         regelkjøring.evaluer()
     }
 
-    override fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T> {
-        return finnNullableOpplysning(opplysningstype)
+    override fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T> =
+        finnNullableOpplysning(opplysningstype)
             ?: throw IllegalStateException("Har ikke opplysning $opplysningstype som er gyldig for ${regelkjøring.forDato}")
-    }
 
     override fun finnOpplysning(opplysningId: UUID) =
         opplysninger.firstOrNull { it.id == opplysningId } ?: throw IllegalStateException("Har ikke opplysning $opplysningId")

@@ -11,13 +11,14 @@ internal class TemporalCollection<R> {
 
     fun get(date: LocalDateTime): R =
         milestones
-            .firstOrNull { it.isBefore(date) || it.isEqual(date) }?.let {
+            .firstOrNull { it.isBefore(date) || it.isEqual(date) }
+            ?.let {
                 contents[it]
             } ?: throw IllegalArgumentException("No records that early. Asked for date $date. Milestones=$milestones")
 
     fun get(date: LocalDate): R = get(date.atStartOfDay())
 
-    fun put(
+    private fun put(
         at: LocalDateTime,
         item: R,
     ) {
@@ -31,7 +32,7 @@ internal class TemporalCollection<R> {
         put(at.atStartOfDay(), item)
     }
 
-    override fun toString(): String {
-        return "TemporalCollection(contents=$contents)"
-    }
+    fun getAll(): List<R> = contents.values.toList()
+
+    override fun toString(): String = "TemporalCollection(contents=$contents)"
 }

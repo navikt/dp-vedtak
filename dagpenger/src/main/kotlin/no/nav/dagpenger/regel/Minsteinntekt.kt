@@ -96,14 +96,14 @@ object Minsteinntekt {
             val søknadstidspunkt = it.finnOpplysning(søknadstidspunkt).verdi
             val søknadsdato = it.finnOpplysning(søknadsdato).verdi
 
-            return@Kontrollpunkt søknadstidspunkt > rapporteringsfrist && søknadsdato <= rapporteringsfrist
+            søknadstidspunkt > rapporteringsfrist && søknadsdato <= rapporteringsfrist
         }
 
     val AvslagInntekt =
         KonklusjonsStrategi(DagpengerKonklusjoner.AvslagMinsteinntekt) { opplysninger ->
             if (opplysninger.mangler(minsteinntekt)) return@KonklusjonsStrategi IkkeKonkludert
             if (!opplysninger.finnOpplysning(minsteinntekt).verdi) {
-                return@KonklusjonsStrategi Konkludert
+                Konkludert
             } else {
                 IkkeKonkludert
             }

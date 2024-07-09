@@ -1,10 +1,15 @@
 package no.nav.dagpenger.opplysning.dag
 
+import no.nav.dagpenger.dag.DAG
+import no.nav.dagpenger.dag.Edge
+import no.nav.dagpenger.dag.Node
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.Regel
 
-class RegeltreBygger(private val regler: List<Regel<*>>) {
+class RegeltreBygger(
+    private val regler: List<Regel<*>>,
+) {
     constructor(regelsett: Regelsett) : this(regelsett.regler())
     constructor(vararg regelsett: Regelsett) : this(regelsett.flatMap { it.regler() })
 

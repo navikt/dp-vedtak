@@ -1,6 +1,6 @@
-package no.nav.dagpenger.opplysning.dag.printer
+package no.nav.dagpenger.dag.printer
 
-import no.nav.dagpenger.opplysning.dag.Node
+import no.nav.dagpenger.dag.Node
 
 typealias RootNodeFinner = (Node<*>) -> Boolean
 

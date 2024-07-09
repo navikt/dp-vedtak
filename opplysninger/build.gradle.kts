@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":dag"))
     api("com.fasterxml.uuid:java-uuid-generator:4.3.0")
     implementation("no.bekk.bekkopen:nocommons:0.16.0")
 

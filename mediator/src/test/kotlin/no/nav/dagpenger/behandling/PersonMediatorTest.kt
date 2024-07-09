@@ -83,7 +83,7 @@ internal class PersonMediatorTest {
             rapidsConnection = rapid,
             personMediator = personMediator,
             hendelseRepository = PostgresHendelseRepository(),
-            SøknadInnsendtRegelsett.regelsett.flatMap { it.produserer() }.toSet(),
+            SøknadInnsendtRegelsett.regelsett.flatMap { it.produserer }.toSet(),
         )
     }
 
