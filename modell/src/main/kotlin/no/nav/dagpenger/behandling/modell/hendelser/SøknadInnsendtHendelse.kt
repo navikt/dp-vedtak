@@ -12,7 +12,7 @@ import no.nav.dagpenger.regel.Minsteinntekt.InntektNesteKalendermånedKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.SvangerskapsrelaterteSykepengerKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.ØnskerEtterRapporteringsfristKontroll
-import no.nav.dagpenger.regel.SøknadInnsendtRegelsett
+import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt.HattLukkedeSakerSiste8UkerKontroll
 import no.nav.dagpenger.regel.Søknadstidspunkt.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
@@ -26,7 +26,7 @@ class SøknadInnsendtHendelse(
     gjelderDato: LocalDate,
     fagsakId: Int,
 ) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId) {
-    override fun regelsett() = SøknadInnsendtRegelsett.regelsett
+    override fun regelsett() = RegelverkDagpenger.regelsett
 
     override fun avklarer(): Opplysningstype<Boolean> = KravPåDagpenger.kravPåDagpenger
 

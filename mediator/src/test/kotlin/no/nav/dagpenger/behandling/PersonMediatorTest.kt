@@ -46,7 +46,7 @@ import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
 import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
-import no.nav.dagpenger.regel.SøknadInnsendtRegelsett
+import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
@@ -83,7 +83,7 @@ internal class PersonMediatorTest {
             rapidsConnection = rapid,
             personMediator = personMediator,
             hendelseRepository = PostgresHendelseRepository(),
-            SøknadInnsendtRegelsett.regelsett.flatMap { it.produserer }.toSet(),
+            opplysningstyper = RegelverkDagpenger.produserer,
         )
     }
 

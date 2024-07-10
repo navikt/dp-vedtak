@@ -14,7 +14,7 @@ import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostg
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.opplysning.Opplysningstype
-import no.nav.dagpenger.regel.SøknadInnsendtRegelsett
+import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
 
@@ -53,7 +53,7 @@ internal class ApplicationBuilder(
         )
 
     // TODO: Last alle regler ved startup. Dette må inn i ett register.
-    private val opplysningstyper: Set<Opplysningstype<*>> = SøknadInnsendtRegelsett.regelsett.flatMap { it.produserer }.toSet()
+    private val opplysningstyper: Set<Opplysningstype<*>> = RegelverkDagpenger.produserer
 
     init {
         MessageMediator(

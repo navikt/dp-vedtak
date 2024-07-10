@@ -8,8 +8,9 @@ import java.time.LocalDate
 class Regelverk(
     vararg regelsett: Regelsett,
 ) {
-    private val produsent: Map<Opplysningstype<*>, Regelsett> =
-        regelsett.flatMap { rs -> rs.produserer.map { it to rs } }.toMap()
+    private val produsent = regelsett.flatMap { rs -> rs.produserer.map { it to rs } }.toMap()
+    val produserer = regelsett.flatMap { it.produserer }.toSet()
+    val regelsett = regelsett.toList()
 
     fun reglerFor(
         opplysningstype: Opplysningstype<*>,
@@ -49,10 +50,10 @@ class Regelverk(
         queue.add(start)
 
         while (queue.isNotEmpty()) {
-            val currentOpplysningstype = queue.removeFirst()
-            val produseresAv = produsent[currentOpplysningstype] ?: continue
+            val gjeldendeOpplysningstype = queue.removeFirst()
+            val produseresAv = produsent[gjeldendeOpplysningstype] ?: continue
 
-            if (visited.add(currentOpplysningstype)) {
+            if (visited.add(gjeldendeOpplysningstype)) {
                 block(produseresAv)
                 queue.addAll(produseresAv.avhengerAv)
             }

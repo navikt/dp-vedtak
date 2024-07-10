@@ -13,12 +13,12 @@ class RegeltreBygger(
     constructor(regelsett: Regelsett) : this(regelsett.regler())
     constructor(vararg regelsett: Regelsett) : this(regelsett.flatMap { it.regler() })
 
-    fun dag(): DAG<Opplysningstype<*>, Any?> {
+    fun dag(): DAG<Opplysningstype<*>, Regel<*>> {
         val edges = regler.flatMap { edge(it) }
         return DAG(edges.toList())
     }
 
-    private fun edge(regel: Regel<*>): List<Edge<Opplysningstype<*>, Any?>> {
+    private fun edge(regel: Regel<*>): List<Edge<Opplysningstype<*>, Regel<*>>> {
         val currentNode = node(regel.produserer)
 
         return regel.avhengerAv.map { dependency ->
