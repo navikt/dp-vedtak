@@ -4,7 +4,7 @@ import no.nav.dagpenger.dag.DAG
 import no.nav.dagpenger.dag.Node
 
 class PrettyPrinter(
-    private val dag: DAG<*, Any?>,
+    private val dag: DAG<*, *>,
 ) : DAGPrinter {
     override fun toPrint(block: RootNodeFinner?): String {
         val adjacencyList = dag.edges.groupBy { it.from }

@@ -1,8 +1,6 @@
 package no.nav.dagpenger.regel
 
-import no.nav.dagpenger.dag.DAG
 import no.nav.dagpenger.dag.printer.MermaidPrinter
-import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Regelverk
 import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -50,7 +48,7 @@ class DiagramTest {
             )
 
         regelverk.regeltreFor(KravPåDagpenger.kravPåDagpenger).also {
-            val b = MermaidPrinter(it as DAG<Regelsett, Any?>)
+            val b = MermaidPrinter(it)
             println(b.toPrint())
         }
     }

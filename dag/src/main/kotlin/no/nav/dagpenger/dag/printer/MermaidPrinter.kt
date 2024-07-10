@@ -3,7 +3,7 @@ package no.nav.dagpenger.dag.printer
 import no.nav.dagpenger.dag.DAG
 
 class MermaidPrinter(
-    private val dag: DAG<*, Any?>,
+    private val dag: DAG<*, *>,
     private val retning: String = "RL",
 ) : DAGPrinter {
     private val nodeIds = NodeIds()

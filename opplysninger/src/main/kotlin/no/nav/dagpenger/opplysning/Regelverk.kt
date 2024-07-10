@@ -3,51 +3,59 @@ package no.nav.dagpenger.opplysning
 import no.nav.dagpenger.dag.DAG
 import no.nav.dagpenger.dag.Edge
 import no.nav.dagpenger.dag.Node
+import java.time.LocalDate
 
 class Regelverk(
     vararg regelsett: Regelsett,
 ) {
-    private val regelsett = regelsett.toList()
+    private val produsent: Map<Opplysningstype<*>, Regelsett> =
+        regelsett.flatMap { rs -> rs.produserer.map { it to rs } }.toMap()
+
+    fun reglerFor(
+        opplysningstype: Opplysningstype<*>,
+        forDato: LocalDate = LocalDate.MIN,
+    ): List<Any> = regelsettFor(opplysningstype).flatMap { it.regler(forDato) }
 
     fun regelsettFor(opplysningstype: Opplysningstype<*>): List<Regelsett> {
-        val result = mutableSetOf<Regelsett>()
-        val queue = ArrayDeque<Opplysningstype<*>>()
-        queue.add(opplysningstype)
+        val nødvendigeRegelsett = mutableSetOf<Regelsett>()
 
-        while (queue.isNotEmpty()) {
-            val currentOpplysningstype = queue.removeFirst()
-            val relevantRegelsett = regelsett.filter { it.produserer(currentOpplysningstype) }
-
-            for (rs in relevantRegelsett) {
-                if (result.add(rs)) {
-                    queue.addAll(rs.avhengerAv)
-                }
-            }
+        traverseOpplysningstyper(opplysningstype) { regelsett ->
+            nødvendigeRegelsett.add(regelsett)
         }
 
-        return result.toList()
+        return nødvendigeRegelsett.toList()
     }
 
     fun regeltreFor(opplysningstype: Opplysningstype<*>): DAG<Regelsett, String> {
-        val kanter = mutableSetOf<Edge<Regelsett, String>>()
-        val queue = ArrayDeque<Opplysningstype<*>>()
-        queue.add(opplysningstype)
+        val edges = mutableSetOf<Edge<Regelsett, String>>()
 
-        while (queue.isNotEmpty()) {
-            val currentOpplysningstype = queue.removeFirst()
-            val fra = regelsett.single { it.produserer(currentOpplysningstype) }
-
-            val avhengigheter = fra.avhengerAv
-            for (avhengighet in avhengigheter) {
-                val til = regelsett.single { it.produserer(avhengighet) }
-                if (kanter.add(Edge(Node(fra.navn, fra), Node(til.navn, til), "avhenger av"))) {
-                    queue.add(avhengighet)
-                }
+        traverseOpplysningstyper(opplysningstype) { currentRegelsett ->
+            for (avhengighet in currentRegelsett.avhengerAv) {
+                val til = produsent[avhengighet] ?: continue
+                edges.add(Edge(Node(currentRegelsett.navn, currentRegelsett), Node(til.navn, til), "avhenger av"))
             }
         }
 
-        return DAG(kanter.toList())
+        return DAG(edges.toList())
     }
 
-    fun reglerFor(opplysningstype: Opplysningstype<*>) = regelsettFor(opplysningstype).flatMap { it.regler() }
+    // Bruker Breadth-First Search (BFS) til å traversere regelsettene
+    private fun traverseOpplysningstyper(
+        start: Opplysningstype<*>,
+        block: (Regelsett) -> Unit,
+    ) {
+        val visited = mutableSetOf<Opplysningstype<*>>()
+        val queue = ArrayDeque<Opplysningstype<*>>()
+        queue.add(start)
+
+        while (queue.isNotEmpty()) {
+            val currentOpplysningstype = queue.removeFirst()
+            val produseresAv = produsent[currentOpplysningstype] ?: continue
+
+            if (visited.add(currentOpplysningstype)) {
+                block(produseresAv)
+                queue.addAll(produseresAv.avhengerAv)
+            }
+        }
+    }
 }

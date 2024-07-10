@@ -1,19 +1,20 @@
 package no.nav.dagpenger.dag.printer
 
-import no.nav.dagpenger.dag.TestOpplysningstyper.faktorA
-import no.nav.dagpenger.dag.TestOpplysningstyper.faktorB
-import no.nav.dagpenger.dag.TestOpplysningstyper.produkt
-import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.dag.RegeltreBygger
-import no.nav.dagpenger.opplysning.regel.multiplikasjon
+import no.nav.dagpenger.dag.DAG
+import no.nav.dagpenger.dag.Edge
+import no.nav.dagpenger.dag.Node
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class DAGPrinterTest {
-    private val regelsett = Regelsett("regelsett") { regel(produkt) { multiplikasjon(faktorA, faktorB) } }
-
-    private val regeltre = RegeltreBygger(regelsett.regler()).dag()
+    private val regeltre =
+        DAG<String, String>(
+            listOf(
+                Edge(from = Node("A", "A"), to = Node("C", "C"), edgeName = "Multiplikasjon"),
+                Edge(from = Node("B", "B"), to = Node("A", "A"), edgeName = "Multiplikasjon"),
+            ),
+        )
 
     @Test
     fun `test av PrettyPrinter`() {
@@ -22,13 +23,11 @@ class DAGPrinterTest {
         assertEquals(
             expected =
                 """
-                Resultat: opplysning om Resultat
+                A: A
                   | Multiplikasjon
-                  FaktorA: opplysning om FaktorA
-                  | Multiplikasjon
-                  FaktorB: opplysning om FaktorB
+                  C: C
                 """.trimIndent(),
-            actual = prettyPrinter.toPrint { it.data == produkt },
+            actual = prettyPrinter.toPrint { it.data == "A" },
         )
     }
 
@@ -36,14 +35,14 @@ class DAGPrinterTest {
     fun `test av MermaidPrinter`() {
         val mermaidPrinter = MermaidPrinter(regeltre)
         assertTrue(mermaidPrinter.toPrint().contains("graph RL"))
-        /*assertEquals(
-        // language=mermaid
+        assertEquals(
+            // language=mermaid
             """
             graph RL
-              1806431167["A * B"] -->|Multiplikasjon| 1297836716["A"]
-              1806431167["A * B"] -->|Multiplikasjon| 710190911["B"]
+              A["A"] -->|"Multiplikasjon"| B["C"]
+              C["B"] -->|"Multiplikasjon"| A["A"]
             """.trimIndent(),
             mermaidPrinter.toPrint(),
-        )*/
+        )
     }
 }
