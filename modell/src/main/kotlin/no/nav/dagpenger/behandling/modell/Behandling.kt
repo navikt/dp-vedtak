@@ -354,7 +354,9 @@ class Behandling private constructor(
             hendelse: AvklaringIkkeRelevantHendelse,
         ) {
             hendelse.kontekst(this)
-            behandling.avbrytAvklaring(hendelse.avklaringId, hendelse)
+            if (behandling.avklaringer.avbryt(hendelse.avklaringId)) {
+                hendelse.info("Avklaring er ikke lenger relevant")
+            }
         }
     }
 
@@ -415,7 +417,16 @@ class Behandling private constructor(
             hendelse: AvklaringIkkeRelevantHendelse,
         ) {
             hendelse.kontekst(this)
-            behandling.avbrytAvklaring(hendelse.avklaringId, hendelse)
+            if (behandling.avklaringer.avbryt(hendelse.avklaringId)) {
+                hendelse.info("Avklaring er ikke lenger relevant")
+                hendelse.hendelse(
+                    AvklaringLukketHendelse,
+                    "Avklaring ikke lenger relevant",
+                    mapOf(
+                        "avklaringId" to hendelse.avklaringId,
+                    ),
+                )
+            }
 
             if (behandling.aktiveAvklaringer().isEmpty()) {
                 if (behandling.opplysninger.finnAlle().any { it.kilde is Saksbehandlerkilde }) {
@@ -520,22 +531,6 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.info("Behandlingen er ferdig, ignorerer avklaringer")
-        }
-    }
-
-    private fun avbrytAvklaring(
-        avklaringId: UUID,
-        hendelse: PersonHendelse,
-    ) {
-        if (avklaringer.avbryt(avklaringId)) {
-            hendelse.info("Avklaring er ikke lenger relevant")
-            hendelse.hendelse(
-                AvklaringLukketHendelse,
-                "Avklaring ikke lenger relevant",
-                mapOf(
-                    "avklaringId" to avklaringId,
-                ),
-            )
         }
     }
 
