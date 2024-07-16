@@ -7,6 +7,7 @@ import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaringer
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
+import no.nav.dagpenger.behandling.modell.BehandlingHendelser.AvklaringLukketHendelse
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
@@ -353,9 +354,7 @@ class Behandling private constructor(
             hendelse: AvklaringIkkeRelevantHendelse,
         ) {
             hendelse.kontekst(this)
-            if (behandling.avklaringer.avbryt(hendelse.avklaringId)) {
-                hendelse.info("Avklaring er ikke lenger relevant")
-            }
+            behandling.avbrytAvklaring(hendelse.avklaringId, hendelse)
         }
     }
 
@@ -416,9 +415,7 @@ class Behandling private constructor(
             hendelse: AvklaringIkkeRelevantHendelse,
         ) {
             hendelse.kontekst(this)
-            if (behandling.avklaringer.avbryt(hendelse.avklaringId)) {
-                hendelse.info("Avklaring er ikke lenger relevant")
-            }
+            behandling.avbrytAvklaring(hendelse.avklaringId, hendelse)
 
             if (behandling.aktiveAvklaringer().isEmpty()) {
                 if (behandling.opplysninger.finnAlle().any { it.kilde is Saksbehandlerkilde }) {
@@ -526,6 +523,22 @@ class Behandling private constructor(
         }
     }
 
+    private fun avbrytAvklaring(
+        avklaringId: UUID,
+        hendelse: PersonHendelse,
+    ) {
+        if (avklaringer.avbryt(avklaringId)) {
+            hendelse.info("Avklaring er ikke lenger relevant")
+            hendelse.hendelse(
+                AvklaringLukketHendelse,
+                "Avklaring ikke lenger relevant",
+                mapOf(
+                    "avklaringId" to avklaringId,
+                ),
+            )
+        }
+    }
+
     private fun tilstand(
         nyTilstand: BehandlingTilstand,
         hendelse: PersonHendelse,
@@ -591,6 +604,8 @@ sealed class BehandlingHendelser(
     data object UnderBehandlingHendelse : BehandlingHendelser("under_behandling")
 
     data object ForslagTilVedtakHendelse : BehandlingHendelser("forslag_til_vedtak")
+
+    data object AvklaringLukketHendelse : BehandlingHendelser("avklaring_lukket")
 
     data object VedtakFattetHendelse : BehandlingHendelser("vedtak_fattet")
 
