@@ -312,10 +312,16 @@ class Behandling private constructor(
             hendelse.opplysninger.forEach { opplysning ->
                 behandling.opplysninger.leggTil(opplysning.opplysning())
             }
+
+            val kanKonkludere = behandling.behandler.kanKonkludere(behandling.opplysninger)
+            if (kanKonkludere) {
+                hendelse.info("Nå vet vi nok til å konkludere")
+            }
+
             val trenger = behandling.hvaTrengerViNå(hendelse)
 
-            // TODO: Lag strategier for når vi kan lage vedtak
             if (trenger.isEmpty()) {
+                // TODO: Dette faller bort når vi sjekker alt
                 val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
                 if (avklaring.verdi) {
                     hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
@@ -323,6 +329,7 @@ class Behandling private constructor(
                     return
                 }
 
+                // TODO: Dette faller bort når vi sjekker alt
                 val kravTilInntekt = behandling.opplysninger.finnOpplysning(minsteinntekt)
                 if (kravTilInntekt.verdi) {
                     hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")
@@ -330,6 +337,7 @@ class Behandling private constructor(
                     return
                 }
 
+                // TODO: Dette kan flyttes til en avklaring
                 val søknadstidspunkt = behandling.opplysninger.finnOpplysning(Søknadstidspunkt.søknadstidspunkt).verdi
                 if (søknadstidspunkt.isAfter(behandling.behandler.skjedde.plusDays(14))) {
                     hendelse.info("Behandling kunne vært automatisk avslag, men ligger for langt fram i tid")

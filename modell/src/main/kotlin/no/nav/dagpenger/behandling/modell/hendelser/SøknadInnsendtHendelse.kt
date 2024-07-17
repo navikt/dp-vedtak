@@ -1,12 +1,11 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import no.nav.dagpenger.behandling.konklusjon.Konklusjon
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
-import no.nav.dagpenger.regel.Alderskrav.AvslagAlder
 import no.nav.dagpenger.regel.KravPåDagpenger
-import no.nav.dagpenger.regel.KravPåDagpenger.Innvilgelse
-import no.nav.dagpenger.regel.Minsteinntekt.AvslagInntekt
 import no.nav.dagpenger.regel.Minsteinntekt.EØSArbeidKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.InntektNesteKalendermånedKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
@@ -16,6 +15,8 @@ import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt.HattLukkedeSakerSiste8UkerKontroll
 import no.nav.dagpenger.regel.Søknadstidspunkt.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
+import no.nav.dagpenger.regel.konklusjon.knockoutAvslag
+import no.nav.dagpenger.regel.konklusjon.regelsettKnockout
 import java.time.LocalDate
 import java.util.UUID
 
@@ -42,7 +43,10 @@ class SøknadInnsendtHendelse(
             ),
         )
 
-    override fun konklusjonStrategier() = listOf(AvslagAlder, AvslagInntekt, Innvilgelse)
+    override fun kanKonkludere(opplysninger: LesbarOpplysninger): Boolean {
+        val konklusjon = Konklusjon(opplysninger, regelsettKnockout)
+        return konklusjon.kanKonkludere(knockoutAvslag)
+    }
 
     override fun kontrollpunkter() =
         listOf(

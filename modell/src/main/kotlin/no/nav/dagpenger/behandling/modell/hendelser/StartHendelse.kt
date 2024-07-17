@@ -3,8 +3,6 @@ package no.nav.dagpenger.behandling.modell.hendelser
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaringer
 import no.nav.dagpenger.avklaring.Kontrollpunkt
-import no.nav.dagpenger.behandling.konklusjon.Konklusjon
-import no.nav.dagpenger.behandling.konklusjon.KonklusjonsStrategi
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
@@ -33,17 +31,9 @@ abstract class StartHendelse(
 
     abstract fun behandling(): Behandling
 
-    abstract fun konklusjonStrategier(): List<KonklusjonsStrategi>
-
     abstract fun kontrollpunkter(): List<Kontrollpunkt>
 
-    fun konklusjoner(opplysninger: LesbarOpplysninger): List<Konklusjon> {
-        return konklusjonStrategier().mapNotNull { konklusjonsStrategi ->
-            konklusjonsStrategi.evaluer(opplysninger)
-        }
-    }
+    abstract fun kanKonkludere(opplysninger: LesbarOpplysninger): Boolean
 
-    fun avklaringer(opplysninger: LesbarOpplysninger): List<Avklaring> {
-        return Avklaringer(kontrollpunkter()).måAvklares(opplysninger)
-    }
+    fun avklaringer(opplysninger: LesbarOpplysninger): List<Avklaring> = Avklaringer(kontrollpunkter()).måAvklares(opplysninger)
 }

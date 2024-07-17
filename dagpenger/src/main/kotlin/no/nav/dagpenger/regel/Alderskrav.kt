@@ -1,8 +1,5 @@
 package no.nav.dagpenger.regel
 
-import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.IkkeKonkludert
-import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.Konkludert
-import no.nav.dagpenger.behandling.konklusjon.KonklusjonsStrategi
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
@@ -30,15 +27,5 @@ object Alderskrav {
             regel(sisteMåned) { leggTilÅr(fødselsdato, aldersgrense) }
             regel(sisteDagIMåned) { sisteDagIMåned(sisteMåned) }
             regel(kravTilAlder) { førEllerLik(virkningsdato, sisteDagIMåned) }
-        }
-
-    val AvslagAlder =
-        KonklusjonsStrategi(DagpengerKonklusjoner.AvslagAlder) { opplysninger ->
-            if (opplysninger.mangler(kravTilAlder)) return@KonklusjonsStrategi IkkeKonkludert
-            if (!opplysninger.finnOpplysning(kravTilAlder).verdi) {
-                return@KonklusjonsStrategi Konkludert
-            } else {
-                IkkeKonkludert
-            }
         }
 }

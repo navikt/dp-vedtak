@@ -22,7 +22,7 @@ class Regelkjøring(
         opplysninger.registrer(this)
     }
 
-    internal fun evaluer() {
+    fun evaluer() {
         aktiverRegler()
         while (plan.size > 0) {
             kjørRegelPlan()
@@ -44,11 +44,12 @@ class Regelkjøring(
     }
 
     private fun aktiverRegler() {
-        muligeRegler.filter {
-            it.kanKjøre(opplysninger)
-        }.forEach {
-            plan.add(it)
-        }
+        muligeRegler
+            .filter {
+                it.kanKjøre(opplysninger)
+            }.forEach {
+                plan.add(it)
+            }
         plan.forEach {
             muligeRegler.remove(it)
         }
@@ -65,19 +66,21 @@ class Regelkjøring(
         val opplysningerUtenRegel = graph.findLeafNodes()
         val opplysningerMedEksternRegel = graph.findNodesWithEdge { it.data is Ekstern<*> }
         return (opplysningerUtenRegel + opplysningerMedEksternRegel)
-            .map { it.data }.filterNot { opplysninger.har(it) }.toSet()
+            .map { it.data }
+            .filterNot { opplysninger.har(it) }
+            .toSet()
     }
 
-    fun informasjonsbehov(opplysningstype: Opplysningstype<*>): Map<Opplysningstype<*>, List<Opplysning<*>>> {
-        return trenger(opplysningstype).associateWith {
-            // Finn regel som produserer opplysningstype og hent ut avhengigheter
-            muligeRegler.find { regel -> regel.produserer(it) }?.avhengerAv ?: emptyList()
-        }.filter { (_, avhengigheter) ->
-            // Finn bare opplysninger hvor alle avhengigheter er tilfredsstilt
-            avhengigheter.all { opplysninger.har(it) }
-        }.mapValues { (_, avhengigheter) ->
-            // Finn verdien av avhengighetene
-            avhengigheter.map { opplysninger.finnOpplysning(it) }
-        }
-    }
+    fun informasjonsbehov(opplysningstype: Opplysningstype<*>): Map<Opplysningstype<*>, List<Opplysning<*>>> =
+        trenger(opplysningstype)
+            .associateWith {
+                // Finn regel som produserer opplysningstype og hent ut avhengigheter
+                muligeRegler.find { regel -> regel.produserer(it) }?.avhengerAv ?: emptyList()
+            }.filter { (_, avhengigheter) ->
+                // Finn bare opplysninger hvor alle avhengigheter er tilfredsstilt
+                avhengigheter.all { opplysninger.har(it) }
+            }.mapValues { (_, avhengigheter) ->
+                // Finn verdien av avhengighetene
+                avhengigheter.map { opplysninger.finnOpplysning(it) }
+            }
 }

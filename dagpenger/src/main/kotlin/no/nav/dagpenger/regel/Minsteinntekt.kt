@@ -1,9 +1,6 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
-import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.IkkeKonkludert
-import no.nav.dagpenger.behandling.konklusjon.KonklusjonsSjekk.Resultat.Konkludert
-import no.nav.dagpenger.behandling.konklusjon.KonklusjonsStrategi
 import no.nav.dagpenger.grunnbelop.Regel
 import no.nav.dagpenger.grunnbelop.forDato
 import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
@@ -97,15 +94,5 @@ object Minsteinntekt {
             val søknadsdato = it.finnOpplysning(søknadsdato).verdi
 
             søknadstidspunkt > rapporteringsfrist && søknadsdato <= rapporteringsfrist
-        }
-
-    val AvslagInntekt =
-        KonklusjonsStrategi(DagpengerKonklusjoner.AvslagMinsteinntekt) { opplysninger ->
-            if (opplysninger.mangler(minsteinntekt)) return@KonklusjonsStrategi IkkeKonkludert
-            if (!opplysninger.finnOpplysning(minsteinntekt).verdi) {
-                Konkludert
-            } else {
-                IkkeKonkludert
-            }
         }
 }
