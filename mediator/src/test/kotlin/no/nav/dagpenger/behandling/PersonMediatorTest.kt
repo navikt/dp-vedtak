@@ -146,10 +146,6 @@ internal class PersonMediatorTest {
             testObservatør.tilstandsendringer.size shouldBe 6
         }
 
-    private val Person.aktivBehandling get() = this.behandlinger().first()
-
-    private val Behandling.aktivAvklaringer get() = this.aktiveAvklaringer()
-
     @Test
     fun `Søknad med nok inntekt skal ikke avslås - men avbrytes`() =
         withMigratedDb {
@@ -278,6 +274,26 @@ internal class PersonMediatorTest {
             }
         }
 
+    @Test
+    fun `søker for langt fram i tid`() =
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    innsendt = 1.juni(2024).atTime(12, 0),
+                    søknadstidspunkt = 1.juni(2024),
+                    ønskerFraDato = 30.juni(2024),
+                )
+            løsBehandlingFramTilFerdig(testPerson)
+
+            rapid.harHendelse("forslag_til_vedtak") {
+                with(medNode("avklaringer")) {
+                    this.size() shouldBe 7
+                }
+            }
+        }
+
     private fun løsBehandlingFramTilFerdig(testPerson: TestPerson) {
         testPerson.sendSøknad()
         rapid.harHendelse("behandling_opprettet", offset = 2)
@@ -338,6 +354,10 @@ internal class PersonMediatorTest {
         rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
         testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
     }
+
+    private val Person.aktivBehandling get() = this.behandlinger().first()
+
+    private val Behandling.aktivAvklaringer get() = this.aktiveAvklaringer()
 
     @Test
     fun `publiserer tilstandsendinger`() =

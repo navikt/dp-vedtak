@@ -25,7 +25,6 @@ import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
-import no.nav.dagpenger.regel.Søknadstidspunkt
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
@@ -334,14 +333,6 @@ class Behandling private constructor(
                 if (kravTilInntekt.verdi) {
                     hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")
                     behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag på grunn av inntekt"), hendelse)
-                    return
-                }
-
-                // TODO: Dette kan flyttes til en avklaring
-                val søknadstidspunkt = behandling.opplysninger.finnOpplysning(Søknadstidspunkt.søknadstidspunkt).verdi
-                if (søknadstidspunkt.isAfter(behandling.behandler.skjedde.plusDays(14))) {
-                    hendelse.info("Behandling kunne vært automatisk avslag, men ligger for langt fram i tid")
-                    behandling.tilstand(Avbrutt(årsak = "Virkningstidspunkt ligger mer enn 14 dager fram i tid"), hendelse)
                     return
                 }
 

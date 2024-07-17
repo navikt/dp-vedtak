@@ -13,6 +13,7 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
+import no.nav.helse.rapids_rivers.asLocalDateTime
 
 internal class SøknadInnsendtMottak(
     rapidsConnection: RapidsConnection,
@@ -68,7 +69,7 @@ internal class SøknadInnsendtMessage(
                 id,
                 ident,
                 søknadId = packet["søknadsData"]["søknad_uuid"].asUUID(),
-                gjelderDato = java.time.LocalDate.now(),
+                gjelderDato = packet["@opprettet"].asLocalDateTime().toLocalDate(),
                 // TODO: Vi burde alltid ha fagsakId, og defaulte til 0 er ikke så lurt
                 fagsakId = packet["fagsakId"].asInt(0),
             ).also {

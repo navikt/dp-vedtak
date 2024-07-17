@@ -25,4 +25,12 @@ object Søknadstidspunkt {
 
     val HattLukkedeSakerSiste8UkerKontroll =
         Kontrollpunkt(Avklaringspunkter.HattLukkedeSakerSiste8Uker) { it.har(søknadsdato) }
+
+    val SøknadstidspunktForLangtFramITid =
+        Kontrollpunkt(Avklaringspunkter.SøknadstidspunktForLangtFramITid) {
+            it.har(søknadstidspunkt) &&
+                it.finnOpplysning(søknadstidspunkt).verdi.isAfter(
+                    it.finnOpplysning(søknadsdato).verdi.plusDays(14),
+                )
+        }
 }

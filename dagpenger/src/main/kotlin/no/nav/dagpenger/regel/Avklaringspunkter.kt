@@ -3,6 +3,13 @@ package no.nav.dagpenger.regel
 import no.nav.dagpenger.avklaring.Avklaringkode
 
 object Avklaringspunkter {
+    val SøknadstidspunktForLangtFramITid =
+        Avklaringkode(
+            kode = "SøknadstidspunktForLangtFramITid",
+            tittel = "Søknadstidspunktet ligger for lang fram i tid",
+            beskrivelse = "Søknadstidspunktet ligger mer enn 14 dager fram i tid",
+        )
+
     val Verneplikt =
         Avklaringkode(
             kode = "Verneplikt",
