@@ -319,6 +319,7 @@ class Behandling private constructor(
 
             val trenger = behandling.hvaTrengerViNå(hendelse)
 
+            // TODO: Endre til kanKonkludere || trenger.isEmpty()
             if (trenger.isEmpty()) {
                 if (kanKonkludere) {
                     hendelse.info("Ny og gammel konklusjonslogikk er enig")
