@@ -321,11 +321,6 @@ class Behandling private constructor(
 
             // TODO: Endre til kanKonkludere || trenger.isEmpty()
             if (trenger.isEmpty()) {
-                if (kanKonkludere) {
-                    hendelse.info("Ny og gammel konklusjonslogikk er enig")
-                } else {
-                    hendelse.info("Ny og gammel konklusjonslogikk er uenig")
-                }
                 // TODO: Dette faller bort når vi sjekker alt
                 val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
                 if (avklaring.verdi) {
@@ -340,6 +335,12 @@ class Behandling private constructor(
                     hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")
                     behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag på grunn av inntekt"), hendelse)
                     return
+                }
+
+                if (kanKonkludere) {
+                    hendelse.info("Ny og gammel konklusjonslogikk er enig")
+                } else {
+                    hendelse.info("Ny og gammel konklusjonslogikk er uenig")
                 }
 
                 if (behandling.aktiveAvklaringer().isEmpty()) {
