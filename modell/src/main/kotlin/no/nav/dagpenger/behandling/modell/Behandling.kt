@@ -320,6 +320,11 @@ class Behandling private constructor(
             val trenger = behandling.hvaTrengerViNå(hendelse)
 
             if (trenger.isEmpty()) {
+                if (kanKonkludere) {
+                    hendelse.info("Ny og gammel konklusjonslogikk er enig")
+                } else {
+                    hendelse.info("Ny og gammel konklusjonslogikk er uenig")
+                }
                 // TODO: Dette faller bort når vi sjekker alt
                 val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
                 if (avklaring.verdi) {
