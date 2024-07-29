@@ -15,6 +15,7 @@ object KravPåDagpenger {
                     ReellArbeidssøker.kravTilArbeidssøker,
                     Meldeplikt.registrertPåSøknadstidspunktet,
                     Rettighetstype.rettighetstype,
+                    Utdanning.kravTilUtdanning,
                 )
             }
         }
