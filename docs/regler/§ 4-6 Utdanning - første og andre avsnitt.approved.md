@@ -17,7 +17,7 @@ graph RL
   H["Godkjent unntak for utdanning eller opplæring?"] -->|"EnAv"| F["Deltar i høyere utdanning"]
   H["Godkjent unntak for utdanning eller opplæring?"] -->|"EnAv"| G["Deltar på kurs mv"]
   I["Har svart ja på spørsmål om utdanning eller opplæring"] -->|"ErSann"| J["Tar utdanning eller opplæring?"]
-  K["Har svart nei på spørsmål om utdanning eller opplæring"] -->|"ErIkkeSann"| J["Tar utdanning eller opplæring?"]
+  K["Har svart nei på spørsmål om utdanning eller opplæring"] -->|"ErUsann"| J["Tar utdanning eller opplæring?"]
   L["Oppfyller kravet på unntak for utdanning eller opplæring"] -->|"Alle"| I["Har svart ja på spørsmål om utdanning eller opplæring"]
   L["Oppfyller kravet på unntak for utdanning eller opplæring"] -->|"Alle"| H["Godkjent unntak for utdanning eller opplæring?"]
   M["Krav til utdanning eller opplæring"] -->|"EnAv"| L["Oppfyller kravet på unntak for utdanning eller opplæring"]

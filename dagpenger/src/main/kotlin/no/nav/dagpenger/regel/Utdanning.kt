@@ -5,8 +5,8 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.enAv
-import no.nav.dagpenger.opplysning.regel.erIkkeSann
 import no.nav.dagpenger.opplysning.regel.erSann
+import no.nav.dagpenger.opplysning.regel.erUsann
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
@@ -80,7 +80,7 @@ object Utdanning {
                 erSann(tarUtdanning)
             }
             regel(svartNeiPåUtdanning) {
-                erIkkeSann(tarUtdanning)
+                erUsann(tarUtdanning)
             }
             regel(oppfyllerKravetPåUnntak) {
                 alle(svartJaPåUtdanning, godkjentUnntakForUtdanning)

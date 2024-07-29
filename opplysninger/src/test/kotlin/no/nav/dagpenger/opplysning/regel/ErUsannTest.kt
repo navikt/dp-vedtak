@@ -11,10 +11,10 @@ import no.nav.dagpenger.opplysning.mai
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class ErIkkeSannTest {
+class ErUsannTest {
     private val regelsett =
         Regelsett("Test") {
-            regel(b) { erIkkeSann(a) }
+            regel(b) { erUsann(a) }
         }
     private val opplysninger = Opplysninger()
 
