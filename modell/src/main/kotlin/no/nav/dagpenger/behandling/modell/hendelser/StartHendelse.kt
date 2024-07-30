@@ -1,7 +1,5 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
-import no.nav.dagpenger.avklaring.Avklaring
-import no.nav.dagpenger.avklaring.Avklaringer
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
@@ -34,6 +32,4 @@ abstract class StartHendelse(
     abstract fun kontrollpunkter(): List<Kontrollpunkt>
 
     abstract fun kanKonkludere(opplysninger: LesbarOpplysninger): Boolean
-
-    fun avklaringer(opplysninger: LesbarOpplysninger): List<Avklaring> = Avklaringer(kontrollpunkter()).måAvklares(opplysninger)
 }
