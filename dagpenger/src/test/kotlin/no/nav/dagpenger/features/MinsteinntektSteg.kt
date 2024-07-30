@@ -35,14 +35,8 @@ class MinsteinntektSteg : No {
                 ),
             )
         }
-        Gitt("at verneplikt er {string}") { verneplikt: String ->
-            val verdi =
-                when (verneplikt) {
-                    "Ja" -> true
-                    "Nei" -> false
-                    else -> throw IllegalArgumentException("Ukjent svar på verneplikt: $verneplikt")
-                }
-            opplysninger.leggTil(Faktum(Verneplikt.avtjentVerneplikt, verdi))
+        Gitt("at verneplikt er {boolsk}") { verneplikt: Boolean ->
+            opplysninger.leggTil(Faktum(Verneplikt.avtjentVerneplikt, verneplikt))
         }
         Gitt("at inntekt er") { data: DataTable ->
 
@@ -60,16 +54,10 @@ class MinsteinntektSteg : No {
             )
         }
 
-        Så("skal utfallet til minste arbeidsinntekt være {string}") { utfall: String ->
-            val verdi =
-                when (utfall) {
-                    "Ja" -> true
-                    "Nei" -> false
-                    else -> throw IllegalArgumentException("Ukjent utfall: $utfall")
-                }
+        Så("skal utfallet til minste arbeidsinntekt være {boolsk}") { utfall: Boolean ->
             Assertions.assertTrue(opplysninger.har(Minsteinntekt.minsteinntekt))
             Assertions.assertEquals(
-                verdi,
+                utfall,
                 opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi,
             )
         }

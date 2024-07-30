@@ -24,15 +24,11 @@ class MeldepliktSteg : No {
             opplysninger.leggTil(Faktum(Søknadstidspunkt.søknadsdato, søknadsdato.somLocalDate()))
             opplysninger.leggTil(Faktum(Søknadstidspunkt.ønsketdato, søknadsdato.somLocalDate()))
         }
-        Gitt("personen var registrert? {string} på {string}") { svar: String, registrert: String ->
+        Gitt("personen var registrert? {boolsk} på {string}") { svar: Boolean, registrert: String ->
             opplysninger.leggTil(
                 Faktum(
                     Meldeplikt.registrertArbeidssøker,
-                    when (svar) {
-                        "Ja" -> true
-                        "Nei" -> false
-                        else -> throw IllegalArgumentException("Ukjent svar: $svar")
-                    },
+                    svar,
                     Gyldighetsperiode(fom = registrert.somLocalDate()),
                 ),
             )

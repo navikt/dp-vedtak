@@ -40,16 +40,10 @@ class AlderskravSteg : No {
                 ),
             )
         }
-        Så("skal utfallet være {string}") { utfall: String ->
-            val verdi =
-                when (utfall) {
-                    "Ja" -> true
-                    "Nei" -> false
-                    else -> throw IllegalArgumentException("Ukjent utfall: $utfall")
-                }
+        Så("skal utfallet være {boolsk}") { utfall: Boolean ->
             Assertions.assertTrue(opplysninger.har(Alderskrav.kravTilAlder))
             Assertions.assertEquals(
-                verdi,
+                utfall,
                 opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi,
             )
         }
