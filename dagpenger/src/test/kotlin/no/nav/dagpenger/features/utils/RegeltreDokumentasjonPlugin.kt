@@ -12,6 +12,7 @@ import io.cucumber.plugin.event.TestSourceRead
 import no.nav.dagpenger.dag.printer.MermaidPrinter
 import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import no.nav.dagpenger.regel.Alderskrav
+import no.nav.dagpenger.regel.FulleYtelser
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Opphold
@@ -42,6 +43,7 @@ fun dokumentasjon(scenario: Scenario) {
             "@regel-utdanning" to Utdanning.regelsett,
             "@regel-verneplikt" to Verneplikt.regelsett,
             "@regel-utestengning" to Utestengning.regelsett,
+            "@regel-fulle-ytelser-eller-afp" to FulleYtelser.regelsett,
         )
     val regelsett = regler[test]
     requireNotNull(regelsett) { "Fant ikke regelsett for $test, det må mappes manuelt i RegeltreDokumentasjonPlugin" }

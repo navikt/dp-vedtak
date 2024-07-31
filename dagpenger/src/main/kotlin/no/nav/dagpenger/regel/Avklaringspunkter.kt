@@ -3,6 +3,13 @@ package no.nav.dagpenger.regel
 import no.nav.dagpenger.avklaring.Avklaringkode
 
 object Avklaringspunkter {
+    val AndreYtelser: Avklaringkode =
+        Avklaringkode(
+            kode = "AndreYtelser",
+            tittel = "Andre ytelser",
+            beskrivelse = "Personen har oppgitt andre ytelser",
+        )
+
     val SøknadstidspunktForLangtFramITid =
         Avklaringkode(
             kode = "SøknadstidspunktForLangtFramITid",
