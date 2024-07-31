@@ -8,7 +8,6 @@ import no.nav.dagpenger.opplysning.regel.oppslag
 object Utestengning {
     val utestengt = Opplysningstype.somBoolsk("Utestengt")
     val ikkeUtestengt = Opplysningstype.somBoolsk("Oppfyller krav til ikke utestengt")
-
     val regelsett =
         Regelsett("Utestengning") {
             regel(utestengt) {
