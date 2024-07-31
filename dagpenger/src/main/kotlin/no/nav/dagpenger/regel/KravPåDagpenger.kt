@@ -16,6 +16,7 @@ object KravPåDagpenger {
                     Meldeplikt.registrertPåSøknadstidspunktet,
                     Rettighetstype.rettighetstype,
                     Utdanning.kravTilUtdanning,
+                    Utestengning.ikkeUtestengt,
                 )
             }
         }

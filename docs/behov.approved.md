@@ -12,6 +12,7 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 |KanJobbeDeltid | Kan jobbe heltid og deltid | Boolsk|boolean|
 |KanJobbeHvorSomHelst | Kan jobbe i hele Norge | Boolsk|boolean|
 |Lønnsgaranti | Har rett til dagpenger etter konkurs | Boolsk|boolean|
+|Oppfyller krav til ikke utestengt | Oppfyller krav til ikke utestengt | Boolsk|boolean|
 |Ordinær | Har rett til ordinære dagpenger gjennom arbeidsforhold | Boolsk|boolean|
 |Permittert | Har rett til dagpenger under permittering | Boolsk|boolean|
 |PermittertFiskeforedling | Har rett til dagpenger under permittering i fiskeforedlingsindustri | Boolsk|boolean|

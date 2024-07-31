@@ -15,4 +15,5 @@ val RegelverkDagpenger =
         Verneplikt.regelsett,
         Virkningstidspunkt.regelsett,
         Utdanning.regelsett,
+        Utestengning.regelsett,
     )

@@ -19,6 +19,7 @@ import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.Utdanning
+import no.nav.dagpenger.regel.Utestengning
 import no.nav.dagpenger.regel.Verneplikt
 import org.approvaltests.Approvals
 import org.approvaltests.core.Options
@@ -40,6 +41,7 @@ fun dokumentasjon(scenario: Scenario) {
             "@regel-tap-arbeidsinntekt-og-arbeidstid" to TapAvArbeidsinntektOgArbeidstid.regelsett,
             "@regel-utdanning" to Utdanning.regelsett,
             "@regel-verneplikt" to Verneplikt.regelsett,
+            "@regel-utestengning" to Utestengning.regelsett,
         )
     val regelsett = regler[test]
     requireNotNull(regelsett) { "Fant ikke regelsett for $test, det må mappes manuelt i RegeltreDokumentasjonPlugin" }
