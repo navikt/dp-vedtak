@@ -17,6 +17,7 @@ object KravPåDagpenger {
                     Rettighetstype.rettighetstype,
                     Utdanning.kravTilUtdanning,
                     Utestengning.ikkeUtestengt,
+                    StreikOgLockout.ikkeStreikEllerLockout,
                 )
             }
         }

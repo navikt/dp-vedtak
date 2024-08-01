@@ -87,7 +87,7 @@ internal class PersonMediatorTest {
         )
     }
 
-    private val forventetAntallOpplysninger = 61
+    private val forventetAntallOpplysninger = 64
 
     @BeforeEach
     fun setUp() {

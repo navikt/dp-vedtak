@@ -4,6 +4,7 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 
 |Behov|Beskrivelse|Logisk datatype|Datatype|
 |---|---|---|---|
+|Er medlemmet påvirket av streik eller lock-out? | Er medlemmet påvirket av streik eller lock-out? | Boolsk|boolean|
 |Fødselsdato | Fødselsdato | Dato|LocalDate|
 |HelseTilAlleTyperJobb | Kan ta alle typer arbeid | Boolsk|boolean|
 |InntektId | Inntekt | ULID|Ulid|

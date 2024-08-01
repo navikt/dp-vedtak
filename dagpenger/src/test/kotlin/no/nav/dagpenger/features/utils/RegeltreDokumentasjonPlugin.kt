@@ -18,6 +18,7 @@ import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Opphold
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.ReellArbeidssøker
+import no.nav.dagpenger.regel.StreikOgLockout
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.Utdanning
 import no.nav.dagpenger.regel.Utestengning
@@ -44,6 +45,7 @@ fun dokumentasjon(scenario: Scenario) {
             "@regel-verneplikt" to Verneplikt.regelsett,
             "@regel-utestengning" to Utestengning.regelsett,
             "@regel-fulle-ytelser-eller-afp" to FulleYtelser.regelsett,
+            "@regel-streik-og-lockout" to StreikOgLockout.regelsett,
         )
     val regelsett = regler[test]
     requireNotNull(regelsett) { "Fant ikke regelsett for $test, det må mappes manuelt i RegeltreDokumentasjonPlugin" }

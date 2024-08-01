@@ -16,4 +16,5 @@ val RegelverkDagpenger =
         Virkningstidspunkt.regelsett,
         Utdanning.regelsett,
         Utestengning.regelsett,
+        StreikOgLockout.regelsett,
     )
