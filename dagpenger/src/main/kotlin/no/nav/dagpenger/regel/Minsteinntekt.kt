@@ -26,7 +26,7 @@ object Minsteinntekt {
     private val `36mndTerskelFaktor` = Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd arbeidsinntekt")
     val inntekt12 = Opplysningstype.somDesimaltall("Arbeidsinntekt siste 12 mnd".id("InntektSiste12Mnd"))
     val inntekt36 = Opplysningstype.somDesimaltall("Arbeidsinntekt siste 36 mnd".id("InntektSiste36Mnd"))
-    private val grunnbeløp = Opplysningstype.somDesimaltall("Grunnbeløp")
+    val grunnbeløp = Opplysningstype.somDesimaltall("Grunnbeløp")
 
     private val sisteAvsluttendendeKalenderMåned = Opptjeningstid.sisteAvsluttendendeKalenderMåned
     private val inntektId = Opplysningstype.somUlid("Inntekt".id(InntektId))
