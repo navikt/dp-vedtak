@@ -1,6 +1,5 @@
 package no.nav.dagpenger.behandling
 
-import no.nav.dagpenger.behandling.modell.BehandlingBehov.AvklaringManuellBehandling
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
@@ -138,7 +137,6 @@ class TestPerson(
             Permittert to true,
             Lønnsgaranti to false,
             PermittertFiskeforedling to false,
-            AvklaringManuellBehandling.name to false,
             // Verneplikt
             Verneplikt to false,
             TarUtdanningEllerOpplæring to false,

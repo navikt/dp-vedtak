@@ -27,7 +27,6 @@ import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPos
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderOpprettelse
-import no.nav.dagpenger.behandling.modell.BehandlingBehov.AvklaringManuellBehandling
 import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEndretTilstand
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
@@ -227,11 +226,6 @@ internal class PersonMediatorTest {
             rapid.harHendelse("behandling_avbrutt") {
                 medTekst("søknadId") shouldBe testPerson.søknadId
             }
-
-            /**
-             * Avklarer om den krever manuell behandling kommer etter avbrutt behandling
-             */
-            testPerson.løsBehov(AvklaringManuellBehandling.name, false)
 
             rapid.inspektør.size shouldBe 5
         }
