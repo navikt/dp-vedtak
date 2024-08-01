@@ -1,4 +1,4 @@
-# Regeltre - Dagpenger 
+# Regeltre - Dagpenger (inngangsvilkår)
 
 ## Regeltre
 

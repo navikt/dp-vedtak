@@ -37,7 +37,7 @@ class DiagramTest {
         @Language("Markdown")
         val markdown =
             """
-                    ># Regeltre - Dagpenger 
+                    ># Regeltre - Dagpenger (inngangsvilkår)
                     >
                     >## Regeltre
                     >
