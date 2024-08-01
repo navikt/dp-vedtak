@@ -154,17 +154,6 @@ internal class AvklaringRepositoryPostgres private constructor(
                 // if (endringerLagret.any { it == 1 }) TODO("Avklaringen er endret")
             }
         }
-
-        /** TODO
-         * 1. [X] Lagre avklaring
-         * 2. [X] Rehydrere avklaringer
-         * 3. [X] Lage AvkaringIkkeRelevantHendelse - når en avklaring er ikke relevant
-         * 4. [X] Sende AvkaringIkkeRelevantHendelse ned modellen til Avklaringer
-         * 5. [X] Lage AvkaringIkkeRelevantMottak
-         * 6. [X] Skrive om dp-manuell-behandling til å lukke avklaringer
-         * 7. [X] Fjerne AvklaringManuellBehandling i Behandling og heller sjekke om det er åpne avklaringer
-         */
-
         nyeAvklaringer.forEach {
             emitNyAvklaring(
                 behandling.behandler.ident,
