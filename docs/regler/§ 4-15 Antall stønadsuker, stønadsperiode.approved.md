@@ -25,8 +25,8 @@ graph RL
   P["Stønadsuker ved siste 36 måneder"] -->|"HvisSannMedResultat"| N["Over terskel for 36 måneder"]
   P["Stønadsuker ved siste 36 måneder"] -->|"HvisSannMedResultat"| C["Lang dagpengeperiode"]
   P["Stønadsuker ved siste 36 måneder"] -->|"HvisSannMedResultat"| A["Kort dagpengeperiode"]
-  Q["Antall stønadsuker"] -->|"MaksAv"| O["Stønadsuker ved siste 12 måneder"]
-  Q["Antall stønadsuker"] -->|"MaksAv"| P["Stønadsuker ved siste 36 måneder"]
+  Q["Antall stønadsuker"] -->|"HøyesteAv"| O["Stønadsuker ved siste 12 måneder"]
+  Q["Antall stønadsuker"] -->|"HøyesteAv"| P["Stønadsuker ved siste 36 måneder"]
 ```
 
 ## Akseptansetester

@@ -4,7 +4,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.divisjon
 import no.nav.dagpenger.opplysning.regel.hvisSannMedResultat
-import no.nav.dagpenger.opplysning.regel.maksAv
+import no.nav.dagpenger.opplysning.regel.høyesteAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
@@ -48,7 +48,7 @@ object Dagpengeperiode {
             regel(stønadsuker36) { hvisSannMedResultat(overterskel36, langPeriode, kortPeriode) }
 
             regel(antallStønadsuker) {
-                maksAv(stønadsuker12, stønadsuker36)
+                høyesteAv(stønadsuker12, stønadsuker36)
             }
         }
 }
