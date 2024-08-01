@@ -24,6 +24,7 @@ import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.Utdanning
 import no.nav.dagpenger.regel.Utestengning
 import no.nav.dagpenger.regel.Verneplikt
+import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import org.approvaltests.Approvals
 import org.approvaltests.core.Options
 import org.approvaltests.namer.NamerWrapper
@@ -48,6 +49,7 @@ fun dokumentasjon(scenario: Scenario) {
             "@regel-fulle-ytelser-eller-afp" to FulleYtelser.regelsett,
             "@regel-streik-og-lockout" to StreikOgLockout.regelsett,
             "@regel-medlemskap" to Medlemskap.regelsett,
+            "@regel-dapengeperiode" to Dagpengeperiode.regelsett,
         )
     val regelsett = regler[test]
     requireNotNull(regelsett) { "Fant ikke regelsett for $test, det må mappes manuelt i RegeltreDokumentasjonPlugin" }

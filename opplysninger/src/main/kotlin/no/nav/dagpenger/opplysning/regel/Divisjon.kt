@@ -12,9 +12,9 @@ class Divisjon internal constructor(
         return verdier.reduce { acc, d -> acc / d }
     }
 
-    override fun toString(): String = "Multiplikasjon av ${opplysningstyper.joinToString(", ")}"
+    override fun toString(): String = "Divisjon av ${opplysningstyper.joinToString(", ")}"
 }
 
-fun Opplysningstype<Double>.divisjon(vararg opplysningstype: Opplysningstype<Double>) = Multiplikasjon(this, *opplysningstype)
+fun Opplysningstype<Double>.divisjon(vararg opplysningstype: Opplysningstype<Double>) = Divisjon(this, *opplysningstype)
 
-operator fun Opplysningstype<Double>.div(opplysningstype: Opplysningstype<Double>) = Multiplikasjon(this, opplysningstype)
+operator fun Opplysningstype<Double>.div(opplysningstype: Opplysningstype<Double>) = Divisjon(this, opplysningstype)
