@@ -18,6 +18,7 @@ object KravPåDagpenger {
                     Utdanning.kravTilUtdanning,
                     Utestengning.ikkeUtestengt,
                     StreikOgLockout.ikkeStreikEllerLockout,
+                    Medlemskap.oppfyllerMedlemskap,
                 )
             }
         }

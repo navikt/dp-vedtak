@@ -6,15 +6,16 @@ val RegelverkDagpenger =
     Regelverk(
         Alderskrav.regelsett,
         KravPåDagpenger.regelsett,
+        Medlemskap.regelsett,
         Meldeplikt.regelsett,
         Minsteinntekt.regelsett,
         Opptjeningstid.regelsett,
         ReellArbeidssøker.regelsett,
         Rettighetstype.regelsett,
+        StreikOgLockout.regelsett,
         Søknadstidspunkt.regelsett,
         Verneplikt.regelsett,
         Virkningstidspunkt.regelsett,
         Utdanning.regelsett,
         Utestengning.regelsett,
-        StreikOgLockout.regelsett,
     )
