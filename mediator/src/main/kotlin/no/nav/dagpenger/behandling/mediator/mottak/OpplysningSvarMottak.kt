@@ -21,6 +21,7 @@ import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Ulid
@@ -218,5 +219,6 @@ private class JsonMapper(
             Desimaltall -> verdi.asDouble() as T
             Boolsk -> verdi.asBoolean() as T
             ULID -> Ulid(verdi.asText()) as T
+            Penger -> TODO()
         }
 }

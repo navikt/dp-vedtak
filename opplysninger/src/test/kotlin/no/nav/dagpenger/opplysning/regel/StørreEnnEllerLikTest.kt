@@ -4,37 +4,39 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.beløpA
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.beløpB
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.boolskA
-import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorA
-import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorB
 import no.nav.dagpenger.opplysning.mai
+import no.nav.dagpenger.opplysning.verdier.Beløp
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class SisteDagIMånedEllerLikTest {
+class StørreEnnEllerLikTest {
     private val opplysninger = Opplysninger()
     private val regelkjøring =
         Regelkjøring(
             1.mai,
             opplysninger,
             Regelsett("regelsett") {
-                regel(boolskA) { størreEnnEllerLik(faktorA, faktorB) }
+                regel(boolskA) { størreEnnEllerLik(beløpA, beløpB) }
             },
         )
 
     @Test
     fun `større enn`() {
-        opplysninger.leggTil(Faktum(faktorA, 2.0))
-        opplysninger.leggTil(Faktum(faktorB, 1.0))
+        opplysninger.leggTil(Faktum(beløpA, Beløp(2.0.toBigDecimal())))
+        opplysninger.leggTil(Faktum(beløpB, Beløp(1.0.toBigDecimal())))
         val utledet = opplysninger.finnOpplysning(boolskA)
         assertTrue(utledet.verdi)
     }
 
     @Test
     fun `ikke større enn`() {
-        opplysninger.leggTil(Faktum(faktorA, 2.0))
-        opplysninger.leggTil(Faktum(faktorB, 1.0))
+        opplysninger.leggTil(Faktum(beløpA, Beløp(1.0.toBigDecimal())))
+        opplysninger.leggTil(Faktum(beløpB, Beløp(2.0.toBigDecimal())))
         val utledet = opplysninger.finnOpplysning(boolskA)
-        assertTrue(utledet.verdi)
+        assertFalse(utledet.verdi)
     }
 }

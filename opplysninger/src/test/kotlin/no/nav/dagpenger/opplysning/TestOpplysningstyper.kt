@@ -7,7 +7,9 @@ internal object TestOpplysningstyper {
     val a by lazy { Opplysningstype.somBoolsk("A") }
     val b by lazy { Opplysningstype.somBoolsk("B") }
     val c by lazy { Opplysningstype.somBoolsk("C") }
-    val grunntall by lazy { Opplysningstype.somDesimaltall("Grunntall") }
+    val grunntall by lazy { Opplysningstype.somBeløp("Grunntall") }
+    val beløpA by lazy { Opplysningstype.somBeløp("BeløpA") }
+    val beløpB by lazy { Opplysningstype.somBeløp("BeløpB") }
     val faktorA by lazy { Opplysningstype.somDesimaltall("FaktorA") }
     val faktorB by lazy { Opplysningstype.somDesimaltall("FaktorB") }
     val produkt by lazy { Opplysningstype.somDesimaltall("Resultat") }

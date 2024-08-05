@@ -16,12 +16,12 @@ object Dagpengeperiode {
     private val terskelFaktor12 = Opplysningstype.somDesimaltall("Terskelfaktor for 12 måneder")
     private val terskelFaktor36 = Opplysningstype.somDesimaltall("Terskelfaktor for 36 måneder")
     private val grunnbeløp = Minsteinntekt.grunnbeløp
-    private val terskel12 = Opplysningstype.somDesimaltall("Terskel for 12 måneder")
-    private val terskel36 = Opplysningstype.somDesimaltall("Terskel for 36 måneder")
+    private val terskel12 = Opplysningstype.somBeløp("Terskel for 12 måneder")
+    private val terskel36 = Opplysningstype.somBeløp("Terskel for 36 måneder")
     private val inntektSiste12 = Minsteinntekt.inntekt12
     private val inntektSiste36 = Minsteinntekt.inntekt36
 
-    private val inntektSnittSiste36 = Opplysningstype.somDesimaltall("Snittinntekt siste 36 måneder")
+    private val inntektSnittSiste36 = Opplysningstype.somBeløp("Snittinntekt siste 36 måneder")
     private val divisor = Opplysningstype.somDesimaltall("Divisior")
 
     private val langPeriode = Opplysningstype.somHeltall("Lang dagpengeperiode")
@@ -37,8 +37,8 @@ object Dagpengeperiode {
             regel(terskelFaktor12) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 2.0 } }
             regel(terskelFaktor36) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 2.0 } }
             regel(divisor) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 3.0 } }
-            regel(terskel12) { multiplikasjon(terskelFaktor12, grunnbeløp) }
-            regel(terskel36) { multiplikasjon(terskelFaktor36, grunnbeløp) }
+            regel(terskel12) { multiplikasjon(grunnbeløp, terskelFaktor12) }
+            regel(terskel36) { multiplikasjon(grunnbeløp, terskelFaktor36) }
             regel(inntektSnittSiste36) { divisjon(inntektSiste36, divisor) }
 
             regel(overterskel12) { størreEnnEllerLik(inntektSiste12, terskel12) }

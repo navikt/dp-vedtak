@@ -1,5 +1,6 @@
 package no.nav.dagpenger.opplysning
 
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import java.time.LocalDate
 
@@ -83,6 +84,16 @@ class Opplysningstype<T : Comparable<T>>(
             navn: String,
             parent: Opplysningstype<Boolean>? = null,
         ) = somBoolsk(navn.id(navn), parent)
+
+        fun somBeløp(
+            navn: String,
+            parent: Opplysningstype<Beløp>? = null,
+        ) = somBeløp(navn.id(navn), parent)
+
+        fun somBeløp(
+            opplysningTypeId: OpplysningTypeId,
+            parent: Opplysningstype<Beløp>? = null,
+        ) = Opplysningstype(opplysningTypeId, Penger, parent)
     }
 
     override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId || parent?.er(type) ?: false

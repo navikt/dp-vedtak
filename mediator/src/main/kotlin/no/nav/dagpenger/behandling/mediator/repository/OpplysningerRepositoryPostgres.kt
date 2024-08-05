@@ -17,6 +17,7 @@ import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
@@ -220,6 +221,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 Desimaltall -> row.double("verdi_desimaltall")
                 Heltall -> row.int("verdi_heltall")
                 ULID -> Ulid(row.string("verdi_string"))
+                Penger -> TODO()
             } as T
 
         fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
@@ -453,6 +455,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             Desimaltall -> Pair("verdi_desimaltall", verdi)
             Heltall -> Pair("verdi_heltall", verdi)
             ULID -> Pair("verdi_string", (verdi as Ulid).verdi)
+            Penger -> TODO()
         }
 
         private fun tilPostgresqlTimestamp(verdi: Any) =

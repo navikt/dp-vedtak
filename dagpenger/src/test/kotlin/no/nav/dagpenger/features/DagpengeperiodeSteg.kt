@@ -7,6 +7,7 @@ import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
@@ -38,7 +39,7 @@ class DagpengeperiodeSteg : No {
             opplysninger.leggTil(
                 Faktum(
                     Minsteinntekt.inntekt12,
-                    inntekt.toDouble(),
+                    Beløp(inntekt.toBigDecimal()),
                 ),
             )
         }
@@ -47,7 +48,7 @@ class DagpengeperiodeSteg : No {
             opplysninger.leggTil(
                 Faktum(
                     Minsteinntekt.inntekt36,
-                    inntekt.toDouble(),
+                    Beløp(inntekt.toBigDecimal()),
                 ),
             )
         }

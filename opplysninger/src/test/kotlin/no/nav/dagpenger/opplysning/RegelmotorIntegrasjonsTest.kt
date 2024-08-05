@@ -9,9 +9,10 @@ import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regelsett.Alderskrav
 import no.nav.dagpenger.opplysning.regelsett.Grunnbeløp
-import no.nav.dagpenger.opplysning.regelsett.Minsteinntekt
+import no.nav.dagpenger.opplysning.regelsett.ReglerForInntektTest
 import no.nav.dagpenger.opplysning.regelsett.Virkningsdato
 import no.nav.dagpenger.opplysning.regelsett.Virkningsdato.virkningsdato
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -26,14 +27,14 @@ class RegelmotorIntegrasjonsTest {
                 listOf(
                     // Setter opp opplysninger med ting som er kjent fra før
                     // Har er ikke lengre gyldig og må hentes på nytt
-                    Faktum(Minsteinntekt.inntekt12, 221221.0, Gyldighetsperiode(1.januar, 1.mai)),
+                    Faktum(ReglerForInntektTest.inntekt12, Beløp(221221.0), Gyldighetsperiode(1.januar, 1.mai)),
                 ),
             )
         val opplysninger = Opplysninger(tidligereBehandling)
         val alleVilkår = Opplysningstype.somBoolsk("Vilkår")
         val regelsett =
             Regelsett("Krav til Dagpenger").apply {
-                regel(alleVilkår) { alle(Minsteinntekt.minsteinntekt, Alderskrav.vilkår) }
+                regel(alleVilkår) { alle(ReglerForInntektTest.minsteinntekt, Alderskrav.vilkår) }
             }
         val regelkjøring =
             Regelkjøring(
@@ -42,7 +43,7 @@ class RegelmotorIntegrasjonsTest {
                 regelsett,
                 Virkningsdato.regelsett,
                 Alderskrav.regelsett,
-                Minsteinntekt.regelsett,
+                ReglerForInntektTest.regelsett,
             )
 
         // Sett virkningsdato som en opplysning
@@ -58,14 +59,14 @@ class RegelmotorIntegrasjonsTest {
 
         // Flyt for å innhente manglende opplysninger
         val avhengigheterTilalleVilkår = regelkjøring.trenger(alleVilkår)
-        val avhengigheterTilMinsteinntekt = regelkjøring.trenger(Minsteinntekt.minsteinntekt)
+        val avhengigheterTilMinsteinntekt = regelkjøring.trenger(ReglerForInntektTest.minsteinntekt)
         val avhengigheterTilAlder = regelkjøring.trenger(Alderskrav.vilkår)
 
         val forventetAlderskravOpplysninger = setOf(Alderskrav.fødselsdato)
         val forventetMinsteinntektOpplysninger =
             setOf(
-                Minsteinntekt.inntekt12,
-                Minsteinntekt.inntekt36,
+                ReglerForInntektTest.inntekt12,
+                ReglerForInntektTest.inntekt36,
                 Alderskrav.fødselsdato,
             )
         avhengigheterTilAlder shouldContainExactly forventetAlderskravOpplysninger
@@ -79,31 +80,31 @@ class RegelmotorIntegrasjonsTest {
         with(regelkjøring.informasjonsbehov(alleVilkår)) {
             shouldContainAll(
                 mapOf(
-                    Minsteinntekt.inntekt12 to listOf(faktiskVirkningsdato),
-                    Minsteinntekt.inntekt36 to listOf(faktiskVirkningsdato),
+                    ReglerForInntektTest.inntekt12 to listOf(faktiskVirkningsdato),
+                    ReglerForInntektTest.inntekt36 to listOf(faktiskVirkningsdato),
                 ),
             )
         }
-        assertEquals(Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(Minsteinntekt.grunnbeløp).verdi)
+        assertEquals(Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(ReglerForInntektTest.grunnbeløp).verdi)
 
         // Har er ikke lengre gyldig inntekt og må hentes på nytt
         opplysninger.leggTil(
             Hypotese(
-                Minsteinntekt.inntekt12,
-                321321.0,
+                ReglerForInntektTest.inntekt12,
+                Beløp(321321.0),
                 Gyldighetsperiode(9.mai),
-                utledetAv = Utledning(Minsteinntekt.inntekt12.innhentMed(virkningsdato), listOf(faktiskVirkningsdato)),
+                utledetAv = Utledning(ReglerForInntektTest.inntekt12.innhentMed(virkningsdato), listOf(faktiskVirkningsdato)),
             ),
         )
-        opplysninger.leggTil(Hypotese(Minsteinntekt.inntekt36, 321321.0, Gyldighetsperiode(9.mai, 12.mai)))
-        assertEquals(0, regelkjøring.trenger(Minsteinntekt.minsteinntekt).size)
+        opplysninger.leggTil(Hypotese(ReglerForInntektTest.inntekt36, Beløp(321321.0), Gyldighetsperiode(9.mai, 12.mai)))
+        assertEquals(0, regelkjøring.trenger(ReglerForInntektTest.minsteinntekt).size)
 
-        Assertions.assertTrue(opplysninger.har(Minsteinntekt.minsteinntekt))
-        Assertions.assertTrue(opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi)
+        Assertions.assertTrue(opplysninger.har(ReglerForInntektTest.minsteinntekt))
+        Assertions.assertTrue(opplysninger.finnOpplysning(ReglerForInntektTest.minsteinntekt).verdi)
 
         Assertions.assertTrue(opplysninger.har(alleVilkår))
 
-        val regelDAG = RegeltreBygger(regelsett, Minsteinntekt.regelsett, Virkningsdato.regelsett, Alderskrav.regelsett).dag()
+        val regelDAG = RegeltreBygger(regelsett, ReglerForInntektTest.regelsett, Virkningsdato.regelsett, Alderskrav.regelsett).dag()
         val mermaidDiagram = MermaidPrinter(regelDAG).toPrint()
         println(mermaidDiagram)
 

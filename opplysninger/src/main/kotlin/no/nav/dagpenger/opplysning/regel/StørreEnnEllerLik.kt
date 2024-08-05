@@ -2,11 +2,12 @@ package no.nav.dagpenger.opplysning.regel
 
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.verdier.Beløp
 
 class StørreEnnEllerLik internal constructor(
     produserer: Opplysningstype<Boolean>,
-    private val a: Opplysningstype<Double>,
-    private val b: Opplysningstype<Double>,
+    private val a: Opplysningstype<Beløp>,
+    private val b: Opplysningstype<Beløp>,
 ) : Regel<Boolean>(produserer, listOf(a, b)) {
     override fun kjør(opplysninger: LesbarOpplysninger): Boolean {
         val a = opplysninger.finnOpplysning(a).verdi
@@ -18,6 +19,6 @@ class StørreEnnEllerLik internal constructor(
 }
 
 fun Opplysningstype<Boolean>.størreEnnEllerLik(
-    er: Opplysningstype<Double>,
-    størreEnn: Opplysningstype<Double>,
+    er: Opplysningstype<Beløp>,
+    størreEnn: Opplysningstype<Beløp>,
 ) = StørreEnnEllerLik(this, er, størreEnn)

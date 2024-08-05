@@ -7,6 +7,7 @@ import no.nav.dagpenger.features.utils.somLocalDate
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
@@ -43,13 +44,13 @@ class MinsteinntektSteg : No {
             opplysninger.leggTil(
                 Faktum(
                     opplysningstype = Minsteinntekt.inntekt12,
-                    verdi = data.cell(0, 1).toDouble(),
+                    verdi = data.cell(0, 1).tilBeløp(),
                 ),
             )
             opplysninger.leggTil(
                 Faktum(
                     opplysningstype = Minsteinntekt.inntekt36,
-                    verdi = data.cell(1, 1).toDouble(),
+                    verdi = data.cell(1, 1).tilBeløp(),
                 ),
             )
         }
@@ -68,3 +69,5 @@ class MinsteinntektSteg : No {
         val beløp: Double,
     )
 }
+
+private fun String.tilBeløp(): Beløp = Beløp(this.toBigDecimal())

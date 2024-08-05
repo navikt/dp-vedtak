@@ -9,14 +9,15 @@ import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import java.time.LocalDate
 
-internal object Minsteinntekt {
+internal object ReglerForInntektTest {
     val antallG12mndInntekt = Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd inntekt")
     val antallG36mndInntekt = Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd inntekt")
-    val inntekt12 = Opplysningstype.somDesimaltall("Inntekt siste 12 mnd".id("inntekt12mnd"))
-    val inntekt36 = Opplysningstype.somDesimaltall("Inntekt siste 36 mnd".id("inntekt36mnd"))
-    val grunnbeløp = Opplysningstype.somDesimaltall("Grunnbeløp")
+    val inntekt12 = Opplysningstype.somBeløp("Inntekt siste 12 mnd".id("inntekt12mnd"))
+    val inntekt36 = Opplysningstype.somBeløp("Inntekt siste 36 mnd".id("inntekt36mnd"))
+    val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp")
 
     private val virkningsdato = Virkningsdato.virkningsdato
     private val antattRapporteringsFrist = Opplysningstype.somDato("Antatt rapporteringsfrist")
@@ -25,8 +26,8 @@ internal object Minsteinntekt {
     private val førsteAvsluttendeKalenderMåned = Opplysningstype.somDato("Første kalendermåned")
     private val inntektId = Opplysningstype.somUlid("InntektId")
 
-    private val nedreTerskel = Opplysningstype.somDesimaltall("Inntektskrav for siste 12 mnd")
-    private val øvreTerskel = Opplysningstype.somDesimaltall("Inntektskrav for siste 36 mnd")
+    private val nedreTerskel = Opplysningstype.somBeløp("Inntektskrav for siste 12 mnd")
+    private val øvreTerskel = Opplysningstype.somBeløp("Inntektskrav for siste 36 mnd")
     private val overNedreTerskel = Opplysningstype.somBoolsk("Inntekt er over kravet for siste 12 mnd")
     private val overØvreTerskel = Opplysningstype.somBoolsk("Inntekt er over kravet for siste 36 mnd")
 
@@ -41,8 +42,8 @@ internal object Minsteinntekt {
             regel(inntekt12) { innhentMed(virkningsdato) }
             regel(inntekt36) { innhentMed(virkningsdato) }
             regel(grunnbeløp) { oppslag(virkningsdato) { Grunnbeløp.finnFor(it) } }
-            regel(nedreTerskel) { multiplikasjon(antallG12mndInntekt, grunnbeløp) }
-            regel(øvreTerskel) { multiplikasjon(antallG36mndInntekt, grunnbeløp) }
+            regel(nedreTerskel) { multiplikasjon(grunnbeløp, antallG12mndInntekt) }
+            regel(øvreTerskel) { multiplikasjon(grunnbeløp, antallG36mndInntekt) }
             regel(overNedreTerskel) { størreEnnEllerLik(inntekt12, nedreTerskel) }
             regel(overØvreTerskel) { størreEnnEllerLik(inntekt36, øvreTerskel) }
             regel(minsteinntekt) { enAv(overNedreTerskel, overØvreTerskel) }
@@ -50,15 +51,18 @@ internal object Minsteinntekt {
 }
 
 internal object Grunnbeløp {
-    const val TEST_GRUNNBELØP = 118620.0
+    val TEST_GRUNNBELØP = Beløp(118620.0)
     private val grunnbeløp =
         mapOf(
-            LocalDate.of(2020, 5, 1) to 99858.0,
-            LocalDate.of(2021, 5, 1) to 105144.0,
+            LocalDate.of(2020, 5, 1) to Beløp(99858.0),
+            LocalDate.of(2021, 5, 1) to Beløp(105144.0),
             LocalDate.of(2022, 5, 1) to TEST_GRUNNBELØP,
         )
 
     fun finnFor(dato: LocalDate) =
-        grunnbeløp.filterKeys { it <= dato }.maxByOrNull { it.key }?.value
+        grunnbeløp
+            .filterKeys { it <= dato }
+            .maxByOrNull { it.key }
+            ?.value
             ?: throw IllegalArgumentException("Fant ikke grunnbeløp for $dato")
 }
