@@ -24,6 +24,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -219,6 +220,6 @@ private class JsonMapper(
             Desimaltall -> verdi.asDouble() as T
             Boolsk -> verdi.asBoolean() as T
             ULID -> Ulid(verdi.asText()) as T
-            Penger -> TODO()
+            Penger -> Beløp(verdi.asText().toBigDecimal()) as T
         }
 }

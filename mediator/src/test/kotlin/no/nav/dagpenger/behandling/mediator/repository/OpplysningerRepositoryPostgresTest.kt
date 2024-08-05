@@ -1,4 +1,4 @@
-package no.nav.dagpenger.behandling.mediator.melding
+package no.nav.dagpenger.behandling.mediator.repository
 
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.longs.shouldBeLessThan
@@ -6,6 +6,8 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.behandling.TestOpplysningstyper.baseOpplysningstype
+import no.nav.dagpenger.behandling.TestOpplysningstyper.beløpA
+import no.nav.dagpenger.behandling.TestOpplysningstyper.beløpB
 import no.nav.dagpenger.behandling.TestOpplysningstyper.boolsk
 import no.nav.dagpenger.behandling.TestOpplysningstyper.dato
 import no.nav.dagpenger.behandling.TestOpplysningstyper.desimal
@@ -14,7 +16,6 @@ import no.nav.dagpenger.behandling.TestOpplysningstyper.maksdato
 import no.nav.dagpenger.behandling.TestOpplysningstyper.mindato
 import no.nav.dagpenger.behandling.TestOpplysningstyper.utledetOpplysningstype
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
-import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Opplysninger
@@ -23,9 +24,11 @@ import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.system.measureTimeMillis
 
@@ -269,6 +272,37 @@ class OpplysningerRepositoryPostgresTest {
                 utledetAv!!.regel shouldBe "Oppslag"
                 utledetAv!!.opplysninger shouldContainExactly listOf(baseOpplysning)
             }
+        }
+    }
+
+    @Test
+    fun `lagrer penger som BigDecimal med riktig presisjon`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+
+            val verdi = "10.00000000000000000006"
+            val verdi1 = BigDecimal(verdi)
+            val beløpFaktumA = Faktum(beløpA, Beløp(verdi1))
+            val beløpFaktumB = Faktum(beløpB, Beløp("EUR 20"))
+
+            val opplysninger = Opplysninger(listOf(beløpFaktumA, beløpFaktumB))
+            repo.lagreOpplysninger(opplysninger)
+
+            val fraDb =
+                repo.hentOpplysninger(opplysninger.id).also {
+                    Regelkjøring(LocalDate.now(), it)
+                }
+
+            beløpFaktumA.verdi.avrundet.numberValue(BigDecimal::class.java) shouldBe verdi1
+
+            fraDb.finnAlle().size shouldBe opplysninger.finnAlle().size
+            val beløpAFraDB = fraDb.finnOpplysning(beløpFaktumA.opplysningstype)
+            beløpAFraDB.verdi shouldBe beløpFaktumA.verdi
+            beløpAFraDB.verdi.toString() shouldBe "NOK $verdi"
+
+            val beløpBFraDB = fraDb.finnOpplysning(beløpFaktumB.opplysningstype)
+            beløpBFraDB.verdi shouldBe beløpFaktumB.verdi
+            beløpBFraDB.verdi.toString() shouldBe "EUR 20"
         }
     }
 }

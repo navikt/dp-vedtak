@@ -6,10 +6,14 @@ import java.math.MathContext
 import java.math.RoundingMode
 import javax.money.Monetary
 import javax.money.MonetaryContextBuilder
+import javax.money.NumberValue
+import javax.money.RoundingQueryBuilder
+import javax.money.convert.MonetaryConversions
 
 class Beløp private constructor(
     private val verdi: Money,
 ) : Comparable<Beløp> {
+    constructor(verdi: String) : this(Money.parse(verdi))
     constructor(verdi: Double) : this(BigDecimal.valueOf(verdi))
     constructor(verdi: BigDecimal) : this(
         Money.of(
@@ -17,14 +21,17 @@ class Beløp private constructor(
             Monetary.getCurrency("NOK"),
             MonetaryContextBuilder
                 .of()
-                .set(
-                    MathContext(
-                        20,
-                        RoundingMode.HALF_UP,
-                    ),
-                ).build(),
+                .set(MathContext.UNLIMITED)
+                .set(RoundingMode.HALF_UP)
+                .build(),
         ),
     )
+
+    val uavrundet: NumberValue get() = verdi.number
+
+    val avrundet: NumberValue get() = verdi.with(avrundet20desimaler).number
+
+    operator fun plus(other: Beløp): Beløp = Beløp(verdi.add(other.verdi))
 
     operator fun div(faktor: Double): Beløp = Beløp(verdi.divide(faktor))
 
@@ -37,4 +44,22 @@ class Beløp private constructor(
     override fun hashCode(): Int = verdi.hashCode()
 
     override fun toString(): String = verdi.toString()
+
+    fun somKroner(): Beløp {
+        val rateProvider = MonetaryConversions.getExchangeRateProvider()
+        val vekslingkurs = rateProvider.getCurrencyConversion("NOK")
+
+        return Beløp(verdi.with(vekslingkurs))
+    }
+
+    private companion object {
+        private val avrundet20desimaler =
+            Monetary.getRounding(
+                RoundingQueryBuilder
+                    .of()
+                    .setScale(20)
+                    .set(RoundingMode.HALF_UP)
+                    .build(),
+            )
+    }
 }

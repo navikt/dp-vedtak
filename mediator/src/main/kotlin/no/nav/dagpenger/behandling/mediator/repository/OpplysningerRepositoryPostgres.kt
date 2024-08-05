@@ -23,6 +23,7 @@ import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.Utledning
 import no.nav.dagpenger.opplysning.id
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import org.postgresql.util.PGobject
 import java.time.LocalDate
@@ -221,7 +222,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 Desimaltall -> row.double("verdi_desimaltall")
                 Heltall -> row.int("verdi_heltall")
                 ULID -> Ulid(row.string("verdi_string"))
-                Penger -> TODO()
+                Penger -> Beløp(row.string("verdi_string"))
             } as T
 
         fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
@@ -455,7 +456,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             Desimaltall -> Pair("verdi_desimaltall", verdi)
             Heltall -> Pair("verdi_heltall", verdi)
             ULID -> Pair("verdi_string", (verdi as Ulid).verdi)
-            Penger -> TODO()
+            Penger -> Pair("verdi_string", (verdi as Beløp).toString())
         }
 
         private fun tilPostgresqlTimestamp(verdi: Any) =
