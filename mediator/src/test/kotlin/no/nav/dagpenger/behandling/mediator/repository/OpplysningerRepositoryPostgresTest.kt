@@ -42,8 +42,9 @@ class OpplysningerRepositoryPostgresTest {
             val boolskFaktum = Faktum(boolsk, true, kilde = kildeA)
             val kildeB = Saksbehandlerkilde("bar")
             val datoFaktum = Faktum(dato, LocalDate.now(), kilde = kildeB)
+            val desimalltallFaktum = Faktum(desimal, 5.5, kilde = kildeB)
 
-            val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum))
+            val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum, desimalltallFaktum))
             repo.lagreOpplysninger(opplysninger)
 
             val fraDb =
@@ -56,6 +57,8 @@ class OpplysningerRepositoryPostgresTest {
             fraDb.finnOpplysning(boolskFaktum.opplysningstype).kilde?.id shouldBe kildeA.id
             fraDb.finnOpplysning(datoFaktum.opplysningstype).verdi shouldBe datoFaktum.verdi
             fraDb.finnOpplysning(datoFaktum.opplysningstype).kilde?.id shouldBe kildeB.id
+
+            fraDb.finnOpplysning(desimalltallFaktum.opplysningstype).verdi shouldBe desimalltallFaktum.verdi
         }
     }
 
@@ -153,7 +156,7 @@ class OpplysningerRepositoryPostgresTest {
     fun `Klarer å lagre store mengder opplysninger effektivt`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
-            val fakta = (1..50000).map { Faktum(desimal, it) }
+            val fakta = (1..50000).map { Faktum(desimal, it.toDouble()) }
             val opplysninger = Opplysninger(fakta)
 
             val tidBrukt = measureTimeMillis { repo.lagreOpplysninger(opplysninger) }
