@@ -7,7 +7,6 @@ import java.math.RoundingMode
 import javax.money.Monetary
 import javax.money.MonetaryContextBuilder
 import javax.money.NumberValue
-import javax.money.RoundingQueryBuilder
 import javax.money.convert.MonetaryConversions
 
 class Beløp private constructor(
@@ -22,6 +21,7 @@ class Beløp private constructor(
             MonetaryContextBuilder
                 .of()
                 .set(MathContext.UNLIMITED)
+                .setMaxScale(DECIMAL_PRESISJON)
                 .set(RoundingMode.HALF_UP)
                 .build(),
         ),
@@ -29,7 +29,7 @@ class Beløp private constructor(
 
     val uavrundet: NumberValue get() = verdi.number
 
-    val avrundet: NumberValue get() = verdi.with(avrundet20desimaler).number
+    val avrundet: NumberValue get() = verdi.number
 
     operator fun plus(other: Beløp): Beløp = Beløp(verdi.add(other.verdi))
 
@@ -53,13 +53,6 @@ class Beløp private constructor(
     }
 
     private companion object {
-        private val avrundet20desimaler =
-            Monetary.getRounding(
-                RoundingQueryBuilder
-                    .of()
-                    .setScale(20)
-                    .set(RoundingMode.HALF_UP)
-                    .build(),
-            )
+        private const val DECIMAL_PRESISJON = 20
     }
 }

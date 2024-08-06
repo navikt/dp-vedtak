@@ -38,6 +38,6 @@ class BeløpTest {
         val beløp2 = Beløp(200.0)
         beløp2 / 2.0 shouldBe beløp
 
-        Beløp(100.0) / 3.0 shouldBe Beløp(33.33333333333333333333)
+        Beløp(100.0) / 3.0 shouldBe Beløp("NOK 33.33333333333333333333")
     }
 }
