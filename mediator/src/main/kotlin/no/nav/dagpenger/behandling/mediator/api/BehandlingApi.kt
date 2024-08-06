@@ -47,6 +47,7 @@ import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import org.apache.kafka.common.errors.ResourceNotFoundException
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -177,7 +178,12 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
     OpplysningDTO(
         id = this.id,
         navn = this.opplysningstype.navn,
-        verdi = this.verdi.toString(),
+        verdi =
+            when (this.opplysningstype.datatype) {
+                // todo: Frontenden burde vite om det er penger og håndtere det med valuta
+                Penger -> (this.verdi as Beløp).uavrundet.toString()
+                else -> this.verdi.toString()
+            },
         status =
             when (this) {
                 is Faktum -> OpplysningDTO.Status.Faktum

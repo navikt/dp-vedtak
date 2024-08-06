@@ -33,6 +33,8 @@ import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.UUIDv7
+import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -62,6 +64,12 @@ internal class BehandlingApiTest {
                             OpplysningSvar(
                                 opplysningstype = Søknadstidspunkt.søknadsdato,
                                 verdi = LocalDate.now(),
+                                tilstand = OpplysningSvar.Tilstand.Faktum,
+                                kilde = Saksbehandlerkilde("Z123456"),
+                            ),
+                            OpplysningSvar(
+                                opplysningstype = Minsteinntekt.inntekt12,
+                                verdi = Beløp(3000.034.toBigDecimal()),
                                 tilstand = OpplysningSvar.Tilstand.Faktum,
                                 kilde = Saksbehandlerkilde("Z123456"),
                             ),
