@@ -8,6 +8,7 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.opplysning.verdier.Stønadsperiode
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
@@ -55,7 +56,7 @@ class DagpengeperiodeSteg : No {
 
         Så("skal søker ha {int} uker med dagpenger") { uker: Int ->
             val faktum = opplysninger.finnOpplysning(Dagpengeperiode.antallStønadsuker)
-            faktum.verdi shouldBe uker
+            faktum.verdi shouldBe Stønadsperiode(uker)
         }
     }
 }

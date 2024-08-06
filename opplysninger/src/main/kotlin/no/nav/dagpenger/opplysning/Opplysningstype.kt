@@ -1,6 +1,7 @@
 package no.nav.dagpenger.opplysning
 
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.opplysning.verdier.Stønadsperiode
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import java.time.LocalDate
 
@@ -94,6 +95,26 @@ class Opplysningstype<T : Comparable<T>>(
             opplysningTypeId: OpplysningTypeId,
             parent: Opplysningstype<Beløp>? = null,
         ) = Opplysningstype(opplysningTypeId, Penger, parent)
+
+        fun somStønadsperiode(
+            navn: String,
+            parent: Opplysningstype<Stønadsperiode>? = null,
+        ) = somStønadsperiode(navn.id(navn), parent)
+
+        fun somStønadsperiode(
+            opplysningTypeId: OpplysningTypeId,
+            parent: Opplysningstype<Stønadsperiode>? = null,
+        ) = Opplysningstype(opplysningTypeId, Stønadsperiode, parent)
+
+        fun somStønadsdager(
+            navn: String,
+            parent: Opplysningstype<no.nav.dagpenger.opplysning.verdier.Stønadsdager>? = null,
+        ) = somStønadsdager(navn.id(navn), parent)
+
+        fun somStønadsdager(
+            opplysningTypeId: OpplysningTypeId,
+            parent: Opplysningstype<no.nav.dagpenger.opplysning.verdier.Stønadsdager>? = null,
+        ) = Opplysningstype(opplysningTypeId, Stønadsdager, parent)
     }
 
     override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId || parent?.er(type) ?: false

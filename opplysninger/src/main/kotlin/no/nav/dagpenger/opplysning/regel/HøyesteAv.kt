@@ -2,13 +2,14 @@ package no.nav.dagpenger.opplysning.regel
 
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.verdier.Stønadsperiode
 
 class HøyesteAv(
-    produserer: Opplysningstype<Int>,
-    vararg val opplysningstyper: Opplysningstype<Int>,
-) : Regel<Int>(produserer, opplysningstyper.toList()) {
-    override fun kjør(opplysninger: LesbarOpplysninger): Int =
-        opplysningstyper.maxOfOrNull { opplysningstype -> opplysninger.finnOpplysning(opplysningstype).verdi } ?: 0
+    produserer: Opplysningstype<Stønadsperiode>,
+    vararg val opplysningstyper: Opplysningstype<Stønadsperiode>,
+) : Regel<Stønadsperiode>(produserer, opplysningstyper.toList()) {
+    override fun kjør(opplysninger: LesbarOpplysninger) =
+        opplysningstyper.maxOfOrNull { opplysningstype -> opplysninger.finnOpplysning(opplysningstype).verdi } ?: Stønadsperiode(0)
 }
 
-fun Opplysningstype<Int>.høyesteAv(vararg opplysningstype: Opplysningstype<Int>) = HøyesteAv(this, *opplysningstype)
+fun Opplysningstype<Stønadsperiode>.høyesteAv(vararg opplysningstype: Opplysningstype<Stønadsperiode>) = HøyesteAv(this, *opplysningstype)
