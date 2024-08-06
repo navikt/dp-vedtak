@@ -100,7 +100,7 @@ internal fun Application.behandlingApi(
                             Desimaltall -> DataTypeDTO.desimaltall
                             Heltall -> DataTypeDTO.heltall
                             ULID -> DataTypeDTO.ulid
-                            Penger -> TODO()
+                            Penger -> DataTypeDTO.penger
                         },
                     )
                 }
