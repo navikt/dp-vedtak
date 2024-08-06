@@ -45,6 +45,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.opplysning.Stønadsperiode
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
 import org.apache.kafka.common.errors.ResourceNotFoundException
@@ -101,6 +102,7 @@ internal fun Application.behandlingApi(
                             Heltall -> DataTypeDTO.heltall
                             ULID -> DataTypeDTO.ulid
                             Penger -> TODO()
+                            Stønadsperiode -> TODO()
                         },
                     )
                 }
