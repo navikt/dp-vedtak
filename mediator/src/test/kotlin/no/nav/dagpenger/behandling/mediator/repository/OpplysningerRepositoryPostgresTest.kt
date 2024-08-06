@@ -296,8 +296,6 @@ class OpplysningerRepositoryPostgresTest {
                     Regelkjøring(LocalDate.now(), it)
                 }
 
-            beløpFaktumA.verdi.avrundet.numberValue(BigDecimal::class.java) shouldBe verdi1
-
             fraDb.finnAlle().size shouldBe opplysninger.finnAlle().size
             val beløpAFraDB = fraDb.finnOpplysning(beløpFaktumA.opplysningstype)
             beløpAFraDB.verdi shouldBe beløpFaktumA.verdi
