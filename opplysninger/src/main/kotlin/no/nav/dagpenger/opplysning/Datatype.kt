@@ -1,7 +1,6 @@
 package no.nav.dagpenger.opplysning
 
 import no.nav.dagpenger.opplysning.verdier.Beløp
-import no.nav.dagpenger.opplysning.verdier.Stønadsperiode
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import java.time.LocalDate
 
@@ -33,5 +32,3 @@ data object Boolsk : Datatype<Boolean>(Boolean::class.java)
 data object ULID : Datatype<Ulid>(Ulid::class.java)
 
 data object Penger : Datatype<Beløp>(Beløp::class.java)
-
-data object Stønadsperiode : Datatype<Stønadsperiode>(Stønadsperiode::class.java)

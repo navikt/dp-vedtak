@@ -8,12 +8,11 @@ import no.nav.dagpenger.opplysning.regel.høyesteAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
-import no.nav.dagpenger.opplysning.verdier.Stønadsperiode
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 
 object Dagpengeperiode {
-    val antallStønadsuker = Opplysningstype.somStønadsperiode("Antall stønadsuker")
+    val antallStønadsuker = Opplysningstype.somHeltall("Antall stønadsuker")
     private val terskelFaktor12 = Opplysningstype.somDesimaltall("Terskelfaktor for 12 måneder")
     private val terskelFaktor36 = Opplysningstype.somDesimaltall("Terskelfaktor for 36 måneder")
     private val grunnbeløp = Minsteinntekt.grunnbeløp
@@ -25,16 +24,16 @@ object Dagpengeperiode {
     private val inntektSnittSiste36 = Opplysningstype.somBeløp("Snittinntekt siste 36 måneder")
     private val divisor = Opplysningstype.somDesimaltall("Divisior")
 
-    private val langPeriode = Opplysningstype.somStønadsperiode("Lang dagpengeperiode")
-    private val kortPeriode = Opplysningstype.somStønadsperiode("Kort dagpengeperiode")
+    private val langPeriode = Opplysningstype.somHeltall("Lang dagpengeperiode")
+    private val kortPeriode = Opplysningstype.somHeltall("Kort dagpengeperiode")
     private val overterskel12 = Opplysningstype.somBoolsk("Over terskel for 12 måneder")
     private val overterskel36 = Opplysningstype.somBoolsk("Over terskel for 36 måneder")
-    private val stønadsuker12 = Opplysningstype.somStønadsperiode("Stønadsuker ved siste 12 måneder")
-    private val stønadsuker36 = Opplysningstype.somStønadsperiode("Stønadsuker ved siste 36 måneder")
+    private val stønadsuker12 = Opplysningstype.somHeltall("Stønadsuker ved siste 12 måneder")
+    private val stønadsuker36 = Opplysningstype.somHeltall("Stønadsuker ved siste 36 måneder")
     val regelsett =
         Regelsett("Dagpengeperiode") {
-            regel(kortPeriode) { oppslag(Søknadstidspunkt.søknadstidspunkt) { Stønadsperiode(52) } }
-            regel(langPeriode) { oppslag(Søknadstidspunkt.søknadstidspunkt) { Stønadsperiode(104) } }
+            regel(kortPeriode) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 52 } }
+            regel(langPeriode) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 104 } }
             regel(terskelFaktor12) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 2.0 } }
             regel(terskelFaktor36) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 2.0 } }
             regel(divisor) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 3.0 } }
