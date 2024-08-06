@@ -39,6 +39,7 @@ internal class PåminnelseMottak(
                 setAttribute("app.behandlingId", behandlingId.toString())
             }
             logger.info { "Mottok hendelse om at behandlingen står fast" }
+            sikkerlogg.info { "Mottok hendelse om at behandlingen står fast: ${packet.toJson()}" }
 
             val message = BehandlingStårFastMessage(packet)
             message.behandle(messageMediator, context)
