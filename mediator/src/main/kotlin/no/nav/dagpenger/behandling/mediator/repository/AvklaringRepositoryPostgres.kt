@@ -28,9 +28,8 @@ internal class AvklaringRepositoryPostgres private constructor(
                 queryOf(
                     // language=PostgreSQL
                     """
-                    SELECT id, avklaringkode.*
+                    SELECT *
                     FROM avklaring
-                             LEFT JOIN avklaringkode ON avklaring.avklaring_kode = avklaringkode.kode
                     WHERE behandling_id = :behandling_id
                     """.trimIndent(),
                     mapOf(
@@ -87,35 +86,22 @@ internal class AvklaringRepositoryPostgres private constructor(
         unitOfWork.inTransaction { tx ->
             avklaringer.forEach { avklaring ->
                 val avklaringskode = avklaring.kode
-                tx.run(
-                    queryOf(
-                        // language=PostgreSQL
-                        """
-                        INSERT INTO avklaringkode (kode, tittel, beskrivelse, kan_kvitteres)
-                        VALUES (:kode, :tittel, :beskrivelse, :kanKvitteres)
-                        ON CONFLICT (kode) DO UPDATE SET tittel = :tittel, beskrivelse = :beskrivelse, kan_kvitteres = :kanKvitteres
-                        """.trimIndent(),
-                        mapOf(
-                            "kode" to avklaringskode.kode,
-                            "tittel" to avklaringskode.tittel,
-                            "beskrivelse" to avklaringskode.beskrivelse,
-                            "kanKvitteres" to avklaringskode.kanKvitteres,
-                        ),
-                    ).asUpdate,
-                )
                 val lagret =
                     tx.run(
                         queryOf(
                             // language=PostgreSQL
                             """
-                            INSERT INTO avklaring (id, behandling_id, avklaring_kode)
-                            VALUES (:avklaring_id, :behandling_id, :avklaring_kode)
+                            INSERT INTO avklaring (id, behandling_id, kode, tittel, beskrivelse, kan_kvitteres)
+                            VALUES (:avklaring_id, :behandling_id, :kode, :tittel, :beskrivelse, :kanKvitteres)
                             ON CONFLICT (id) DO NOTHING
                             """.trimIndent(),
                             mapOf(
                                 "avklaring_id" to avklaring.id,
                                 "behandling_id" to behandling.behandlingId,
-                                "avklaring_kode" to avklaring.kode.kode,
+                                "kode" to avklaringskode.kode,
+                                "tittel" to avklaringskode.tittel,
+                                "beskrivelse" to avklaringskode.beskrivelse,
+                                "kanKvitteres" to avklaringskode.kanKvitteres,
                             ),
                         ).asUpdate,
                     )
