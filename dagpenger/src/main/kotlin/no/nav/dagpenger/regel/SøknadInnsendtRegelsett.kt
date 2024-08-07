@@ -1,10 +1,12 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.Regelverk
+import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 
 val RegelverkDagpenger =
     Regelverk(
         Alderskrav.regelsett,
+        Dagpengeperiode.regelsett,
         KravPåDagpenger.regelsett,
         Medlemskap.regelsett,
         Meldeplikt.regelsett,
@@ -14,8 +16,8 @@ val RegelverkDagpenger =
         Rettighetstype.regelsett,
         StreikOgLockout.regelsett,
         Søknadstidspunkt.regelsett,
-        Verneplikt.regelsett,
-        Virkningstidspunkt.regelsett,
         Utdanning.regelsett,
         Utestengning.regelsett,
+        Verneplikt.regelsett,
+        Virkningstidspunkt.regelsett,
     )

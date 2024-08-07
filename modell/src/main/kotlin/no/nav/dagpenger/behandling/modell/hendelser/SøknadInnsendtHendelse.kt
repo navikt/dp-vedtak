@@ -4,7 +4,9 @@ import no.nav.dagpenger.behandling.konklusjon.Konklusjon
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
+import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.KravPåDagpenger
 import no.nav.dagpenger.regel.Minsteinntekt
@@ -30,7 +32,12 @@ class SøknadInnsendtHendelse(
     gjelderDato: LocalDate,
     fagsakId: Int,
 ) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId) {
-    override fun regelsett() = RegelverkDagpenger.regelsett
+    private fun regelsettFor(opplysning: Opplysningstype<*>) = RegelverkDagpenger.regelsettFor(opplysning)
+
+    override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring {
+        val opplysningstype = avklarer(opplysninger)
+        return Regelkjøring(skjedde, opplysninger, *regelsettFor(opplysningstype).toTypedArray())
+    }
 
     override fun avklarer(opplysninger: LesbarOpplysninger): Opplysningstype<*> {
         // Sjekk krav til alder

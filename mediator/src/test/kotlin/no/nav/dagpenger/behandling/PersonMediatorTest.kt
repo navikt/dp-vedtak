@@ -87,7 +87,7 @@ internal class PersonMediatorTest {
         )
     }
 
-    private val forventetAntallOpplysninger = 66
+    private val forventetAntallOpplysninger = 65
 
     @BeforeEach
     fun setUp() {
@@ -163,12 +163,15 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe forventetAntallOpplysninger
+                it
+                    .behandlinger()
+                    .flatMap { behandling -> behandling.opplysninger().finnAlle() }
+                    .size shouldBe forventetAntallOpplysninger + 13
             }
 
             rapid.harHendelse("behandling_avbrutt") {
                 medTekst("søknadId") shouldBe testPerson.søknadId
-                medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
+                medTekst("årsak") shouldBe "Førte ikke til avslag"
             }
             rapid.inspektør.size shouldBe 18
         }
@@ -307,6 +310,12 @@ internal class PersonMediatorTest {
         testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
 
         /**
+         * Sjekker om mulig verneplikt
+         */
+        rapid.harBehov(Verneplikt)
+        testPerson.løsBehov(Verneplikt)
+
+        /**
          * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
          */
         rapid.harBehov(InntektId) {
@@ -326,12 +335,6 @@ internal class PersonMediatorTest {
         rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
 
         testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
-
-        /**
-         * Sjekker om mulig verneplikt
-         */
-        rapid.harBehov(Verneplikt)
-        testPerson.løsBehov(Verneplikt)
 
         /**
          * Sjekker kravene til reell arbeidssøker

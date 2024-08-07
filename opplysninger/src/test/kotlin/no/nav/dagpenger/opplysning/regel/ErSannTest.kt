@@ -17,22 +17,23 @@ class ErSannTest {
             regel(b) { erSann(a) }
         }
     private val opplysninger = Opplysninger()
+    private lateinit var regelkjøring: Regelkjøring
 
     @BeforeEach
     fun setup() {
-        Regelkjøring(23.mai(2024), opplysninger = opplysninger, regelsett)
+        regelkjøring = Regelkjøring(23.mai(2024), opplysninger = opplysninger, regelsett)
     }
 
     @Test
     fun `Opplysning er ikke sann`() {
-        opplysninger.leggTil(Faktum(a, false))
+        regelkjøring.leggTil(Faktum(a, false))
         opplysninger.har(b) shouldBe true
         opplysninger.finnOpplysning(b).verdi shouldBe false
     }
 
     @Test
     fun `Opplysning er sann`() {
-        opplysninger.leggTil(Faktum(a, true))
+        regelkjøring.leggTil(Faktum(a, true))
         opplysninger.har(b) shouldBe true
         opplysninger.finnOpplysning(b).verdi shouldBe true
     }

@@ -24,24 +24,24 @@ internal class EnAvTest {
 
     @Test
     fun `hvis en av opplysningene er sanne så er utledningen sann`() {
-        opplysninger.leggTil(Faktum(boolskB, false))
-        opplysninger.leggTil(Faktum(boolskC, true))
+        regelkjøring.leggTil(Faktum(boolskB, false))
+        regelkjøring.leggTil(Faktum(boolskC, true))
         val utledet = opplysninger.finnOpplysning(boolskA)
         utledet.verdi shouldBe true
     }
 
     @Test
     fun `hvis ingen av opplysningene er sanne så er utledningen usann`() {
-        opplysninger.leggTil(Faktum(boolskB, false))
-        opplysninger.leggTil(Faktum(boolskC, false))
+        regelkjøring.leggTil(Faktum(boolskB, false))
+        regelkjøring.leggTil(Faktum(boolskC, false))
         val utledet = opplysninger.finnOpplysning(boolskA)
         utledet.verdi shouldBe false
     }
 
     @Test
     fun `hvis begge opplysningene er sanne så er utledningen sann`() {
-        opplysninger.leggTil(Faktum(boolskB, true))
-        opplysninger.leggTil(Faktum(boolskC, true))
+        regelkjøring.leggTil(Faktum(boolskB, true))
+        regelkjøring.leggTil(Faktum(boolskC, true))
         val utledet = opplysninger.finnOpplysning(boolskA)
         utledet.verdi shouldBe true
         utledet.verdi shouldBe true

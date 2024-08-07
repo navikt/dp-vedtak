@@ -22,13 +22,11 @@ class HøyesteAvTest {
             Regelsett("Test") {
                 regel(høyeste) { høyeste.høyesteAv(opplysning1, opplysning2) }
             }
-        val opplysninger =
-            Opplysninger().also {
-                Regelkjøring(23.mai(2024), opplysninger = it, regelsett)
-            }
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(23.mai(2024), opplysninger, regelsett)
 
-        opplysninger.leggTil(Faktum(opplysning1, 1))
-        opplysninger.leggTil(Faktum(opplysning2, 2))
+        regelkjøring.leggTil(Faktum(opplysning1, 1))
+        regelkjøring.leggTil(Faktum(opplysning2, 2))
         opplysninger.har(høyeste) shouldBe true
         opplysninger.finnOpplysning(høyeste).verdi shouldBe 2
     }

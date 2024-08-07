@@ -1,28 +1,32 @@
 package no.nav.dagpenger.opplysning
 
+import java.time.LocalDate
 import java.util.UUID
 
 class Opplysninger private constructor(
     override val id: UUID,
     opplysninger: List<Opplysning<*>> = emptyList(),
     basertPå: List<Opplysninger> = emptyList(),
+    private var forDato: LocalDate = LocalDate.now(),
 ) : LesbarOpplysninger {
-    private lateinit var regelkjøring: Regelkjøring
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
     private val basertPåOpplysninger: List<Opplysning<*>> = basertPå.flatMap { it.basertPåOpplysninger + it.opplysninger }.toList()
     private val alleOpplysninger: List<Opplysning<*>> get() = (basertPåOpplysninger + opplysninger).filterNot { it.erErstattet }
 
     constructor() : this(UUIDv7.ny(), emptyList(), emptyList())
+    constructor(forDato: LocalDate) : this(UUIDv7.ny(), emptyList(), emptyList(), forDato)
     constructor(id: UUID, opplysninger: List<Opplysning<*>>) : this(id, opplysninger, emptyList())
     constructor(opplysninger: List<Opplysning<*>>, basertPå: List<Opplysninger> = emptyList()) : this(UUIDv7.ny(), opplysninger, basertPå)
     constructor(vararg basertPå: Opplysninger) : this(emptyList(), basertPå.toList())
 
+    @Deprecated("Bruk heller konstruktør med forDato")
     fun registrer(regelkjøring: Regelkjøring) {
-        this.regelkjøring = regelkjøring
+        forDato = regelkjøring.forDato
     }
 
+    @Deprecated("Gå via Regelkjøring")
     @Suppress("UNCHECKED_CAST")
-    fun <T : Comparable<T>> leggTil(opplysning: Opplysning<T>) {
+    internal fun <T : Comparable<T>> leggTil(opplysning: Opplysning<T>) {
         val erstattes: Opplysning<T>? = alleOpplysninger.find { it.overlapper(opplysning) } as Opplysning<T>?
         if (erstattes !== null) {
             if (erstattes.erFør(opplysning) && opplysning.etterEllerLik(erstattes)) {
@@ -37,8 +41,13 @@ class Opplysninger private constructor(
         } else {
             opplysninger.add(opplysning)
         }
+    }
 
-        regelkjøring.evaluer()
+    internal fun leggTilUtledet(opplysning: Opplysning<*>) {
+        alleOpplysninger.find { it.overlapper(opplysning) }?.let {
+            opplysninger.remove(it)
+        }
+        opplysninger.add(opplysning)
     }
 
     private fun <T : Comparable<T>> Opplysning<T>.erFør(opplysning: Opplysning<T>) =
@@ -50,17 +59,9 @@ class Opplysninger private constructor(
     private fun <T : Comparable<T>> Opplysning<T>.harSammegyldighetsperiode(opplysning: Opplysning<T>) =
         this.gyldighetsperiode.tom == opplysning.gyldighetsperiode.tom
 
-    internal fun leggTilUtledet(opplysning: Opplysning<*>) {
-        alleOpplysninger.find { it.overlapper(opplysning) }?.let {
-            opplysninger.remove(it)
-        }
-        opplysninger.add(opplysning)
-        regelkjøring.evaluer()
-    }
-
     override fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T> =
         finnNullableOpplysning(opplysningstype)
-            ?: throw IllegalStateException("Har ikke opplysning $opplysningstype som er gyldig for ${regelkjøring.forDato}")
+            ?: throw IllegalStateException("Har ikke opplysning $opplysningstype som er gyldig for $forDato")
 
     override fun finnOpplysning(opplysningId: UUID) =
         opplysninger.firstOrNull { it.id == opplysningId } ?: throw IllegalStateException("Har ikke opplysning $opplysningId")
@@ -75,7 +76,7 @@ class Opplysninger private constructor(
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? =
-        alleOpplysninger.firstOrNull { it.er(opplysningstype) && it.gyldighetsperiode.inneholder(regelkjøring.forDato) } as Opplysning<T>?
+        alleOpplysninger.firstOrNull { it.er(opplysningstype) && it.gyldighetsperiode.inneholder(forDato) } as Opplysning<T>?
 
     operator fun plus(tidligereOpplysninger: List<Opplysninger>) = Opplysninger(id, opplysninger, tidligereOpplysninger)
 

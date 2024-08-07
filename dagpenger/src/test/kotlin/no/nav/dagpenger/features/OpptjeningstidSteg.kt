@@ -11,24 +11,23 @@ import no.nav.dagpenger.regel.Søknadstidspunkt
 import java.time.LocalDate
 
 class OpptjeningstidSteg : No {
-    private val fraDato = 10.mai(2022)
+    private val forDato = 10.mai(2022)
     private val regelsett = listOf(Opptjeningstid.regelsett, Søknadstidspunkt.regelsett)
-    private val opplysninger = Opplysninger()
+    private val opplysninger = Opplysninger(forDato = forDato)
 
     init {
-
-        Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
+        val regelkjøring = Regelkjøring(forDato, opplysninger, *regelsett.toTypedArray())
 
         Gitt(
             "at søknadstidspunktet er {dato}",
         ) { søknadstidspunktet: LocalDate ->
-            opplysninger.leggTil(
+            regelkjøring.leggTil(
                 Faktum(
                     Søknadstidspunkt.søknadsdato,
                     søknadstidspunktet,
                 ),
             )
-            opplysninger.leggTil(
+            regelkjøring.leggTil(
                 Faktum(
                     Søknadstidspunkt.ønsketdato,
                     søknadstidspunktet,

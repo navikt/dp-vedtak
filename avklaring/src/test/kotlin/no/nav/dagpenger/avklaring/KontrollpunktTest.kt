@@ -11,6 +11,7 @@ import no.nav.dagpenger.avklaring.TestAvklaringer.SvangerskapsrelaterteSykepenge
 import no.nav.dagpenger.avklaring.TestAvklaringer.TestIkke123
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
@@ -31,12 +32,14 @@ class KontrollpunktTest {
                 opplysninger.har(opplysningstype) && opplysninger.finnOpplysning(opplysningstype).verdi == 123
             }
 
-        val opplysninger = Opplysninger().also { Regelkjøring(1.mai(2024), it) }
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(1.mai(2024), opplysninger)
+
         with(kontrollpunkt.evaluer(opplysninger)) {
             this shouldBe Kontrollresultat.OK
         }
 
-        opplysninger.leggTil(getOpplysning(123))
+        regelkjøring.leggTil(getOpplysning(123) as Opplysning<*>)
         with(kontrollpunkt.evaluer(opplysninger)) {
             this.shouldBeInstanceOf<Kontrollresultat.KreverAvklaring>()
 
@@ -53,8 +56,9 @@ class KontrollpunktTest {
                 },
             )
 
-        val opplysninger = Opplysninger().also { Regelkjøring(1.mai(2024), it) }
-        opplysninger.leggTil(getOpplysning(321))
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(1.mai(2024), opplysninger)
+        regelkjøring.leggTil(getOpplysning(321) as Opplysning<*>)
 
         val ding = Avklaringer(kontrollpunkter)
         ding.måAvklares(opplysninger).also { avklaringer ->
@@ -64,7 +68,7 @@ class KontrollpunktTest {
         }
 
         // Saksbehandler endrer opplysningen
-        opplysninger.leggTil(getOpplysning(123))
+        regelkjøring.leggTil(getOpplysning(123) as Opplysning<*>)
 
         ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 0
@@ -72,7 +76,7 @@ class KontrollpunktTest {
 
         // Opplysningen endres tilbake til tilstand som krever avklaring
         val endretOpplysning = getOpplysning(321)
-        opplysninger.leggTil(endretOpplysning)
+        regelkjøring.leggTil(endretOpplysning as Opplysning<*>)
 
         ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
@@ -92,8 +96,9 @@ class KontrollpunktTest {
                 },
             )
 
-        val opplysninger = Opplysninger().also { Regelkjøring(1.mai(2024), it) }
-        opplysninger.leggTil(Faktum(inntekterInneholderSykepenger, true))
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(1.mai(2024), opplysninger)
+        regelkjøring.leggTil(Faktum<Boolean>(inntekterInneholderSykepenger, true) as Opplysning<*>)
 
         val ding = Avklaringer(kontrollpunkter)
         ding.måAvklares(opplysninger).also { avklaringer ->
@@ -129,10 +134,11 @@ class KontrollpunktTest {
                 },
             )
 
-        val opplysninger = Opplysninger().also { Regelkjøring(1.mai(2024), it) }
-        opplysninger.leggTil(Faktum(regel1, false))
-        opplysninger.leggTil(Faktum(regel2, false))
-        opplysninger.leggTil(Faktum(regel3, false))
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(1.mai(2024), opplysninger)
+        regelkjøring.leggTil(Faktum<Boolean>(regel1, false) as Opplysning<*>)
+        regelkjøring.leggTil(Faktum<Boolean>(regel2, false) as Opplysning<*>)
+        regelkjøring.leggTil(Faktum<Boolean>(regel3, false) as Opplysning<*>)
 
         val ding = Avklaringer(kontrollpunkter)
         ding.måAvklares(opplysninger).also { avklaringer ->
@@ -141,7 +147,7 @@ class KontrollpunktTest {
             avklaringer.all { it.kode == BeregningsregelForFVA } shouldBe true
         }
 
-        opplysninger.leggTil(Faktum(regel1, true))
+        regelkjøring.leggTil(Faktum<Boolean>(regel1, true) as Opplysning<*>)
 
         // Denne avklaringen skal ikke kunne kvitteres ut, den krever endring
         shouldThrow<IllegalArgumentException> {

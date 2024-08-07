@@ -26,16 +26,16 @@ class StørreEnnEllerLikTest {
 
     @Test
     fun `større enn`() {
-        opplysninger.leggTil(Faktum(beløpA, Beløp(2.0.toBigDecimal())))
-        opplysninger.leggTil(Faktum(beløpB, Beløp(1.0.toBigDecimal())))
+        regelkjøring.leggTil(Faktum(beløpA, Beløp(2.0.toBigDecimal())))
+        regelkjøring.leggTil(Faktum(beløpB, Beløp(1.0.toBigDecimal())))
         val utledet = opplysninger.finnOpplysning(boolskA)
         assertTrue(utledet.verdi)
     }
 
     @Test
     fun `ikke større enn`() {
-        opplysninger.leggTil(Faktum(beløpA, Beløp(1.0.toBigDecimal())))
-        opplysninger.leggTil(Faktum(beløpB, Beløp(2.0.toBigDecimal())))
+        regelkjøring.leggTil(Faktum(beløpA, Beløp(1.0.toBigDecimal())))
+        regelkjøring.leggTil(Faktum(beløpB, Beløp(2.0.toBigDecimal())))
         val utledet = opplysninger.finnOpplysning(boolskA)
         assertFalse(utledet.verdi)
     }

@@ -8,29 +8,42 @@ import no.nav.dagpenger.features.MeldepliktSteg.Utfall.Oppfylt
 import no.nav.dagpenger.features.utils.somLocalDate
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
+import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.Assertions.assertTrue
+import java.time.LocalDate
 
 class MeldepliktSteg : No {
     private val regelsett = listOf(Meldeplikt.regelsett, Søknadstidspunkt.regelsett)
     private val opplysninger: Opplysninger = Opplysninger()
+    private lateinit var regelkjøring: Regelkjøring
 
     init {
         Gitt("at personen søkte {string}") { søknadsdato: String ->
-            Regelkjøring(søknadsdato.somLocalDate(), opplysninger, *regelsett.toTypedArray())
-            opplysninger.leggTil(Faktum(Søknadstidspunkt.søknadsdato, søknadsdato.somLocalDate()))
-            opplysninger.leggTil(Faktum(Søknadstidspunkt.ønsketdato, søknadsdato.somLocalDate()))
+            regelkjøring = Regelkjøring(søknadsdato.somLocalDate(), opplysninger, *regelsett.toTypedArray())
+            regelkjøring.leggTil(
+                Faktum<LocalDate>(
+                    Søknadstidspunkt.søknadsdato,
+                    søknadsdato.somLocalDate(),
+                ) as Opplysning<*>,
+            )
+            regelkjøring.leggTil(
+                Faktum<LocalDate>(
+                    Søknadstidspunkt.ønsketdato,
+                    søknadsdato.somLocalDate(),
+                ) as Opplysning<*>,
+            )
         }
         Gitt("personen var registrert? {boolsk} på {string}") { svar: Boolean, registrert: String ->
-            opplysninger.leggTil(
-                Faktum(
+            regelkjøring.leggTil(
+                Faktum<Boolean>(
                     Meldeplikt.registrertArbeidssøker,
                     svar,
                     Gyldighetsperiode(fom = registrert.somLocalDate()),
-                ),
+                ) as Opplysning<*>,
             )
         }
 

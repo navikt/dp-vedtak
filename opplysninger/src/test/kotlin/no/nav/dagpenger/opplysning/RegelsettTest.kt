@@ -43,32 +43,23 @@ class RegelsettTest {
 
     @Test
     fun `regelkjøring i januar skal bruke regler for januar`() {
-        with(Opplysninger()) {
-            val regelkjøring = Regelkjøring(10.januar, this, regelsett)
-            assertEquals(2, regelkjøring.trenger(beløpA).size)
-            leggTil(Faktum(grunntall, Beløp(3.0)))
-            leggTil(Faktum(faktorA, 1.0))
-            finnOpplysning(beløpA).verdi shouldBe Beløp(3.0)
-        }
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(10.januar, opplysninger, regelsett)
+
+        assertEquals(2, regelkjøring.trenger().size)
+        regelkjøring.leggTil(Faktum(grunntall, Beløp(3.0)))
+        regelkjøring.leggTil(Faktum(faktorA, 1.0))
+        opplysninger.finnOpplysning(beløpA).verdi shouldBe Beløp(3.0)
     }
 
     @Test
     fun `regelkjøring i juni skal bruke regler for juni`() {
-        with(Opplysninger()) {
-            val regelkjøring = Regelkjøring(10.juni, this, regelsett)
-            assertEquals(2, regelkjøring.trenger(beløpA).size)
-            leggTil(Faktum(grunntall, Beløp(3.0)))
-            leggTil(Faktum(faktorB, 2.0))
-            finnOpplysning(beløpA).verdi shouldBe Beløp(6.0)
-        }
-    }
+        val opplysninger = Opplysninger()
+        val regelkjøring = Regelkjøring(10.juni, opplysninger, regelsett)
 
-    @Test
-    fun `regelkjøring i juni skal gjenbruke verdi fra januar`() {
-        with(Opplysninger(listOf(Faktum(beløpA, Beløp(3.0))))) {
-            val regelkjøring = Regelkjøring(10.juni, this, regelsett)
-            assertEquals(0, regelkjøring.trenger(beløpA).size)
-            finnOpplysning(beløpA).verdi shouldBe Beløp(3.0)
-        }
+        assertEquals(2, regelkjøring.trenger().size)
+        regelkjøring.leggTil(Faktum(grunntall, Beløp(3.0)))
+        regelkjøring.leggTil(Faktum(faktorB, 2.0))
+        opplysninger.finnOpplysning(beløpA).verdi shouldBe Beløp(6.0)
     }
 }

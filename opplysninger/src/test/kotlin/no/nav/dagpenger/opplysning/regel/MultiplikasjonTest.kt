@@ -25,8 +25,8 @@ class MultiplikasjonTest {
 
     @Test
     fun `multiplikasjon regel`() {
-        opplysninger.leggTil(Faktum(beløpB, Beløp(2.0)))
-        opplysninger.leggTil(Faktum(faktorB, 2.0))
+        regelkjøring.leggTil(Faktum(beløpB, Beløp(2.0)))
+        regelkjøring.leggTil(Faktum(faktorB, 2.0))
         val utledet = opplysninger.finnOpplysning(beløpA)
         assertEquals(Beløp(4.0), utledet.verdi)
     }

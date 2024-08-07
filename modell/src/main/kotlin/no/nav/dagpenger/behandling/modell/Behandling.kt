@@ -22,6 +22,7 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.KravPåDagpenger
@@ -56,7 +57,8 @@ class Behandling private constructor(
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
     private val opplysninger: Opplysninger = gjeldendeOpplysninger + tidligereOpplysninger
 
-    private val regelkjøring = Regelkjøring(behandler.skjedde, opplysninger, *behandler.regelsett().toTypedArray())
+    private fun regelkjøring(regelsett: List<Regelsett>) = Regelkjøring(behandler.skjedde, opplysninger, *regelsett.toTypedArray())
+
     private val avklaringer = Avklaringer(behandler.kontrollpunkter(), avklaringer)
 
     fun avklaringer() = avklaringer.avklaringer(opplysninger)
@@ -93,8 +95,6 @@ class Behandling private constructor(
 
     fun opplysninger(): LesbarOpplysninger = opplysninger
 
-    private fun informasjonsbehov() = regelkjøring.informasjonsbehov(behandler.avklarer(opplysninger))
-
     override fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
@@ -124,6 +124,8 @@ class Behandling private constructor(
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
+
+    private fun informasjonsbehov() = behandler.regelkjøring(opplysninger).also { it.evaluer() }.informasjonsbehov()
 
     private fun hvaTrengerViNå(hendelse: PersonHendelse) =
         informasjonsbehov().onEach { (behov, avhengigheter) ->
@@ -309,8 +311,9 @@ class Behandling private constructor(
             hendelse: OpplysningSvarHendelse,
         ) {
             hendelse.kontekst(this)
+            val regelkjøring: Regelkjøring = behandling.behandler.regelkjøring(behandling.opplysninger)
             hendelse.opplysninger.forEach { opplysning ->
-                behandling.opplysninger.leggTil(opplysning.opplysning())
+                regelkjøring.leggTil(opplysning.opplysning())
             }
 
             val kanKonkludere = behandling.behandler.kanKonkludere(behandling.opplysninger)

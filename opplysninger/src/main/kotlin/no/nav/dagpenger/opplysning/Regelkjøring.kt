@@ -22,11 +22,28 @@ class Regelkjøring(
         opplysninger.registrer(this)
     }
 
+    fun leggTil(opplysning: Opplysning<*>) {
+        opplysninger.leggTil(opplysning)
+        evaluer()
+    }
+
     fun evaluer() {
         aktiverRegler()
         while (plan.size > 0) {
             kjørRegelPlan()
             aktiverRegler()
+        }
+    }
+
+    private fun aktiverRegler() {
+        muligeRegler
+            .filter {
+                it.kanKjøre(opplysninger)
+            }.forEach {
+                plan.add(it)
+            }
+        plan.forEach {
+            muligeRegler.remove(it)
         }
     }
 
@@ -43,26 +60,8 @@ class Regelkjøring(
         opplysninger.leggTilUtledet(opplysning)
     }
 
-    private fun aktiverRegler() {
-        muligeRegler
-            .filter {
-                it.kanKjøre(opplysninger)
-            }.forEach {
-                plan.add(it)
-            }
-        plan.forEach {
-            muligeRegler.remove(it)
-        }
-    }
-
-    internal fun trenger(opplysningstype: Opplysningstype<*>? = null): Set<Opplysningstype<*>> {
-        if (opplysningstype?.let { opplysninger.har(it) } == true) return emptySet()
-        val dag = RegeltreBygger(muligeRegler).dag()
-        val graph =
-            when (opplysningstype) {
-                null -> dag
-                else -> dag.subgraph { it.er(opplysningstype) }
-            }
+    internal fun trenger(): Set<Opplysningstype<*>> {
+        val graph = RegeltreBygger(muligeRegler).dag()
         val opplysningerUtenRegel = graph.findLeafNodes()
         val opplysningerMedEksternRegel = graph.findNodesWithEdge { it.data is Ekstern<*> }
         return (opplysningerUtenRegel + opplysningerMedEksternRegel)
@@ -71,8 +70,8 @@ class Regelkjøring(
             .toSet()
     }
 
-    fun informasjonsbehov(opplysningstype: Opplysningstype<*>): Map<Opplysningstype<*>, List<Opplysning<*>>> =
-        trenger(opplysningstype)
+    fun informasjonsbehov(): Map<Opplysningstype<*>, List<Opplysning<*>>> =
+        trenger()
             .associateWith {
                 // Finn regel som produserer opplysningstype og hent ut avhengigheter
                 muligeRegler.find { regel -> regel.produserer(it) }?.avhengerAv ?: emptyList()

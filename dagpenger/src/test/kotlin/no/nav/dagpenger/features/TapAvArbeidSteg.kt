@@ -5,6 +5,7 @@ import io.cucumber.java8.No
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.features.utils.somLocalDate
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Søknadstidspunkt
@@ -18,45 +19,48 @@ import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.tapAvArbeid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.tapAvArbeidsinntekt
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import java.time.LocalDate
 
 class TapAvArbeidSteg : No {
     private val fraDato = 10.mai(2022)
     private val regelsett = listOf(TapAvArbeidsinntektOgArbeidstid.regelsett, Søknadstidspunkt.regelsett)
     private val opplysninger = Opplysninger()
 
+    private lateinit var regelkjøring: Regelkjøring
+
     @BeforeStep
     fun kjørRegler() {
-        Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
+        regelkjøring = Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
     }
 
     init {
 
         Gitt("at søknadsdatossssss er {string}") { søknadsdato: String ->
-            opplysninger.leggTil(
-                Faktum(
+            regelkjøring.leggTil(
+                Faktum<LocalDate>(
                     Søknadstidspunkt.søknadsdato,
                     søknadsdato.somLocalDate(),
-                ),
+                ) as Opplysning<*>,
             )
-            opplysninger.leggTil(
-                Faktum(
+            regelkjøring.leggTil(
+                Faktum<LocalDate>(
                     Søknadstidspunkt.ønsketdato,
                     søknadsdato.somLocalDate(),
-                ),
+                ) as Opplysning<*>,
             )
         }
 
         Gitt("at personen har tapt arbeid") {
-            opplysninger.leggTil(Faktum(tapAvArbeid, true))
+            regelkjøring.leggTil(Faktum<Boolean>(tapAvArbeid, true) as Opplysning<*>)
         }
         Og("personen har tapt arbeidsinntekt") {
-            opplysninger.leggTil(Faktum(kravPåLønn, false))
+            regelkjøring.leggTil(Faktum<Boolean>(kravPåLønn, false) as Opplysning<*>)
         }
         Og("har fått fastsatt vanlig arbeidstid til {double}") { timer: Double ->
-            opplysninger.leggTil(Faktum(beregnetArbeidstid, timer))
+            regelkjøring.leggTil(Faktum<Double>(beregnetArbeidstid, timer) as Opplysning<*>)
         }
         Og("har ny arbeidstid {double}") { timer: Double ->
-            opplysninger.leggTil(Faktum(nyArbeidstid, timer))
+            regelkjøring.leggTil(Faktum<Double>(nyArbeidstid, timer) as Opplysning<*>)
         }
         Når("personen søker om dagpenger") { }
         Så("skal personen oppfylle kravet til tap av arbeidsinntekt") {

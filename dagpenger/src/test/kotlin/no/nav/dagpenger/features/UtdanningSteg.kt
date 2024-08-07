@@ -6,54 +6,57 @@ import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.Utdanning
+import java.time.LocalDate
 
 class UtdanningSteg : No {
     private val fraDato = 23.mai(2024)
     private val regelsett = listOf(Utdanning.regelsett, Søknadstidspunkt.regelsett)
     private val opplysninger = Opplysninger()
+    private lateinit var regelkjøring: Regelkjøring
 
     @BeforeStep
     fun kjørRegler() {
-        Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
+        regelkjøring = Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
     }
 
     init {
 
         Gitt("at personen søker på kravet om dagpenger") {
-            opplysninger.leggTil(Faktum(Søknadstidspunkt.søknadsdato, 23.mai(2024)))
-            opplysninger.leggTil(Faktum(Søknadstidspunkt.ønsketdato, 23.mai(2024)))
+            regelkjøring.leggTil(Faktum<LocalDate>(Søknadstidspunkt.søknadsdato, 23.mai(2024)) as Opplysning<*>)
+            regelkjøring.leggTil(Faktum<LocalDate>(Søknadstidspunkt.ønsketdato, 23.mai(2024)) as Opplysning<*>)
         }
 
         Gitt("at søkeren svarer {boolsk} på spørsmålet om utdanning") { utdanning: Boolean ->
-            opplysninger.leggTil(Faktum(Utdanning.tarUtdanning, utdanning))
+            regelkjøring.leggTil(Faktum<Boolean>(Utdanning.tarUtdanning, utdanning) as Opplysning<*>)
         }
 
         Gitt("at unntaket arbeidsmarkedstiltak er {boolsk}") { svar: Boolean ->
-            opplysninger.leggTil(Faktum(Utdanning.deltakelseIArbeidsmarkedstiltak, svar))
+            regelkjøring.leggTil(Faktum<Boolean>(Utdanning.deltakelseIArbeidsmarkedstiltak, svar) as Opplysning<*>)
         }
 
         Gitt("at unntaket opplæring for innvandrere er {boolsk}") { svar: Boolean ->
-            opplysninger.leggTil(Faktum(Utdanning.opplæringForInnvandrere, svar))
+            regelkjøring.leggTil(Faktum<Boolean>(Utdanning.opplæringForInnvandrere, svar) as Opplysning<*>)
         }
 
         Gitt("at unntaket grunnskoleopplæring er {boolsk}") { svar: Boolean ->
-            opplysninger.leggTil(Faktum(Utdanning.grunnskoleopplæring, svar))
+            regelkjøring.leggTil(Faktum<Boolean>(Utdanning.grunnskoleopplæring, svar) as Opplysning<*>)
         }
 
         Gitt("at unntaket høyere yrkesfaglig utdanning er {boolsk}") { svar: Boolean ->
-            opplysninger.leggTil(Faktum(Utdanning.høyereYrkesfagligUtdanning, svar))
+            regelkjøring.leggTil(Faktum<Boolean>(Utdanning.høyereYrkesfagligUtdanning, svar) as Opplysning<*>)
         }
 
         Gitt("at unntaket høyere utdanning er {boolsk}") { svar: Boolean ->
-            opplysninger.leggTil(Faktum(Utdanning.høyereUtdanning, svar))
+            regelkjøring.leggTil(Faktum<Boolean>(Utdanning.høyereUtdanning, svar) as Opplysning<*>)
         }
 
         Gitt("at unntaket deltar på kurs er {boolsk}") { svar: Boolean ->
-            opplysninger.leggTil(Faktum(Utdanning.deltakelsePåKurs, svar))
+            regelkjøring.leggTil(Faktum<Boolean>(Utdanning.deltakelsePåKurs, svar) as Opplysning<*>)
         }
 
         Så("skal utfallet om utdanning være {boolsk}") { svar: Boolean ->

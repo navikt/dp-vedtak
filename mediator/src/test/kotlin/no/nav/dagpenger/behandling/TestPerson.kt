@@ -131,7 +131,7 @@ class TestPerson(
             HelseTilAlleTyperJobb to true,
             VilligTilÅBytteYrke to true,
             // Arbeidssøkerregistrering
-            RegistrertSomArbeidssøker to LocalDate.now().minusDays(1),
+            RegistrertSomArbeidssøker to true,
             // Rettighetsype
             Ordinær to false,
             Permittert to true,

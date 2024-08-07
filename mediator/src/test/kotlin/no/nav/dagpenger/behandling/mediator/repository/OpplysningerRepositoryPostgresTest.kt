@@ -18,6 +18,7 @@ import no.nav.dagpenger.behandling.TestOpplysningstyper.utledetOpplysningstype
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
+import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
@@ -128,8 +129,9 @@ class OpplysningerRepositoryPostgresTest {
             val baseOpplysning = Faktum(baseOpplysningstype, LocalDate.now())
 
             val regelsett = Regelsett("Regelsett") { regel(utledetOpplysningstype) { oppslag(baseOpplysningstype) { 5 } } }
-            val opplysninger = Opplysninger().also { Regelkjøring(LocalDate.now(), it, regelsett) }
-            opplysninger.leggTil(baseOpplysning)
+            val opplysninger = Opplysninger()
+            val regelkjøring = Regelkjøring(LocalDate.now(), opplysninger, regelsett)
+            regelkjøring.leggTil(baseOpplysning as Opplysning<*>)
 
             repo.lagreOpplysninger(opplysninger)
 
@@ -173,12 +175,11 @@ class OpplysningerRepositoryPostgresTest {
             val repo = OpplysningerRepositoryPostgres()
             val opplysning = Faktum(heltall, 10)
             val opplysningErstattet = Faktum(heltall, 20)
-            val opplysninger =
-                Opplysninger(listOf(opplysning)).also {
-                    Regelkjøring(LocalDate.now(), it)
-                }
+            val opplysninger = Opplysninger(listOf(opplysning))
+            val regelkjøring = Regelkjøring(LocalDate.now(), opplysninger)
+
             repo.lagreOpplysninger(opplysninger)
-            opplysninger.leggTil(opplysningErstattet)
+            regelkjøring.leggTil(opplysningErstattet as Opplysning<*>)
             repo.lagreOpplysninger(opplysninger)
             val fraDb =
                 repo.hentOpplysninger(opplysninger.id).also {
@@ -196,16 +197,14 @@ class OpplysningerRepositoryPostgresTest {
 
             // Lag opplysninger med opprinnelig opplysning
             val opplysning = Faktum(heltall, 10)
-            val opprinneligOpplysninger =
-                Opplysninger(listOf(opplysning)).also {
-                    Regelkjøring(LocalDate.now(), it)
-                }
+            val opprinneligOpplysninger = Opplysninger(listOf(opplysning))
             repo.lagreOpplysninger(opprinneligOpplysninger)
 
             // Lag ny opplysninger med erstattet opplysning
             val opplysningErstattet = Faktum(heltall, 20)
-            val erstattetOpplysninger = Opplysninger(opprinneligOpplysninger).also { Regelkjøring(LocalDate.now(), it) }
-            erstattetOpplysninger.leggTil(opplysningErstattet)
+            val erstattetOpplysninger = Opplysninger(opprinneligOpplysninger)
+            val regelkjøring = Regelkjøring(LocalDate.now(), erstattetOpplysninger)
+            regelkjøring.leggTil(opplysningErstattet as Opplysning<*>)
             repo.lagreOpplysninger(erstattetOpplysninger)
 
             // Verifiser
@@ -228,17 +227,17 @@ class OpplysningerRepositoryPostgresTest {
             val baseOpplysning = Faktum(baseOpplysningstype, LocalDate.now())
 
             val regelsett = Regelsett("Regelsett") { regel(utledetOpplysningstype) { oppslag(baseOpplysningstype) { 5 } } }
-            val tidligereOpplysninger = Opplysninger().also { Regelkjøring(LocalDate.now(), it, regelsett) }
-            tidligereOpplysninger.leggTil(baseOpplysning)
+            val tidligereOpplysninger = Opplysninger()
+            val regelkjøring = Regelkjøring(LocalDate.now(), tidligereOpplysninger, regelsett)
+
+            regelkjøring.leggTil(baseOpplysning as Opplysning<*>)
 
             repo.lagreOpplysninger(tidligereOpplysninger)
 
-            val nyeOpplysninger =
-                Opplysninger(opplysninger = emptyList(), basertPå = listOf(tidligereOpplysninger)).also {
-                    Regelkjøring(LocalDate.now(), it, regelsett)
-                }
+            val nyeOpplysninger = Opplysninger(opplysninger = emptyList(), basertPå = listOf(tidligereOpplysninger))
+            val nyRegelkjøring = Regelkjøring(LocalDate.now(), nyeOpplysninger, regelsett)
             val endretBaseOpplysningstype = Faktum(baseOpplysningstype, LocalDate.now().plusDays(1))
-            nyeOpplysninger.leggTil(endretBaseOpplysningstype)
+            nyRegelkjøring.leggTil(endretBaseOpplysningstype as Opplysning<*>)
             repo.lagreOpplysninger(nyeOpplysninger)
 
             val fraDb = repo.hentOpplysninger(nyeOpplysninger.id).also { Regelkjøring(LocalDate.now(), it) }

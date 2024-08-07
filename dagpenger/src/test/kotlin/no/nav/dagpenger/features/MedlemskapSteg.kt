@@ -6,28 +6,31 @@ import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Medlemskap
 import no.nav.dagpenger.regel.Søknadstidspunkt
+import java.time.LocalDate
 
 class MedlemskapSteg : No {
     private val fraDato = 23.mai(2024)
     private val regelsett = listOf(Medlemskap.regelsett)
     private val opplysninger = Opplysninger()
+    private lateinit var regelkjøring: Regelkjøring
 
     @BeforeStep
     fun kjørRegler() {
-        Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
+        regelkjøring = Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
     }
 
     init {
         Gitt("at søker har søkt om dagpenger og er medlem?") {
-            opplysninger.leggTil(Faktum(Søknadstidspunkt.søknadstidspunkt, fraDato))
+            regelkjøring.leggTil(Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>)
         }
 
         Og("at personen er medlem {boolsk} i folketrygden") { medlem: Boolean ->
-            opplysninger.leggTil(Faktum(Medlemskap.medlemFolketrygden, medlem))
+            regelkjøring.leggTil(Faktum<Boolean>(Medlemskap.medlemFolketrygden, medlem) as Opplysning<*>)
         }
 
         Så("skal vilkåret om medlemskap være {boolsk}") { utfall: Boolean ->
