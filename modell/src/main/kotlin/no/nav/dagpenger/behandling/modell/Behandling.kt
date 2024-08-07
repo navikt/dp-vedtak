@@ -24,6 +24,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import no.nav.dagpenger.regel.KravPåDagpenger
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
 import java.time.Duration
 import java.time.LocalDateTime
@@ -92,7 +93,7 @@ class Behandling private constructor(
 
     fun opplysninger(): LesbarOpplysninger = opplysninger
 
-    private fun informasjonsbehov() = regelkjøring.informasjonsbehov(behandler.avklarer())
+    private fun informasjonsbehov() = regelkjøring.informasjonsbehov(behandler.avklarer(opplysninger))
 
     override fun håndter(hendelse: SøknadInnsendtHendelse) {
         hendelse.kontekst(this)
@@ -322,7 +323,7 @@ class Behandling private constructor(
             // TODO: Endre til kanKonkludere || trenger.isEmpty()
             if (trenger.isEmpty()) {
                 // TODO: Dette faller bort når vi sjekker alt
-                val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
+                val avklaring = behandling.opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger)
                 if (avklaring.verdi) {
                     hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
                     behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag"), hendelse)
@@ -391,10 +392,10 @@ class Behandling private constructor(
                 BehandlingHendelser.ForslagTilVedtakHendelse,
                 "Foreslår vedtak",
                 mapOf(
-                    "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer()).verdi,
+                    "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger)).verdi,
                     "harAvklart" to
                         behandling.opplysninger
-                            .finnOpplysning(behandling.behandler.avklarer())
+                            .finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger))
                             .opplysningstype.navn,
                     "avklaringer" to avklaringer,
                 ),
@@ -513,7 +514,7 @@ class Behandling private constructor(
         ) {
             behandling.observatører.forEach { it.ferdig() }
             // TODO: Dette er vel strengt tatt ikke vedtak fattet?
-            val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer())
+            val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger))
             hendelse.hendelse(
                 VedtakFattetHendelse,
                 "Vedtak fattet",

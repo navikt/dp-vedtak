@@ -25,7 +25,7 @@ abstract class StartHendelse(
 
     abstract fun regelsett(): List<Regelsett>
 
-    abstract fun avklarer(): Opplysningstype<Boolean>
+    abstract fun avklarer(opplysnigner: LesbarOpplysninger): Opplysningstype<*>
 
     abstract fun behandling(): Behandling
 
