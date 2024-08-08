@@ -21,8 +21,6 @@ import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
-import no.nav.dagpenger.opplysning.Regelkjøring
-import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.KravPåDagpenger
@@ -57,9 +55,9 @@ class Behandling private constructor(
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
     private val opplysninger: Opplysninger = gjeldendeOpplysninger + tidligereOpplysninger
 
-    private fun regelkjøring(regelsett: List<Regelsett>) = Regelkjøring(behandler.skjedde, opplysninger, *regelsett.toTypedArray())
-
     private val avklaringer = Avklaringer(behandler.kontrollpunkter(), avklaringer)
+
+    private val regelkjøring get() = behandler.regelkjøring(opplysninger)
 
     fun avklaringer() = avklaringer.avklaringer(opplysninger)
 
@@ -125,7 +123,7 @@ class Behandling private constructor(
         tilstand.håndter(this, hendelse)
     }
 
-    private fun informasjonsbehov() = behandler.regelkjøring(opplysninger).also { it.evaluer() }.informasjonsbehov()
+    private fun informasjonsbehov() = regelkjøring.informasjonsbehov()
 
     private fun hvaTrengerViNå(hendelse: PersonHendelse) =
         informasjonsbehov().onEach { (behov, avhengigheter) ->
@@ -311,10 +309,12 @@ class Behandling private constructor(
             hendelse: OpplysningSvarHendelse,
         ) {
             hendelse.kontekst(this)
-            val regelkjøring: Regelkjøring = behandling.behandler.regelkjøring(behandling.opplysninger)
             hendelse.opplysninger.forEach { opplysning ->
-                regelkjøring.leggTil(opplysning.opplysning())
+                behandling.regelkjøring.leggTil(opplysning.opplysning())
             }
+
+            // Kjør regelkjøring for alle oppplysninger
+            behandling.regelkjøring.evaluer()
 
             val kanKonkludere = behandling.behandler.kanKonkludere(behandling.opplysninger)
             if (kanKonkludere) {

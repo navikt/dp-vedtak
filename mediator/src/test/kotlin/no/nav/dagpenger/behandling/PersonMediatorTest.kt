@@ -161,12 +161,14 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilFerdig(testPerson)
 
             personRepository.hent(ident.tilPersonIdentfikator()).also {
+                val opplysningerForDagpengeperiode = 13
+
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
                 it
                     .behandlinger()
                     .flatMap { behandling -> behandling.opplysninger().finnAlle() }
-                    .size shouldBe forventetAntallOpplysninger + 13
+                    .size shouldBe forventetAntallOpplysninger + opplysningerForDagpengeperiode
             }
 
             rapid.harHendelse("behandling_avbrutt") {
