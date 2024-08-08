@@ -58,6 +58,8 @@ jobs:
     name: Generate SBOM, attest and sign image
     needs: [ build ]
     runs-on: ubuntu-latest
+    permissions:
+      id-token: "write"
     steps:
       - name: NAIS login
         uses: nais/login@v0
