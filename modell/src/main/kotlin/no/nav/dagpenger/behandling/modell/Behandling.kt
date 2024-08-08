@@ -316,14 +316,8 @@ class Behandling private constructor(
             // Kjør regelkjøring for alle oppplysninger
             behandling.regelkjøring.evaluer()
 
-            val kanKonkludere = behandling.behandler.kanKonkludere(behandling.opplysninger)
-            if (kanKonkludere) {
-                hendelse.info("Nå vet vi nok til å konkludere")
-            }
-
             val trenger = behandling.hvaTrengerViNå(hendelse)
 
-            // TODO: Endre til kanKonkludere || trenger.isEmpty()
             if (trenger.isEmpty()) {
                 // TODO: Dette faller bort når vi sjekker alt
                 val avklaring = behandling.opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger)
@@ -339,12 +333,6 @@ class Behandling private constructor(
                     hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")
                     behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag på grunn av inntekt"), hendelse)
                     return
-                }
-
-                if (kanKonkludere) {
-                    hendelse.info("Ny og gammel konklusjonslogikk er enig")
-                } else {
-                    hendelse.info("Ny og gammel konklusjonslogikk er uenig")
                 }
 
                 if (behandling.aktiveAvklaringer().isEmpty()) {

@@ -31,6 +31,4 @@ abstract class StartHendelse(
     abstract fun behandling(): Behandling
 
     abstract fun kontrollpunkter(): List<Kontrollpunkt>
-
-    abstract fun kanKonkludere(opplysninger: LesbarOpplysninger): Boolean
 }

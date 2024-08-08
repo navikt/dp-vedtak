@@ -1,6 +1,5 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
-import no.nav.dagpenger.behandling.konklusjon.Konklusjon
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
@@ -20,8 +19,6 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.HattLukkedeSakerSiste8UkerKontro
 import no.nav.dagpenger.regel.Søknadstidspunkt.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
-import no.nav.dagpenger.regel.konklusjon.knockoutAvslag
-import no.nav.dagpenger.regel.konklusjon.regelsettKnockout
 import java.time.LocalDate
 import java.util.UUID
 
@@ -70,11 +67,6 @@ class SøknadInnsendtHendelse(
                 Faktum(fagsakIdOpplysningstype, fagsakId),
             ),
         )
-
-    override fun kanKonkludere(opplysninger: LesbarOpplysninger): Boolean {
-        val konklusjon = Konklusjon(opplysninger, regelsettKnockout)
-        return konklusjon.kanKonkludere(knockoutAvslag)
-    }
 
     override fun kontrollpunkter() =
         listOf(
