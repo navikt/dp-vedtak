@@ -29,6 +29,7 @@ jobs:
           DEPENDENCY_GRAPH_INCLUDE_CONFIGURATIONS: compileClasspath|runtimeClasspath
         with:
           dependency-graph: generate-and-submit
+          cache-encryption-key: ${{ secrets.GradleEncryptionKey }}
       - run: ./gradlew --configuration-cache build
 
       - name: Publish results (unit test)
