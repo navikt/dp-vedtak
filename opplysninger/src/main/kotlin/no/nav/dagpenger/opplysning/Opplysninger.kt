@@ -19,6 +19,8 @@ class Opplysninger private constructor(
     constructor(opplysninger: List<Opplysning<*>>, basertPå: List<Opplysninger> = emptyList()) : this(UUIDv7.ny(), opplysninger, basertPå)
     constructor(vararg basertPå: Opplysninger) : this(emptyList(), basertPå.toList())
 
+    val aktiveOpplysninger get() = opplysninger.toList()
+
     @Deprecated("Bruk heller konstruktør med forDato")
     fun registrer(regelkjøring: Regelkjøring) {
         forDato = regelkjøring.forDato
@@ -50,15 +52,6 @@ class Opplysninger private constructor(
         opplysninger.add(opplysning)
     }
 
-    private fun <T : Comparable<T>> Opplysning<T>.erFør(opplysning: Opplysning<T>) =
-        this.gyldighetsperiode.fom.isBefore(opplysning.gyldighetsperiode.fom)
-
-    private fun <T : Comparable<T>> Opplysning<T>.etterEllerLik(opplysning: Opplysning<T>) =
-        this.gyldighetsperiode.tom >= opplysning.gyldighetsperiode.tom
-
-    private fun <T : Comparable<T>> Opplysning<T>.harSammegyldighetsperiode(opplysning: Opplysning<T>) =
-        this.gyldighetsperiode.tom == opplysning.gyldighetsperiode.tom
-
     override fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T> =
         finnNullableOpplysning(opplysningstype)
             ?: throw IllegalStateException("Har ikke opplysning $opplysningstype som er gyldig for $forDato")
@@ -72,11 +65,18 @@ class Opplysninger private constructor(
 
     override fun finnAlle() = alleOpplysninger.toList()
 
-    fun aktiveOpplysninger() = opplysninger.toList()
-
     @Suppress("UNCHECKED_CAST")
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? =
         alleOpplysninger.firstOrNull { it.er(opplysningstype) && it.gyldighetsperiode.inneholder(forDato) } as Opplysning<T>?
+
+    private fun <T : Comparable<T>> Opplysning<T>.erFør(opplysning: Opplysning<T>) =
+        this.gyldighetsperiode.fom.isBefore(opplysning.gyldighetsperiode.fom)
+
+    private fun <T : Comparable<T>> Opplysning<T>.etterEllerLik(opplysning: Opplysning<T>) =
+        this.gyldighetsperiode.tom >= opplysning.gyldighetsperiode.tom
+
+    private fun <T : Comparable<T>> Opplysning<T>.harSammegyldighetsperiode(opplysning: Opplysning<T>) =
+        this.gyldighetsperiode.tom == opplysning.gyldighetsperiode.tom
 
     operator fun plus(tidligereOpplysninger: List<Opplysninger>) = Opplysninger(id, opplysninger, tidligereOpplysninger)
 

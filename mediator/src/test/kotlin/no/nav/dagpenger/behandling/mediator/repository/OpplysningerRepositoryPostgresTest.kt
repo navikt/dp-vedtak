@@ -185,7 +185,7 @@ class OpplysningerRepositoryPostgresTest {
                 repo.hentOpplysninger(opplysninger.id).also {
                     Regelkjøring(LocalDate.now(), it)
                 }
-            fraDb.aktiveOpplysninger() shouldContainExactly opplysninger.aktiveOpplysninger()
+            fraDb.aktiveOpplysninger shouldContainExactly opplysninger.aktiveOpplysninger
             fraDb.finnOpplysning(heltall).verdi shouldBe opplysningErstattet.verdi
         }
     }
@@ -212,7 +212,7 @@ class OpplysningerRepositoryPostgresTest {
                 // Simulerer hvordan Behandling setter opp Opplysninger
                 repo.hentOpplysninger(erstattetOpplysninger.id) + repo.hentOpplysninger(opprinneligOpplysninger.id)
             Regelkjøring(LocalDate.now(), fraDb)
-            fraDb.aktiveOpplysninger() shouldContainExactly erstattetOpplysninger.aktiveOpplysninger()
+            fraDb.aktiveOpplysninger shouldContainExactly erstattetOpplysninger.aktiveOpplysninger
             fraDb.finnOpplysning(heltall).verdi shouldBe opplysningErstattet.verdi
 
             fraDb.finnOpplysning(heltall).erstatter shouldBe opplysning
