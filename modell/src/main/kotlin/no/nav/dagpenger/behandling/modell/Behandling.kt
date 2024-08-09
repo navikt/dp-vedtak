@@ -53,11 +53,15 @@ class Behandling private constructor(
     private val observatører = mutableListOf<BehandlingObservatør>()
 
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
-    private val opplysninger: Opplysninger = gjeldendeOpplysninger + tidligereOpplysninger
-
-    private val avklaringer = Avklaringer(behandler.kontrollpunkter(), avklaringer)
+    private val opplysninger: Opplysninger =
+        (gjeldendeOpplysninger + tidligereOpplysninger).also {
+            // TODO: Fjern denne og gjør forDato internal igjen
+            it.forDato = behandler.skjedde
+        }
 
     private val regelkjøring get() = behandler.regelkjøring(opplysninger)
+
+    private val avklaringer = Avklaringer(behandler.kontrollpunkter(), avklaringer)
 
     fun avklaringer() = avklaringer.avklaringer(opplysninger)
 

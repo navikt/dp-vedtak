@@ -7,7 +7,7 @@ class Opplysninger private constructor(
     override val id: UUID,
     opplysninger: List<Opplysning<*>> = emptyList(),
     basertPå: List<Opplysninger> = emptyList(),
-    private var forDato: LocalDate = LocalDate.now(),
+    var forDato: LocalDate = LocalDate.now(),
 ) : LesbarOpplysninger {
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
     private val basertPåOpplysninger: List<Opplysning<*>> = basertPå.flatMap { it.basertPåOpplysninger + it.opplysninger }.toList()
