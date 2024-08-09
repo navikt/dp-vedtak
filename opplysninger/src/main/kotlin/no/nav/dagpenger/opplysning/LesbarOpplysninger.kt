@@ -9,8 +9,6 @@ interface LesbarOpplysninger {
 
     fun har(opplysningstype: Opplysningstype<*>): Boolean
 
-    fun mangler(opplysningstype: Opplysningstype<*>): Boolean = !har(opplysningstype)
-
     fun finnAlle(opplysningstyper: List<Opplysningstype<*>>): List<Opplysning<*>>
 
     fun finnAlle(): List<Opplysning<*>>
