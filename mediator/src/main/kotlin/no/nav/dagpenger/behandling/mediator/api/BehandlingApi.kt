@@ -41,6 +41,7 @@ import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Hypotese
+import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
@@ -102,6 +103,7 @@ internal fun Application.behandlingApi(
                             Heltall -> DataTypeDTO.heltall
                             ULID -> DataTypeDTO.ulid
                             Penger -> DataTypeDTO.penger
+                            InntektDataType -> TODO()
                         },
                     )
                 }
@@ -199,6 +201,7 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
                 Heltall -> DataTypeDTO.heltall
                 ULID -> DataTypeDTO.ulid
                 Penger -> DataTypeDTO.penger
+                InntektDataType -> TODO()
             },
         kilde =
             this.kilde?.let {

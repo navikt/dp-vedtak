@@ -1,0 +1,1 @@
+ALTER TABLE opplysning_verdi ADD COLUMN verdi_jsonb JSONB DEFAULT NULL;

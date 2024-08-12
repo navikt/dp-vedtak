@@ -12,10 +12,12 @@ import no.nav.dagpenger.behandling.TestOpplysningstyper.boolsk
 import no.nav.dagpenger.behandling.TestOpplysningstyper.dato
 import no.nav.dagpenger.behandling.TestOpplysningstyper.desimal
 import no.nav.dagpenger.behandling.TestOpplysningstyper.heltall
+import no.nav.dagpenger.behandling.TestOpplysningstyper.inntektA
 import no.nav.dagpenger.behandling.TestOpplysningstyper.maksdato
 import no.nav.dagpenger.behandling.TestOpplysningstyper.mindato
 import no.nav.dagpenger.behandling.TestOpplysningstyper.utledetOpplysningstype
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
+import no.nav.dagpenger.behandling.objectMapper
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Opplysning
@@ -26,6 +28,7 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -303,6 +306,33 @@ class OpplysningerRepositoryPostgresTest {
             val beløpBFraDB = fraDb.finnOpplysning(beløpFaktumB.opplysningstype)
             beløpBFraDB.verdi shouldBe beløpFaktumB.verdi
             beløpBFraDB.verdi.toString() shouldBe "EUR 20"
+        }
+    }
+
+    @Test
+    fun `kan lagre inntekt`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val inntektV1: no.nav.dagpenger.inntekt.v1.Inntekt =
+                objectMapper.readValue(
+                    this.javaClass.getResourceAsStream("/test-data/inntekt.json"),
+                    no.nav.dagpenger.inntekt.v1.Inntekt::class.java,
+                )
+            val inntektFaktum =
+                Faktum(
+                    inntektA,
+                    Inntekt(
+                        inntektV1,
+                    ),
+                )
+            val opplysninger = Opplysninger(listOf(inntektFaktum))
+            repo.lagreOpplysninger(opplysninger)
+            val fraDb = repo.hentOpplysninger(opplysninger.id)
+
+            fraDb.finnOpplysning(inntektA).verdi.id shouldBe inntektFaktum.verdi.id
+            fraDb
+                .finnOpplysning(inntektA)
+                .verdi.verdi.inntektsListe shouldBe inntektFaktum.verdi.verdi.inntektsListe
         }
     }
 }

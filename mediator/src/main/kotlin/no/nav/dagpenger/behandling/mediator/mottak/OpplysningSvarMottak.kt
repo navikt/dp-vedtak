@@ -14,17 +14,20 @@ import no.nav.dagpenger.behandling.mediator.mottak.SvarStrategi.Svar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar.Tilstand
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
+import no.nav.dagpenger.behandling.objectMapper
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Heltall
+import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -213,7 +216,7 @@ private object EnkeltSvar : SvarStrategi {
 private class JsonMapper(
     private val verdi: JsonNode,
 ) : OpplysningSvarBygger.VerdiMapper {
-    override fun <T : Comparable<T>> map(datatype: Datatype<T>) =
+    override fun <T : Comparable<T>> map(datatype: Datatype<T>): T =
         when (datatype) {
             Dato -> verdi.asLocalDate() as T
             Heltall -> verdi.asInt() as T
@@ -221,5 +224,9 @@ private class JsonMapper(
             Boolsk -> verdi.asBoolean() as T
             ULID -> Ulid(verdi.asText()) as T
             Penger -> Beløp(verdi.asText().toBigDecimal()) as T
+            InntektDataType ->
+                Inntekt(
+                    objectMapper.convertValue(verdi.asText(), no.nav.dagpenger.inntekt.v1.Inntekt::class.java),
+                ) as T
         }
 }

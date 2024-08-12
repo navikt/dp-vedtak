@@ -5,6 +5,7 @@ import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.behandling.objectMapper
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
@@ -13,6 +14,7 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Hypotese
+import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
@@ -24,6 +26,7 @@ import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.Utledning
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import org.postgresql.util.PGobject
 import java.time.LocalDate
@@ -223,6 +226,12 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 Heltall -> row.int("verdi_heltall")
                 ULID -> Ulid(row.string("verdi_string"))
                 Penger -> Beløp(row.string("verdi_string"))
+                InntektDataType ->
+                    Inntekt(
+                        row.binaryStream("verdi_jsonb").use {
+                            objectMapper.readValue(it, no.nav.dagpenger.inntekt.v1.Inntekt::class.java)
+                        },
+                    )
             } as T
 
         fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
@@ -365,7 +374,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     mapOf(
                         "id" to it.id,
                         "navn" to it.navn,
-                        "datatype" to it.datatype.javaClass.simpleName,
+                        "datatype" to it.datatype.navn(),
                     )
                 },
             )
@@ -388,7 +397,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         "status" to opplysning.javaClass.simpleName,
                         "typeId" to opplysning.opplysningstype.id,
                         "typeNavn" to opplysning.opplysningstype.navn,
-                        "datatype" to opplysning.opplysningstype.datatype.javaClass.simpleName,
+                        "datatype" to opplysning.opplysningstype.datatype.navn(),
                         "fom" to gyldighetsperiode.fom.let { if (it == LocalDate.MIN) null else it },
                         "tom" to gyldighetsperiode.tom.let { if (it == LocalDate.MAX) null else it },
                         "opprettet" to opplysning.opprettet,
@@ -425,8 +434,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             return BatchStatement(
                 //language=PostgreSQL
                 """
-                INSERT INTO opplysning_verdi (opplysning_id, datatype, verdi_heltall, verdi_desimaltall, verdi_dato, verdi_boolsk, verdi_string) 
-                VALUES (:opplysning_id, :datatype, :verdi_heltall, :verdi_desimaltall, :verdi_dato, :verdi_boolsk, :verdi_string)
+                INSERT INTO opplysning_verdi (opplysning_id, datatype, verdi_heltall, verdi_desimaltall, verdi_dato, verdi_boolsk, verdi_string, verdi_jsonb) 
+                VALUES (:opplysning_id, :datatype, :verdi_heltall, :verdi_desimaltall, :verdi_dato, :verdi_boolsk, :verdi_string, :verdi_jsonb)
                 ON CONFLICT DO NOTHING
                 """.trimIndent(),
                 opplysninger.map {
@@ -436,7 +445,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     mapOf(
                         "kolonne" to kolonne,
                         "opplysning_id" to it.id,
-                        "datatype" to datatype.javaClass.simpleName,
+                        "datatype" to datatype.navn(),
                     ) + verdi
                 },
             )
@@ -457,6 +466,16 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             Heltall -> Pair("verdi_heltall", verdi)
             ULID -> Pair("verdi_string", (verdi as Ulid).verdi)
             Penger -> Pair("verdi_string", (verdi as Beløp).toString())
+            InntektDataType ->
+                Pair(
+                    "verdi_jsonb",
+                    (verdi as Inntekt).verdi.let {
+                        PGobject().apply {
+                            type = "jsonb"
+                            value = objectMapper.writeValueAsString(it)
+                        }
+                    },
+                )
         }
 
         private fun tilPostgresqlTimestamp(verdi: Any) =

@@ -5,7 +5,10 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class Utledning(val regel: String, val opplysninger: List<Opplysning<*>>) {
+data class Utledning(
+    val regel: String,
+    val opplysninger: List<Opplysning<*>>,
+) {
     internal constructor(regel: Regel<*>, opplysninger: List<Opplysning<*>>) : this(regel::class.java.simpleName, opplysninger)
 }
 
@@ -108,7 +111,12 @@ class Faktum<T : Comparable<T>>(
         Faktum(
             opplysningstype,
             verdi,
-            gyldighetsperiode.kopi(tom = opplysning.gyldighetsperiode.fom.takeIf { it != LocalDate.MIN }?.minusDays(1) ?: LocalDate.MIN),
+            gyldighetsperiode.kopi(
+                tom =
+                    opplysning.gyldighetsperiode.fom
+                        .takeIf { it != LocalDate.MIN }
+                        ?.minusDays(1) ?: LocalDate.MIN,
+            ),
             utledetAv,
             kilde,
             opplysning.opprettet,
