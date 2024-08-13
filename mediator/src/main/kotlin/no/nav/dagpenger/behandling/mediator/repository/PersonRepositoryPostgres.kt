@@ -8,7 +8,8 @@ import no.nav.dagpenger.behandling.modell.Person
 
 class PersonRepositoryPostgres(
     private val behandlingRepository: BehandlingRepository,
-) : PersonRepository, BehandlingRepository by behandlingRepository {
+) : PersonRepository,
+    BehandlingRepository by behandlingRepository {
     override fun hent(ident: Ident) =
         sessionOf(dataSource).use { session ->
             session.run(
@@ -19,9 +20,9 @@ class PersonRepositoryPostgres(
                     """.trimIndent(),
                     mapOf("ident" to ident.identifikator()),
                 ).map { row ->
-                    val ident = Ident(row.string("ident"))
-                    val behandlinger = behandlingerFor(ident)
-                    Person(ident, behandlinger)
+                    val dbIdent = Ident(row.string("ident"))
+                    val behandlinger = behandlingerFor(dbIdent)
+                    Person(dbIdent, behandlinger)
                 }.asSingle,
             )
         }
