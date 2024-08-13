@@ -8,5 +8,5 @@ CREATE TABLE behandling_tilstand
 );
 
 INSERT INTO behandling_tilstand (behandling_id, tilstand, endret)
-SELECT behandling_id, tilstand, opprettet
+SELECT behandling_id, tilstand, sist_endret_tilstand
 FROM behandling;
