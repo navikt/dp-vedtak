@@ -126,6 +126,21 @@ class BehandlingRepositoryPostgres(
             )
             tx.run(
                 queryOf(
+                    //language=PostgreSQL
+                    """
+                    INSERT INTO behandling_tilstand (behandling_id, tilstand, endret)
+                    VALUES (:behandling_id, :tilstand, :endret)
+                    ON CONFLICT DO NOTHING
+                    """.trimIndent(),
+                    mapOf(
+                        "behandling_id" to behandling.behandlingId,
+                        "tilstand" to behandling.tilstand().first.name,
+                        "endret" to behandling.tilstand().second,
+                    ),
+                ).asUpdate,
+            )
+            tx.run(
+                queryOf(
                     // language=PostgreSQL
                     """
                     INSERT INTO behandler_hendelse_behandling (behandling_id, melding_id) 
