@@ -7,12 +7,14 @@ import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.UUIDv7
+import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.Avklaringspunkter
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -26,7 +28,7 @@ class BehandlingRepositoryPostgresTest {
             ident = ident,
             meldingsreferanseId = søknadId,
             gjelderDato = LocalDate.now(),
-            fagsakId = 1,
+            fagsakId = 0,
         )
     private val tidligereOpplysning = Faktum(Opplysningstype.somDesimaltall("tidligere-opplysning"), 1.0)
     private val basertPåBehandling =
@@ -37,8 +39,10 @@ class BehandlingRepositoryPostgresTest {
             tilstand = Behandling.TilstandType.Ferdig,
             sistEndretTilstand = LocalDateTime.now(),
             avklaringer = emptyList(),
+            versjon = 0,
         )
-    private val opplysning1 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning1"), 1.0)
+    val opplysningstype1 = Opplysningstype.somDesimaltall("aktiv-opplysning1")
+    private val opplysning1 = Faktum(opplysningstype1, 1.0)
     private val opplysning2 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning2"), 2.0)
     private val opplysning3 = Faktum(Opplysningstype.somBoolsk("aktiv-opplysning3"), false)
 
@@ -53,6 +57,7 @@ class BehandlingRepositoryPostgresTest {
             tilstand = Behandling.TilstandType.UnderBehandling,
             sistEndretTilstand = LocalDateTime.now(),
             avklaringer = listOf(avklaring),
+            versjon = 0,
         )
 
     @Test
@@ -106,6 +111,31 @@ class BehandlingRepositoryPostgresTest {
                             .truncatedTo(ChronoUnit.SECONDS)
                 }
             }
+        }
+    }
+
+    @Test
+    fun `optimistisk låsing`() {
+        withMigratedDb {
+            val avklaringRepository = AvklaringRepositoryPostgres()
+            val behandlingRepositoryPostgres = BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres(), avklaringRepository)
+            behandlingRepositoryPostgres.lagre(basertPåBehandling)
+            behandlingRepositoryPostgres.lagre(behandling) // ny behandling
+            assertThrows<IllegalStateException> { behandlingRepositoryPostgres.lagre(behandling) }
+            val versjon1 = behandlingRepositoryPostgres.hentBehandling(behandling.behandlingId).shouldNotBeNull()
+            versjon1.versjon shouldBe 1
+            versjon1.håndter(
+                AvklaringIkkeRelevantHendelse(
+                    avklaringId = avklaring.id,
+                    ident = ident,
+                    kode = avklaring.kode.kode,
+                    behandlingId = behandling.behandlingId,
+                    meldingsreferanseId = UUIDv7.ny(),
+                ),
+            )
+            behandlingRepositoryPostgres.lagre(versjon1)
+            val versjon2 = behandlingRepositoryPostgres.hentBehandling(behandling.behandlingId).shouldNotBeNull()
+            versjon2.versjon shouldBe 2
         }
     }
 }

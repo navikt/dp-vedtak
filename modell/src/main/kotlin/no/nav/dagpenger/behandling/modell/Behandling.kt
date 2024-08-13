@@ -36,13 +36,22 @@ class Behandling private constructor(
     val basertPå: List<Behandling> = emptyList(),
     private var tilstand: BehandlingTilstand,
     avklaringer: List<Avklaring>,
+    val versjon: Int,
 ) : Aktivitetskontekst,
     BehandlingHåndter {
     constructor(
         behandler: StartHendelse,
         opplysninger: List<Opplysning<*>>,
         basertPå: List<Behandling> = emptyList(),
-    ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå, UnderOpprettelse(LocalDateTime.now()), emptyList())
+    ) : this(
+        behandlingId = UUIDv7.ny(),
+        behandler = behandler,
+        gjeldendeOpplysninger = Opplysninger(opplysninger),
+        basertPå = basertPå,
+        tilstand = UnderOpprettelse(LocalDateTime.now()),
+        avklaringer = emptyList(),
+        versjon = 0,
+    )
 
     init {
         require(basertPå.all { it.tilstand is Ferdig }) {
@@ -76,6 +85,7 @@ class Behandling private constructor(
             tilstand: TilstandType,
             sistEndretTilstand: LocalDateTime,
             avklaringer: List<Avklaring>,
+            versjon: Int,
         ) = Behandling(
             behandlingId,
             behandler,
@@ -83,6 +93,7 @@ class Behandling private constructor(
             basertPå,
             fraType(tilstand, sistEndretTilstand),
             avklaringer,
+            versjon,
         )
 
         fun List<Behandling>.finn(behandlingId: UUID) =

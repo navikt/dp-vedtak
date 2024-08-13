@@ -68,6 +68,7 @@ internal class BehandlingTest {
                     tilstand = Ferdig,
                     sistEndretTilstand = LocalDateTime.now(),
                     avklaringer = emptyList(),
+                    versjon = 0,
                 )
             forrigeBehandling = behandling
             // TODO: Det burde eksplodere uten denne

@@ -54,6 +54,7 @@ class BehandlingRepositoryPostgres(
                         tilstand = Behandling.TilstandType.valueOf(row.string("tilstand")),
                         sistEndretTilstand = row.localDateTime("sist_endret_tilstand"),
                         avklaringer = hentAvklaringer(behandlingId),
+                        versjon = row.int("versjon"),
                     )
                 }.asSingle,
             )
@@ -109,21 +110,12 @@ class BehandlingRepositoryPostgres(
                     ),
                 ).asUpdate,
             )
-            tx.run(
-                queryOf(
-                    // language=PostgreSQL
-                    """
-                    INSERT INTO behandling (behandling_id, tilstand, sist_endret_tilstand)
-                    VALUES (:id, :tilstand, :sisteEndretTilstand)
-                    ON CONFLICT (behandling_id) DO UPDATE SET tilstand = :tilstand, sist_endret_tilstand = :sisteEndretTilstand
-                    """.trimIndent(),
-                    mapOf(
-                        "id" to behandling.behandlingId,
-                        "tilstand" to behandling.tilstand().first.name,
-                        "sisteEndretTilstand" to behandling.tilstand().second,
-                    ),
-                ).asUpdate,
-            )
+            if (eksisterer(tx, behandling)) {
+                oppdatertBehandling(tx, behandling)
+            } else {
+                nyBehandling(tx, behandling)
+            }
+
             tx.run(
                 queryOf(
                     //language=PostgreSQL
@@ -188,4 +180,68 @@ class BehandlingRepositoryPostgres(
             avklaringRepository.lagreAvklaringer(behandling, unitOfWork)
         }
     }
+
+    private fun oppdatertBehandling(
+        tx: Session,
+        behandling: Behandling,
+    ) {
+        val oppdaterteRader =
+            tx.run(
+                queryOf(
+                    // language=PostgreSQL
+                    """
+                    UPDATE behandling
+                    SET tilstand = :tilstand, sist_endret_tilstand = :sisteEndretTilstand, versjon = versjon + 1
+                    WHERE behandling_id = :id AND versjon = :versjon
+                    """.trimIndent(),
+                    mapOf(
+                        "id" to behandling.behandlingId,
+                        "tilstand" to behandling.tilstand().first.name,
+                        "sisteEndretTilstand" to behandling.tilstand().second,
+                        "versjon" to behandling.versjon,
+                    ),
+                ).asUpdate,
+            )
+
+        if (oppdaterteRader == 0) {
+            throw IllegalStateException(
+                "Optimistic locking failed for behandling ${behandling.behandlingId} med versjon ${behandling.versjon}",
+            )
+        }
+    }
+
+    private fun nyBehandling(
+        tx: Session,
+        behandling: Behandling,
+    ) {
+        tx.run(
+            queryOf(
+                // language=PostgreSQL
+                """
+                INSERT INTO behandling (behandling_id, tilstand, sist_endret_tilstand, versjon)
+                VALUES (:id, :tilstand, :sisteEndretTilstand, 1)
+                """.trimIndent(),
+                mapOf(
+                    "id" to behandling.behandlingId,
+                    "tilstand" to behandling.tilstand().first.name,
+                    "sisteEndretTilstand" to behandling.tilstand().second,
+                ),
+            ).asUpdate,
+        )
+    }
+
+    private fun eksisterer(
+        session: Session,
+        behandling: Behandling,
+    ) = session.run(
+        // language=PostgreSQL
+        queryOf(
+            """
+            SELECT * FROM behandling WHERE behandling_id = :id
+            """.trimIndent(),
+            mapOf("id" to behandling.behandlingId),
+        ).map {
+            it.uuidOrNull("behandling_id") != null
+        }.asSingle,
+    ) ?: false
 }

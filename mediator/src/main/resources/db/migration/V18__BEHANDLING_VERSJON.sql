@@ -1,0 +1,1 @@
+ALTER TABLE behandling ADD COLUMN versjon INT DEFAULT 0;

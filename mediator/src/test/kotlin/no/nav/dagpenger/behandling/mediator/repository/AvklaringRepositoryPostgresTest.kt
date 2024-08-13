@@ -85,6 +85,7 @@ class AvklaringRepositoryPostgresTest {
                 tilstand = TilstandType.UnderBehandling,
                 sistEndretTilstand = LocalDateTime.now(),
                 avklaringer = avklaring.toList(),
+                versjon = 0,
             )
     }
 
