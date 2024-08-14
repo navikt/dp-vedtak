@@ -14,17 +14,20 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.regel.RegelverkDagpenger
+import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.Verneplikt.vurderingAvVerneplikt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.avkortet
+import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.grunnlag
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.time.YearMonth
 import java.util.UUID
 import no.nav.dagpenger.inntekt.v1.Inntekt as InntektV1
 
 class DagpengergrunnlagSteg : No {
-    private val fraDato = 10.mai(2022)
-    private val regelsett = RegelverkDagpenger.regelsettFor(avkortet)
+    private val fraDato = 10.mai(2021)
+    private val regelsett = RegelverkDagpenger.regelsettFor(grunnlag)
     private val opplysninger: Opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 
@@ -34,6 +37,14 @@ class DagpengergrunnlagSteg : No {
     }
 
     init {
+        Gitt("at søknadsdato for dagpenger er {dato}") { søknadsdato: LocalDate ->
+            regelkjøring.leggTil(
+                Faktum(
+                    Søknadstidspunkt.søknadstidspunkt,
+                    søknadsdato,
+                ),
+            )
+        }
         Gitt("at verneplikt for grunnlag er satt {boolsk}") { verneplikt: Boolean ->
             regelkjøring.leggTil(Faktum(vurderingAvVerneplikt, verneplikt))
         }
@@ -45,7 +56,8 @@ class DagpengergrunnlagSteg : No {
         }
 
         Så("beregnet grunnlag være {string} og {string}") { avkortet: String, uavkortet: String ->
-
+            opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe BigDecimal(avkortet)
+            opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe BigDecimal(uavkortet)
 //            opplysninger.finnOpplysning(Dagpengegrunnlag.avkortet).verdi shouldBe Beløp(avkortet.toBigDecimal())
 //            opplysninger.finnOpplysning(Dagpengegrunnlag.uavkortet).verdi shouldBe Beløp(uavkortet.toBigDecimal())
         }

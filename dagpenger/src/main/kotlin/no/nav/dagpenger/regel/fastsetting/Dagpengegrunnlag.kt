@@ -4,8 +4,6 @@ import no.nav.dagpenger.grunnbelop.forDato
 import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.regel.brukt
-import no.nav.dagpenger.opplysning.regel.erUlik
 import no.nav.dagpenger.opplysning.regel.høyesteAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.inntekt.filtrerRelevanteInntekter
@@ -26,7 +24,7 @@ object Dagpengegrunnlag {
     val oppjustertinntekt = Opplysningstype.somInntekt("Oppjustert inntekt")
     val relevanteinntekter = Opplysningstype.somInntekt("Tellende inntekt")
     private val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
-    private val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp")
+    private val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp for grunnlag")
     val verneplikt = Verneplikt.vurderingAvVerneplikt
     val inntektId = Minsteinntekt.inntektId
     private val inntekt12mnd = Opplysningstype.somBeløp("Inntektsgrunnlag 12 mnd")
@@ -54,10 +52,7 @@ object Dagpengegrunnlag {
             regel(relevanteinntekter) { filtrerRelevanteInntekter(oppjustertinntekt) }
 
             val siste12 = siste12mnd(relevanteinntekter, grunnbeløp)
-            val siste36 = siste36mnd(relevanteinntekter)
-            regel(grunnlag) { høyesteAv(siste12, siste36) }
-            regel(harAvkortet) { erUlik(avkortet, uavkortet) }
-            regel(beregningsregel) { brukt(grunnlag) }
+            regel(grunnlag) { høyesteAv(siste12) }
         }
 }
 
@@ -72,8 +67,12 @@ private fun Regelsett.siste12mnd(
     grunnbeløp: Opplysningstype<Beløp>,
 ): Opplysningstype<Beløp> {
     val inntektSiste12 = Opplysningstype.somBeløp("Inntekt siste 12 mnd")
+
+    @Suppress("ktlint:standard:property-naming")
     val `6G` = Opplysningstype.somDesimaltall("6 ganger grunnbeløp")
     val maksGrunnlag = Opplysningstype.somBeløp("Maks grunnlag")
+
+    @Suppress("ktlint:standard:property-naming")
     val `12MånederGrunnlag` = Opplysningstype.somBeløp("Grunnlag siste 12 mnd.")
 
     regel(`6G`) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 6.0 } }
