@@ -105,6 +105,16 @@ class Opplysningstype<T : Comparable<T>>(
             opplysningTypeId: OpplysningTypeId,
             parent: Opplysningstype<Inntekt>?,
         ) = Opplysningstype<Inntekt>(opplysningTypeId, InntektDataType, parent)
+
+        fun somTekst(
+            navn: String,
+            parent: Opplysningstype<String>? = null,
+        ) = somTekst(navn.id(navn), parent)
+
+        fun somTekst(
+            opplysningTypeId: OpplysningTypeId,
+            parent: Opplysningstype<String>?,
+        ) = Opplysningstype(opplysningTypeId, Tekst, parent)
     }
 
     override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId || parent?.er(type) ?: false

@@ -2,8 +2,11 @@ package no.nav.dagpenger.regel.fastsetting
 
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.regel.brukt
 import no.nav.dagpenger.opplysning.regel.erUlik
-import no.nav.dagpenger.opplysning.regel.inntekt.sumAv
+import no.nav.dagpenger.opplysning.regel.høyesteAv
+import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.regel.Verneplikt
 
 object Dagpengegrunnlag {
@@ -14,7 +17,9 @@ object Dagpengegrunnlag {
     private val inntekt36mnd = Opplysningstype.somBeløp("Inntektsgrunnlag 36 mnd")
     val avkortet = Opplysningstype.somBeløp("Avkortet grunnlag")
     val uavkortet = Opplysningstype.somBeløp("Uavkortet grunnlag")
+    val grunnlag = Opplysningstype.somBeløp("Grunnlag")
     val harAvkortet = Opplysningstype.somBoolsk("Har avkortet grunnlag")
+    val beregningsregel = Opplysningstype.somTekst("Beregningsregel")
 
     val regelsett =
         Regelsett("Dagpengegrunnlag") {
@@ -27,10 +32,24 @@ object Dagpengegrunnlag {
 
             // regel(avkortet) { avkortet(inntekt36mnd, seksGangerG) }
             // regel(avkortet, LocalDate.of(2021, 12, 17)) { avkortetMånedlig(inntekt36mnd, seksGangerG) }
-
-            regel(avkortet) { sumAv(inntekt) }
-            regel(uavkortet) { sumAv(inntekt) }
+            val siste12 = siste12mnd(inntekt)
+            val siste36 = siste36mnd(inntekt)
+            regel(grunnlag) { høyesteAv(siste12, siste36) }
             regel(harAvkortet) { erUlik(avkortet, uavkortet) }
-            // regel(beregningsregel) {}
+            regel(beregningsregel) { brukt(grunnlag) }
         }
 }
+
+private fun Regelsett.siste12mnd(inntekt: Opplysningstype<Inntekt>): Opplysningstype<Beløp> {
+    val sum = Opplysningstype.somBeløp("Sum inntekt 12 mnd")
+    val avkortet = Opplysningstype.somBeløp("dsfasdfjlk")
+
+    regel(avkortet) { høyesteAv(sum) }
+    val grunnlag = Opplysningstype.somBeløp("Inntektsgrunnlag 12 mnd")
+
+    regel(grunnlag) { høyesteAv(avkortet) }
+    return grunnlag
+}
+
+private fun Regelsett.siste36mnd(inntekt: Opplysningstype<Inntekt>): Opplysningstype<Beløp> =
+    Opplysningstype.somBeløp("Inntektsgrunnlag 36 mnd")

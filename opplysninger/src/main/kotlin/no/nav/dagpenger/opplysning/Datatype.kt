@@ -33,6 +33,8 @@ data object Heltall : Datatype<Int>(Int::class.java)
 
 data object Boolsk : Datatype<Boolean>(Boolean::class.java)
 
+data object Tekst : Datatype<String>(String::class.java)
+
 data object ULID : Datatype<Ulid>(Ulid::class.java)
 
 data object Penger : Datatype<Beløp>(Beløp::class.java)
