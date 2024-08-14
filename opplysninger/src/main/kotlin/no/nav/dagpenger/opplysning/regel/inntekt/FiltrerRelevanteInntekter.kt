@@ -5,32 +5,20 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.regel.Regel
 import no.nav.dagpenger.opplysning.verdier.Inntekt
-import java.util.EnumSet
 
 // TODO : Flytt denne til dagpenger-regelverks modul
 class FiltrerRelevanteInntekter(
     produserer: Opplysningstype<Inntekt>,
     private val ufiltrertInntekt: Opplysningstype<Inntekt>,
+    private val inntektsklasser: List<InntektKlasse>,
 ) : Regel<Inntekt>(produserer, listOf(ufiltrertInntekt)) {
-    private val inntektklasser =
-        EnumSet
-            .of(
-                InntektKlasse.ARBEIDSINNTEKT,
-                InntektKlasse.DAGPENGER,
-                InntektKlasse.SYKEPENGER,
-                InntektKlasse.TILTAKSLØNN,
-                InntektKlasse.PLEIEPENGER,
-                InntektKlasse.OPPLÆRINGSPENGER,
-                InntektKlasse.OMSORGSPENGER,
-            ).toList()
-
     override fun kjør(opplysninger: LesbarOpplysninger): Inntekt {
         val inntekt = opplysninger.finnOpplysning(this.ufiltrertInntekt).verdi
         val relevanteInntekter =
             inntekt.verdi.inntektsListe.filter {
                 it.klassifiserteInntekter.any { inntektMåned ->
                     inntektMåned.inntektKlasse in
-                        inntektklasser
+                        inntektsklasser
                 }
             }
         return Inntekt(
@@ -43,5 +31,11 @@ class FiltrerRelevanteInntekter(
     }
 }
 
-fun Opplysningstype<Inntekt>.filtrerRelevanteInntekter(ufiltrertInntekt: Opplysningstype<Inntekt>) =
-    FiltrerRelevanteInntekter(this, ufiltrertInntekt)
+fun Opplysningstype<Inntekt>.filtrerRelevanteInntekter(
+    ufiltrertInntekt: Opplysningstype<Inntekt>,
+    inntektklasser: List<InntektKlasse>,
+) = FiltrerRelevanteInntekter(
+    this,
+    ufiltrertInntekt,
+    inntektklasser,
+)

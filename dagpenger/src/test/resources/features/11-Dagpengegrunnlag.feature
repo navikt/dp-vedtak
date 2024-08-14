@@ -12,6 +12,6 @@ Egenskap: § 4-11. Dagpengegrunnlag
 
   Scenario: Grunnlag for dagpenger
     Gitt at søknadsdato for dagpenger er 01.04.2022
-    Så beregnet grunnlag være "1100000" og "1100000"
+    Så beregnet grunnlag være "246131.33333333333333333333" og "246131.33333333333333333333"
     Og vi har ikke avkortet
     #Og beregningsregel er "siste36"

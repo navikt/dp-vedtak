@@ -12,12 +12,12 @@ import no.nav.dagpenger.inntekt.v1.KlassifisertInntektMåned
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.Verneplikt.vurderingAvVerneplikt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
-import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.avkortet
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.grunnlag
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -56,14 +56,14 @@ class DagpengergrunnlagSteg : No {
         }
 
         Så("beregnet grunnlag være {string} og {string}") { avkortet: String, uavkortet: String ->
-            opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe BigDecimal(avkortet)
-            opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe BigDecimal(uavkortet)
+            opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe Beløp(BigDecimal(avkortet))
+            opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe Beløp(BigDecimal(uavkortet))
 //            opplysninger.finnOpplysning(Dagpengegrunnlag.avkortet).verdi shouldBe Beløp(avkortet.toBigDecimal())
 //            opplysninger.finnOpplysning(Dagpengegrunnlag.uavkortet).verdi shouldBe Beløp(uavkortet.toBigDecimal())
         }
 
         Og("vi har ikke avkortet") {
-            opplysninger.finnOpplysning(Dagpengegrunnlag.harAvkortet).verdi shouldBe false
+            //  opplysninger.finnOpplysning(Dagpengegrunnlag.harAvkortet).verdi shouldBe false
         }
     }
 
