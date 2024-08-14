@@ -291,7 +291,7 @@ internal class PersonMediatorTest {
 
             rapid.harHendelse("forslag_til_vedtak") {
                 with(medNode("avklaringer")) {
-                    this.size() shouldBe 7
+                    this.size() shouldBe 8
                 }
             }
         }

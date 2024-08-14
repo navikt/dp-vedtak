@@ -17,6 +17,7 @@ import no.nav.dagpenger.regel.Minsteinntekt.ØnskerEtterRapporteringsfristKontro
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt.HattLukkedeSakerSiste8UkerKontroll
 import no.nav.dagpenger.regel.Søknadstidspunkt.MuligGjenopptakKontroll
+import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import java.time.LocalDate
@@ -76,6 +77,7 @@ class SøknadInnsendtHendelse(
             JobbetUtenforNorgeKontroll,
             MuligGjenopptakKontroll,
             SvangerskapsrelaterteSykepengerKontroll,
+            SøknadstidspunktForLangtFramITid,
             VernepliktKontroll,
             ØnskerEtterRapporteringsfristKontroll,
         )
