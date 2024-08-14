@@ -3,6 +3,7 @@ package no.nav.dagpenger.features
 import io.cucumber.datatable.DataTable
 import io.cucumber.java.BeforeStep
 import io.cucumber.java8.No
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.dato.mai
 import no.nav.dagpenger.features.DagpengergrunnlagSteg.Månedsinntekt.Companion.finnSisteAvsluttendeKalenderMåned
@@ -55,15 +56,21 @@ class DagpengergrunnlagSteg : No {
             regelkjøring.leggTil(Faktum(Dagpengegrunnlag.inntekt, f))
         }
 
-        Så("beregnet grunnlag være {string} og {string}") { avkortet: String, uavkortet: String ->
+        Så("beregnet grunnlag være {string}") { avkortet: String ->
             opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe Beløp(BigDecimal(avkortet))
-            opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe Beløp(BigDecimal(uavkortet))
-//            opplysninger.finnOpplysning(Dagpengegrunnlag.avkortet).verdi shouldBe Beløp(avkortet.toBigDecimal())
-//            opplysninger.finnOpplysning(Dagpengegrunnlag.uavkortet).verdi shouldBe Beløp(uavkortet.toBigDecimal())
+        }
+        Så("uavkortet {string}") { uavkortet: String ->
+            listOf(
+                opplysninger.finnOpplysning(Dagpengegrunnlag.uavkortet12mnd).verdi,
+                opplysninger.finnOpplysning(Dagpengegrunnlag.uavkortet36mnd).verdi,
+            ).shouldContain(Beløp(uavkortet.toBigDecimal()))
         }
 
         Og("vi har ikke avkortet") {
-            //  opplysninger.finnOpplysning(Dagpengegrunnlag.harAvkortet).verdi shouldBe false
+            opplysninger.finnOpplysning(Dagpengegrunnlag.harAvkortet).verdi shouldBe false
+        }
+        Og("vi har avkortet") {
+            opplysninger.finnOpplysning(Dagpengegrunnlag.harAvkortet).verdi shouldBe true
         }
     }
 

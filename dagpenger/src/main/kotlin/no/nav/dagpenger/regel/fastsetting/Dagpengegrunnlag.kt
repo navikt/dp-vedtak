@@ -6,6 +6,7 @@ import no.nav.dagpenger.inntekt.v1.InntektKlasse
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.divisjon
+import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.høyesteAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.inntekt.SummerPeriode
@@ -16,29 +17,46 @@ import no.nav.dagpenger.opplysning.regel.inntekt.summerPeriode
 import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.opplysning.verdier.Beløp
-import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
-import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.maksgrenseForGrunnlag
 import java.time.LocalDate
 
 @Suppress("ktlint:standard:property-naming")
 object Dagpengegrunnlag {
-    val inntekt = Opplysningstype.somInntekt("Inntekt")
-    val oppjustertinntekt = Opplysningstype.somInntekt("Oppjustert inntekt")
-    val relevanteinntekter = Opplysningstype.somInntekt("Tellende inntekt")
     val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
-    private val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp for grunnlag")
-    private val inntektId = Minsteinntekt.inntektId
+
+    val inntekt = Opplysningstype.somInntekt("Inntekt")
     val grunnlag = Opplysningstype.somBeløp("Grunnlag")
     val harAvkortet = Opplysningstype.somBoolsk("Har avkortet grunnlag")
+    val uavkortet12mnd = Opplysningstype.somBeløp("Uavkortet grunnlag siste 12 mnd")
+    val uavkortet36mnd = Opplysningstype.somBeløp("Uavkortet grunnlag siste 36 mnd")
 
-    val faktorForMaksgrense = Opplysningstype.somDesimaltall("Faktor")
-    val maksgrenseForGrunnlag = Opplysningstype.somBeløp("6 ganger grunnbeløp")
+    private val oppjustertinntekt = Opplysningstype.somInntekt("Oppjustert inntekt")
+    private val relevanteinntekter = Opplysningstype.somInntekt("Tellende inntekt")
+    private val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp for grunnlag")
+
+    private val inntektId = Minsteinntekt.inntektId
+
+    private val faktorForMaksgrense = Opplysningstype.somDesimaltall("Faktor for maksimalt mulig grunnlag")
+    private val maksgrenseForGrunnlag = Opplysningstype.somBeløp("6 ganger grunnbeløp")
+    private val antallÅrI36Måneder = Opplysningstype.somDesimaltall("Antall år i 36 måneder")
+
+    private val grunnlag12mnd = Opplysningstype.somBeløp("Grunnlag siste 12 mnd.")
+
+    private val beløpSiste36 = Opplysningstype.somBeløp("Inntekt siste 36 måneder")
+    private val grunnlag36mnd = Opplysningstype.somBeløp("Gjennomsnittlig arbeidsinntekt siste 36 måneder")
+    private val inntektperiode1 = Opplysningstype.somBeløp("Inntektperiode 1")
+    private val inntektperiode2 = Opplysningstype.somBeløp("Inntektperiode 2")
+    private val inntektperiode3 = Opplysningstype.somBeløp("Inntektperiode 3")
+    private val avkortetperiode1 = Opplysningstype.somBeløp("Avkortet inntektperiode 1")
+    private val avkortetperiode2 = Opplysningstype.somBeløp("Avkortet inntektperiode 2")
+    private val avkortetperiode3 = Opplysningstype.somBeløp("Avkortet inntektperiode 3")
 
     val regelsett =
         Regelsett("Dagpengegrunnlag") {
+            regel(antallÅrI36Måneder) { oppslag(søknadstidspunkt) { 3.0 } }
             regel(faktorForMaksgrense) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 6.0 } }
             regel(maksgrenseForGrunnlag) { multiplikasjon(grunnbeløp, faktorForMaksgrense) }
 
@@ -60,46 +78,41 @@ object Dagpengegrunnlag {
                 )
             }
 
-            val siste12 = siste12mnd(relevanteinntekter)
-            val siste36 = siste36mnd(relevanteinntekter)
-            regel(grunnlag) { høyesteAv(siste36, siste12) }
+            // Summer hver 12 månedersperiode
+            regel(inntektperiode1) { summerPeriode(relevanteinntekter, SummerPeriode.InntektPeriode.Første) }
+            regel(inntektperiode2) { summerPeriode(relevanteinntekter, SummerPeriode.InntektPeriode.Andre) }
+            regel(inntektperiode3) { summerPeriode(relevanteinntekter, SummerPeriode.InntektPeriode.Tredje) }
+
+            regel(uavkortet12mnd) { sumAv(inntektperiode1) }
+            regel(uavkortet36mnd) { sumAv(inntektperiode1, inntektperiode2, inntektperiode3) }
+
+            // Avkort hver 12 månedersperiode
+            regel(avkortetperiode1) { minstAv(inntektperiode1, maksgrenseForGrunnlag) }
+            regel(avkortetperiode2) { minstAv(inntektperiode2, maksgrenseForGrunnlag) }
+            regel(avkortetperiode3) { minstAv(inntektperiode3, maksgrenseForGrunnlag) }
+
+            // Fastsett grunnlag basert på siste 12 mnd
+            regel(grunnlag12mnd) { minstAv(inntektperiode1, maksgrenseForGrunnlag) }
+
+            // Summer siste 36 måneder
+            regel(beløpSiste36) { sumAv(avkortetperiode1, avkortetperiode2, avkortetperiode3) }
+
+            // Fastsett grunnlag basert på siste 36 mnd
+            regel(grunnlag36mnd) { divisjon(beløpSiste36, antallÅrI36Måneder) }
+
+            // Fastsett grunnlag til det som gir høyest grunnlag
+            regel(grunnlag) { høyesteAv(grunnlag12mnd, grunnlag36mnd) }
+
+            val harAvkortetPeriode1 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 1")
+            val harAvkortetPeriode2 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 2")
+            val harAvkortetPeriode3 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 3")
+            // Fastsett om grunnlaget er avkortet
+            // TODO: størreEnn - ikke erLik
+            regel(harAvkortetPeriode1) { størreEnnEllerLik(inntektperiode1, maksgrenseForGrunnlag) }
+            regel(harAvkortetPeriode2) { størreEnnEllerLik(inntektperiode2, maksgrenseForGrunnlag) }
+            regel(harAvkortetPeriode3) { størreEnnEllerLik(inntektperiode3, maksgrenseForGrunnlag) }
+            regel(harAvkortet) { enAv(harAvkortetPeriode1, harAvkortetPeriode2, harAvkortetPeriode3) }
         }
-}
-
-private fun Regelsett.siste12mnd(inntekt: Opplysningstype<Inntekt>): Opplysningstype<Beløp> {
-    val inntektSiste12 = Opplysningstype.somBeløp("Inntekt siste 12 mnd")
-    val grunnlag = Opplysningstype.somBeløp("Grunnlag siste 12 mnd.")
-
-    regel(inntektSiste12) { summerPeriode(inntekt, SummerPeriode.InntektPeriode.Første) }
-    regel(grunnlag) { minstAv(inntektSiste12, maksgrenseForGrunnlag) }
-
-    return grunnlag
-}
-
-private fun Regelsett.siste36mnd(inntekt: Opplysningstype<Inntekt>): Opplysningstype<Beløp> {
-    val beløpSiste36 = Opplysningstype.somBeløp("Inntekt siste 36 måneder")
-    val årligGjennomsnittSiste36 = Opplysningstype.somBeløp("Gjennomsnittlig arbeidsinntekt siste 36 måneder")
-    val antallÅrI36Måneder = Opplysningstype.somDesimaltall("Antall år i 36 måneder")
-    val inntektperiode1 = Opplysningstype.somBeløp("Inntektperiode 1")
-    val inntektperiode2 = Opplysningstype.somBeløp("Inntektperiode 2")
-    val inntektperiode3 = Opplysningstype.somBeløp("Inntektperiode 3")
-
-    val avkortetperiode1 = Opplysningstype.somBeløp("Avkortet inntektperiode 1")
-    val avkortetperiode2 = Opplysningstype.somBeløp("Avkortet inntektperiode 2")
-    val avkortetperiode3 = Opplysningstype.somBeløp("Avkortet inntektperiode 3")
-
-    regel(inntektperiode1) { summerPeriode(inntekt, SummerPeriode.InntektPeriode.Første) }
-    regel(inntektperiode2) { summerPeriode(inntekt, SummerPeriode.InntektPeriode.Andre) }
-    regel(inntektperiode3) { summerPeriode(inntekt, SummerPeriode.InntektPeriode.Tredje) }
-
-    regel(avkortetperiode1) { minstAv(inntektperiode1, maksgrenseForGrunnlag) }
-    regel(avkortetperiode2) { minstAv(inntektperiode2, maksgrenseForGrunnlag) }
-    regel(avkortetperiode3) { minstAv(inntektperiode3, maksgrenseForGrunnlag) }
-
-    regel(beløpSiste36) { sumAv(avkortetperiode1, avkortetperiode2, avkortetperiode3) }
-    regel(antallÅrI36Måneder) { oppslag(Dagpengegrunnlag.søknadstidspunkt) { 3.0 } }
-    regel(årligGjennomsnittSiste36) { divisjon(beløpSiste36, antallÅrI36Måneder) }
-    return årligGjennomsnittSiste36
 }
 
 private fun grunnbeløpFor(it: LocalDate) =
