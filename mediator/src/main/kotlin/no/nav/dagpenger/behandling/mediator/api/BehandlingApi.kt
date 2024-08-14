@@ -47,6 +47,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
+import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import org.apache.kafka.common.errors.ResourceNotFoundException
@@ -104,6 +105,7 @@ internal fun Application.behandlingApi(
                             ULID -> DataTypeDTO.ulid
                             Penger -> DataTypeDTO.penger
                             InntektDataType -> TODO()
+                            Tekst -> TODO()
                         },
                     )
                 }
@@ -202,6 +204,7 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
                 ULID -> DataTypeDTO.ulid
                 Penger -> DataTypeDTO.penger
                 InntektDataType -> TODO()
+                Tekst -> TODO()
             },
         kilde =
             this.kilde?.let {

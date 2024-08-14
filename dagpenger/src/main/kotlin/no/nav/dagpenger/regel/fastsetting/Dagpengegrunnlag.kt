@@ -1,18 +1,34 @@
 package no.nav.dagpenger.regel.fastsetting
 
+import no.nav.dagpenger.grunnbelop.forDato
+import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.brukt
 import no.nav.dagpenger.opplysning.regel.erUlik
 import no.nav.dagpenger.opplysning.regel.høyesteAv
+import no.nav.dagpenger.opplysning.regel.innhentMed
+import no.nav.dagpenger.opplysning.regel.inntekt.filtrerRelevanteInntekter
+import no.nav.dagpenger.opplysning.regel.inntekt.oppjuster
+import no.nav.dagpenger.opplysning.regel.inntekt.summerFørstePeriode
+import no.nav.dagpenger.opplysning.regel.minstAv
+import no.nav.dagpenger.opplysning.regel.multiplikasjon
+import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
+import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.Verneplikt
+import java.time.LocalDate
 
 object Dagpengegrunnlag {
     val inntekt = Opplysningstype.somInntekt("Inntekt")
     val oppjustertinntekt = Opplysningstype.somInntekt("Oppjustert inntekt")
+    val relevanteinntekter = Opplysningstype.somInntekt("Tellende inntekt")
+    private val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
+    private val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp")
     val verneplikt = Verneplikt.vurderingAvVerneplikt
+    val inntektId = Minsteinntekt.inntektId
     private val inntekt12mnd = Opplysningstype.somBeløp("Inntektsgrunnlag 12 mnd")
     private val inntekt36mnd = Opplysningstype.somBeløp("Inntektsgrunnlag 36 mnd")
     val avkortet = Opplysningstype.somBeløp("Avkortet grunnlag")
@@ -32,23 +48,41 @@ object Dagpengegrunnlag {
 
             // regel(avkortet) { avkortet(inntekt36mnd, seksGangerG) }
             // regel(avkortet, LocalDate.of(2021, 12, 17)) { avkortetMånedlig(inntekt36mnd, seksGangerG) }
-            val siste12 = siste12mnd(inntekt)
-            val siste36 = siste36mnd(inntekt)
+            regel(inntekt) { innhentMed(inntektId) }
+            regel(grunnbeløp) { oppslag(søknadstidspunkt) { grunnbeløpFor(it) } }
+            regel(oppjustertinntekt) { oppjuster(grunnbeløp, inntekt) }
+            regel(relevanteinntekter) { filtrerRelevanteInntekter(oppjustertinntekt) }
+
+            val siste12 = siste12mnd(relevanteinntekter, grunnbeløp)
+            val siste36 = siste36mnd(relevanteinntekter)
             regel(grunnlag) { høyesteAv(siste12, siste36) }
             regel(harAvkortet) { erUlik(avkortet, uavkortet) }
             regel(beregningsregel) { brukt(grunnlag) }
         }
 }
 
-private fun Regelsett.siste12mnd(inntekt: Opplysningstype<Inntekt>): Opplysningstype<Beløp> {
-    val sum = Opplysningstype.somBeløp("Sum inntekt 12 mnd")
-    val avkortet = Opplysningstype.somBeløp("dsfasdfjlk")
+private fun grunnbeløpFor(it: LocalDate) =
+    getGrunnbeløpForRegel(no.nav.dagpenger.grunnbelop.Regel.Grunnlag)
+        .forDato(it)
+        .verdi
+        .let { Beløp(it) }
 
-    regel(avkortet) { høyesteAv(sum) }
-    val grunnlag = Opplysningstype.somBeløp("Inntektsgrunnlag 12 mnd")
+private fun Regelsett.siste12mnd(
+    inntekt: Opplysningstype<Inntekt>,
+    grunnbeløp: Opplysningstype<Beløp>,
+): Opplysningstype<Beløp> {
+    val inntektSiste12 = Opplysningstype.somBeløp("Inntekt siste 12 mnd")
+    val `6G` = Opplysningstype.somDesimaltall("6 ganger grunnbeløp")
+    val maksGrunnlag = Opplysningstype.somBeløp("Maks grunnlag")
+    val `12MånederGrunnlag` = Opplysningstype.somBeløp("Grunnlag siste 12 mnd.")
 
-    regel(grunnlag) { høyesteAv(avkortet) }
-    return grunnlag
+    regel(`6G`) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 6.0 } }
+    regel(inntektSiste12) { summerFørstePeriode(inntekt) }
+    regel(maksGrunnlag) { multiplikasjon(grunnbeløp, `6G`) }
+
+    regel(`12MånederGrunnlag`) { minstAv(inntektSiste12, maksGrunnlag) }
+
+    return `12MånederGrunnlag`
 }
 
 private fun Regelsett.siste36mnd(inntekt: Opplysningstype<Inntekt>): Opplysningstype<Beløp> =

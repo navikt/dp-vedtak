@@ -21,6 +21,8 @@ class Brukt<T : Comparable<T>> internal constructor(
     override fun toString() = "Hvilken regel har utledet $a"
 }
 
+@JvmName("bruktBeløp")
 fun Opplysningstype<String>.brukt(a: Opplysningstype<Beløp>) = Brukt(this, a)
 
+@JvmName("bruktTall")
 fun Opplysningstype<String>.brukt(a: Opplysningstype<Int>) = Brukt(this, a)
