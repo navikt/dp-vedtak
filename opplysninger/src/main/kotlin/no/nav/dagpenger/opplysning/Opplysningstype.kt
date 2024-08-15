@@ -103,7 +103,7 @@ class Opplysningstype<T : Comparable<T>>(
 
         fun somInntekt(
             opplysningTypeId: OpplysningTypeId,
-            parent: Opplysningstype<Inntekt>?,
+            parent: Opplysningstype<Inntekt>? = null,
         ) = Opplysningstype<Inntekt>(opplysningTypeId, InntektDataType, parent)
 
         fun somTekst(
