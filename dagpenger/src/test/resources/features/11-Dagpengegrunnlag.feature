@@ -40,3 +40,34 @@ Egenskap: § 4-11. Dagpengegrunnlag
     Og uavkortet "20000"
     Og vi har ikke avkortet
     #Og beregningsregel er "siste36"
+
+
+
+
+  ###################################################
+  #
+  # Tatt scenarioer fra dp-regel-grunnlag under
+
+  Scenario: Skal gi riktig avkortet grunnlag siste 12 kalendermåneder gitt mars 2019 inntekt
+    Gitt at søknadsdato for dagpenger er 01.01.2019
+    Gitt at inntekt for grunnlag er
+      | Beløp | Inntektsklasse | Periode |
+      | 300000 | ARBEIDSINNTEKT | 2018-04 |
+      | 300000 | ARBEIDSINNTEKT | 2018-05 |
+    Så beregnet grunnlag være "581298"
+    Og uavkortet "610409.68024435568276400000"
+    Og vi har avkortet
+    #Og beregningsregel er "siste12"
+
+  Scenario: Skal gi riktig grunnlag med minusinntekt
+    Gitt at søknadsdato for dagpenger er 10.05.2019
+    Gitt at inntekt for grunnlag er
+      | Beløp | Inntektsklasse | Periode |
+      | 1000   | ARBEIDSINNTEKT | 2018-04 |
+      | 1000 | ARBEIDSINNTEKT | 2018-05 |
+      | -1000 | ARBEIDSINNTEKT | 2018-05 |
+    Så beregnet grunnlag være "1066.47158083602110345000"
+    Og uavkortet "1066.47158083602110345000"
+    Og vi har ikke avkortet
+    #Og beregningsregel er "siste12"
+

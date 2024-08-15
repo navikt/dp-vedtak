@@ -23,7 +23,6 @@ import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import java.time.LocalDate
 
-@Suppress("ktlint:standard:property-naming")
 object Dagpengegrunnlag {
     val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
 
