@@ -33,9 +33,13 @@ class Beløp private constructor(
     val avrundet: NumberValue get() = verdi.with(ører).number
     val heleKroner: NumberValue get() = verdi.with(kroner).number
 
+    val verdien: BigDecimal get() = verdi.number.numberValueExact(BigDecimal::class.java)
+
     operator fun plus(other: Beløp): Beløp = Beløp(verdi.add(other.verdi))
 
     operator fun div(faktor: Double): Beløp = Beløp(verdi.divide(faktor))
+
+    operator fun div(faktor: Beløp): Beløp = Beløp(verdi.divide(faktor.verdien))
 
     operator fun times(faktor: Double): Beløp = Beløp(verdi.multiply(faktor))
 
@@ -60,7 +64,7 @@ class Beløp private constructor(
             Monetary.getRounding(
                 RoundingQueryBuilder
                     .of()
-                    .setScale(2)
+                    .setScale(0)
                     .set(RoundingMode.HALF_UP)
                     .build(),
             )

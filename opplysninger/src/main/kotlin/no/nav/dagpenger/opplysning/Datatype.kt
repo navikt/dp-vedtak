@@ -18,6 +18,7 @@ sealed class Datatype<T : Comparable<T>>(
                 "ULID" -> ULID
                 "Penger" -> Penger
                 "Inntekt" -> InntektDataType
+                "Tekst" -> Tekst
                 else -> throw IllegalArgumentException("Unknown datatype: $datatype")
             }
     }
@@ -32,6 +33,8 @@ data object Desimaltall : Datatype<Double>(Double::class.java)
 data object Heltall : Datatype<Int>(Int::class.java)
 
 data object Boolsk : Datatype<Boolean>(Boolean::class.java)
+
+data object Tekst : Datatype<String>(String::class.java)
 
 data object ULID : Datatype<Ulid>(Ulid::class.java)
 

@@ -25,6 +25,7 @@ import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Systemkilde
+import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
@@ -228,5 +229,7 @@ private class JsonMapper(
                 Inntekt(
                     objectMapper.convertValue(verdi.asText(), no.nav.dagpenger.inntekt.v1.Inntekt::class.java),
                 ) as T
+
+            Tekst -> verdi.asText() as T
         }
 }

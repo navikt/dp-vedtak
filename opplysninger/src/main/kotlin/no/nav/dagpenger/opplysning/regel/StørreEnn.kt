@@ -2,11 +2,12 @@ package no.nav.dagpenger.opplysning.regel
 
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.verdier.Beløp
 
-class StørreEnn internal constructor(
+class StørreEnn<T : Comparable<T>> internal constructor(
     produserer: Opplysningstype<Boolean>,
-    private val a: Opplysningstype<Double>,
-    private val b: Opplysningstype<Double>,
+    private val a: Opplysningstype<T>,
+    private val b: Opplysningstype<T>,
 ) : Regel<Boolean>(produserer, listOf(a, b)) {
     override fun kjør(opplysninger: LesbarOpplysninger): Boolean {
         val a = opplysninger.finnOpplysning(a).verdi
@@ -17,7 +18,14 @@ class StørreEnn internal constructor(
     override fun toString() = "Større enn $a > $b"
 }
 
+@JvmName("størreEnnDouble")
 fun Opplysningstype<Boolean>.størreEnn(
     er: Opplysningstype<Double>,
     størreEnn: Opplysningstype<Double>,
+) = StørreEnn(this, er, størreEnn)
+
+@JvmName("størreEnnBeløp")
+fun Opplysningstype<Boolean>.størreEnn(
+    er: Opplysningstype<Beløp>,
+    størreEnn: Opplysningstype<Beløp>,
 ) = StørreEnn(this, er, størreEnn)

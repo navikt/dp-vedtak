@@ -22,6 +22,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
+import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.Utledning
 import no.nav.dagpenger.opplysning.id
@@ -232,6 +233,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                             objectMapper.readValue(it, no.nav.dagpenger.inntekt.v1.Inntekt::class.java)
                         },
                     )
+
+                Tekst -> row.string("verdi_string")
             } as T
 
         fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
@@ -476,6 +479,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         }
                     },
                 )
+
+            Tekst -> Pair("verdi_string", verdi)
         }
 
         private fun tilPostgresqlTimestamp(verdi: Any) =
