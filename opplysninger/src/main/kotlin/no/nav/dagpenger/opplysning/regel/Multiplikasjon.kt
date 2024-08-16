@@ -27,7 +27,7 @@ fun Opplysningstype<Beløp>.multiplikasjon(
     this,
     beløp,
     faktor,
-) { ledd1, ledd2 -> ledd1 * ledd2 }
+) { a, b -> a * b }
 
 @JvmName("multiplikasjonInt")
 fun Opplysningstype<Beløp>.multiplikasjon(
@@ -37,4 +37,4 @@ fun Opplysningstype<Beløp>.multiplikasjon(
     this,
     beløp,
     faktor,
-) { ledd1, ledd2 -> ledd1 * ledd2 }
+) { a, b -> a * b }
