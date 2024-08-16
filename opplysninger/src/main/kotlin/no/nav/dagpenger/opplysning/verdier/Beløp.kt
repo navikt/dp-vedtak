@@ -43,6 +43,8 @@ class Beløp private constructor(
 
     operator fun times(faktor: Double): Beløp = Beløp(verdi.multiply(faktor))
 
+    operator fun times(faktor: Int): Beløp = Beløp(verdi.multiply(faktor))
+
     override fun compareTo(other: Beløp): Int = verdi.compareTo(other.verdi)
 
     override fun equals(other: Any?): Boolean = other is Beløp && verdi == other.verdi

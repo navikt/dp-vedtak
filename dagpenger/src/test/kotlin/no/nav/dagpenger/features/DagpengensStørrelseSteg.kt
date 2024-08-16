@@ -11,10 +11,13 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
+import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.antallBarn
+import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.avrundetDagpengensStørrelse
 import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.dagpengensStørrelse
+import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.dagsatsMedBarn
 
 class DagpengensStørrelseSteg : No {
-    private val fraDato = 10.mai(2021)
+    private val fraDato = 10.mai(2024)
     private val regelsett = RegelverkDagpenger.regelsettFor(dagpengensStørrelse)
     private val opplysninger: Opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
@@ -41,10 +44,23 @@ class DagpengensStørrelseSteg : No {
         }
 
         Og("at søker har ikke barn") {
-            // Vi har ikke barn
+            regelkjøring.leggTil(Faktum(antallBarn, 0))
         }
-        Så("skal dagpengens størrelse være {string}") { størrelse: String ->
+
+        Gitt("at søker har {int} barn") { antall: Int ->
+            regelkjøring.leggTil(Faktum(antallBarn, antall))
+        }
+
+        Så("skal dagpengens uavrundet størrelse være {string}") { størrelse: String ->
             opplysninger.finnOpplysning(dagpengensStørrelse).verdi shouldBe Beløp(størrelse.toBigDecimal())
+        }
+
+        Så("skal dagpengens størrelse være {string}") { størrelse: String ->
+            opplysninger.finnOpplysning(avrundetDagpengensStørrelse).verdi shouldBe Beløp(størrelse.toBigDecimal())
+        }
+
+        Så("skal dagpengens størrelse med barn være {string}") { størrelse: String ->
+            opplysninger.finnOpplysning(dagsatsMedBarn).verdi shouldBe Beløp(størrelse.toBigDecimal())
         }
     }
 }

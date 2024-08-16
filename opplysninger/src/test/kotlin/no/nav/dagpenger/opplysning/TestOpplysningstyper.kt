@@ -12,6 +12,7 @@ internal object TestOpplysningstyper {
     val beløpB by lazy { Opplysningstype.somBeløp("BeløpB") }
     val faktorA by lazy { Opplysningstype.somDesimaltall("FaktorA") }
     val faktorB by lazy { Opplysningstype.somDesimaltall("FaktorB") }
+    val heltallA by lazy { Opplysningstype.somHeltall("HeltallA") }
     val produkt by lazy { Opplysningstype.somDesimaltall("Resultat") }
     val boolskB by lazy { Opplysningstype.somBoolsk("boolsk B") }
     val boolskC by lazy { Opplysningstype.somBoolsk("boolsk C") }

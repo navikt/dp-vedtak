@@ -4,20 +4,22 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.verdier.Beløp
 
-class Multiplikasjon internal constructor(
+class Multiplikasjon<T : Comparable<T>> internal constructor(
     produserer: Opplysningstype<Beløp>,
     private val beløp: Opplysningstype<Beløp>,
-    private val faktor: Opplysningstype<Double>,
+    private val faktor: Opplysningstype<T>,
+    private val operasjon: (Beløp, T) -> Beløp,
 ) : Regel<Beløp>(produserer, listOf(beløp, faktor)) {
     override fun kjør(opplysninger: LesbarOpplysninger): Beløp {
         val a = opplysninger.finnOpplysning(beløp)
         val b = opplysninger.finnOpplysning(faktor)
-        return a.verdi * b.verdi
+        return operasjon(a.verdi, b.verdi)
     }
 
     override fun toString(): String = "Multiplikasjon av $beløp med $faktor"
 }
 
+@JvmName("multiplikasjonDouble")
 fun Opplysningstype<Beløp>.multiplikasjon(
     beløp: Opplysningstype<Beløp>,
     faktor: Opplysningstype<Double>,
@@ -25,4 +27,14 @@ fun Opplysningstype<Beløp>.multiplikasjon(
     this,
     beløp,
     faktor,
-)
+) { ledd1, ledd2 -> ledd1 * ledd2 }
+
+@JvmName("multiplikasjonInt")
+fun Opplysningstype<Beløp>.multiplikasjon(
+    beløp: Opplysningstype<Beløp>,
+    faktor: Opplysningstype<Int>,
+) = Multiplikasjon(
+    this,
+    beløp,
+    faktor,
+) { ledd1, ledd2 -> ledd1 * ledd2 }
