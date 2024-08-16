@@ -36,7 +36,7 @@ object DagpengensStørrelse {
             regel(barnetillegetsStørrelse) { oppslag(Søknadstidspunkt.søknadstidspunkt) { Barnetillegg.forDato(it) } }
             regel(dekningsgrad) {
                 oppslag(Søknadstidspunkt.søknadstidspunkt) { DagpengensStørrelseFaktor.forDato(it) }
-            } // 2,4% av grunnlag. TODO: Hent faktor fra konfiguasjon som er datostyrt
+            }
             regel(dagpengensStørrelse) { multiplikasjon(grunnlag, dekningsgrad) }
             regel(avrundetDagpengensStørrelse) { avrund(dagpengensStørrelse) }
             regel(barnetillegg) { multiplikasjon(barnetillegetsStørrelse, antallBarn) }
