@@ -61,7 +61,7 @@ class DagpengergrunnlagSteg : No {
         }
 
         Så("beregnet grunnlag være {string}") { grunnlag: String ->
-            opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe grunnlag.toInt()
+            opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe Beløp(grunnlag.toBigDecimal())
         }
 
         Så("uavkortet {string}") { uavkortet: String ->

@@ -30,7 +30,7 @@ object Dagpengegrunnlag {
 
     val inntekt = Opplysningstype.somInntekt("Inntekt")
     val uavrundetGrunnlag = Opplysningstype.somBeløp("Uavrundet grunnlag")
-    val grunnlag = Opplysningstype.somHeltall("Grunnlag")
+    val grunnlag = Opplysningstype.somBeløp("Grunnlag")
     val harAvkortet = Opplysningstype.somBoolsk("Har avkortet grunnlag")
     val uavkortet12mnd = Opplysningstype.somBeløp("Uavkortet grunnlag siste 12 mnd")
     val uavkortet36mnd = Opplysningstype.somBeløp("Uavkortet grunnlag siste 36 mnd")

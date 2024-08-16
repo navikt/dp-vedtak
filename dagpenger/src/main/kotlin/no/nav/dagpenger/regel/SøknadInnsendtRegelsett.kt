@@ -2,12 +2,14 @@ package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.Regelverk
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
+import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 
 val RegelverkDagpenger =
     Regelverk(
         Alderskrav.regelsett,
         Dagpengegrunnlag.regelsett,
+        DagpengensStørrelse.regelsett,
         Dagpengeperiode.regelsett,
         KravPåDagpenger.regelsett,
         Medlemskap.regelsett,

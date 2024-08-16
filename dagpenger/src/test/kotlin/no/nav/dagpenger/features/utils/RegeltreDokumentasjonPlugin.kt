@@ -25,6 +25,7 @@ import no.nav.dagpenger.regel.Utdanning
 import no.nav.dagpenger.regel.Utestengning
 import no.nav.dagpenger.regel.Verneplikt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
+import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import org.approvaltests.Approvals
 import org.approvaltests.core.Options
@@ -52,6 +53,7 @@ fun dokumentasjon(scenario: Scenario) {
             "@regel-medlemskap" to Medlemskap.regelsett,
             "@regel-dapengeperiode" to Dagpengeperiode.regelsett,
             "@regel-dagpengegrunnlag" to Dagpengegrunnlag.regelsett,
+            "@regel-dagpengensStørrelse" to DagpengensStørrelse.regelsett,
         )
     val regelsett = regler[test]
     requireNotNull(regelsett) { "Fant ikke regelsett for $test, det må mappes manuelt i RegeltreDokumentasjonPlugin" }
