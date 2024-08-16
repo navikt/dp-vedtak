@@ -18,6 +18,7 @@ sealed class Datatype<T : Comparable<T>>(
                 "ULID" -> ULID
                 "Penger" -> Penger
                 "Inntekt" -> InntektDataType
+                "Tekst" -> Tekst
                 else -> throw IllegalArgumentException("Unknown datatype: $datatype")
             }
     }

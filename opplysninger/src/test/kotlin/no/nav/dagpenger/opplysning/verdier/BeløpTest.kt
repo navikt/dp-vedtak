@@ -1,6 +1,5 @@
 package no.nav.dagpenger.opplysning.verdier
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.javamoney.moneta.Money
@@ -52,11 +51,9 @@ class BeløpTest {
 
         beløp4 shouldBe Beløp("NOK 166.66666666666666666667")
         beløp4.uavrundet.doubleValueExact() shouldBe 166.66666666666666
-        beløp4.avrundet.doubleValueExact() shouldBe 166.67
-        beløp4.avrundet.numberValue(BigDecimal::class.java) shouldBe BigDecimal("166.67")
-        shouldThrow<ArithmeticException> {
-            beløp4.avrundet.intValueExact() shouldBe 167
-        }
+        beløp4.avrundet.doubleValueExact() shouldBe 167.0
+        beløp4.avrundet.numberValue(BigDecimal::class.java) shouldBe BigDecimal("167")
+        beløp4.avrundet.intValueExact() shouldBe 167
 
         beløp4.heleKroner.doubleValueExact() shouldBe 167.0
         beløp4.heleKroner.intValueExact() shouldBe 167

@@ -234,7 +234,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         },
                     )
 
-                Tekst -> TODO()
+                Tekst -> row.string("verdi_string")
             } as T
 
         fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
@@ -479,6 +479,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         }
                     },
                 )
+
+            Tekst -> Pair("verdi_string", verdi)
         }
 
         private fun tilPostgresqlTimestamp(verdi: Any) =

@@ -15,6 +15,7 @@ import no.nav.dagpenger.behandling.TestOpplysningstyper.heltall
 import no.nav.dagpenger.behandling.TestOpplysningstyper.inntektA
 import no.nav.dagpenger.behandling.TestOpplysningstyper.maksdato
 import no.nav.dagpenger.behandling.TestOpplysningstyper.mindato
+import no.nav.dagpenger.behandling.TestOpplysningstyper.tekst
 import no.nav.dagpenger.behandling.TestOpplysningstyper.utledetOpplysningstype
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.objectMapper
@@ -47,8 +48,9 @@ class OpplysningerRepositoryPostgresTest {
             val kildeB = Saksbehandlerkilde("bar")
             val datoFaktum = Faktum(dato, LocalDate.now(), kilde = kildeB)
             val desimalltallFaktum = Faktum(desimal, 5.5, kilde = kildeB)
+            val tekstFaktum = Faktum(tekst, "Dette er en tekst")
 
-            val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum, desimalltallFaktum))
+            val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum, desimalltallFaktum, tekstFaktum))
             repo.lagreOpplysninger(opplysninger)
 
             val fraDb =
@@ -61,6 +63,7 @@ class OpplysningerRepositoryPostgresTest {
             fraDb.finnOpplysning(boolskFaktum.opplysningstype).kilde?.id shouldBe kildeA.id
             fraDb.finnOpplysning(datoFaktum.opplysningstype).verdi shouldBe datoFaktum.verdi
             fraDb.finnOpplysning(datoFaktum.opplysningstype).kilde?.id shouldBe kildeB.id
+            fraDb.finnOpplysning(tekstFaktum.opplysningstype).verdi shouldBe tekstFaktum.verdi
 
             fraDb.finnOpplysning(desimalltallFaktum.opplysningstype).verdi shouldBe desimalltallFaktum.verdi
         }

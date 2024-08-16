@@ -104,8 +104,8 @@ internal fun Application.behandlingApi(
                             Heltall -> DataTypeDTO.heltall
                             ULID -> DataTypeDTO.ulid
                             Penger -> DataTypeDTO.penger
-                            InntektDataType -> TODO()
-                            Tekst -> TODO()
+                            InntektDataType -> DataTypeDTO.inntekt
+                            Tekst -> DataTypeDTO.tekst
                         },
                     )
                 }
@@ -203,8 +203,8 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
                 Heltall -> DataTypeDTO.heltall
                 ULID -> DataTypeDTO.ulid
                 Penger -> DataTypeDTO.penger
-                InntektDataType -> TODO()
-                Tekst -> TODO()
+                InntektDataType -> DataTypeDTO.inntekt
+                Tekst -> DataTypeDTO.tekst
             },
         kilde =
             this.kilde?.let {

@@ -17,6 +17,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.dagpenger.behandling.TestOpplysningstyper
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.mediator.PersonMediator
@@ -70,6 +71,12 @@ internal class BehandlingApiTest {
                             OpplysningSvar(
                                 opplysningstype = Minsteinntekt.inntekt12,
                                 verdi = Beløp(3000.034.toBigDecimal()),
+                                tilstand = OpplysningSvar.Tilstand.Faktum,
+                                kilde = Saksbehandlerkilde("Z123456"),
+                            ),
+                            OpplysningSvar(
+                                opplysningstype = TestOpplysningstyper.tekst,
+                                verdi = "DETTE ERN TEST ",
                                 tilstand = OpplysningSvar.Tilstand.Faktum,
                                 kilde = Saksbehandlerkilde("Z123456"),
                             ),
