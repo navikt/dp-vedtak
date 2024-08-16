@@ -19,7 +19,7 @@ import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.Verneplikt.vurderingAvVerneplikt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
-import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.grunnlag
+import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.uavrundetGrunnlag
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.YearMonth
@@ -28,7 +28,7 @@ import no.nav.dagpenger.inntekt.v1.Inntekt as InntektV1
 
 class DagpengergrunnlagSteg : No {
     private val fraDato = 10.mai(2021)
-    private val regelsett = RegelverkDagpenger.regelsettFor(grunnlag)
+    private val regelsett = RegelverkDagpenger.regelsettFor(uavrundetGrunnlag)
     private val opplysninger: Opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 
@@ -56,9 +56,14 @@ class DagpengergrunnlagSteg : No {
             regelkjøring.leggTil(Faktum(Dagpengegrunnlag.inntekt, f))
         }
 
-        Så("beregnet grunnlag være {string}") { avkortet: String ->
-            opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe Beløp(BigDecimal(avkortet))
+        Så("beregnet uavrundet grunnlag være {string}") { uavrundetGrunnlag: String ->
+            opplysninger.finnOpplysning(Dagpengegrunnlag.uavrundetGrunnlag).verdi shouldBe Beløp(BigDecimal(uavrundetGrunnlag))
         }
+
+        Så("beregnet grunnlag være {string}") { grunnlag: String ->
+            opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi shouldBe grunnlag.toInt()
+        }
+
         Så("uavkortet {string}") { uavkortet: String ->
             listOf(
                 opplysninger.finnOpplysning(Dagpengegrunnlag.uavkortet12mnd).verdi,

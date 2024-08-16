@@ -5,7 +5,7 @@ import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
 import no.nav.dagpenger.inntekt.v1.InntektKlasse
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.regel.Regel
+import no.nav.dagpenger.opplysning.regel.avrund
 import no.nav.dagpenger.opplysning.regel.brukt
 import no.nav.dagpenger.opplysning.regel.divisjon
 import no.nav.dagpenger.opplysning.regel.enAv
@@ -29,7 +29,8 @@ object Dagpengegrunnlag {
     val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
 
     val inntekt = Opplysningstype.somInntekt("Inntekt")
-    val grunnlag = Opplysningstype.somBeløp("Grunnlag")
+    val uavrundetGrunnlag = Opplysningstype.somBeløp("Uavrundet grunnlag")
+    val grunnlag = Opplysningstype.somHeltall("Grunnlag")
     val harAvkortet = Opplysningstype.somBoolsk("Har avkortet grunnlag")
     val uavkortet12mnd = Opplysningstype.somBeløp("Uavkortet grunnlag siste 12 mnd")
     val uavkortet36mnd = Opplysningstype.somBeløp("Uavkortet grunnlag siste 36 mnd")
@@ -104,10 +105,13 @@ object Dagpengegrunnlag {
             regel(grunnlag36mnd) { divisjon(beløpSiste36, antallÅrI36Måneder) }
 
             // Fastsett grunnlag til det som gir høyest grunnlag
-            regel(grunnlag) { høyesteAv(grunnlag12mnd, grunnlag36mnd) }
+            regel(uavrundetGrunnlag) { høyesteAv(grunnlag12mnd, grunnlag36mnd) }
 
             // Finn beregningsregel brukt
-            regel(bruktBeregningsregel) { brukt(grunnlag) }
+            regel(bruktBeregningsregel) { brukt(uavrundetGrunnlag) }
+
+            // Fastsett avrundet grunnlag
+            regel(grunnlag) { avrund(uavrundetGrunnlag) }
 
             val harAvkortetPeriode1 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 1")
             val harAvkortetPeriode2 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 2")
