@@ -5,6 +5,8 @@ import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
 import no.nav.dagpenger.inntekt.v1.InntektKlasse
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.regel.Regel
+import no.nav.dagpenger.opplysning.regel.brukt
 import no.nav.dagpenger.opplysning.regel.divisjon
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.høyesteAv
@@ -17,7 +19,7 @@ import no.nav.dagpenger.opplysning.regel.inntekt.summerPeriode
 import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
+import no.nav.dagpenger.opplysning.regel.størreEnn
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
@@ -52,6 +54,8 @@ object Dagpengegrunnlag {
     private val avkortetperiode1 = Opplysningstype.somBeløp("Avkortet inntektperiode 1")
     private val avkortetperiode2 = Opplysningstype.somBeløp("Avkortet inntektperiode 2")
     private val avkortetperiode3 = Opplysningstype.somBeløp("Avkortet inntektperiode 3")
+
+    internal val bruktBeregningsregel = Opplysningstype.somTekst("Brukt beregningsregel")
 
     val regelsett =
         Regelsett("Dagpengegrunnlag") {
@@ -102,14 +106,16 @@ object Dagpengegrunnlag {
             // Fastsett grunnlag til det som gir høyest grunnlag
             regel(grunnlag) { høyesteAv(grunnlag12mnd, grunnlag36mnd) }
 
+            // Finn beregningsregel brukt
+            regel(bruktBeregningsregel) { brukt(grunnlag) }
+
             val harAvkortetPeriode1 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 1")
             val harAvkortetPeriode2 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 2")
             val harAvkortetPeriode3 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 3")
             // Fastsett om grunnlaget er avkortet
-            // TODO: størreEnn - ikke erLik
-            regel(harAvkortetPeriode1) { størreEnnEllerLik(inntektperiode1, maksgrenseForGrunnlag) }
-            regel(harAvkortetPeriode2) { størreEnnEllerLik(inntektperiode2, maksgrenseForGrunnlag) }
-            regel(harAvkortetPeriode3) { størreEnnEllerLik(inntektperiode3, maksgrenseForGrunnlag) }
+            regel(harAvkortetPeriode1) { størreEnn(inntektperiode1, maksgrenseForGrunnlag) }
+            regel(harAvkortetPeriode2) { størreEnn(inntektperiode2, maksgrenseForGrunnlag) }
+            regel(harAvkortetPeriode3) { størreEnn(inntektperiode3, maksgrenseForGrunnlag) }
             regel(harAvkortet) { enAv(harAvkortetPeriode1, harAvkortetPeriode2, harAvkortetPeriode3) }
         }
 }

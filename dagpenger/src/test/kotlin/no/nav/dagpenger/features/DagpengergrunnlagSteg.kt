@@ -72,6 +72,10 @@ class DagpengergrunnlagSteg : No {
         Og("vi har avkortet") {
             opplysninger.finnOpplysning(Dagpengegrunnlag.harAvkortet).verdi shouldBe true
         }
+
+        Og("beregningsregel er {string}") { bruktBeregningsregel: String ->
+            opplysninger.finnOpplysning(Dagpengegrunnlag.bruktBeregningsregel).verdi shouldBe bruktBeregningsregel
+        }
     }
 
     private fun lagInntekt(inntekt: MutableList<MutableMap<String, String>>): InntektV1 {

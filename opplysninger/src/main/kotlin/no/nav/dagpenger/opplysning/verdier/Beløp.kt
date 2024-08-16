@@ -64,7 +64,7 @@ class Beløp private constructor(
             Monetary.getRounding(
                 RoundingQueryBuilder
                     .of()
-                    .setScale(2)
+                    .setScale(0)
                     .set(RoundingMode.HALF_UP)
                     .build(),
             )
