@@ -37,7 +37,7 @@ object Dagpengegrunnlag {
 
     private val oppjustertinntekt = Opplysningstype.somInntekt("Oppjustert inntekt")
     private val relevanteinntekter = Opplysningstype.somInntekt("Tellende inntekt")
-    private val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp for grunnlag")
+    val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp for grunnlag")
 
     private val inntektId = Minsteinntekt.inntektId
 

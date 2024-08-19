@@ -15,6 +15,7 @@ class Beløp private constructor(
 ) : Comparable<Beløp> {
     constructor(verdi: String) : this(Money.parse(verdi))
     constructor(verdi: Double) : this(BigDecimal.valueOf(verdi))
+    constructor(verdi: Int) : this(verdi.toBigDecimal())
     constructor(verdi: BigDecimal) : this(
         Money.of(
             verdi,
