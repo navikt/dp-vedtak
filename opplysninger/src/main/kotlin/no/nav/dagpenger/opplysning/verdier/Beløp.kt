@@ -37,9 +37,11 @@ class Beløp private constructor(
 
     operator fun plus(other: Beløp): Beløp = Beløp(verdi.add(other.verdi))
 
-    operator fun div(faktor: Double): Beløp = Beløp(verdi.divide(faktor))
+    operator fun div(divisior: Double): Beløp = Beløp(verdi.divide(divisior))
 
-    operator fun div(faktor: Beløp): Beløp = Beløp(verdi.divide(faktor.verdien))
+    operator fun div(divisor: Beløp): Beløp = Beløp(verdi.divide(divisor.verdien))
+
+    operator fun div(divisor: Int): Beløp = Beløp(verdi.divide(divisor))
 
     operator fun times(faktor: Double): Beløp = Beløp(verdi.multiply(faktor))
 

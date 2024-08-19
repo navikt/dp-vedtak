@@ -11,14 +11,14 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
+import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
 import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.antallBarn
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.avrundetDagpengensStørrelse
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.dagpengensStørrelse
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.dagsatsMedBarn
+import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.avrundetDagsMedBarnetillegg
+import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.dagsatsUtenBarnetillegg
 
 class DagpengensStørrelseSteg : No {
     private val fraDato = 10.mai(2024)
-    private val regelsett = RegelverkDagpenger.regelsettFor(dagpengensStørrelse)
+    private val regelsett = RegelverkDagpenger.regelsettFor(dagsatsUtenBarnetillegg)
     private val opplysninger: Opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 
@@ -51,16 +51,16 @@ class DagpengensStørrelseSteg : No {
             regelkjøring.leggTil(Faktum(antallBarn, antall))
         }
 
-        Så("skal dagpengens uavrundet størrelse være {string}") { størrelse: String ->
-            opplysninger.finnOpplysning(dagpengensStørrelse).verdi shouldBe Beløp(størrelse.toBigDecimal())
+        Så("skal dagpengens uavrundet størrelse uten barnetillegg være {string}") { størrelse: String ->
+            opplysninger.finnOpplysning(dagsatsUtenBarnetillegg).verdi shouldBe Beløp(størrelse.toBigDecimal())
         }
 
         Så("skal dagpengens størrelse være {string}") { størrelse: String ->
-            opplysninger.finnOpplysning(avrundetDagpengensStørrelse).verdi shouldBe Beløp(størrelse.toBigDecimal())
+            opplysninger.finnOpplysning(avrundetDagsMedBarnetillegg).verdi shouldBe Beløp(størrelse.toBigDecimal())
         }
 
-        Så("skal dagpengens størrelse med barn være {string}") { størrelse: String ->
-            opplysninger.finnOpplysning(dagsatsMedBarn).verdi shouldBe Beløp(størrelse.toBigDecimal())
+        Så("skal ukessats være {string}") { ukessats: String ->
+            opplysninger.finnOpplysning(DagpengensStørrelse.ukessats).verdi shouldBe Beløp(ukessats.toBigDecimal())
         }
     }
 }

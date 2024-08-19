@@ -5,6 +5,8 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.TemporalCollection
 import no.nav.dagpenger.opplysning.regel.addisjon
 import no.nav.dagpenger.opplysning.regel.avrund
+import no.nav.dagpenger.opplysning.regel.divisjon
+import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Beløp
@@ -17,7 +19,7 @@ object DagpengensStørrelse {
 
     // TODO: Hent antall barn fra søknaden. Hvordan skal saksbehandler godkjenne antall barn?
     internal val antallBarn = Opplysningstype.somHeltall("Antall barn")
-    private val barnetillegetsStørrelse = Opplysningstype.somBeløp("Barnetilleggets størrelse")
+    private val barnetilleggetsStørrelse = Opplysningstype.somBeløp("Barnetilleggets størrelse")
 
     /**
      * 1. Hente barn fra søknad
@@ -25,22 +27,42 @@ object DagpengensStørrelse {
      * 3. == antall barn * barnetillegg
      */
     private val dekningsgrad = Opplysningstype.somDesimaltall("Dekningsgrad")
-    val dagpengensStørrelse = Opplysningstype.somBeløp("Dagpengens størrelse")
-    val avrundetDagpengensStørrelse = Opplysningstype.somBeløp("Dagpengens størrelse avrundet")
+    val dagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Dagsats uten barnetillegg")
+    val avrundetDagsUtenBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats uten barnetillegg")
+    val avrundetDagsMedBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats med barnetillegg")
     val barnetillegg = Opplysningstype.somBeløp("Barnetillegg")
     val dagsatsMedBarn = Opplysningstype.somBeløp("Dagsats med barn")
+    val ukessats = Opplysningstype.somBeløp("Ukessats")
+    private val maksGrunnlag = Opplysningstype.somBeløp("Maks grunnlag for dagpenger")
+    private val antallArbeidsdagerPerÅr = Opplysningstype.somHeltall("Antall arbeidsdager per år")
+    private val arbeidsdagerPerUke = Opplysningstype.somHeltall("Antall arbeidsdager per uke")
+    private val maksSats = Opplysningstype.somBeløp("Maks dagsats for dagpenger")
+    private val nittiProsent = Opplysningstype.somDesimaltall("90% av grunnlag for dagpenger")
+    val sats = Opplysningstype.somBeløp("Dagsats for dagpenger med barnetillegg")
 
     val regelsett =
         Regelsett("§ 4-12. Dagpengens størrelse (Sats)") {
 
-            regel(barnetillegetsStørrelse) { oppslag(Søknadstidspunkt.søknadstidspunkt) { Barnetillegg.forDato(it) } }
+            regel(barnetilleggetsStørrelse) { oppslag(Søknadstidspunkt.søknadstidspunkt) { Barnetillegg.forDato(it) } }
             regel(dekningsgrad) {
                 oppslag(Søknadstidspunkt.søknadstidspunkt) { DagpengensStørrelseFaktor.forDato(it) }
             }
-            regel(dagpengensStørrelse) { multiplikasjon(grunnlag, dekningsgrad) }
-            regel(avrundetDagpengensStørrelse) { avrund(dagpengensStørrelse) }
-            regel(barnetillegg) { multiplikasjon(barnetillegetsStørrelse, antallBarn) }
-            regel(dagsatsMedBarn) { addisjon(avrundetDagpengensStørrelse, barnetillegg) }
+            regel(dagsatsUtenBarnetillegg) { multiplikasjon(grunnlag, dekningsgrad) }
+            regel(barnetillegg) { multiplikasjon(barnetilleggetsStørrelse, antallBarn) }
+            regel(dagsatsMedBarn) { addisjon(dagsatsUtenBarnetillegg, barnetillegg) }
+
+            // Regne ut ukessats
+            regel(arbeidsdagerPerUke) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 5 } }
+            regel(nittiProsent) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 0.9 } }
+            regel(antallArbeidsdagerPerÅr) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 260 } }
+
+            regel(maksGrunnlag) { multiplikasjon(grunnlag, nittiProsent) }
+            regel(maksSats) { divisjon(maksGrunnlag, antallArbeidsdagerPerÅr) }
+            regel(sats) { minstAv(maksSats, dagsatsMedBarn) }
+
+            regel(avrundetDagsMedBarnetillegg) { avrund(sats) }
+            regel(avrundetDagsUtenBarnetillegg) { avrund(dagsatsUtenBarnetillegg) } // Arena trenger denne
+            regel(ukessats) { multiplikasjon(avrundetDagsMedBarnetillegg, arbeidsdagerPerUke) }
         }
 }
 
