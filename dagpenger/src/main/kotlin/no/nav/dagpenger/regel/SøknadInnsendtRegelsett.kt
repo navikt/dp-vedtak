@@ -4,6 +4,7 @@ import no.nav.dagpenger.opplysning.Regelverk
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
+import no.nav.dagpenger.regel.fastsetting.Egenandel
 
 val RegelverkDagpenger =
     Regelverk(
@@ -11,6 +12,7 @@ val RegelverkDagpenger =
         Dagpengegrunnlag.regelsett,
         DagpengensStørrelse.regelsett,
         Dagpengeperiode.regelsett,
+        Egenandel.regelsett,
         KravPåDagpenger.regelsett,
         Medlemskap.regelsett,
         Meldeplikt.regelsett,

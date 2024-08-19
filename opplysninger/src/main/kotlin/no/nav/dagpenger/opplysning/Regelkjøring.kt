@@ -16,8 +16,11 @@ class Regelkjøring(
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
 
     init {
-        require(muligeRegler.groupBy { it.produserer }.all { it.value.size == 1 }) {
-            "Regelsett inneholder flere regler som produserer samme opplysningstype."
+        val duplikate = muligeRegler.groupBy { it.produserer }.filter { it.value.size > 1 }
+
+        require(duplikate.isEmpty()) {
+            "Regelsett inneholder flere regler som produserer samme opplysningstype. " +
+                "Regler: ${duplikate.map { it.key.navn }}."
         }
         opplysninger.registrer(this)
     }
