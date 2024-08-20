@@ -16,7 +16,6 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.path
 import io.ktor.server.request.uri
-import io.ktor.server.resources.Resources
 import io.ktor.server.response.respond
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.api.models.HttpProblemDTO
@@ -39,7 +38,6 @@ internal fun Application.konfigurerApi(
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
     }
-    install(Resources)
     install(CallLogging) {
         disableDefaultColors()
         filter {

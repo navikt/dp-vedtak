@@ -80,6 +80,12 @@ internal class BehandlingApiTest {
                                 tilstand = OpplysningSvar.Tilstand.Faktum,
                                 kilde = Saksbehandlerkilde("Z123456"),
                             ),
+                            OpplysningSvar(
+                                opplysningstype = TestOpplysningstyper.heltall,
+                                verdi = 3,
+                                tilstand = OpplysningSvar.Tilstand.Faktum,
+                                kilde = Saksbehandlerkilde("Z123456"),
+                            ),
                         ),
                 ),
             )
@@ -199,6 +205,27 @@ internal class BehandlingApiTest {
             verify {
                 personMediator.håndter(any<ForslagGodkjentHendelse>())
             }
+        }
+    }
+
+    @Test
+    fun `endre opplysningsverdi`() {
+        medSikretBehandlingApi {
+            val behandlingId = person.behandlinger().first().behandlingId
+            val opplysning =
+                person
+                    .behandlinger()
+                    .first()
+                    .opplysninger()
+                    .finnOpplysning(TestOpplysningstyper.heltall)
+            val response =
+                autentisert(
+                    httpMethod = HttpMethod.Put,
+                    endepunkt = "/behandling/$behandlingId/opplysning/${opplysning.id}",
+                    // language=JSON
+                    body = """{"begrunnelse":"tekst", "verdi": 4 }""",
+                )
+            response.status shouldBe HttpStatusCode.OK
         }
     }
 

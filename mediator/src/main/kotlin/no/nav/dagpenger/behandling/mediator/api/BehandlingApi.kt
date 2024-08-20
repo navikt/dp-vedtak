@@ -1,29 +1,32 @@
 package no.nav.dagpenger.behandling.mediator.api
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.resources.Resource
 import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.application.install
 import io.ktor.server.auth.authenticate
 import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.request.receive
-import io.ktor.server.resources.get
-import io.ktor.server.resources.post
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
+import io.ktor.server.routing.put
+import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.opentelemetry.api.trace.Span
 import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
+import no.nav.dagpenger.behandling.api.models.OppdaterOpplysningRequestDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningstypeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
+import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger
 import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.VerdiMapper
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.api.auth.saksbehandlerId
@@ -34,6 +37,8 @@ import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.UUIDv7
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
+import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
@@ -56,27 +61,6 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.util.UUID
-
-@Resource("/behandling")
-private class BehandlingRoute {
-    @Resource("{behandlingId}")
-    class Id(
-        val behandlinger: BehandlingRoute = BehandlingRoute(),
-        private val behandlingId: String,
-    ) {
-        val id: UUID get() = UUID.fromString(behandlingId)
-
-        @Resource("/avbryt")
-        class Avbryt(
-            val behandling: Id,
-        )
-
-        @Resource("/godkjenn")
-        class Godkjenn(
-            val behandling: Id,
-        )
-    }
-}
 
 internal fun Application.behandlingApi(
     personRepository: PersonRepository,
@@ -113,52 +97,97 @@ internal fun Application.behandlingApi(
         }
 
         authenticate("azureAd") {
-            post<BehandlingRoute> {
-                val identForespørsel = call.receive<IdentForesporselDTO>()
-                val ident = identForespørsel.ident
-                val person =
-                    personRepository.hent(
-                        ident.tilPersonIdentfikator(),
-                    ) ?: throw ResourceNotFoundException("Person ikke funnet")
+            route("behandling") {
+                post {
+                    val identForespørsel = call.receive<IdentForesporselDTO>()
+                    val ident = identForespørsel.ident
+                    val person =
+                        personRepository.hent(
+                            ident.tilPersonIdentfikator(),
+                        ) ?: throw ResourceNotFoundException("Person ikke funnet")
 
-                auditlogg.les("Listet ut behandlinger", ident, call.saksbehandlerId())
+                    auditlogg.les("Listet ut behandlinger", ident, call.saksbehandlerId())
 
-                call.respond(HttpStatusCode.OK, person.behandlinger().map { it.tilBehandlingDTO() })
-            }
-            get<BehandlingRoute.Id> { request ->
-                val behandling =
-                    personRepository.hentBehandling(
-                        request.id,
-                    ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+                    call.respond(HttpStatusCode.OK, person.behandlinger().map { it.tilBehandlingDTO() })
+                }
+                get("{behandlingId}") {
+                    val behandling =
+                        personRepository.hentBehandling(
+                            call.behandlingId,
+                        ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
 
-                auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
+                    auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
 
-                call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
-            }
-            post<BehandlingRoute.Id.Godkjenn> { request ->
-                val identForespørsel = call.receive<IdentForesporselDTO>()
-                // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
-                val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, request.behandling.id)
-                hendelse.info("Godkjente behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+                    call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
+                }
+                post("{behandlingId}/godkjenn") {
+                    val identForespørsel = call.receive<IdentForesporselDTO>()
+                    // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
+                    val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId)
+                    hendelse.info("Godkjente behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
 
-                personMediator.håndter(hendelse)
+                    personMediator.håndter(hendelse)
 
-                call.respond(HttpStatusCode.Created)
-            }
-            post<BehandlingRoute.Id.Avbryt> { request ->
-                val identForespørsel = call.receive<IdentForesporselDTO>()
-                // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
-                val hendelse =
-                    AvbrytBehandlingHendelse(UUIDv7.ny(), identForespørsel.ident, request.behandling.id, "Avbrutt av saksbehandler")
-                hendelse.info("Avbrøt behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+                    call.respond(HttpStatusCode.Created)
+                }
+                post("{behandlingId}/avbryt") {
+                    val identForespørsel = call.receive<IdentForesporselDTO>()
+                    // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
+                    val hendelse =
+                        AvbrytBehandlingHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId, "Avbrutt av saksbehandler")
+                    hendelse.info("Avbrøt behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
 
-                personMediator.håndter(hendelse)
+                    personMediator.håndter(hendelse)
 
-                call.respond(HttpStatusCode.Created)
+                    call.respond(HttpStatusCode.Created)
+                }
+
+                put("{behandlingId}/opplysning/{opplysningId}") {
+                    val behandlingId = call.behandlingId
+                    val opplysningId = call.opplysningId
+                    val oppdaterOpplysningRequestDTO = call.receive<OppdaterOpplysningRequestDTO>()
+                    val behandling =
+                        personRepository.hentBehandling(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+                    val opplysning = behandling.opplysninger().finnOpplysning(opplysningId)
+                    val opplysningSvarBygger =
+                        OpplysningSvarBygger(
+                            opplysning.opplysningstype,
+                            HttpVerdiMapper(oppdaterOpplysningRequestDTO),
+                            Saksbehandlerkilde(call.saksbehandlerId()),
+                            OpplysningSvar.Tilstand.Faktum,
+                            opplysning.gyldighetsperiode,
+                        )
+                    val svar =
+                        OpplysningSvarHendelse(
+                            UUIDv7.ny(),
+                            behandling.behandler.ident,
+                            behandling.behandlingId,
+                            listOf(opplysningSvarBygger.opplysningSvar()),
+                        )
+
+                    auditlogg.slett("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
+                    svar.info(
+                        "Oppdaterte ${opplysning.opplysningstype.navn}, begrunnelse ${oppdaterOpplysningRequestDTO.begrunnelse}",
+                    )
+                    behandling.håndter(svar)
+                    personRepository.lagre(behandling)
+                    call.respond(HttpStatusCode.OK)
+                }
             }
         }
     }
 }
+
+private val ApplicationCall.opplysningId: UUID
+    get() {
+        val opplysningId = parameters["opplysningId"] ?: throw IllegalArgumentException("OpplysningId må være satt")
+        return UUID.fromString(opplysningId)
+    }
+private val ApplicationCall.behandlingId: UUID
+    get() {
+        val behandlingId = parameters["behandlingId"] ?: throw IllegalArgumentException("BehandlingId må være satt")
+        return UUID.fromString(behandlingId)
+    }
 
 private val OtelTraceIdPlugin =
     createApplicationPlugin("OtelTraceIdPlugin") {
@@ -235,7 +264,11 @@ private fun LocalDateTime.tilOffsetTime(): OffsetDateTime = this.atZone(ZoneId.s
 
 @Suppress("UNCHECKED_CAST")
 class HttpVerdiMapper(
-    private val verdi: Any,
+    private val oppdaterOpplysningRequestDTO: OppdaterOpplysningRequestDTO,
 ) : VerdiMapper {
-    override fun <T : Comparable<T>> map(datatype: Datatype<T>) = verdi as T
+    override fun <T : Comparable<T>> map(datatype: Datatype<T>): T =
+        when (datatype) {
+            Heltall -> oppdaterOpplysningRequestDTO.verdi.toInt() as T
+            else -> throw IllegalArgumentException("Datatype $datatype støttes ikke i APIet enda")
+        }
 }

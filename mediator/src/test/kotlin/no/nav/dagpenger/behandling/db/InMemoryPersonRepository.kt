@@ -23,7 +23,7 @@ class InMemoryPersonRepository :
             }.find { it.behandlingId == behandlingId }
 
     override fun lagre(behandling: Behandling) {
-        TODO("Not yet implemented")
+        // no-op
     }
 
     override fun lagre(
