@@ -40,6 +40,7 @@ class BeløpTest {
 
         Beløp(100.0) / 3.0 shouldBe Beløp("NOK 33.33333333333333333333")
         Beløp(100000.0) / 3.0 shouldBe Beløp("NOK 33333.33333333333333333333")
+        Beløp("NOK 33.33333333333333333333") / Beløp("NOK 33.33333333333333333333") shouldBe Beløp("NOK 1")
     }
 
     @Test
