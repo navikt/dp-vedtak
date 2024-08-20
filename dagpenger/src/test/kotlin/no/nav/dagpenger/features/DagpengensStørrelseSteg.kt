@@ -8,18 +8,17 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
 import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.antallBarn
 import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.avrundetDagsMedBarnetillegg
 import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.dagsatsUtenBarnetillegg
-import no.nav.dagpenger.regel.fastsetting.Egenandel
 
 class DagpengensStørrelseSteg : No {
     private val fraDato = 10.mai(2024)
-    private val regelsett =
-        listOf(DagpengensStørrelse.regelsett, Egenandel.regelsett)
+    private val regelsett = RegelverkDagpenger.regelsettFor(avrundetDagsMedBarnetillegg)
     private val opplysninger: Opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 
