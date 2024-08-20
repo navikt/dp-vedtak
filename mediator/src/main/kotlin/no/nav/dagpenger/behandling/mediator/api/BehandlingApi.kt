@@ -110,68 +110,73 @@ internal fun Application.behandlingApi(
 
                     call.respond(HttpStatusCode.OK, person.behandlinger().map { it.tilBehandlingDTO() })
                 }
-                get("{behandlingId}") {
-                    val behandling =
-                        personRepository.hentBehandling(
-                            call.behandlingId,
-                        ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
 
-                    auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
+                route("{behandlingId}") {
+                    get {
+                        val behandling =
+                            personRepository.hentBehandling(
+                                call.behandlingId,
+                            ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
 
-                    call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
-                }
-                post("{behandlingId}/godkjenn") {
-                    val identForespørsel = call.receive<IdentForesporselDTO>()
-                    // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
-                    val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId)
-                    hendelse.info("Godkjente behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+                        auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
 
-                    personMediator.håndter(hendelse)
+                        call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
+                    }
 
-                    call.respond(HttpStatusCode.Created)
-                }
-                post("{behandlingId}/avbryt") {
-                    val identForespørsel = call.receive<IdentForesporselDTO>()
-                    // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
-                    val hendelse =
-                        AvbrytBehandlingHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId, "Avbrutt av saksbehandler")
-                    hendelse.info("Avbrøt behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+                    post("godkjenn") {
+                        val identForespørsel = call.receive<IdentForesporselDTO>()
+                        // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
+                        val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId)
+                        hendelse.info("Godkjente behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
 
-                    personMediator.håndter(hendelse)
+                        personMediator.håndter(hendelse)
 
-                    call.respond(HttpStatusCode.Created)
-                }
+                        call.respond(HttpStatusCode.Created)
+                    }
 
-                put("{behandlingId}/opplysning/{opplysningId}") {
-                    val behandlingId = call.behandlingId
-                    val opplysningId = call.opplysningId
-                    val oppdaterOpplysningRequestDTO = call.receive<OppdaterOpplysningRequestDTO>()
-                    val behandling =
-                        personRepository.hentBehandling(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")
-                    val opplysning = behandling.opplysninger().finnOpplysning(opplysningId)
-                    val opplysningSvarBygger =
-                        OpplysningSvarBygger(
-                            opplysning.opplysningstype,
-                            HttpVerdiMapper(oppdaterOpplysningRequestDTO),
-                            Saksbehandlerkilde(call.saksbehandlerId()),
-                            OpplysningSvar.Tilstand.Faktum,
-                            opplysning.gyldighetsperiode,
+                    post("avbryt") {
+                        val identForespørsel = call.receive<IdentForesporselDTO>()
+                        // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
+                        val hendelse =
+                            AvbrytBehandlingHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId, "Avbrutt av saksbehandler")
+                        hendelse.info("Avbrøt behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+
+                        personMediator.håndter(hendelse)
+
+                        call.respond(HttpStatusCode.Created)
+                    }
+
+                    put("opplysning/{opplysningId}") {
+                        val behandlingId = call.behandlingId
+                        val opplysningId = call.opplysningId
+                        val oppdaterOpplysningRequestDTO = call.receive<OppdaterOpplysningRequestDTO>()
+                        val behandling =
+                            personRepository.hentBehandling(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+                        val opplysning = behandling.opplysninger().finnOpplysning(opplysningId)
+                        val opplysningSvarBygger =
+                            OpplysningSvarBygger(
+                                opplysning.opplysningstype,
+                                HttpVerdiMapper(oppdaterOpplysningRequestDTO),
+                                Saksbehandlerkilde(call.saksbehandlerId()),
+                                OpplysningSvar.Tilstand.Faktum,
+                                opplysning.gyldighetsperiode,
+                            )
+                        val svar =
+                            OpplysningSvarHendelse(
+                                UUIDv7.ny(),
+                                behandling.behandler.ident,
+                                behandling.behandlingId,
+                                listOf(opplysningSvarBygger.opplysningSvar()),
+                            )
+
+                        auditlogg.slett("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
+                        svar.info(
+                            "Oppdaterte ${opplysning.opplysningstype.navn}, begrunnelse ${oppdaterOpplysningRequestDTO.begrunnelse}",
                         )
-                    val svar =
-                        OpplysningSvarHendelse(
-                            UUIDv7.ny(),
-                            behandling.behandler.ident,
-                            behandling.behandlingId,
-                            listOf(opplysningSvarBygger.opplysningSvar()),
-                        )
-
-                    auditlogg.slett("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
-                    svar.info(
-                        "Oppdaterte ${opplysning.opplysningstype.navn}, begrunnelse ${oppdaterOpplysningRequestDTO.begrunnelse}",
-                    )
-                    behandling.håndter(svar)
-                    personRepository.lagre(behandling)
-                    call.respond(HttpStatusCode.OK)
+                        behandling.håndter(svar)
+                        personRepository.lagre(behandling)
+                        call.respond(HttpStatusCode.OK)
+                    }
                 }
             }
         }
