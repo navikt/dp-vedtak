@@ -75,7 +75,7 @@ internal class AvklaringRepositoryPostgres private constructor(
                         Avklaring.Endring.Avklart(
                             id,
                             it.uuidOrNull("kilde_id")?.let { kildeId ->
-                                kildeRespository.hentKilde(kildeId)
+                                kildeRespository.hentKilde(kildeId)!!
                             },
                             endret,
                         )
@@ -119,11 +119,9 @@ internal class AvklaringRepositoryPostgres private constructor(
                         val kildeId =
                             when (endring) {
                                 is Avklaring.Endring.Avklart -> {
-                                    if (endring.avklartAv != null) {
-                                        kildeRespository.lagreKilde(endring.avklartAv!!, tx)
-                                        endring.avklartAv!!.id
-                                    } else {
-                                        null
+                                    endring.avklartAv?.let { kilde ->
+                                        kildeRespository.lagreKilde(kilde, tx)
+                                        kilde.id
                                     }
                                 }
                                 else -> null

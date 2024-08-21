@@ -186,7 +186,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             } as T
 
         fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
-            kildeRespository.lagreKilde(opplysninger.mapNotNull { it.kilde }, tx)
+            kildeRespository.lagreKilder(opplysninger.mapNotNull { it.kilde }, tx)
             batchOpplysningstyper(opplysninger.map { it.opplysningstype }).run(tx)
             batchOpplysninger(opplysninger).run(tx)
             lagreErstattetAv(opplysninger).run(tx)

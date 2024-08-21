@@ -66,9 +66,9 @@ internal class KildeRepository {
     fun lagreKilde(
         kilde: Kilde,
         tx: Session,
-    ) = lagreKilde(listOf(kilde), tx)
+    ) = lagreKilder(listOf(kilde), tx)
 
-    fun lagreKilde(
+    fun lagreKilder(
         kilder: List<Kilde>,
         tx: Session,
     ) {
