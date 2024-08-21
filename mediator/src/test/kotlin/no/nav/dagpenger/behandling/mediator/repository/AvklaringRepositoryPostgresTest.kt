@@ -8,6 +8,7 @@ import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.UUIDv7
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
@@ -37,11 +38,11 @@ class AvklaringRepositoryPostgresTest {
             val kode1 = Avklaringkode("JobbetUtenforNorge", "Arbeid utenfor Norge", "Personen har oppgitt arbeid utenfor Norge")
 
             val avklaring = avklaring(kode1)
-            avklaring.kvittering()
+            avklaring.kvittering(Saksbehandlerkilde("123"))
             avklaring.gjenåpne()
-            avklaring.avbryt()
+            avklaring.avklar(Saksbehandlerkilde("123"))
 
-            val forventedeTilstander = listOf("UnderBehandling", "Avklart", "UnderBehandling", "Avbrutt")
+            val forventedeTilstander = listOf("UnderBehandling", "Avklart", "UnderBehandling", "Avklart")
             avklaring.endringer.map { it::class.simpleName!! } shouldBe forventedeTilstander
 
             val behandling = TestBehandling(avklaring)
@@ -79,7 +80,7 @@ class AvklaringRepositoryPostgresTest {
         private fun behandling(vararg avklaring: Avklaring) =
             Behandling.rehydrer(
                 behandlingId = UUIDv7.ny(),
-                behandler = SøknadInnsendtHendelse(UUIDv7.ny(), "123", UUIDv7.ny(), LocalDate.now(), 1),
+                behandler = SøknadInnsendtHendelse(UUIDv7.ny(), "123", UUIDv7.ny(), LocalDate.now(), 1, LocalDateTime.now()),
                 gjeldendeOpplysninger = Opplysninger(emptyList()),
                 basertPå = emptyList(),
                 tilstand = TilstandType.UnderBehandling,

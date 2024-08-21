@@ -27,6 +27,7 @@ class BehandlingRepositoryPostgresTest {
             meldingsreferanseId = søknadId,
             gjelderDato = LocalDate.now(),
             fagsakId = 1,
+            opprettet = LocalDateTime.now(),
         )
     private val tidligereOpplysning = Faktum(Opplysningstype.somDesimaltall("tidligere-opplysning"), 1.0)
     private val basertPåBehandling =

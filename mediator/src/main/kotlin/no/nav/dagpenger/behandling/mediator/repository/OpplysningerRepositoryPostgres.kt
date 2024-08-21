@@ -20,8 +20,6 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
-import no.nav.dagpenger.opplysning.Saksbehandlerkilde
-import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.Utledning
@@ -71,6 +69,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
     private class OpplysningRepository(
         private val opplysningerId: UUID,
         private val tx: Session,
+        private val kildeRespository: KildeRepository = KildeRepository(),
     ) {
         fun hentOpplysninger(): List<Opplysning<*>> {
             val rader: List<OpplysningRad<*>> =
@@ -87,7 +86,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     )
                 }
 
-            val kilder = hentKilder(rader.mapNotNull { it.kildeId })
+            val kilder = kildeRespository.hentKilder(rader.mapNotNull { it.kildeId })
             val erstattetAv =
                 rader
                     .map {
@@ -161,57 +160,6 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             )
         }
 
-        private fun hentKilder(kilder: List<UUID>) =
-            sessionOf(dataSource)
-                .use { session ->
-                    session.run(
-                        queryOf(
-                            //language=PostgreSQL
-                            """
-                            SELECT 
-                                opplysning_kilde.id, 
-                                opplysning_kilde.type, 
-                                opplysning_kilde.opprettet, 
-                                opplysning_kilde.registrert, 
-                                opplysning_kilde_system.melding_id AS system_melding_id, 
-                                opplysning_kilde_saksbehandler.ident AS saksbehandler_ident
-                            FROM 
-                                opplysning_kilde 
-                            LEFT JOIN 
-                                opplysning_kilde_system ON opplysning_kilde.id = opplysning_kilde_system.kilde_id
-                            LEFT JOIN 
-                                opplysning_kilde_saksbehandler ON opplysning_kilde.id = opplysning_kilde_saksbehandler.kilde_id
-                            WHERE opplysning_kilde.id = ANY(?)
-                            """.trimIndent(),
-                            kilder.toTypedArray(),
-                        ).map { row ->
-                            val kildeId = row.uuid("id")
-                            val kildeType = row.string("type")
-                            val opprettet = row.localDateTime("opprettet")
-                            val registrert = row.localDateTime("registrert")
-                            when (kildeType) {
-                                Systemkilde::class.java.simpleName ->
-                                    Systemkilde(
-                                        row.uuid("system_melding_id"),
-                                        opprettet,
-                                        kildeId,
-                                        registrert,
-                                    )
-
-                                Saksbehandlerkilde::class.java.simpleName ->
-                                    Saksbehandlerkilde(
-                                        row.string("saksbehandler_ident"),
-                                        opprettet,
-                                        kildeId,
-                                        registrert,
-                                    )
-
-                                else -> throw IllegalStateException("Ukjent kilde")
-                            }
-                        }.asList,
-                    )
-                }.associateBy { it.id }
-
         @Suppress("UNCHECKED_CAST")
         private fun <T : Comparable<T>> Datatype<T>.verdi(row: Row): T =
             when (this) {
@@ -238,75 +186,14 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             } as T
 
         fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
+            kildeRespository.lagreKilde(opplysninger.mapNotNull { it.kilde }, tx)
             batchOpplysningstyper(opplysninger.map { it.opplysningstype }).run(tx)
             batchOpplysninger(opplysninger).run(tx)
             lagreErstattetAv(opplysninger).run(tx)
             batchVerdi(opplysninger).run(tx)
             batchOpplysningLink(opplysninger).run(tx)
             lagreUtledetAv(opplysninger)
-            lagreKilde(opplysninger)
         }
-
-        private fun lagreKilde(opplysninger: List<Opplysning<*>>) {
-            batchKilde(opplysninger).run(tx)
-            val kilder = opplysninger.mapNotNull { it.kilde }
-            require(kilder.all { it is Systemkilde || it is Saksbehandlerkilde }) { "Mangler lagring av kildetypen" }
-            batchKildeSystem(kilder.filterIsInstance<Systemkilde>()).run(tx)
-            batchKildeSaksbehandler(kilder.filterIsInstance<Saksbehandlerkilde>()).run(tx)
-        }
-
-        private fun batchKilde(opplysninger: List<Opplysning<*>>) =
-            BatchStatement(
-                // language=PostgreSQL
-                """
-                INSERT INTO opplysning_kilde (id, opplysning_id, type, opprettet, registrert) 
-                VALUES (:id, :opplysningId, :type, :opprettet, :registrert)
-                ON CONFLICT DO NOTHING
-                """.trimIndent(),
-                opplysninger.mapNotNull {
-                    it.kilde?.let { kilde ->
-                        mapOf(
-                            "id" to kilde.id,
-                            "opplysningId" to it.id,
-                            "type" to kilde.javaClass.simpleName,
-                            "opprettet" to kilde.opprettet,
-                            "registrert" to kilde.registrert,
-                        )
-                    }
-                },
-            )
-
-        private fun batchKildeSystem(kilder: List<Systemkilde>) =
-            BatchStatement(
-                // language=PostgreSQL
-                """
-                INSERT INTO opplysning_kilde_system (kilde_id, melding_id) 
-                VALUES (:kildeId, :meldingId)
-                ON CONFLICT DO NOTHING
-                """.trimIndent(),
-                kilder.map { kilde ->
-                    mapOf(
-                        "kildeId" to kilde.id,
-                        "meldingId" to kilde.meldingsreferanseId,
-                    )
-                },
-            )
-
-        private fun batchKildeSaksbehandler(kilder: List<Saksbehandlerkilde>) =
-            BatchStatement(
-                // language=PostgreSQL
-                """
-                INSERT INTO opplysning_kilde_saksbehandler (kilde_id, ident) 
-                VALUES (:kildeId, :ident)
-                ON CONFLICT DO NOTHING
-                """.trimIndent(),
-                kilder.map { kilde ->
-                    mapOf(
-                        "kildeId" to kilde.id,
-                        "ident" to kilde.ident,
-                    )
-                },
-            )
 
         private fun lagreUtledetAv(opplysninger: List<Opplysning<*>>) {
             val utlededeOpplysninger = opplysninger.filterNot { it.utledetAv == null }
@@ -389,8 +276,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 WITH ins AS (
                     SELECT opplysningstype_id FROM opplysningstype WHERE id = :typeId AND navn = :typeNavn AND  datatype = :datatype
                 )
-                INSERT INTO opplysning (id, status, opplysningstype_id, gyldig_fom, gyldig_tom, opprettet)
-                VALUES (:id, :status, (SELECT opplysningstype_id FROM ins), :fom::timestamp, :tom::timestamp, :opprettet)
+                INSERT INTO opplysning (id, status, opplysningstype_id, kilde_id, gyldig_fom, gyldig_tom, opprettet)
+                VALUES (:id, :status, (SELECT opplysningstype_id FROM ins), :kilde_id, :fom::timestamp, :tom::timestamp, :opprettet)
                 ON CONFLICT DO NOTHING
                 """.trimIndent(),
                 opplysninger.map { opplysning ->
@@ -401,6 +288,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         "typeId" to opplysning.opplysningstype.id,
                         "typeNavn" to opplysning.opplysningstype.navn,
                         "datatype" to opplysning.opplysningstype.datatype.navn(),
+                        "kilde_id" to opplysning.kilde?.id,
                         "fom" to gyldighetsperiode.fom.let { if (it == LocalDate.MIN) null else it },
                         "tom" to gyldighetsperiode.tom.let { if (it == LocalDate.MAX) null else it },
                         "opprettet" to opplysning.opprettet,

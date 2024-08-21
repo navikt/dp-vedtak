@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class PersonRepositoryPostgresTest {
     private val fnr = "12345678901"
@@ -34,6 +35,7 @@ class PersonRepositoryPostgresTest {
             meldingsreferanseId = søknadId,
             gjelderDato = LocalDate.now(),
             fagsakId = 1,
+            opprettet = LocalDateTime.now(),
         )
 
     @Test

@@ -8,11 +8,11 @@ import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryObserver.NyAvklaringHendelse
 import no.nav.dagpenger.behandling.modell.Behandling
-import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import java.util.UUID
 
 internal class AvklaringRepositoryPostgres private constructor(
     private val observatører: MutableList<AvklaringRepositoryObserver>,
+    private val kildeRespository: KildeRepository = KildeRepository(),
 ) : AvklaringRepository {
     constructor(vararg observatører: AvklaringRepositoryObserver) : this(observatører.toMutableList())
 
@@ -74,9 +74,11 @@ internal class AvklaringRepositoryPostgres private constructor(
                     EndringType.Avklart ->
                         Avklaring.Endring.Avklart(
                             id,
-                            Saksbehandlerkilde(it.string("saksbehandler")),
+                            it.uuidOrNull("kilde_id")?.let { kildeId ->
+                                kildeRespository.hentKilde(kildeId)
+                            },
                             endret,
-                        ) // TODO: VI MÅ SNU KILDE DB
+                        )
                     EndringType.Avbrutt -> Avklaring.Endring.Avbrutt(id, endret)
                 }
             }.asList,
@@ -114,12 +116,25 @@ internal class AvklaringRepositoryPostgres private constructor(
 
                 val endringerLagret =
                     avklaring.endringer.map { endring ->
+                        val kildeId =
+                            when (endring) {
+                                is Avklaring.Endring.Avklart -> {
+                                    if (endring.avklartAv != null) {
+                                        kildeRespository.lagreKilde(endring.avklartAv!!, tx)
+                                        endring.avklartAv!!.id
+                                    } else {
+                                        null
+                                    }
+                                }
+                                else -> null
+                            }
+
                         tx.run(
                             queryOf(
                                 // language=PostgreSQL
                                 """
-                                INSERT INTO avklaring_endring (endring_id, avklaring_id, endret, type, saksbehandler)
-                                VALUES (:endring_id, :avklaring_id, :endret, :endring_type, :saksbehandler)
+                                INSERT INTO avklaring_endring (endring_id, avklaring_id, endret, type, kilde_id)
+                                VALUES (:endring_id, :avklaring_id, :endret, :endring_type, :kilde_id)
                                 ON CONFLICT DO NOTHING
                                 """.trimIndent(),
                                 mapOf(
@@ -132,11 +147,7 @@ internal class AvklaringRepositoryPostgres private constructor(
                                             is Avklaring.Endring.Avklart -> "Avklart"
                                             is Avklaring.Endring.Avbrutt -> "Avbrutt"
                                         },
-                                    "saksbehandler" to
-                                        when (endring) {
-                                            is Avklaring.Endring.Avklart -> endring.avklartAv
-                                            else -> null
-                                        },
+                                    "kilde_id" to kildeId,
                                 ),
                             ).asUpdate,
                         )

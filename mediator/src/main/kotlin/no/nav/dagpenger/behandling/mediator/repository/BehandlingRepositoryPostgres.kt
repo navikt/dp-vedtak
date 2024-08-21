@@ -45,8 +45,8 @@ class BehandlingRepositoryPostgres(
                                         søknadId = UUID.fromString(row.string("ekstern_id")),
                                         gjelderDato = row.localDate("skjedde"),
                                         fagsakId = row.int("fagsak_id"),
+                                        opprettet = row.localDateTime("opprettet"),
                                     )
-
                                 else -> throw IllegalArgumentException("Ukjent hendelse type ${row.string("hendelse_type")}")
                             },
                         gjeldendeOpplysninger = opplysningRepository.hentOpplysninger(row.uuid("opplysninger_id"))!!,

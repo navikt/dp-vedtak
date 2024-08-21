@@ -199,7 +199,7 @@ internal class PersonMediatorTest {
             rapid.harHendelse("forslag_til_vedtak") {
                 medTekst("søknadId") shouldBe testPerson.søknadId
                 with(medNode("avklaringer")) {
-                    this.size() shouldBe 7
+                    this.size() shouldBe 6
                     val avklaring = this.first()
                     avklaring["type"].asText() shouldBe Avklaringspunkter.HattLukkedeSakerSiste8Uker.kode
                     avklaring["begrunnelse"].asText() shouldBe Avklaringspunkter.HattLukkedeSakerSiste8Uker.beskrivelse
@@ -210,7 +210,7 @@ internal class PersonMediatorTest {
             rapid.inspektør.size shouldBe
                 listOf(
                     "opprettet" to 1,
-                    "behov" to 9,
+                    "behov" to 7,
                     "avklaring" to 6,
                     "forslag" to 1,
                     "event" to 2,
@@ -238,7 +238,7 @@ internal class PersonMediatorTest {
                 medTekst("søknadId") shouldBe testPerson.søknadId
             }
 
-            rapid.inspektør.size shouldBe 6
+            rapid.inspektør.size shouldBe 5
         }
 
     @Test
@@ -256,7 +256,7 @@ internal class PersonMediatorTest {
 
             rapid.harHendelse("forslag_til_vedtak") {
                 with(medNode("avklaringer")) {
-                    this.size() shouldBe 8
+                    this.size() shouldBe 7
                     this.shouldHaveSingleElement { it["type"].asText() == Avklaringspunkter.ØnskerEtterRapporteringsfrist.kode }
                 }
             }
@@ -277,7 +277,7 @@ internal class PersonMediatorTest {
 
             rapid.harHendelse("forslag_til_vedtak") {
                 with(medNode("avklaringer")) {
-                    this.size() shouldBe 7
+                    this.size() shouldBe 6
                 }
             }
         }
@@ -297,7 +297,7 @@ internal class PersonMediatorTest {
 
             rapid.harHendelse("forslag_til_vedtak") {
                 with(medNode("avklaringer")) {
-                    this.size() shouldBe 9
+                    this.size() shouldBe 8
                 }
             }
         }
