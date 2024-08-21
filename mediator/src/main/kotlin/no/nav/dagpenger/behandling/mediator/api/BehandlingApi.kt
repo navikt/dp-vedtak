@@ -169,7 +169,7 @@ internal fun Application.behandlingApi(
                                 listOf(opplysningSvarBygger.opplysningSvar()),
                             )
 
-                        auditlogg.slett("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
+                        auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
                         svar.info(
                             "Oppdaterte ${opplysning.opplysningstype.navn}, begrunnelse ${oppdaterOpplysningRequestDTO.begrunnelse}",
                         )

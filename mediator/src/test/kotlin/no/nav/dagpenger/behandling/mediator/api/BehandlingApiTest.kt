@@ -226,6 +226,10 @@ internal class BehandlingApiTest {
                     body = """{"begrunnelse":"tekst", "verdi": 4 }""",
                 )
             response.status shouldBe HttpStatusCode.OK
+
+            verify {
+                auditlogg.oppdater(any(), any(), any())
+            }
         }
     }
 
