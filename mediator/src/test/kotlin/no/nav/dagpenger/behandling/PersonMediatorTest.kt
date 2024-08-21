@@ -32,10 +32,12 @@ import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.regel.Avklaringspunkter
+import no.nav.dagpenger.regel.Behov.HarTaptArbeid
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
+import no.nav.dagpenger.regel.Behov.KravPåLønn
 import no.nav.dagpenger.regel.Behov.Lønnsgaranti
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.Behov.Ordinær
@@ -87,7 +89,7 @@ internal class PersonMediatorTest {
         )
     }
 
-    private val forventetAntallOpplysninger = 65
+    private val forventetAntallOpplysninger = 79
 
     @BeforeEach
     fun setUp() {
@@ -142,7 +144,7 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 26
+            rapid.inspektør.size shouldBe 27
 
             testObservatør.tilstandsendringer.size shouldBe 6
         }
@@ -161,19 +163,17 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilFerdig(testPerson)
 
             personRepository.hent(ident.tilPersonIdentfikator()).also {
-                val opplysningerForDagpengeperiode = 13
-
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
                 it
                     .behandlinger()
                     .flatMap { behandling -> behandling.opplysninger().finnAlle() }
-                    .size shouldBe forventetAntallOpplysninger + opplysningerForDagpengeperiode
+                    .size shouldBe forventetAntallOpplysninger
             }
 
             rapid.harHendelse("behandling_avbrutt") {
                 medTekst("søknadId") shouldBe testPerson.søknadId
-                medTekst("årsak") shouldBe "Førte ikke til avslag"
+                medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
             }
             rapid.inspektør.size shouldBe 18
         }
@@ -204,7 +204,7 @@ internal class PersonMediatorTest {
             rapid.inspektør.size shouldBe
                 listOf(
                     "opprettet" to 1,
-                    "behov" to 8,
+                    "behov" to 9,
                     "avklaring" to 6,
                     "forslag" to 1,
                     "event" to 2,
@@ -361,6 +361,12 @@ internal class PersonMediatorTest {
          */
         rapid.harBehov(TarUtdanningEllerOpplæring)
         testPerson.løsBehov(TarUtdanningEllerOpplæring)
+
+        /**
+         * Innhenter tapt arbeidstid og krav på lønn
+         */
+        rapid.harBehov(HarTaptArbeid, KravPåLønn)
+        testPerson.løsBehov(HarTaptArbeid, KravPåLønn)
     }
 
     private val Person.aktivBehandling get() = this.behandlinger().first()

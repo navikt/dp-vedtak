@@ -22,6 +22,7 @@ val RegelverkDagpenger =
         Rettighetstype.regelsett,
         StreikOgLockout.regelsett,
         Søknadstidspunkt.regelsett,
+        TapAvArbeidsinntektOgArbeidstid.regelsett,
         Utdanning.regelsett,
         Utestengning.regelsett,
         Verneplikt.regelsett,
