@@ -6,6 +6,7 @@ import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
+import java.time.LocalDateTime
 import java.util.UUID
 
 class OpplysningSvarHendelse(
@@ -13,7 +14,8 @@ class OpplysningSvarHendelse(
     ident: String,
     override val behandlingId: UUID,
     val opplysninger: List<OpplysningSvar<*>>,
-) : PersonHendelse(meldingsreferanseId, ident),
+    opprettet: LocalDateTime,
+) : PersonHendelse(meldingsreferanseId, ident, opprettet),
     BehandlingHendelse {
     init {
         require(opplysninger.isNotEmpty()) { "Må ha minst én opplysning" }

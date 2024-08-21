@@ -8,6 +8,7 @@ import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryObserver.NyAvklaringHendelse
 import no.nav.dagpenger.behandling.modell.Behandling
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import java.util.UUID
 
 internal class AvklaringRepositoryPostgres private constructor(
@@ -70,7 +71,12 @@ internal class AvklaringRepositoryPostgres private constructor(
                 val endret = it.localDateTime("endret")
                 when (EndringType.valueOf(it.string("type"))) {
                     EndringType.UnderBehandling -> Avklaring.Endring.UnderBehandling(id, endret)
-                    EndringType.Avklart -> Avklaring.Endring.Avklart(id, it.string("saksbehandler"), endret)
+                    EndringType.Avklart ->
+                        Avklaring.Endring.Avklart(
+                            id,
+                            Saksbehandlerkilde(it.string("saksbehandler")),
+                            endret,
+                        ) // TODO: VI MÅ SNU KILDE DB
                     EndringType.Avbrutt -> Avklaring.Endring.Avbrutt(id, endret)
                 }
             }.asList,
@@ -128,7 +134,7 @@ internal class AvklaringRepositoryPostgres private constructor(
                                         },
                                     "saksbehandler" to
                                         when (endring) {
-                                            is Avklaring.Endring.Avklart -> endring.saksbehandler
+                                            is Avklaring.Endring.Avklart -> endring.avklartAv
                                             else -> null
                                         },
                                 ),

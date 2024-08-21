@@ -1,6 +1,7 @@
 package no.nav.dagpenger.avklaring
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt.Kontrollresultat.KreverAvklaring
+import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import java.util.UUID
 
@@ -41,5 +42,8 @@ class Avklaringer(
         return avklaringer.toList()
     }
 
-    fun avbryt(avklaringId: UUID): Boolean = avklaringer.find { it.id == avklaringId }?.avbryt() ?: false
+    fun avklar(
+        avklaringId: UUID,
+        kilde: Kilde,
+    ): Boolean = avklaringer.find { it.id == avklaringId }?.avklar(kilde) ?: false
 }

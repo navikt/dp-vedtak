@@ -324,8 +324,10 @@ class Behandling private constructor(
 
             if (trenger.isEmpty()) {
                 // TODO: Dette faller bort når vi sjekker alt
-                val avklaring = behandling.opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger)
-                if (avklaring.verdi) {
+                val kravPåDagpenger =
+                    behandling.opplysninger.har(KravPåDagpenger.kravPåDagpenger) &&
+                        behandling.opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
+                if (kravPåDagpenger) {
                     hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
                     behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag"), hendelse)
                     return
@@ -356,7 +358,7 @@ class Behandling private constructor(
             hendelse: AvklaringIkkeRelevantHendelse,
         ) {
             hendelse.kontekst(this)
-            if (behandling.avklaringer.avbryt(hendelse.avklaringId)) {
+            if (behandling.avklaringer.avklar(hendelse.avklaringId, hendelse.kilde)) {
                 hendelse.info("Avklaring er ikke lenger relevant")
             }
         }
@@ -419,7 +421,7 @@ class Behandling private constructor(
             hendelse: AvklaringIkkeRelevantHendelse,
         ) {
             hendelse.kontekst(this)
-            if (behandling.avklaringer.avbryt(hendelse.avklaringId)) {
+            if (behandling.avklaringer.avklar(hendelse.avklaringId, hendelse.kilde)) {
                 hendelse.info("Avklaring er ikke lenger relevant")
                 hendelse.hendelse(
                     AvklaringLukketHendelse,

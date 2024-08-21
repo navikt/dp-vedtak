@@ -3,6 +3,8 @@ package no.nav.dagpenger.avklaring
 import no.nav.dagpenger.avklaring.Avklaring.Endring.Avbrutt
 import no.nav.dagpenger.avklaring.Avklaring.Endring.Avklart
 import no.nav.dagpenger.avklaring.Avklaring.Endring.UnderBehandling
+import no.nav.dagpenger.opplysning.Kilde
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.UUIDv7
 import java.time.LocalDateTime
 import java.util.UUID
@@ -41,14 +43,20 @@ data class Avklaring(
 
     fun erAvbrutt() = tilstand is Avbrutt
 
-    fun avbryt() = historikk.add(Avbrutt())
+    internal fun avbryt(): Boolean = historikk.add(Avbrutt())
 
-    fun kvittering() {
-        require(kode.kanKvitteres) { "Avklaring $kode kan ikke kvitteres ut, krever endring i behandlingen" }
-        historikk.add(Avklart(saksbehandler = "saksbehandler"))
+    fun kvittering(saksbehandlerkilde: Saksbehandlerkilde): Boolean {
+        kanKvitteresSjekk()
+        return historikk.add(Avklart(avklartAv = saksbehandlerkilde))
     }
 
+    fun avklar(kilde: Kilde) = historikk.add(Avklart(avklartAv = kilde))
+
     fun gjenåpne() = historikk.add(UnderBehandling())
+
+    private fun kanKvitteresSjekk() {
+        require(kode.kanKvitteres) { "Avklaring $kode kan ikke kvitteres ut, krever endring i behandlingen" }
+    }
 
     sealed class Endring(
         val id: UUID,
@@ -63,7 +71,7 @@ data class Avklaring(
 
         class Avklart(
             id: UUID = UUIDv7.ny(),
-            val saksbehandler: String,
+            val avklartAv: Kilde,
             endret: LocalDateTime = LocalDateTime.now(),
         ) : Endring(id, endret)
 

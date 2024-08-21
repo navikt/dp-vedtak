@@ -72,6 +72,7 @@ internal class SøknadInnsendtMessage(
                 gjelderDato = packet["@opprettet"].asLocalDateTime().toLocalDate(),
                 // TODO: Vi burde alltid ha fagsakId, og defaulte til 0 er ikke så lurt
                 fagsakId = packet["fagsakId"].asInt(0),
+                opprettet,
             ).also {
                 if (it.fagsakId == 0) logger.warn { "Søknad mottatt uten fagsakId" }
             }

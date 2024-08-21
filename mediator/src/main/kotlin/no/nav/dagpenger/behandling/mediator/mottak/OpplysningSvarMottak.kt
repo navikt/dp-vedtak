@@ -121,6 +121,7 @@ internal class OpplysningSvarMessage(
                 ident,
                 behandlingId = packet["behandlingId"].asUUID(),
                 opplysninger = opplysning,
+                opprettet,
             )
     override val ident get() = packet["ident"].asText()
 

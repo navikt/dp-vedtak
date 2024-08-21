@@ -66,6 +66,7 @@ internal class BehandlingStårFastMessage(
                 id,
                 ident,
                 packet["behandlingId"].asUUID(),
+                opprettet,
             )
 
     override fun behandle(

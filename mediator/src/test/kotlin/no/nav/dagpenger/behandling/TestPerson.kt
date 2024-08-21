@@ -1,11 +1,9 @@
 package no.nav.dagpenger.behandling
 
-import no.nav.dagpenger.regel.Behov.HarTaptArbeid
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
-import no.nav.dagpenger.regel.Behov.KravPåLønn
 import no.nav.dagpenger.regel.Behov.Lønnsgaranti
 import no.nav.dagpenger.regel.Behov.Ordinær
 import no.nav.dagpenger.regel.Behov.Permittert
@@ -142,8 +140,5 @@ class TestPerson(
             // Verneplikt
             Verneplikt to false,
             TarUtdanningEllerOpplæring to false,
-            // Tapt arbeidstid og inntekt
-            HarTaptArbeid to true,
-            KravPåLønn to true,
         )
 }

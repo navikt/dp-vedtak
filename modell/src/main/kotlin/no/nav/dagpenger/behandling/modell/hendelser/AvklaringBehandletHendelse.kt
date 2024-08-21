@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 class AvklaringBehandletHendelse(
@@ -8,7 +9,8 @@ class AvklaringBehandletHendelse(
     val behandlingId: UUID,
     val behandlesManuelt: Boolean,
     val avklaringer: List<Avklaring>,
-) : PersonHendelse(meldingsreferanseId, ident) {
+    opprettet: LocalDateTime,
+) : PersonHendelse(meldingsreferanseId, ident, opprettet) {
     data class Avklaring(
         val type: String,
         val utfall: String,

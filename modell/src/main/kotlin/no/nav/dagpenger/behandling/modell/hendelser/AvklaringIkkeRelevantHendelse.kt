@@ -1,5 +1,7 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import no.nav.dagpenger.opplysning.Systemkilde
+import java.time.LocalDateTime
 import java.util.UUID
 
 class AvklaringIkkeRelevantHendelse(
@@ -8,11 +10,19 @@ class AvklaringIkkeRelevantHendelse(
     val avklaringId: UUID,
     val kode: String,
     override val behandlingId: UUID,
-) : PersonHendelse(meldingsreferanseId, ident),
+    opprettet: LocalDateTime,
+) : PersonHendelse(meldingsreferanseId, ident, opprettet),
     BehandlingHendelse {
     override fun kontekstMap(): Map<String, String> =
         mapOf(
             "avklaringId" to avklaringId.toString(),
             "kode" to kode,
+        )
+
+    val kilde =
+        Systemkilde(
+            meldingsreferanseId = meldingsreferanseId,
+            opprettet = opprettet,
+            registrert = LocalDateTime.now(),
         )
 }

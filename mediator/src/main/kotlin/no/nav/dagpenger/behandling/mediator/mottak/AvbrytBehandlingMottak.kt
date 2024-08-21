@@ -64,7 +64,7 @@ internal class AvbrytBehandlingMessage(
     packet: JsonMessage,
 ) : HendelseMessage(packet) {
     private val hendelse
-        get() = AvbrytBehandlingHendelse(id, ident, behandlingId, "Avbrutt av datamaskinen")
+        get() = AvbrytBehandlingHendelse(id, ident, behandlingId, "Avbrutt av datamaskinen", opprettet)
     override val ident = packet["ident"].asText()
 
     private val behandlingId = packet["behandlingId"].asUUID()

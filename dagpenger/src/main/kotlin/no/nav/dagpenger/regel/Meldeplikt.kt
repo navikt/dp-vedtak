@@ -10,7 +10,7 @@ import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 object Meldeplikt {
     private val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
     internal val registrertArbeidssøker = Opplysningstype.somBoolsk("Registrert som arbeidssøker".id(RegistrertSomArbeidssøker))
-    internal val registrertPåSøknadstidspunktet = Opplysningstype.somBoolsk("Registrert som arbeidssøker på søknadstidspunktet")
+    val registrertPåSøknadstidspunktet = Opplysningstype.somBoolsk("Registrert som arbeidssøker på søknadstidspunktet")
 
     val regelsett =
         Regelsett("Meldeplikt") {

@@ -15,6 +15,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import org.junit.jupiter.api.Test
 
 class KontrollpunktTest {
@@ -108,7 +109,9 @@ class KontrollpunktTest {
         }
 
         // Saksbehandler kvittererer ut avklaringen fordi sykepengene ikke er svangerskapsrelaterte
-        ding.avklaringer.first().kvittering()
+        ding.avklaringer.first().kvittering(Saksbehandlerkilde("Z123456")).also { kvittert ->
+            kvittert shouldBe true
+        }
 
         // Nå skal det ikke være avklaringer som må avklares
         ding.måAvklares(opplysninger).also { avklaringer ->
@@ -151,7 +154,7 @@ class KontrollpunktTest {
 
         // Denne avklaringen skal ikke kunne kvitteres ut, den krever endring
         shouldThrow<IllegalArgumentException> {
-            ding.avklaringer.first().kvittering()
+            ding.avklaringer.first().kvittering(Saksbehandlerkilde("Z123456"))
         }
 
         // Nå skal det ikke være avklaringer som må avklares

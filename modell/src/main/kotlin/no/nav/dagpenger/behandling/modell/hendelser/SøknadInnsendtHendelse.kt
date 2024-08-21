@@ -8,19 +8,24 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.KravPåDagpenger
+import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Minsteinntekt.EØSArbeidKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.InntektNesteKalendermånedKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.SvangerskapsrelaterteSykepengerKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.ØnskerEtterRapporteringsfristKontroll
+import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.RegelverkDagpenger
+import no.nav.dagpenger.regel.Rettighetstype
 import no.nav.dagpenger.regel.Søknadstidspunkt.HattLukkedeSakerSiste8UkerKontroll
 import no.nav.dagpenger.regel.Søknadstidspunkt.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBeregningsregelKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 class SøknadInnsendtHendelse(
@@ -29,7 +34,8 @@ class SøknadInnsendtHendelse(
     søknadId: UUID,
     gjelderDato: LocalDate,
     fagsakId: Int,
-) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId) {
+    opprettet: LocalDateTime,
+) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId, opprettet) {
     private fun regelsettFor(opplysning: Opplysningstype<*>) = RegelverkDagpenger.regelsettFor(opplysning)
 
     override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring {
@@ -47,8 +53,18 @@ class SøknadInnsendtHendelse(
         if (!opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi ||
             !opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
         ) {
-            // TODO: return Minsteinntekt.minsteinntekt
-            return KravPåDagpenger.kravPåDagpenger
+            if (opplysninger.mangler(ReellArbeidssøker.kravTilArbeidssøker)) {
+                return ReellArbeidssøker.kravTilArbeidssøker
+            }
+
+            if (opplysninger.mangler(Meldeplikt.registrertPåSøknadstidspunktet)) {
+                return Meldeplikt.registrertPåSøknadstidspunktet
+            }
+            if (opplysninger.mangler(Rettighetstype.rettighetstype)) {
+                return Rettighetstype.rettighetstype
+            }
+
+            return Minsteinntekt.minsteinntekt
         }
 
         if (!opplysninger.har(KravPåDagpenger.kravPåDagpenger)) return KravPåDagpenger.kravPåDagpenger
@@ -80,5 +96,6 @@ class SøknadInnsendtHendelse(
             SøknadstidspunktForLangtFramITid,
             VernepliktKontroll,
             ØnskerEtterRapporteringsfristKontroll,
+            TapArbeidstidBeregningsregelKontroll,
         )
 }
