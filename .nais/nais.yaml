@@ -76,6 +76,7 @@ spec:
     inbound:
       rules:
         - application: dp-saksbehandling-frontend
+        - application: dp-saksbehandling
         {{#if wonderwalled}}
         - application: wonderwalled-idporten
           namespace: aura
