@@ -87,7 +87,8 @@ internal class PersonMediatorTest {
         )
     }
 
-    private val forventetAntallOpplysninger = 65
+    private val forventetAntallOpplysningerInnvilgelse = 74
+    private val forventetAntallOpplysningerAvslag = 45
 
     @BeforeEach
     fun setUp() {
@@ -108,10 +109,12 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe forventetAntallOpplysninger
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe
+                    forventetAntallOpplysningerAvslag
 
                 it.aktivBehandling.aktivAvklaringer.shouldHaveSize(6)
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe forventetAntallOpplysninger
+                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe
+                    forventetAntallOpplysningerAvslag
             }
 
             listOf(
@@ -142,7 +145,7 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 26
+            rapid.inspektør.size shouldBe 25
 
             testObservatør.tilstandsendringer.size shouldBe 6
         }
@@ -161,21 +164,24 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilFerdig(testPerson)
 
             personRepository.hent(ident.tilPersonIdentfikator()).also {
-                val opplysningerForDagpengeperiode = 13
-
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
                 it
                     .behandlinger()
                     .flatMap { behandling -> behandling.opplysninger().finnAlle() }
-                    .size shouldBe forventetAntallOpplysninger + opplysningerForDagpengeperiode
+                    .size shouldBe forventetAntallOpplysningerInnvilgelse
             }
+            /**
+             * Innhenter tar utdanning eller opplæring
+             */
+            rapid.harBehov(TarUtdanningEllerOpplæring)
+            testPerson.løsBehov(TarUtdanningEllerOpplæring)
 
             rapid.harHendelse("behandling_avbrutt") {
                 medTekst("søknadId") shouldBe testPerson.søknadId
-                medTekst("årsak") shouldBe "Førte ikke til avslag"
+                medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
             }
-            rapid.inspektør.size shouldBe 18
+            rapid.inspektør.size shouldBe 19
         }
 
     @Test
@@ -204,7 +210,7 @@ internal class PersonMediatorTest {
             rapid.inspektør.size shouldBe
                 listOf(
                     "opprettet" to 1,
-                    "behov" to 8,
+                    "behov" to 7,
                     "avklaring" to 6,
                     "forslag" to 1,
                     "event" to 2,
@@ -355,12 +361,6 @@ internal class PersonMediatorTest {
          */
         rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
         testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
-
-        /**
-         * Innhenter tar utdanning eller opplæring
-         */
-        rapid.harBehov(TarUtdanningEllerOpplæring)
-        testPerson.løsBehov(TarUtdanningEllerOpplæring)
     }
 
     private val Person.aktivBehandling get() = this.behandlinger().first()

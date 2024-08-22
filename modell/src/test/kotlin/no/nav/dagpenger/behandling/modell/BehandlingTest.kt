@@ -28,6 +28,7 @@ internal class BehandlingTest {
             meldingsreferanseId = søknadId,
             gjelderDato = LocalDate.now(),
             fagsakId = 1,
+            opprettet = LocalDateTime.now(),
         )
 
     private companion object {

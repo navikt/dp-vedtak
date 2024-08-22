@@ -126,7 +126,7 @@ internal fun Application.behandlingApi(
                     post("godkjenn") {
                         val identForespørsel = call.receive<IdentForesporselDTO>()
                         // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
-                        val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId)
+                        val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId, LocalDateTime.now())
                         hendelse.info("Godkjente behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
 
                         personMediator.håndter(hendelse)
@@ -138,7 +138,13 @@ internal fun Application.behandlingApi(
                         val identForespørsel = call.receive<IdentForesporselDTO>()
                         // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
                         val hendelse =
-                            AvbrytBehandlingHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId, "Avbrutt av saksbehandler")
+                            AvbrytBehandlingHendelse(
+                                UUIDv7.ny(),
+                                identForespørsel.ident,
+                                call.behandlingId,
+                                "Avbrutt av saksbehandler",
+                                LocalDateTime.now(),
+                            )
                         hendelse.info("Avbrøt behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
 
                         personMediator.håndter(hendelse)
@@ -167,6 +173,7 @@ internal fun Application.behandlingApi(
                                 behandling.behandler.ident,
                                 behandling.behandlingId,
                                 listOf(opplysningSvarBygger.opplysningSvar()),
+                                LocalDateTime.now(),
                             )
 
                         auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())

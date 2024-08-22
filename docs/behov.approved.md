@@ -12,6 +12,7 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 |InntektSiste36Mnd | Arbeidsinntekt siste 36 mnd | Penger|Beløp|
 |KanJobbeDeltid | Kan jobbe heltid og deltid | Boolsk|boolean|
 |KanJobbeHvorSomHelst | Kan jobbe i hele Norge | Boolsk|boolean|
+|Krav til tap av arbeidsinntekt og arbeidstid | Krav til tap av arbeidsinntekt og arbeidstid | Boolsk|boolean|
 |Lønnsgaranti | Har rett til dagpenger etter konkurs | Boolsk|boolean|
 |Oppfyller krav til ikke utestengt | Oppfyller krav til ikke utestengt | Boolsk|boolean|
 |Oppfyller personen vilkåret om medlemskap? | Oppfyller personen vilkåret om medlemskap? | Boolsk|boolean|

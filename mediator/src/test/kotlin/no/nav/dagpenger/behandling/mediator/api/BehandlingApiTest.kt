@@ -40,6 +40,7 @@ import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 internal class BehandlingApiTest {
     private val ident = "12345123451"
@@ -52,6 +53,7 @@ internal class BehandlingApiTest {
                     søknadId = UUIDv7.ny(),
                     gjelderDato = LocalDate.now(),
                     fagsakId = 1,
+                    opprettet = LocalDateTime.now(),
                 ),
             )
             val behandlingId = it.behandlinger().first().behandlingId
@@ -60,6 +62,7 @@ internal class BehandlingApiTest {
                     meldingsreferanseId = UUIDv7.ny(),
                     ident = ident,
                     behandlingId = behandlingId,
+                    opprettet = LocalDateTime.now(),
                     opplysninger =
                         listOf(
                             OpplysningSvar(

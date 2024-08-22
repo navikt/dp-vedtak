@@ -1,11 +1,12 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.alle
+import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.ikke
-import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.prosentTerskel
@@ -20,7 +21,8 @@ object TapAvArbeidsinntektOgArbeidstid {
     internal val tapAvArbeidsinntekt = Opplysningstype.somBoolsk("Krav til tap av arbeidsinntekt")
 
     private val kravTilArbeidstidsreduksjon = Opplysningstype.somDesimaltall("Krav til prosentvis tap av arbeidstid")
-    private val beregningsregel6mnd = Opplysningstype.somBoolsk("Beregningsregel: Arbeidstid siste 6 måneder")
+    private val beregningsregel = Opplysningstype.somBoolsk("Beregningsregel: Tapt arbeidstid")
+    internal val beregningsregel6mnd = Opplysningstype.somBoolsk("Beregningsregel: Arbeidstid siste 6 måneder")
     private val beregningsregel12mnd = Opplysningstype.somBoolsk("Beregningsregel: Arbeidstid siste 12 måneder")
     private val beregningsregel36mnd = Opplysningstype.somBoolsk("Beregeningsregel: Arbeidstid siste 36 måneder")
     internal val beregnetArbeidstid = Opplysningstype.somDesimaltall("Beregnet vanlig arbeidstid per uke før tap")
@@ -33,8 +35,8 @@ object TapAvArbeidsinntektOgArbeidstid {
 
     val regelsett =
         Regelsett("Krav til tap av arbeidsinntekt og arbeidstid") {
-            regel(tapAvArbeid) { innhentMed() }
-            regel(kravPåLønn) { innhentMed() }
+            regel(tapAvArbeid) { oppslag(søknadstidspunkt) { false } }
+            regel(kravPåLønn) { oppslag(søknadstidspunkt) { false } }
             regel(ikkeKravPåLønn) { ikke(kravPåLønn) }
             regel(tapAvArbeidsinntekt) { alle(tapAvArbeid, ikkeKravPåLønn) }
 
@@ -53,8 +55,26 @@ object TapAvArbeidsinntektOgArbeidstid {
 
             regel(kravTilTaptArbeidstid) { prosentTerskel(nyArbeidstid, fastsattVanligArbeidstid, kravTilArbeidstidsreduksjon) }
 
+            regel(beregningsregel) { enAv(beregningsregel6mnd, beregningsregel12mnd, beregningsregel36mnd) }
+
             regel(kravTilTapAvArbeidsinntektOgArbeidstid) {
-                alle(tapAvArbeidsinntekt, kravTilTaptArbeidstid)
+                alle(tapAvArbeidsinntekt, kravTilTaptArbeidstid, beregningsregel)
             }
+        }
+
+    val TapArbeidstidBeregningsregelKontroll =
+        Kontrollpunkt(sjekker = Avklaringspunkter.TapAvArbeidstidBeregningsregel) { opplysninger ->
+
+            if (
+                opplysninger.mangler(beregnetArbeidstid)
+            ) {
+                return@Kontrollpunkt false
+            }
+
+            listOf(
+                opplysninger.har(beregningsregel6mnd) && opplysninger.finnOpplysning(beregningsregel6mnd).verdi,
+                opplysninger.har(beregningsregel12mnd) && opplysninger.finnOpplysning(beregningsregel12mnd).verdi,
+                opplysninger.har(beregningsregel36mnd) && opplysninger.finnOpplysning(beregningsregel36mnd).verdi,
+            ).count { it } != 1
         }
 }

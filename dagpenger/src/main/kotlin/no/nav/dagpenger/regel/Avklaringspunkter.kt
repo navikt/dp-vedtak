@@ -24,6 +24,18 @@ object Avklaringspunkter {
             beskrivelse = "Krever avklaring om verneplikt",
         )
 
+    val TapAvArbeidstidBeregningsregel =
+        Avklaringkode(
+            kode = "TapAvArbeidsinntektOgArbeidstid",
+            tittel = "Beregningsregel for tap av arbeidsinntekt og arbeidstid",
+            kanKvitteres = false,
+            beskrivelse =
+                """
+                Kun én beregningsregel kan være gyldig til en hver tid. 
+                Velg en av Arbeidstid siste 6 måneder, Arbeidstid siste 12 måneder eller Arbeidstid siste 36 måneder.
+                """.trimIndent(),
+        )
+
     val EØSArbeid =
         Avklaringkode(
             kode = "EØSArbeid",

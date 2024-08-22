@@ -8,10 +8,12 @@ import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryObserver.NyAvklaringHendelse
 import no.nav.dagpenger.behandling.modell.Behandling
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import java.util.UUID
 
 internal class AvklaringRepositoryPostgres private constructor(
     private val observatører: MutableList<AvklaringRepositoryObserver>,
+    private val kildeRespository: KildeRepository = KildeRepository(),
 ) : AvklaringRepository {
     constructor(vararg observatører: AvklaringRepositoryObserver) : this(observatører.toMutableList())
 
@@ -70,7 +72,13 @@ internal class AvklaringRepositoryPostgres private constructor(
                 val endret = it.localDateTime("endret")
                 when (EndringType.valueOf(it.string("type"))) {
                     EndringType.UnderBehandling -> Avklaring.Endring.UnderBehandling(id, endret)
-                    EndringType.Avklart -> Avklaring.Endring.Avklart(id, it.string("saksbehandler"), endret)
+                    EndringType.Avklart ->
+                        Avklaring.Endring.Avklart(
+                            id,
+                            // Lager en dummy kilde hvis kilde ikke finnes (migrering endret funksjonalitet)
+                            kildeRespository.hentKilde(it.uuid("kilde_id")) ?: Saksbehandlerkilde("DIGIDAG"),
+                            endret,
+                        )
                     EndringType.Avbrutt -> Avklaring.Endring.Avbrutt(id, endret)
                 }
             }.asList,
@@ -108,12 +116,23 @@ internal class AvklaringRepositoryPostgres private constructor(
 
                 val endringerLagret =
                     avklaring.endringer.map { endring ->
+                        val kildeId =
+                            when (endring) {
+                                is Avklaring.Endring.Avklart -> {
+                                    endring.avklartAv.let { kilde ->
+                                        kildeRespository.lagreKilde(kilde, tx)
+                                        kilde.id
+                                    }
+                                }
+                                else -> null
+                            }
+
                         tx.run(
                             queryOf(
                                 // language=PostgreSQL
                                 """
-                                INSERT INTO avklaring_endring (endring_id, avklaring_id, endret, type, saksbehandler)
-                                VALUES (:endring_id, :avklaring_id, :endret, :endring_type, :saksbehandler)
+                                INSERT INTO avklaring_endring (endring_id, avklaring_id, endret, type, kilde_id)
+                                VALUES (:endring_id, :avklaring_id, :endret, :endring_type, :kilde_id)
                                 ON CONFLICT DO NOTHING
                                 """.trimIndent(),
                                 mapOf(
@@ -126,11 +145,7 @@ internal class AvklaringRepositoryPostgres private constructor(
                                             is Avklaring.Endring.Avklart -> "Avklart"
                                             is Avklaring.Endring.Avbrutt -> "Avbrutt"
                                         },
-                                    "saksbehandler" to
-                                        when (endring) {
-                                            is Avklaring.Endring.Avklart -> endring.saksbehandler
-                                            else -> null
-                                        },
+                                    "kilde_id" to kildeId,
                                 ),
                             ).asUpdate,
                         )

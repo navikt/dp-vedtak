@@ -7,6 +7,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 // Baseklasse for alle hendelser som kan påvirke dagpengene til en person og må behandles
@@ -16,7 +17,8 @@ abstract class StartHendelse(
     val eksternId: EksternId<*>,
     val skjedde: LocalDate,
     val fagsakId: Int,
-) : PersonHendelse(meldingsreferanseId, ident) {
+    opprettet: LocalDateTime,
+) : PersonHendelse(meldingsreferanseId, ident, opprettet) {
     val type: String = this.javaClass.simpleName
 
     override fun kontekstMap() =

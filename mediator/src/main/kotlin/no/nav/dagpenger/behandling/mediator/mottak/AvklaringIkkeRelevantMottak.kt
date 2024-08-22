@@ -52,7 +52,7 @@ internal class AvklaringIkkeRelevantMessage(
     override val ident = packet["ident"].asText()
 
     private val hendelse
-        get() = AvklaringIkkeRelevantHendelse(id, ident, avklaringId, kode, behandlingId)
+        get() = AvklaringIkkeRelevantHendelse(id, ident, avklaringId, kode, behandlingId, opprettet)
 
     private val avklaringId = packet["avklaringId"].asUUID()
     private val behandlingId = packet["behandlingId"].asUUID()

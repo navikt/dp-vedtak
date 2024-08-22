@@ -11,6 +11,7 @@ import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel6mnd
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.kravPåLønn
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.kravTilTaptArbeidstid
@@ -51,16 +52,17 @@ class TapAvArbeidSteg : No {
         }
 
         Gitt("at personen har tapt arbeid") {
-            regelkjøring.leggTil(Faktum<Boolean>(tapAvArbeid, true) as Opplysning<*>)
+            regelkjøring.leggTil(Faktum(tapAvArbeid, true))
         }
         Og("personen har tapt arbeidsinntekt") {
-            regelkjøring.leggTil(Faktum<Boolean>(kravPåLønn, false) as Opplysning<*>)
+            regelkjøring.leggTil(Faktum(kravPåLønn, false))
         }
         Og("har fått fastsatt vanlig arbeidstid til {double}") { timer: Double ->
-            regelkjøring.leggTil(Faktum<Double>(beregnetArbeidstid, timer) as Opplysning<*>)
+            regelkjøring.leggTil(Faktum(beregnetArbeidstid, timer))
+            regelkjøring.leggTil(Faktum(beregningsregel6mnd, true))
         }
         Og("har ny arbeidstid {double}") { timer: Double ->
-            regelkjøring.leggTil(Faktum<Double>(nyArbeidstid, timer) as Opplysning<*>)
+            regelkjøring.leggTil(Faktum(nyArbeidstid, timer))
         }
         Når("personen søker om dagpenger") { }
         Så("skal personen oppfylle kravet til tap av arbeidsinntekt") {
