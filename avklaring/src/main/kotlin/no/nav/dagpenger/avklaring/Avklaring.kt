@@ -71,7 +71,7 @@ data class Avklaring(
 
         class Avklart(
             id: UUID = UUIDv7.ny(),
-            val avklartAv: Kilde?,
+            val avklartAv: Kilde,
             endret: LocalDateTime = LocalDateTime.now(),
         ) : Endring(id, endret)
 
