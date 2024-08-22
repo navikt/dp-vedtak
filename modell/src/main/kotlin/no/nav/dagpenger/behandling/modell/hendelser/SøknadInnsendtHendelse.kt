@@ -7,6 +7,8 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Alderskrav
+import no.nav.dagpenger.regel.Alderskrav.HattLukkedeSakerSiste8UkerKontroll
+import no.nav.dagpenger.regel.Alderskrav.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.KravPåDagpenger
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
@@ -18,8 +20,6 @@ import no.nav.dagpenger.regel.Minsteinntekt.ØnskerEtterRapporteringsfristKontro
 import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Rettighetstype
-import no.nav.dagpenger.regel.Søknadstidspunkt.HattLukkedeSakerSiste8UkerKontroll
-import no.nav.dagpenger.regel.Søknadstidspunkt.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBeregningsregelKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll

@@ -1,5 +1,6 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
@@ -28,4 +29,10 @@ object Alderskrav {
             regel(sisteDagIMåned) { sisteDagIMåned(sisteMåned) }
             regel(kravTilAlder) { førEllerLik(virkningsdato, sisteDagIMåned) }
         }
+
+    val MuligGjenopptakKontroll =
+        Kontrollpunkt(Avklaringspunkter.MuligGjenopptak) { it.har(kravTilAlder) && it.finnOpplysning(kravTilAlder).verdi }
+
+    val HattLukkedeSakerSiste8UkerKontroll =
+        Kontrollpunkt(Avklaringspunkter.HattLukkedeSakerSiste8Uker) { it.har(kravTilAlder) && it.finnOpplysning(kravTilAlder).verdi }
 }
