@@ -334,8 +334,9 @@ class Behandling private constructor(
                 }
 
                 // TODO: Dette faller bort når vi sjekker alt
-                val kravTilInntekt = behandling.opplysninger.finnOpplysning(minsteinntekt)
-                if (kravTilInntekt.verdi) {
+                val kravTilInntekt =
+                    behandling.opplysninger.har(minsteinntekt) && behandling.opplysninger.finnOpplysning(minsteinntekt).verdi
+                if (kravTilInntekt) {
                     hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")
                     behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag på grunn av inntekt"), hendelse)
                     return
