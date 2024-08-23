@@ -520,7 +520,7 @@ class Behandling private constructor(
                     "utfall" to avklaring.verdi,
                     "harAvklart" to avklaring.opplysningstype.navn,
                     "opplysninger" to behandling.opplysninger.finnAlle(),
-                    "automatisk" to behandling.avklaringer().all { it.erAvbrutt() },
+                    "automatisk" to behandling.avklaringer().all { it.erAvbrutt() || it.erAvklart() },
                 ),
             )
         }

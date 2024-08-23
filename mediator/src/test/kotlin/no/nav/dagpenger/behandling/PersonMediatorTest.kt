@@ -140,6 +140,7 @@ internal class PersonMediatorTest {
                 medBoolsk("utfall") shouldBe false
                 medTekst("fagsakId").shouldBeNull()
                 medTekst("søknadId") shouldBe testPerson.søknadId
+                medBoolsk("automatisk") shouldBe true
 
                 medOpplysning<Int>("fagsakId") shouldBe 123
                 medOpplysning<Boolean>("Ordinær") shouldBe false
