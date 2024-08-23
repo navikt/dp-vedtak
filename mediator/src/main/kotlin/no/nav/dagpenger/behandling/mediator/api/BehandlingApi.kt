@@ -57,6 +57,7 @@ import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
+import no.nav.dagpenger.regel.Verneplikt
 import org.apache.kafka.common.errors.ResourceNotFoundException
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -279,7 +280,11 @@ private fun LocalDate.tilApiDato(): LocalDate? =
 val redigerbarPerOpplysningstype =
     object : Redigerbar {
         private val redigerbare =
-            setOf(TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid, TapAvArbeidsinntektOgArbeidstid.nyArbeidstid)
+            setOf(
+                TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid,
+                TapAvArbeidsinntektOgArbeidstid.nyArbeidstid,
+                Verneplikt.vurderingAvVerneplikt,
+            )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)
     }
@@ -293,6 +298,7 @@ class HttpVerdiMapper(
     override fun <T : Comparable<T>> map(datatype: Datatype<T>): T =
         when (datatype) {
             Heltall -> oppdaterOpplysningRequestDTO.verdi.toInt() as T
+            Boolsk -> oppdaterOpplysningRequestDTO.verdi.toBoolean() as T
             else -> throw IllegalArgumentException("Datatype $datatype støttes ikke i APIet enda")
         }
 }

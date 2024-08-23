@@ -169,6 +169,7 @@ internal class BehandlingApiTest {
             val behandling = shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), BehandlingDTO::class.java) }
             behandling.behandlingId shouldBe behandlingId
             behandling.opplysning.shouldNotBeEmpty()
+            behandling.opplysning.all { it.redigerbar } shouldBe false
             verify {
                 auditlogg.les(any(), any(), any())
             }
