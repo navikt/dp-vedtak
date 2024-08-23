@@ -283,7 +283,7 @@ val redigerbarPerOpplysningstype =
             setOf(
                 TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid,
                 TapAvArbeidsinntektOgArbeidstid.nyArbeidstid,
-                Verneplikt.vurderingAvVerneplikt,
+                Verneplikt.avtjentVerneplikt,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)
