@@ -23,6 +23,8 @@ sealed class Opplysning<T : Comparable<T>>(
     private var _erstatter: Opplysning<T>? = null,
     private val _erstattetAv: MutableList<Opplysning<T>> = mutableListOf(),
 ) : Klassifiserbart by opplysningstype {
+    private val defaultRedigering = Redigerbar { utledetAv == null && opplysningstype.datatype != ULID && !erErstattet }
+
     abstract fun bekreft(): Faktum<T>
 
     val erstatter get() = _erstatter
@@ -31,7 +33,7 @@ sealed class Opplysning<T : Comparable<T>>(
 
     val erstattetAv get() = _erstattetAv.toList()
 
-    val kanRedigeres get() = utledetAv == null && opplysningstype.datatype != ULID && !erErstattet
+    val kanRedigere: (Redigerbar) -> Boolean = { redigerbar -> redigerbar.kanRedigere(this) && defaultRedigering.kanRedigere(this) }
 
     fun overlapper(opplysning: Opplysning<*>) =
         opplysningstype == opplysning.opplysningstype && gyldighetsperiode.overlapp(opplysning.gyldighetsperiode)
