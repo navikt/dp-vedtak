@@ -1,0 +1,2 @@
+ALTER TABLE opplysningstype
+    ADD COLUMN tekst_id TEXT NULL DEFAULT NULL;

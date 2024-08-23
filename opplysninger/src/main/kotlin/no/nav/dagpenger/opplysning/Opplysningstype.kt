@@ -11,9 +11,17 @@ interface Klassifiserbart {
 
 fun String.id(id: String) = OpplysningTypeId(id, this)
 
+fun String.id(
+    id: String,
+    tekstId: String? = null,
+) = OpplysningTypeId(id, this, tekstId)
+
+fun String.tekstId(tekstId: String) = OpplysningTypeId(this, this, tekstId)
+
 data class OpplysningTypeId(
     val id: String,
     val beskrivelse: String,
+    val tekstId: String? = null,
 )
 
 class Opplysningstype<T : Comparable<T>>(
@@ -30,6 +38,7 @@ class Opplysningstype<T : Comparable<T>>(
 
     val id = opplysningTypeId.id
     val navn = opplysningTypeId.beskrivelse
+    val tekstId = opplysningTypeId.tekstId
 
     init {
         parent?.child?.add(this)
