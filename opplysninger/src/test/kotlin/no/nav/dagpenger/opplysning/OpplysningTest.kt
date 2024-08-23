@@ -4,6 +4,9 @@ import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.dato1
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.dato2
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.desimaltall
+import no.nav.dagpenger.opplysning.TestOpplysningstyper.ulid
+import no.nav.dagpenger.opplysning.verdier.Ulid
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -34,10 +37,22 @@ class OpplysningTest {
     fun `er redigerbar`() {
         val opplysning1 = Faktum(dato1, LocalDate.now())
         val opplysning2 = Faktum(dato2, LocalDate.now())
+        val opplysning3 = Faktum(desimaltall, 2.0, utledetAv = Utledning("regel", listOf(opplysning1, opplysning2)))
+        val opplysning4 = Faktum(ulid, Ulid("01F9KZ3YX4QZJZQVQZJZQVQVQZ"))
+        val erstattet = opplysning4.lagErstatning(Faktum(ulid, Ulid("01F9KZ3YX4QZJZQVQZJZQVQVQZ")))
 
-        opplysning1.kanRedigere(RedigerbarPerOpplysningstype) shouldBe true
-        opplysning2.kanRedigere(RedigerbarPerOpplysningstype) shouldBe false
-        opplysning2.kanRedigere { true } shouldBe true
+        opplysning1.kanRedigeres(RedigerbarPerOpplysningstype) shouldBe true
+        opplysning2.kanRedigeres(RedigerbarPerOpplysningstype) shouldBe false
+        opplysning2.kanRedigeres { true } shouldBe true
+
+        // Kan ikke redigere opplysning som er utledet
+        opplysning3.kanRedigeres { true } shouldBe false
+
+        // Kan ikke redigere opplysningstype ULID
+        opplysning4.kanRedigeres { true } shouldBe false
+
+        // Kan ikke redigere erstattet opplysning
+        erstattet.kanRedigeres { true } shouldBe false
     }
 
     private object RedigerbarPerOpplysningstype : Redigerbar {

@@ -33,7 +33,7 @@ sealed class Opplysning<T : Comparable<T>>(
 
     val erstattetAv get() = _erstattetAv.toList()
 
-    val kanRedigere: (Redigerbar) -> Boolean = { redigerbar -> redigerbar.kanRedigere(this) && defaultRedigering.kanRedigere(this) }
+    val kanRedigeres: (Redigerbar) -> Boolean get() = { redigerbar -> redigerbar.kanRedigere(this) && defaultRedigering.kanRedigere(this) }
 
     fun overlapper(opplysning: Opplysning<*>) =
         opplysningstype == opplysning.opplysningstype && gyldighetsperiode.overlapp(opplysning.gyldighetsperiode)

@@ -267,7 +267,7 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
                 )
             },
         redigerbar =
-            this.kanRedigere(redigerbarPerOpplysningstype),
+            this.kanRedigeres(redigerbarPerOpplysningstype),
     )
 
 private fun LocalDate.tilApiDato(): LocalDate? =

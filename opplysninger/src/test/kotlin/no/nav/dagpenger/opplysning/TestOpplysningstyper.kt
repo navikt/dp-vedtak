@@ -4,6 +4,7 @@ internal object TestOpplysningstyper {
     val dato1 by lazy { Opplysningstype.somDato("dato1") }
     val dato2 by lazy { Opplysningstype.somDato("dato2") }
     val desimaltall by lazy { Opplysningstype.somDesimaltall("desimaltall") }
+    val ulid by lazy { Opplysningstype.somUlid("ULID") }
     val a by lazy { Opplysningstype.somBoolsk("A") }
     val b by lazy { Opplysningstype.somBoolsk("B") }
     val c by lazy { Opplysningstype.somBoolsk("C") }
