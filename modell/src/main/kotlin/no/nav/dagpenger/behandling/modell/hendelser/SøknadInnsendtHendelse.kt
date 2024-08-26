@@ -23,6 +23,8 @@ import no.nav.dagpenger.regel.Rettighetstype
 import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBeregningsregelKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
+import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
+import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -49,28 +51,30 @@ class SøknadInnsendtHendelse(
         // Sjekk krav til minste arbeidsinntekt
         if (!opplysninger.har(Minsteinntekt.minsteinntekt)) return Minsteinntekt.minsteinntekt
 
-        // Om krav til alder eller arbeidsinntekt ikke er oppfylt er det ingen grunn til å fortsette
-        if (!opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi ||
-            !opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
-        ) {
-            if (opplysninger.mangler(ReellArbeidssøker.kravTilArbeidssøker)) {
-                return ReellArbeidssøker.kravTilArbeidssøker
-            }
+        val alderskravOppfylt = opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
+        val minsteinntektOppfylt = opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi
 
-            if (opplysninger.mangler(Meldeplikt.registrertPåSøknadstidspunktet)) {
-                return Meldeplikt.registrertPåSøknadstidspunktet
+        // Om krav til alder eller arbeidsinntekt ikke er oppfylt er det ingen grunn til å fortsette, men vi må fastsette hvilke tillegskrav Arena trenger.
+        if (!alderskravOppfylt || !minsteinntektOppfylt) {
+            return when {
+                opplysninger.mangler(ReellArbeidssøker.kravTilArbeidssøker) -> ReellArbeidssøker.kravTilArbeidssøker
+                opplysninger.mangler(Meldeplikt.registrertPåSøknadstidspunktet) -> Meldeplikt.registrertPåSøknadstidspunktet
+                opplysninger.mangler(Rettighetstype.rettighetstype) -> Rettighetstype.rettighetstype
+                else -> Minsteinntekt.minsteinntekt
             }
-            if (opplysninger.mangler(Rettighetstype.rettighetstype)) {
-                return Rettighetstype.rettighetstype
-            }
-
-            return Minsteinntekt.minsteinntekt
         }
 
-        if (!opplysninger.har(KravPåDagpenger.kravPåDagpenger)) return KravPåDagpenger.kravPåDagpenger
-        if (!opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi) return KravPåDagpenger.kravPåDagpenger
+        if (opplysninger.mangler(KravPåDagpenger.kravPåDagpenger)) return KravPåDagpenger.kravPåDagpenger
+        val kravPåDagpenger = opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
+        if (!kravPåDagpenger) return KravPåDagpenger.kravPåDagpenger
 
-        return Dagpengeperiode.antallStønadsuker
+        // Fastsettelse av dagpengegrunnlag, dagpengens størrelse og dagpengeperiode
+        return when {
+            opplysninger.mangler(Dagpengeperiode.antallStønadsuker) -> Dagpengeperiode.antallStønadsuker
+            opplysninger.mangler(Dagpengegrunnlag.grunnlag) -> Dagpengegrunnlag.grunnlag
+            opplysninger.mangler(DagpengensStørrelse.dagsatsMedBarn) -> DagpengensStørrelse.dagsatsMedBarn
+            else -> KravPåDagpenger.kravPåDagpenger
+        }
     }
 
     private companion object {
