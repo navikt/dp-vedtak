@@ -19,6 +19,7 @@ object StreikOgLockout {
             regel(deltarIStreikOgLockout) { oppslag(Søknadstidspunkt.søknadstidspunkt) { false } }
             regel(sammeBedriftOgPåvirket) { oppslag(Søknadstidspunkt.søknadstidspunkt) { false } }
             regel(ikkeStreikEllerLockout) {
+                // TODO: denne blir feil vei, false = true og true = false
                 ingenAv(deltarIStreikOgLockout, sammeBedriftOgPåvirket)
             }
         }

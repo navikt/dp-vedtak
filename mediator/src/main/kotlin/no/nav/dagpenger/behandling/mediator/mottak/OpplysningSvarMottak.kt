@@ -142,6 +142,12 @@ internal class OpplysningSvarMessage(
                 val kilde =
                     Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
 
+                if (opplysningstype.datatype is InntektDataType && svar.verdi.asText() == "") {
+                    logger.error("Vi har mottatt en tom inntekt, de kan ikke leses inn.")
+                    sikkerLogger.error { "Vi har mottatt en tom inntekt, de kan ikke leses inn. Pakke: ${packet.toJson()}" }
+                    return@forEach
+                }
+
                 val opplysningSvarBygger =
                     OpplysningSvarBygger(
                         opplysningstype,
