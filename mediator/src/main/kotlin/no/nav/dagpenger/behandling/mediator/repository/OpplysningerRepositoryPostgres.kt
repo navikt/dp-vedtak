@@ -276,7 +276,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 //language=PostgreSQL
                 """
                 WITH ins AS (
-                    SELECT opplysningstype_id FROM opplysningstype WHERE id = :typeId AND navn = :typeNavn AND  datatype = :datatype
+                    SELECT opplysningstype_id FROM opplysningstype WHERE id = :typeId AND navn = :typeNavn AND datatype = :datatype 
                 )
                 INSERT INTO opplysning (id, status, opplysningstype_id, kilde_id, gyldig_fom, gyldig_tom, opprettet)
                 VALUES (:id, :status, (SELECT opplysningstype_id FROM ins), :kilde_id, :fom::timestamp, :tom::timestamp, :opprettet)

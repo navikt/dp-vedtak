@@ -126,11 +126,11 @@ class Opplysningstype<T : Comparable<T>>(
         ) = Opplysningstype(opplysningTypeId, Tekst, parent)
     }
 
-    override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId || parent?.er(type) ?: false
+    override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId.id == type.opplysningTypeId.id || parent?.er(type) ?: false
 
     override fun toString() = "opplysning om $navn"
 
-    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningTypeId == this.opplysningTypeId
+    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningTypeId.id == this.opplysningTypeId.id
 
-    override fun hashCode() = opplysningTypeId.hashCode() * 31
+    override fun hashCode() = opplysningTypeId.id.hashCode() * 31
 }
