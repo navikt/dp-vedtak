@@ -12,7 +12,7 @@ internal object TestOpplysningstyper {
     val boolsk = Opplysningstype.somBoolsk("boolsk")
     val dato = Opplysningstype.somDato("Dato")
     val desimal = Opplysningstype.somDesimaltall("Desimal".id("desimaltall"))
-    val inntektA = Opplysningstype.somInntekt("inntekt")
+    val inntektA = Opplysningstype.somInntekt("Inntekt")
     val tekst = Opplysningstype.somTekst("Tekst")
 
     val beløpA by lazy { Opplysningstype.somBeløp("BeløpA") }

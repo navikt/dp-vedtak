@@ -142,12 +142,6 @@ internal class OpplysningSvarMessage(
                 val kilde =
                     Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
 
-                if (opplysningstype.datatype is InntektDataType && svar.verdi.asText() == "") {
-                    logger.error("Vi har mottatt en tom inntekt, de kan ikke leses inn.")
-                    sikkerLogger.error { "Vi har mottatt en tom inntekt, de kan ikke leses inn. Pakke: ${packet.toJson()}" }
-                    return@forEach
-                }
-
                 val opplysningSvarBygger =
                     OpplysningSvarBygger(
                         opplysningstype,
@@ -234,7 +228,7 @@ private class JsonMapper(
             Penger -> Beløp(verdi.asText().toBigDecimal()) as T
             InntektDataType ->
                 Inntekt(
-                    objectMapper.convertValue(verdi.asText(), no.nav.dagpenger.inntekt.v1.Inntekt::class.java),
+                    objectMapper.convertValue(verdi, no.nav.dagpenger.inntekt.v1.Inntekt::class.java),
                 ) as T
 
             Tekst -> verdi.asText() as T
