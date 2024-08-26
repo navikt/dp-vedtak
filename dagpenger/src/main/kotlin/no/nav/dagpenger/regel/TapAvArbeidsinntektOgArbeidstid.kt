@@ -35,7 +35,7 @@ object TapAvArbeidsinntektOgArbeidstid {
 
     val regelsett =
         Regelsett("Krav til tap av arbeidsinntekt og arbeidstid") {
-            regel(tapAvArbeid) { oppslag(søknadstidspunkt) { false } }
+            regel(tapAvArbeid) { oppslag(søknadstidspunkt) { true } } // TODO: Satt til true for testing av innvilgelse
             regel(kravPåLønn) { oppslag(søknadstidspunkt) { false } }
             regel(ikkeKravPåLønn) { ikke(kravPåLønn) }
             regel(tapAvArbeidsinntekt) { alle(tapAvArbeid, ikkeKravPåLønn) }
@@ -65,9 +65,7 @@ object TapAvArbeidsinntektOgArbeidstid {
     val TapArbeidstidBeregningsregelKontroll =
         Kontrollpunkt(sjekker = Avklaringspunkter.TapAvArbeidstidBeregningsregel) { opplysninger ->
 
-            if (
-                opplysninger.mangler(beregnetArbeidstid)
-            ) {
+            if (opplysninger.mangler(beregnetArbeidstid)) {
                 return@Kontrollpunkt false
             }
 

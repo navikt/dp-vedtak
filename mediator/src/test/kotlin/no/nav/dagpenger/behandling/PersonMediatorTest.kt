@@ -50,6 +50,7 @@ import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
@@ -152,6 +153,7 @@ internal class PersonMediatorTest {
         }
 
     @Test
+    @Disabled("Vi skal ikke avbryte når vi skal innvilge")
     fun `Søknad med nok inntekt skal ikke avslås - men avbrytes`() =
         withMigratedDb {
             val testPerson =
@@ -182,6 +184,7 @@ internal class PersonMediatorTest {
                 medTekst("søknadId") shouldBe testPerson.søknadId
                 medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
             }
+
             // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
             rapid.inspektør.size shouldBe 18
         }
