@@ -6,6 +6,7 @@ import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaringer
+import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.AvklaringLukketHendelse
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
@@ -323,24 +324,26 @@ class Behandling private constructor(
             val trenger = behandling.hvaTrengerViNå(hendelse)
 
             if (trenger.isEmpty()) {
-                // TODO: Dette faller bort når vi sjekker alt
-                val kravPåDagpenger =
-                    behandling.opplysninger.har(KravPåDagpenger.kravPåDagpenger) &&
-                        behandling.opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
-                if (kravPåDagpenger) {
-                    hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
-                    behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag"), hendelse)
-                    return
-                }
+                if (!støtterInnvilgelse) {
+                    // TODO: Dette faller bort når vi sjekker alt
+                    val kravPåDagpenger =
+                        behandling.opplysninger.har(KravPåDagpenger.kravPåDagpenger) &&
+                            behandling.opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
+                    if (kravPåDagpenger) {
+                        hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
+                        behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag"), hendelse)
+                        return
+                    }
 
-                // TODO: Dette faller bort når vi sjekker alt
-                val kravTilInntekt =
-                    behandling.opplysninger.har(minsteinntekt) &&
-                        behandling.opplysninger.finnOpplysning(minsteinntekt).verdi
-                if (kravTilInntekt) {
-                    hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")
-                    behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag på grunn av inntekt"), hendelse)
-                    return
+                    // TODO: Dette faller bort når vi sjekker alt
+                    val kravTilInntekt =
+                        behandling.opplysninger.har(minsteinntekt) &&
+                            behandling.opplysninger.finnOpplysning(minsteinntekt).verdi
+                    if (kravTilInntekt) {
+                        hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")
+                        behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag på grunn av inntekt"), hendelse)
+                        return
+                    }
                 }
 
                 if (behandling.aktiveAvklaringer().isEmpty()) {

@@ -6,9 +6,11 @@ import io.getunleash.DefaultUnleash
 import io.getunleash.FakeUnleash
 import io.getunleash.Unleash
 import io.getunleash.util.UnleashConfig
+import mu.KotlinLogging
 import no.nav.dagpenger.behandling.konfigurasjon.Configuration.properties
 import java.net.InetAddress
 
+private val logger = KotlinLogging.logger { }
 internal val unleash: Unleash =
     if (properties.getOrNull(Key("UNLEASH_SERVER_API_URL", stringType)) == null) {
         FakeUnleash()
@@ -27,4 +29,13 @@ internal val unleash: Unleash =
                     },
                 ).build(),
         )
+    }
+
+val støtterInnvilgelse =
+    unleash.isEnabled("dp-behandling.innvilgelse").also {
+        if (it) {
+            logger.info("Feature dp-behandling.innvilgelse er aktivert")
+        } else {
+            logger.info("Feature dp-behandling.innvilgelse er deaktivert")
+        }
     }
