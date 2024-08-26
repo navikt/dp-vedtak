@@ -43,12 +43,12 @@ object TapAvArbeidsinntektOgArbeidstid {
             regel(kravTilArbeidstidsreduksjon) { oppslag(søknadstidspunkt) { 50.0 } } // Perm og sånt har andre terskelverdier
 
             // TODO: Kun en av disse må være sann. Enforces med Avklaring (i framtiden)
-            regel(beregningsregel6mnd) { oppslag(søknadstidspunkt) { false } }
+            regel(beregningsregel6mnd) { oppslag(søknadstidspunkt) { true } } // TODO: Satt til true for testing av innvilgelse
             regel(beregningsregel12mnd) { oppslag(søknadstidspunkt) { false } }
             regel(beregningsregel36mnd) { oppslag(søknadstidspunkt) { false } }
 
             // TODO: Bør hentes fra noe
-            regel(beregnetArbeidstid) { oppslag(søknadstidspunkt) { 0.0 } }
+            regel(beregnetArbeidstid) { oppslag(søknadstidspunkt) { 37.5 } } // TODO: Satt til 37.5 for testing av innvilgelse
             regel(nyArbeidstid) { oppslag(søknadstidspunkt) { 0.0 } }
             regel(maksimalVanligArbeidstid) { oppslag(søknadstidspunkt) { 40.0 } }
             regel(fastsattVanligArbeidstid) { minstAv(beregnetArbeidstid, maksimalVanligArbeidstid) }
