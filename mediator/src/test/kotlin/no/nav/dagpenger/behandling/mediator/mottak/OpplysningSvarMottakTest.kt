@@ -8,12 +8,14 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import no.nav.dagpenger.behandling.TestOpplysningstyper.boolsk
+import no.nav.dagpenger.behandling.TestOpplysningstyper.inntektA
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.UUIDv7
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -22,10 +24,8 @@ class OpplysningSvarMottakTest {
     private val rapid = TestRapid()
     private val messageMediator = mockk<MessageMediator>(relaxed = true)
 
-    private val opplysningstype = boolsk // må registrere opplysningstype først
-
     init {
-        OpplysningSvarMottak(rapid, messageMediator, setOf(opplysningstype))
+        OpplysningSvarMottak(rapid, messageMediator, setOf(boolsk, inntektA))
     }
 
     @BeforeEach
@@ -56,6 +56,19 @@ class OpplysningSvarMottakTest {
             .first()
             .opplysning()
             .gyldighetsperiode shouldBe Gyldighetsperiode()
+    }
+
+    @Test
+    fun `kan parse løsninger med full inntekt`() {
+        rapid.sendTestMessage(løsningPåInntekt)
+        val hendelse = slot<OpplysningSvarHendelse>()
+        verify {
+            messageMediator.behandle(capture(hendelse), any(), any())
+        }
+
+        hendelse.isCaptured shouldBe true
+        hendelse.captured.behandlingId shouldBe behandlingId
+        hendelse.captured.opplysninger shouldHaveSize 1
     }
 
     @Test
@@ -123,6 +136,7 @@ class OpplysningSvarMottakTest {
     }
 
     private val behandlingId = UUIDv7.ny()
+
     private val konvolutt =
         mapOf(
             "ident" to "12345678901",
@@ -167,4 +181,108 @@ class OpplysningSvarMottakTest {
                         ),
                 ),
         )
+
+    @Language("JSON")
+    private val løsningPåInntekt =
+        """
+        {
+          "@event_name": "behov",
+          "@behovId": "ABBADABBADOO",
+          "@behov": [
+            "Inntekt"
+          ],
+          "ident": "12345678901",
+          "behandlingId": "$behandlingId",
+          "gjelderDato": "2024-08-26",
+          "søknadId": "ABBADABBADOO",
+          "søknad_uuid": "ABBADABBADOO",
+          "opprettet": "2024-08-26T13:19:05.183155",
+          "Inntekt": {
+            "@opplysningsbehov": true,
+            "InntektId": "ABBADABBADOO",
+            "InnsendtSøknadsId": {
+              "urn": "urn:soknad:ABBADABBADOO"
+            },
+            "søknad_uuid": "ABBADABBADOO"
+          },
+          "@opplysningsbehov": true,
+          "InntektId": "ABBADABBADOO",
+          "InnsendtSøknadsId": {
+            "urn": "urn:soknad:ABBADABBADOO"
+          },
+          "@final": true,
+          "@id": "ed48feff-ff1d-42a2-9972-5c3b0d95f04c",
+          "@opprettet": "2024-08-26T13:38:41.001093444",
+          "system_read_count": 2,
+          "system_participating_services": [
+            {
+              "id": "5ee12cde-a683-4af1-8e47-08fa1d5c1217",
+              "time": "2024-08-26T13:38:38.342267021",
+              "service": "dp-behandling",
+              "instance": "dp-behandling-5dcf7cb4dc-zxnpd",
+              "image": "europe-north1-docker.pkg.dev/nais-management-233d/teamdagpenger/dp-behandling:2024.08.26-11.36-699d7af"
+            },
+            {
+              "id": "5ee12cde-a683-4af1-8e47-08fa1d5c1217",
+              "time": "2024-08-26T13:38:40.941990530",
+              "service": "dp-oppslag-inntekt",
+              "instance": "dp-oppslag-inntekt-9d6cd69fb-wfbpg",
+              "image": "europe-north1-docker.pkg.dev/nais-management-233d/teamdagpenger/dp-oppslag-inntekt:2024.08.21-07.07-a168d45"
+            },
+            {
+              "id": "ed48feff-ff1d-42a2-9972-5c3b0d95f04c",
+              "time": "2024-08-26T13:38:41.001093444",
+              "service": "dp-oppslag-inntekt",
+              "instance": "dp-oppslag-inntekt-9d6cd69fb-wfbpg",
+              "image": "europe-north1-docker.pkg.dev/nais-management-233d/teamdagpenger/dp-oppslag-inntekt:2024.08.21-07.07-a168d45"
+            },
+            {
+              "id": "ed48feff-ff1d-42a2-9972-5c3b0d95f04c",
+              "time": "2024-08-26T13:41:32.447626972",
+              "service": "dp-behandling",
+              "instance": "dp-behandling-5dcf7cb4dc-2bwsm",
+              "image": "europe-north1-docker.pkg.dev/nais-management-233d/teamdagpenger/dp-behandling:2024.08.26-11.36-699d7af"
+            }
+          ],
+          "@løsning": {
+            "Inntekt": {
+              "verdi": {
+                "inntektsId": "01J677GHJRC2H08Q55DASFD0XX",
+                "inntektsListe": [
+                  {
+                    "årMåned": "2021-11",
+                    "klassifiserteInntekter": [
+                      {
+                        "beløp": 41600.0,
+                        "inntektKlasse": "ARBEIDSINNTEKT"
+                      }
+                    ],
+                    "harAvvik": false
+                  },
+                  {
+                    "årMåned": "2021-10",
+                    "klassifiserteInntekter": [
+                      {
+                        "beløp": 40366,
+                        "inntektKlasse": "ARBEIDSINNTEKT"
+                      }
+                    ],
+                    "harAvvik": false
+                  }
+                ],
+                "manueltRedigert": false,
+                "sisteAvsluttendeKalenderMåned": "2024-07"
+              }
+            }
+          },
+          "@forårsaket_av": {
+            "id": "5ee12cde-a683-4af1-8e47-08fa1d5c1217",
+            "opprettet": "2024-08-26T13:38:38.342267021",
+            "event_name": "behov",
+            "behov": [
+              "Inntekt"
+            ]
+          }
+        }
+        """.trimIndent()
 }
