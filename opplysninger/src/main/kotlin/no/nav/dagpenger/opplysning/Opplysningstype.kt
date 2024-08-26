@@ -18,11 +18,15 @@ fun String.id(
 
 fun String.tekstId(tekstId: String) = OpplysningTypeId(this, this, tekstId)
 
-data class OpplysningTypeId(
+class OpplysningTypeId(
     val id: String,
     val beskrivelse: String,
     val tekstId: String? = null,
-)
+) {
+    override fun equals(other: Any?): Boolean = other is OpplysningTypeId && other.id == this.id && other.beskrivelse == this.beskrivelse
+
+    override fun hashCode() = id.hashCode() * beskrivelse.hashCode() * 31
+}
 
 class Opplysningstype<T : Comparable<T>>(
     private val opplysningTypeId: OpplysningTypeId,
@@ -126,11 +130,11 @@ class Opplysningstype<T : Comparable<T>>(
         ) = Opplysningstype(opplysningTypeId, Tekst, parent)
     }
 
-    override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId.id == type.opplysningTypeId.id || parent?.er(type) ?: false
+    override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId || parent?.er(type) ?: false
 
     override fun toString() = "opplysning om $navn"
 
-    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningTypeId.id == this.opplysningTypeId.id
+    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningTypeId == this.opplysningTypeId
 
-    override fun hashCode() = opplysningTypeId.id.hashCode() * 31
+    override fun hashCode() = opplysningTypeId.hashCode() * 31
 }
