@@ -3,6 +3,8 @@ package no.nav.dagpenger.regel.beregning
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
+import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk.Dagstype.Helg
+import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk.Dagstype.Hverdag
 import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
@@ -49,17 +51,9 @@ internal class BeregningsperiodeFabrikk(
     ): List<Dag> =
         dager.map { dato ->
             opplysninger.forDato = dato
-            when (dato.dayOfWeek) {
-                DayOfWeek.MONDAY,
-                DayOfWeek.TUESDAY,
-                DayOfWeek.WEDNESDAY,
-                DayOfWeek.THURSDAY,
-                DayOfWeek.FRIDAY,
-                -> opprettArbeidsdagEllerFraværsdag(dato, opplysninger)
-
-                DayOfWeek.SATURDAY,
-                DayOfWeek.SUNDAY,
-                -> Helgedag(dato, opplysninger.finnOpplysning(Beregning.arbeidstimer).verdi)
+            when (dato.dagstype) {
+                Hverdag -> opprettArbeidsdagEllerFraværsdag(dato, opplysninger)
+                Helg -> Helgedag(dato, opplysninger.finnOpplysning(Beregning.arbeidstimer).verdi)
             }
         }
 
@@ -83,4 +77,24 @@ internal class BeregningsperiodeFabrikk(
             Fraværsdag(dato)
         }
     }
+
+    private enum class Dagstype {
+        Hverdag,
+        Helg,
+    }
+
+    private val LocalDate.dagstype
+        get() =
+            when (dayOfWeek) {
+                DayOfWeek.MONDAY,
+                DayOfWeek.TUESDAY,
+                DayOfWeek.WEDNESDAY,
+                DayOfWeek.THURSDAY,
+                DayOfWeek.FRIDAY,
+                -> Hverdag
+
+                DayOfWeek.SATURDAY,
+                DayOfWeek.SUNDAY,
+                -> Helg
+            }
 }

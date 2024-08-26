@@ -31,11 +31,12 @@ internal val unleash: Unleash =
         )
     }
 
-val støtterInnvilgelse =
-    unleash.isEnabled("dp-behandling.innvilgelse").also {
-        if (it) {
-            logger.info("Feature dp-behandling.innvilgelse er aktivert")
-        } else {
-            logger.info("Feature dp-behandling.innvilgelse er deaktivert")
+val støtterInnvilgelse
+    get() =
+        unleash.isEnabled("dp-behandling.innvilgelse").also {
+            if (it) {
+                logger.info("Feature dp-behandling.innvilgelse er aktivert")
+            } else {
+                logger.info("Feature dp-behandling.innvilgelse er deaktivert")
+            }
         }
-    }
