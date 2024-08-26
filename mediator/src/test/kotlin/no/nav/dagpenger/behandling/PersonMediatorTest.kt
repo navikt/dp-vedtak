@@ -182,7 +182,8 @@ internal class PersonMediatorTest {
                 medTekst("søknadId") shouldBe testPerson.søknadId
                 medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
             }
-            rapid.inspektør.size shouldBe 19
+            // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
+            rapid.inspektør.size shouldBe 18
         }
 
     @Test

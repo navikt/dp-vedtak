@@ -16,7 +16,6 @@ import no.nav.dagpenger.regel.Minsteinntekt.EØSArbeidKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.InntektNesteKalendermånedKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.SvangerskapsrelaterteSykepengerKontroll
-import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
 import no.nav.dagpenger.regel.Minsteinntekt.ØnskerEtterRapporteringsfristKontroll
 import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.RegelverkDagpenger
@@ -27,6 +26,7 @@ import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
+import no.nav.dagpenger.regel.fastsetting.Egenandel
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -74,6 +74,7 @@ class SøknadInnsendtHendelse(
             opplysninger.mangler(Dagpengeperiode.antallStønadsuker) -> Dagpengeperiode.antallStønadsuker
             opplysninger.mangler(Dagpengegrunnlag.grunnlag) -> Dagpengegrunnlag.grunnlag
             opplysninger.mangler(DagpengensStørrelse.dagsatsMedBarn) -> DagpengensStørrelse.dagsatsMedBarn
+            opplysninger.mangler(Egenandel.egenandel) -> Egenandel.egenandel
             else -> KravPåDagpenger.kravPåDagpenger
         }
     }
