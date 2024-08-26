@@ -14,7 +14,6 @@ dependencies {
     api("no.nav.dagpenger:aktivitetslogg:20240412.29.afd090")
 
     implementation(libs.kotlin.logging)
-
     testImplementation("io.cucumber:cucumber-java8:$cucumberVersion")
     testImplementation("io.cucumber:cucumber-junit-platform-engine:$cucumberVersion")
     testImplementation(libs.kotest.assertions.core)

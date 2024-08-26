@@ -8,6 +8,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(path = ":konfigurasjon"))
     implementation(project(path = ":modell"))
     implementation(project(path = ":openapi"))
     implementation(project(path = ":dagpenger"))
@@ -21,8 +22,6 @@ dependencies {
     implementation(libs.bundles.postgres)
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.3")
-
-    implementation("io.getunleash:unleash-client-java:9.2.0")
 
     implementation(libs.rapids.and.rivers)
     implementation(libs.konfig)

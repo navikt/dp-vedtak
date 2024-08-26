@@ -3,7 +3,7 @@ package no.nav.dagpenger.behandling.mediator
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
-import no.nav.dagpenger.behandling.mediator.Configuration.config
+import no.nav.dagpenger.behandling.konfigurasjon.Configuration.config
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.audit.AktivitetsloggAuditlogg
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository

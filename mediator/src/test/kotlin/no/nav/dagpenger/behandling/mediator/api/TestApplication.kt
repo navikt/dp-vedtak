@@ -11,7 +11,7 @@ import io.ktor.http.content.TextContent
 import io.ktor.server.application.Application
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
-import no.nav.dagpenger.behandling.mediator.Configuration
+import no.nav.dagpenger.behandling.konfigurasjon.Configuration
 import no.nav.security.mock.oauth2.MockOAuth2Server
 
 object TestApplication {
@@ -24,17 +24,17 @@ object TestApplication {
         }
     }
 
-    internal fun testAzureAdToken(ADGrupper: List<String>): String {
-        return mockOAuth2Server.issueToken(
-            issuerId = AZUREAD_ISSUER_ID,
-            audience = CLIENT_ID,
-            claims =
-                mapOf(
-                    "NAVident" to "123",
-                    "groups" to ADGrupper,
-                ),
-        ).serialize()
-    }
+    internal fun testAzureAdToken(ADGrupper: List<String>): String =
+        mockOAuth2Server
+            .issueToken(
+                issuerId = AZUREAD_ISSUER_ID,
+                audience = CLIENT_ID,
+                claims =
+                    mapOf(
+                        "NAVident" to "123",
+                        "groups" to ADGrupper,
+                    ),
+            ).serialize()
 
     internal fun withMockAuthServerAndTestApplication(
         moduleFunction: Application.() -> Unit,
@@ -57,11 +57,10 @@ object TestApplication {
             ),
         httpMethod: HttpMethod = HttpMethod.Post,
         body: String? = null,
-    ): HttpResponse {
-        return client.request(endepunkt) {
+    ): HttpResponse =
+        client.request(endepunkt) {
             this.method = httpMethod
             body?.let { this.setBody(TextContent(it, ContentType.Application.Json)) }
             this.header(HttpHeaders.Authorization, "Bearer $token")
         }
-    }
 }

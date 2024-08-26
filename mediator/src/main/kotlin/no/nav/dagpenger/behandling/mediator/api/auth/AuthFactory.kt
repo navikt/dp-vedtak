@@ -14,7 +14,7 @@ import io.ktor.client.request.get
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.auth.jwt.JWTAuthenticationProvider
 import kotlinx.coroutines.runBlocking
-import no.nav.dagpenger.behandling.mediator.Configuration
+import no.nav.dagpenger.behandling.konfigurasjon.Configuration
 import no.nav.dagpenger.behandling.mediator.api.auth.validering.autoriserADGrupper
 import java.net.URI
 import java.net.URL
@@ -62,7 +62,8 @@ object AuthFactory {
     }
 
     private fun jwkProvider(url: URL) =
-        JwkProviderBuilder(url).cached(10, 24, TimeUnit.HOURS) // cache up to 10 JWKs for 24 hours
+        JwkProviderBuilder(url)
+            .cached(10, 24, TimeUnit.HOURS) // cache up to 10 JWKs for 24 hours
             .rateLimited(
                 10,
                 1,
