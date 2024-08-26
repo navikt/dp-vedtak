@@ -26,6 +26,7 @@ import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningstypeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
+import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger
 import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.VerdiMapper
 import no.nav.dagpenger.behandling.mediator.PersonMediator
@@ -78,6 +79,14 @@ internal fun Application.behandlingApi(
         swaggerUI(path = "openapi", swaggerFile = "behandling-api.yaml")
 
         get("/") { call.respond(HttpStatusCode.OK) }
+        get("/features") {
+            call.respond(
+                HttpStatusCode.OK,
+                mapOf(
+                    "støtterInnvilgelse" to støtterInnvilgelse,
+                ),
+            )
+        }
         get("/opplysningstyper") {
             val typer =
                 opplysningstyper.map {
