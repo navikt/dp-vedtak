@@ -11,10 +11,10 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.antallBarn
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.avrundetDagsMedBarnetillegg
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.dagsatsUtenBarnetillegg
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.antallBarn
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.avrundetDagsMedBarnetillegg
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsUtenBarnetillegg
 
 class DagpengensStørrelseSteg : No {
     private val fraDato = 10.mai(2024)
@@ -60,7 +60,7 @@ class DagpengensStørrelseSteg : No {
         }
 
         Så("skal ukessats være {string}") { ukessats: String ->
-            opplysninger.finnOpplysning(DagpengensStørrelse.ukessats).verdi shouldBe Beløp(ukessats.toBigDecimal())
+            opplysninger.finnOpplysning(DagpengenesStørrelse.ukessats).verdi shouldBe Beløp(ukessats.toBigDecimal())
         }
     }
 }

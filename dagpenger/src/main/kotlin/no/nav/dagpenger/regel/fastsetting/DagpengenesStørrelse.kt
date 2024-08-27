@@ -11,10 +11,11 @@ import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import java.math.BigDecimal
 import java.time.LocalDate
 
-object DagpengensStørrelse {
+object DagpengenesStørrelse {
     private val grunnlag = Dagpengegrunnlag.grunnlag
 
     // TODO: Hent antall barn fra søknaden. Hvordan skal saksbehandler godkjenne antall barn?
@@ -41,7 +42,8 @@ object DagpengensStørrelse {
     val sats = Opplysningstype.somBeløp("Dagsats for dagpenger med barnetillegg")
 
     val regelsett =
-        Regelsett("§ 4-12. Dagpengens størrelse (Sats)") {
+        Regelsett("§ 4-12. Dagpengenes størrelse\n (Sats)") {
+            regel(antallBarn) { oppslag(søknadstidspunkt) { 0 } } // TODO: Satt til 0 for testing av innvilgelse
 
             regel(barnetilleggetsStørrelse) { oppslag(Søknadstidspunkt.søknadstidspunkt) { Barnetillegg.forDato(it) } }
             regel(dekningsgrad) {

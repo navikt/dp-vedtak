@@ -14,7 +14,7 @@ import no.nav.dagpenger.regel.beregning.Beregning.arbeidstimer
 import no.nav.dagpenger.regel.beregning.Beregning.forbruk
 import no.nav.dagpenger.regel.beregning.Beregning.terskel
 import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse.sats
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.sats
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode.antallStønadsuker
 import no.nav.dagpenger.regel.fastsetting.Egenandel.egenandel
 import java.time.LocalDate

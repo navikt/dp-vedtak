@@ -8,7 +8,7 @@ import no.nav.dagpenger.regel.Søknadstidspunkt
 
 object Egenandel {
     val egenandel = Opplysningstype.somBeløp("Egenandel")
-    private val sats = DagpengensStørrelse.avrundetDagsMedBarnetillegg
+    private val sats = DagpengenesStørrelse.avrundetDagsMedBarnetillegg
     private val faktor = Opplysningstype.somDesimaltall("Antall dagsats for egenandel")
 
     val regelsett =

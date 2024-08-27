@@ -5,7 +5,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk.Dagstype.Helg
 import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk.Dagstype.Hverdag
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
 import java.time.DayOfWeek
@@ -66,7 +66,7 @@ internal class BeregningsperiodeFabrikk(
             Arbeidsdag(
                 dato,
                 opplysninger
-                    .finnOpplysning(DagpengensStørrelse.sats)
+                    .finnOpplysning(DagpengenesStørrelse.sats)
                     .verdi.verdien
                     .toInt(),
                 opplysninger.finnOpplysning(TapAvArbeidsinntektOgArbeidstid.fastsattVanligArbeidstid).verdi / 5,

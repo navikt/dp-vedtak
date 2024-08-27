@@ -2,7 +2,7 @@ package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.Regelverk
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
 
@@ -10,7 +10,7 @@ val RegelverkDagpenger =
     Regelverk(
         Alderskrav.regelsett,
         Dagpengegrunnlag.regelsett,
-        DagpengensStørrelse.regelsett,
+        DagpengenesStørrelse.regelsett,
         Dagpengeperiode.regelsett,
         Egenandel.regelsett,
         KravPåDagpenger.regelsett,

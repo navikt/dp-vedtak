@@ -24,7 +24,7 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITi
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBeregningsregelKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
 import java.time.LocalDate
@@ -73,7 +73,7 @@ class SøknadInnsendtHendelse(
         return when {
             opplysninger.mangler(Dagpengeperiode.antallStønadsuker) -> Dagpengeperiode.antallStønadsuker
             opplysninger.mangler(Dagpengegrunnlag.grunnlag) -> Dagpengegrunnlag.grunnlag
-            opplysninger.mangler(DagpengensStørrelse.dagsatsMedBarn) -> DagpengensStørrelse.dagsatsMedBarn
+            opplysninger.mangler(DagpengenesStørrelse.dagsatsMedBarn) -> DagpengenesStørrelse.dagsatsMedBarn
             opplysninger.mangler(Egenandel.egenandel) -> Egenandel.egenandel
             else -> KravPåDagpenger.kravPåDagpenger
         }

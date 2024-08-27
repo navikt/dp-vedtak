@@ -10,7 +10,7 @@ import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.Egenandel
 
 class EgenandelSteg : No {
@@ -36,7 +36,7 @@ class EgenandelSteg : No {
             )
             regelkjøring.leggTil(
                 Faktum(
-                    DagpengensStørrelse.avrundetDagsMedBarnetillegg,
+                    DagpengenesStørrelse.avrundetDagsMedBarnetillegg,
                     Beløp(sats.toBigDecimal()),
                 ),
             )

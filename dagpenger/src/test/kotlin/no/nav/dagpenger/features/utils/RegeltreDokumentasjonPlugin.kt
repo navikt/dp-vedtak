@@ -25,7 +25,7 @@ import no.nav.dagpenger.regel.Utdanning
 import no.nav.dagpenger.regel.Utestengning
 import no.nav.dagpenger.regel.Verneplikt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
-import no.nav.dagpenger.regel.fastsetting.DagpengensStørrelse
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting
@@ -55,7 +55,7 @@ fun dokumentasjon(scenario: Scenario) {
             "@regel-medlemskap" to Medlemskap.regelsett,
             "@regel-dapengeperiode" to Dagpengeperiode.regelsett,
             "@regel-dagpengegrunnlag" to Dagpengegrunnlag.regelsett,
-            "@regel-dagpengensStørrelse" to DagpengensStørrelse.regelsett,
+            "@regel-dagpengensStørrelse" to DagpengenesStørrelse.regelsett,
             "@regel-egenandel" to Egenandel.regelsett,
             "@regel-verneplikt-fastsetting" to VernepliktFastsetting.regelsett,
         )
