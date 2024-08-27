@@ -25,30 +25,7 @@ val VernepliktKontroll =
 
 Kontrollpunktet kan brukes i en behandling for å avklare informasjon.
 
-Hvis kontrollpunktet er sann vil det lages en Avklaring som legges til behandlingen. 
-
-
-### Konklusjoner
-
-Konklusjoner er en indikasjon på at behandlingen er ferdig utredet. 
-
-dp-behandling har en mekanisme for å lage konklusjoner ved å lage Konklusjonsstrategier.
-
-Feks - en konklusjon på at søker har avslag minsteinntekt.
-```kotlin
- val AvslagInntekt =
-    KonklusjonsStrategi(DagpengerKonklusjoner.AvslagMinsteinntekt) { opplysninger ->
-        if (opplysninger.mangler(minsteinntekt)) return@KonklusjonsStrategi IkkeKonkludert
-        if (!opplysninger.finnOpplysning(minsteinntekt).verdi) {
-            return@KonklusjonsStrategi Konkludert
-        } else {
-            IkkeKonkludert
-        }
-    }
-```
-
-Konklusjonsstrategien kan brukes i en behandling for å konkludere behandlingen. 
-
+Hvis kontrollpunktet er sann vil det lages en Avklaring som legges til behandlingen.
 
 ## Flyt 
 
