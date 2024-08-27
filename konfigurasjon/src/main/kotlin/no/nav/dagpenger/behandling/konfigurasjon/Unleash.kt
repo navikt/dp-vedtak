@@ -36,6 +36,11 @@ fun skruPåFeature(feature: String) {
     unleash.enable(feature)
 }
 
+fun skruAvFeatures() {
+    require(unleash is FakeUnleash)
+    unleash.resetAll()
+}
+
 val støtterInnvilgelse
     get() =
         unleash.isEnabled("dp-behandling.innvilgelse").also {

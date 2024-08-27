@@ -14,6 +14,7 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
 import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
+import no.nav.dagpenger.behandling.konfigurasjon.skruAvFeatures
 import no.nav.dagpenger.behandling.konfigurasjon.skruPåFeature
 import no.nav.dagpenger.behandling.mediator.BehovMediator
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
@@ -95,6 +96,7 @@ internal class PersonMediatorTest {
     @BeforeEach
     fun setUp() {
         rapid.reset()
+        skruAvFeatures()
     }
 
     @Test
@@ -151,6 +153,34 @@ internal class PersonMediatorTest {
             rapid.inspektør.size shouldBe 25
 
             testObservatør.tilstandsendringer.size shouldBe 6
+        }
+
+    @Test
+    fun `Søknad med nok inntekt skal avbrytes`() =
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    søknadstidspunkt = 6.mai(2021),
+                    InntektSiste12Mnd = 500000,
+                )
+            løsBehandlingFramTilMinsteinntekt(testPerson)
+
+            personRepository.hent(ident.tilPersonIdentfikator()).also {
+                it.shouldNotBeNull()
+                it.behandlinger().size shouldBe 1
+                it
+                    .behandlinger()
+                    .flatMap { behandling -> behandling.opplysninger().finnAlle() }
+                    .size shouldBe 27
+            }
+
+            rapid.harHendelse("behandling_avbrutt") {
+                medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
+            }
+
+            rapid.inspektør.size shouldBe 14
         }
 
     @Test
@@ -318,7 +348,24 @@ internal class PersonMediatorTest {
             }
         }
 
+    enum class Behandlingslengde {
+        Alder,
+        Minsteinntekt,
+        KravPåDagpenger,
+    }
+
     private fun løsBehandlingFramTilFerdig(testPerson: TestPerson) {
+        løsBehandlingFramTil(testPerson, Behandlingslengde.KravPåDagpenger)
+    }
+
+    private fun løsBehandlingFramTilMinsteinntekt(testPerson: TestPerson) {
+        løsBehandlingFramTil(testPerson, Behandlingslengde.Minsteinntekt)
+    }
+
+    private fun løsBehandlingFramTil(
+        testPerson: TestPerson,
+        behandlingslengde: Behandlingslengde,
+    ) {
         testPerson.sendSøknad()
         rapid.harHendelse("behandling_opprettet", offset = 2)
 
@@ -359,6 +406,10 @@ internal class PersonMediatorTest {
         rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
 
         testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
+
+        if (behandlingslengde == Behandlingslengde.Minsteinntekt) {
+            return
+        }
 
         /**
          * Sjekker kravene til reell arbeidssøker

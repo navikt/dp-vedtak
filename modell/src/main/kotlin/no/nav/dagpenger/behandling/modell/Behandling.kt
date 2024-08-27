@@ -318,9 +318,6 @@ class Behandling private constructor(
                 behandling.regelkjøring.leggTil(opplysning.opplysning())
             }
 
-            // Kjør regelkjøring for alle opplysninger
-            behandling.regelkjøring.evaluer()
-
             if (!støtterInnvilgelse) {
                 // TODO: Dette faller bort når vi sjekker alt
                 val kravPåDagpenger =
@@ -342,6 +339,9 @@ class Behandling private constructor(
                     return
                 }
             }
+
+            // Kjør regelkjøring for alle opplysninger
+            behandling.regelkjøring.evaluer()
 
             val trenger = behandling.hvaTrengerViNå(hendelse)
 
