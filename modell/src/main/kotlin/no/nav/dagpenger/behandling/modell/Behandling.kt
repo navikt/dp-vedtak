@@ -26,7 +26,6 @@ import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.KravPåDagpenger
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
-import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
@@ -315,12 +314,6 @@ class Behandling private constructor(
             hendelse: OpplysningSvarHendelse,
         ) {
             hendelse.kontekst(this)
-            // TODO: Quickfix for å rydde opp i behandlinger osm har gått for langt
-            if (hendelse.opplysninger.any { it.opplysningstype == Dagpengegrunnlag.inntekt }) {
-                hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
-                behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag"), hendelse)
-                return
-            }
             hendelse.opplysninger.forEach { opplysning ->
                 behandling.regelkjøring.leggTil(opplysning.opplysning())
             }
