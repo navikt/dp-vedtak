@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling
 
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
+import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
@@ -14,8 +15,10 @@ import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
+import org.intellij.lang.annotations.Language
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.YearMonth
 
 class TestPerson(
     private val ident: String,
@@ -116,6 +119,45 @@ class TestPerson(
         )
     }
 
+    @Language("JSON")
+    private val løsningPåInntekt =
+        """
+        {
+          "inntektsId": "01J677GHJRC2H08Q55DASFD0XX",
+          "inntektsListe": [
+            {
+              "årMåned": "${YearMonth.from(søknadstidspunkt.minusMonths(2))}",
+              "klassifiserteInntekter": [
+                {
+                  "beløp": 41600.0,
+                  "inntektKlasse": "ARBEIDSINNTEKT"
+                }
+              ],
+              "harAvvik": false
+            },
+            {
+              "årMåned": "${YearMonth.from(søknadstidspunkt.minusMonths(3))}",
+              "klassifiserteInntekter": [
+                {
+                  "beløp": 403660.0,
+                  "inntektKlasse": "ARBEIDSINNTEKT"
+                }
+              ],
+              "harAvvik": false
+            }
+          ],
+          "manueltRedigert": false,
+          "sisteAvsluttendeKalenderMåned": "2024-07"
+        }
+        """.trimIndent()
+
+    private val lollerhino =
+        no.nav.dagpenger.inntekt.v1.Inntekt(
+            inntektsId = "01J677GHJRC2H08Q55DASFD0XX",
+            inntektsListe = emptyList(),
+            sisteAvsluttendeKalenderMåned = YearMonth.from(søknadstidspunkt.minusMonths(2)),
+        )
+
     private val løsninger =
         mapOf(
             "Fødselsdato" to søknadstidspunkt.minusYears(alder.toLong()),
@@ -140,5 +182,6 @@ class TestPerson(
             // Verneplikt
             Verneplikt to false,
             TarUtdanningEllerOpplæring to false,
+            Inntekt to mapOf("verdi" to lollerhino),
         )
 }

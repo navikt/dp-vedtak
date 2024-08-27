@@ -344,6 +344,7 @@ class Behandling private constructor(
                     return
                 }
             }
+
             if (trenger.isEmpty()) {
                 if (behandling.aktiveAvklaringer().isEmpty()) {
                     hendelse.info("Har ingen aktive avklaringer, går videre til vedtak.")

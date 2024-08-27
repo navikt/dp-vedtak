@@ -24,6 +24,8 @@ object Behov {
 
     val HarTaptArbeid by StringConstant()
     val KravPåLønn by StringConstant()
+
+    val Inntekt by StringConstant()
 }
 
 class StringConstant {

@@ -10,6 +10,7 @@ import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Alderskrav.HattLukkedeSakerSiste8UkerKontroll
 import no.nav.dagpenger.regel.Alderskrav.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.KravPåDagpenger
+import no.nav.dagpenger.regel.KravPåDagpenger.Totrinnskontroll
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Minsteinntekt.EØSArbeidKontroll
@@ -116,6 +117,7 @@ class SøknadInnsendtHendelse(
             VernepliktKontroll,
             ØnskerEtterRapporteringsfristKontroll,
             TapArbeidstidBeregningsregelKontroll,
+            Totrinnskontroll,
         )
 }
 

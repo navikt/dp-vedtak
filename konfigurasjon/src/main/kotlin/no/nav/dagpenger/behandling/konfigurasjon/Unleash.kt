@@ -31,6 +31,11 @@ internal val unleash: Unleash =
         )
     }
 
+fun skruPåFeature(feature: String) {
+    require(unleash is FakeUnleash)
+    unleash.enable(feature)
+}
+
 val støtterInnvilgelse
     get() =
         unleash.isEnabled("dp-behandling.innvilgelse").also {

@@ -84,4 +84,12 @@ object Avklaringspunkter {
             tittel = "Ønsker dagpenger etter rapporteringsfrist",
             beskrivelse = "Personen ønsker dagpenger etter rapporteringsfrist",
         )
+
+    val Totrinnskontroll =
+        Avklaringkode(
+            kode = "Totrinnskontroll",
+            tittel = "Totrinnskontroll",
+            beskrivelse = "Totrinnskontroll",
+            kanKvitteres = true,
+        )
 }

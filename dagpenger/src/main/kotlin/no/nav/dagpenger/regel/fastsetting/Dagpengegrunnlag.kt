@@ -5,6 +5,7 @@ import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
 import no.nav.dagpenger.inntekt.v1.InntektKlasse
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.avrund
 import no.nav.dagpenger.opplysning.regel.brukt
 import no.nav.dagpenger.opplysning.regel.divisjon
@@ -21,6 +22,7 @@ import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnn
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import java.time.LocalDate
@@ -28,7 +30,7 @@ import java.time.LocalDate
 object Dagpengegrunnlag {
     val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
 
-    val inntekt = Opplysningstype.somInntekt("Inntekt")
+    val inntekt = Opplysningstype.somInntekt("Inntekt for grunnlag".id(Inntekt))
     val uavrundetGrunnlag = Opplysningstype.somBeløp("Uavrundet grunnlag")
     val grunnlag = Opplysningstype.somBeløp("Grunnlag")
     val harAvkortet = Opplysningstype.somBoolsk("Har avkortet grunnlag")

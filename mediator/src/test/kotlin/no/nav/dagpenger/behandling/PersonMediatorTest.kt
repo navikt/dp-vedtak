@@ -14,6 +14,7 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
 import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
+import no.nav.dagpenger.behandling.konfigurasjon.skruPåFeature
 import no.nav.dagpenger.behandling.mediator.BehovMediator
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
@@ -33,6 +34,7 @@ import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.regel.Avklaringspunkter
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
+import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
@@ -50,7 +52,6 @@ import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
@@ -153,8 +154,7 @@ internal class PersonMediatorTest {
         }
 
     @Test
-    @Disabled("Vi skal ikke avbryte når vi skal innvilge")
-    fun `Søknad med nok inntekt skal ikke avslås - men avbrytes`() =
+    fun `Søknad med nok inntekt skal innvilges`() =
         withMigratedDb {
             val testPerson =
                 TestPerson(
@@ -163,7 +163,7 @@ internal class PersonMediatorTest {
                     søknadstidspunkt = 6.mai(2021),
                     InntektSiste12Mnd = 500000,
                 )
-
+            skruPåFeature("dp-behandling.innvilgelse")
             løsBehandlingFramTilFerdig(testPerson)
 
             personRepository.hent(ident.tilPersonIdentfikator()).also {
@@ -172,7 +172,7 @@ internal class PersonMediatorTest {
                 it
                     .behandlinger()
                     .flatMap { behandling -> behandling.opplysninger().finnAlle() }
-                    .size shouldBe forventetAntallOpplysningerInnvilgelse
+                    .size shouldBe 74
             }
             /**
              * Innhenter tar utdanning eller opplæring
@@ -180,13 +180,24 @@ internal class PersonMediatorTest {
             rapid.harBehov(TarUtdanningEllerOpplæring)
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
 
-            rapid.harHendelse("behandling_avbrutt") {
-                medTekst("søknadId") shouldBe testPerson.søknadId
-                medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
+            /**
+             * Innhenter inntekt for fastsettelse
+             */
+            rapid.harBehov(Inntekt)
+            testPerson.løsBehov(Inntekt)
+
+            rapid.harHendelse("forslag_til_vedtak") {
+                medBoolsk("utfall") shouldBe true
             }
 
             // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
-            rapid.inspektør.size shouldBe 18
+            rapid.inspektør.size shouldBe 20
+
+            rapid.harAvklaring(Avklaringspunkter.Totrinnskontroll) {}
+
+            rapid.harHendelse("forslag_til_vedtak") {
+                medBoolsk("utfall") shouldBe true
+            }
         }
 
     @Test

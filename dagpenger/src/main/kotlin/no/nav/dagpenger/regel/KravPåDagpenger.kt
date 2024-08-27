@@ -1,5 +1,6 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.alle
@@ -24,4 +25,7 @@ object KravPåDagpenger {
                 )
             }
         }
+
+    val Totrinnskontroll =
+        Kontrollpunkt(Avklaringspunkter.Totrinnskontroll) { it.har(kravPåDagpenger) && it.finnOpplysning(kravPåDagpenger).verdi }
 }
