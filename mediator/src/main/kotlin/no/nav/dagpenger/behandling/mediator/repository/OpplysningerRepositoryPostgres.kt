@@ -212,10 +212,10 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 VALUES (:opplysningId, :regel)
                 ON CONFLICT DO NOTHING
                 """.trimIndent(),
-                opplysninger.mapNotNull {
-                    it.utledetAv?.let { utledning ->
+                opplysninger.mapNotNull { opplysningSomBleUtledet ->
+                    opplysningSomBleUtledet.utledetAv?.let { utledning ->
                         mapOf(
-                            "opplysningId" to it.id,
+                            "opplysningId" to opplysningSomBleUtledet.id,
                             "regel" to utledning.regel,
                         )
                     }
