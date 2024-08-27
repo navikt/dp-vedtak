@@ -43,10 +43,22 @@ class SøknadInnsendtHendelse(
 
     override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring {
         val opplysningstype = avklarer(opplysninger)
-        return Regelkjøring(skjedde, opplysninger, *regelsettFor(opplysningstype).toTypedArray())
+        val harKravPåDagpenger =
+            opplysninger.har(KravPåDagpenger.kravPåDagpenger) && opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
+
+        val regelsettFor = regelsettFor(opplysningstype).toMutableList()
+        if (harKravPåDagpenger) {
+            val fastsetting =
+                RegelverkDagpenger.regelsettFor(Dagpengeperiode.antallStønadsuker) +
+                    RegelverkDagpenger.regelsettFor(Dagpengegrunnlag.grunnlag) +
+                    RegelverkDagpenger.regelsettFor(DagpengenesStørrelse.dagsatsMedBarn) +
+                    RegelverkDagpenger.regelsettFor(Egenandel.egenandel)
+            regelsettFor.addAll(fastsetting)
+        }
+        return Regelkjøring(skjedde, opplysninger, *regelsettFor.toTypedArray())
     }
 
-    override fun avklarer(opplysninger: LesbarOpplysninger): Opplysningstype<*> {
+    override fun avklarer(opplysninger: LesbarOpplysninger): Opplysningstype<Boolean> {
         // Sjekk krav til alder
         if (!opplysninger.har(Alderskrav.kravTilAlder)) return Alderskrav.kravTilAlder
         // Sjekk krav til minste arbeidsinntekt
@@ -65,7 +77,8 @@ class SøknadInnsendtHendelse(
             }
         }
 
-        if (opplysninger.mangler(KravPåDagpenger.kravPåDagpenger)) return KravPåDagpenger.kravPåDagpenger
+        return KravPåDagpenger.kravPåDagpenger
+        /*if (opplysninger.mangler(KravPåDagpenger.kravPåDagpenger)) return KravPåDagpenger.kravPåDagpenger
         val kravPåDagpenger = opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
         if (!kravPåDagpenger) return KravPåDagpenger.kravPåDagpenger
 
@@ -76,7 +89,7 @@ class SøknadInnsendtHendelse(
             opplysninger.mangler(DagpengenesStørrelse.dagsatsMedBarn) -> DagpengenesStørrelse.dagsatsMedBarn
             opplysninger.mangler(Egenandel.egenandel) -> Egenandel.egenandel
             else -> KravPåDagpenger.kravPåDagpenger
-        }
+        }*/
     }
 
     private companion object {
@@ -104,4 +117,16 @@ class SøknadInnsendtHendelse(
             ØnskerEtterRapporteringsfristKontroll,
             TapArbeidstidBeregningsregelKontroll,
         )
+}
+
+fun main() {
+    println(
+        when {
+            false -> "antallStønadsuker"
+            true -> "grunnlag"
+            true -> "dagsatsMedBarn"
+            true -> "egenandel"
+            else -> "kravPåDagpenger"
+        },
+    )
 }

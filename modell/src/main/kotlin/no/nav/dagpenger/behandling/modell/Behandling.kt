@@ -318,7 +318,7 @@ class Behandling private constructor(
                 behandling.regelkjøring.leggTil(opplysning.opplysning())
             }
 
-            // Kjør regelkjøring for alle oppplysninger
+            // Kjør regelkjøring for alle opplysninger
             behandling.regelkjøring.evaluer()
 
             val trenger = behandling.hvaTrengerViNå(hendelse)
