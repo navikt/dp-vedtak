@@ -6,9 +6,7 @@ Behandler alle ulike hendelser på dagpenger.
 
 - [Behandling og opplysninger](./opplysning/README.md)
 
-## Avklaring og konklusjon
-
-### Avklaringer
+## Avklaringer
 
 I behandlingen kan det være behov for å avklare informasjon. Dette er en indikasjon på at opplysninger må sjekkes manuelt av en saksbehandler.
 
