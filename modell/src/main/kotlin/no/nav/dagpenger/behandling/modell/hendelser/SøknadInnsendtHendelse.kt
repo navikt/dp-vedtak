@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
@@ -48,7 +49,7 @@ class SøknadInnsendtHendelse(
             opplysninger.har(KravPåDagpenger.kravPåDagpenger) && opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
 
         val regelsettFor = regelsettFor(opplysningstype).toMutableSet()
-        if (harKravPåDagpenger) {
+        if (harKravPåDagpenger && støtterInnvilgelse) {
             val fastsetting =
                 RegelverkDagpenger.regelsettFor(Dagpengeperiode.antallStønadsuker) +
                     RegelverkDagpenger.regelsettFor(Dagpengegrunnlag.grunnlag) +
