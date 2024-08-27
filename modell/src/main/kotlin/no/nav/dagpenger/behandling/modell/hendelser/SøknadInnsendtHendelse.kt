@@ -46,7 +46,7 @@ class SøknadInnsendtHendelse(
         val harKravPåDagpenger =
             opplysninger.har(KravPåDagpenger.kravPåDagpenger) && opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
 
-        val regelsettFor = regelsettFor(opplysningstype).toMutableList()
+        val regelsettFor = regelsettFor(opplysningstype).toMutableSet()
         if (harKravPåDagpenger) {
             val fastsetting =
                 RegelverkDagpenger.regelsettFor(Dagpengeperiode.antallStønadsuker) +
