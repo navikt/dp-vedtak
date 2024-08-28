@@ -9,6 +9,7 @@ import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Alderskrav.HattLukkedeSakerSiste8UkerKontroll
 import no.nav.dagpenger.regel.Alderskrav.MuligGjenopptakKontroll
+import no.nav.dagpenger.regel.Alderskrav.Under18Kontroll
 import no.nav.dagpenger.regel.KravPåDagpenger
 import no.nav.dagpenger.regel.KravPåDagpenger.Totrinnskontroll
 import no.nav.dagpenger.regel.Meldeplikt
@@ -118,17 +119,6 @@ class SøknadInnsendtHendelse(
             ØnskerEtterRapporteringsfristKontroll,
             TapArbeidstidBeregningsregelKontroll,
             Totrinnskontroll,
+            Under18Kontroll,
         )
-}
-
-fun main() {
-    println(
-        when {
-            false -> "antallStønadsuker"
-            true -> "grunnlag"
-            true -> "dagsatsMedBarn"
-            true -> "egenandel"
-            else -> "kravPåDagpenger"
-        },
-    )
 }

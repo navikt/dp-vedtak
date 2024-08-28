@@ -9,11 +9,14 @@ import no.nav.dagpenger.opplysning.regel.dato.leggTilÅr
 import no.nav.dagpenger.opplysning.regel.dato.sisteDagIMåned
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.Alderskrav.fødselsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 
 object Alderskrav {
     val fødselsdato = Opplysningstype.somDato("Fødselsdato".id("Fødselsdato", "opplysning.fodselsdato"))
 
-    private val virkningsdato = Søknadstidspunkt.søknadstidspunkt
+    private val virkningsdato = søknadstidspunkt
 
     private val aldersgrense = Opplysningstype.somHeltall("Aldersgrense")
     private val sisteMåned = Opplysningstype.somDato("Dato søker når maks alder")
@@ -35,4 +38,15 @@ object Alderskrav {
 
     val HattLukkedeSakerSiste8UkerKontroll =
         Kontrollpunkt(Avklaringspunkter.HattLukkedeSakerSiste8Uker) { it.har(kravTilAlder) && it.finnOpplysning(kravTilAlder).verdi }
+
+    val Under18Kontroll =
+        Kontrollpunkt(Avklaringspunkter.BrukerUnder18) {
+            if (it.mangler(fødselsdato) || it.mangler(søknadsdato)) {
+                return@Kontrollpunkt false
+            }
+            val søknadsdato = it.finnOpplysning(søknadsdato).verdi
+            val fødselsdato = it.finnOpplysning(fødselsdato).verdi
+
+            søknadsdato.minusYears(18).isBefore(fødselsdato)
+        }
 }

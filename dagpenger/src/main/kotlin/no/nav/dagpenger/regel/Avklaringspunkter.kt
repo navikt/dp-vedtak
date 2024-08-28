@@ -92,4 +92,12 @@ object Avklaringspunkter {
             beskrivelse = "Totrinnskontroll",
             kanKvitteres = true,
         )
+
+    val BrukerUnder18 =
+        Avklaringkode(
+            kode = "BrukerUnder18",
+            tittel = "Bruker er under 18",
+            beskrivelse = "Bruker er under 18 og skal ikke ha automatisk behandling",
+            kanKvitteres = true,
+        )
 }
