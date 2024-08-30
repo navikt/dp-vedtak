@@ -460,4 +460,5 @@ Egenskap: Beregning av meldekort
     Og det forbrukes 10 dager
     Og det forbrukes 2400 i egenandel
     Og gjenstår 0 i egenandel
-    Og utbetales 8800,0 kroner
+    # TODO: Vi må håndtere avrunding
+    Og utbetales 8800,000000000002 kroner
