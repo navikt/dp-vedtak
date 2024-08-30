@@ -60,15 +60,15 @@ Egenskap: Beregning av meldekort
       | Opplysning | verdi | fraOgMed   | tilOgMed |
       | Terskel    | 0.5   |            |          |
       | Periode    | 52    | 01.01.2020 |          |
-      | Sats       | 100   | 01.01.2020 |          |
-      | FVA        | 40    | 01.01.2020 |          |
+      | Sats       | 101   | 01.01.2020 |          |
+      | FVA        | 37.5    | 01.01.2020 |          |
       | Egenandel  | 0     | 01.01.2020 |          |
     Når meldekort for periode som begynner fra og med 06.01.2020 mottas med
       | Dag     | type         | verdi |
       | Mandag  | Arbeidstimer | 5     |
       | Tirsdag | Arbeidstimer | 5     |
       | Onsdag  | Arbeidstimer | 5     |
-      | Torsdag | Arbeidstimer | 5     |
+      | Torsdag | Arbeidstimer | 4     |
       | Fredag  | Arbeidstimer | 0     |
       | Lørdag  | Arbeidstimer | 0     |
       | Søndag  | Arbeidstimer | 0     |
@@ -80,7 +80,7 @@ Egenskap: Beregning av meldekort
       | Lørdag  | Arbeidstimer | 0     |
       | Søndag  | Arbeidstimer | 0     |
     Så skal kravet til tapt arbeidstid være oppfylt
-    Og utbetales 750,0 kroner
+    Og utbetales 754,1333333333331 kroner
     Og det forbrukes 10 dager
 
   Scenario: Jobbet under terskel og får 50% gradert utbetaling med endring av sats midt i perioden
@@ -370,6 +370,8 @@ Egenskap: Beregning av meldekort
     Og det forbrukes 3000 i egenandel
     Og gjenstår 0 i egenandel
     Og utbetales 2500,0 kroner
+    Og utbetales 454,5454545454545 kroner på dag 1
+    Og utbetales 45,45454545454546 kroner på dag 10
 
   Scenario: Har for lav sats til å få utbetaling og bruker ikke opp all egenandel
     Gitt at mottaker har vedtak med

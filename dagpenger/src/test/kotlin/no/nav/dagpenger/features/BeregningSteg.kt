@@ -55,6 +55,9 @@ class BeregningSteg : No {
                 opplysninger.add(Faktum(forbruk, true, Gyldighetsperiode(it.dato, it.dato)))
             }
         }
+        Så("utbetales {double} kroner på dag {int}") { utbetaling: Double, dag: Int ->
+            beregning.forbruksdager[dag - 1].tilUtbetaling shouldBe utbetaling
+        }
         Så("det gjenstår {int} dager") { dager: Int ->
             // TODO: Dette må bo et sted
             val utgangspunkt = opplysninger.find { it.opplysningstype == antallStønadsuker }!!.verdi as Int * 5

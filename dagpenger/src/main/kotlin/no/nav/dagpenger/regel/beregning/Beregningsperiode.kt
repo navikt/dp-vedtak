@@ -44,9 +44,9 @@ internal class Beregningsperiode private constructor(
             }
 
     private fun fordelEgenandel(fordeling: List<Arbeidsdag>): List<Arbeidsdag> {
-        val total = fordeling.sumOf { it.dagsbeløp }
+        val totalTilUtbetaling = fordeling.sumOf { it.dagsbeløp }
         return fordeling.onEach {
-            val egenandelPerDag = minOf(it.dagsbeløp, it.dagsbeløp / total * gjenståendeEgenandel)
+            val egenandelPerDag = minOf(it.dagsbeløp, it.dagsbeløp / totalTilUtbetaling * gjenståendeEgenandel)
             it.forbrukEgenandel(egenandelPerDag)
         }
     }
