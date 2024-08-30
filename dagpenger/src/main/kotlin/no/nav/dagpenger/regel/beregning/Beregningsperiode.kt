@@ -43,10 +43,13 @@ internal class Beregningsperiode private constructor(
                 dagerMedDenneSatsen.onEach { it.dagsbeløp = sumForDag }
             }
 
-    private fun fordelEgenandel(fordeling: List<Arbeidsdag>): List<Arbeidsdag> =
-        fordeling.onEach {
-            it.forbrukEgenandel(gjenståendeEgenandel / fordeling.size)
+    private fun fordelEgenandel(fordeling: List<Arbeidsdag>): List<Arbeidsdag> {
+        val total = fordeling.sumOf { it.dagsbeløp }
+        return fordeling.onEach {
+            val egenandelPerDag = minOf(it.dagsbeløp, it.dagsbeløp / total * gjenståendeEgenandel)
+            it.forbrukEgenandel(egenandelPerDag)
         }
+    }
 
     internal fun interface Terskelstrategi {
         fun beregnTerskel(dager: List<Arbeidsdag>): Double
