@@ -1,6 +1,7 @@
 package no.nav.dagpenger.opplysning
 
 import no.nav.dagpenger.opplysning.regel.Regel
+import no.nav.dagpenger.uuid.UUIDv7
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID

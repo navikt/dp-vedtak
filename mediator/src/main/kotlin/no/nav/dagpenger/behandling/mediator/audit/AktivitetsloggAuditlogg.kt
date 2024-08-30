@@ -6,9 +6,11 @@ import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
 import no.nav.dagpenger.aktivitetslogg.IAktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.behandling.mediator.AktivitetsloggMediator
-import no.nav.dagpenger.behandling.modell.UUIDv7
+import no.nav.dagpenger.uuid.UUIDv7
 
-internal class AktivitetsloggAuditlogg(private val aktivitetsloggMediator: AktivitetsloggMediator) : Auditlogg {
+internal class AktivitetsloggAuditlogg(
+    private val aktivitetsloggMediator: AktivitetsloggMediator,
+) : Auditlogg {
     override fun les(
         melding: String,
         ident: String,
@@ -50,8 +52,11 @@ internal class AktivitetsloggAuditlogg(private val aktivitetsloggMediator: Aktiv
         aktivitetsloggMediator.håndter(aktivitetslogg)
     }
 
-    private class AuditLoggHendelse(val ident: String, private val aktivitetslogg: Aktivitetslogg = Aktivitetslogg()) :
-        AktivitetsloggHendelse, IAktivitetslogg by aktivitetslogg {
+    private class AuditLoggHendelse(
+        val ident: String,
+        private val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
+    ) : AktivitetsloggHendelse,
+        IAktivitetslogg by aktivitetslogg {
         override fun ident() = ident
 
         override fun meldingsreferanseId() = UUIDv7.ny()

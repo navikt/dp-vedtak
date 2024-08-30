@@ -1,4 +1,4 @@
-package no.nav.dagpenger.opplysning
+package no.nav.dagpenger.uuid
 
 import com.fasterxml.uuid.UUIDType
 import com.fasterxml.uuid.impl.UUIDUtil

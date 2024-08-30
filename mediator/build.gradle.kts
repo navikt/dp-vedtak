@@ -14,6 +14,7 @@ dependencies {
     implementation(project(path = ":dagpenger"))
     implementation(project(path = ":opplysninger"))
     implementation(project(path = ":avklaring"))
+    implementation(project(path = ":uuid-v7"))
 
     implementation(libs.bundles.jackson)
     implementation("com.fasterxml.jackson.module:jackson-module-blackbird:${libs.versions.jackson.get()}")

@@ -26,6 +26,7 @@ import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.KravPåDagpenger
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
+import no.nav.dagpenger.uuid.UUIDv7
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID

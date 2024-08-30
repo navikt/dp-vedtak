@@ -3,7 +3,7 @@ package no.nav.dagpenger.behandling.mediator.melding
 import io.kotest.matchers.equals.shouldBeEqual
 import no.nav.dagpenger.behandling.db.Postgres
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
-import no.nav.dagpenger.behandling.modell.UUIDv7
+import no.nav.dagpenger.uuid.UUIDv7
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
 import kotlin.test.Test
