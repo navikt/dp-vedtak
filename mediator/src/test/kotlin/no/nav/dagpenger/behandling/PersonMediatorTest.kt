@@ -79,6 +79,7 @@ internal class PersonMediatorTest {
             behovMediator = BehovMediator(rapid),
             hendelseMediator = HendelseMediator(rapid),
             observatører = setOf(testObservatør, kafkaObservatør),
+            rapidsConnection = rapid,
         )
 
     init {

@@ -16,6 +16,8 @@ import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.helse.rapids_rivers.MessageContext
+import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.withMDC
 
 internal class PersonMediator(
@@ -24,7 +26,9 @@ internal class PersonMediator(
     private val behovMediator: BehovMediator,
     private val hendelseMediator: HendelseMediator,
     private val observatører: Set<PersonObservatør> = emptySet(),
-) : PersonHåndter {
+    private val rapidsConnection: RapidsConnection,
+) : PersonHåndter,
+    MessageContext by rapidsConnection {
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerLogger = KotlinLogging.logger("tjenestekall")

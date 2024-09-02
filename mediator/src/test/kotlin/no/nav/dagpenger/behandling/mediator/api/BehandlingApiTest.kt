@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
@@ -16,14 +17,17 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import no.nav.dagpenger.behandling.TestOpplysningstyper
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
+import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.autentisert
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.testAzureAdToken
 import no.nav.dagpenger.behandling.mediator.audit.Auditlogg
+import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
@@ -37,6 +41,8 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.uuid.UUIDv7
+import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageProblems
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -215,6 +221,10 @@ internal class BehandlingApiTest {
     @Test
     fun `endre opplysningsverdi`() {
         medSikretBehandlingApi {
+            val messageMediator = mockk<IMessageMediator>(relaxed = true)
+            val opplysningSvar = slot<String>()
+            val opplysningSvarHendelse = slot<OpplysningSvarHendelse>()
+
             val behandlingId = person.behandlinger().first().behandlingId
             val opplysning =
                 person
@@ -232,8 +242,33 @@ internal class BehandlingApiTest {
             response.status shouldBe HttpStatusCode.OK
 
             verify {
+                personMediator.publish(ident, capture(opplysningSvar))
                 auditlogg.oppdater(any(), any(), any())
             }
+            opplysningSvar.isCaptured shouldBe true
+            val melding =
+                opplysningSvar.captured.let { json ->
+                    OpplysningSvarMessage(
+                        JsonMessage(json, MessageProblems(json)).also {
+                            it.requireKey("ident", "behandlingId", "@løsning")
+                        },
+                        setOf(TestOpplysningstyper.heltall),
+                    )
+                }
+
+            melding.behandle(
+                messageMediator,
+                mockk(),
+            )
+
+            verify {
+                messageMediator.behandle(capture(opplysningSvarHendelse), any(), any())
+            }
+
+            opplysningSvarHendelse.isCaptured shouldBe true
+            val redigertOpplysning = opplysningSvarHendelse.captured.opplysninger.first()
+            redigertOpplysning.verdi shouldBe 4
+            redigertOpplysning.opplysningstype shouldBe TestOpplysningstyper.heltall
         }
     }
 

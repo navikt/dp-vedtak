@@ -27,7 +27,6 @@ import no.nav.dagpenger.behandling.api.models.OpplysningstypeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
 import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
-import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger
 import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.VerdiMapper
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.api.auth.saksbehandlerId
@@ -37,8 +36,6 @@ import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
-import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
@@ -59,6 +56,7 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.Verneplikt
 import no.nav.dagpenger.uuid.UUIDv7
+import no.nav.helse.rapids_rivers.JsonMessage
 import org.apache.kafka.common.errors.ResourceNotFoundException
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -171,35 +169,60 @@ internal fun Application.behandlingApi(
                         val behandling =
                             personRepository.hentBehandling(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")
                         val opplysning = behandling.opplysninger().finnOpplysning(opplysningId)
-                        val opplysningSvarBygger =
-                            OpplysningSvarBygger(
-                                opplysning.opplysningstype,
-                                HttpVerdiMapper(oppdaterOpplysningRequestDTO),
-                                Saksbehandlerkilde(call.saksbehandlerId()),
-                                OpplysningSvar.Tilstand.Faktum,
-                                opplysning.gyldighetsperiode,
-                            )
                         val svar =
-                            OpplysningSvarHendelse(
-                                UUIDv7.ny(),
+                            OpplysningsSvar(
+                                behandlingId,
+                                opplysningId,
+                                opplysning.opplysningstype.id,
                                 behandling.behandler.ident,
-                                behandling.behandlingId,
-                                listOf(opplysningSvarBygger.opplysningSvar()),
-                                LocalDateTime.now(),
+                                HttpVerdiMapper(oppdaterOpplysningRequestDTO).map(opplysning.opplysningstype.datatype),
+                                call.saksbehandlerId(),
                             )
 
-                        auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
-                        svar.info(
-                            "Oppdaterte ${opplysning.opplysningstype.navn}, begrunnelse ${oppdaterOpplysningRequestDTO.begrunnelse}",
+                        personMediator.publish(
+                            behandling.behandler.ident,
+                            svar.toJson(),
                         )
-                        behandling.håndter(svar)
-                        personRepository.lagre(behandling)
+                        auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
                         call.respond(HttpStatusCode.OK)
                     }
                 }
             }
         }
     }
+}
+
+data class OpplysningsSvar(
+    val behandlingId: UUID,
+    val opplysningId: UUID,
+    val opplysningNavn: String,
+    val ident: String,
+    val verdi: Any,
+    val saksbehandler: String,
+) {
+    fun toJson(): String =
+        JsonMessage
+            .newNeed(
+                listOf(opplysningNavn),
+                mapOf(
+                    "@final" to true,
+                    "@opplysningsbehov" to true,
+                    "opplysningId" to opplysningId,
+                    "behandlingId" to behandlingId,
+                    "ident" to ident,
+                    "@løsning" to
+                        mapOf(
+                            opplysningNavn to
+                                mapOf(
+                                    "verdi" to verdi,
+                                    "@kilde" to
+                                        mapOf(
+                                            "saksbehandler" to saksbehandler,
+                                        ),
+                                ),
+                        ),
+                ),
+            ).toJson()
 }
 
 private val ApplicationCall.opplysningId: UUID

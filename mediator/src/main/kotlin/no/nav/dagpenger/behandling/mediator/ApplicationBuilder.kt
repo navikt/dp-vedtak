@@ -50,6 +50,7 @@ internal class ApplicationBuilder(
             behovMediator = BehovMediator(rapidsConnection),
             hendelseMediator = HendelseMediator(rapidsConnection),
             observatører = setOf(KafkaBehandlingObservatør(rapidsConnection)),
+            rapidsConnection = rapidsConnection,
         )
 
     // TODO: Last alle regler ved startup. Dette må inn i ett register.
