@@ -18,13 +18,17 @@ internal class BeregningsperiodeFabrikk(
     private val opplysninger: Opplysninger,
 ) {
     fun lagBeregningsperiode(): Beregningsperiode {
+        val gjenståendePeriode = hentGjenståendePeriode(opplysninger)
         val gjenståendeEgenandel = hentGjenståendeEgenandel(opplysninger)
         val virkningsdato = hentVedtaksperiode(opplysninger)
         val dager = beregnDager(meldeperiodeFraOgMed, virkningsdato)
         val periode = opprettPeriode(dager, opplysninger)
 
-        return Beregningsperiode(gjenståendeEgenandel, periode)
+        return Beregningsperiode(gjenståendePeriode, gjenståendeEgenandel, periode)
     }
+
+    private fun hentGjenståendePeriode(opplysninger: Opplysninger) =
+        opplysninger.finnOpplysning(Dagpengeperiode.gjenståendeStønadsdager).verdi
 
     private fun hentGjenståendeEgenandel(opplysninger: Opplysninger) =
         opplysninger

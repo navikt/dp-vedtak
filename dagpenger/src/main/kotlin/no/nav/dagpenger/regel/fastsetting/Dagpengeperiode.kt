@@ -13,6 +13,8 @@ import no.nav.dagpenger.regel.Søknadstidspunkt
 
 object Dagpengeperiode {
     val antallStønadsuker = Opplysningstype.somHeltall("Antall stønadsuker")
+    val gjenståendeStønadsdager = Opplysningstype.somHeltall("Antall gjenstående stønadsdager")
+    private val ukedager = Opplysningstype.somHeltall("Antall dager i en arbeidsuke")
     private val terskelFaktor12 = Opplysningstype.somDesimaltall("Terskelfaktor for 12 måneder")
     private val terskelFaktor36 = Opplysningstype.somDesimaltall("Terskelfaktor for 36 måneder")
     private val grunnbeløp = Minsteinntekt.grunnbeløp
@@ -50,5 +52,8 @@ object Dagpengeperiode {
             regel(antallStønadsuker) {
                 høyesteAv(stønadsuker12, stønadsuker36)
             }
+
+            regel(ukedager) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 5 } }
+            regel(gjenståendeStønadsdager) { multiplikasjon(antallStønadsuker, ukedager) }
         }
 }

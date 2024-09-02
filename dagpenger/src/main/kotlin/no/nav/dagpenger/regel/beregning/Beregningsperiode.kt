@@ -3,11 +3,13 @@ package no.nav.dagpenger.regel.beregning
 import no.nav.dagpenger.regel.beregning.Beregningsperiode.Terskelstrategi
 
 internal class Beregningsperiode private constructor(
+    private val gjenståendePeriode: Int,
     private val gjenståendeEgenandel: Double,
     dager: List<Dag>,
     terskelstrategi: Terskelstrategi,
 ) {
-    constructor(gjenståendeEgenandel: Double, dag: List<Dag>) : this(gjenståendeEgenandel, dag, snitterskel)
+    constructor(gjenståendePeriode: Int, gjenståendeEgenandel: Double, dag: List<Dag>) :
+        this(gjenståendePeriode, gjenståendeEgenandel, dag, snitterskel)
 
     init {
         require(dager.size <= 14) { "En beregningsperiode kan maksimalt inneholde 14 dager" }
@@ -17,7 +19,7 @@ internal class Beregningsperiode private constructor(
     private val arbeidsdager = dager.filterIsInstance<Arbeidsdag>()
     private val prosentfaktor = beregnProsentfaktor(dager)
     val terskel = terskelstrategi.beregnTerskel(arbeidsdager)
-    val oppfyllerKravTilTaptArbeidstid = (arbeidsdager.sumOf { it.timerArbeidet ?: 0 } / sumFva) <= terskel
+    val oppfyllerKravTilTaptArbeidstid = (arbeidsdager.sumOf { it.timerArbeidet } / sumFva) <= terskel
 
     val utbetaling = beregnUtbetaling(arbeidsdager)
 
