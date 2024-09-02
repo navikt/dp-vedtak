@@ -178,6 +178,7 @@ class Behandling private constructor(
         ForslagTilVedtak,
         Avbrutt,
         Ferdig,
+        Redigert,
     }
 
     private sealed interface BehandlingTilstand : Aktivitetskontekst {
@@ -196,6 +197,7 @@ class Behandling private constructor(
                 TilstandType.ForslagTilVedtak -> ForslagTilVedtak(opprettet)
                 TilstandType.Avbrutt -> Avbrutt(opprettet)
                 TilstandType.Ferdig -> Ferdig(opprettet)
+                TilstandType.Redigert -> Redigert(opprettet)
             }
         }
 
@@ -294,11 +296,16 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: PersonHendelse,
         ) {
-            behandling.observatører.forEach { it.behandlingStartet() }
-            val trenger = behandling.hvaTrengerViNå(hendelse)
+            when (hendelse) {
+                is OpplysningSvarHendelse -> this.håndter(behandling, hendelse)
+                else -> {
+                    behandling.observatører.forEach { it.behandlingStartet() }
+                    val trenger = behandling.hvaTrengerViNå(hendelse)
 
-            if (trenger.isEmpty()) {
-                behandling.tilstand(ForslagTilVedtak(), hendelse)
+                    if (trenger.isEmpty()) {
+                        behandling.tilstand(ForslagTilVedtak(), hendelse)
+                    }
+                }
             }
         }
 
@@ -459,8 +466,54 @@ class Behandling private constructor(
             hendelse: OpplysningSvarHendelse,
         ) {
             hendelse.kontekst(this)
-            hendelse.info("Fikk svar på opplysning i ForslagTilVedtak. Vi vet ikke hva vi skal gjøre")
-            // TODO: Håndter svar på opplysninger
+            hendelse.info("Fikk svar på opplysning i ${this.type.name}.")
+
+            hendelse.opplysninger.forEach { opplysning ->
+                behandling.regelkjøring.leggTil(opplysning.opplysning())
+            }
+            behandling.tilstand(Redigert(), hendelse)
+        }
+    }
+
+    private data class Redigert(
+        override val opprettet: LocalDateTime = LocalDateTime.now(),
+    ) : BehandlingTilstand {
+        override val type: TilstandType
+            get() = TilstandType.Redigert
+
+        override fun entering(
+            behandling: Behandling,
+            hendelse: PersonHendelse,
+        ) {
+            // Kjør regelkjøring for alle opplysninger
+            behandling.regelkjøring.evaluer()
+
+            val trenger = behandling.hvaTrengerViNå(hendelse)
+            if (trenger.isEmpty()) {
+                behandling.tilstand(ForslagTilVedtak(), hendelse)
+            }
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: OpplysningSvarHendelse,
+        ) {
+            hendelse.opplysninger.forEach { opplysning ->
+                behandling.regelkjøring.leggTil(opplysning.opplysning())
+            }
+            behandling.regelkjøring.evaluer()
+
+            val trenger = behandling.hvaTrengerViNå(hendelse)
+            if (trenger.isEmpty()) {
+                behandling.tilstand(ForslagTilVedtak(), hendelse)
+            }
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: PåminnelseHendelse,
+        ) {
+            behandling.hvaTrengerViNå(hendelse)
         }
     }
 

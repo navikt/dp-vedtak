@@ -349,6 +349,36 @@ internal class PersonMediatorTest {
             }
         }
 
+    @Test
+    fun `redigering av opplysning i forslag til vedtak sk`() {
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    innsendt = 1.juni(2024).atTime(12, 0),
+                    søknadstidspunkt = 1.juni(2024),
+                    ønskerFraDato = 30.juni(2024),
+                )
+            løsBehandlingFramTilFerdig(testPerson)
+
+            rapid.harHendelse("forslag_til_vedtak") {
+                with(medNode("avklaringer")) {
+                    this.size() shouldBe 8
+                }
+            }
+
+            testPerson.ønskerFraDato = LocalDate.now()
+            testPerson.løsBehov("ØnskerDagpengerFraDato")
+
+            rapid.harHendelse("forslag_til_vedtak") {
+                with(medNode("avklaringer")) {
+                    this.size() shouldBe 7
+                }
+            }
+        }
+    }
+
     enum class Behandlingslengde {
         Alder,
         Minsteinntekt,

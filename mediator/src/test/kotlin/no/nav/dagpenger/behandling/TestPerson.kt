@@ -24,11 +24,11 @@ class TestPerson(
     private val ident: String,
     private val rapid: TestRapid,
     internal val søknadstidspunkt: LocalDate = 5.mai(2021),
-    alder: Int = 30,
+    val alder: Int = 30,
     private val innsendt: LocalDateTime = LocalDateTime.now(),
-    InntektSiste12Mnd: Int = 1234,
-    InntektSiste36Mnd: Int = 1234,
-    internal val ønskerFraDato: LocalDate = søknadstidspunkt,
+    val InntektSiste12Mnd: Int = 1234,
+    val InntektSiste36Mnd: Int = 1234,
+    internal var ønskerFraDato: LocalDate = søknadstidspunkt,
 ) {
     val inntektId = "01HQTE3GBWCSVYH6S436DYFREN"
     internal val søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"
@@ -158,7 +158,7 @@ class TestPerson(
             sisteAvsluttendeKalenderMåned = YearMonth.from(søknadstidspunkt.minusMonths(2)),
         )
 
-    private val løsninger =
+    private val løsninger get() =
         mapOf(
             "Fødselsdato" to søknadstidspunkt.minusYears(alder.toLong()),
             "Søknadstidspunkt" to søknadstidspunkt,
