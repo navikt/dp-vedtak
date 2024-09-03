@@ -17,71 +17,27 @@ Overordnet flyt er som følger:
 
 Flere detaljer om [Behandling og opplysninger](./opplysning/README.md).
 
-## Avklaringer
-
-Underveis i en behandling kan det være behov for å avklare motstridende informasjon, uklarheter, eller risikomomenter. Dette kan gjøres både
-maskinelt, av sakbehandler, eller av søker.
-
-En avklaring opprettes av det vi kaller ett kontrollpunkt. Alle kontrollpunkt kjøres hver gang behandlingen eller opplysningene i
-behandlingen endres. Kontrollpunktene har tilgang til å gjøre mange ulike vurderinger på opplysningene, men typisk sjekker vi:
-
-- Verdien til enn opplysning
-- Kombinasjoner av verdier
-- Hvor opplysningen kommer fra - maskinelt eller menneske
-
-Når et kontrollpunkt oppdager noe som må avklares, opprettes en avklaring. Avklaringer kan lukkes på tre måter:
-
-- Opplysningene som førte til avklaringen endres og avklaringen ikke lengre er nødvendig
-- Avklaringen blir lukket av systemet etter å vurdert tilgjengelig informasjon
-- Avklaringen blir kvittert ut av saksbehandler - uten at noe endres.
-
-### Eksempel
-
-Eksempler på avklaringer kan være:
-
-- Det kan ligge gamle saker i Arena som kan være relevant. Vi oppretter en Avklaring som fører til at det automatisk sjekkes sakshistorikk i
-  Arena. Finner vi noe relevant, blir avklaringen stående åpen så en saksbehandler kan vurdere informasjonen.
-- Vi finner informasjon om arbeid i utlandet. En saksbehandler må vurdere om dette er relevant for saken.
-- Bruker er under 18 år. Da skal vi ikke fatte automatiske vedtak, så en saksbehandler må vurdere saken. Avklaringen kvitteres ut, og vi kan
-  fortsette behandlingen
-
-### Kontrollpunkt for Verneplikt
-
-```kotlin
-val VernepliktKontroll =
-    Kontrollpunkt(sjekker = Avklaringspunkter.Verneplikt) { opplysninger ->
-        opplysninger.har(avtjentVerneplikt) && opplysninger.finnOpplysning(avtjentVerneplikt).verdi
-    }
-```
-
-### Sporing
-
-Avklaringer opprettes med referanser til informasjonen som førte til at avklaringen ble opprettet i utgangspunktet.
-
-Hver gang en avklaring lukkes eller kvitteres vil det bli sporet hvorfor det skjedde. Det kan være endringer i underliggende opplysninger,
-et system har markert den som lukket, eller en saksbehandler har kvittert ut avklaringen.
-
-## Flyt
+## Overordnet flyt i en behandling
 
 ```mermaid
 graph TD
 ;
     Mottatt["Søknad mottatt"]
     Opprettet["Behandling opprettet"]
+    UnderBehandling["Under behandling"]
     ForslagFattet["Forslag fattet"]
     SkrevetTilArena["Vedtak skrevet til Arena"]
-    Mottatt --> Behandling
-    ForslagFattet --> VedtakKanSkrive
     ForslagTilVedtak["Forslag til vedtak"]
     BehandlingAvbrutt["Behandling avbrutt"]
-    
     Redigert["Redigert"]
-    Redigert --> Konklusjon
-
-    Konklusjon{"Har konklusjon?"}
-    Opprettet --> Konklusjon
-    Konklusjon -->|Ja| Avklaring
-    Konklusjon -.->|Endringer| Opprettet
+    Mottatt --> Behandling
+    ForslagFattet --> VedtakKanSkrive
+    Redigert --> FerdigUtredet
+    Opprettet --> UnderBehandling
+    FerdigUtredet{"Trenger flere \nopplysninger?"}
+    UnderBehandling --> FerdigUtredet
+    FerdigUtredet -->|Nei| Avklaring
+    FerdigUtredet -->|Ja, innhenter flere \nopplysninger| UnderBehandling
     Avklaring{"Har avklaringer?"}
     Avklaring -->|Ja| ForslagTilVedtak
     Avklaring -->|Nei| KanFatteVedtak
@@ -90,11 +46,10 @@ graph TD
     Forslag -->|Endringer| Redigert
     Forslag -->|Forkastes| BehandlingAvbrutt
     Forslag -->|Godkjennes| ForslagFattet
-    
     VedtakKanSkrive{"Vedtak kan skrives"}
     VedtakKanSkrive -->|Nei| KunneIkkeSkrive
     VedtakKanSkrive -->|Ja| SkrevetTilArena
-    KanFatteVedtak{"Kan fatte vedtak automatisk?"}
+    KanFatteVedtak{"Kan fatte \nvedtak automatisk?"}
     KanFatteVedtak -->|Ja| VedtakKanSkrive
     KanFatteVedtak -->|Nei| Avbryt
     Avbryt["Avbryt behandling"]
@@ -105,61 +60,23 @@ graph TD
         Avklaring
         Forslag
         Redigert
-        Konklusjon
+        UnderBehandling
+        FerdigUtredet
         ForslagTilVedtak
         BehandlingAvbrutt
         ForslagFattet
         KanFatteVedtak
         Avbryt
     end
-```
 
-## Systemoversikt
-
-```mermaid
-flowchart TD
-    A[dp-soknad]
-    B[dp-behov-journalforing]
-    C[dp-mottak]
-    D[dp-behandling]
-    E[dp-saksbehandling]
-    F[dp-saksbehandling-frontend]
-    G[Joark]
-    H[dp-arena-sink]
-    I[Arena]
-    J[Behovløsere for opplysninger]
-    K[dp-manuell-behandling]
-    click A "https://github.com/navikt/dp-soknad" "dp-soknad"
-    click B "https://github.com/navikt/dp-behov-journalforing" "dp-behov-journalforing"
-    click C "https://github.com/navikt/dp-mottak" "dp-mottak"
-    click D "https://github.com/navikt/dp-behandling" "dp-behandling"
-    click E "https://github.com/navikt/dp-saksbehandling" "dp-saksbehandling"
-    click F "https://github.com/navikt/dp-saksbehandling-frontend" "dp-saksbehandling-frontend"
-    click H "https://github.com/navikt/dp-arena-sink" "dp-arena-sink"
-    click J "https://github.com/navikt/dp-behandling/blob/main/docs/README.md#behov-for-opplysninger" "Behovløsere for opplysninger"
-    A -->|Behov for å journalføre søknad| B
-    B -->|Journalfører søknad| G
-    G -->|Lytter på dagpenger journalføringer| C
-    C -->|innsending_ferdigstilt| Behandling
-
-    subgraph Behandling
-        D -->|Opplysningsbehov| J
-        D -->|Manuell behandling avklaring?| K
-        K -->|Manuell behandling avklart| D
-        D -->|behandling_opprettet| E
-        D -->|forslag_til_vedtak| E
-        F -->|Oppgaver| E
-        D -->|behandling_avbrutt| E
-        F -->|Godkjenner/avbryt forslag til vedtak| D
-        D -->|vedtak_fattet| Arena
-    end
-
-    subgraph Arena
-        H -->|Skriver vedtak til| I
+    subgraph "Adapter mot Arena"
+        KunneIkkeSkrive
+        VedtakKanSkrive
+        SkrevetTilArena
     end
 ```
 
-## Behov for opplysninger
+## Innhenting av opplysninger
 
 [Komplett liste med behov](./behov.approved.md)
 
@@ -217,4 +134,93 @@ Eksempel på løsning med metadata:
     }
   }
 }
+```
+
+## Avklaringer
+
+Underveis i en behandling kan det være behov for å avklare motstridende informasjon, uklarheter, eller risikomomenter. Dette kan gjøres både
+maskinelt, av sakbehandler, eller av søker.
+
+En avklaring opprettes av det vi kaller ett kontrollpunkt. Alle kontrollpunkt kjøres hver gang behandlingen eller opplysningene i
+behandlingen endres. Kontrollpunktene har tilgang til å gjøre mange ulike vurderinger på opplysningene, men typisk sjekker vi:
+
+- Verdien til enn opplysning
+- Kombinasjoner av verdier
+- Hvor opplysningen kommer fra - maskinelt eller menneske
+
+Når et kontrollpunkt oppdager noe som må avklares, opprettes en avklaring. Avklaringer kan lukkes på tre måter:
+
+- Opplysningene som førte til avklaringen endres og avklaringen ikke lengre er nødvendig
+- Avklaringen blir lukket av systemet etter å vurdert tilgjengelig informasjon
+- Avklaringen blir kvittert ut av saksbehandler - uten at noe endres.
+
+### Eksempel
+
+Eksempler på avklaringer kan være:
+
+- Det kan ligge gamle saker i Arena som kan være relevant. Vi oppretter en Avklaring som fører til at det automatisk sjekkes sakshistorikk i
+  Arena. Finner vi noe relevant, blir avklaringen stående åpen så en saksbehandler kan vurdere informasjonen.
+- Vi finner informasjon om arbeid i utlandet. En saksbehandler må vurdere om dette er relevant for saken.
+- Bruker er under 18 år. Da skal vi ikke fatte automatiske vedtak, så en saksbehandler må vurdere saken. Avklaringen kvitteres ut, og vi kan
+  fortsette behandlingen
+
+### Kontrollpunkt for Verneplikt
+
+```kotlin
+val VernepliktKontroll =
+    Kontrollpunkt(sjekker = Avklaringspunkter.Verneplikt) { opplysninger ->
+        opplysninger.har(avtjentVerneplikt) && opplysninger.finnOpplysning(avtjentVerneplikt).verdi
+    }
+```
+
+### Sporing
+
+Avklaringer opprettes med referanser til informasjonen som førte til at avklaringen ble opprettet i utgangspunktet.
+
+Hver gang en avklaring lukkes eller kvitteres vil det bli sporet hvorfor det skjedde. Det kan være endringer i underliggende opplysninger,
+et system har markert den som lukket, eller en saksbehandler har kvittert ut avklaringen.
+
+# Systemoversikt
+
+```mermaid
+flowchart TD
+    A[dp-soknad]
+    B[dp-behov-journalforing]
+    C[dp-mottak]
+    D[dp-behandling]
+    E[dp-saksbehandling]
+    F[dp-saksbehandling-frontend]
+    G[Joark]
+    H[dp-arena-sink]
+    I[Arena]
+    J[Behovløsere for opplysninger]
+    K[dp-manuell-behandling]
+    click A "https://github.com/navikt/dp-soknad" "dp-soknad"
+    click B "https://github.com/navikt/dp-behov-journalforing" "dp-behov-journalforing"
+    click C "https://github.com/navikt/dp-mottak" "dp-mottak"
+    click D "https://github.com/navikt/dp-behandling" "dp-behandling"
+    click E "https://github.com/navikt/dp-saksbehandling" "dp-saksbehandling"
+    click F "https://github.com/navikt/dp-saksbehandling-frontend" "dp-saksbehandling-frontend"
+    click H "https://github.com/navikt/dp-arena-sink" "dp-arena-sink"
+    click J "https://github.com/navikt/dp-behandling/blob/main/docs/README.md#behov-for-opplysninger" "Behovløsere for opplysninger"
+    A -->|Behov for å journalføre søknad| B
+    B -->|Journalfører søknad| G
+    G -->|Lytter på dagpenger journalføringer| C
+    C -->|innsending_ferdigstilt| Behandling
+
+    subgraph Behandling
+        D -->|Opplysningsbehov| J
+        D -->|Manuell behandling avklaring?| K
+        K -->|Manuell behandling avklart| D
+        D -->|behandling_opprettet| E
+        D -->|forslag_til_vedtak| E
+        F -->|Oppgaver| E
+        D -->|behandling_avbrutt| E
+        F -->|Godkjenner/avbryt forslag til vedtak| D
+        D -->|vedtak_fattet| Arena
+    end
+
+    subgraph Arena
+        H -->|Skriver vedtak til| I
+    end
 ```
