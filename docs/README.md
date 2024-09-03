@@ -39,6 +39,9 @@ graph TD;
 
     ForslagTilVedtak["Forslag til vedtak"]
     BehandlingAvbrutt["Behandling avbrutt"]
+    
+    Redigert["Redigert"]
+    Redigert --> Konklusjon
 
     Konklusjon{"Har konklusjon?"}
     Opprettet --> Konklusjon
@@ -52,9 +55,9 @@ graph TD;
     
     Forslag{"Forslag godkjent"}
     ForslagTilVedtak --> Forslag
+    Forslag -->|Endringer| Redigert
     Forslag -->|Forkastes| BehandlingAvbrutt
     Forslag -->|Godkjennes| ForslagFattet
-    Forslag -.->|Endringer| Opprettet
     
     VedtakKanSkrive{"Vedtak kan skrives"}
     VedtakKanSkrive -->|Nei| KunneIkkeSkrive
@@ -72,6 +75,7 @@ graph TD;
         Opprettet
         Avklaring
         Forslag
+        Redigert
         Konklusjon
         ForslagTilVedtak
         BehandlingAvbrutt
