@@ -24,7 +24,7 @@ sealed class Opplysning<T : Comparable<T>>(
     private var _erstatter: Opplysning<T>? = null,
     private val _erstattetAv: MutableList<Opplysning<T>> = mutableListOf(),
 ) : Klassifiserbart by opplysningstype {
-    private val defaultRedigering = Redigerbar { utledetAv == null && opplysningstype.datatype != ULID && !erErstattet }
+    private val defaultRedigering = Redigerbar { opplysningstype.datatype != ULID && !erErstattet }
 
     abstract fun bekreft(): Faktum<T>
 

@@ -45,8 +45,8 @@ class OpplysningTest {
         opplysning2.kanRedigeres(RedigerbarPerOpplysningstype) shouldBe false
         opplysning2.kanRedigeres { true } shouldBe true
 
-        // Kan ikke redigere opplysning som er utledet
-        opplysning3.kanRedigeres { true } shouldBe false
+        // Kan redigere opplysning som er utledet
+        opplysning3.kanRedigeres { true } shouldBe true
 
         // Kan ikke redigere opplysningstype ULID
         opplysning4.kanRedigeres { true } shouldBe false
