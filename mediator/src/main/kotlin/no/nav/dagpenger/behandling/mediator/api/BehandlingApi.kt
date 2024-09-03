@@ -54,7 +54,6 @@ import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
-import no.nav.dagpenger.regel.Verneplikt
 import no.nav.dagpenger.uuid.UUIDv7
 import no.nav.helse.rapids_rivers.JsonMessage
 import org.apache.kafka.common.errors.ResourceNotFoundException
@@ -316,7 +315,6 @@ val redigerbarPerOpplysningstype =
             setOf(
                 TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid,
                 TapAvArbeidsinntektOgArbeidstid.nyArbeidstid,
-                Verneplikt.avtjentVerneplikt,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)
@@ -325,13 +323,14 @@ val redigerbarPerOpplysningstype =
 private fun LocalDateTime.tilOffsetTime(): OffsetDateTime = this.atZone(ZoneId.systemDefault()).toOffsetDateTime()
 
 @Suppress("UNCHECKED_CAST")
-class HttpVerdiMapper(
+private class HttpVerdiMapper(
     private val oppdaterOpplysningRequestDTO: OppdaterOpplysningRequestDTO,
 ) : VerdiMapper {
     override fun <T : Comparable<T>> map(datatype: Datatype<T>): T =
         when (datatype) {
             Heltall -> oppdaterOpplysningRequestDTO.verdi.toInt() as T
             Boolsk -> oppdaterOpplysningRequestDTO.verdi.toBoolean() as T
-            else -> throw IllegalArgumentException("Datatype $datatype støttes ikke i APIet enda")
+            Desimaltall -> oppdaterOpplysningRequestDTO.verdi.toDouble() as T
+            else -> throw IllegalArgumentException("Datatype $datatype støttes ikke å redigere i APIet enda")
         }
 }
