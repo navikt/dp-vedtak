@@ -15,7 +15,7 @@ Overordnet flyt er som følger:
     - Har vi fortsatt åpne avklaringer vil behandlingen gå til saksbehandler for ferdigstillelse
     - Har vi ingen åpne avklaringer vil behandlingen automatisk avsluttes
 
-Flere detaljer om [Behandling og opplysninger](./opplysning/README.md).
+Flere detaljer om [behandling og opplysninger](./opplysning/README.md).
 
 ## Overordnet flyt i en behandling
 

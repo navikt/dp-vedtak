@@ -4,16 +4,6 @@
 
 Representerer en ting vi tror (hypotese) eller vet (faktum). Må ha en verdi. Verdien kan være dato, tall, boolske osv. 
 
-## Gyldighetsperiode
-
-Alle opplysninger har en gyldighetsperiode. Fra og med er obligatorisk, men til og med er åpen. Fra-og-med og til-og-med kan settes til samme dag for å si at en opplysning gjelder **en** dag.
-
-### Erstatning av opplysning 
-
-> **_MERKNAD:_** Erstatning er ikke implementert.[Skisser om erstatning og splitting](https://whimsical.com/erstatning-og-splitting-AnGM4QKHzDUyq7DT3zW1E7)
-
-En opplysning kan erstatte en annen opplysning. Opplysning som blir ikke erstattet vil ikke bli slettet men en ny opplysning vil over ta med en ny gyldighetsperiode. 
-
 ## Opplysningstype
 
 Vi kan identifisere ulike opplysninger via en type. Opplysningstype er navn på en opplysning. 
@@ -58,13 +48,22 @@ Vi bruker tilstand til å skille mellom det vi **vet** \(faktum\), og det vi **t
 
 Saksbehandlers rolle vil typisk være å ta stilling til et utkast til vedtak, hvor det er flere hypoteser, og bekrefte de slik at vi kan behandle de som fakta.
 
+## Gyldighetsperiode
+
+Alle opplysninger har en gyldighetsperiode. Fra og med er obligatorisk, men til og med er åpen. Fra-og-med og til-og-med kan settes til samme dag for å si at en opplysning gjelder **en** dag.
+
+### Erstatning av opplysning
+
+> **_MERKNAD:_** Erstatning er ikke implementert.[Skisser om erstatning og splitting](https://whimsical.com/erstatning-og-splitting-AnGM4QKHzDUyq7DT3zW1E7)
+
+En opplysning kan erstatte en annen opplysning. Opplysning som blir ikke erstattet vil ikke bli slettet men en ny opplysning vil over ta med en ny gyldighetsperiode.
+
 ## Sporing
 
 Alle opplysninger bør oppstå i kontekst av en behandling og ha en relasjon tilbake til behandlingen som laget den.
 
 ### Utledning
 Om en opplysning er utledet så har vi sporing som sier med hvilken funksjon på andre opplysninger som har utledet denne opplysningen. 
-
 
 ### Kilde
 
@@ -110,10 +109,6 @@ Feks
 
 ![](regel-er-fraktale.png "Regel er fraktale")
 
-# Faktainnhenting/behov/actions/plan
-
-Representerer ting vi ønsker å vite. Fører til at det lages en eller flere opplysninger.
-
 # Behandling
 
 Representerer en prosess som beskriver hvilke ting må vurderes for å anse en hendelse som ferdig behandlet.
@@ -121,7 +116,6 @@ Representerer en prosess som beskriver hvilke ting må vurderes for å anse en h
 For en søknadshendelse vil det være å sjekke om alle vilkårene for å kunne innvilges dagpenger.
 
 For en rapporteringshendelse vil det være å sjekke om de løpende vilkårene er oppgitt, og beregne hvor mange dager det skal betales dagpenger for.
-
 
 # Vedtak
 
