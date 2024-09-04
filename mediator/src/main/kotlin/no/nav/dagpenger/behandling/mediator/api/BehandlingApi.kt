@@ -24,6 +24,8 @@ import no.nav.dagpenger.behandling.api.models.OppdaterOpplysningRequestDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningstypeDTO
+import no.nav.dagpenger.behandling.api.models.RegelDTO
+import no.nav.dagpenger.behandling.api.models.UtledningDTO
 import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.VerdiMapper
 import no.nav.dagpenger.behandling.mediator.PersonMediator
@@ -288,7 +290,13 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
                     is Systemkilde -> OpplysningskildeDTO("System", meldingId = it.meldingsreferanseId, registrert = registrert)
                 }
             },
-        utledetAv = null,
+        utledetAv =
+            utledetAv?.let { utledning ->
+                UtledningDTO(
+                    regel = RegelDTO(navn = utledning.regel),
+                    opplysninger = utledning.opplysninger.map { it.id },
+                )
+            },
         redigerbar =
             this.kanRedigeres(redigerbarPerOpplysningstype),
     )
