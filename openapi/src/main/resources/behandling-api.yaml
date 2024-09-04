@@ -386,7 +386,8 @@ components:
         opplysninger:
           type: array
           items:
-            $ref: '#/components/schemas/Opplysning'
+            type: string
+            format: uuid
 
     Regel:
       type: object
