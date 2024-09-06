@@ -4,6 +4,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.konfigurasjon.Configuration.config
+import no.nav.dagpenger.behandling.mediator.api.SseHendelseLytter
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.audit.AktivitetsloggAuditlogg
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
@@ -34,9 +35,11 @@ internal class ApplicationBuilder(
                     personMediator,
                     AktivitetsloggAuditlogg(aktivitetsloggMediator),
                     opplysningstyper,
+                    sseHendelseLytter.hendelser(),
                 )
             }.build()
 
+    private val sseHendelseLytter = SseHendelseLytter(rapidsConnection)
     private val opplysningRepository = OpplysningerRepositoryPostgres()
     private val behandlingRepository =
         BehandlingRepositoryPostgres(opplysningRepository, AvklaringRepositoryPostgres(AvklaringKafkaObservatør(rapidsConnection)))

@@ -16,6 +16,8 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.opentelemetry.api.trace.Span
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
@@ -51,6 +53,7 @@ internal fun Application.behandlingApi(
     personMediator: PersonMediator,
     auditlogg: Auditlogg,
     opplysningstyper: Set<Opplysningstype<*>>,
+    hendelser: Flow<BehandlingSseEvent> = emptyFlow(),
 ) {
     konfigurerApi()
     install(OtelTraceIdPlugin)
@@ -86,6 +89,10 @@ internal fun Application.behandlingApi(
                     )
                 }
             call.respond(HttpStatusCode.OK, typer)
+        }
+
+        get("/behandling/sse") {
+            call.respondSse(hendelser)
         }
 
         authenticate("azureAd") {
