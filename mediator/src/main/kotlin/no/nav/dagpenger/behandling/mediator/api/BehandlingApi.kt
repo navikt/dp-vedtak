@@ -20,6 +20,7 @@ import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
+import no.nav.dagpenger.behandling.api.models.KvitteringDTO
 import no.nav.dagpenger.behandling.api.models.OppdaterOpplysningRequestDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
@@ -183,7 +184,12 @@ internal fun Application.behandlingApi(
                             svar.toJson(),
                         )
                         auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
-                        call.respond(HttpStatusCode.OK)
+                        call.respond(
+                            HttpStatusCode.OK,
+                            KvitteringDTO(
+                                behandlingId = behandlingId,
+                            ),
+                        )
                     }
                 }
             }

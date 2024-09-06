@@ -21,6 +21,7 @@ import io.mockk.slot
 import io.mockk.verify
 import no.nav.dagpenger.behandling.TestOpplysningstyper
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
+import no.nav.dagpenger.behandling.api.models.KvitteringDTO
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.PersonMediator
@@ -240,6 +241,13 @@ internal class BehandlingApiTest {
                     body = """{"begrunnelse":"tekst", "verdi": 4 }""",
                 )
             response.status shouldBe HttpStatusCode.OK
+            with(response.bodyAsText()) {
+                shouldNotBeEmpty()
+                shouldNotThrowAny {
+                    val kvitteringDTO = objectMapper.readValue<KvitteringDTO>(this)
+                    kvitteringDTO.behandlingId shouldBe behandlingId
+                }
+            }
 
             verify {
                 personMediator.publish(ident, capture(opplysningSvar))
