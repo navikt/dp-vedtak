@@ -16,6 +16,7 @@ import no.nav.dagpenger.regel.beregning.Beregning.terskel
 import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.sats
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode.antallStønadsuker
+import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode.gjenståendeStønadsdager
 import no.nav.dagpenger.regel.fastsetting.Egenandel.egenandel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -24,6 +25,7 @@ import java.util.Locale
 class BeregningSteg : No {
     private val opplysninger = mutableListOf<Opplysning<*>>()
     private lateinit var meldeperiodeFraOgMed: LocalDate
+    private lateinit var meldeperiodeTilOgMed: LocalDate
 
     init {
         Gitt("at terskel er satt til {double}") { terskelVerdi: Double ->
@@ -36,6 +38,7 @@ class BeregningSteg : No {
         Når("meldekort for periode som begynner fra og med {dato} mottas med") { fraOgMed: LocalDate, dataTable: DataTable? ->
             val dager = dataTable!!.asMaps()
             meldeperiodeFraOgMed = fraOgMed
+            meldeperiodeTilOgMed = fraOgMed.plusDays(13)
             opplysninger.addAll(lagMeldekort(fraOgMed, dager))
         }
         Så("skal kravet til tapt arbeidstid ikke være oppfylt") {
@@ -64,6 +67,9 @@ class BeregningSteg : No {
             val forbrukteDager = opplysninger.filter { it.opplysningstype == forbruk }.size
             val gjenståendeDager = utgangspunkt - forbrukteDager
             gjenståendeDager shouldBe dager
+
+            // Lagre gjenstående stønadsdager tilbake i opplysninger
+            opplysninger.add(Faktum(gjenståendeStønadsdager, gjenståendeDager, Gyldighetsperiode(fom = meldeperiodeTilOgMed)))
         }
         Og("det forbrukes {int} i egenandel") { forbruktEgenandel: Int ->
             beregning.forbruksdager.sumOf { it.forbruktEgenandel } shouldBe forbruktEgenandel.toDouble()
@@ -78,7 +84,7 @@ class BeregningSteg : No {
 
     private val beregning by lazy {
         val opplysninger = Opplysninger(opplysninger)
-        BeregningsperiodeFabrikk(meldeperiodeFraOgMed, meldeperiodeFraOgMed.plusDays(13), opplysninger).lagBeregningsperiode()
+        BeregningsperiodeFabrikk(meldeperiodeFraOgMed, meldeperiodeTilOgMed, opplysninger).lagBeregningsperiode()
     }
 
     private fun lagVedtak(vedtakstabell: List<MutableMap<String, String>>): List<Opplysning<*>> =

@@ -368,7 +368,7 @@ internal class PersonMediatorTest {
                 }
             }
 
-            testPerson.ønskerFraDato = LocalDate.now()
+            testPerson.ønskerFraDato = 1.juli(2024)
             testPerson.løsBehov("ØnskerDagpengerFraDato")
 
             rapid.harHendelse("forslag_til_vedtak") {

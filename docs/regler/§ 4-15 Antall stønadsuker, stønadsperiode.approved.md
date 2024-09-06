@@ -27,6 +27,9 @@ graph RL
   P["Stønadsuker ved siste 36 måneder"] -->|"HvisSannMedResultat"| A["Kort dagpengeperiode"]
   Q["Antall stønadsuker"] -->|"HøyesteAv"| O["Stønadsuker ved siste 12 måneder"]
   Q["Antall stønadsuker"] -->|"HøyesteAv"| P["Stønadsuker ved siste 36 måneder"]
+  R["Antall dager som skal regnes med i hver uke"] -->|"Oppslag"| B["Søknadstidspunkt"]
+  S["Antall gjenstående stønadsdager"] -->|"Multiplikasjon"| Q["Antall stønadsuker"]
+  S["Antall gjenstående stønadsdager"] -->|"Multiplikasjon"| R["Antall dager som skal regnes med i hver uke"]
 ```
 
 ## Akseptansetester

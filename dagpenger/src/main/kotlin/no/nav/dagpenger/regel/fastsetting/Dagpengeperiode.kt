@@ -13,6 +13,8 @@ import no.nav.dagpenger.regel.Søknadstidspunkt
 
 object Dagpengeperiode {
     val antallStønadsuker = Opplysningstype.somHeltall("Antall stønadsuker")
+    val gjenståendeStønadsdager = Opplysningstype.somHeltall("Antall gjenstående stønadsdager")
+    private val dagerIUka = Opplysningstype.somHeltall("Antall dager som skal regnes med i hver uke")
     private val terskelFaktor12 = Opplysningstype.somDesimaltall("Terskelfaktor for 12 måneder")
     private val terskelFaktor36 = Opplysningstype.somDesimaltall("Terskelfaktor for 36 måneder")
     private val grunnbeløp = Minsteinntekt.grunnbeløp
@@ -30,6 +32,7 @@ object Dagpengeperiode {
     private val overterskel36 = Opplysningstype.somBoolsk("Over terskel for 36 måneder")
     private val stønadsuker12 = Opplysningstype.somHeltall("Stønadsuker ved siste 12 måneder")
     private val stønadsuker36 = Opplysningstype.somHeltall("Stønadsuker ved siste 36 måneder")
+
     val regelsett =
         Regelsett("Dagpengeperiode") {
             regel(kortPeriode) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 52 } }
@@ -50,5 +53,8 @@ object Dagpengeperiode {
             regel(antallStønadsuker) {
                 høyesteAv(stønadsuker12, stønadsuker36)
             }
+
+            regel(dagerIUka) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 5 } }
+            regel(gjenståendeStønadsdager) { multiplikasjon(antallStønadsuker, dagerIUka) }
         }
 }
