@@ -7,7 +7,6 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeGreaterThan
-import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -143,7 +142,8 @@ internal class PersonMediatorTest {
 
             rapid.harHendelse("vedtak_fattet") {
                 medBoolsk("utfall") shouldBe false
-                medTekst("fagsakId").shouldBeNull()
+                medNode("fagsakId").asInt() shouldBe 123
+                medNode("fagsaknummer").asInt() shouldBe 123
                 medTekst("søknadId") shouldBe testPerson.søknadId
                 medBoolsk("automatisk") shouldBe true
 
