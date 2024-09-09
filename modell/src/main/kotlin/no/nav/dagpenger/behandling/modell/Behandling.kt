@@ -577,6 +577,8 @@ class Behandling private constructor(
                 mapOf(
                     "utfall" to avklaring.verdi,
                     "harAvklart" to avklaring.opplysningstype.navn,
+                    "fagsakId" to behandling.behandler.fagsakId,
+                    "fagsaknummer" to behandling.behandler.fagsakId,
                     "opplysninger" to behandling.opplysninger.finnAlle(),
                     "automatisk" to behandling.avklaringer().all { it.erAvbrutt() || it.erAvklart() },
                 ),
