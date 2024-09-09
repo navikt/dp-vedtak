@@ -10,6 +10,8 @@ import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldNotBeEmpty
+import io.ktor.client.plugins.sse.SSE
+import io.ktor.client.plugins.sse.sse
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -278,6 +280,22 @@ internal class BehandlingApiTest {
             redigertOpplysning.verdi shouldBe 4
             // TODO: Legge til kilde  (redigertOpplysning.kilde as Saksbehandlerkilde).ident shouldBe "Z123456"
             redigertOpplysning.opplysningstype shouldBe TestOpplysningstyper.heltall
+        }
+    }
+
+    @Test
+    fun sse() {
+        medSikretBehandlingApi {
+            val client =
+                createClient {
+                    install(SSE) {
+                        showRetryEvents()
+                        showCommentEvents()
+                    }
+                }
+
+            client.sse("/behandling/sse") {
+            }
         }
     }
 
