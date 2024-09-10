@@ -23,6 +23,10 @@ class Person(
     constructor(ident: Ident) : this(ident, mutableListOf())
 
     override fun håndter(hendelse: SøknadInnsendtHendelse) {
+        if (behandlinger.any { it.behandler.eksternId == hendelse.eksternId }) {
+            hendelse.varsel("Søknad med eksternId ${hendelse.eksternId} er allerede mottatt")
+            return
+        }
         hendelse.leggTilKontekst(this)
         val behandling =
             hendelse.behandling().also { behandling ->

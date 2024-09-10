@@ -100,6 +100,25 @@ internal class PersonMediatorTest {
     }
 
     @Test
+    fun `skal lage en behandling for samme søknad`() {
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    søknadstidspunkt = 6.mai(2021),
+                )
+            testPerson.sendSøknad()
+            rapid.harHendelse("behandling_opprettet", offset = 2)
+            testPerson.sendSøknad()
+            personRepository.hent(ident.tilPersonIdentfikator()).also {
+                it.shouldNotBeNull()
+                it.behandlinger().size shouldBe 1
+            }
+        }
+    }
+
+    @Test
     fun `søknad med for lite inntekt skal automatisk avslås`() =
         withMigratedDb {
             val testPerson =
