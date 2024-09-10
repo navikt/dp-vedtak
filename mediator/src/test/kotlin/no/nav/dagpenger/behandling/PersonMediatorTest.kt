@@ -100,7 +100,7 @@ internal class PersonMediatorTest {
     }
 
     @Test
-    fun `skal lage en behandling for samme søknad`() {
+    fun `kan bare lage en behandling for samme søknad`() {
         withMigratedDb {
             val testPerson =
                 TestPerson(
