@@ -59,6 +59,10 @@ spec:
           - id: {{azure.grupper.saksbehandler}}
           - id: {{azure.grupper.beslutter}}
   observability:
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
     autoInstrumentation:
       enabled: true
       runtime: java
