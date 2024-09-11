@@ -1,12 +1,12 @@
 package no.nav.dagpenger.opplysning
 
+import io.kotest.assertions.throwables.shouldThrow
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.desimaltall
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.foreldrevilkår
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.undervilkår1
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.undervilkår2
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 class OpplysningerTest {
@@ -27,66 +27,59 @@ class OpplysningerTest {
     }
 
     @Test
-    fun `tillater ikke overlappende opplysninger av samme type`() {
-        val opplysninger =
-            Opplysninger().also {
-                Regelkjøring(1.mai, it)
-            }
+    fun `Ny opplysning overlapper på halen av eksisterende opplysning`() {
+        // Og skal endre tilOgMed for eksisterende opplysning
+        // Og skal legge til ny opplysning
+        val opplysninger = Opplysninger()
 
-        opplysninger.leggTil(Faktum(desimaltall, 0.5, Gyldighetsperiode(1.mai, 10.mai)))
-        assertThrows<IllegalArgumentException> {
-            opplysninger.leggTil(Faktum(desimaltall, 0.5))
+        opplysninger.leggTil(Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 1.mai)))
+        opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 11.mai)))
+
+        assertEquals(0.5, opplysninger.forDato(10.mai).finnOpplysning(desimaltall).verdi)
+        assertEquals(1.5, opplysninger.forDato(15.mai).finnOpplysning(desimaltall).verdi)
+    }
+
+    @Test
+    fun `Ny opplysning overlapper samme periode`() {
+        // Da skal vi erstatte gammel opplysning med ny
+        val opplysninger = Opplysninger()
+
+        opplysninger.leggTil(Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 1.mai)))
+        opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 1.mai)))
+
+        assertEquals(1.5, opplysninger.forDato(1.mai).finnOpplysning(desimaltall).verdi)
+        assertEquals(1.5, opplysninger.forDato(15.mai).finnOpplysning(desimaltall).verdi)
+    }
+
+    @Test
+    fun `Ny opplysning overlapper på starten av eksisterende opplysning`() {
+        // Da skal vi erstatte gammel opplysning med ny
+        val opplysninger = Opplysninger()
+
+        opplysninger.leggTil(Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 5.mai, tom = 20.mai)))
+        opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 1.mai, tom = 16.mai)))
+
+        assertEquals(1.5, opplysninger.forDato(1.mai).finnOpplysning(desimaltall).verdi)
+        assertEquals(1.5, opplysninger.forDato(15.mai).finnOpplysning(desimaltall).verdi)
+
+        shouldThrow<Exception> {
+            assertEquals(1.5, opplysninger.forDato(18.mai).finnOpplysning(desimaltall).verdi)
         }
-        opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(11.mai)))
-
-        assertEquals(0.5, opplysninger.finnOpplysning(desimaltall).verdi)
-        assertEquals(0.5, opplysninger.finnOpplysning(desimaltall).verdi)
-        Regelkjøring(15.mai, opplysninger) // Bytt til 15. mai for regelkjøringen
-        assertEquals(1.5, opplysninger.finnOpplysning(desimaltall).verdi)
     }
 
     @Test
-    fun `opplysninger kan erstattes om de gjelder samme periode`() {
-        val opplysninger =
-            Opplysninger().also {
-                Regelkjøring(1.mai, it)
-            }
+    fun `Ny opplysning overlapper på midten av eksisterende opplysning`() {
+        // Da skal vi erstatte gammel opplysning med forkortet opplysning og legge til ny opplysning
+        val opplysninger = Opplysninger()
 
-        val gyldighetsperiode = Gyldighetsperiode(1.mai, 10.mai)
-        opplysninger.leggTil(Faktum(desimaltall, 0.5, gyldighetsperiode))
-        opplysninger.leggTil(Faktum(desimaltall, 1.5, gyldighetsperiode))
+        opplysninger.leggTil(Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 1.mai, tom = 30.mai)))
+        opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 10.mai, tom = 20.mai)))
 
-        assertEquals(1.5, opplysninger.finnOpplysning(desimaltall).verdi)
-    }
+        assertEquals(0.5, opplysninger.forDato(1.mai).finnOpplysning(desimaltall).verdi)
+        assertEquals(1.5, opplysninger.forDato(15.mai).finnOpplysning(desimaltall).verdi)
 
-    @Test
-    fun `opplysninger kan erstattes om de bare overlapper på halen`() {
-        val opplysninger =
-            Opplysninger().also {
-                Regelkjøring(8.mai, it)
-            }
-
-        opplysninger.leggTil(Faktum(desimaltall, 0.5, Gyldighetsperiode(1.mai, 10.mai)))
-        opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(5.mai, 15.mai)))
-
-        assertEquals(1.5, opplysninger.finnOpplysning(desimaltall).verdi)
-    }
-
-    @Test
-    fun `opplysninger kan arve tidligere opplysninger`() {
-        val tidligereOpplysninger = Opplysninger(listOf(Faktum(desimaltall, 0.5, Gyldighetsperiode(1.mai, 20.mai))))
-        val opplysninger =
-            Opplysninger(tidligereOpplysninger).also {
-                Regelkjøring(15.mai, it)
-            }
-
-        // Vi får hentet ut opplysning fra tidligere behandlinger
-        assertEquals(0.5, opplysninger.finnOpplysning(desimaltall).verdi)
-
-        assertThrows<IllegalArgumentException> {
-            opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(15.mai, 18.mai)))
+        shouldThrow<Exception> {
+            assertEquals(1.5, opplysninger.forDato(21.mai).finnOpplysning(desimaltall).verdi)
         }
-
-        opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(21.mai)))
     }
 }

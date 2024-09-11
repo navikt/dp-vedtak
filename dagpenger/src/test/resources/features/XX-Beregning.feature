@@ -3,13 +3,13 @@ Egenskap: Beregning av meldekort
 
   Scenario: Jobbet over terskel og får ingen utbetaling
     Gitt at mottaker har vedtak med
-      | Opplysning | verdi | fraOgMed   | tilOgMed |
-      | Terskel    | 0.5   |            |          |
-      | Periode    | 52    | 01.01.2020 |          |
-      | Sats       | 550   | 01.01.2020 |          |
-      | FVA        | 37.5  | 01.01.2020 |          |
-      | Sats       | 5555  | 13.01.2020 |          |
-      | Egenandel  | 0     | 01.01.2020 |          |
+      | Opplysning | verdi | fraOgMed   | tilOgMed   |
+      | Terskel    | 0.5   |            |            |
+      | Periode    | 52    | 01.01.2020 |            |
+      | Sats       | 550   | 01.01.2020 | 12.01.2020 |
+      | FVA        | 37.5  | 01.01.2020 |            |
+      | Sats       | 5555  | 13.01.2020 |            |
+      | Egenandel  | 0     | 01.01.2020 |            |
     Når meldekort for periode som begynner fra og med 06.01.2020 mottas med
       | Dag     | type         | verdi |
       | Mandag  | Arbeidstimer | 5     |
@@ -61,7 +61,7 @@ Egenskap: Beregning av meldekort
       | Terskel    | 0.5   |            |          |
       | Periode    | 52    | 01.01.2020 |          |
       | Sats       | 101   | 01.01.2020 |          |
-      | FVA        | 37.5    | 01.01.2020 |          |
+      | FVA        | 37.5  | 01.01.2020 |          |
       | Egenandel  | 0     | 01.01.2020 |          |
     Når meldekort for periode som begynner fra og med 06.01.2020 mottas med
       | Dag     | type         | verdi |

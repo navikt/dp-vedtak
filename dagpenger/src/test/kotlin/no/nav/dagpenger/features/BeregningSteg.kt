@@ -27,6 +27,10 @@ class BeregningSteg : No {
     private lateinit var meldeperiodeFraOgMed: LocalDate
     private lateinit var meldeperiodeTilOgMed: LocalDate
 
+    private companion object {
+        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())
+    }
+
     init {
         Gitt("at terskel er satt til {double}") { terskelVerdi: Double ->
             opplysninger.add(Faktum(terskel, terskelVerdi))
@@ -93,17 +97,12 @@ class BeregningSteg : No {
             factory(it, gyldighetsperiode(it["fraOgMed"].toLocalDate(), it["tilOgMed"].toLocalDate()))
         }
 
-    private companion object {
-        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())
-    }
-
     private fun String?.toLocalDate() = this?.let { LocalDate.parse(it, formatter) }
 
     private fun gyldighetsperiode(
         gyldigFraOgMed: LocalDate? = null,
         gyldigTilOgMed: LocalDate? = null,
     ): Gyldighetsperiode =
-
         if (gyldigFraOgMed != null && gyldigTilOgMed != null) {
             Gyldighetsperiode(gyldigFraOgMed, gyldigTilOgMed)
         } else if (gyldigFraOgMed != null && gyldigTilOgMed == null) {

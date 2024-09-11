@@ -1,10 +1,5 @@
 package no.nav.dagpenger.opplysning
 
-import no.nav.dagpenger.opplysning.verdier.Beløp
-import no.nav.dagpenger.opplysning.verdier.Inntekt
-import no.nav.dagpenger.opplysning.verdier.Ulid
-import java.time.LocalDate
-
 interface Klassifiserbart {
     fun er(type: Opplysningstype<*>): Boolean
 }
@@ -31,106 +26,51 @@ class OpplysningTypeId(
 class Opplysningstype<T : Comparable<T>>(
     private val opplysningTypeId: OpplysningTypeId,
     val datatype: Datatype<T>,
-    private val parent: Opplysningstype<T>? = null,
-    private val child: MutableSet<Opplysningstype<*>> = mutableSetOf(),
 ) : Klassifiserbart {
     constructor(
         navn: String,
         datatype: Datatype<T>,
-        parent: Opplysningstype<T>? = null,
-    ) : this(OpplysningTypeId(navn, navn), datatype, parent)
+    ) : this(OpplysningTypeId(navn, navn), datatype)
 
     val id = opplysningTypeId.id
     val navn = opplysningTypeId.beskrivelse
     val tekstId = opplysningTypeId.tekstId
 
-    init {
-        parent?.child?.add(this)
-    }
-
     companion object {
-        fun somHeltall(
-            opplysningTypeId: OpplysningTypeId,
-            parent: Opplysningstype<Int>? = null,
-        ) = Opplysningstype(opplysningTypeId, Heltall, parent)
+        fun somHeltall(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Heltall)
 
-        fun somHeltall(
-            navn: String,
-            parent: Opplysningstype<Int>? = null,
-        ) = somHeltall(navn.id(navn), parent)
+        fun somHeltall(navn: String) = somHeltall(navn.id(navn))
 
-        fun somDesimaltall(
-            opplysningTypeId: OpplysningTypeId,
-            parent: Opplysningstype<Double>? = null,
-        ) = Opplysningstype(opplysningTypeId, Desimaltall, parent)
+        fun somDesimaltall(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Desimaltall)
 
-        fun somDesimaltall(
-            navn: String,
-            parent: Opplysningstype<Double>? = null,
-        ) = somDesimaltall(navn.id(navn), parent)
+        fun somDesimaltall(navn: String) = somDesimaltall(navn.id(navn))
 
-        fun somDato(
-            opplysningTypeId: OpplysningTypeId,
-            parent: Opplysningstype<LocalDate>? = null,
-        ) = Opplysningstype(opplysningTypeId, Dato, parent)
+        fun somDato(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Dato)
 
-        fun somDato(
-            navn: String,
-            parent: Opplysningstype<LocalDate>? = null,
-        ) = somDato(navn.id(navn), parent)
+        fun somDato(navn: String) = somDato(navn.id(navn))
 
-        fun somUlid(
-            opplysningTypeId: OpplysningTypeId,
-            parent: Opplysningstype<Ulid>? = null,
-        ) = Opplysningstype(opplysningTypeId, ULID, parent)
+        fun somUlid(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, ULID)
 
-        fun somUlid(
-            navn: String,
-            parent: Opplysningstype<Ulid>? = null,
-        ) = somUlid(navn.id(navn), parent)
+        fun somUlid(navn: String) = somUlid(navn.id(navn))
 
-        fun somBoolsk(
-            opplysningTypeId: OpplysningTypeId,
-            parent: Opplysningstype<Boolean>? = null,
-        ) = Opplysningstype(opplysningTypeId, Boolsk, parent)
+        fun somBoolsk(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Boolsk)
 
-        fun somBoolsk(
-            navn: String,
-            parent: Opplysningstype<Boolean>? = null,
-        ) = somBoolsk(navn.id(navn), parent)
+        fun somBoolsk(navn: String) = somBoolsk(navn.id(navn))
 
-        fun somBeløp(
-            navn: String,
-            parent: Opplysningstype<Beløp>? = null,
-        ) = somBeløp(navn.id(navn), parent)
+        fun somBeløp(navn: String) = somBeløp(navn.id(navn))
 
-        fun somBeløp(
-            opplysningTypeId: OpplysningTypeId,
-            parent: Opplysningstype<Beløp>? = null,
-        ) = Opplysningstype(opplysningTypeId, Penger, parent)
+        fun somBeløp(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Penger)
 
-        fun somInntekt(
-            navn: String,
-            parent: Opplysningstype<Inntekt>? = null,
-        ) = somInntekt(navn.id(navn), parent)
+        fun somInntekt(navn: String) = somInntekt(navn.id(navn))
 
-        fun somInntekt(
-            opplysningTypeId: OpplysningTypeId,
-            parent: Opplysningstype<Inntekt>? = null,
-        ) = Opplysningstype<Inntekt>(opplysningTypeId, InntektDataType, parent)
+        fun somInntekt(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, InntektDataType)
 
-        fun somTekst(
-            navn: String,
-            parent: Opplysningstype<String>? = null,
-        ) = somTekst(navn.id(navn), parent)
+        fun somTekst(navn: String) = somTekst(navn.id(navn))
 
-        fun somTekst(
-            opplysningTypeId: OpplysningTypeId,
-            parent: Opplysningstype<String>?,
-        ) = Opplysningstype(opplysningTypeId, Tekst, parent)
+        fun somTekst(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Tekst)
     }
 
-    override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId || parent?.er(type) ?: false
+    override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId
 
     override fun toString() = "opplysning om $navn"
 

@@ -19,6 +19,6 @@ internal object TestOpplysningstyper {
     val boolskC by lazy { Opplysningstype.somBoolsk("boolsk C") }
     val boolskA by lazy { Opplysningstype.somBoolsk("boolsk A") }
     val foreldrevilkår by lazy { Opplysningstype.somBoolsk("Foreldrevilkår") }
-    val undervilkår1 by lazy { Opplysningstype.somBoolsk("Undervilkår1", foreldrevilkår) }
-    val undervilkår2 by lazy { Opplysningstype.somBoolsk("Undervilkår2", foreldrevilkår) }
+    val undervilkår1 by lazy { Opplysningstype.somBoolsk("Undervilkår1") }
+    val undervilkår2 by lazy { Opplysningstype.somBoolsk("Undervilkår2") }
 }

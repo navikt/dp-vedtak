@@ -1,7 +1,7 @@
 package no.nav.dagpenger.regel.beregning
 
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
-import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk.Dagstype.Helg
 import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk.Dagstype.Hverdag
@@ -15,26 +15,25 @@ import java.time.LocalDate
 internal class BeregningsperiodeFabrikk(
     private val meldeperiodeFraOgMed: LocalDate,
     private val meldeperiodeTilOgMed: LocalDate,
-    private val opplysninger: Opplysninger,
+    private val opplysninger: LesbarOpplysninger,
 ) {
     fun lagBeregningsperiode(): Beregningsperiode {
-        val gjenståendeEgenandel = hentGjenståendeEgenandel(opplysninger)
-        val virkningsdato = hentVedtaksperiode(opplysninger)
+        val gjenståendeEgenandel = hentGjenståendeEgenandel()
+        val virkningsdato = hentVedtaksperiode()
         val dager = beregnDager(meldeperiodeFraOgMed, virkningsdato)
-        val periode = opprettPeriode(dager, opplysninger)
+        val periode = opprettPeriode(dager)
 
         return Beregningsperiode(gjenståendeEgenandel, periode)
     }
 
-    private fun hentGjenståendeEgenandel(opplysninger: Opplysninger) =
+    private fun hentGjenståendeEgenandel() =
         opplysninger
             .finnOpplysning(Egenandel.egenandel)
             .verdi.verdien
             .toDouble()
 
     // TODO: Finn en ekte virkningsdato
-    private fun hentVedtaksperiode(opplysninger: Opplysninger) =
-        opplysninger.finnOpplysning(Dagpengeperiode.antallStønadsuker).gyldighetsperiode
+    private fun hentVedtaksperiode() = opplysninger.finnOpplysning(Dagpengeperiode.antallStønadsuker).gyldighetsperiode
 
     private fun beregnDager(
         meldeperiodeFraOgMed: LocalDate,
@@ -45,21 +44,18 @@ internal class BeregningsperiodeFabrikk(
         return sisteStart.datesUntil(førsteSlutt).toList()
     }
 
-    private fun opprettPeriode(
-        dager: List<LocalDate>,
-        opplysninger: Opplysninger,
-    ): List<Dag> =
+    private fun opprettPeriode(dager: List<LocalDate>): List<Dag> =
         dager.map { dato ->
-            opplysninger.forDato = dato
+            val gjeldendeOpplysninger = opplysninger.forDato(dato)
             when (dato.dagstype) {
-                Hverdag -> opprettArbeidsdagEllerFraværsdag(dato, opplysninger)
-                Helg -> Helgedag(dato, opplysninger.finnOpplysning(Beregning.arbeidstimer).verdi)
+                Hverdag -> opprettArbeidsdagEllerFraværsdag(dato, gjeldendeOpplysninger)
+                Helg -> Helgedag(dato, gjeldendeOpplysninger.finnOpplysning(Beregning.arbeidstimer).verdi)
             }
         }
 
     private fun opprettArbeidsdagEllerFraværsdag(
         dato: LocalDate,
-        opplysninger: Opplysninger,
+        opplysninger: LesbarOpplysninger,
     ): Dag {
         val erArbeidsdag = opplysninger.har(Beregning.arbeidsdag) && opplysninger.finnOpplysning(Beregning.arbeidsdag).verdi
         return if (erArbeidsdag) {

@@ -37,7 +37,7 @@ sealed class Opplysning<T : Comparable<T>>(
     val kanRedigeres: (Redigerbar) -> Boolean get() = { redigerbar -> redigerbar.kanRedigere(this) && defaultRedigering.kanRedigere(this) }
 
     fun overlapper(opplysning: Opplysning<*>) =
-        opplysningstype == opplysning.opplysningstype && gyldighetsperiode.overlapp(opplysning.gyldighetsperiode)
+        opplysningstype.er(opplysning.opplysningstype) && gyldighetsperiode.overlapp(opplysning.gyldighetsperiode)
 
     override fun equals(other: Any?) = other is Opplysning<*> && id == other.id
 

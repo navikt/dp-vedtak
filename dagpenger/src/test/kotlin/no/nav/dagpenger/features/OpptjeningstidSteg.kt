@@ -13,7 +13,7 @@ import java.time.LocalDate
 class OpptjeningstidSteg : No {
     private val forDato = 10.mai(2022)
     private val regelsett = listOf(Opptjeningstid.regelsett, Søknadstidspunkt.regelsett)
-    private val opplysninger = Opplysninger(forDato = forDato)
+    private val opplysninger = Opplysninger()
 
     init {
         val regelkjøring = Regelkjøring(forDato, opplysninger, *regelsett.toTypedArray())
