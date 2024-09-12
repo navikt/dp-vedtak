@@ -3,6 +3,7 @@ package no.nav.dagpenger.behandling.mediator.mottak
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.mockk.Called
 import io.mockk.clearMocks
 import io.mockk.mockk
 import io.mockk.slot
@@ -133,6 +134,23 @@ class OpplysningSvarMottakTest {
             .opplysning()
             .gyldighetsperiode shouldBe
             Gyldighetsperiode(LocalDate.MIN, gyldigFraOgMed)
+    }
+
+    @Test
+    fun `logger og kaster behov uten opplysningsbehov`() {
+        rapid.sendTestMessage(
+            JsonMessage
+                .newNeed(
+                    listOf("test"),
+                    konvolutt.toMutableMap().apply {
+                        remove("@opplysningsbehov")
+                    },
+                ).toJson(),
+        )
+
+        verify {
+            messageMediator wasNot Called
+        }
     }
 
     private val behandlingId = UUIDv7.ny()

@@ -36,6 +36,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
+import no.nav.helse.rapids_rivers.isMissingOrNull
 import java.time.LocalDate
 import java.util.UUID
 
@@ -68,7 +69,7 @@ internal class OpplysningSvarMottak(
         packet: JsonMessage,
         context: MessageContext,
     ) {
-        val opplysningBehov = packet["@opplysningsbehov"].isNull
+        val opplysningBehov = packet["@opplysningsbehov"].isMissingOrNull()
         if (opplysningBehov) {
             logger.error { "Mottok svar på en opplysning som ikke er et opplysningsbehov" }
             return
