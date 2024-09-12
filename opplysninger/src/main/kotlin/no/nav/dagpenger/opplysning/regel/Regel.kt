@@ -26,6 +26,8 @@ abstract class Regel<T : Comparable<T>> internal constructor(
         }
     }
 
+    abstract override fun toString(): String
+
     protected abstract fun kjør(opplysninger: LesbarOpplysninger): T
 
     fun produserer(opplysningstype: Opplysningstype<*>) = produserer.er(opplysningstype)

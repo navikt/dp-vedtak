@@ -11,7 +11,7 @@ class Ekstern<T : Comparable<T>> internal constructor(
 
     override fun kjør(opplysninger: LesbarOpplysninger): T = throw IllegalStateException("Kan ikke kjøres")
 
-    override fun toString() = "Ekstern innhenting for $produserer"
+    override fun toString() = "Henter inn opplysning for $produserer med ${avhengerAv.joinToString { it.navn }} som avhengigheter."
 }
 
 fun <T : Comparable<T>> Opplysningstype<T>.innhentMed(vararg opplysninger: Opplysningstype<*>) = Ekstern(this, opplysninger.toList())

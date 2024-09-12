@@ -29,6 +29,8 @@ class FiltrerRelevanteInntekter(
             ),
         )
     }
+
+    override fun toString() = "Filtrerer inntekter for $ufiltrertInntekt med inntektsklasser ${inntektsklasser.joinToString { it.name }}"
 }
 
 fun Opplysningstype<Inntekt>.filtrerRelevanteInntekter(

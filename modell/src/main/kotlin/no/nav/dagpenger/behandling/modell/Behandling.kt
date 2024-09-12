@@ -25,6 +25,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.opplysning.regel.Regel
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.KravPåDagpenger
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
@@ -322,6 +323,10 @@ class Behandling private constructor(
 
             // Kjør regelkjøring for alle opplysninger
             val rapport = behandling.regelkjøring.evaluer()
+
+            rapport.kjørteRegler.forEach { regel: Regel<*> ->
+                hendelse.info(regel.toString())
+            }
 
             hendelse.lagBehov(rapport.informasjonsbehov)
 

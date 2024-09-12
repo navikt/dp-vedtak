@@ -42,6 +42,8 @@ class Oppjuster(
             )
         return Inntekt(oppjustertInntekt)
     }
+
+    override fun toString() = "Oppjusterer inntekt for $inntekt med grunnbeløp $grunnbeløp"
 }
 
 fun Opplysningstype<Inntekt>.oppjuster(

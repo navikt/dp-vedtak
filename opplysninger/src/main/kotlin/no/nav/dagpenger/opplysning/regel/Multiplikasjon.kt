@@ -16,7 +16,7 @@ class Multiplikasjon<R : Comparable<R>, T1 : Comparable<T1>, T2 : Comparable<T2>
         return operasjon(a.verdi, b.verdi)
     }
 
-    override fun toString(): String = "Multiplikasjon av $faktor1 med $faktor2"
+    override fun toString(): String = "Regner ut $produserer ved å gange $faktor1 med $faktor2"
 }
 
 @JvmName("multiplikasjonBeløpDouble")
