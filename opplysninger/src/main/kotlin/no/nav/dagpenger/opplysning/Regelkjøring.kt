@@ -11,6 +11,8 @@ import java.time.LocalDate
 
 // Virkningsdato: Dato som *behandlingen* finner til slutt
 
+typealias Informasjonsbehov = Map<Opplysningstype<*>, List<Opplysning<*>>>
+
 class Regelkjøring(
     private val regelverksdato: LocalDate,
     private val prøvingsdato: LocalDate,
@@ -53,9 +55,9 @@ class Regelkjøring(
         }
 
         return Regelkjøringsrapport(
-            kjørteRegler,
-            trenger(),
-            informasjonsbehov(),
+            kjørteRegler = kjørteRegler,
+            mangler = trenger(),
+            informasjonsbehov = informasjonsbehov(),
         )
     }
 
@@ -84,7 +86,7 @@ class Regelkjøring(
         opplysninger.leggTilUtledet(opplysning)
     }
 
-    internal fun trenger(): Set<Opplysningstype<*>> {
+    private fun trenger(): Set<Opplysningstype<*>> {
         val graph = RegeltreBygger(muligeRegler).dag()
         val opplysningerUtenRegel = graph.findLeafNodes()
         val opplysningerMedEksternRegel = graph.findNodesWithEdge { it.data is Ekstern<*> }
@@ -94,7 +96,7 @@ class Regelkjøring(
             .toSet()
     }
 
-    fun informasjonsbehov(): Map<Opplysningstype<*>, List<Opplysning<*>>> =
+    private fun informasjonsbehov(): Informasjonsbehov =
         trenger()
             .associateWith {
                 // Finn regel som produserer opplysningstype og hent ut avhengigheter
@@ -110,6 +112,10 @@ class Regelkjøring(
 
 data class Regelkjøringsrapport(
     val kjørteRegler: List<Regel<*>>,
-    val manglendeOpplysninger: Set<Opplysningstype<*>>,
-    val oppdaterteOpplysninger: Map<Opplysningstype<*>, List<Opplysning<*>>>,
-)
+    val mangler: Set<Opplysningstype<*>>,
+    val informasjonsbehov: Informasjonsbehov,
+) {
+    fun manglerOpplysninger(): Boolean = mangler.isNotEmpty()
+
+    fun erFerdig(): Boolean = !manglerOpplysninger()
+}

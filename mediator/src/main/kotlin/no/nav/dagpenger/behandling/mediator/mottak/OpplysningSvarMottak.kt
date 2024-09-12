@@ -49,7 +49,7 @@ internal class OpplysningSvarMottak(
             .apply {
                 validate { it.demandValue("@event_name", "behov") }
                 validate { it.demandValue("@final", true) }
-                validate { it.demandValue("@opplysningsbehov", true) }
+                validate { it.interestedIn("@opplysningsbehov") }
                 validate { it.requireKey("ident") }
                 validate { it.requireKey("@løsning") }
                 validate { it.requireKey("behandlingId") }
@@ -68,6 +68,11 @@ internal class OpplysningSvarMottak(
         packet: JsonMessage,
         context: MessageContext,
     ) {
+        val opplysningBehov = packet["@opplysningsbehov"].isNull
+        if (opplysningBehov) {
+            logger.error { "Mottok svar på en opplysning som ikke er et opplysningsbehov" }
+            return
+        }
         val behovId = packet["@behovId"].asText()
         val behandlingId = packet["behandlingId"].asUUID()
         addOtelAttributes(behovId, behandlingId)

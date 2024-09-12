@@ -56,11 +56,11 @@ class RegelmotorIntegrasjonsTest {
         regelkjøring.leggTil(Faktum(Virkningsdato.sisteDagMedArbeidsplikt, regelverksdato))
         regelkjøring.leggTil(Faktum(Virkningsdato.sisteDagMedLønn, regelverksdato))
 
-        regelkjøring.informasjonsbehov() shouldContainAll mapOf(Alderskrav.fødselsdato to listOf())
+        regelkjøring.evaluer().informasjonsbehov shouldContainAll mapOf(Alderskrav.fødselsdato to listOf())
         regelkjøring.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
 
         val faktiskVirkningsdato = opplysninger.finnOpplysning(virkningsdato)
-        with(regelkjøring.informasjonsbehov()) {
+        with(regelkjøring.evaluer().informasjonsbehov) {
             shouldContainAll(
                 mapOf(
                     ReglerForInntektTest.inntekt12 to listOf(faktiskVirkningsdato),
@@ -80,7 +80,7 @@ class RegelmotorIntegrasjonsTest {
             ),
         )
         regelkjøring.leggTil(Hypotese(ReglerForInntektTest.inntekt36, Beløp(321321.0), Gyldighetsperiode(9.mai, 12.mai)))
-        assertEquals(0, regelkjøring.trenger().size)
+        assertEquals(0, regelkjøring.evaluer().mangler.size)
 
         assertTrue(opplysninger.har(ReglerForInntektTest.minsteinntekt))
         assertTrue(opplysninger.finnOpplysning(ReglerForInntektTest.minsteinntekt).verdi)
@@ -102,11 +102,11 @@ class RegelmotorIntegrasjonsTest {
         val regelkjøring = Regelkjøring(fraDato, opplysninger, Alderskrav.regelsett)
 
         // Flyt for å innhente manglende opplysninger
-        val trenger = regelkjøring.trenger()
-        assertEquals(setOf(Alderskrav.fødselsdato, virkningsdato), trenger)
+        val mangler = regelkjøring.evaluer().mangler
+        assertEquals(setOf(Alderskrav.fødselsdato, virkningsdato), mangler)
 
         regelkjøring.leggTil(Faktum(virkningsdato, LocalDate.of(2020, 2, 29)))
-        assertEquals(setOf(Alderskrav.fødselsdato), regelkjøring.trenger())
+        assertEquals(setOf(Alderskrav.fødselsdato), regelkjøring.evaluer().mangler)
 
         regelkjøring.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
 

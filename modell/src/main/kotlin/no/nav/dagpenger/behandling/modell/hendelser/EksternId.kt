@@ -24,9 +24,4 @@ class SøknadId(
             "søknadId" to id.toString(),
             "søknad_uuid" to id.toString(),
         )
-
-//        "InnsendtSøknadsId" to mapOf(
-//            "urn" to "urn:soknadid:${id}"
-//            )
-//        )
 }

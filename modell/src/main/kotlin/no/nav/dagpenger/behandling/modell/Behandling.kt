@@ -19,9 +19,11 @@ import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Hypotese
+import no.nav.dagpenger.opplysning.Informasjonsbehov
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.KravPåDagpenger
@@ -57,7 +59,7 @@ class Behandling private constructor(
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
     private val opplysninger: Opplysninger = (gjeldendeOpplysninger + tidligereOpplysninger)
 
-    private val regelkjøring get() = behandler.regelkjøring(opplysninger)
+    private val regelkjøring: Regelkjøring get() = behandler.regelkjøring(opplysninger)
 
     private val avklaringer = Avklaringer(behandler.kontrollpunkter(), avklaringer)
 
@@ -124,32 +126,6 @@ class Behandling private constructor(
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
-
-    private fun informasjonsbehov() = regelkjøring.informasjonsbehov()
-
-    private fun hvaTrengerViNå(hendelse: PersonHendelse) =
-        informasjonsbehov().onEach { (behov, avhengigheter) ->
-            hendelse.behov(
-                type = OpplysningBehov(behov.id),
-                melding = "Trenger en opplysning (${behov.id})",
-                detaljer =
-                    mapOf("@opplysningsbehov" to true) +
-                        avhengigheter.associate { avhengighet ->
-                            val verdi =
-                                when (avhengighet.verdi) {
-                                    is Ulid -> (avhengighet.verdi as Ulid).verdi
-                                    else -> avhengighet.verdi
-                                }
-                            avhengighet.opplysningstype.id to verdi
-                        } +
-                        // TODO: Midlertidlig hack for å få med søknadId for gamle behovløsere
-                        mapOf(
-                            "InnsendtSøknadsId" to mapOf("urn" to "urn:soknad:${behandler.eksternId.id}"),
-                            // søknad_uuid er egentlig ID på prosessen i quiz, som ikke er det samme som søknaden som behandles sin ID
-                            "søknad_uuid" to behandlingId.toString(),
-                        ),
-            )
-        }
 
     fun registrer(observatør: BehandlingObservatør) {
         observatører.add(observatør)
@@ -293,9 +269,10 @@ class Behandling private constructor(
             hendelse: PersonHendelse,
         ) {
             behandling.observatører.forEach { it.behandlingStartet() }
-            val trenger = behandling.hvaTrengerViNå(hendelse)
+            val regelkjøringsrapport = behandling.regelkjøring.evaluer()
+            hendelse.lagBehov(regelkjøringsrapport.informasjonsbehov)
 
-            if (trenger.isEmpty()) {
+            if (regelkjøringsrapport.erFerdig()) {
                 behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
@@ -305,7 +282,11 @@ class Behandling private constructor(
             hendelse: PåminnelseHendelse,
         ) {
             hendelse.kontekst(this)
-            behandling.hvaTrengerViNå(hendelse)
+            val rapport = behandling.regelkjøring.evaluer()
+            if (rapport.erFerdig()) {
+                hendelse.logiskFeil("Behandlingen er ferdig men vi er fortsatt i ${this.type.name}")
+            }
+            hendelse.lagBehov(rapport.informasjonsbehov)
         }
 
         override fun håndter(
@@ -340,11 +321,11 @@ class Behandling private constructor(
             }
 
             // Kjør regelkjøring for alle opplysninger
-            behandling.regelkjøring.evaluer()
+            val rapport = behandling.regelkjøring.evaluer()
 
-            val trenger = behandling.hvaTrengerViNå(hendelse)
+            hendelse.lagBehov(rapport.informasjonsbehov)
 
-            if (trenger.isEmpty()) {
+            if (rapport.erFerdig()) {
                 if (behandling.aktiveAvklaringer().isEmpty()) {
                     hendelse.info("Har ingen aktive avklaringer, går videre til vedtak.")
                     behandling.tilstand(Ferdig(), hendelse)
@@ -477,10 +458,9 @@ class Behandling private constructor(
             hendelse: PersonHendelse,
         ) {
             // Kjør regelkjøring for alle opplysninger
-            behandling.regelkjøring.evaluer()
-
-            val trenger = behandling.hvaTrengerViNå(hendelse)
-            if (trenger.isEmpty()) {
+            val rapport = behandling.regelkjøring.evaluer()
+            hendelse.lagBehov(rapport.informasjonsbehov)
+            if (rapport.erFerdig()) {
                 behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
@@ -492,10 +472,9 @@ class Behandling private constructor(
             hendelse.opplysninger.forEach { opplysning ->
                 behandling.regelkjøring.leggTil(opplysning.opplysning())
             }
-            behandling.regelkjøring.evaluer()
-
-            val trenger = behandling.hvaTrengerViNå(hendelse)
-            if (trenger.isEmpty()) {
+            val rapport = behandling.regelkjøring.evaluer()
+            hendelse.lagBehov(rapport.informasjonsbehov)
+            if (rapport.erFerdig()) {
                 behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
@@ -504,7 +483,11 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: PåminnelseHendelse,
         ) {
-            behandling.hvaTrengerViNå(hendelse)
+            val rapport = behandling.regelkjøring.evaluer()
+            if (rapport.erFerdig()) {
+                hendelse.logiskFeil("Behandlingen er ferdig men vi er fortsatt i ${this.type.name}")
+            }
+            hendelse.lagBehov(rapport.informasjonsbehov)
         }
     }
 
@@ -662,3 +645,21 @@ sealed class BehandlingHendelser(
 
     data object AvbrytBehandlingHendelse : BehandlingHendelser("behandling_avbrutt")
 }
+
+private fun PersonHendelse.lagBehov(informasjonsbehov: Informasjonsbehov) =
+    informasjonsbehov.onEach { (behov, avhengigheter) ->
+        behov(
+            type = OpplysningBehov(behov.id),
+            melding = "Trenger en opplysning (${behov.id})",
+            detaljer =
+                mapOf("@opplysningsbehov" to true) +
+                    avhengigheter.associate { avhengighet ->
+                        val verdi =
+                            when (avhengighet.verdi) {
+                                is Ulid -> (avhengighet.verdi as Ulid).verdi
+                                else -> avhengighet.verdi
+                            }
+                        avhengighet.opplysningstype.id to verdi
+                    } + this.kontekstMap(),
+        )
+    }

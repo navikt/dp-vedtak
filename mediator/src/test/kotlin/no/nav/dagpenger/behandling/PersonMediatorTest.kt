@@ -9,7 +9,6 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.mockk.mockk
 import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
@@ -423,8 +422,8 @@ internal class PersonMediatorTest {
          * Fastsetter søknadstidspunkt
          */
         rapid.harBehov("Søknadstidspunkt") {
-            medTekst("søknad_uuid") shouldNotBe testPerson.søknadId
-            medNode("InnsendtSøknadsId")["urn"].asText() shouldBe "urn:soknad:${testPerson.søknadId}"
+            medTekst("søknadId") shouldBe testPerson.søknadId
+            medTekst("søknad_uuid") shouldBe testPerson.søknadId
         }
 
         rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
