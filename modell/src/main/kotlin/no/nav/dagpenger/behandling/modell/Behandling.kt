@@ -61,9 +61,9 @@ class Behandling private constructor(
 
     private val avklaringer = Avklaringer(behandler.kontrollpunkter(), avklaringer)
 
-    fun avklaringer() = avklaringer.avklaringer(opplysninger)
+    fun avklaringer() = avklaringer.avklaringer(opplysninger.forDato(behandler.skjedde))
 
-    fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger)
+    fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger.forDato(behandler.skjedde))
 
     companion object {
         fun rehydrer(
