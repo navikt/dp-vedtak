@@ -39,7 +39,6 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.mock.oauth2.server)
     testImplementation(libs.bundles.postgres.test)
-    testImplementation("io.ktor:ktor-client-core:3.0.0-beta-2")
     testImplementation("io.ktor:ktor-server-test-host-jvm:${libs.versions.ktor.get()}")
 }
 

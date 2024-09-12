@@ -94,7 +94,6 @@ internal fun Application.behandlingApi(
         get("/behandling/sse") {
             call.respondSse(hendelser)
         }
-
         authenticate("azureAd") {
             route("behandling") {
                 post {
