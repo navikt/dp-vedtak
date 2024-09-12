@@ -15,7 +15,7 @@ class StørreEnnEllerLik internal constructor(
         return a >= b
     }
 
-    override fun toString() = "Større enn $a >= $b"
+    override fun toString() = "Sjekker om $a er større enn eller lik $b"
 }
 
 fun Opplysningstype<Boolean>.størreEnnEllerLik(

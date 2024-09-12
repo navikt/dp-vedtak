@@ -9,7 +9,7 @@ class ErUsann internal constructor(
 ) : Regel<Boolean>(produserer, listOf(opplysningstype)) {
     override fun kjør(opplysninger: LesbarOpplysninger): Boolean = opplysninger.finnOpplysning(opplysningstype).verdi.not()
 
-    override fun toString() = "Sjekket at opplysning $opplysningstype er usann"
+    override fun toString() = "Sjekket om opplysning $opplysningstype er usann"
 }
 
 fun Opplysningstype<Boolean>.erUsann(opplysningstype: Opplysningstype<Boolean>) = ErUsann(this, opplysningstype)

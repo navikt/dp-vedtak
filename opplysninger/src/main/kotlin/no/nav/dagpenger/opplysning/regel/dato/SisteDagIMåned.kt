@@ -14,7 +14,7 @@ class SisteDagIMåned internal constructor(
         return a.withDayOfMonth(a.lengthOfMonth())
     }
 
-    override fun toString() = "Siste dag i måneden for $dato"
+    override fun toString() = "Fastsetter $produserer til siste dag i måneden for $dato"
 }
 
 fun Opplysningstype<LocalDate>.sisteDagIMåned(dato: Opplysningstype<LocalDate>) = SisteDagIMåned(this, dato)

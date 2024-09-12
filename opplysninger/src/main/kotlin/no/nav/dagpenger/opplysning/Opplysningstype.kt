@@ -72,7 +72,7 @@ class Opplysningstype<T : Comparable<T>>(
 
     override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId
 
-    override fun toString() = "opplysning om $navn"
+    override fun toString() = navn
 
     override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningTypeId == this.opplysningTypeId
 

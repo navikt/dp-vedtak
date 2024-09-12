@@ -28,7 +28,7 @@ class SisteavsluttendeKalenderMåned internal constructor(
         return avsluttendeKalenderMåned.withDayOfMonth(avsluttendeKalenderMåned.lengthOfMonth())
     }
 
-    override fun toString() = "Siste avsluttende kalendermåned for $dato og $terskeldato"
+    override fun toString() = "Fastsetter siste avsluttende kalendermåned hvor $dato er etter $terskeldato"
 }
 
 private fun LocalDate.førEllerLik(dato: LocalDate) = this.isBefore(dato) || this.isEqual(dato)

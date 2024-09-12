@@ -10,7 +10,7 @@ class IngenAv internal constructor(
     override fun kjør(opplysninger: LesbarOpplysninger): Boolean =
         opplysninger.finnAlle(opplysningstyper.toList()).none { it.verdi as Boolean }
 
-    override fun toString() = "Ingen av ${opplysningstyper.joinToString(", ")} er sanne"
+    override fun toString() = "Sjekker at ingen av ${opplysningstyper.joinToString(", ")} er sanne"
 }
 
 fun Opplysningstype<Boolean>.ingenAv(vararg opplysningstype: Opplysningstype<Boolean>) = IngenAv(this, *opplysningstype)

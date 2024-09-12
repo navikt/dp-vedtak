@@ -14,7 +14,7 @@ class SisteAv internal constructor(
         return dager.maxOrNull() ?: throw IllegalStateException("Ingen datoer funnet")
     }
 
-    override fun toString() = "Siste dato av ${datoer.joinToString(", ")}"
+    override fun toString() = "Fastsetter $produserer til siste dato av ${datoer.joinToString()}"
 }
 
 fun Opplysningstype<LocalDate>.sisteAv(vararg liste: Opplysningstype<LocalDate>) = SisteAv(this, *liste)

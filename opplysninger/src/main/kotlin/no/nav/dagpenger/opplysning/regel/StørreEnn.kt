@@ -15,7 +15,7 @@ class StørreEnn<T : Comparable<T>> internal constructor(
         return a > b
     }
 
-    override fun toString() = "Større enn $a > $b"
+    override fun toString() = "Sjekker om $a er større enn $b"
 }
 
 @JvmName("størreEnnDouble")

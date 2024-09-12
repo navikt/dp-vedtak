@@ -16,7 +16,7 @@ class FørEllerLik internal constructor(
         return a.isBefore(b) || a.isEqual(b)
     }
 
-    override fun toString() = "$dato er før eller lik $tom"
+    override fun toString() = "Sjekker at $dato er før eller lik $tom"
 }
 
 fun Opplysningstype<Boolean>.førEllerLik(
