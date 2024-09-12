@@ -70,10 +70,6 @@ internal class OpplysningSvarMottak(
         context: MessageContext,
     ) {
         val opplysningBehov = packet["@opplysningsbehov"].isMissingOrNull()
-        if (opplysningBehov) {
-            logger.error { "Mottok svar på en opplysning som ikke er et opplysningsbehov" }
-            return
-        }
         val behovId = packet["@behovId"].asText()
         val behandlingId = packet["behandlingId"].asUUID()
         addOtelAttributes(behovId, behandlingId)
@@ -82,6 +78,10 @@ internal class OpplysningSvarMottak(
             "behovId" to behovId.toString(),
             "behandlingId" to behandlingId.toString(),
         ) {
+            if (opplysningBehov) {
+                logger.error { "Mottok svar på en opplysning som ikke er et opplysningsbehov" }
+                return
+            }
             if (skipBehovId.contains(behovId)) {
                 logger.info { "Mottok svar på en opplysning som skal ignoreres" }
                 return
