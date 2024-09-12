@@ -90,7 +90,7 @@ class Hypotese<T : Comparable<T>>(
             kilde,
             opplysning.opprettet,
             erstatter = this,
-        )
+        ).also { this.erstattesAv(it) }
 }
 
 class Faktum<T : Comparable<T>>(
