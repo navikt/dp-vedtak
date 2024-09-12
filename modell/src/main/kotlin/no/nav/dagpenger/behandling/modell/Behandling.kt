@@ -447,6 +447,7 @@ class Behandling private constructor(
             hendelse.info("Fikk svar på opplysning i ${this.type.name}.")
 
             hendelse.opplysninger.forEach { opplysning ->
+                hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
                 behandling.regelkjøring.leggTil(opplysning.opplysning())
             }
             behandling.tilstand(Redigert(), hendelse)
