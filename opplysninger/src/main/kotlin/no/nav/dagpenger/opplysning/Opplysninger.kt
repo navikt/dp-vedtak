@@ -30,7 +30,7 @@ class Opplysninger private constructor(
     fun <T : Comparable<T>> leggTil(opplysning: Opplysning<T>) {
         val erstattes: Opplysning<T>? = alleOpplysninger.find { it.overlapper(opplysning) } as Opplysning<T>?
         if (erstattes !== null) {
-            if (opplysning.overlapperHalenAv(erstattes)) { // erstattes.erFør(opplysning)) {
+            if (opplysning.overlapperHalenAv(erstattes)) {
                 // Overlapp på halen av eksisterende opplysning
                 val forkortet = erstattes.lagErstatning(opplysning)
                 opplysninger.add(forkortet)
@@ -38,7 +38,7 @@ class Opplysninger private constructor(
             } else if (erstattes.harSammegyldighetsperiode(opplysning)) {
                 // Overlapp for samme periode
                 opplysninger.addAll(erstattes.erstattesAv(opplysning))
-            } else if (opplysning.starterFørOgOverlapper(erstattes)) { // erstattes.etterEllerLik(opplysning)) {
+            } else if (opplysning.starterFørOgOverlapper(erstattes)) {
                 // Overlapp på starten av eksisterende opplysning
                 erstattes.erstattesAv(opplysning)
                 opplysninger.add(opplysning)
