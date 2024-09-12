@@ -296,6 +296,7 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.opplysninger.forEach { opplysning ->
+                hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
                 behandling.regelkjøring.leggTil(opplysning.opplysning())
             }
 
@@ -475,6 +476,7 @@ class Behandling private constructor(
             hendelse: OpplysningSvarHendelse,
         ) {
             hendelse.opplysninger.forEach { opplysning ->
+                hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
                 behandling.regelkjøring.leggTil(opplysning.opplysning())
             }
             val rapport = behandling.regelkjøring.evaluer()
