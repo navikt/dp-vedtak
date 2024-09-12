@@ -1,5 +1,6 @@
 package no.nav.dagpenger.opplysning
 
+import java.time.LocalDate
 import java.util.UUID
 
 interface LesbarOpplysninger {
@@ -16,4 +17,6 @@ interface LesbarOpplysninger {
     fun finnAlle(): List<Opplysning<*>>
 
     fun finnOpplysning(opplysningId: UUID): Opplysning<*>
+
+    fun forDato(gjelderFor: LocalDate): LesbarOpplysninger
 }

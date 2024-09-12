@@ -5,15 +5,31 @@ import no.nav.dagpenger.opplysning.regel.Ekstern
 import no.nav.dagpenger.opplysning.regel.Regel
 import java.time.LocalDate
 
+// Regelverksdato: Datoen regelverket gjelder fra. Som hovedregel tidspunktet søknaden ble fremmet.
+
+// Prøvingsdato: Dato som legges til grunn for når opplysninger som brukes av regelkjøringen skal være gyldige
+
+// Virkningsdato: Dato som *behandlingen* finner til slutt
+
 class Regelkjøring(
-    val forDato: LocalDate,
+    private val regelverksdato: LocalDate,
+    private val prøvingsdato: LocalDate,
     private val opplysninger: Opplysninger,
     vararg regelsett: Regelsett,
 ) {
-    private val alleRegler: List<Regel<*>> = regelsett.flatMap { it.regler(forDato) }
+    constructor(regelverksdato: LocalDate, opplysninger: Opplysninger, vararg regelsett: Regelsett) : this(
+        regelverksdato,
+        regelverksdato,
+        opplysninger,
+        *regelsett,
+    )
+
+    private val alleRegler: List<Regel<*>> = regelsett.flatMap { it.regler(regelverksdato) }
     private val muligeRegler: MutableList<Regel<*>> = alleRegler.toMutableList()
     private val plan: MutableList<Regel<*>> = mutableListOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
+
+    private val opplysningerPåPrøvingsdato get() = opplysninger.forDato(prøvingsdato)
 
     init {
         val duplikate = muligeRegler.groupBy { it.produserer }.filter { it.value.size > 1 }
@@ -22,7 +38,6 @@ class Regelkjøring(
             "Regelsett inneholder flere regler som produserer samme opplysningstype. " +
                 "Regler: ${duplikate.map { it.key.navn }}."
         }
-        opplysninger.registrer(this)
     }
 
     fun leggTil(opplysning: Opplysning<*>) {
@@ -30,18 +45,24 @@ class Regelkjøring(
         evaluer()
     }
 
-    fun evaluer() {
+    fun evaluer(): Regelkjøringsrapport {
         aktiverRegler()
         while (plan.size > 0) {
             kjørRegelPlan()
             aktiverRegler()
         }
+
+        return Regelkjøringsrapport(
+            kjørteRegler,
+            trenger(),
+            informasjonsbehov(),
+        )
     }
 
     private fun aktiverRegler() {
         muligeRegler
             .filter {
-                it.kanKjøre(opplysninger)
+                it.kanKjøre(opplysningerPåPrøvingsdato)
             }.forEach {
                 plan.add(it)
             }
@@ -57,7 +78,7 @@ class Regelkjøring(
     }
 
     private fun kjør(regel: Regel<*>) {
-        val opplysning = regel.lagProdukt(opplysninger)
+        val opplysning = regel.lagProdukt(opplysningerPåPrøvingsdato)
         kjørteRegler.add(regel)
         plan.remove(regel)
         opplysninger.leggTilUtledet(opplysning)
@@ -69,7 +90,7 @@ class Regelkjøring(
         val opplysningerMedEksternRegel = graph.findNodesWithEdge { it.data is Ekstern<*> }
         return (opplysningerUtenRegel + opplysningerMedEksternRegel)
             .map { it.data }
-            .filterNot { opplysninger.har(it) }
+            .filterNot { opplysningerPåPrøvingsdato.har(it) }
             .toSet()
     }
 
@@ -80,9 +101,15 @@ class Regelkjøring(
                 muligeRegler.find { regel -> regel.produserer(it) }?.avhengerAv ?: emptyList()
             }.filter { (_, avhengigheter) ->
                 // Finn bare opplysninger hvor alle avhengigheter er tilfredsstilt
-                avhengigheter.all { opplysninger.har(it) }
+                avhengigheter.all { opplysningerPåPrøvingsdato.har(it) }
             }.mapValues { (_, avhengigheter) ->
                 // Finn verdien av avhengighetene
-                avhengigheter.map { opplysninger.finnOpplysning(it) }
+                avhengigheter.map { opplysningerPåPrøvingsdato.finnOpplysning(it) }
             }
 }
+
+data class Regelkjøringsrapport(
+    val kjørteRegler: List<Regel<*>>,
+    val manglendeOpplysninger: Set<Opplysningstype<*>>,
+    val oppdaterteOpplysninger: Map<Opplysningstype<*>, List<Opplysning<*>>>,
+)

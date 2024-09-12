@@ -18,6 +18,7 @@ import no.nav.dagpenger.behandling.TestOpplysningstyper.mindato
 import no.nav.dagpenger.behandling.TestOpplysningstyper.tekst
 import no.nav.dagpenger.behandling.TestOpplysningstyper.utledetOpplysningstype
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
+import no.nav.dagpenger.behandling.mai
 import no.nav.dagpenger.behandling.objectMapper
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
@@ -209,19 +210,23 @@ class OpplysningerRepositoryPostgresTest {
             // Lag ny opplysninger med erstattet opplysning
             val opplysningErstattet = Faktum(heltall, 20)
             val erstattetOpplysninger = Opplysninger(opprinneligOpplysninger)
-            val regelkjøring = Regelkjøring(LocalDate.now(), erstattetOpplysninger)
-            regelkjøring.leggTil(opplysningErstattet as Opplysning<*>)
+            erstattetOpplysninger.leggTil(opplysningErstattet as Opplysning<*>)
             repo.lagreOpplysninger(erstattetOpplysninger)
 
             // Verifiser
+            opprinneligOpplysninger.aktiveOpplysninger shouldContainExactly listOf(opplysning)
+            val opprinneligFraDb = repo.hentOpplysninger(opprinneligOpplysninger.id)
+            opprinneligFraDb.aktiveOpplysninger shouldContainExactly opprinneligOpplysninger.aktiveOpplysninger
+
             val fraDb: Opplysninger =
                 // Simulerer hvordan Behandling setter opp Opplysninger
-                repo.hentOpplysninger(erstattetOpplysninger.id) + repo.hentOpplysninger(opprinneligOpplysninger.id)
-            Regelkjøring(LocalDate.now(), fraDb)
-            fraDb.aktiveOpplysninger shouldContainExactly erstattetOpplysninger.aktiveOpplysninger
-            fraDb.finnOpplysning(heltall).verdi shouldBe opplysningErstattet.verdi
+                repo.hentOpplysninger(erstattetOpplysninger.id) + listOf(opprinneligFraDb)
 
-            fraDb.finnOpplysning(heltall).erstatter shouldBe opplysning
+            fraDb.aktiveOpplysninger shouldContainExactly erstattetOpplysninger.aktiveOpplysninger
+            fraDb.forDato(10.mai).finnOpplysning(heltall).verdi shouldBe opplysningErstattet.verdi
+
+            // TODO: Noe muffens oppstod i arbeidet rundt erstatning
+            fraDb.forDato(10.mai).finnOpplysning(heltall).erstatter shouldBe opplysning
         }
     }
 
@@ -264,7 +269,7 @@ class OpplysningerRepositoryPostgresTest {
             }
 
             val tidligereOpplysningerFraDb = repo.hentOpplysninger(tidligereOpplysninger.id).also { Regelkjøring(LocalDate.now(), it) }
-            tidligereOpplysningerFraDb.finnAlle().size shouldBe 2
+            tidligereOpplysningerFraDb.finnAlle().size shouldBe 1
             with(tidligereOpplysningerFraDb.finnOpplysning(baseOpplysning.id)) {
                 id shouldBe baseOpplysning.id
                 verdi shouldBe baseOpplysning.verdi

@@ -22,7 +22,7 @@ sealed class Opplysning<T : Comparable<T>>(
     val kilde: Kilde?,
     val opprettet: LocalDateTime,
     private var _erstatter: Opplysning<T>? = null,
-    private val _erstattetAv: MutableList<Opplysning<T>> = mutableListOf(),
+    private val _erstattetAv: MutableSet<Opplysning<T>> = mutableSetOf(),
 ) : Klassifiserbart by opplysningstype {
     private val defaultRedigering = Redigerbar { opplysningstype.datatype != ULID && !erErstattet }
 
@@ -37,7 +37,7 @@ sealed class Opplysning<T : Comparable<T>>(
     val kanRedigeres: (Redigerbar) -> Boolean get() = { redigerbar -> redigerbar.kanRedigere(this) && defaultRedigering.kanRedigere(this) }
 
     fun overlapper(opplysning: Opplysning<*>) =
-        opplysningstype == opplysning.opplysningstype && gyldighetsperiode.overlapp(opplysning.gyldighetsperiode)
+        opplysningstype.er(opplysning.opplysningstype) && gyldighetsperiode.overlapp(opplysning.gyldighetsperiode)
 
     override fun equals(other: Any?) = other is Opplysning<*> && id == other.id
 
@@ -49,6 +49,11 @@ sealed class Opplysning<T : Comparable<T>>(
         val erstatninger = erstatning.toList().onEach { it._erstatter = this }
         _erstattetAv.addAll(erstatninger)
         return erstatninger
+    }
+
+    fun erstatter(erstattet: Opplysning<T>) {
+        _erstatter = erstattet
+        erstattet.erstattesAv(this)
     }
 
     abstract fun lagErstatning(opplysning: Opplysning<T>): Opplysning<T>
@@ -85,7 +90,7 @@ class Hypotese<T : Comparable<T>>(
             kilde,
             opplysning.opprettet,
             erstatter = this,
-        )
+        ).also { this.erstattesAv(it) }
 }
 
 class Faktum<T : Comparable<T>>(
@@ -124,5 +129,5 @@ class Faktum<T : Comparable<T>>(
             kilde,
             opplysning.opprettet,
             this,
-        )
+        ).also { this.erstattesAv(it) }
 }

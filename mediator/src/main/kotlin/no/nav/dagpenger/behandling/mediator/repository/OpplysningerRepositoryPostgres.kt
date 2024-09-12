@@ -92,6 +92,12 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     .map {
                         it.erstattetAv.filterNot(eksisterer(rader)).mapNotNull { uuid -> hentOpplysning(uuid) }
                     }.flatten()
+            val erstatter =
+                rader.mapNotNull {
+                    it.erstatter?.takeUnless { uuid -> eksisterer(rader)(uuid) }?.let { uuid ->
+                        hentOpplysning(uuid)
+                    }
+                }
             val raderMedKilde =
                 rader.map {
                     if (it.kildeId == null) return@map it
@@ -99,11 +105,12 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     it.copy(kilde = kilde)
                 }
 
-            val raderFraTidligereOpplysninger = rader.filterNot { it.opplysingerId == opplysningerId }.map { it.id }
-            return (raderMedKilde + erstattetAv).somOpplysninger().filterNot { it.id in raderFraTidligereOpplysninger }
+            val merged = raderMedKilde + erstattetAv + erstatter
+            val raderFraTidligereOpplysninger = merged.filterNot { it.opplysingerId == opplysningerId }.map { it.id }
+            return merged.somOpplysninger().filterNot { it.id in raderFraTidligereOpplysninger }
         }
 
-        private fun eksisterer(rader: List<OpplysningRad<*>>) =
+        private fun eksisterer(rader: List<OpplysningRad<*>>): (UUID) -> Boolean =
             { opplysningId: UUID ->
                 rader.any { annen -> annen.id == opplysningId }
             }
@@ -143,6 +150,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val utledetAvId = this.arrayOrNull<UUID>("utledet_av_id")?.toList() ?: emptyList()
             val utledetAv = this.stringOrNull("utledet_av")?.let { UtledningRad(it, utledetAvId) }
             val erstattetAvId = this.arrayOrNull<UUID>("erstattet_av_id")?.toList() ?: emptyList()
+            val erstatterId = this.uuidOrNull("erstatter_id")
 
             val kildeId = this.uuidOrNull("kilde_id")
 
@@ -158,6 +166,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 kilde = null,
                 opprettet = opprettet,
                 erstattetAv = erstattetAvId,
+                erstatter = erstatterId,
             )
         }
 
@@ -395,6 +404,21 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
 private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
     val opplysningMap = mutableMapOf<UUID, Opplysning<*>>()
 
+    fun <T : Comparable<T>> OpplysningRad<T>.finnErstattesAv() {
+        if (this.erstattetAv.isNotEmpty()) {
+            val erstattetAvListe =
+                this.erstattetAv.map { erstattetAvId ->
+                    require(opplysningMap.contains(erstattetAvId)) { "Opplysning med id $erstattetAvId er ikke funnet" }
+                    opplysningMap[erstattetAvId] as Opplysning<T>
+                }
+            (opplysningMap[this.id] as Opplysning<T>).erstattesAv(*erstattetAvListe.toTypedArray())
+        }
+        this.erstatter?.let {
+            require(opplysningMap.contains(it)) { "Opplysning med id $it er ikke funnet" }
+            (opplysningMap[this.id] as Opplysning<T>).erstatter(opplysningMap[it] as Opplysning<T>)
+        }
+    }
+
     fun <T : Comparable<T>> OpplysningRad<T>.toOpplysning(): Opplysning<*> {
         // If the Opplysning instance has already been created, return it
         opplysningMap[id]?.let { return it }
@@ -410,39 +434,32 @@ private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
                 )
             }
 
-        val erstattetAv =
-            erstattetAv.map { opplysningId ->
-                (opplysningMap[opplysningId] ?: this@somOpplysninger.find { it.id == opplysningId }?.toOpplysning()) as Opplysning<T>
-            }
-
         // Create the Opplysning instance
         val opplysning =
             when (status) {
                 "Hypotese" ->
                     Hypotese(
-                        id,
-                        opplysningstype,
-                        verdi,
-                        gyldighetsperiode,
-                        utledetAv,
-                        kilde,
-                        opprettet,
+                        id = id,
+                        opplysningstype = opplysningstype,
+                        verdi = verdi,
+                        gyldighetsperiode = gyldighetsperiode,
+                        utledetAv = utledetAv,
+                        kilde = kilde,
+                        opprettet = opprettet,
                     )
 
                 "Faktum" ->
                     Faktum(
-                        id,
-                        opplysningstype,
-                        verdi,
-                        gyldighetsperiode,
-                        utledetAv,
-                        kilde,
-                        opprettet,
+                        id = id,
+                        opplysningstype = opplysningstype,
+                        verdi = verdi,
+                        gyldighetsperiode = gyldighetsperiode,
+                        utledetAv = utledetAv,
+                        kilde = kilde,
+                        opprettet = opprettet,
                     )
 
                 else -> throw IllegalStateException("Ukjent opplysningstype")
-            }.also {
-                it.erstattesAv(*erstattetAv.toTypedArray())
             }
 
         // Add the Opplysning instance to the map and return it
@@ -451,7 +468,11 @@ private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
     }
 
     // Convert all OpplysningRad instances to Opplysning instances
-    return this.map { it.toOpplysning() }
+    val alleOpplysninger = this.map { it.toOpplysning() }
+    this.forEach {
+        it.finnErstattesAv()
+    }
+    return alleOpplysninger
 }
 
 private data class UtledningRad(
@@ -471,4 +492,5 @@ private data class OpplysningRad<T : Comparable<T>>(
     val kilde: Kilde? = null,
     val opprettet: LocalDateTime,
     val erstattetAv: List<UUID>,
+    val erstatter: UUID? = null,
 )

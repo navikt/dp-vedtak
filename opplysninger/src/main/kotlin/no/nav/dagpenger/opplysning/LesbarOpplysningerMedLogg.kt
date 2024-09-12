@@ -1,5 +1,6 @@
 package no.nav.dagpenger.opplysning
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -7,9 +8,9 @@ import java.util.UUID
 class LesbarOpplysningerMedLogg(
     private val opplysninger: LesbarOpplysninger,
 ) : LesbarOpplysninger {
-    override val id: UUID = opplysninger.id
-
     private val oppslag = mutableListOf<Opplysning<*>>()
+
+    override val id get() = opplysninger.id
 
     val sistBrukteOpplysning: LocalDateTime
         get() =
@@ -36,4 +37,6 @@ class LesbarOpplysningerMedLogg(
     override fun finnAlle(opplysningstyper: List<Opplysningstype<*>>) = TODO()
 
     override fun finnAlle() = TODO()
+
+    override fun forDato(gjelderFor: LocalDate) = TODO()
 }
