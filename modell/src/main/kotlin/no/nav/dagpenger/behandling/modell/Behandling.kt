@@ -292,16 +292,11 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: PersonHendelse,
         ) {
-            when (hendelse) {
-                is OpplysningSvarHendelse -> this.håndter(behandling, hendelse)
-                else -> {
-                    behandling.observatører.forEach { it.behandlingStartet() }
-                    val trenger = behandling.hvaTrengerViNå(hendelse)
+            behandling.observatører.forEach { it.behandlingStartet() }
+            val trenger = behandling.hvaTrengerViNå(hendelse)
 
-                    if (trenger.isEmpty()) {
-                        behandling.tilstand(ForslagTilVedtak(), hendelse)
-                    }
-                }
+            if (trenger.isEmpty()) {
+                behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
 
