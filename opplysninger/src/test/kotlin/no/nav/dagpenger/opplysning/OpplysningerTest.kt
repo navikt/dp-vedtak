@@ -1,6 +1,7 @@
 package no.nav.dagpenger.opplysning
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.desimaltall
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.foreldrevilkår
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.undervilkår1
@@ -32,11 +33,16 @@ class OpplysningerTest {
         // Og skal legge til ny opplysning
         val opplysninger = Opplysninger()
 
-        opplysninger.leggTil(Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 1.mai)))
-        opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 11.mai)))
+        val original = Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 1.mai))
+        val nyOpplysning = Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 11.mai))
+        opplysninger.leggTil(original)
+        opplysninger.leggTil(nyOpplysning)
 
         assertEquals(0.5, opplysninger.forDato(10.mai).finnOpplysning(desimaltall).verdi)
         assertEquals(1.5, opplysninger.forDato(15.mai).finnOpplysning(desimaltall).verdi)
+
+        opplysninger.forDato(5.mai).finnOpplysning(desimaltall).erstatter shouldBe original
+        opplysninger.forDato(15.mai).finnOpplysning(desimaltall).erstatter shouldBe null
     }
 
     @Test
@@ -44,11 +50,15 @@ class OpplysningerTest {
         // Da skal vi erstatte gammel opplysning med ny
         val opplysninger = Opplysninger()
 
-        opplysninger.leggTil(Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 1.mai)))
-        opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 1.mai)))
+        val original = Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 1.mai))
+        val nyOpplysning = Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 1.mai))
+        opplysninger.leggTil(original)
+        opplysninger.leggTil(nyOpplysning)
 
         assertEquals(1.5, opplysninger.forDato(1.mai).finnOpplysning(desimaltall).verdi)
         assertEquals(1.5, opplysninger.forDato(15.mai).finnOpplysning(desimaltall).verdi)
+
+        opplysninger.forDato(5.mai).finnOpplysning(desimaltall).erstatter shouldBe original
     }
 
     @Test
@@ -56,8 +66,10 @@ class OpplysningerTest {
         // Da skal vi erstatte gammel opplysning med ny
         val opplysninger = Opplysninger()
 
-        opplysninger.leggTil(Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 5.mai, tom = 20.mai)))
-        opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 1.mai, tom = 16.mai)))
+        val original = Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 5.mai, tom = 20.mai))
+        val nyOpplysning = Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 1.mai, tom = 16.mai))
+        opplysninger.leggTil(original)
+        opplysninger.leggTil(nyOpplysning)
 
         assertEquals(1.5, opplysninger.forDato(1.mai).finnOpplysning(desimaltall).verdi)
         assertEquals(1.5, opplysninger.forDato(15.mai).finnOpplysning(desimaltall).verdi)
@@ -65,6 +77,8 @@ class OpplysningerTest {
         shouldThrow<Exception> {
             assertEquals(1.5, opplysninger.forDato(18.mai).finnOpplysning(desimaltall).verdi)
         }
+
+        opplysninger.forDato(5.mai).finnOpplysning(desimaltall).erstatter shouldBe original
     }
 
     @Test
@@ -72,8 +86,10 @@ class OpplysningerTest {
         // Da skal vi erstatte gammel opplysning med forkortet opplysning og legge til ny opplysning
         val opplysninger = Opplysninger()
 
-        opplysninger.leggTil(Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 1.mai, tom = 30.mai)))
-        opplysninger.leggTil(Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 10.mai, tom = 20.mai)))
+        val original = Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 1.mai, tom = 30.mai))
+        val nyOpplysning = Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 10.mai, tom = 20.mai))
+        opplysninger.leggTil(original)
+        opplysninger.leggTil(nyOpplysning)
 
         assertEquals(0.5, opplysninger.forDato(1.mai).finnOpplysning(desimaltall).verdi)
         assertEquals(1.5, opplysninger.forDato(15.mai).finnOpplysning(desimaltall).verdi)
@@ -81,5 +97,8 @@ class OpplysningerTest {
         shouldThrow<Exception> {
             assertEquals(1.5, opplysninger.forDato(21.mai).finnOpplysning(desimaltall).verdi)
         }
+
+        opplysninger.forDato(5.mai).finnOpplysning(desimaltall).erstatter shouldBe original
+        opplysninger.forDato(15.mai).finnOpplysning(desimaltall).erstatter shouldBe null
     }
 }

@@ -124,5 +124,5 @@ class Faktum<T : Comparable<T>>(
             kilde,
             opplysning.opprettet,
             this,
-        )
+        ).also { this.erstattesAv(it) }
 }

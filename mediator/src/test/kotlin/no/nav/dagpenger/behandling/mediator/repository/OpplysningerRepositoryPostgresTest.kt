@@ -222,7 +222,7 @@ class OpplysningerRepositoryPostgresTest {
             fraDb.forDato(10.mai).finnOpplysning(heltall).verdi shouldBe opplysningErstattet.verdi
 
             // TODO: Noe muffens oppstod i arbeidet rundt erstatning
-            // fraDb.forDato(10.mai).finnOpplysning(heltall).erstatter shouldBe opplysning
+            fraDb.forDato(10.mai).finnOpplysning(heltall).erstatter shouldBe opplysning
         }
     }
 

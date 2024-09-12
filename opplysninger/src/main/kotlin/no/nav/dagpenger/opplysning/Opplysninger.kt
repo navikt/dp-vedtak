@@ -30,16 +30,15 @@ class Opplysninger private constructor(
     fun <T : Comparable<T>> leggTil(opplysning: Opplysning<T>) {
         val erstattes: Opplysning<T>? = alleOpplysninger.find { it.overlapper(opplysning) } as Opplysning<T>?
         if (erstattes !== null) {
-            if (erstattes.erFør(opplysning)) {
+            if (opplysning.overlapperHalenAv(erstattes)) { // erstattes.erFør(opplysning)) {
                 // Overlapp på halen av eksisterende opplysning
                 val forkortet = erstattes.lagErstatning(opplysning)
-                erstattes.erstattesAv(forkortet)
                 opplysninger.add(forkortet)
                 opplysninger.add(opplysning)
             } else if (erstattes.harSammegyldighetsperiode(opplysning)) {
                 // Overlapp for samme periode
                 opplysninger.addAll(erstattes.erstattesAv(opplysning))
-            } else if (erstattes.etterEllerLik(opplysning)) {
+            } else if (opplysning.starterFørOgOverlapper(erstattes)) { // erstattes.etterEllerLik(opplysning)) {
                 // Overlapp på starten av eksisterende opplysning
                 erstattes.erstattesAv(opplysning)
                 opplysninger.add(opplysning)
@@ -74,14 +73,16 @@ class Opplysninger private constructor(
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? =
         alleOpplysninger.singleOrNull { it.er(opplysningstype) } as Opplysning<T>?
 
-    private fun <T : Comparable<T>> Opplysning<T>.erFør(opplysning: Opplysning<T>) =
-        this.gyldighetsperiode.fom.isBefore(opplysning.gyldighetsperiode.fom)
-
-    private fun <T : Comparable<T>> Opplysning<T>.etterEllerLik(opplysning: Opplysning<T>) =
-        this.gyldighetsperiode.tom >= opplysning.gyldighetsperiode.tom
+    private fun <T : Comparable<T>> Opplysning<T>.overlapperHalenAv(opplysning: Opplysning<T>) =
+        this.gyldighetsperiode.fom.isAfter(opplysning.gyldighetsperiode.fom) &&
+            this.gyldighetsperiode.fom <= opplysning.gyldighetsperiode.tom
 
     private fun <T : Comparable<T>> Opplysning<T>.harSammegyldighetsperiode(opplysning: Opplysning<T>) =
         this.gyldighetsperiode == opplysning.gyldighetsperiode
+
+    private fun <T : Comparable<T>> Opplysning<T>.starterFørOgOverlapper(opplysning: Opplysning<T>) =
+        this.gyldighetsperiode.fom.isBefore(opplysning.gyldighetsperiode.fom) &&
+            opplysning.gyldighetsperiode.inneholder(this.gyldighetsperiode.tom)
 
     operator fun plus(tidligereOpplysninger: List<Opplysninger>) = Opplysninger(id, opplysninger, tidligereOpplysninger)
 
