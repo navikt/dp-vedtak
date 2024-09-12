@@ -214,9 +214,13 @@ class OpplysningerRepositoryPostgresTest {
             repo.lagreOpplysninger(erstattetOpplysninger)
 
             // Verifiser
+            opprinneligOpplysninger.aktiveOpplysninger shouldContainExactly listOf(opplysning)
+            val opprinneligFraDb = repo.hentOpplysninger(opprinneligOpplysninger.id)
+            opprinneligFraDb.aktiveOpplysninger shouldContainExactly opprinneligOpplysninger.aktiveOpplysninger
+
             val fraDb: Opplysninger =
                 // Simulerer hvordan Behandling setter opp Opplysninger
-                repo.hentOpplysninger(erstattetOpplysninger.id) + repo.hentOpplysninger(opprinneligOpplysninger.id)
+                repo.hentOpplysninger(erstattetOpplysninger.id) + listOf(opprinneligFraDb)
 
             fraDb.aktiveOpplysninger shouldContainExactly erstattetOpplysninger.aktiveOpplysninger
             fraDb.forDato(10.mai).finnOpplysning(heltall).verdi shouldBe opplysningErstattet.verdi

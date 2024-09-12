@@ -85,6 +85,4 @@ class Opplysninger private constructor(
             opplysning.gyldighetsperiode.inneholder(this.gyldighetsperiode.tom)
 
     operator fun plus(tidligereOpplysninger: List<Opplysninger>) = Opplysninger(id, opplysninger, tidligereOpplysninger)
-
-    operator fun plus(tidligereOpplysninger: Opplysninger) = Opplysninger(id, opplysninger, listOf(tidligereOpplysninger))
 }
