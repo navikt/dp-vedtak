@@ -269,7 +269,7 @@ class OpplysningerRepositoryPostgresTest {
             }
 
             val tidligereOpplysningerFraDb = repo.hentOpplysninger(tidligereOpplysninger.id).also { Regelkjøring(LocalDate.now(), it) }
-            tidligereOpplysningerFraDb.finnAlle().size shouldBe 2
+            tidligereOpplysningerFraDb.finnAlle().size shouldBe 1
             with(tidligereOpplysningerFraDb.finnOpplysning(baseOpplysning.id)) {
                 id shouldBe baseOpplysning.id
                 verdi shouldBe baseOpplysning.verdi

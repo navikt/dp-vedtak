@@ -22,7 +22,7 @@ sealed class Opplysning<T : Comparable<T>>(
     val kilde: Kilde?,
     val opprettet: LocalDateTime,
     private var _erstatter: Opplysning<T>? = null,
-    private val _erstattetAv: MutableList<Opplysning<T>> = mutableListOf(),
+    private val _erstattetAv: MutableSet<Opplysning<T>> = mutableSetOf(),
 ) : Klassifiserbart by opplysningstype {
     private val defaultRedigering = Redigerbar { opplysningstype.datatype != ULID && !erErstattet }
 
@@ -49,6 +49,11 @@ sealed class Opplysning<T : Comparable<T>>(
         val erstatninger = erstatning.toList().onEach { it._erstatter = this }
         _erstattetAv.addAll(erstatninger)
         return erstatninger
+    }
+
+    fun erstatter(erstattet: Opplysning<T>) {
+        _erstatter = erstattet
+        erstattet.erstattesAv(this)
     }
 
     abstract fun lagErstatning(opplysning: Opplysning<T>): Opplysning<T>

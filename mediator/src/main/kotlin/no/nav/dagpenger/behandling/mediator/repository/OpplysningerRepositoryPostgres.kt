@@ -404,6 +404,21 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
 private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
     val opplysningMap = mutableMapOf<UUID, Opplysning<*>>()
 
+    fun <T : Comparable<T>> OpplysningRad<T>.finnErstattesAv() {
+        if (this.erstattetAv.isNotEmpty()) {
+            val erstattetAvListe =
+                this.erstattetAv.map { erstattetAvId ->
+                    require(opplysningMap.contains(erstattetAvId)) { "Opplysning med id $erstattetAvId er ikke funnet" }
+                    opplysningMap[erstattetAvId] as Opplysning<T>
+                }
+            (opplysningMap[this.id] as Opplysning<T>).erstattesAv(*erstattetAvListe.toTypedArray())
+        }
+        this.erstatter?.let {
+            require(opplysningMap.contains(it)) { "Opplysning med id $it er ikke funnet" }
+            (opplysningMap[this.id] as Opplysning<T>).erstatter(opplysningMap[it] as Opplysning<T>)
+        }
+    }
+
     fun <T : Comparable<T>> OpplysningRad<T>.toOpplysning(): Opplysning<*> {
         // If the Opplysning instance has already been created, return it
         opplysningMap[id]?.let { return it }
@@ -419,16 +434,6 @@ private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
                 )
             }
 
-        val erstatter =
-            erstatter?.let { opplysningId ->
-                (opplysningMap[opplysningId] ?: this@somOpplysninger.find { it.id == opplysningId }?.toOpplysning()) as Opplysning<T>
-            }
-
-        val erstattetAv =
-            erstattetAv.map { opplysningId ->
-                (opplysningMap[opplysningId] ?: this@somOpplysninger.find { it.id == opplysningId }?.toOpplysning()) as Opplysning<T>
-            }
-
         // Create the Opplysning instance
         val opplysning =
             when (status) {
@@ -441,7 +446,6 @@ private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
                         utledetAv = utledetAv,
                         kilde = kilde,
                         opprettet = opprettet,
-                        erstatter = erstatter,
                     )
 
                 "Faktum" ->
@@ -453,12 +457,9 @@ private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
                         utledetAv = utledetAv,
                         kilde = kilde,
                         opprettet = opprettet,
-                        erstatter = erstatter,
                     )
 
                 else -> throw IllegalStateException("Ukjent opplysningstype")
-            }.also {
-                it.erstattesAv(*erstattetAv.toTypedArray())
             }
 
         // Add the Opplysning instance to the map and return it
@@ -467,7 +468,11 @@ private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
     }
 
     // Convert all OpplysningRad instances to Opplysning instances
-    return this.map { it.toOpplysning() }
+    val alleOpplysninger = this.map { it.toOpplysning() }
+    this.forEach {
+        it.finnErstattesAv()
+    }
+    return alleOpplysninger
 }
 
 private data class UtledningRad(
