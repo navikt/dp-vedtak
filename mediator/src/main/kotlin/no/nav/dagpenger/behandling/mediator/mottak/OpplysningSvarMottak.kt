@@ -36,7 +36,6 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDate
 import no.nav.helse.rapids_rivers.asLocalDateTime
-import no.nav.helse.rapids_rivers.isMissingOrNull
 import java.time.LocalDate
 import java.util.UUID
 
@@ -50,7 +49,7 @@ internal class OpplysningSvarMottak(
             .apply {
                 validate { it.demandValue("@event_name", "behov") }
                 validate { it.demandValue("@final", true) }
-                validate { it.interestedIn("@opplysningsbehov") }
+                validate { it.requireValue("@opplysningsbehov", true) }
                 validate { it.requireKey("ident") }
                 validate { it.requireKey("@løsning") }
                 validate { it.requireKey("behandlingId") }
@@ -69,7 +68,6 @@ internal class OpplysningSvarMottak(
         packet: JsonMessage,
         context: MessageContext,
     ) {
-        val opplysningBehov = packet["@opplysningsbehov"].isMissingOrNull()
         val behovId = packet["@behovId"].asText()
         val behandlingId = packet["behandlingId"].asUUID()
         addOtelAttributes(behovId, behandlingId)
@@ -78,10 +76,6 @@ internal class OpplysningSvarMottak(
             "behovId" to behovId.toString(),
             "behandlingId" to behandlingId.toString(),
         ) {
-            if (opplysningBehov) {
-                logger.error { "Mottok svar på en opplysning som ikke er et opplysningsbehov" }
-                return
-            }
             if (skipBehovId.contains(behovId)) {
                 logger.info { "Mottok svar på en opplysning som skal ignoreres" }
                 return

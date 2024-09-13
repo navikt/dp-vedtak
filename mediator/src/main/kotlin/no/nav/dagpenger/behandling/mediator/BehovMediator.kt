@@ -34,6 +34,8 @@ class BehovMediator(
             .forEach { (kontekst, behovMap) ->
                 mutableMapOf<String, Any>()
                     .apply {
+                        // Denne lar oss filtrere ut pakker fra andre system som ber om løsning på de samme behovene vi bruker
+                        put("@opplysningsbehov", true)
                         putAll(kontekst)
                         putAll(behovMap)
                         // TODO: Flat ut alle kontekster rett på root i behovet. Dette er for å være kompatibel med gamle behovløsere

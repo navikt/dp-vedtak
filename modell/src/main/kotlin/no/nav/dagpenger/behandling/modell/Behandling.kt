@@ -678,14 +678,13 @@ private fun PersonHendelse.lagBehov(informasjonsbehov: Informasjonsbehov) =
             type = OpplysningBehov(behov.id),
             melding = "Trenger en opplysning (${behov.id})",
             detaljer =
-                mapOf("@opplysningsbehov" to true) +
-                    avhengigheter.associate { avhengighet ->
-                        val verdi =
-                            when (avhengighet.verdi) {
-                                is Ulid -> (avhengighet.verdi as Ulid).verdi
-                                else -> avhengighet.verdi
-                            }
-                        avhengighet.opplysningstype.id to verdi
-                    } + this.kontekstMap(),
+                avhengigheter.associate { avhengighet ->
+                    val verdi =
+                        when (avhengighet.verdi) {
+                            is Ulid -> (avhengighet.verdi as Ulid).verdi
+                            else -> avhengighet.verdi
+                        }
+                    avhengighet.opplysningstype.id to verdi
+                } + this.kontekstMap(),
         )
     }
