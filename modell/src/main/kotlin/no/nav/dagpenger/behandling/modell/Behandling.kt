@@ -300,6 +300,11 @@ class Behandling private constructor(
                 behandling.opplysninger.leggTil(opplysning.opplysning())
             }
 
+            // Kjør regelkjøring for alle opplysninger
+            val rapport = behandling.regelkjøring.evaluer()
+            rapport.kjørteRegler.forEach { regel: Regel<*> ->
+                hendelse.info(regel.toString())
+            }
             if (!støtterInnvilgelse) {
                 // TODO: Dette faller bort når vi sjekker alt
                 val kravPåDagpenger =
@@ -320,14 +325,6 @@ class Behandling private constructor(
                     behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag på grunn av inntekt"), hendelse)
                     return
                 }
-            }
-
-            // Kjør regelkjøring for alle opplysninger
-            behandling.regelkjøring.evaluer()
-            val rapport = behandling.regelkjøring.evaluer()
-
-            rapport.kjørteRegler.forEach { regel: Regel<*> ->
-                hendelse.info(regel.toString())
             }
 
             hendelse.lagBehov(rapport.informasjonsbehov)

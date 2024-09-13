@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Forretningsprosess
@@ -28,6 +29,10 @@ import no.nav.dagpenger.regel.Rettighetstype
 import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBeregningsregelKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
+import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
+import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
+import no.nav.dagpenger.regel.fastsetting.Egenandel
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -127,7 +132,24 @@ class SøknadInnsendtHendelse(
 class Søknadsprosess : Forretningsprosess {
     private val regelverk = RegelverkDagpenger
 
-    override fun regelsett(opplysninger: Opplysninger): List<Regelsett> = regelverk.regelsettFor(avklar(opplysninger))
+    override fun regelsett(opplysninger: Opplysninger): List<Regelsett> {
+        val opplysningstype = avklar(opplysninger)
+
+        val harKravPåDagpenger =
+            opplysninger.har(KravPåDagpenger.kravPåDagpenger) && opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
+
+        val regelsettFor = regelverk.regelsettFor(opplysningstype).toMutableSet()
+        if (harKravPåDagpenger && støtterInnvilgelse) {
+            val fastsetting =
+                RegelverkDagpenger.regelsettFor(Dagpengeperiode.antallStønadsuker) +
+                    RegelverkDagpenger.regelsettFor(Dagpengegrunnlag.grunnlag) +
+                    RegelverkDagpenger.regelsettFor(DagpengenesStørrelse.dagsatsMedBarn) +
+                    RegelverkDagpenger.regelsettFor(Egenandel.egenandel)
+            regelsettFor.addAll(fastsetting)
+        }
+
+        return regelsettFor.toList()
+    }
 
     private fun avklar(opplysninger: Opplysninger): Opplysningstype<Boolean> {
         // Sjekk krav til alder
@@ -146,7 +168,10 @@ class Søknadsprosess : Forretningsprosess {
                 opplysninger.mangler(Rettighetstype.rettighetstype) -> Rettighetstype.rettighetstype
                 else -> Minsteinntekt.minsteinntekt
             }
+        } else if (!støtterInnvilgelse) {
+            return Minsteinntekt.minsteinntekt
         }
+
         return KravPåDagpenger.kravPåDagpenger
     }
 }
