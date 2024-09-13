@@ -45,27 +45,9 @@ class SøknadInnsendtHendelse(
     fagsakId: Int,
     opprettet: LocalDateTime,
 ) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId, opprettet) {
-    private fun regelsettFor(opplysning: Opplysningstype<*>) = RegelverkDagpenger.regelsettFor(opplysning)
+    override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring = Regelkjøring(skjedde, opplysninger, Søknadsprosess())
 
-    override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring {
-        return Regelkjøring(skjedde, opplysninger, Søknadsprosess())
-
-        /*val opplysningstype = avklarer(opplysninger)
-        val harKravPåDagpenger =
-            opplysninger.har(KravPåDagpenger.kravPåDagpenger) && opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
-
-        val regelsettFor = regelsettFor(opplysningstype).toMutableSet()
-        if (harKravPåDagpenger) {
-            val fastsetting =
-                RegelverkDagpenger.regelsettFor(Dagpengeperiode.antallStønadsuker) +
-                    RegelverkDagpenger.regelsettFor(Dagpengegrunnlag.grunnlag) +
-                    RegelverkDagpenger.regelsettFor(DagpengenesStørrelse.dagsatsMedBarn) +
-                    RegelverkDagpenger.regelsettFor(Egenandel.egenandel)
-            regelsettFor.addAll(fastsetting)
-        }
-        return Regelkjøring(skjedde, opplysninger, *regelsettFor.toTypedArray())*/
-    }
-
+    // todo: Behovet forsvinner når vi forslag til vedtak og vedtak_fattet. De forventer at det vi avklarer er en boolean.
     override fun avklarer(opplysninger: LesbarOpplysninger): Opplysningstype<Boolean> {
         // Sjekk krav til alder
         if (!opplysninger.har(Alderskrav.kravTilAlder)) return Alderskrav.kravTilAlder
@@ -86,18 +68,6 @@ class SøknadInnsendtHendelse(
         }
 
         return KravPåDagpenger.kravPåDagpenger
-        /*if (opplysninger.mangler(KravPåDagpenger.kravPåDagpenger)) return KravPåDagpenger.kravPåDagpenger
-        val kravPåDagpenger = opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
-        if (!kravPåDagpenger) return KravPåDagpenger.kravPåDagpenger
-
-        // Fastsettelse av dagpengegrunnlag, dagpengens størrelse og dagpengeperiode
-        return when {
-            opplysninger.mangler(Dagpengeperiode.antallStønadsuker) -> Dagpengeperiode.antallStønadsuker
-            opplysninger.mangler(Dagpengegrunnlag.grunnlag) -> Dagpengegrunnlag.grunnlag
-            opplysninger.mangler(DagpengenesStørrelse.dagsatsMedBarn) -> DagpengenesStørrelse.dagsatsMedBarn
-            opplysninger.mangler(Egenandel.egenandel) -> Egenandel.egenandel
-            else -> KravPåDagpenger.kravPåDagpenger
-        }*/
     }
 
     private companion object {
