@@ -297,7 +297,7 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             hendelse.opplysninger.forEach { opplysning ->
                 hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
-                behandling.regelkjøring.leggTil(opplysning.opplysning())
+                behandling.opplysninger.leggTil(opplysning.opplysning())
             }
 
             if (!støtterInnvilgelse) {
@@ -323,6 +323,7 @@ class Behandling private constructor(
             }
 
             // Kjør regelkjøring for alle opplysninger
+            behandling.regelkjøring.evaluer()
             val rapport = behandling.regelkjøring.evaluer()
 
             rapport.kjørteRegler.forEach { regel: Regel<*> ->
@@ -448,8 +449,9 @@ class Behandling private constructor(
 
             hendelse.opplysninger.forEach { opplysning ->
                 hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
-                behandling.regelkjøring.leggTil(opplysning.opplysning())
+                behandling.opplysninger.leggTil(opplysning.opplysning())
             }
+
             behandling.tilstand(Redigert(), hendelse)
         }
     }
@@ -464,9 +466,18 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: PersonHendelse,
         ) {
+            hendelse.kontekst(this)
+            hendelse.info("Endret tilstand til redigert")
+
             // Kjør regelkjøring for alle opplysninger
             val rapport = behandling.regelkjøring.evaluer()
+
+            rapport.kjørteRegler.forEach { regel: Regel<*> ->
+                hendelse.info(regel.toString())
+            }
+
             hendelse.lagBehov(rapport.informasjonsbehov)
+
             if (rapport.erFerdig()) {
                 behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
@@ -478,10 +489,17 @@ class Behandling private constructor(
         ) {
             hendelse.opplysninger.forEach { opplysning ->
                 hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
-                behandling.regelkjøring.leggTil(opplysning.opplysning())
+                behandling.opplysninger.leggTil(opplysning.opplysning())
             }
+
             val rapport = behandling.regelkjøring.evaluer()
+
+            rapport.kjørteRegler.forEach { regel: Regel<*> ->
+                hendelse.info(regel.toString())
+            }
+
             hendelse.lagBehov(rapport.informasjonsbehov)
+
             if (rapport.erFerdig()) {
                 behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
@@ -491,6 +509,9 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: PåminnelseHendelse,
         ) {
+            hendelse.kontekst(this)
+            hendelse.info("Mottak påminnelse")
+
             val rapport = behandling.regelkjøring.evaluer()
             if (rapport.erFerdig()) {
                 hendelse.logiskFeil("Behandlingen er ferdig men vi er fortsatt i ${this.type.name}")

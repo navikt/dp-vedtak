@@ -13,21 +13,39 @@ import java.time.LocalDate
 
 typealias Informasjonsbehov = Map<Opplysningstype<*>, List<Opplysning<*>>>
 
+interface Forretningsprosess {
+    fun regelsett(opplysninger: Opplysninger): List<Regelsett>
+}
+
+private class Regelsettprosess(
+    val regelsett: List<Regelsett>,
+) : Forretningsprosess {
+    override fun regelsett(opplysninger: Opplysninger) = regelsett
+}
+
 class Regelkjøring(
     private val regelverksdato: LocalDate,
     private val prøvingsdato: LocalDate,
     private val opplysninger: Opplysninger,
-    vararg regelsett: Regelsett,
+    private val forretningsprosess: Forretningsprosess,
 ) {
     constructor(regelverksdato: LocalDate, opplysninger: Opplysninger, vararg regelsett: Regelsett) : this(
         regelverksdato,
         regelverksdato,
         opplysninger,
-        *regelsett,
+        Regelsettprosess(regelsett.toList()),
     )
 
-    private val alleRegler: List<Regel<*>> = regelsett.flatMap { it.regler(regelverksdato) }
-    private val muligeRegler: MutableList<Regel<*>> = alleRegler.toMutableList()
+    constructor(regelverksdato: LocalDate, opplysninger: Opplysninger, forretningsprosess: Forretningsprosess) : this(
+        regelverksdato,
+        regelverksdato,
+        opplysninger,
+        forretningsprosess,
+    )
+
+    private val regelsett get() = forretningsprosess.regelsett(opplysninger)
+    private val alleRegler: List<Regel<*>> get() = regelsett.flatMap { it.regler(regelverksdato) }
+    private val muligeRegler: MutableList<Regel<*>> get() = alleRegler.toMutableList()
     private val plan: MutableList<Regel<*>> = mutableListOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
 
@@ -42,6 +60,7 @@ class Regelkjøring(
         }
     }
 
+    @Deprecated("Bruk leggTil rett på opplysninger", ReplaceWith("opplysninger.leggTil(opplysning)"))
     fun leggTil(opplysning: Opplysning<*>) {
         opplysninger.leggTil(opplysning)
         evaluer()
