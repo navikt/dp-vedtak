@@ -13,6 +13,7 @@ abstract class PersonHendelse(
     val opprettet: LocalDateTime,
     private val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
 ) : AktivitetsloggHendelse,
+    HendelseMedKontekst,
     IAktivitetslogg by aktivitetslogg {
     init {
         // TODO: Fjern denne når vi har fikset oppsett av aktivitetslogg
@@ -28,5 +29,9 @@ abstract class PersonHendelse(
 
     override fun meldingsreferanseId() = meldingsreferanseId
 
-    open fun kontekstMap(): Map<String, String> = emptyMap()
+    override fun kontekstMap(): Map<String, String> = emptyMap()
+}
+
+interface HendelseMedKontekst {
+    fun kontekstMap(): Map<String, String>
 }

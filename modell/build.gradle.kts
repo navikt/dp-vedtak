@@ -20,4 +20,6 @@ dependencies {
     testImplementation(libs.kotest.assertions.core)
     testImplementation("org.junit.platform:junit-platform-suite:1.10.2")
     testImplementation(libs.bundles.jackson)
+
+    testImplementation(libs.mockk)
 }

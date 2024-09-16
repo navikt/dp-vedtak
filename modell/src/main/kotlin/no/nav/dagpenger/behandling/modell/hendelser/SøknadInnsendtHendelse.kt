@@ -1,11 +1,14 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import no.nav.dagpenger.avklaring.Avklaring
+import no.nav.dagpenger.avklaring.Avklaringer
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.Regelkjøringsrapport
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Alderskrav.HattLukkedeSakerSiste8UkerKontroll
@@ -37,7 +40,10 @@ class SøknadInnsendtHendelse(
     gjelderDato: LocalDate,
     fagsakId: Int,
     opprettet: LocalDateTime,
-) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId, opprettet) {
+) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId, opprettet),
+    NoeSomBehandlingKanKalle {
+    override fun evaluer(opplysninger: Opplysninger): Regelkjøringsrapport = regelkjøring(opplysninger).evaluer()
+
     override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring = Regelkjøring(skjedde, opplysninger, Søknadsprosess())
 
     // todo: Behovet forsvinner når vi forslag til vedtak og vedtak_fattet. De forventer at det vi avklarer er en boolean.
@@ -63,7 +69,7 @@ class SøknadInnsendtHendelse(
         return KravPåDagpenger.kravPåDagpenger
     }
 
-    private companion object {
+    companion object {
         val fagsakIdOpplysningstype = Opplysningstype.somHeltall("fagsakId")
     }
 
@@ -90,4 +96,11 @@ class SøknadInnsendtHendelse(
             Totrinnskontroll,
             Under18Kontroll,
         )
+
+    override fun avklaringer(
+        avklaringer: Avklaringer,
+        opplysninger: LesbarOpplysninger,
+    ): List<Avklaring> = avklaringer.avklaringer(opplysninger.forDato(skjedde))
+
+    override fun harYtelse(opplysninger: LesbarOpplysninger): Boolean = opplysninger.finnOpplysning(avklarer(opplysninger)).verdi
 }

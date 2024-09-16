@@ -13,7 +13,12 @@ class Avklaringer(
 
     fun avklaringer(opplysninger: LesbarOpplysninger) = vurderAvklaringer(opplysninger)
 
+    @Deprecated("Bruk avklaringer() + aktive() i stedet", replaceWith = ReplaceWith("avklaringer().aktive()"))
     fun måAvklares(opplysninger: LesbarOpplysninger) = vurderAvklaringer(opplysninger).filter { it.måAvklares() }
+
+    companion object {
+        fun List<Avklaring>.aktive() = filter { it.måAvklares() }
+    }
 
     private fun vurderAvklaringer(opplysninger: LesbarOpplysninger): List<Avklaring> {
         val aktiveAvklaringer: List<KreverAvklaring> =

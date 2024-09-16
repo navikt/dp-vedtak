@@ -12,7 +12,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 
 @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
-internal class BeregningsperiodeFabrikk(
+class BeregningsperiodeFabrikk(
     private val meldeperiodeFraOgMed: LocalDate,
     private val meldeperiodeTilOgMed: LocalDate,
     private val opplysninger: LesbarOpplysninger,

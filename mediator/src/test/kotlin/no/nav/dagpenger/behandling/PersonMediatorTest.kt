@@ -10,6 +10,7 @@ import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
+import no.nav.dagpenger.avklaring.Avklaringer.Companion.aktive
 import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.konfigurasjon.skruAvFeatures
@@ -481,7 +482,7 @@ internal class PersonMediatorTest {
 
     private val Person.aktivBehandling get() = this.behandlinger().first()
 
-    private val Behandling.aktivAvklaringer get() = this.aktiveAvklaringer()
+    private val Behandling.aktivAvklaringer get() = this.alleAvklaringer().aktive()
 
     @Test
     fun `publiserer tilstandsendinger`() =
