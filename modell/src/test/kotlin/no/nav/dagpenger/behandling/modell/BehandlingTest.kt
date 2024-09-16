@@ -5,6 +5,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldBeWithin
 import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.behandling.hjelpere.mai
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.Ferdig
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderBehandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderOpprettelse
@@ -14,6 +15,7 @@ import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.uuid.UUIDv7
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
@@ -34,6 +36,8 @@ internal class BehandlingTest {
 
     private companion object {
         val tidligereOpplysning = Opplysningstype.somDesimaltall("opplysning-fra-tidligere-behandling")
+        val rettighet = Opplysningstype.somBoolsk("rettPåDagpenger")
+        val meldekortPeriode = Opplysningstype.somBoolsk("meldekortperiode")
     }
 
     @Test
@@ -44,6 +48,24 @@ internal class BehandlingTest {
             it.verdi
         } shouldContainExactly listOf(1.0, 2.0, 3.0, 4.0, 5.0)
     }
+
+    @Test
+    @Disabled("Vi må vite mer om hva som skal skje her")
+    fun `Behandling for søknader er ikke ferdig behandlet, og vi har meldekort i kø`() {
+        val meldekorthendelse = søknadInnsendtHendelse
+
+        // Behandlingskøa ser slik ut:
+        val søknadsbehandling = Behandling(søknadInnsendtHendelse, emptyList())
+        val meldekort1 = Behandling(meldekorthendelse, meldekortOpplysninger(1.mai, 14.mai), listOf(søknadsbehandling))
+        val meldekort2 = Behandling(meldekorthendelse, meldekortOpplysninger(15.mai, 31.mai), listOf(meldekort1))
+
+        søknadsbehandling.håndter(søknadInnsendtHendelse)
+    }
+
+    private fun meldekortOpplysninger(
+        fom: LocalDate,
+        tom: LocalDate,
+    ) = listOf(Faktum(meldekortPeriode, true, Gyldighetsperiode(fom, tom)))
 
     private fun behandlingskjede(
         antall: Int,
