@@ -3,14 +3,14 @@ package no.nav.dagpenger.regel.beregning
 import java.math.BigDecimal
 import java.time.LocalDate
 
-sealed interface Dag {
+internal sealed interface Dag {
     val dato: LocalDate
     val sats: Int?
     val fva: Double?
     val timerArbeidet: Int?
 }
 
-class Arbeidsdag(
+internal class Arbeidsdag(
     override val dato: LocalDate,
     override val sats: Int,
     override val fva: Double,

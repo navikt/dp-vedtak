@@ -2,7 +2,7 @@ package no.nav.dagpenger.regel.beregning
 
 import no.nav.dagpenger.regel.beregning.Beregningsperiode.Terskelstrategi
 
-class Beregningsperiode private constructor(
+internal class Beregningsperiode private constructor(
     private val gjenståendeEgenandel: Double,
     dager: List<Dag>,
     terskelstrategi: Terskelstrategi,

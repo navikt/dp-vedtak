@@ -6,7 +6,6 @@ import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaringer
-import no.nav.dagpenger.avklaring.Avklaringer.Companion.aktive
 import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.AvklaringLukketHendelse
@@ -14,18 +13,17 @@ import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendel
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.MeldekortBeregningHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.NoeSomBehandlingKanKalle
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Informasjonsbehov
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.regel.Regel
 import no.nav.dagpenger.opplysning.verdier.Ulid
@@ -38,7 +36,7 @@ import java.util.UUID
 
 class Behandling private constructor(
     val behandlingId: UUID,
-    val behandler: NoeSomBehandlingKanKalle,
+    val behandler: StartHendelse,
     gjeldendeOpplysninger: Opplysninger,
     val basertPå: List<Behandling> = emptyList(),
     private var tilstand: BehandlingTilstand,
@@ -46,7 +44,7 @@ class Behandling private constructor(
 ) : Aktivitetskontekst,
     BehandlingHåndter {
     constructor(
-        behandler: NoeSomBehandlingKanKalle,
+        behandler: StartHendelse,
         opplysninger: List<Opplysning<*>>,
         basertPå: List<Behandling> = emptyList(),
     ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå, UnderOpprettelse(LocalDateTime.now()), emptyList())
@@ -62,14 +60,18 @@ class Behandling private constructor(
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
     private val opplysninger: Opplysninger = (gjeldendeOpplysninger + tidligereOpplysninger)
 
+    private val regelkjøring: Regelkjøring get() = behandler.regelkjøring(opplysninger)
+
     private val avklaringer = Avklaringer(behandler.kontrollpunkter(), avklaringer)
 
-    fun alleAvklaringer() = behandler.avklaringer(avklaringer, opplysninger)
+    fun avklaringer() = avklaringer.avklaringer(opplysninger.forDato(behandler.skjedde))
+
+    fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger.forDato(behandler.skjedde))
 
     companion object {
         fun rehydrer(
             behandlingId: UUID,
-            behandler: NoeSomBehandlingKanKalle,
+            behandler: StartHendelse,
             gjeldendeOpplysninger: Opplysninger,
             basertPå: List<Behandling> = emptyList(),
             tilstand: TilstandType,
@@ -122,11 +124,6 @@ class Behandling private constructor(
     }
 
     override fun håndter(hendelse: PåminnelseHendelse) {
-        hendelse.kontekst(this)
-        tilstand.håndter(this, hendelse)
-    }
-
-    override fun håndter(hendelse: MeldekortBeregningHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
@@ -243,12 +240,6 @@ class Behandling private constructor(
                     "opprettet" to opprettet.toString(),
                 ),
             )
-
-        fun håndter(
-            behandling: Behandling,
-            hendelse: MeldekortBeregningHendelse,
-        ) {
-        }
     }
 
     private data class UnderOpprettelse(
@@ -266,17 +257,6 @@ class Behandling private constructor(
 
             behandling.tilstand(UnderBehandling(), hendelse)
         }
-
-        override fun håndter(
-            behandling: Behandling,
-            hendelse: MeldekortBeregningHendelse,
-        ) {
-            hendelse.kontekst(this)
-            hendelse.info("Mottatt meldekort og startet behandling")
-            hendelse.hendelse(BehandlingHendelser.BehandlingOpprettetHendelse, "Behandling opprettet")
-
-            behandling.tilstand(UnderBehandling(), hendelse)
-        }
     }
 
     private data class UnderBehandling(
@@ -290,12 +270,11 @@ class Behandling private constructor(
             hendelse: PersonHendelse,
         ) {
             behandling.observatører.forEach { it.behandlingStartet() }
+            val regelkjøringsrapport = behandling.regelkjøring.evaluer()
+            hendelse.lagBehov(regelkjøringsrapport.informasjonsbehov)
 
-            val rapport = behandling.behandler.evaluer(behandling.opplysninger)
-            hendelse.lagBehov(rapport.informasjonsbehov)
-
-            if (rapport.erFerdig()) {
-                behandling.tilstand(Ferdig(), hendelse)
+            if (regelkjøringsrapport.erFerdig()) {
+                behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
 
@@ -304,7 +283,7 @@ class Behandling private constructor(
             hendelse: PåminnelseHendelse,
         ) {
             hendelse.kontekst(this)
-            val rapport = behandling.behandler.evaluer(behandling.opplysninger)
+            val rapport = behandling.regelkjøring.evaluer()
             if (rapport.erFerdig()) {
                 hendelse.logiskFeil("Behandlingen er ferdig men vi er fortsatt i ${this.type.name}")
             }
@@ -322,7 +301,7 @@ class Behandling private constructor(
             }
 
             // Kjør regelkjøring for alle opplysninger
-            val rapport = behandling.behandler.evaluer(behandling.opplysninger)
+            val rapport = behandling.regelkjøring.evaluer()
             rapport.kjørteRegler.forEach { regel: Regel<*> ->
                 hendelse.info(regel.toString())
             }
@@ -351,7 +330,7 @@ class Behandling private constructor(
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
-                if (behandling.alleAvklaringer().aktive().isEmpty()) {
+                if (behandling.aktiveAvklaringer().isEmpty()) {
                     hendelse.info("Har ingen aktive avklaringer, går videre til vedtak.")
                     behandling.tilstand(Ferdig(), hendelse)
                     return
@@ -388,7 +367,7 @@ class Behandling private constructor(
 
             // TODO: Shim for å gi STSB avklaringer på lik måte osm før
             val avklaringer =
-                behandling.alleAvklaringer().aktive().map {
+                behandling.aktiveAvklaringer().map {
                     mapOf(
                         "type" to it.kode.kode,
                         "utfall" to "Manuell",
@@ -399,7 +378,11 @@ class Behandling private constructor(
                 BehandlingHendelser.ForslagTilVedtakHendelse,
                 "Foreslår vedtak",
                 mapOf(
-                    "utfall" to behandling.behandler.harYtelse(behandling.opplysninger),
+                    "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger)).verdi,
+                    "harAvklart" to
+                        behandling.opplysninger
+                            .finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger))
+                            .opplysningstype.navn,
                     "avklaringer" to avklaringer,
                 ),
             )
@@ -438,11 +421,11 @@ class Behandling private constructor(
                 )
             }
 
-            if (behandling.alleAvklaringer().aktive().isEmpty()) {
+            if (behandling.aktiveAvklaringer().isEmpty()) {
                 if (behandling.opplysninger.finnAlle().any { it.kilde is Saksbehandlerkilde }) {
                     hendelse.info(
                         """Har ingen aktive avklaringer, men saksbehandler har lagt til opplysninger, 
-                    |så vi kan ikke automatisk fatte vedtak
+                        |så vi kan ikke automatisk fatte vedtak
                         """.trimMargin(),
                     )
                     return
@@ -484,7 +467,7 @@ class Behandling private constructor(
             hendelse.info("Endret tilstand til redigert")
 
             // Kjør regelkjøring for alle opplysninger
-            val rapport = behandling.behandler.evaluer(behandling.opplysninger)
+            val rapport = behandling.regelkjøring.evaluer()
 
             rapport.kjørteRegler.forEach { regel: Regel<*> ->
                 hendelse.info(regel.toString())
@@ -506,7 +489,7 @@ class Behandling private constructor(
                 behandling.opplysninger.leggTil(opplysning.opplysning())
             }
 
-            val rapport = behandling.behandler.evaluer(behandling.opplysninger)
+            val rapport = behandling.regelkjøring.evaluer()
 
             rapport.kjørteRegler.forEach { regel: Regel<*> ->
                 hendelse.info(regel.toString())
@@ -526,8 +509,7 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             hendelse.info("Mottak påminnelse")
 
-            val rapport = behandling.behandler.evaluer(behandling.opplysninger)
-
+            val rapport = behandling.regelkjøring.evaluer()
             if (rapport.erFerdig()) {
                 hendelse.logiskFeil("Behandlingen er ferdig men vi er fortsatt i ${this.type.name}")
             }
@@ -588,21 +570,18 @@ class Behandling private constructor(
         ) {
             behandling.observatører.forEach { it.ferdig() }
             // TODO: Dette er vel strengt tatt ikke vedtak fattet?
+            val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger))
             hendelse.hendelse(
                 VedtakFattetHendelse,
                 "Vedtak fattet",
                 mapOf(
-                    "utfall" to behandling.behandler.harYtelse(behandling.opplysninger),
+                    "utfall" to avklaring.verdi,
+                    "harAvklart" to avklaring.opplysningstype.navn,
+                    "fagsakId" to behandling.behandler.fagsakId,
+                    "fagsaknummer" to behandling.behandler.fagsakId,
                     "opplysninger" to behandling.opplysninger.finnAlle(),
-                    "automatisk" to behandling.alleAvklaringer().all { it.erAvbrutt() || it.erAvklart() },
-                ) +
-                    // TODO: Dette går bra så lenge alle behandlinger har fagsakId som opplysning
-                    behandling.opplysninger.finnOpplysning(fagsakIdOpplysningstype).let {
-                        mapOf(
-                            "fagsakId" to it.verdi,
-                            "fagsaknummer" to it.verdi,
-                        )
-                    },
+                    "automatisk" to behandling.avklaringer().all { it.erAvbrutt() || it.erAvklart() },
+                ),
             )
         }
 

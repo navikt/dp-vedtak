@@ -7,28 +7,10 @@ import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEndret
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.MeldekortBeregningHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.MeldekortMottattHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
-import no.nav.dagpenger.opplysning.Opplysninger
-import no.nav.dagpenger.regel.beregning.Beregning.arbeidsdag
-import no.nav.dagpenger.regel.beregning.Beregning.meldeperiodeBehandlet
-import java.util.UUID
-
-class Meldekort(
-    val meldekortId: UUID,
-    val opplysninger: Opplysninger,
-) {
-    private val meldekortperiode = opplysninger.finnOpplysning(meldeperiodeBehandlet)
-    val periode = meldekortperiode.gyldighetsperiode
-    val fraOgMed = periode.fom
-    val tilOgMed = periode.tom
-    val erBehandlet = meldekortperiode.verdi
-    val arbeidsdager = opplysninger.finnAlle().filter { it.opplysningstype == arbeidsdag }
-}
 
 class Person(
     val ident: Ident,
@@ -37,17 +19,14 @@ class Person(
     PersonHåndter {
     private val observatører = mutableSetOf<PersonObservatør>()
     private val behandlinger = behandlinger.toMutableList()
-    val meldekort = mutableListOf<Meldekort>()
 
     constructor(ident: Ident) : this(ident, mutableListOf())
 
     override fun håndter(hendelse: SøknadInnsendtHendelse) {
-        /*
-        TODO: Behandlinger bør spørres om de skal håndtere hendelsen
         if (behandlinger.any { it.behandler.eksternId == hendelse.eksternId }) {
             hendelse.varsel("Søknad med eksternId ${hendelse.eksternId} er allerede mottatt")
             return
-        }*/
+        }
         hendelse.leggTilKontekst(this)
         val behandling =
             hendelse.behandling().also { behandling ->
@@ -60,26 +39,6 @@ class Person(
             }
         behandling.håndter(hendelse)
     }
-
-    override fun håndter(hendelse: MeldekortMottattHendelse) {
-        hendelse.leggTilKontekst(this)
-        val meldekort = hendelse.somMeldekort()
-        this.meldekort.add(meldekort)
-    }
-
-    /*override fun håndter(hendelse: BeregningsperiodeHendelse) {
-        hendelse.leggTilKontekst(this)
-        val meldekortTilBehandling = meldekort.first { !it.erBehandlet }
-
-        // TODO: Skal meldekortet behandles?
-        val forrigeBehandling = behandlinger.last()
-        val behandling =
-            Behandling(
-                behandler = hendelse,
-                opplysninger = meldekortTilBehandling.opplysninger.finnAlle(), // TODO: Skal vi gjøre dette?
-                basertPå = listOf(forrigeBehandling),
-            )
-    }*/
 
     override fun håndter(hendelse: AvklaringIkkeRelevantHendelse) {
         hendelse.leggTilKontekst(this)
@@ -109,10 +68,6 @@ class Person(
         hendelse.leggTilKontekst(this)
         val behandling = behandlinger.finn(hendelse.behandlingId)
         behandling.håndter(hendelse)
-    }
-
-    override fun håndter(hendelse: MeldekortBeregningHendelse) {
-        TODO("Not yet implemented")
     }
 
     fun behandlinger() = behandlinger.toList()

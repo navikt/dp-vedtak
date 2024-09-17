@@ -17,7 +17,6 @@ class Opplysninger private constructor(
     constructor(id: UUID, opplysninger: List<Opplysning<*>>) : this(id, opplysninger, emptyList())
     constructor(opplysninger: List<Opplysning<*>>, basertPå: List<Opplysninger> = emptyList()) : this(UUIDv7.ny(), opplysninger, basertPå)
     constructor(vararg basertPå: Opplysninger) : this(emptyList(), basertPå.toList())
-    constructor(vararg opplysning: Opplysning<*>) : this(opplysning.toList(), emptyList())
 
     val aktiveOpplysninger get() = opplysninger.toList()
 

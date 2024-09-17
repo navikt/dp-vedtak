@@ -4,7 +4,6 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 
 object Beregning {
     val arbeidsdag = Opplysningstype.somBoolsk("Arbeidsdag")
-    val meldeperiodeBehandlet = Opplysningstype.somBoolsk("Er meldeperiode behandlet")
     val arbeidstimer = Opplysningstype.somHeltall("Arbeidstimer på en arbeidsdag")
     val forbruk = Opplysningstype.somBoolsk("Dag som fører til forbruk av dagpengeperiode")
 
