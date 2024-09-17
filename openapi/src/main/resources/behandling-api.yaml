@@ -470,12 +470,15 @@ components:
     Vedtak:
       type: object
       required:
-          - behandlingId
-          - virkningstidspunkt
-          - utfall
-          - fattet
-          - vilkaar
+        - behandlingId
+        - fagsakId
+        - virkningstidspunkt
+        - utfall
+        - fattet
+        - vilkaar
       properties:
+        fagsakId:
+          type: number
         utfall:
           type: boolean
         virkningstidspunkt:
@@ -487,6 +490,10 @@ components:
         fattet:
           type: string
           format: date-time
+        behandletAv:
+          type: array
+          items:
+            $ref: '#/components/schemas/BehandletAv'
         vilkaar:
           type: array
           items:
@@ -506,7 +513,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Utbetaling'
-
 
     Vilkaar:
       type: object
@@ -545,7 +551,16 @@ components:
         sats:
           type: number
 
-
+    BehandletAv:
+      type: object
+      required:
+        - rolle
+      properties:
+        rolle:
+          type: string
+          enum: [ "saksbehandler", "beslutter" ]
+        behandler:
+          $ref: '#/components/schemas/Saksbehandler'
 
 
   securitySchemes:
