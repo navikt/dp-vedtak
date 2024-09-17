@@ -467,6 +467,86 @@ components:
           format: uri
           description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced
 
+    Vedtak:
+      type: object
+      required:
+          - behandlingId
+          - virkningstidspunkt
+          - utfall
+          - fattet
+          - vilkaar
+      properties:
+        utfall:
+          type: boolean
+        virkningstidspunkt:
+          type: string
+          format: date
+        behandlingId:
+          type: string
+          format: uuid
+        fattet:
+          type: string
+          format: date-time
+        vilkaar:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vilkaar'
+        kvoter:
+          type: array
+          items:
+            $ref: '#/components/schemas/Kvote'
+        sats:
+          type: object
+          properties:
+            dagsats:
+              type: number
+            dagsatsMedBarnetillegg:
+              type: number
+        utbetalinger:
+          type: array
+          items:
+            $ref: '#/components/schemas/Utbetaling'
+
+
+    Vilkaar:
+      type: object
+      properties:
+        hjemmel:
+          type: string
+        status:
+          type: string
+          enum: [ "Oppfylt", "IkkeOppfylt" ]
+        vurdert:
+          type: string
+          format: date-time
+
+    Kvote:
+      type: object
+      properties:
+        navn:
+          type: string
+        antallUker:
+          type: number
+        antallDager:
+          type: number
+        gjenståendeDager:
+          type: number
+
+    Utbetaling:
+      type: object
+      properties:
+        dato:
+          type: string
+          format: date
+        utbetaling:
+          type: number
+        egenandel:
+          type: number
+        sats:
+          type: number
+
+
+
 
   securitySchemes:
     azureAd:
