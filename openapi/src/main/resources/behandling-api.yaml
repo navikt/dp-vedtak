@@ -15,9 +15,14 @@ tags:
     description: Operasjoner på opplysningstyper
   - name: Behandling
     description: Operasjoner på behandlinger
+  - name: Vedtak
+    description: Drodling rundt hvordan vi tror vedtak, eller resultat på behandliner, skal se ut
 paths:
   /vedtak:
     get:
+      description: Viser et vedtak / resultat av en behandling
+      tags:
+        - Vedtak
       responses:
         200:
           description: OK
@@ -508,6 +513,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Vilkaar'
+          example:
+            - navn: "Opphold i Norge"
+              hjemmel: "Folketrygdloven § 4-2"
+              status: "Oppfylt"
+              vurderingstidspunkt: "2021-01-01T12:00:00Z"
+            - navn: "Krav til minsteinntekt"
+              hjemmel: "Folketrygdloven § 4-4"
+              status: "IkkeOppfylt"
+              vurderingstidspunkt: "2021-01-01T12:00:00Z"
         fastsatt:
           type: object
           required:
@@ -592,7 +606,13 @@ components:
 
     Vilkaar:
       type: object
+      required:
+        - navn
+        - status
+        - vurderingstidspunkt
       properties:
+        navn:
+          type: string
         hjemmel:
           type: string
         status:
