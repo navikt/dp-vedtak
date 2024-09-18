@@ -31,9 +31,9 @@ internal val unleash: Unleash =
         )
     }
 
-fun skruPåFeature(feature: String) {
+fun skruPåFeature(feature: Feature) {
     require(unleash is FakeUnleash)
-    unleash.enable(feature)
+    unleash.enable(feature.navn)
 }
 
 fun skruAvFeatures() {
@@ -41,9 +41,15 @@ fun skruAvFeatures() {
     unleash.resetAll()
 }
 
+enum class Feature(
+    val navn: String,
+) {
+    INNVILGELSE("dp-behandling.innvilgelse"),
+}
+
 val støtterInnvilgelse
     get() =
-        unleash.isEnabled("dp-behandling.innvilgelse").also {
+        unleash.isEnabled(Feature.INNVILGELSE.navn).also {
             if (it) {
                 logger.info("Feature dp-behandling.innvilgelse er aktivert")
             } else {

@@ -12,6 +12,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
+import no.nav.dagpenger.behandling.konfigurasjon.Feature
 import no.nav.dagpenger.behandling.konfigurasjon.skruAvFeatures
 import no.nav.dagpenger.behandling.konfigurasjon.skruPåFeature
 import no.nav.dagpenger.behandling.mediator.BehovMediator
@@ -120,6 +121,7 @@ internal class PersonMediatorTest {
     @Test
     fun `søknad med for lite inntekt skal automatisk avslås`() =
         withMigratedDb {
+            skruPåFeature(Feature.INNVILGELSE)
             val testPerson =
                 TestPerson(
                     ident,
@@ -212,7 +214,7 @@ internal class PersonMediatorTest {
                     søknadstidspunkt = 6.mai(2021),
                     InntektSiste12Mnd = 500000,
                 )
-            skruPåFeature("dp-behandling.innvilgelse")
+            skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilFerdig(testPerson)
 
             personRepository.hent(ident.tilPersonIdentfikator()).also {
