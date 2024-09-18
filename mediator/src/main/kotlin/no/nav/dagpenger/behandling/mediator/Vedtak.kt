@@ -2,6 +2,9 @@ package no.nav.dagpenger.behandling.mediator
 
 import no.nav.dagpenger.behandling.api.models.VedtakDTO
 import no.nav.dagpenger.behandling.api.models.VedtakFastsattDTO
+import no.nav.dagpenger.behandling.api.models.VedtakFastsattFastsattVanligArbeidstidDTO
+import no.nav.dagpenger.behandling.api.models.VedtakFastsattGrunnlagDTO
+import no.nav.dagpenger.behandling.api.models.VedtakFastsattSatsDTO
 import no.nav.dagpenger.behandling.api.models.VedtakGjenstaaendeDTO
 import no.nav.dagpenger.behandling.api.models.VilkaarDTO
 import no.nav.dagpenger.behandling.modell.Behandling
@@ -17,8 +20,11 @@ import no.nav.dagpenger.regel.Rettighetstype
 import no.nav.dagpenger.regel.StreikOgLockout
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.fastsattVanligArbeidstid
 import no.nav.dagpenger.regel.Utdanning
 import no.nav.dagpenger.regel.Utestengning
+import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.sats
 import java.time.LocalDateTime
 
 private val autorativKildeForDetViPåEkteMenerErVilkår: List<Opplysningstype<Boolean>> =
@@ -44,6 +50,27 @@ fun lagVedtak(behandling: Behandling): VedtakDTO {
             .filter { it.opplysningstype in autorativKildeForDetViPåEkteMenerErVilkår }
             .map { it.tilVilkårDTO() }
 
+    val utfall = vilkår.all { it.status == VilkaarDTO.Status.Oppfylt }
+    val fastsatt =
+        when (utfall) {
+            true ->
+                VedtakFastsattDTO(
+                    utfall = true,
+                    grunnlag = VedtakFastsattGrunnlagDTO(opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi.verdien),
+                    fastsattVanligArbeidstid =
+                        VedtakFastsattFastsattVanligArbeidstidDTO(
+                            opplysninger.finnOpplysning(fastsattVanligArbeidstid).verdi.toBigDecimal(),
+                        ),
+                    sats =
+                        VedtakFastsattSatsDTO(
+                            dagsatsMedBarnetillegg = opplysninger.finnOpplysning(sats).verdi.verdien,
+                        ),
+                    kvoter = emptyList(),
+                )
+
+            false -> VedtakFastsattDTO(utfall = false)
+        }
+
     return VedtakDTO(
         behandlingId = behandling.behandlingId,
         fagsakId = opplysninger.finnOpplysning(fagsakIdOpplysningstype).verdi.toString(),
@@ -54,10 +81,7 @@ fun lagVedtak(behandling: Behandling): VedtakDTO {
         // TODO("Vi må få med oss noe greier om saksbehandler og beslutter"),
         behandletAv = emptyList(),
         vilkaar = vilkår,
-        fastsatt =
-            VedtakFastsattDTO(
-                utfall = vilkår.all { it.status == VilkaarDTO.Status.Oppfylt },
-            ),
+        fastsatt = fastsatt,
         gjenstaaende = VedtakGjenstaaendeDTO(),
         utbetalinger = emptyList(),
     )
