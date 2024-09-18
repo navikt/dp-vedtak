@@ -15,10 +15,10 @@ import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.Rettighetstype
 import no.nav.dagpenger.regel.StreikOgLockout
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.Utdanning
 import no.nav.dagpenger.regel.Utestengning
-import no.nav.dagpenger.regel.Virkningstidspunkt.virkningstidspunkt
 import java.time.LocalDateTime
 
 private val autorativKildeForDetViPåEkteMenerErVilkår: List<Opplysningstype<Boolean>> =
@@ -49,7 +49,8 @@ fun lagVedtak(behandling: Behandling): VedtakDTO {
         fagsakId = opplysninger.finnOpplysning(fagsakIdOpplysningstype).verdi.toString(),
         // TODO("Dette må være når vedtaket har gått til Ferdig"),
         vedtakstidspunkt = LocalDateTime.now(),
-        virkningstidspunkt = opplysninger.finnOpplysning(virkningstidspunkt).verdi,
+        // TODO: Denne må utledes igjen - virkningstidspunkt = opplysninger.finnOpplysning(virkningstidspunkt).verdi,
+        virkningstidspunkt = opplysninger.finnOpplysning(søknadstidspunkt).verdi,
         // TODO("Vi må få med oss noe greier om saksbehandler og beslutter"),
         behandletAv = emptyList(),
         vilkaar = vilkår,
