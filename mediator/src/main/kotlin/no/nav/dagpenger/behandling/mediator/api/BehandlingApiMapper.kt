@@ -24,9 +24,6 @@ import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
 
 internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
     BehandlingDTO(
@@ -69,7 +66,7 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
             },
         kilde =
             this.kilde?.let {
-                val registrert = it.registrert.tilOffsetTime()
+                val registrert = it.registrert
                 when (it) {
                     is Saksbehandlerkilde -> OpplysningskildeDTO("Saksbehandler", ident = it.ident, registrert = registrert)
                     is Systemkilde -> OpplysningskildeDTO("System", meldingId = it.meldingsreferanseId, registrert = registrert)
@@ -85,8 +82,6 @@ private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
         redigerbar =
             this.kanRedigeres(redigerbareOpplysninger),
     )
-
-private fun LocalDateTime.tilOffsetTime(): OffsetDateTime = this.atZone(ZoneId.systemDefault()).toOffsetDateTime()
 
 private fun LocalDate.tilApiDato(): LocalDate? =
     when (this) {
