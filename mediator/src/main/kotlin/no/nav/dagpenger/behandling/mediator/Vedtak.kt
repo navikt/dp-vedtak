@@ -59,14 +59,24 @@ fun lagVedtak(behandling: Behandling): VedtakDTO {
             true ->
                 VedtakFastsattDTO(
                     utfall = true,
-                    grunnlag = VedtakFastsattGrunnlagDTO(opplysninger.finnOpplysning(Dagpengegrunnlag.grunnlag).verdi.verdien),
+                    grunnlag =
+                        VedtakFastsattGrunnlagDTO(
+                            opplysninger
+                                .finnOpplysning(Dagpengegrunnlag.grunnlag)
+                                .verdi.verdien
+                                .toInt(),
+                        ),
                     fastsattVanligArbeidstid =
                         VedtakFastsattFastsattVanligArbeidstidDTO(
                             opplysninger.finnOpplysning(fastsattVanligArbeidstid).verdi.toBigDecimal(),
                         ),
                     sats =
                         VedtakFastsattSatsDTO(
-                            dagsatsMedBarnetillegg = opplysninger.finnOpplysning(sats).verdi.verdien,
+                            dagsatsMedBarnetillegg =
+                                opplysninger
+                                    .finnOpplysning(sats)
+                                    .verdi.verdien
+                                    .toInt(),
                         ),
                     kvoter =
                         listOf(

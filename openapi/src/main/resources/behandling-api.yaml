@@ -532,13 +532,17 @@ components:
               type: boolean
             grunnlag:
               type: object
+              required:
+                - grunnlag
               properties:
                 grunnlag:
-                  type: number
+                  type: integer
                 begrunnelse:
                   $ref: '#/components/schemas/Forklaring'
             fastsattVanligArbeidstid:
               type: object
+              required:
+                - vanligArbeidstidPerUke
               properties:
                 vanligArbeidstidPerUke:
                   type: number
@@ -546,11 +550,13 @@ components:
                   $ref: '#/components/schemas/Forklaring'
             sats:
               type: object
+              required:
+                - dagsatsMedBarnetillegg
               properties:
                 dagsats:
-                  type: number
+                  type: integer
                 dagsatsMedBarnetillegg:
-                  type: number
+                  type: integer
                 begrunnelse:
                   $ref: '#/components/schemas/Forklaring'
             kvoter:
