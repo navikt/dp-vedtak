@@ -16,6 +16,17 @@ tags:
   - name: Behandling
     description: Operasjoner på behandlinger
 paths:
+  /vedtak:
+    get:
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vedtak'
   /opplysningstyper:
     get:
       description: Lister ut alle registrerte opplysningstyper
@@ -473,21 +484,19 @@ components:
         - behandlingId
         - fagsakId
         - virkningstidspunkt
-        - utfall
         - fattet
+        - fastsatt
         - vilkaar
       properties:
         fagsakId:
           type: number
-        utfall:
-          type: boolean
         virkningstidspunkt:
           type: string
           format: date
         behandlingId:
           type: string
           format: uuid
-        fattet:
+        vedtakstidspunkt:
           type: string
           format: date-time
         behandletAv:
@@ -498,13 +507,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Vilkaar'
-        kvoter:
-          type: array
-          items:
-            $ref: '#/components/schemas/Kvote'
-        fastsetting:
+        fastsatt:
           type: object
+          required:
+            - utfall
           properties:
+            utfall:
+              type: boolean
             grunnlag:
               type: object
               properties:
@@ -528,19 +537,53 @@ components:
                   type: number
                 begrunnelse:
                   $ref: '#/components/schemas/Forklaring'
-            periode:
-              type: object
-              properties:
-                antallUker:
-                  type: number
-                antallDager:
-                  type: number
-                begrunnelse:
-                  $ref: '#/components/schemas/Forklaring'
+            kvoter:
+              type: array
+              items:
+                $ref: '#/components/schemas/Kvote'
+              example:
+                - navn: "Dagpengeperiode"
+                  type: "uker"
+                  verdi: 52
+                - navn: "Permitteringsperiode"
+                  type: "uker"
+                  verdi: 26
+                - navn: "Egenandel"
+                  type: "beløp"
+                  verdi: 3000
+        gjenstaaende:
+          type: object
+          properties:
+            kvoter:
+              type: array
+              items:
+                $ref: '#/components/schemas/Kvote'
+          example:
+            kvoter:
+              - navn: "Dagpengeperiode"
+                type: "dager"
+                verdi: 230
+              - navn: "Permitteringsperiode"
+                type: "dager"
+                verdi: 130
+              - navn: "Egenandel"
+                type: "beløp"
+                verdi: 0
         utbetalinger:
           type: array
           items:
             $ref: '#/components/schemas/Utbetaling'
+          example:
+            - dato: "2021-01-01"
+              sats: 1000
+              gradertSats: 500
+              egenandel: 200
+              utbetaling: 300
+            - dato: "2021-01-15"
+              sats: 1000
+              gradertSats: 500
+              egenandel: 0
+              utbetaling: 500
 
     Forklaring:
       description: En tynn versjon av regeltre og data som førte til resultatet
@@ -563,7 +606,10 @@ components:
       properties:
         navn:
           type: string
-        gjenstående:
+        type:
+          type: string
+          enum: [ "dager", "uker", "beløp" ]
+        verdi:
           type: number
 
     Utbetaling:
@@ -572,11 +618,13 @@ components:
         dato:
           type: string
           format: date
-        utbetaling:
+        sats:
+          type: number
+        gradertSats:
           type: number
         egenandel:
           type: number
-        sats:
+        utbetaling:
           type: number
 
     BehandletAv:
