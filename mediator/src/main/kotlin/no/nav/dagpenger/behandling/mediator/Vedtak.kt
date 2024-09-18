@@ -42,6 +42,7 @@ private fun toVedtak(behandling: Behandling): VedtakDTO {
 
 private fun Opplysning<Boolean>.tilVilkårDTO(): VilkaarDTO =
     VilkaarDTO(
+        navn = this.opplysningstype.toString(),
         hjemmel = "Lover og sånt",
         status =
             when (this.verdi) {
