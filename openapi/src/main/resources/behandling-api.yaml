@@ -502,17 +502,49 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Kvote'
-        sats:
+        fastsetting:
           type: object
           properties:
-            dagsats:
-              type: number
-            dagsatsMedBarnetillegg:
-              type: number
+            grunnlag:
+              type: object
+              properties:
+                grunnlag:
+                  type: number
+                begrunnelse:
+                  $ref: '#/components/schemas/Forklaring'
+            fastsattVanligArbeidstid:
+              type: object
+              properties:
+                vanligArbeidstidPerUke:
+                  type: number
+                begrunnelse:
+                  $ref: '#/components/schemas/Forklaring'
+            sats:
+              type: object
+              properties:
+                dagsats:
+                  type: number
+                dagsatsMedBarnetillegg:
+                  type: number
+                begrunnelse:
+                  $ref: '#/components/schemas/Forklaring'
+            periode:
+              type: object
+              properties:
+                antallUker:
+                  type: number
+                antallDager:
+                  type: number
+                begrunnelse:
+                  $ref: '#/components/schemas/Forklaring'
         utbetalinger:
           type: array
           items:
             $ref: '#/components/schemas/Utbetaling'
+
+    Forklaring:
+      description: En tynn versjon av regeltre og data som førte til resultatet
+      type: object
 
     Vilkaar:
       type: object
@@ -531,11 +563,7 @@ components:
       properties:
         navn:
           type: string
-        antallUker:
-          type: number
-        antallDager:
-          type: number
-        gjenståendeDager:
+        gjenstående:
           type: number
 
     Utbetaling:
