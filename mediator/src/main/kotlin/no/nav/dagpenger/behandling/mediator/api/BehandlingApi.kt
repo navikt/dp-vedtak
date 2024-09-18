@@ -27,6 +27,7 @@ import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.VerdiMapper
 import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.api.auth.saksbehandlerId
 import no.nav.dagpenger.behandling.mediator.audit.Auditlogg
+import no.nav.dagpenger.behandling.mediator.lagVedtak
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
@@ -113,6 +114,17 @@ internal fun Application.behandlingApi(
                         auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
 
                         call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
+                    }
+
+                    get("vedtak") {
+                        val behandling =
+                            personRepository.hentBehandling(
+                                call.behandlingId,
+                            ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+
+                        auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
+
+                        call.respond(HttpStatusCode.OK, lagVedtak(behandling))
                     }
 
                     post("godkjenn") {

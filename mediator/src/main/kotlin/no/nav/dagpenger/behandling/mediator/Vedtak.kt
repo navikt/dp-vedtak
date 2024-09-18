@@ -8,12 +8,34 @@ import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.regel.Alderskrav
+import no.nav.dagpenger.regel.Medlemskap
+import no.nav.dagpenger.regel.Meldeplikt
+import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.ReellArbeidssøker
+import no.nav.dagpenger.regel.Rettighetstype
+import no.nav.dagpenger.regel.StreikOgLockout
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
+import no.nav.dagpenger.regel.Utdanning
+import no.nav.dagpenger.regel.Utestengning
 import no.nav.dagpenger.regel.Virkningstidspunkt.virkningstidspunkt
 import java.time.LocalDateTime
 
-private val autorativKildeForDetViPåEkteMenerErVilkår: List<Opplysningstype<Boolean>> = emptyList()
+private val autorativKildeForDetViPåEkteMenerErVilkår: List<Opplysningstype<Boolean>> =
+    listOf(
+        Alderskrav.kravTilAlder,
+        Minsteinntekt.minsteinntekt,
+        ReellArbeidssøker.kravTilArbeidssøker,
+        Meldeplikt.registrertPåSøknadstidspunktet,
+        Rettighetstype.rettighetstype,
+        Utdanning.kravTilUtdanning,
+        Utestengning.ikkeUtestengt,
+        StreikOgLockout.ikkeStreikEllerLockout,
+        Medlemskap.oppfyllerMedlemskap,
+        TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid,
+    )
 
-private fun toVedtak(behandling: Behandling): VedtakDTO {
+fun lagVedtak(behandling: Behandling): VedtakDTO {
     val opplysninger = behandling.opplysninger()
     val vilkår =
         opplysninger
@@ -33,7 +55,7 @@ private fun toVedtak(behandling: Behandling): VedtakDTO {
         vilkaar = vilkår,
         fastsatt =
             VedtakFastsattDTO(
-                utfall = false,
+                utfall = vilkår.all { it.status == VilkaarDTO.Status.Oppfylt },
             ),
         gjenstaaende = VedtakGjenstaaendeDTO(),
         utbetalinger = emptyList(),

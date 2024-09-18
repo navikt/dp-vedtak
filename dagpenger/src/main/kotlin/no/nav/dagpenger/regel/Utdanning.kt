@@ -47,6 +47,7 @@ object Utdanning {
             regel(tarUtdanning) {
                 innhentMed()
             }
+            // TODO: Legg til regler for å om kravet til utdanning skal vurderes
             regel(deltakelseIArbeidsmarkedstiltak) {
                 oppslag(søknadstidspunkt) { false }
             }

@@ -522,6 +522,7 @@ components:
               hjemmel: "Folketrygdloven § 4-4"
               status: "IkkeOppfylt"
               vurderingstidspunkt: "2021-01-01T12:00:00Z"
+
         fastsatt:
           type: object
           required:
