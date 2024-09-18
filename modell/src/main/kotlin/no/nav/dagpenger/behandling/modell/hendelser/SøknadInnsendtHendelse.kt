@@ -63,7 +63,7 @@ class SøknadInnsendtHendelse(
         return KravPåDagpenger.kravPåDagpenger
     }
 
-    private companion object {
+    companion object {
         val fagsakIdOpplysningstype = Opplysningstype.somHeltall("fagsakId")
     }
 

@@ -483,22 +483,23 @@ components:
       required:
         - behandlingId
         - fagsakId
+        - vedtakstidspunkt
         - virkningstidspunkt
         - fattet
         - fastsatt
         - vilkaar
       properties:
-        fagsakId:
-          type: number
-        virkningstidspunkt:
-          type: string
-          format: date
         behandlingId:
           type: string
           format: uuid
+        fagsakId:
+          type: string
         vedtakstidspunkt:
           type: string
           format: date-time
+        virkningstidspunkt:
+          type: string
+          format: date
         behandletAv:
           type: array
           items:
@@ -597,7 +598,7 @@ components:
         status:
           type: string
           enum: [ "Oppfylt", "IkkeOppfylt" ]
-        vurdert:
+        vurderingstidspunkt:
           type: string
           format: date-time
 
