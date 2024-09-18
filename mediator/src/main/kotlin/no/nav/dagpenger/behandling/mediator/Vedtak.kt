@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator
 
+import no.nav.dagpenger.behandling.api.models.KvoteDTO
 import no.nav.dagpenger.behandling.api.models.VedtakDTO
 import no.nav.dagpenger.behandling.api.models.VedtakFastsattDTO
 import no.nav.dagpenger.behandling.api.models.VedtakFastsattFastsattVanligArbeidstidDTO
@@ -25,6 +26,8 @@ import no.nav.dagpenger.regel.Utdanning
 import no.nav.dagpenger.regel.Utestengning
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.sats
+import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
+import no.nav.dagpenger.regel.fastsetting.Egenandel
 import java.time.LocalDateTime
 
 private val autorativKildeForDetViPåEkteMenerErVilkår: List<Opplysningstype<Boolean>> =
@@ -65,7 +68,19 @@ fun lagVedtak(behandling: Behandling): VedtakDTO {
                         VedtakFastsattSatsDTO(
                             dagsatsMedBarnetillegg = opplysninger.finnOpplysning(sats).verdi.verdien,
                         ),
-                    kvoter = emptyList(),
+                    kvoter =
+                        listOf(
+                            KvoteDTO(
+                                "Dagpengeperiode",
+                                type = KvoteDTO.Type.uker,
+                                opplysninger.finnOpplysning(Dagpengeperiode.antallStønadsuker).verdi.toBigDecimal(),
+                            ),
+                            KvoteDTO(
+                                "Egenandel",
+                                type = KvoteDTO.Type.beløp,
+                                opplysninger.finnOpplysning(Egenandel.egenandel).verdi.verdien,
+                            ),
+                        ),
                 )
 
             false -> VedtakFastsattDTO(utfall = false)
