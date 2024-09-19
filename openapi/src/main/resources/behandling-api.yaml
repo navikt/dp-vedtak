@@ -12,11 +12,12 @@ servers:
     description: prod
 tags:
   - name: Opplysingstype
-    description: Operasjoner på opplysningstyper
+    description: Operasjoner på opplysningstyper.
   - name: Behandling
-    description: Operasjoner på behandlinger
+    description: Operasjoner på behandlinger.
   - name: Vedtak
-    description: Drodling rundt hvordan vi tror vedtak, eller resultat på behandliner, skal se ut
+    description: Drodling rundt hvordan vi tror vedtak, eller resultat på behandlinger, skal se ut.
+
 paths:
   /vedtak:
     get:
@@ -208,78 +209,6 @@ paths:
           description: OK
         default:
           description: Feil ved redigering av opplysninger
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/HttpProblem'
-  /behandling/{behandlingId}/opplysning/bekreftelse:
-    parameters:
-      - name: behandlingId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: Behandlingens id
-    post:
-      summary: Bekrefter en eller flere opplysninger
-      security:
-        - azureAd: [ ]
-      tags:
-        - Behandling
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/OpplysningsId'
-      responses:
-        201:
-          headers:
-            Location:
-              schema:
-                type: string
-                description: URL til bekreftelsen
-          description: OK
-        default:
-          description: Feil ved henting av behandlinger
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/HttpProblem'
-  /behandling/{behandlingId}/opplysning/bekreftelse/{bekreftelseId}:
-    parameters:
-      - name: behandlingId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: Behandlingens id
-      - name: bekreftelseId
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-        description: Bekreftelsens id
-    get:
-      summary: Hent en bekreftelse
-      security:
-        - azureAd: [ ]
-      tags:
-        - Behandling
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Bekreftelse'
-          description: OK
-        default:
-          description: Feil ved henting av behandlinger
           content:
             application/problem+json:
               schema:
@@ -509,7 +438,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BehandletAv'
-        vilkaar:
+        vilkår:
           type: array
           items:
             $ref: '#/components/schemas/Vilkaar'
@@ -530,6 +459,9 @@ components:
           properties:
             utfall:
               type: boolean
+            status:
+              type: string
+              enum: [ "Innvilget", "Avslått", "Stanset", "Avsluttet" ]
             grunnlag:
               type: object
               required:
@@ -573,7 +505,7 @@ components:
                 - navn: "Egenandel"
                   type: "beløp"
                   verdi: 3000
-        gjenstaaende:
+        gjenstående:
           type: object
           properties:
             kvoter:

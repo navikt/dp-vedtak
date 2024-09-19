@@ -6,7 +6,7 @@ import no.nav.dagpenger.behandling.api.models.VedtakFastsattDTO
 import no.nav.dagpenger.behandling.api.models.VedtakFastsattFastsattVanligArbeidstidDTO
 import no.nav.dagpenger.behandling.api.models.VedtakFastsattGrunnlagDTO
 import no.nav.dagpenger.behandling.api.models.VedtakFastsattSatsDTO
-import no.nav.dagpenger.behandling.api.models.VedtakGjenstaaendeDTO
+import no.nav.dagpenger.behandling.api.models.VedtakGjenstEndeDTO
 import no.nav.dagpenger.behandling.api.models.VilkaarDTO
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
@@ -105,9 +105,9 @@ fun lagVedtak(behandling: Behandling): VedtakDTO {
         virkningstidspunkt = opplysninger.finnOpplysning(søknadstidspunkt).verdi,
         // TODO("Vi må få med oss noe greier om saksbehandler og beslutter"),
         behandletAv = emptyList(),
-        vilkaar = vilkår,
+        vilkår = vilkår,
         fastsatt = fastsatt,
-        gjenstaaende = VedtakGjenstaaendeDTO(),
+        gjenstående = VedtakGjenstEndeDTO(),
         utbetalinger = emptyList(),
     )
 }
