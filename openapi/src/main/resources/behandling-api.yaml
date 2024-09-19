@@ -210,6 +210,8 @@ paths:
           format: uuid
     get:
       description: Viser et vedtak / resultat av en behandling
+      security:
+        - azureAd: [ ]
       tags:
         - Vedtak
       responses:
