@@ -4,6 +4,7 @@ import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
+import no.nav.dagpenger.behandling.modell.BehandlingObservatør
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
@@ -19,6 +20,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.withMDC
+import java.util.LinkedList
 
 internal class PersonMediator(
     private val personRepository: PersonRepository,
@@ -29,6 +31,8 @@ internal class PersonMediator(
     private val rapidsConnection: RapidsConnection,
 ) : PersonHåndter,
     MessageContext by rapidsConnection {
+    private val delegatedPersonObservatør = DelegatedPersonObservatør(observatører)
+
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerLogger = KotlinLogging.logger("tjenestekall")
@@ -112,6 +116,8 @@ internal class PersonMediator(
         }
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
         // TODO: Lag en outbox-løsning hvor vi skriver utgående meldinger til database sammen med data
+
+        delegatedPersonObservatør.finalize()
         hendelseMediator.håndter(hendelse)
         behovMediator.håndter(hendelse)
         aktivitetsloggMediator.håndter(hendelse)
@@ -124,5 +130,29 @@ internal class PersonMediator(
     ) {
         logger.error("alvorlig feil: ${err.message} (se sikkerlogg for melding)", err)
         withMDC(context) { sikkerLogger.error("alvorlig feil: ${err.message}\n\t$message", err) }
+    }
+}
+
+private class DelegatedPersonObservatør(
+    private val observatørerer: Set<PersonObservatør>,
+) : PersonObservatør {
+    private val hendelser = LinkedList<PersonObservatør.PersonEvent<*>>()
+
+    override fun endretTilstand(event: PersonObservatør.PersonEvent<BehandlingObservatør.BehandlingEndretTilstand>) {
+        hendelser.add(event)
+    }
+
+    internal fun finalize() {
+        while (hendelser.isNotEmpty()) {
+            val hendelse = hendelser.poll()
+            observatørerer.forEach { observatør ->
+                when (hendelse.wrappedEvent) {
+                    is BehandlingObservatør.BehandlingEndretTilstand ->
+                        observatør.endretTilstand(
+                            hendelse as BehandlingObservatør.BehandlingEndretTilstand,
+                        )
+                }
+            }
+        }
     }
 }

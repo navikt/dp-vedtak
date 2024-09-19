@@ -8,6 +8,7 @@ import no.nav.dagpenger.behandling.api.models.VedtakFastsattGrunnlagDTO
 import no.nav.dagpenger.behandling.api.models.VedtakFastsattSatsDTO
 import no.nav.dagpenger.behandling.api.models.VedtakGjenstEndeDTO
 import no.nav.dagpenger.behandling.api.models.VilkaarDTO
+import no.nav.dagpenger.behandling.mediator.api.tilOpplysningDTO
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
 import no.nav.dagpenger.opplysning.Opplysning
@@ -107,6 +108,7 @@ fun lagVedtak(behandling: Behandling): VedtakDTO {
         behandletAv = emptyList(),
         vilkår = vilkår,
         fastsatt = fastsatt,
+        opplysninger = opplysninger.finnAlle().map { it.tilOpplysningDTO() },
         gjenstående = VedtakGjenstEndeDTO(),
         utbetalinger = emptyList(),
     )

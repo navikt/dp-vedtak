@@ -538,6 +538,10 @@ components:
               gradertSats: 500
               egenandel: 0
               utbetaling: 500
+        opplysninger:
+          type: array
+          items:
+            $ref: '#/components/schemas/Opplysning'
 
     Forklaring:
       description: En tynn versjon av regeltre og data som førte til resultatet

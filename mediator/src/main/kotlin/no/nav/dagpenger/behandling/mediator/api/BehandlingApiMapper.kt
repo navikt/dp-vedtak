@@ -35,7 +35,7 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
             },
     )
 
-private fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
+internal fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
     OpplysningDTO(
         id = this.id,
         navn = this.opplysningstype.navn,
