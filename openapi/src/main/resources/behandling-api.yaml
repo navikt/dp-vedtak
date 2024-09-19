@@ -19,20 +19,6 @@ tags:
     description: Drodling rundt hvordan vi tror vedtak, eller resultat på behandlinger, skal se ut.
 
 paths:
-  /vedtak:
-    get:
-      description: Viser et vedtak / resultat av en behandling
-      tags:
-        - Vedtak
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Vedtak'
   /opplysningstyper:
     get:
       description: Lister ut alle registrerte opplysningstyper
@@ -209,6 +195,34 @@ paths:
           description: OK
         default:
           description: Feil ved redigering av opplysninger
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HttpProblem'
+
+  /behandling/{behandlingId}/vedtak:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      description: Viser et vedtak / resultat av en behandling
+      tags:
+        - Vedtak
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vedtak'
+        default:
+          description: Feil ved uthenting av vedtak
           content:
             application/problem+json:
               schema:
