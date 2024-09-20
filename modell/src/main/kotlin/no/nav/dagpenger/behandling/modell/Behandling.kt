@@ -2,7 +2,6 @@ package no.nav.dagpenger.behandling.modell
 
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
-import no.nav.dagpenger.aktivitetslogg.Varselkode
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaringer
@@ -647,11 +646,6 @@ interface BehandlingObservatør {
     fun ferdig() {}
 
     fun endretTilstand(event: BehandlingEndretTilstand) {}
-}
-
-@Suppress("ktlint:standard:class-naming")
-object Behandlingsvarsler {
-    data object SØKNAD_MOTTATT : Varselkode("Søknad mottatt - midlertidlig test av varsel")
 }
 
 // TODO: Vi bør ha bedre kontroll på navnene og kanskje henge sammen med behov?
