@@ -103,7 +103,7 @@ fun lagVedtak(behandling: Behandling): VedtakDTO {
         // TODO("Dette må være når vedtaket har gått til Ferdig"),
         vedtakstidspunkt = LocalDateTime.now(),
         // TODO: Denne må utledes igjen - virkningstidspunkt = opplysninger.finnOpplysning(virkningstidspunkt).verdi,
-        virkningstidspunkt = opplysninger.finnOpplysning(søknadstidspunkt).verdi,
+        virkningsdato = opplysninger.finnOpplysning(søknadstidspunkt).verdi,
         // TODO("Vi må få med oss noe greier om saksbehandler og beslutter"),
         behandletAv = emptyList(),
         vilkår = vilkår,

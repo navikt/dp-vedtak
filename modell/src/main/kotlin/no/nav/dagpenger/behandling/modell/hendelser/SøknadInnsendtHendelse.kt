@@ -2,6 +2,7 @@ package no.nav.dagpenger.behandling.modell.hendelser
 
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
@@ -65,6 +66,7 @@ class SøknadInnsendtHendelse(
 
     companion object {
         val fagsakIdOpplysningstype = Opplysningstype.somHeltall("fagsakId")
+        val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")
     }
 
     override fun behandling() =
@@ -72,6 +74,12 @@ class SøknadInnsendtHendelse(
             this,
             listOf(
                 Faktum(fagsakIdOpplysningstype, fagsakId, kilde = Systemkilde(meldingsreferanseId, opprettet)),
+                Faktum(
+                    søknadIdOpplysningstype,
+                    this.eksternId.id.toString(),
+                    Gyldighetsperiode(skjedde, skjedde),
+                    kilde = Systemkilde(meldingsreferanseId, opprettet),
+                ),
             ),
         )
 

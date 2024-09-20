@@ -434,7 +434,7 @@ components:
         - behandlingId
         - fagsakId
         - vedtakstidspunkt
-        - virkningstidspunkt
+        - virkningsdato
         - fattet
         - fastsatt
         - vilkaar
@@ -447,7 +447,7 @@ components:
         vedtakstidspunkt:
           type: string
           format: date-time
-        virkningstidspunkt:
+        virkningsdato:
           type: string
           format: date
         behandletAv:
@@ -462,11 +462,11 @@ components:
             - navn: "Opphold i Norge"
               hjemmel: "Folketrygdloven § 4-2"
               status: "Oppfylt"
-              vurderingstidspunkt: "2021-01-01T12:00:00Z"
+              virkningsdato: "2021-01-01T12:00:00Z"
             - navn: "Krav til minsteinntekt"
               hjemmel: "Folketrygdloven § 4-4"
               status: "IkkeOppfylt"
-              vurderingstidspunkt: "2021-01-01T12:00:00Z"
+              virkningsdato: "2021-01-01T12:00:00Z"
 
         fastsatt:
           type: object

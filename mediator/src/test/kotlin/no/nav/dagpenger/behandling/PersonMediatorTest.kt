@@ -90,8 +90,9 @@ internal class PersonMediatorTest {
         )
     }
 
-    private val forventetAntallOpplysningerInnvilgelse = 74
-    private val forventetAntallOpplysningerAvslag = 45
+    private val forventetAntallOpplysningerInnvilgelse = 75
+    private val forventetAntallOpplysningerAvslag = 46
+    private val forventetAntallOpplysningerKnockout = 28
 
     @BeforeEach
     fun setUp() {
@@ -194,7 +195,7 @@ internal class PersonMediatorTest {
                 it
                     .behandlinger()
                     .flatMap { behandling -> behandling.opplysninger().finnAlle() }
-                    .size shouldBe 27
+                    .size shouldBe forventetAntallOpplysningerKnockout
             }
 
             rapid.harHendelse("behandling_avbrutt") {
@@ -223,7 +224,7 @@ internal class PersonMediatorTest {
                 it
                     .behandlinger()
                     .flatMap { behandling -> behandling.opplysninger().finnAlle() }
-                    .size shouldBe 74
+                    .size shouldBe forventetAntallOpplysningerInnvilgelse
             }
             /**
              * Innhenter tar utdanning eller opplæring
