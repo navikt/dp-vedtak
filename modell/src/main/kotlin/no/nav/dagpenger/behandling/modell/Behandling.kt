@@ -567,9 +567,10 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: PersonHendelse,
         ) {
-            behandling.observatører.forEach { it.ferdig() }
+            behandling.emitFerdig()
             // TODO: Dette er vel strengt tatt ikke vedtak fattet?
             val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger))
+
             hendelse.hendelse(
                 VedtakFattetHendelse,
                 "Vedtak fattet",
@@ -614,6 +615,17 @@ class Behandling private constructor(
         tilstand.entering(this, hendelse)
     }
 
+    private fun emitFerdig() {
+        val event =
+            BehandlingObservatør.BehandlingFerdig(
+                behandlingId = behandlingId,
+                behandlingAv = behandler,
+                opplysninger = opplysninger,
+            )
+
+        observatører.forEach { it.ferdig(event) }
+    }
+
     private fun emitVedtaksperiodeEndret(forrigeTilstand: BehandlingTilstand) {
         val event =
             BehandlingObservatør.BehandlingEndretTilstand(
@@ -629,6 +641,12 @@ class Behandling private constructor(
 }
 
 interface BehandlingObservatør {
+    data class BehandlingFerdig(
+        val behandlingId: UUID,
+        val behandlingAv: StartHendelse,
+        val opplysninger: LesbarOpplysninger,
+    )
+
     data class BehandlingEndretTilstand(
         val behandlingId: UUID,
         val gjeldendeTilstand: Behandling.TilstandType,
@@ -643,7 +661,7 @@ interface BehandlingObservatør {
 
     fun avbrutt() {}
 
-    fun ferdig() {}
+    fun ferdig(event: BehandlingFerdig) {}
 
     fun endretTilstand(event: BehandlingEndretTilstand) {}
 }
@@ -654,8 +672,6 @@ sealed class BehandlingHendelser(
     override val name: String,
 ) : Hendelse.Hendelsetype {
     data object BehandlingOpprettetHendelse : BehandlingHendelser("behandling_opprettet")
-
-    data object UnderBehandlingHendelse : BehandlingHendelser("under_behandling")
 
     data object ForslagTilVedtakHendelse : BehandlingHendelser("forslag_til_vedtak")
 
