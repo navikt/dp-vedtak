@@ -117,7 +117,7 @@ internal class PersonMediator(
         sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
         // TODO: Lag en outbox-løsning hvor vi skriver utgående meldinger til database sammen med data
 
-        delegatedPersonObservatør.finalize()
+        delegatedPersonObservatør.ferdigstill()
         hendelseMediator.håndter(hendelse)
         behovMediator.håndter(hendelse)
         aktivitetsloggMediator.håndter(hendelse)
@@ -142,7 +142,7 @@ private class DelegatedPersonObservatør(
         hendelser.add(event)
     }
 
-    internal fun finalize() {
+    fun ferdigstill() {
         while (hendelser.isNotEmpty()) {
             val hendelse = hendelser.poll()
             observatørerer.forEach { observatør ->
