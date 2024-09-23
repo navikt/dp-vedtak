@@ -1,6 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.api
 
-import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.JsonMessage
 import java.util.UUID
 
 internal data class OpplysningsSvar(

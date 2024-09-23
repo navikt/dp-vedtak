@@ -1,9 +1,9 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
-import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
-import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 
 class AvklaringKafkaObservatør(
     private val rapid: MessageContext,

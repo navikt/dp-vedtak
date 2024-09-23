@@ -1,7 +1,5 @@
 package no.nav.dagpenger.behandling.mediator
 
-import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
-import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
@@ -10,6 +8,8 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Behov
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
+import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.RapidsConnection
 
 class BehovMediator(
     private val rapidsConnection: RapidsConnection,
