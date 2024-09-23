@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.KafkaRapid
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.clean
@@ -25,44 +26,47 @@ internal class ApplicationBuilder(
         private val logger = KotlinLogging.logger { }
     }
 
+    // TODO: Last alle regler ved startup. Dette må inn i ett register.
+    private val opplysningstyper: Set<Opplysningstype<*>> = RegelverkDagpenger.produserer
+
     private val rapidsConnection: RapidsConnection =
         RapidApplication
-            .create(config) { engine, _ ->
+            .create(config) { engine, rapidsConnection: KafkaRapid ->
+                val aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection)
+
+                val personRepository =
+                    PersonRepositoryPostgres(
+                        BehandlingRepositoryPostgres(
+                            OpplysningerRepositoryPostgres(),
+                            AvklaringRepositoryPostgres(AvklaringKafkaObservatør(rapidsConnection)),
+                        ),
+                    )
+                val personMediator =
+                    PersonMediator(
+                        personRepository = personRepository,
+                        aktivitetsloggMediator = aktivitetsloggMediator,
+                        behovMediator = BehovMediator(rapidsConnection),
+                        hendelseMediator = HendelseMediator(rapidsConnection),
+                        observatører = setOf(KafkaBehandlingObservatør(rapidsConnection)),
+                        rapidsConnection = rapidsConnection,
+                    )
+
                 engine.application.behandlingApi(
                     personRepository = personRepository,
                     personMediator,
                     AktivitetsloggAuditlogg(aktivitetsloggMediator),
                     opplysningstyper,
                 )
+
+                MessageMediator(
+                    rapidsConnection = rapidsConnection,
+                    personMediator = personMediator,
+                    hendelseRepository = PostgresHendelseRepository(),
+                    opplysningstyper = opplysningstyper,
+                )
             }
 
-    private val opplysningRepository = OpplysningerRepositoryPostgres()
-    private val behandlingRepository =
-        BehandlingRepositoryPostgres(opplysningRepository, AvklaringRepositoryPostgres(AvklaringKafkaObservatør(rapidsConnection)))
-    private val personRepository = PersonRepositoryPostgres(behandlingRepository)
-
-    private val aktivitetsloggMediator = AktivitetsloggMediator(rapidsConnection)
-    private val personMediator: PersonMediator =
-        PersonMediator(
-            personRepository = personRepository,
-            aktivitetsloggMediator = aktivitetsloggMediator,
-            behovMediator = BehovMediator(rapidsConnection),
-            hendelseMediator = HendelseMediator(rapidsConnection),
-            observatører = setOf(KafkaBehandlingObservatør(rapidsConnection)),
-            rapidsConnection = rapidsConnection,
-        )
-
-    // TODO: Last alle regler ved startup. Dette må inn i ett register.
-    private val opplysningstyper: Set<Opplysningstype<*>> = RegelverkDagpenger.produserer
-
     init {
-        MessageMediator(
-            rapidsConnection = rapidsConnection,
-            personMediator = personMediator,
-            hendelseRepository = PostgresHendelseRepository(),
-            opplysningstyper = opplysningstyper,
-        )
-
         rapidsConnection.register(this)
     }
 
