@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator
 
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
@@ -16,7 +17,6 @@ import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.helse.rapids_rivers.RapidApplication
-import no.nav.helse.rapids_rivers.RapidsConnection
 
 internal class ApplicationBuilder(
     config: Map<String, String>,
@@ -27,15 +27,14 @@ internal class ApplicationBuilder(
 
     private val rapidsConnection: RapidsConnection =
         RapidApplication
-            .Builder(RapidApplication.RapidApplicationConfig.fromEnv(config))
-            .withKtorModule {
-                behandlingApi(
+            .create(config) { engine, _ ->
+                engine.application.behandlingApi(
                     personRepository = personRepository,
                     personMediator,
                     AktivitetsloggAuditlogg(aktivitetsloggMediator),
                     opplysningstyper,
                 )
-            }.build()
+            }
 
     private val opplysningRepository = OpplysningerRepositoryPostgres()
     private val behandlingRepository =
