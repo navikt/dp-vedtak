@@ -1,11 +1,12 @@
 package no.nav.dagpenger.behandling.mediator.melding
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import io.kotest.matchers.equals.shouldBeEqual
+import io.mockk.mockk
 import no.nav.dagpenger.behandling.db.Postgres
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
 import no.nav.dagpenger.uuid.UUIDv7
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageProblems
 import kotlin.test.Test
 
 internal class PostgresHendelseRepositoryTest {
@@ -26,7 +27,7 @@ internal class PostgresHendelseRepositoryTest {
             |}
             """.trimMargin()
         val jsonMessage =
-            JsonMessage(originalMessage, MessageProblems(originalMessage)).also {
+            JsonMessage(originalMessage, MessageProblems(originalMessage), mockk(relaxed = true)).also {
                 it.interestedIn("@id", "fødselsnummer", "søknadsData")
             }
         val søknadInnsendtMessage = SøknadInnsendtMessage(jsonMessage)

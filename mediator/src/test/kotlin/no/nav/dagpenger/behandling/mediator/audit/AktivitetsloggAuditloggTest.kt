@@ -1,8 +1,8 @@
 package no.nav.dagpenger.behandling.mediator.audit
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.behandling.mediator.AktivitetsloggMediator
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Test
 
 class AktivitetsloggAuditloggTest {
