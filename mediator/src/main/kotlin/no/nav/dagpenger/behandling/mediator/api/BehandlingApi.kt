@@ -126,7 +126,7 @@ internal fun Application.behandlingApi(
 
                         auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
 
-                        call.respond(HttpStatusCode.OK, lagVedtak(behandling))
+                        call.respond(HttpStatusCode.OK, lagVedtak(behandling.behandlingId, behandling.opplysninger()))
                     }
 
                     post("godkjenn") {

@@ -3,7 +3,9 @@ package no.nav.dagpenger.behandling.mediator
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import mu.KotlinLogging
+import no.nav.dagpenger.behandling.api.models.VedtakDTO
 import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEndretTilstand
+import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingFerdig
 import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 
@@ -18,6 +20,10 @@ internal class PersonMediator(
     }
 
     override fun endretTilstand(event: BehandlingEndretTilstand) {
+        meldinger.add(event.toJsonMessage())
+    }
+
+    override fun ferdig(event: BehandlingFerdig) {
         meldinger.add(event.toJsonMessage())
     }
 
@@ -38,4 +44,24 @@ internal class PersonMediator(
                     "tidBrukt" to tidBrukt.toString(),
                 ),
             )
+
+    private fun BehandlingFerdig.toJsonMessage(): JsonMessage {
+        val vedtak = lagVedtak(behandlingId, opplysninger)
+
+        return JsonMessage.newMessage("vedtak_fattet_beta_WIP", vedtak.toMap())
+    }
+
+    private fun VedtakDTO.toMap() =
+        listOfNotNull(
+            "behandlingId" to behandlingId,
+            "fagsakId" to fagsakId,
+            "vedtakstidspunkt" to vedtakstidspunkt,
+            "virkningsdato" to virkningsdato,
+            "fastsatt" to fastsatt,
+            behandletAv?.let { "behandletAv" to it },
+            vilkår?.let { "vilkår" to it },
+            gjenstående?.let { "gjenstående" to it },
+            utbetalinger?.let { "utbetalinger" to it },
+            opplysninger?.let { "opplysninger" to it },
+        ).toMap()
 }

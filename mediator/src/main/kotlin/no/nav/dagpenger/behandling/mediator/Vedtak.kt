@@ -9,8 +9,8 @@ import no.nav.dagpenger.behandling.api.models.VedtakFastsattSatsDTO
 import no.nav.dagpenger.behandling.api.models.VedtakGjenstEndeDTO
 import no.nav.dagpenger.behandling.api.models.VilkaarDTO
 import no.nav.dagpenger.behandling.mediator.api.tilOpplysningDTO
-import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
+import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.Alderskrav
@@ -30,6 +30,7 @@ import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.sats
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
 import java.time.LocalDateTime
+import java.util.UUID
 
 private val autorativKildeForDetViPåEkteMenerErVilkår: List<Opplysningstype<Boolean>> =
     listOf(
@@ -45,8 +46,10 @@ private val autorativKildeForDetViPåEkteMenerErVilkår: List<Opplysningstype<Bo
         TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid,
     )
 
-fun lagVedtak(behandling: Behandling): VedtakDTO {
-    val opplysninger = behandling.opplysninger()
+fun lagVedtak(
+    behandlingId: UUID,
+    opplysninger: LesbarOpplysninger,
+): VedtakDTO {
     val vilkår =
         opplysninger
             .finnAlle()
@@ -98,7 +101,7 @@ fun lagVedtak(behandling: Behandling): VedtakDTO {
         }
 
     return VedtakDTO(
-        behandlingId = behandling.behandlingId,
+        behandlingId = behandlingId,
         fagsakId = opplysninger.finnOpplysning(fagsakIdOpplysningstype).verdi.toString(),
         // TODO("Dette må være når vedtaket har gått til Ferdig"),
         vedtakstidspunkt = LocalDateTime.now(),

@@ -167,7 +167,7 @@ internal class PersonMediatorTest {
                 medOpplysning<Boolean>("Ordinær") shouldBe false
             }
 
-            rapid.inspektør.size shouldBe 25
+            rapid.inspektør.size shouldBe 26
 
             testObservatør.tilstandsendringer.size shouldBe 3
 
