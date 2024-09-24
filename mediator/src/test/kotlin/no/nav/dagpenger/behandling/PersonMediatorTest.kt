@@ -20,9 +20,7 @@ import no.nav.dagpenger.behandling.konfigurasjon.skruPåFeature
 import no.nav.dagpenger.behandling.mediator.BehovMediator
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
-import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
-import no.nav.dagpenger.behandling.mediator.observatør.KafkaBehandlingObservatør
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringKafkaObservatør
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
@@ -70,21 +68,18 @@ internal class PersonMediatorTest {
         )
 
     private val testObservatør = TestObservatør()
-    private val kafkaObservatør = KafkaBehandlingObservatør(rapid)
-    private val personMediator =
-        PersonMediator(
+    private val hendelseMediator =
+        HendelseMediator(
             personRepository = personRepository,
+            behovMediator = BehovMediator(),
             aktivitetsloggMediator = mockk(relaxed = true),
-            behovMediator = BehovMediator(rapid),
-            hendelseMediator = HendelseMediator(rapid),
-            observatører = setOf(testObservatør, kafkaObservatør),
-            rapidsConnection = rapid,
+            observatører = listOf(testObservatør),
         )
 
     init {
         MessageMediator(
             rapidsConnection = rapid,
-            personMediator = personMediator,
+            hendelseMediator = hendelseMediator,
             hendelseRepository = PostgresHendelseRepository(),
             opplysningstyper = RegelverkDagpenger.produserer,
         )
@@ -174,7 +169,11 @@ internal class PersonMediatorTest {
 
             rapid.inspektør.size shouldBe 25
 
-            testObservatør.tilstandsendringer.size shouldBe 6
+            testObservatør.tilstandsendringer.size shouldBe 3
+
+            /*repeat(rapid.inspektør.size) {
+                rapid.inspektør.key(it) shouldBe ident
+            }*/
         }
 
     @Test
@@ -511,10 +510,6 @@ internal class PersonMediatorTest {
 
         override fun endretTilstand(event: BehandlingEndretTilstand) {
             tilstandsendringer.add(event)
-        }
-
-        override fun endretTilstand(event: PersonObservatør.PersonEvent<BehandlingEndretTilstand>) {
-            tilstandsendringer.add(event.wrappedEvent)
         }
     }
 }

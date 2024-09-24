@@ -4,6 +4,7 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDate
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.mockk.mockk
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.AktivitetsloggObserver
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
@@ -18,9 +19,15 @@ import java.util.UUID
 class HendelseMediatorTest {
     private val rapid = TestRapid()
 
+    // TODO: Denne skal dø
     @Test
     fun foobar() {
-        val mediator = HendelseMediator(rapid)
+        val mediator =
+            HendelseMediator(
+                personRepository = mockk(),
+                behovMediator = mockk(),
+                aktivitetsloggMediator = mockk(),
+            )
         val søknadId = UUIDv7.ny()
         val gjelderDato = LocalDate.now()
         val hendelse = SøknadInnsendtHendelse(UUIDv7.ny(), "ident", søknadId, gjelderDato, 1, LocalDateTime.now())
@@ -32,7 +39,7 @@ class HendelseMediatorTest {
         hendelse.hendelse(FooBar.FOO, "foo")
         hendelse.hendelse(FooBar.BAR, "bar", mapOf("detaljA" to "verdiA", "detaljB" to "verdiB", "kontekstA" to "bar"))
 
-        mediator.håndter(hendelse)
+        mediator.håndter(hendelse, rapid)
         rapid.inspektør.size shouldBe 2
 
         with(rapid.inspektør.message(0)) {

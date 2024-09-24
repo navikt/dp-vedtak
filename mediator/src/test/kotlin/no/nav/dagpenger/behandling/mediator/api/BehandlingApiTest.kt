@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.collections.shouldNotBeEmpty
@@ -20,13 +21,14 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.spyk
 import io.mockk.verify
 import no.nav.dagpenger.behandling.TestOpplysningstyper
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.KvitteringDTO
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
+import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.IMessageMediator
-import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.autentisert
 import no.nav.dagpenger.behandling.mediator.api.TestApplication.testAzureAdToken
 import no.nav.dagpenger.behandling.mediator.audit.Auditlogg
@@ -51,7 +53,8 @@ import java.time.LocalDateTime
 
 internal class BehandlingApiTest {
     private val ident = "12345123451"
-    val person =
+    private val rapid = spyk(TestRapid())
+    private val person =
         Person(ident.tilPersonIdentfikator()).also {
             it.håndter(
                 SøknadInnsendtHendelse(
@@ -104,7 +107,7 @@ internal class BehandlingApiTest {
         InMemoryPersonRepository().also {
             it.lagre(person)
         }
-    private val personMediator = mockk<PersonMediator>(relaxed = true)
+    private val hendelseMediator = mockk<HendelseMediator>(relaxed = true)
     private val auditlogg = mockk<Auditlogg>(relaxed = true)
 
     @AfterEach
@@ -196,7 +199,7 @@ internal class BehandlingApiTest {
             response.status shouldBe HttpStatusCode.Created
             response.bodyAsText().shouldBeEmpty()
             verify {
-                personMediator.håndter(any<AvbrytBehandlingHendelse>())
+                hendelseMediator.behandle(any<AvbrytBehandlingHendelse>(), any())
             }
         }
     }
@@ -214,7 +217,7 @@ internal class BehandlingApiTest {
             response.status shouldBe HttpStatusCode.Created
             response.bodyAsText().shouldBeEmpty()
             verify {
-                personMediator.håndter(any<ForslagGodkjentHendelse>())
+                hendelseMediator.behandle(any<ForslagGodkjentHendelse>(), any())
             }
         }
     }
@@ -250,7 +253,7 @@ internal class BehandlingApiTest {
             }
 
             verify {
-                personMediator.publish(ident, capture(opplysningSvar))
+                rapid.publish(capture(opplysningSvar))
                 auditlogg.oppdater(any(), any(), any())
             }
             opplysningSvar.isCaptured shouldBe true
@@ -283,13 +286,13 @@ internal class BehandlingApiTest {
 
     private fun medSikretBehandlingApi(
         personRepository: PersonRepository = this.personRepository,
-        personMediator: PersonMediator = this.personMediator,
+        hendelseMediator: HendelseMediator = this.hendelseMediator,
         test: suspend ApplicationTestBuilder.() -> Unit,
     ) {
         System.setProperty("Grupper.saksbehandler", "dagpenger-saksbehandler")
         TestApplication.withMockAuthServerAndTestApplication(
             moduleFunction = {
-                behandlingApi(personRepository, personMediator, auditlogg, emptySet())
+                behandlingApi(personRepository, hendelseMediator, auditlogg, emptySet()) { rapid }
             },
             test,
         )

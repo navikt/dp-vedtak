@@ -9,6 +9,7 @@ import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.AvklaringLukketHendelse
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
+import no.nav.dagpenger.behandling.modell.PersonObservatør.PersonEvent
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
@@ -645,7 +646,7 @@ interface BehandlingObservatør {
         val behandlingId: UUID,
         val behandlingAv: StartHendelse,
         val opplysninger: LesbarOpplysninger,
-    )
+    ) : PersonEvent()
 
     data class BehandlingEndretTilstand(
         val behandlingId: UUID,
@@ -653,7 +654,7 @@ interface BehandlingObservatør {
         val forrigeTilstand: Behandling.TilstandType,
         val forventetFerdig: LocalDateTime,
         val tidBrukt: Duration,
-    )
+    ) : PersonEvent()
 
     fun behandlingStartet() {}
 

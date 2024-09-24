@@ -1,7 +1,7 @@
 package no.nav.dagpenger.behandling.mediator
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
-import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
@@ -11,21 +11,22 @@ import mu.withLoggingContext
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Behov
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 
-class BehovMediator(
-    private val rapidsConnection: RapidsConnection,
-) {
+class BehovMediator {
     private companion object {
         val logger = KotlinLogging.logger { }
         val sikkerlogg = KotlinLogging.logger("tjenestekall.BehovMediator")
     }
 
     @WithSpan
-    internal fun håndter(hendelse: PersonHendelse) {
-        hendelse.kontekster().forEach { if (!it.harFunksjonelleFeilEllerVerre()) håndter(hendelse, it.behov()) }
+    internal fun håndter(
+        context: MessageContext,
+        hendelse: PersonHendelse,
+    ) {
+        hendelse.kontekster().forEach { if (!it.harFunksjonelleFeilEllerVerre()) håndter(context, it.behov()) }
     }
 
     private fun håndter(
-        hendelse: PersonHendelse,
+        context: MessageContext,
         behov: List<Behov>,
     ) {
         behov
@@ -52,7 +53,7 @@ class BehovMediator(
 
                             leggPåOtelTracing(behovId, behovMap)
 
-                            rapidsConnection.publish(hendelse.ident(), it.toJson())
+                            context.publish(it.toJson())
                         }
                     }
             }

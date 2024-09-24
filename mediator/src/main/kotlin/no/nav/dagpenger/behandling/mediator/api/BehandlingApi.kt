@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.api
 
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
@@ -23,8 +24,8 @@ import no.nav.dagpenger.behandling.api.models.KvitteringDTO
 import no.nav.dagpenger.behandling.api.models.OppdaterOpplysningRequestDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningstypeDTO
 import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
+import no.nav.dagpenger.behandling.mediator.IHendelseMediator
 import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.VerdiMapper
-import no.nav.dagpenger.behandling.mediator.PersonMediator
 import no.nav.dagpenger.behandling.mediator.api.auth.saksbehandlerId
 import no.nav.dagpenger.behandling.mediator.audit.Auditlogg
 import no.nav.dagpenger.behandling.mediator.lagVedtak
@@ -49,9 +50,10 @@ import java.util.UUID
 
 internal fun Application.behandlingApi(
     personRepository: PersonRepository,
-    personMediator: PersonMediator,
+    hendelseMediator: IHendelseMediator,
     auditlogg: Auditlogg,
     opplysningstyper: Set<Opplysningstype<*>>,
+    messageContext: (ident: String) -> MessageContext,
 ) {
     konfigurerApi()
     install(OtelTraceIdPlugin)
@@ -133,7 +135,7 @@ internal fun Application.behandlingApi(
                         val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId, LocalDateTime.now())
                         hendelse.info("Godkjente behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
 
-                        personMediator.håndter(hendelse)
+                        hendelseMediator.behandle(hendelse, messageContext(identForespørsel.ident))
 
                         call.respond(HttpStatusCode.Created)
                     }
@@ -151,7 +153,7 @@ internal fun Application.behandlingApi(
                             )
                         hendelse.info("Avbrøt behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
 
-                        personMediator.håndter(hendelse)
+                        hendelseMediator.behandle(hendelse, messageContext(identForespørsel.ident))
 
                         call.respond(HttpStatusCode.Created)
                     }
@@ -173,10 +175,8 @@ internal fun Application.behandlingApi(
                                 call.saksbehandlerId(),
                             )
 
-                        personMediator.publish(
-                            behandling.behandler.ident,
-                            svar.toJson(),
-                        )
+                        messageContext(behandling.behandler.ident).publish(svar.toJson())
+
                         auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
                         call.respond(
                             HttpStatusCode.OK,
@@ -189,6 +189,24 @@ internal fun Application.behandlingApi(
             }
         }
     }
+}
+
+internal class ApiMessageContext(
+    val rapid: MessageContext,
+    val ident: String,
+) : MessageContext {
+    override fun publish(message: String) {
+        publish(ident, message)
+    }
+
+    override fun publish(
+        key: String,
+        message: String,
+    ) {
+        rapid.publish(ident, message)
+    }
+
+    override fun rapidName() = "API"
 }
 
 private val ApplicationCall.opplysningId: UUID

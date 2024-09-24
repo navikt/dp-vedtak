@@ -445,16 +445,20 @@ components:
         fagsakId:
           type: string
         vedtakstidspunkt:
+          description: Når vedtaket ble fattet
           type: string
           format: date-time
         virkningsdato:
+          description: Hvilken dato vedtaket har virkning fra
           type: string
           format: date
         behandletAv:
+          description: Hvilke saksbehandlere har vært involvert i behandlingen
           type: array
           items:
             $ref: '#/components/schemas/BehandletAv'
         vilkår:
+          description: En liste over vilkår som er vurdert i behandlingen
           type: array
           items:
             $ref: '#/components/schemas/Vilkaar'
@@ -469,6 +473,7 @@ components:
               virkningsdato: "2021-01-01T12:00:00Z"
 
         fastsatt:
+          description: Hvilke rettigheter som er fastsatt i vedtaket
           type: object
           required:
             - utfall

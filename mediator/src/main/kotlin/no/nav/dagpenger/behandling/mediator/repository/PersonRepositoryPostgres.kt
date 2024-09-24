@@ -16,7 +16,7 @@ class PersonRepositoryPostgres(
                 queryOf(
                     //language=PostgreSQL
                     """
-                    SELECT * FROM person WHERE ident = :ident
+                    SELECT * FROM person WHERE ident = :ident FOR UPDATE
                     """.trimIndent(),
                     mapOf("ident" to ident.identifikator()),
                 ).map { row ->
@@ -33,7 +33,7 @@ class PersonRepositoryPostgres(
                 queryOf(
                     //language=PostgreSQL
                     """
-                    SELECT * FROM person_behandling WHERE ident IN (:ident)
+                    SELECT * FROM person_behandling WHERE ident IN (:ident) FOR UPDATE
                     """.trimIndent(),
                     mapOf("ident" to ident.alleIdentifikatorer().first()),
                 ).map { row ->

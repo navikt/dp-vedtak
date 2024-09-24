@@ -27,7 +27,7 @@ import java.util.UUID
 
 internal class MessageMediator(
     rapidsConnection: RapidsConnection,
-    private val personMediator: PersonMediator,
+    private val hendelseMediator: HendelseMediator,
     private val hendelseRepository: HendelseRepository,
     opplysningstyper: Set<Opplysningstype<*>>,
 ) : IMessageMediator {
@@ -45,7 +45,7 @@ internal class MessageMediator(
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
-            personMediator.håndter(it)
+            hendelseMediator.behandle(it, context)
         }
     }
 
@@ -55,7 +55,7 @@ internal class MessageMediator(
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
-            personMediator.håndter(it)
+            hendelseMediator.behandle(it, context)
         }
     }
 
@@ -65,7 +65,7 @@ internal class MessageMediator(
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
-            personMediator.håndter(it)
+            hendelseMediator.behandle(it, context)
         }
     }
 
@@ -75,7 +75,7 @@ internal class MessageMediator(
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
-            personMediator.håndter(it)
+            hendelseMediator.behandle(it, context)
         }
     }
 
@@ -85,7 +85,7 @@ internal class MessageMediator(
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
-            personMediator.håndter(it)
+            hendelseMediator.behandle(it, context)
         }
     }
 

@@ -25,7 +25,7 @@ class BehandlingRepositoryPostgres(
                     LEFT JOIN behandler_hendelse_behandling ON behandling.behandling_id = behandler_hendelse_behandling.behandling_id
                     LEFT JOIN behandler_hendelse ON behandler_hendelse.melding_id = behandler_hendelse_behandling.melding_id
                     LEFT JOIN behandling_opplysninger ON behandling.behandling_id = behandling_opplysninger.behandling_id                    
-                    WHERE behandling.behandling_id = :id
+                    WHERE behandling.behandling_id = :id 
                     """.trimIndent(),
                     mapOf(
                         "id" to behandlingId,
@@ -66,7 +66,7 @@ class BehandlingRepositoryPostgres(
                 """
                 SELECT *  
                 FROM behandling_basertpå 
-                WHERE behandling_id = :id
+                WHERE behandling_id = :id 
                 """.trimIndent(),
                 mapOf(
                     "id" to behandlingId,

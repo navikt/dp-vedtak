@@ -4,6 +4,8 @@ import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.behandling.modell.Behandling.Companion.finn
 import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEndretTilstand
+import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingFerdig
+import no.nav.dagpenger.behandling.modell.PersonObservatør.PersonEvent
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
@@ -94,18 +96,20 @@ class Person(
         private val ident: String,
         private val delegate: PersonObservatør,
     ) : PersonObservatør {
-        override fun endretTilstand(event: BehandlingEndretTilstand) {
-            delegate.endretTilstand(event)
-            delegate.endretTilstand(PersonObservatør.PersonEvent(ident, event))
+        override fun ferdig(event: BehandlingFerdig) {
+            event.medIdent { delegate.ferdig(it) }
         }
+
+        override fun endretTilstand(event: BehandlingEndretTilstand) {
+            event.medIdent { delegate.endretTilstand(it) }
+        }
+
+        private fun <T : PersonEvent> T.medIdent(block: (T) -> Unit) = block(this.also { it.ident = this@PersonObservatørAdapter.ident })
     }
 }
 
 interface PersonObservatør : BehandlingObservatør {
-    fun endretTilstand(event: PersonEvent<BehandlingEndretTilstand>) {}
-
-    data class PersonEvent<T>(
-        val ident: String,
-        val wrappedEvent: T,
+    sealed class PersonEvent(
+        var ident: String? = null,
     )
 }

@@ -5,13 +5,13 @@ import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.behandling.mediator.AktivitetsloggMediator
 import org.junit.jupiter.api.Test
 
-class AktivitetsloggAuditloggTest {
+class ApiAuditloggTest {
     private val rapid = TestRapid()
-    private val aktivitetsloggMediator = AktivitetsloggMediator(rapid)
+    private val aktivitetsloggMediator = AktivitetsloggMediator()
 
     @Test
     fun `publiserer auditlogg som aktivitetslogg på rapiden`() {
-        val auditlogg = AktivitetsloggAuditlogg(aktivitetsloggMediator)
+        val auditlogg = ApiAuditlogg(aktivitetsloggMediator, rapid)
         val ident = "12345678901"
         auditlogg.opprett("melding", ident, "Z123456")
 

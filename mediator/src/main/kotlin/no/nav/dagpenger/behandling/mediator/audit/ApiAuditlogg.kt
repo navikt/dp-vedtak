@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.audit
 
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
 import no.nav.dagpenger.aktivitetslogg.AktivitetsloggHendelse
 import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
@@ -8,8 +9,9 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.behandling.mediator.AktivitetsloggMediator
 import no.nav.dagpenger.uuid.UUIDv7
 
-internal class AktivitetsloggAuditlogg(
+internal class ApiAuditlogg(
     private val aktivitetsloggMediator: AktivitetsloggMediator,
+    private val rapidsConnection: MessageContext,
 ) : Auditlogg {
     override fun les(
         melding: String,
@@ -49,7 +51,25 @@ internal class AktivitetsloggAuditlogg(
     ) {
         val aktivitetslogg = AuditLoggHendelse(ident)
         block(aktivitetslogg)
-        aktivitetsloggMediator.håndter(aktivitetslogg)
+        aktivitetsloggMediator.håndter(PersonAuditContext(rapidsConnection, ident), aktivitetslogg)
+    }
+
+    private class PersonAuditContext(
+        val rapid: MessageContext,
+        val ident: String,
+    ) : MessageContext {
+        override fun publish(message: String) {
+            publish(ident, message)
+        }
+
+        override fun publish(
+            key: String,
+            message: String,
+        ) {
+            rapid.publish(ident, message)
+        }
+
+        override fun rapidName() = "apiAuditlogg"
     }
 
     private class AuditLoggHendelse(

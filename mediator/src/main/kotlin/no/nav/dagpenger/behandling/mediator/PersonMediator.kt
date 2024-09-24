@@ -1,158 +1,41 @@
 package no.nav.dagpenger.behandling.mediator
 
-import com.github.navikt.tbd_libs.rapids_and_rivers.withMDC
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
-import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
-import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
-import no.nav.dagpenger.aktivitetslogg.Aktivitetslogg
-import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
-import no.nav.dagpenger.behandling.modell.BehandlingObservatør
-import no.nav.dagpenger.behandling.modell.Ident
-import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
-import no.nav.dagpenger.behandling.modell.Person
-import no.nav.dagpenger.behandling.modell.PersonHåndter
+import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEndretTilstand
 import no.nav.dagpenger.behandling.modell.PersonObservatør
-import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
-import java.util.LinkedList
 
 internal class PersonMediator(
-    private val personRepository: PersonRepository,
-    private val aktivitetsloggMediator: AktivitetsloggMediator,
-    private val behovMediator: BehovMediator,
-    private val hendelseMediator: HendelseMediator,
-    private val observatører: Set<PersonObservatør> = emptySet(),
-    private val rapidsConnection: RapidsConnection,
-) : PersonHåndter,
-    MessageContext by rapidsConnection {
-    private val delegatedPersonObservatør = DelegatedPersonObservatør(observatører)
+    private val hendelse: PersonHendelse,
+) : PersonObservatør {
+    private val meldinger = mutableListOf<JsonMessage>()
 
     private companion object {
         val logger = KotlinLogging.logger { }
-        val sikkerLogger = KotlinLogging.logger("tjenestekall")
+        val sikkerlogg = KotlinLogging.logger("tjenestekall")
     }
 
-    override fun håndter(hendelse: SøknadInnsendtHendelse) {
-        behandle(hendelse) { person ->
-            person.håndter(hendelse)
-        }
+    override fun endretTilstand(event: BehandlingEndretTilstand) {
+        meldinger.add(event.toJsonMessage())
     }
 
-    override fun håndter(hendelse: AvklaringIkkeRelevantHendelse) {
-        behandle(hendelse) { person ->
-            person.håndter(hendelse)
-        }
+    internal fun ferdigstill(context: MessageContext) {
+        meldinger.forEach { context.publish(it.toJson()) }
     }
 
-    override fun håndter(hendelse: OpplysningSvarHendelse) {
-        behandle(hendelse) { person ->
-            person.håndter(hendelse)
-        }
-    }
-
-    override fun håndter(hendelse: AvbrytBehandlingHendelse) {
-        behandle(hendelse) { person ->
-            person.håndter(hendelse)
-        }
-    }
-
-    override fun håndter(hendelse: ForslagGodkjentHendelse) {
-        behandle(hendelse) { person ->
-            person.håndter(hendelse)
-        }
-    }
-
-    override fun håndter(hendelse: PåminnelseHendelse) {
-        behandle(hendelse) { person ->
-            person.håndter(hendelse)
-        }
-    }
-
-    @WithSpan
-    private fun behandle(
-        hendelse: PersonHendelse,
-        håndter: (Person) -> Unit,
-    ) = try {
-        val person = hentEllerOpprettPerson(hendelse)
-        observatører.forEach { person.registrer(it) }
-        håndter(person)
-        lagre(person)
-        ferdigstill(hendelse)
-    } catch (err: Aktivitetslogg.AktivitetException) {
-        logger.error("alvorlig feil i aktivitetslogg (se sikkerlogg for detaljer)")
-
-        withMDC(err.kontekst()) {
-            sikkerLogger.error("alvorlig feil i aktivitetslogg: ${err.message}", err)
-        }
-        throw err
-    } catch (e: Exception) {
-        errorHandler(e, e.message ?: "Ukjent feil")
-        throw e
-    }
-
-    private fun lagre(person: Person) {
-        personRepository.lagre(person)
-    }
-
-    private fun hentEllerOpprettPerson(hendelse: PersonHendelse): Person {
-        val person = personRepository.hent(hendelse.ident().tilPersonIdentfikator())
-        return person ?: Person(Ident(hendelse.ident()))
-    }
-
-    @WithSpan
-    private fun ferdigstill(hendelse: PersonHendelse) {
-        if (!hendelse.harAktiviteter()) return
-        if (hendelse.harFunksjonelleFeilEllerVerre()) {
-            logger.info("aktivitetslogg inneholder feil (se sikkerlogg)")
-            sikkerLogger.error("aktivitetslogg inneholder feil:\n${hendelse.toLogString()}")
-        } else {
-            sikkerLogger.info("aktivitetslogg inneholder meldinger:\n${hendelse.toLogString()}")
-        }
-        sikkerLogger.info("aktivitetslogg inneholder meldinger: ${hendelse.toLogString()}")
-        // TODO: Lag en outbox-løsning hvor vi skriver utgående meldinger til database sammen med data
-
-        delegatedPersonObservatør.ferdigstill()
-        hendelseMediator.håndter(hendelse)
-        behovMediator.håndter(hendelse)
-        aktivitetsloggMediator.håndter(hendelse)
-    }
-
-    private fun errorHandler(
-        err: Exception,
-        message: String,
-        context: Map<String, String> = emptyMap(),
-    ) {
-        logger.error("alvorlig feil: ${err.message} (se sikkerlogg for melding)", err)
-        withMDC(context) { sikkerLogger.error("alvorlig feil: ${err.message}\n\t$message", err) }
-    }
-}
-
-private class DelegatedPersonObservatør(
-    private val observatørerer: Set<PersonObservatør>,
-) : PersonObservatør {
-    private val hendelser = LinkedList<PersonObservatør.PersonEvent<*>>()
-
-    override fun endretTilstand(event: PersonObservatør.PersonEvent<BehandlingObservatør.BehandlingEndretTilstand>) {
-        hendelser.add(event)
-    }
-
-    fun ferdigstill() {
-        while (hendelser.isNotEmpty()) {
-            val hendelse = hendelser.poll()
-            observatørerer.forEach { observatør ->
-                when (hendelse.wrappedEvent) {
-                    is BehandlingObservatør.BehandlingEndretTilstand ->
-                        observatør.endretTilstand(
-                            hendelse as BehandlingObservatør.BehandlingEndretTilstand,
-                        )
-                }
-            }
-        }
-    }
+    private fun BehandlingEndretTilstand.toJsonMessage() =
+        JsonMessage
+            .newMessage(
+                "behandling_endret_tilstand",
+                mapOf(
+                    "ident" to requireNotNull(ident) { "Mangler ident i BehandlingEndretTilstand" },
+                    "behandlingId" to behandlingId.toString(),
+                    "forrigeTilstand" to forrigeTilstand.name,
+                    "gjeldendeTilstand" to gjeldendeTilstand.name,
+                    "forventetFerdig" to forventetFerdig.toString(),
+                    "tidBrukt" to tidBrukt.toString(),
+                ),
+            )
 }

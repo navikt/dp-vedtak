@@ -77,7 +77,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     session.run(
                         queryOf(
                             //language=PostgreSQL
-                            "SELECT * FROM opplysningstabell WHERE opplysninger_id = :id",
+                            "SELECT * FROM opplysningstabell WHERE opplysninger_id = :id ",
                             mapOf("id" to opplysningerId),
                         ).map { row ->
                             val datatype = Datatype.fromString(row.string("datatype"))

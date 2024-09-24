@@ -35,6 +35,16 @@ interface PersonRepository : BehandlingRepository {
         person: Person,
         unitOfWork: UnitOfWork<*>,
     )
+
+    fun håndter(
+        ident: Ident,
+        handler: (Person) -> Unit,
+    ): Person {
+        val person = hent(ident) ?: Person(ident)
+        handler(person)
+        lagre(person)
+        return person
+    }
 }
 
 interface UnitOfWork<S> {

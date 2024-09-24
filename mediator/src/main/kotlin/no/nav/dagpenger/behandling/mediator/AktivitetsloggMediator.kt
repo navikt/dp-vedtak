@@ -1,22 +1,23 @@
 package no.nav.dagpenger.behandling.mediator
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
-import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import no.nav.dagpenger.aktivitetslogg.AktivitetsloggEventMapper
 import no.nav.dagpenger.aktivitetslogg.AktivitetsloggHendelse
 
-internal class AktivitetsloggMediator(
-    private val rapidsConnection: RapidsConnection,
-) {
+internal class AktivitetsloggMediator {
     private val aktivitetsloggEventMapper = AktivitetsloggEventMapper()
 
     @WithSpan
-    fun håndter(hendelse: AktivitetsloggHendelse) {
+    fun håndter(
+        context: MessageContext,
+        hendelse: AktivitetsloggHendelse,
+    ) {
         Span.current().addEvent("Publiserer aktivitetslogg")
         aktivitetsloggEventMapper.håndter(hendelse) { aktivitetLoggMelding ->
-            rapidsConnection.publish(
+            context.publish(
                 JsonMessage
                     .newMessage(
                         aktivitetLoggMelding.eventNavn,
