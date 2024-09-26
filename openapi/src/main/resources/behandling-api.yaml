@@ -239,6 +239,7 @@ components:
       properties:
         ident:
           type: string
+          pattern: '^\d{11}$'
     Behandling:
       type: object
       required:
@@ -448,6 +449,7 @@ components:
         ident:
           description: Person vedtak gjelder for
           type: string
+          pattern: '^\d{11}$'
         vedtakstidspunkt:
           description: Når vedtaket ble fattet
           type: string
