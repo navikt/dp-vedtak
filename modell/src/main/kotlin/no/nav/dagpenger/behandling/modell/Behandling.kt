@@ -66,6 +66,8 @@ class Behandling private constructor(
 
     fun avklaringer() = avklaringer.avklaringer(opplysninger.forDato(behandler.skjedde))
 
+    fun erAutomatiskBehandlet() = avklaringer().all { it.erAvklart() || it.erAvbrutt() }
+
     fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger.forDato(behandler.skjedde))
 
     companion object {
@@ -581,7 +583,7 @@ class Behandling private constructor(
                     "fagsakId" to behandling.behandler.fagsakId,
                     "fagsaknummer" to behandling.behandler.fagsakId,
                     "opplysninger" to behandling.opplysninger.finnAlle(),
-                    "automatisk" to behandling.avklaringer().all { it.erAvbrutt() || it.erAvklart() },
+                    "automatisk" to behandling.erAutomatiskBehandlet(),
                 ),
             )
         }
@@ -622,6 +624,7 @@ class Behandling private constructor(
                 behandlingId = behandlingId,
                 behandlingAv = behandler,
                 opplysninger = opplysninger,
+                automatiskBehandlet = erAutomatiskBehandlet(),
             )
 
         observatører.forEach { it.ferdig(event) }
@@ -646,6 +649,7 @@ interface BehandlingObservatør {
         val behandlingId: UUID,
         val behandlingAv: StartHendelse,
         val opplysninger: LesbarOpplysninger,
+        val automatiskBehandlet: Boolean,
     ) : PersonEvent()
 
     data class BehandlingEndretTilstand(

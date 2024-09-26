@@ -129,7 +129,12 @@ internal fun Application.behandlingApi(
 
                         call.respond(
                             HttpStatusCode.OK,
-                            lagVedtak(behandling.behandlingId, Ident(behandling.behandler.ident), behandling.opplysninger()),
+                            lagVedtak(
+                                behandling.behandlingId,
+                                Ident(behandling.behandler.ident),
+                                behandling.opplysninger(),
+                                behandling.erAutomatiskBehandlet(),
+                            ),
                         )
                     }
 

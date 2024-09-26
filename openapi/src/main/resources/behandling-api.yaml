@@ -449,6 +449,8 @@ components:
           type: string
         søknadId:
           type: string
+        automatisk:
+          type: boolean
         ident:
           description: Person vedtak gjelder for
           type: string

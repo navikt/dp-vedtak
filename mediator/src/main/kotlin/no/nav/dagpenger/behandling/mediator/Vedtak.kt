@@ -52,6 +52,7 @@ fun lagVedtak(
     behandlingId: UUID,
     ident: Ident,
     opplysninger: LesbarOpplysninger,
+    automatisk: Boolean,
 ): VedtakDTO {
     val vilkår =
         opplysninger
@@ -107,6 +108,7 @@ fun lagVedtak(
         behandlingId = behandlingId,
         søknadId = opplysninger.finnOpplysning(søknadIdOpplysningstype).verdi,
         fagsakId = opplysninger.finnOpplysning(fagsakIdOpplysningstype).verdi.toString(),
+        automatisk = automatisk,
         // TODO("Dette må være når vedtaket har gått til Ferdig"),
         ident = ident.identifikator(),
         vedtakstidspunkt = LocalDateTime.now(),
