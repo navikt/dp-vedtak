@@ -11,6 +11,7 @@ import no.nav.dagpenger.behandling.api.models.VilkaarDTO
 import no.nav.dagpenger.behandling.mediator.api.tilOpplysningDTO
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
+import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.søknadIdOpplysningstype
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
@@ -104,6 +105,7 @@ fun lagVedtak(
 
     return VedtakDTO(
         behandlingId = behandlingId,
+        søknadId = opplysninger.finnOpplysning(søknadIdOpplysningstype).verdi,
         fagsakId = opplysninger.finnOpplysning(fagsakIdOpplysningstype).verdi.toString(),
         // TODO("Dette må være når vedtaket har gått til Ferdig"),
         ident = ident.identifikator(),

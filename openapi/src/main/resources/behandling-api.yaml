@@ -435,6 +435,7 @@ components:
         - behandlingId
         - fagsakId
         - ident
+        - hendelseBehandlet
         - vedtakstidspunkt
         - virkningsdato
         - fattet
@@ -445,6 +446,8 @@ components:
           type: string
           format: uuid
         fagsakId:
+          type: string
+        søknadId:
           type: string
         ident:
           description: Person vedtak gjelder for
