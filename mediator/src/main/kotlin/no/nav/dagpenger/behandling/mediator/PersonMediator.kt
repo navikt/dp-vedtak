@@ -6,6 +6,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.behandling.api.models.VedtakDTO
 import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEndretTilstand
 import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingFerdig
+import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 
@@ -46,7 +47,8 @@ internal class PersonMediator(
             )
 
     private fun BehandlingFerdig.toJsonMessage(): JsonMessage {
-        val vedtak = lagVedtak(behandlingId, opplysninger)
+        val ident = Ident(requireNotNull(ident) { "Mangler ident i BehandlingEndretTilstand" })
+        val vedtak = lagVedtak(behandlingId, ident, opplysninger)
 
         return JsonMessage.newMessage("vedtak_fattet_beta_WIP", vedtak.toMap())
     }
@@ -58,6 +60,7 @@ internal class PersonMediator(
             "vedtakstidspunkt" to vedtakstidspunkt,
             "virkningsdato" to virkningsdato,
             "fastsatt" to fastsatt,
+            "ident" to ident,
             behandletAv?.let { "behandletAv" to it },
             vilkår?.let { "vilkår" to it },
             gjenstående?.let { "gjenstående" to it },

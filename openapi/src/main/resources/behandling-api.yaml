@@ -433,6 +433,7 @@ components:
       required:
         - behandlingId
         - fagsakId
+        - ident
         - vedtakstidspunkt
         - virkningsdato
         - fattet
@@ -443,6 +444,9 @@ components:
           type: string
           format: uuid
         fagsakId:
+          type: string
+        ident:
+          description: Person vedtak gjelder for
           type: string
         vedtakstidspunkt:
           description: Når vedtaket ble fattet

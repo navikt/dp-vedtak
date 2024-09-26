@@ -9,6 +9,7 @@ import no.nav.dagpenger.behandling.api.models.VedtakFastsattSatsDTO
 import no.nav.dagpenger.behandling.api.models.VedtakGjenstEndeDTO
 import no.nav.dagpenger.behandling.api.models.VilkaarDTO
 import no.nav.dagpenger.behandling.mediator.api.tilOpplysningDTO
+import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
@@ -48,6 +49,7 @@ private val autorativKildeForDetViPåEkteMenerErVilkår: List<Opplysningstype<Bo
 
 fun lagVedtak(
     behandlingId: UUID,
+    ident: Ident,
     opplysninger: LesbarOpplysninger,
 ): VedtakDTO {
     val vilkår =
@@ -104,6 +106,7 @@ fun lagVedtak(
         behandlingId = behandlingId,
         fagsakId = opplysninger.finnOpplysning(fagsakIdOpplysningstype).verdi.toString(),
         // TODO("Dette må være når vedtaket har gått til Ferdig"),
+        ident = ident.identifikator(),
         vedtakstidspunkt = LocalDateTime.now(),
         // TODO: Denne må utledes igjen - virkningstidspunkt = opplysninger.finnOpplysning(virkningstidspunkt).verdi,
         virkningsdato = opplysninger.finnOpplysning(søknadstidspunkt).verdi,
