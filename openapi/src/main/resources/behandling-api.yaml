@@ -440,7 +440,10 @@ components:
         - virkningsdato
         - fattet
         - fastsatt
-        - vilkaar
+        - behandletAv
+        - vilkår
+        - utbetalinger
+        - opplysninger
       properties:
         behandlingId:
           type: string

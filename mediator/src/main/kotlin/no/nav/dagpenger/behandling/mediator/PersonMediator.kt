@@ -63,10 +63,10 @@ internal class PersonMediator(
             "fastsatt" to fastsatt,
             "ident" to ident,
             automatisk?.let { "automatisk" to it },
-            behandletAv?.let { "behandletAv" to it },
-            vilkår?.let { "vilkår" to it },
             gjenstående?.let { "gjenstående" to it },
-            utbetalinger?.let { "utbetalinger" to it },
-            opplysninger?.let { "opplysninger" to it },
+            "behandletAv" to behandletAv,
+            "vilkår" to vilkår,
+            "utbetalinger" to utbetalinger,
+            "opplysninger" to opplysninger,
         ).toMap()
 }
