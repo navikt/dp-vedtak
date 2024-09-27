@@ -159,7 +159,7 @@ internal class PersonMediatorTest {
                 }
 
             rapid.harHendelse("vedtak_fattet", 2) {
-                medInnhold("fastsatt") {
+                medMeldingsInnhold("fastsatt") {
                     medBoolsk("utfall") shouldBe false
                 }
                 medNode("fagsakId").asInt() shouldBe 123
@@ -173,11 +173,21 @@ internal class PersonMediatorTest {
                     medTimestamp("vedtakstidspunkt")
                 }
                 medTekst("behandlingId") shouldBe person!!.aktivBehandling.behandlingId.toString()
-                medVilkår("Oppfyller kravet til alder")["status"].asText() shouldBe "Oppfylt"
-                medVilkår("Krav til minsteinntekt")["status"].asText() shouldBe "IkkeOppfylt"
-                medVilkår("Krav til arbeidssøker")["status"].asText() shouldBe "Oppfylt"
-                medVilkår("Registrert som arbeidssøker på søknadstidspunktet")["status"].asText() shouldBe "Oppfylt"
-                medVilkår("Rettighetstype")["status"].asText() shouldBe "Oppfylt"
+                medVilkår("Oppfyller kravet til alder") {
+                    erOppfylt()
+                }
+                medVilkår("Krav til minsteinntekt") {
+                    erIkkeOppfylt()
+                }
+                medVilkår("Krav til arbeidssøker") {
+                    erOppfylt()
+                }
+                medVilkår("Registrert som arbeidssøker på søknadstidspunktet") {
+                    erOppfylt()
+                }
+                medVilkår("Rettighetstype") {
+                    erOppfylt()
+                }
             }
 
             rapid.inspektør.size shouldBe 25
@@ -586,7 +596,7 @@ private class Meldingsinnhold(
 ) {
     fun medNode(navn: String) = message.get(navn)
 
-    fun medInnhold(
+    fun medMeldingsInnhold(
         navn: String,
         block: Meldingsinnhold.() -> Unit,
     ) = Meldingsinnhold(message.get(navn)).apply { block() }
@@ -601,7 +611,14 @@ private class Meldingsinnhold(
 
     fun medOpplysning(navn: String) = message.get("opplysninger").single { it["opplysningstype"]["id"].asText() == navn }
 
-    fun medVilkår(navn: String) = message.get("vilkår").single { it["navn"].asText() == navn }
+    fun medVilkår(
+        navn: String,
+        block: Vilkår.() -> Unit,
+    ) = Vilkår(
+        message.get("vilkår").single {
+            it["navn"].asText() == navn
+        },
+    ).apply { block() }
 
     inline fun <reified T> medOpplysning(navn: String): T =
         when (T::class) {
@@ -611,4 +628,17 @@ private class Meldingsinnhold(
             Int::class -> medOpplysning(navn)["verdi"].asInt() as T
             else -> throw IllegalArgumentException("Ukjent type")
         }
+
+    inner class Vilkår(
+        private val jsonNode: JsonNode,
+    ) {
+        private val status = jsonNode["status"].asText()
+        private val navn = jsonNode["navn"].asText()
+
+        fun erOppfylt() = withClue("$navn skal være oppfylt") { status shouldBe "Oppfylt" }
+
+        fun erIkkeOppfylt() = withClue("$navn skal være ikke oppfylt") { status shouldBe "IkkeOppfylt" }
+
+        fun hjemmel() = jsonNode["hjemmel"].asText()
+    }
 }
