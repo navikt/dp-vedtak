@@ -12,6 +12,7 @@ import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendel
 import no.nav.dagpenger.behandling.modell.PersonObservatør.PersonEvent
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.EksternId
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
@@ -622,6 +623,7 @@ class Behandling private constructor(
         val event =
             BehandlingObservatør.BehandlingFerdig(
                 behandlingId = behandlingId,
+                søknadId = behandler.eksternId,
                 behandlingAv = behandler,
                 opplysninger = opplysninger,
                 automatiskBehandlet = erAutomatiskBehandlet(),
@@ -647,6 +649,7 @@ class Behandling private constructor(
 interface BehandlingObservatør {
     data class BehandlingFerdig(
         val behandlingId: UUID,
+        val søknadId: EksternId<*>,
         val behandlingAv: StartHendelse,
         val opplysninger: LesbarOpplysninger,
         val automatiskBehandlet: Boolean,

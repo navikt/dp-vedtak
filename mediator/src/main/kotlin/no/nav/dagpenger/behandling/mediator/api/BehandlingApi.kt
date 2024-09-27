@@ -132,6 +132,7 @@ internal fun Application.behandlingApi(
                             lagVedtak(
                                 behandling.behandlingId,
                                 Ident(behandling.behandler.ident),
+                                behandling.behandler.eksternId,
                                 behandling.opplysninger(),
                                 behandling.erAutomatiskBehandlet(),
                             ),

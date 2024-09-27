@@ -10,8 +10,8 @@ import no.nav.dagpenger.behandling.api.models.VedtakGjenstEndeDTO
 import no.nav.dagpenger.behandling.api.models.VilkaarDTO
 import no.nav.dagpenger.behandling.mediator.api.tilOpplysningDTO
 import no.nav.dagpenger.behandling.modell.Ident
+import no.nav.dagpenger.behandling.modell.hendelser.EksternId
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.søknadIdOpplysningstype
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
@@ -51,6 +51,7 @@ private val autorativKildeForDetViPåEkteMenerErVilkår: List<Opplysningstype<Bo
 fun lagVedtak(
     behandlingId: UUID,
     ident: Ident,
+    søknadId: EksternId<*>,
     opplysninger: LesbarOpplysninger,
     automatisk: Boolean,
 ): VedtakDTO {
@@ -106,7 +107,7 @@ fun lagVedtak(
 
     return VedtakDTO(
         behandlingId = behandlingId,
-        søknadId = opplysninger.finnOpplysning(søknadIdOpplysningstype).verdi,
+        søknadId = søknadId.id.toString(),
         fagsakId = opplysninger.finnOpplysning(fagsakIdOpplysningstype).verdi.toString(),
         automatisk = automatisk,
         // TODO("Dette må være når vedtaket har gått til Ferdig"),
