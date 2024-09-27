@@ -8,7 +8,6 @@ import no.nav.dagpenger.avklaring.Avklaringer
 import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.AvklaringLukketHendelse
-import no.nav.dagpenger.behandling.modell.BehandlingHendelser.VedtakFattetHendelse
 import no.nav.dagpenger.behandling.modell.PersonObservatør.PersonEvent
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
@@ -572,20 +571,20 @@ class Behandling private constructor(
         ) {
             behandling.emitFerdig()
             // TODO: Dette er vel strengt tatt ikke vedtak fattet?
-            val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger))
+//            val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger))
 
-            hendelse.hendelse(
-                VedtakFattetHendelse,
-                "Vedtak fattet",
-                mapOf(
-                    "utfall" to avklaring.verdi,
-                    "harAvklart" to avklaring.opplysningstype.navn,
-                    "fagsakId" to behandling.behandler.fagsakId,
-                    "fagsaknummer" to behandling.behandler.fagsakId,
-                    "opplysninger" to behandling.opplysninger.finnAlle(),
-                    "automatisk" to behandling.erAutomatiskBehandlet(),
-                ),
-            )
+//            hendelse.hendelse(
+//                VedtakFattetHendelse,
+//                "Vedtak fattet",
+//                mapOf(
+//                    "utfall" to avklaring.verdi,
+//                    "harAvklart" to avklaring.opplysningstype.navn,
+//                    "fagsakId" to behandling.behandler.fagsakId,
+//                    "fagsaknummer" to behandling.behandler.fagsakId,
+//                    "opplysninger" to behandling.opplysninger.finnAlle(),
+//                    "automatisk" to behandling.erAutomatiskBehandlet(),
+//                ),
+//            )
         }
 
         override fun håndter(

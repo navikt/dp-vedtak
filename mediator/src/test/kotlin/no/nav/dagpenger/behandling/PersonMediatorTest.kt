@@ -2,6 +2,7 @@ package no.nav.dagpenger.behandling
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDate
+import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -151,23 +152,35 @@ internal class PersonMediatorTest {
                 }
             }
 
-            personRepository.hent(ident.tilPersonIdentfikator()).also {
-                it.shouldNotBeNull()
-                it.aktivBehandling.aktivAvklaringer.shouldBeEmpty()
-            }
+            val person =
+                personRepository.hent(ident.tilPersonIdentfikator()).also {
+                    it.shouldNotBeNull()
+                    it.aktivBehandling.aktivAvklaringer.shouldBeEmpty()
+                }
 
-            rapid.harHendelse("vedtak_fattet") {
-                medBoolsk("utfall") shouldBe false
+            rapid.harHendelse("vedtak_fattet", 2) {
+                medInnhold("fastsatt") {
+                    medBoolsk("utfall") shouldBe false
+                }
                 medNode("fagsakId").asInt() shouldBe 123
-                medNode("fagsaknummer").asInt() shouldBe 123
                 medTekst("søknadId") shouldBe testPerson.søknadId
+                medTekst("ident") shouldBe ident
                 medBoolsk("automatisk") shouldBe true
-
-                medOpplysning<Int>("fagsakId") shouldBe 123
-                medOpplysning<Boolean>("Ordinær") shouldBe false
+                shouldNotBeNull {
+                    medDato("virkningsdato")
+                }
+                shouldNotBeNull {
+                    medTimestamp("vedtakstidspunkt")
+                }
+                medTekst("behandlingId") shouldBe person!!.aktivBehandling.behandlingId.toString()
+                medVilkår("Oppfyller kravet til alder")["status"].asText() shouldBe "Oppfylt"
+                medVilkår("Krav til minsteinntekt")["status"].asText() shouldBe "IkkeOppfylt"
+                medVilkår("Krav til arbeidssøker")["status"].asText() shouldBe "Oppfylt"
+                medVilkår("Registrert som arbeidssøker på søknadstidspunktet")["status"].asText() shouldBe "Oppfylt"
+                medVilkår("Rettighetstype")["status"].asText() shouldBe "Oppfylt"
             }
 
-            rapid.inspektør.size shouldBe 26
+            rapid.inspektør.size shouldBe 25
 
             testObservatør.tilstandsendringer.size shouldBe 3
 
@@ -573,13 +586,22 @@ private class Meldingsinnhold(
 ) {
     fun medNode(navn: String) = message.get(navn)
 
+    fun medInnhold(
+        navn: String,
+        block: Meldingsinnhold.() -> Unit,
+    ) = Meldingsinnhold(message.get(navn)).apply { block() }
+
     fun medTekst(navn: String) = message.get(navn)?.asText()
 
     fun medDato(navn: String) = message.get(navn)?.asLocalDate()
 
+    fun medTimestamp(navn: String) = message.get(navn)?.asLocalDateTime()
+
     fun medBoolsk(navn: String) = message.get(navn)?.asBoolean()
 
     fun medOpplysning(navn: String) = message.get("opplysninger").single { it["opplysningstype"]["id"].asText() == navn }
+
+    fun medVilkår(navn: String) = message.get("vilkår").single { it["navn"].asText() == navn }
 
     inline fun <reified T> medOpplysning(navn: String): T =
         when (T::class) {

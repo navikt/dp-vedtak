@@ -50,7 +50,7 @@ internal class PersonMediator(
         val ident = Ident(requireNotNull(ident) { "Mangler ident i BehandlingEndretTilstand" })
         val vedtak = lagVedtak(behandlingId, ident, opplysninger, automatiskBehandlet)
 
-        return JsonMessage.newMessage("vedtak_fattet_beta_WIP", vedtak.toMap())
+        return JsonMessage.newMessage("vedtak_fattet", vedtak.toMap())
     }
 
     private fun VedtakDTO.toMap() =
