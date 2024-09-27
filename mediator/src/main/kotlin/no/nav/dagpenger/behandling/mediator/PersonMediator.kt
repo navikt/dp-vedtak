@@ -57,10 +57,12 @@ internal class PersonMediator(
         listOfNotNull(
             "behandlingId" to behandlingId,
             "fagsakId" to fagsakId,
+            "søknadId" to søknadId,
             "vedtakstidspunkt" to vedtakstidspunkt,
             "virkningsdato" to virkningsdato,
             "fastsatt" to fastsatt,
             "ident" to ident,
+            automatisk?.let { "automatisk" to it },
             behandletAv?.let { "behandletAv" to it },
             vilkår?.let { "vilkår" to it },
             gjenstående?.let { "gjenstående" to it },
