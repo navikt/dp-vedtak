@@ -435,7 +435,7 @@ components:
         - behandlingId
         - fagsakId
         - ident
-        - hendelseBehandlet
+        - søknadId
         - vedtakstidspunkt
         - virkningsdato
         - fattet
