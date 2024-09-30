@@ -254,6 +254,7 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.info("Mottatt søknad og startet behandling")
+            behandling.observatører.forEach { it.behandlingStartet() }
             hendelse.hendelse(BehandlingHendelser.BehandlingOpprettetHendelse, "Behandling opprettet")
 
             behandling.tilstand(UnderBehandling(), hendelse)
@@ -680,8 +681,6 @@ sealed class BehandlingHendelser(
     data object ForslagTilVedtakHendelse : BehandlingHendelser("forslag_til_vedtak")
 
     data object AvklaringLukketHendelse : BehandlingHendelser("avklaring_lukket")
-
-    data object VedtakFattetHendelse : BehandlingHendelser("vedtak_fattet")
 
     data object AvbrytBehandlingHendelse : BehandlingHendelser("behandling_avbrutt")
 }

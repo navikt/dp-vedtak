@@ -10,10 +10,12 @@ import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 
+typealias Hendelse = Pair<String, JsonMessage>
+
 internal class PersonMediator(
     private val hendelse: PersonHendelse,
 ) : PersonObservatør {
-    private val meldinger = mutableListOf<JsonMessage>()
+    private val meldinger = mutableListOf<Hendelse>()
 
     private companion object {
         val logger = KotlinLogging.logger { }
@@ -21,15 +23,17 @@ internal class PersonMediator(
     }
 
     override fun endretTilstand(event: BehandlingEndretTilstand) {
-        meldinger.add(event.toJsonMessage())
+        val ident = requireNotNull(event.ident) { "Mangler ident i BehandlingEndretTilstand" }
+        meldinger.add(ident to event.toJsonMessage())
     }
 
     override fun ferdig(event: BehandlingFerdig) {
-        meldinger.add(event.toJsonMessage())
+        val ident = requireNotNull(event.ident) { "Mangler ident i BehandlingFerdig" }
+        meldinger.add(ident to event.toJsonMessage())
     }
 
     internal fun ferdigstill(context: MessageContext) {
-        meldinger.forEach { context.publish(it.toJson()) }
+        meldinger.forEach { context.publish(it.first, it.second.toJson()) }
     }
 
     private fun BehandlingEndretTilstand.toJsonMessage() =
