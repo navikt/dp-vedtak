@@ -2,6 +2,7 @@ package no.nav.dagpenger.behandling
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDate
+import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -151,29 +152,57 @@ internal class PersonMediatorTest {
                 }
             }
 
-            personRepository.hent(ident.tilPersonIdentfikator()).also {
-                it.shouldNotBeNull()
-                it.aktivBehandling.aktivAvklaringer.shouldBeEmpty()
-            }
+            val person =
+                personRepository.hent(ident.tilPersonIdentfikator()).also {
+                    it.shouldNotBeNull()
+                    it.aktivBehandling.aktivAvklaringer.shouldBeEmpty()
+                }
 
-            rapid.harHendelse("vedtak_fattet") {
-                medBoolsk("utfall") shouldBe false
+            rapid.harHendelse("vedtak_fattet", 2) {
+                medMeldingsInnhold("fastsatt") {
+                    medBoolsk("utfall") shouldBe false
+                }
                 medNode("fagsakId").asInt() shouldBe 123
-                medNode("fagsaknummer").asInt() shouldBe 123
                 medTekst("søknadId") shouldBe testPerson.søknadId
+                medTekst("ident") shouldBe ident
                 medBoolsk("automatisk") shouldBe true
-
-                medOpplysning<Int>("fagsakId") shouldBe 123
-                medOpplysning<Boolean>("Ordinær") shouldBe false
+                shouldNotBeNull {
+                    medDato("virkningsdato")
+                }
+                shouldNotBeNull {
+                    medTimestamp("vedtakstidspunkt")
+                }
+                medTekst("behandlingId") shouldBe person!!.aktivBehandling.behandlingId.toString()
+                medVilkår("Oppfyller kravet til alder") {
+                    erOppfylt()
+                }
+                medVilkår("Krav til minsteinntekt") {
+                    erIkkeOppfylt()
+                }
+                medVilkår("Krav til arbeidssøker") {
+                    erOppfylt()
+                }
+                medVilkår("Registrert som arbeidssøker på søknadstidspunktet") {
+                    erOppfylt()
+                }
+                medVilkår("Rettighetstype") {
+                    erOppfylt()
+                }
             }
 
-            rapid.inspektør.size shouldBe 26
+            rapid.inspektør.size shouldBe 25
 
             testObservatør.tilstandsendringer.size shouldBe 3
 
-            /*repeat(rapid.inspektør.size) {
-                rapid.inspektør.key(it) shouldBe ident
-            }*/
+            repeat(rapid.inspektør.size) {
+                // @todo: Fjerne hendelse fra aktivitetslogg og bruk observatør for alle hendelser ut.
+                val forventerNøkkelFor = setOf("vedtak_fattet", "behandling_endret_tilstand")
+                withClue("Melding nr $it skal ha nøkkel. Meldingsinnhold: ${rapid.inspektør.message(it)}") {
+                    if (rapid.inspektør.message(it)["@event_name"].asText() in forventerNøkkelFor) {
+                        rapid.inspektør.key(it) shouldBe ident
+                    }
+                }
+            }
         }
 
     @Test
@@ -573,13 +602,29 @@ private class Meldingsinnhold(
 ) {
     fun medNode(navn: String) = message.get(navn)
 
+    fun medMeldingsInnhold(
+        navn: String,
+        block: Meldingsinnhold.() -> Unit,
+    ) = Meldingsinnhold(message.get(navn)).apply { block() }
+
     fun medTekst(navn: String) = message.get(navn)?.asText()
 
     fun medDato(navn: String) = message.get(navn)?.asLocalDate()
 
+    fun medTimestamp(navn: String) = message.get(navn)?.asLocalDateTime()
+
     fun medBoolsk(navn: String) = message.get(navn)?.asBoolean()
 
     fun medOpplysning(navn: String) = message.get("opplysninger").single { it["opplysningstype"]["id"].asText() == navn }
+
+    fun medVilkår(
+        navn: String,
+        block: Vilkår.() -> Unit,
+    ) = Vilkår(
+        message.get("vilkår").single {
+            it["navn"].asText() == navn
+        },
+    ).apply { block() }
 
     inline fun <reified T> medOpplysning(navn: String): T =
         when (T::class) {
@@ -589,4 +634,17 @@ private class Meldingsinnhold(
             Int::class -> medOpplysning(navn)["verdi"].asInt() as T
             else -> throw IllegalArgumentException("Ukjent type")
         }
+
+    inner class Vilkår(
+        private val jsonNode: JsonNode,
+    ) {
+        private val status = jsonNode["status"].asText()
+        private val navn = jsonNode["navn"].asText()
+
+        fun erOppfylt() = withClue("$navn skal være oppfylt") { status shouldBe "Oppfylt" }
+
+        fun erIkkeOppfylt() = withClue("$navn skal være ikke oppfylt") { status shouldBe "IkkeOppfylt" }
+
+        fun hjemmel() = jsonNode["hjemmel"].asText()
+    }
 }
