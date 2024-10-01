@@ -59,6 +59,7 @@ internal class OpplysningSvarMottak(
     }
 
     private val skipBehovId = listOf("3f596a29-69a3-4e43-a2ef-629e3ee72921")
+    private val skipBehandlingsId = listOf("0191ffac-675a-743c-9042-8e000289a558")
 
     @WithSpan
     override fun onPacket(
@@ -74,6 +75,10 @@ internal class OpplysningSvarMottak(
             "behandlingId" to behandlingId.toString(),
         ) {
             if (skipBehovId.contains(behovId)) {
+                logger.info { "Mottok svar på en opplysning som skal ignoreres" }
+                return
+            }
+            if (skipBehandlingsId.contains(behandlingId.toString())) {
                 logger.info { "Mottok svar på en opplysning som skal ignoreres" }
                 return
             }
