@@ -2,6 +2,7 @@ package no.nav.dagpenger.behandling
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
+import no.nav.dagpenger.inntekt.v1.KlassifisertInntektMåned
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.InntektId
@@ -119,6 +120,19 @@ class TestPerson(
         )
     }
 
+    fun godkjennForslagTilVedtak() {
+        rapid.sendTestMessage(
+            JsonMessage
+                .newMessage(
+                    "godkjenn_behandling",
+                    mapOf(
+                        "behandlingId" to behandlingId,
+                        "ident" to ident,
+                    ),
+                ).toJson(),
+        )
+    }
+
     @Language("JSON")
     private val løsningPåInntekt =
         """
@@ -151,10 +165,23 @@ class TestPerson(
         }
         """.trimIndent()
 
-    private val lollerhino =
+    private val inntektV1 =
         no.nav.dagpenger.inntekt.v1.Inntekt(
             inntektsId = "01J677GHJRC2H08Q55DASFD0XX",
-            inntektsListe = emptyList(),
+            inntektsListe =
+                listOf(
+                    KlassifisertInntektMåned(
+                        årMåned = YearMonth.from(søknadstidspunkt.minusMonths(2)),
+                        klassifiserteInntekter =
+                            listOf(
+                                no.nav.dagpenger.inntekt.v1.KlassifisertInntekt(
+                                    beløp = InntektSiste12Mnd.toBigDecimal(),
+                                    inntektKlasse = no.nav.dagpenger.inntekt.v1.InntektKlasse.ARBEIDSINNTEKT,
+                                ),
+                            ),
+                        harAvvik = false,
+                    ),
+                ),
             sisteAvsluttendeKalenderMåned = YearMonth.from(søknadstidspunkt.minusMonths(2)),
         )
 
@@ -182,6 +209,6 @@ class TestPerson(
             // Verneplikt
             Verneplikt to false,
             TarUtdanningEllerOpplæring to false,
-            Inntekt to mapOf("verdi" to lollerhino),
+            Inntekt to mapOf("verdi" to inntektV1),
         )
 }

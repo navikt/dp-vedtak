@@ -572,21 +572,6 @@ class Behandling private constructor(
             hendelse: PersonHendelse,
         ) {
             behandling.emitFerdig()
-            // TODO: Dette er vel strengt tatt ikke vedtak fattet?
-//            val avklaring = behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger))
-
-//            hendelse.hendelse(
-//                VedtakFattetHendelse,
-//                "Vedtak fattet",
-//                mapOf(
-//                    "utfall" to avklaring.verdi,
-//                    "harAvklart" to avklaring.opplysningstype.navn,
-//                    "fagsakId" to behandling.behandler.fagsakId,
-//                    "fagsaknummer" to behandling.behandler.fagsakId,
-//                    "opplysninger" to behandling.opplysninger.finnAlle(),
-//                    "automatisk" to behandling.erAutomatiskBehandlet(),
-//                ),
-//            )
         }
 
         override fun håndter(

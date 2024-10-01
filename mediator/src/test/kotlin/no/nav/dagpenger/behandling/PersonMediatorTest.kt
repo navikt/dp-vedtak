@@ -278,6 +278,17 @@ internal class PersonMediatorTest {
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe true
             }
+
+            testPerson.godkjennForslagTilVedtak()
+
+            rapid.harHendelse("vedtak_fattet") {
+                medFastsattelser {
+                    oppfylt
+                    withClue("Grunnlag bør større enn 0") { grunnlag shouldBeGreaterThan 0 }
+                    vanligArbeidstidPerUke shouldBe 37.5
+                    sats shouldBeGreaterThan 0
+                }
+            }
         }
 
     @Test
@@ -602,6 +613,10 @@ private class Meldingsinnhold(
 ) {
     fun medNode(navn: String) = message.get(navn)
 
+    fun medFastsattelser(block: Fastsettelser.() -> Unit) {
+        Fastsettelser(medNode("fastsatt")).apply { block() }
+    }
+
     fun medMeldingsInnhold(
         navn: String,
         block: Meldingsinnhold.() -> Unit,
@@ -646,5 +661,21 @@ private class Meldingsinnhold(
         fun erIkkeOppfylt() = withClue("$navn skal være ikke oppfylt") { status shouldBe "IkkeOppfylt" }
 
         fun hjemmel() = jsonNode["hjemmel"].asText()
+    }
+
+    inner class Fastsettelser(
+        private val jsonNode: JsonNode,
+    ) {
+        private val utfall = jsonNode["utfall"].asBoolean()
+
+        val status get() = jsonNode["status"].asText()
+
+        val grunnlag get() = jsonNode["grunnlag"]["grunnlag"].asInt()
+        val vanligArbeidstidPerUke get() = jsonNode["fastsattVanligArbeidstid"]["vanligArbeidstidPerUke"].asDouble()
+        val sats get() = jsonNode["sats"]["dagsatsMedBarnetillegg"].asInt()
+
+        val oppfylt get() = withClue("Utfall skal være true") { utfall shouldBe true }
+
+        val `ikke oppfylt` get() = withClue("Utfall skal være false") { utfall shouldBe false }
     }
 }
