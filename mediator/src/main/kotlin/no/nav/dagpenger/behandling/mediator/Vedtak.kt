@@ -25,6 +25,7 @@ import no.nav.dagpenger.regel.StreikOgLockout
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.fastsattVanligArbeidstid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.nyArbeidstid
 import no.nav.dagpenger.regel.Utdanning
 import no.nav.dagpenger.regel.Utestengning
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
@@ -77,7 +78,8 @@ fun lagVedtak(
                         ),
                     fastsattVanligArbeidstid =
                         VedtakFastsattFastsattVanligArbeidstidDTO(
-                            opplysninger.finnOpplysning(fastsattVanligArbeidstid).verdi.toBigDecimal(),
+                            vanligArbeidstidPerUke = opplysninger.finnOpplysning(fastsattVanligArbeidstid).verdi.toBigDecimal(),
+                            nyArbeidstidPerUke = opplysninger.finnOpplysning(nyArbeidstid).verdi.toBigDecimal(),
                         ),
                     sats =
                         VedtakFastsattSatsDTO(

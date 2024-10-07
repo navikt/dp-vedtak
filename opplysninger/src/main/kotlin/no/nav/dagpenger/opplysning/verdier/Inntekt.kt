@@ -1,6 +1,5 @@
 package no.nav.dagpenger.opplysning.verdier
 
-import java.math.BigDecimal
 import no.nav.dagpenger.inntekt.v1.Inntekt as InntektV1
 
 class Inntekt(
@@ -13,6 +12,4 @@ class Inntekt(
     override fun hashCode(): Int = verdi.hashCode()
 
     override fun equals(other: Any?): Boolean = other is Inntekt && verdi == other.verdi
-
-    fun sum(): BigDecimal = verdi.inntektsListe.map { it.klassifiserteInntekter.sumOf { it.beløp } }.sumOf { it }
 }

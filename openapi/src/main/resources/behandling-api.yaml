@@ -510,8 +510,11 @@ components:
               type: object
               required:
                 - vanligArbeidstidPerUke
+                - nyArbeidstidPerUke
               properties:
                 vanligArbeidstidPerUke:
+                  type: number
+                nyArbeidstidPerUke:
                   type: number
                 begrunnelse:
                   $ref: '#/components/schemas/Forklaring'
