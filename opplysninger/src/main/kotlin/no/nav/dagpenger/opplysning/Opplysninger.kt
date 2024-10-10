@@ -54,8 +54,7 @@ class Opplysninger private constructor(
         alleOpplysninger.find { it.overlapper(opplysning) }?.let {
             val erstattet = it as Opplysning<T>
             opplysninger.addAll(erstattet.erstattesAv(opplysning))
-        }
-        opplysninger.add(opplysning)
+        } ?: opplysninger.add(opplysning)
     }
 
     override fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T> =

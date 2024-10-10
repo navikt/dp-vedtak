@@ -15,7 +15,6 @@ import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysning
-import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Redigerbar
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
@@ -23,6 +22,7 @@ import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import java.time.LocalDate
 
 internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
@@ -93,11 +93,11 @@ private fun LocalDate.tilApiDato(): LocalDate? =
 // TODO: Denne bor nok et annet sted - men bare for å vise at det er mulig å ha en slik funksjon
 private val redigerbareOpplysninger =
     object : Redigerbar {
-        private val redigerbare = emptySet<Opplysningstype<*>>()
-         /*   setOf(
+        private val redigerbare =
+            setOf(
                 TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid,
                 TapAvArbeidsinntektOgArbeidstid.nyArbeidstid,
-            ) */
+            )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)
     }

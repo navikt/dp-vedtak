@@ -269,7 +269,8 @@ class OpplysningerRepositoryPostgresTest {
             }
 
             val tidligereOpplysningerFraDb = repo.hentOpplysninger(tidligereOpplysninger.id).also { Regelkjøring(LocalDate.now(), it) }
-            tidligereOpplysningerFraDb.finnAlle().size shouldBe 1
+            tidligereOpplysningerFraDb.finnAlle().size shouldBe 0
+            tidligereOpplysningerFraDb.aktiveOpplysninger.size shouldBe 2
             with(tidligereOpplysningerFraDb.finnOpplysning(baseOpplysning.id)) {
                 id shouldBe baseOpplysning.id
                 verdi shouldBe baseOpplysning.verdi
@@ -278,12 +279,6 @@ class OpplysningerRepositoryPostgresTest {
                 utledetAv.shouldBeNull()
                 erErstattet shouldBe true
                 erstattetAv shouldBe listOf(endretBaseOpplysningstype)
-            }
-            with(tidligereOpplysningerFraDb.finnOpplysning(utledetOpplysningstype)) {
-                verdi shouldBe 5
-                utledetAv.shouldNotBeNull()
-                utledetAv!!.regel shouldBe "Oppslag"
-                utledetAv!!.opplysninger shouldContainExactly listOf(baseOpplysning)
             }
         }
     }
