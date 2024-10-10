@@ -50,9 +50,10 @@ class Opplysninger private constructor(
         }
     }
 
-    internal fun leggTilUtledet(opplysning: Opplysning<*>) {
+    internal fun <T : Comparable<T>> leggTilUtledet(opplysning: Opplysning<T>) {
         alleOpplysninger.find { it.overlapper(opplysning) }?.let {
-            opplysninger.remove(it)
+            val erstattet = it as Opplysning<T>
+            opplysninger.addAll(erstattet.erstattesAv(opplysning))
         }
         opplysninger.add(opplysning)
     }
