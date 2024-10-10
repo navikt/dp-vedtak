@@ -38,6 +38,7 @@ class SøknadInnsendtHendelse(
     gjelderDato: LocalDate,
     fagsakId: Int,
     opprettet: LocalDateTime,
+    private val støtterInnvilgelse: Boolean = false,
 ) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId, opprettet) {
     override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring = Regelkjøring(skjedde, opplysninger, Søknadsprosess())
 
@@ -67,6 +68,7 @@ class SøknadInnsendtHendelse(
     companion object {
         val fagsakIdOpplysningstype = Opplysningstype.somHeltall("fagsakId")
         val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")
+        val støtterInnvilgelseOpplysningstype = Opplysningstype.somBoolsk("støtterInnvilgelse")
     }
 
     override fun behandling() =
@@ -78,6 +80,11 @@ class SøknadInnsendtHendelse(
                     søknadIdOpplysningstype,
                     this.eksternId.id.toString(),
                     Gyldighetsperiode(skjedde, skjedde),
+                    kilde = Systemkilde(meldingsreferanseId, opprettet),
+                ),
+                Faktum(
+                    støtterInnvilgelseOpplysningstype,
+                    støtterInnvilgelse,
                     kilde = Systemkilde(meldingsreferanseId, opprettet),
                 ),
             ),

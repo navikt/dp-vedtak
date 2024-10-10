@@ -9,6 +9,7 @@ import io.opentelemetry.api.trace.Span
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.asUUID
@@ -63,19 +64,23 @@ internal class SøknadInnsendtMessage(
     private val packet: JsonMessage,
 ) : HendelseMessage(packet) {
     override val ident get() = packet["fødselsnummer"].asText()
-    private val hendelse
-        get() =
-            SøknadInnsendtHendelse(
+    private val søknadId = packet["søknadsData"]["søknad_uuid"].asUUID()
+    private val hendelse: SøknadInnsendtHendelse
+        get() {
+            return SøknadInnsendtHendelse(
                 id,
                 ident,
-                søknadId = packet["søknadsData"]["søknad_uuid"].asUUID(),
+                søknadId = søknadId,
                 gjelderDato = packet["@opprettet"].asLocalDateTime().toLocalDate(),
                 // TODO: Vi burde alltid ha fagsakId, og defaulte til 0 er ikke så lurt
                 fagsakId = packet["fagsakId"].asInt(0),
                 opprettet,
+                støtterInnvilgelse,
+                // TODO: Første sak || ?? && kandidatplukk(),
             ).also {
                 if (it.fagsakId == 0) logger.warn { "Søknad mottatt uten fagsakId" }
             }
+        }
 
     override fun behandle(
         mediator: IMessageMediator,
@@ -86,6 +91,8 @@ internal class SøknadInnsendtMessage(
             mediator.behandle(hendelse, this, context)
         }
     }
+
+    private fun kandidatplukk(): Boolean = false
 
     private companion object {
         private val logger = KotlinLogging.logger {}

@@ -4,6 +4,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 
 object Medlemskap {
     val medlemFolketrygden = Opplysningstype.somBoolsk("Er personen medlem av folketrygden?")
@@ -13,7 +14,7 @@ object Medlemskap {
         Regelsett(
             "Medlemskap",
         ) {
-            regel(medlemFolketrygden) { oppslag(Søknadstidspunkt.søknadstidspunkt) { true } }
+            regel(medlemFolketrygden) { oppslag(søknadstidspunkt) { true } }
             regel(oppfyllerMedlemskap) { erSann(medlemFolketrygden) }
         }
 }

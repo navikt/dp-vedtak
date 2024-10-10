@@ -22,9 +22,9 @@ class BehandlingRepositoryPostgresTest {
     private val søknadId = UUIDv7.ny()
     private val søknadInnsendtHendelse =
         SøknadInnsendtHendelse(
-            søknadId = søknadId,
-            ident = ident,
             meldingsreferanseId = søknadId,
+            ident = ident,
+            søknadId = søknadId,
             gjelderDato = LocalDate.now(),
             fagsakId = 1,
             opprettet = LocalDateTime.now(),

@@ -40,8 +40,8 @@ class BehandlingRepositoryPostgres(
                             when (row.string("hendelse_type")) {
                                 SøknadInnsendtHendelse::class.simpleName ->
                                     SøknadInnsendtHendelse(
-                                        ident = row.string("ident"),
                                         meldingsreferanseId = row.uuid("melding_id"),
+                                        ident = row.string("ident"),
                                         søknadId = UUID.fromString(row.string("ekstern_id")),
                                         gjelderDato = row.localDate("skjedde"),
                                         fagsakId = row.int("fagsak_id"),

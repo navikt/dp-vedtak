@@ -5,7 +5,6 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaringer
-import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.AvklaringLukketHendelse
 import no.nav.dagpenger.behandling.modell.PersonObservatør.PersonEvent
@@ -18,6 +17,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.støtterInnvilgelseOpplysningstype
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Informasjonsbehov
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
@@ -308,6 +308,11 @@ class Behandling private constructor(
             rapport.kjørteRegler.forEach { regel: Regel<*> ->
                 hendelse.info(regel.toString())
             }
+
+            val støtterInnvilgelse =
+                behandling.opplysninger.har(støtterInnvilgelseOpplysningstype) &&
+                    behandling.opplysninger.finnOpplysning(støtterInnvilgelseOpplysningstype).verdi
+
             if (!støtterInnvilgelse) {
                 // TODO: Dette faller bort når vi sjekker alt
                 val kravPåDagpenger =

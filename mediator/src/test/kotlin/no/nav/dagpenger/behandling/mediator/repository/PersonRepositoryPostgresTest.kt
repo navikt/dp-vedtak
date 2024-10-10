@@ -30,9 +30,9 @@ class PersonRepositoryPostgresTest {
             )
     private val søknadInnsendtHendelse =
         SøknadInnsendtHendelse(
-            søknadId = søknadId,
-            ident = fnr,
             meldingsreferanseId = søknadId,
+            ident = fnr,
+            søknadId = søknadId,
             gjelderDato = LocalDate.now(),
             fagsakId = 1,
             opprettet = LocalDateTime.now(),
