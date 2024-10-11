@@ -25,6 +25,7 @@ internal class KildeRepository {
                             kilde.opprettet, 
                             kilde.registrert, 
                             kilde_system.melding_id AS system_melding_id, 
+                            kilde_saksbehandler.melding_id AS saksbehandler_melding_id, 
                             kilde_saksbehandler.ident AS saksbehandler_ident
                         FROM 
                             kilde 
@@ -51,6 +52,7 @@ internal class KildeRepository {
 
                             Saksbehandlerkilde::class.java.simpleName ->
                                 Saksbehandlerkilde(
+                                    row.uuid("saksbehandler_melding_id"),
                                     row.string("saksbehandler_ident"),
                                     opprettet,
                                     kildeId,
@@ -116,14 +118,15 @@ internal class KildeRepository {
         BatchStatement(
             // language=PostgreSQL
             """
-            INSERT INTO kilde_saksbehandler (kilde_id, ident) 
-            VALUES (:kildeId, :ident)
+            INSERT INTO kilde_saksbehandler (kilde_id, ident, melding_id) 
+            VALUES (:kildeId, :ident, :meldingId)
             ON CONFLICT DO NOTHING
             """.trimIndent(),
             kilder.map { kilde ->
                 mapOf(
                     "kildeId" to kilde.id,
                     "ident" to kilde.ident,
+                    "meldingId" to kilde.meldingsreferanseId,
                 )
             },
         )

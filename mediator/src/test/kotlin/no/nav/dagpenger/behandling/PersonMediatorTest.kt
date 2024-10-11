@@ -33,6 +33,7 @@ import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEndret
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonObservatør
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.regel.Avklaringspunkter
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.Inntekt
@@ -50,6 +51,7 @@ import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
 import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.RegelverkDagpenger
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -436,7 +438,22 @@ internal class PersonMediatorTest {
                     this.size() shouldBe 7
                 }
             }
-            testPerson.løsBehov("Beregnet vanlig arbeidstid per uke før tap")
+            testPerson.løsBehov(
+                "Beregnet vanlig arbeidstid per uke før tap",
+                mapOf(
+                    "verdi" to 40.0,
+                    "@kilde" to mapOf("saksbehandler" to "123"),
+                ),
+            )
+            personRepository.hent(ident.tilPersonIdentfikator()).also { person ->
+                person.shouldNotBeNull()
+                person.behandlinger().first().opplysninger().finnOpplysning(TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid).let {
+                    it.verdi shouldBe 40.0
+                    it.kilde.shouldNotBeNull()
+                    it.kilde!!::class shouldBe Saksbehandlerkilde::class
+                    (it.kilde!! as Saksbehandlerkilde).ident shouldBe "123"
+                }
+            }
         }
     }
 

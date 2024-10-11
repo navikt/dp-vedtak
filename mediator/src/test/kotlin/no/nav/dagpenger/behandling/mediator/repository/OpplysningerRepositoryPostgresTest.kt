@@ -32,6 +32,7 @@ import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
@@ -44,9 +45,9 @@ class OpplysningerRepositoryPostgresTest {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
             val heltallFaktum = Faktum(heltall, 10)
-            val kildeA = Saksbehandlerkilde("foo")
+            val kildeA = Saksbehandlerkilde(UUIDv7.ny(), "foo")
             val boolskFaktum = Faktum(boolsk, true, kilde = kildeA)
-            val kildeB = Saksbehandlerkilde("bar")
+            val kildeB = Saksbehandlerkilde(UUIDv7.ny(), "bar")
             val datoFaktum = Faktum(dato, LocalDate.now(), kilde = kildeB)
             val desimalltallFaktum = Faktum(desimal, 5.5, kilde = kildeB)
             val tekstFaktum = Faktum(tekst, "Dette er en tekst")
@@ -90,7 +91,7 @@ class OpplysningerRepositoryPostgresTest {
     fun `lagrer grenseverdier for dato opplysninger`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
-            val kilde = Saksbehandlerkilde("foo")
+            val kilde = Saksbehandlerkilde(UUIDv7.ny(), "foo")
             val maksDatoFaktum = Faktum(maksdato, LocalDate.MAX, kilde = kilde)
             val minDatoFaktum = Faktum(mindato, LocalDate.MIN, kilde = kilde)
             val opplysninger = Opplysninger(listOf(maksDatoFaktum, minDatoFaktum))

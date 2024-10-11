@@ -65,7 +65,7 @@ class TestPerson(
         løsning: Any,
         data: Map<String, Any> = emptyMap(),
     ) {
-        rapid.sendTestMessage(løstBehov(mapOf(behov to løsning), false, data))
+        rapid.sendTestMessage(løstBehov(mapOf(behov to løsning), true, data))
     }
 
     private fun løstBehov(

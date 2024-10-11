@@ -38,9 +38,9 @@ class AvklaringRepositoryPostgresTest {
             val kode1 = Avklaringkode("JobbetUtenforNorge", "Arbeid utenfor Norge", "Personen har oppgitt arbeid utenfor Norge")
 
             val avklaring = avklaring(kode1)
-            avklaring.kvittering(Saksbehandlerkilde("123"))
+            avklaring.kvittering(Saksbehandlerkilde(UUIDv7.ny(), "123"))
             avklaring.gjenåpne()
-            avklaring.avklar(Saksbehandlerkilde("123"))
+            avklaring.avklar(Saksbehandlerkilde(UUIDv7.ny(), "123"))
 
             val forventedeTilstander = listOf("UnderBehandling", "Avklart", "UnderBehandling", "Avklart")
             avklaring.endringer.map { it::class.simpleName!! } shouldBe forventedeTilstander

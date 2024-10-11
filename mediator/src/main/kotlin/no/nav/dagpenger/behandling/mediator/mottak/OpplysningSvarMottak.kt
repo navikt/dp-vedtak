@@ -30,6 +30,7 @@ import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
@@ -134,7 +135,21 @@ internal class OpplysningSvarMessage(
 
                 val svar = lagSvar(løsning)
                 val kilde =
-                    Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
+                    when (løsning.has("@kilde")) {
+                        true -> {
+                            val ident =
+                                løsning["@kilde"]["saksbehandler"]?.asText() ?: throw IllegalArgumentException("Mangler saksbehandler")
+                            Saksbehandlerkilde(
+                                meldingsreferanseId = packet["@id"].asUUID(),
+                                opprettet = packet["@opprettet"].asLocalDateTime(),
+                                ident = ident,
+                            )
+                        }
+
+                        false -> {
+                            Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
+                        }
+                    }
 
                 val opplysningSvarBygger =
                     OpplysningSvarBygger(
