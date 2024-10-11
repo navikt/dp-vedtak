@@ -4,7 +4,7 @@ plugins {
     id("common")
     alias(libs.plugins.shadow.jar)
     application
-    kotlin("plugin.serialization") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 dependencies {
