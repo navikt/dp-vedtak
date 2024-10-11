@@ -410,7 +410,7 @@ internal class PersonMediatorTest {
         }
 
     @Test
-    fun `redigering av opplysning i forslag til vedtak sk`() {
+    fun `redigering av opplysning i forslag til vedtak`() {
         withMigratedDb {
             val testPerson =
                 TestPerson(
@@ -436,6 +436,7 @@ internal class PersonMediatorTest {
                     this.size() shouldBe 7
                 }
             }
+            testPerson.løsBehov("Beregnet vanlig arbeidstid per uke før tap")
         }
     }
 

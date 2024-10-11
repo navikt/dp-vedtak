@@ -210,5 +210,6 @@ class TestPerson(
             Verneplikt to false,
             TarUtdanningEllerOpplæring to false,
             Inntekt to mapOf("verdi" to inntektV1),
+            "Beregnet vanlig arbeidstid per uke før tap" to 40,
         )
 }
