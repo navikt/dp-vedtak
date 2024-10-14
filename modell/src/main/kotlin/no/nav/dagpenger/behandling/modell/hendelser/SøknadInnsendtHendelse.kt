@@ -27,6 +27,7 @@ import no.nav.dagpenger.regel.Søknadsprosess
 import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBeregningsregelKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
+import no.nav.dagpenger.regel.støtterInnvilgelseOpplysningstype
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -68,7 +69,6 @@ class SøknadInnsendtHendelse(
     companion object {
         val fagsakIdOpplysningstype = Opplysningstype.somHeltall("fagsakId")
         val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")
-        val støtterInnvilgelseOpplysningstype = Opplysningstype.somBoolsk("støtterInnvilgelse")
     }
 
     override fun behandling() =

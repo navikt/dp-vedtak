@@ -17,7 +17,6 @@ import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse.Companion.støtterInnvilgelseOpplysningstype
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Informasjonsbehov
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
@@ -29,6 +28,7 @@ import no.nav.dagpenger.opplysning.regel.Regel
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.KravPåDagpenger
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
+import no.nav.dagpenger.regel.støtterInnvilgelseOpplysningstype
 import no.nav.dagpenger.uuid.UUIDv7
 import java.time.Duration
 import java.time.LocalDateTime
