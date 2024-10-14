@@ -33,6 +33,7 @@ internal class SøknadInnsendtMottak(
                     }
                 }
                 validate { it.interestedIn("@id", "@opprettet") }
+                validate { it.interestedIn("journalpostId") }
             }.register(this)
     }
 
@@ -75,8 +76,7 @@ internal class SøknadInnsendtMessage(
                 // TODO: Vi burde alltid ha fagsakId, og defaulte til 0 er ikke så lurt
                 fagsakId = packet["fagsakId"].asInt(0),
                 opprettet,
-                støtterInnvilgelse,
-                // TODO: Første sak || ?? && kandidatplukk(),
+                støtterInnvilgelse && kandidatplukk(),
             ).also {
                 if (it.fagsakId == 0) logger.warn { "Søknad mottatt uten fagsakId" }
             }
@@ -92,7 +92,12 @@ internal class SøknadInnsendtMessage(
         }
     }
 
-    private fun kandidatplukk(): Boolean = false
+    private val kandidater = listOf(678481687)
+
+    private fun kandidatplukk(): Boolean =
+        (packet["journalpostId"].asInt() in kandidater || støtterInnvilgelse).also {
+            if (it) logger.info { "Fant en søknad som er kandidat. " }
+        }
 
     private companion object {
         private val logger = KotlinLogging.logger {}
