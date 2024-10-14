@@ -76,7 +76,7 @@ internal class SøknadInnsendtMessage(
                 // TODO: Vi burde alltid ha fagsakId, og defaulte til 0 er ikke så lurt
                 fagsakId = packet["fagsakId"].asInt(0),
                 opprettet,
-                støtterInnvilgelse && kandidatplukk(),
+                støtterInnvilgelse || kandidatplukk(),
             ).also {
                 if (it.fagsakId == 0) logger.warn { "Søknad mottatt uten fagsakId" }
             }
@@ -92,10 +92,10 @@ internal class SøknadInnsendtMessage(
         }
     }
 
-    private val kandidater = listOf(678481687)
+    private val kandidater = setOf(678481687)
 
     private fun kandidatplukk(): Boolean =
-        (packet["journalpostId"].asInt() in kandidater || støtterInnvilgelse).also {
+        (packet["journalpostId"].asInt() in kandidater).also {
             if (it) logger.info { "Fant en søknad som er kandidat. " }
         }
 
