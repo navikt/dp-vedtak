@@ -33,7 +33,7 @@ class PersonRepositoryPostgres(
                 queryOf(
                     //language=PostgreSQL
                     """
-                    SELECT * FROM person_behandling WHERE ident IN (:ident) FOR UPDATE
+                    SELECT * FROM person_behandling WHERE ident IN (:ident) 
                     """.trimIndent(),
                     mapOf("ident" to ident.alleIdentifikatorer().first()),
                 ).map { row ->

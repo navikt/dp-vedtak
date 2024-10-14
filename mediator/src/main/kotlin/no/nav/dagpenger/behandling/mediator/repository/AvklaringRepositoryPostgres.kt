@@ -33,7 +33,7 @@ internal class AvklaringRepositoryPostgres private constructor(
                     """
                     SELECT *
                     FROM avklaring
-                    WHERE behandling_id = :behandling_id FOR UPDATE
+                    WHERE behandling_id = :behandling_id 
                     """.trimIndent(),
                     mapOf(
                         "behandling_id" to behandlingId,
@@ -65,7 +65,7 @@ internal class AvklaringRepositoryPostgres private constructor(
             queryOf(
                 // language=PostgreSQL
                 """
-                SELECT * FROM avklaring_endring WHERE avklaring_id = :avklaring_id FOR UPDATE
+                SELECT * FROM avklaring_endring WHERE avklaring_id = :avklaring_id 
                 """.trimIndent(),
                 mapOf("avklaring_id" to uuid),
             ).map {
