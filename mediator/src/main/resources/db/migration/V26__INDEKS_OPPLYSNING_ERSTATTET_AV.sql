@@ -1,0 +1,1 @@
+CREATE INDEX idx_opplysning_erstattet_av_erstattet_av ON opplysning_erstattet_av (erstattet_av);
