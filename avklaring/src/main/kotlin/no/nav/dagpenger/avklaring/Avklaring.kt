@@ -31,11 +31,11 @@ data class Avklaring(
 ) {
     constructor(kode: Avklaringkode) : this(UUIDv7.ny(), kode)
 
-    private val tilstand get() = historikk.last()
+    private val tilstand get() = endringer.last()
 
-    val sistEndret get(): LocalDateTime = historikk.last().endret
+    val sistEndret get(): LocalDateTime = endringer.last().endret
 
-    val endringer get() = historikk.toList()
+    val endringer get() = historikk.sorted().toList()
 
     fun måAvklares() = tilstand is UnderBehandling
 
