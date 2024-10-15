@@ -73,13 +73,18 @@ internal class HendelseMediator(
         context: MessageContext,
         handler: (Person) -> Unit,
     ) {
-        val personMediator = PersonMediator(hendelse)
-        person(ident) { person ->
-            person.registrer(personMediator)
-            observatører.forEach { observatør -> person.registrer(observatør) }
-            handler(person)
+        try {
+            val personMediator = PersonMediator(hendelse)
+            person(ident) { person ->
+                person.registrer(personMediator)
+                observatører.forEach { observatør -> person.registrer(observatør) }
+                handler(person)
+            }
+            ferdigstill(context, personMediator, hendelse)
+        } catch (e: Exception) {
+            logger.error(e) { "Feil ved håndtering av ${hendelse.javaClass.simpleName}." }
+            throw e
         }
-        ferdigstill(context, personMediator, hendelse)
     }
 
     private fun person(
