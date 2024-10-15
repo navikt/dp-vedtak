@@ -51,6 +51,7 @@ object TapAvArbeidsinntektOgArbeidstid {
             regel(beregnetArbeidstid) { oppslag(søknadstidspunkt) { 37.5 } } // TODO: Satt til 37.5 for testing av innvilgelse
             regel(nyArbeidstid) { oppslag(søknadstidspunkt) { 0.0 } }
             regel(maksimalVanligArbeidstid) { oppslag(søknadstidspunkt) { 40.0 } }
+            // TODO: Legg til maks ønsket arbeidstid
             regel(fastsattVanligArbeidstid) { minstAv(beregnetArbeidstid, maksimalVanligArbeidstid) }
 
             regel(kravTilTaptArbeidstid) { prosentTerskel(nyArbeidstid, fastsattVanligArbeidstid, kravTilArbeidstidsreduksjon) }
