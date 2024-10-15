@@ -29,4 +29,33 @@ class AvklaringTest {
 
         assertEquals(2, avklaringer.size)
     }
+
+    @Test
+    fun `endringer sorteres etter tid`() {
+        val underBehandling = Avklaring.Endring.UnderBehandling()
+        val avklart = Avklaring.Endring.Avklart(avklartAv = Saksbehandlerkilde(UUIDv7.ny(), "X123456"))
+        val avklaring =
+            Avklaring(
+                id = UUIDv7.ny(),
+                ArbeidIEØS,
+                historikk =
+                    mutableListOf(
+                        avklart,
+                        underBehandling,
+                    ),
+            )
+        avklaring.endringer.size shouldBe 2
+        val sisteEndring =
+            avklaring.endringer
+                .last()
+        sisteEndring.javaClass.simpleName shouldBe "Avklart"
+        avklaring.sistEndret shouldBe sisteEndring.endret
+
+        // Avklaring ikke lenger relevant
+        avklaring.avbryt() shouldBe true
+        avklaring.endringer.size shouldBe 3
+        avklaring.endringer
+            .last()
+            .javaClass.simpleName shouldBe "Avbrutt"
+    }
 }
