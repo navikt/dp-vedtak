@@ -19,4 +19,12 @@ interface LesbarOpplysninger {
     fun finnOpplysning(opplysningId: UUID): Opplysning<*>
 
     fun forDato(gjelderFor: LocalDate): LesbarOpplysninger
+
+    fun finnVirkningstidspunkt(
+        prøvingsdato: LocalDate,
+        vararg vilkår: Opplysningstype<Boolean>,
+    ): LocalDate
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>?
 }

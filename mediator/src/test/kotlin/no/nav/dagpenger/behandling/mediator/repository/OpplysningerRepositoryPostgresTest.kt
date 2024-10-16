@@ -139,7 +139,7 @@ class OpplysningerRepositoryPostgresTest {
             val regelsett = Regelsett("Regelsett") { regel(utledetOpplysningstype) { oppslag(baseOpplysningstype) { 5 } } }
             val opplysninger = Opplysninger()
             val regelkjøring = Regelkjøring(LocalDate.now(), opplysninger, regelsett)
-            regelkjøring.leggTil(baseOpplysning as Opplysning<*>)
+            opplysninger.leggTil(baseOpplysning as Opplysning<*>)
 
             repo.lagreOpplysninger(opplysninger)
 
@@ -187,7 +187,7 @@ class OpplysningerRepositoryPostgresTest {
             val regelkjøring = Regelkjøring(LocalDate.now(), opplysninger)
 
             repo.lagreOpplysninger(opplysninger)
-            regelkjøring.leggTil(opplysningErstattet as Opplysning<*>)
+            opplysninger.leggTil(opplysningErstattet as Opplysning<*>)
             repo.lagreOpplysninger(opplysninger)
             val fraDb =
                 repo.hentOpplysninger(opplysninger.id).also {
@@ -242,14 +242,14 @@ class OpplysningerRepositoryPostgresTest {
             val tidligereOpplysninger = Opplysninger()
             val regelkjøring = Regelkjøring(LocalDate.now(), tidligereOpplysninger, regelsett)
 
-            regelkjøring.leggTil(baseOpplysning as Opplysning<*>)
+            opplysninger.leggTil(baseOpplysning as Opplysning<*>)
 
             repo.lagreOpplysninger(tidligereOpplysninger)
 
             val nyeOpplysninger = Opplysninger(opplysninger = emptyList(), basertPå = listOf(tidligereOpplysninger))
             val nyRegelkjøring = Regelkjøring(LocalDate.now(), nyeOpplysninger, regelsett)
             val endretBaseOpplysningstype = Faktum(baseOpplysningstype, LocalDate.now().plusDays(1))
-            nyRegelkjøring.leggTil(endretBaseOpplysningstype as Opplysning<*>)
+            nyopplysninger.leggTil(endretBaseOpplysningstype as Opplysning<*>)
             repo.lagreOpplysninger(nyeOpplysninger)
 
             val fraDb = repo.hentOpplysninger(nyeOpplysninger.id).also { Regelkjøring(LocalDate.now(), it) }

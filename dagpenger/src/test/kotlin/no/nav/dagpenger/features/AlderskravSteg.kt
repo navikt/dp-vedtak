@@ -27,7 +27,7 @@ class AlderskravSteg : No {
     init {
 
         Gitt("at fødselsdatoen til søkeren er {string}") { fødselsdato: String ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<LocalDate>(
                     Alderskrav.fødselsdato,
                     fødselsdato.somLocalDate(),
@@ -35,13 +35,13 @@ class AlderskravSteg : No {
             )
         }
         Gitt("at virkningstidspunktet er {string}") { virkningsdato: String ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<LocalDate>(
                     Søknadstidspunkt.søknadsdato,
                     virkningsdato.somLocalDate(),
                 ) as Opplysning<*>,
             )
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<LocalDate>(
                     Søknadstidspunkt.ønsketdato,
                     virkningsdato.somLocalDate(),

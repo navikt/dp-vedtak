@@ -30,13 +30,13 @@ class MinsteinntektSteg : No {
     init {
 
         Gitt("at søknadsdato er {string}") { søknadsdato: String ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<LocalDate>(
                     Søknadstidspunkt.søknadsdato,
                     søknadsdato.somLocalDate(),
                 ) as Opplysning<*>,
             )
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<LocalDate>(
                     Søknadstidspunkt.ønsketdato,
                     søknadsdato.somLocalDate(),
@@ -44,17 +44,17 @@ class MinsteinntektSteg : No {
             )
         }
         Gitt("at verneplikt er {boolsk}") { verneplikt: Boolean ->
-            regelkjøring.leggTil(Faktum<Boolean>(Verneplikt.avtjentVerneplikt, verneplikt) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(Verneplikt.avtjentVerneplikt, verneplikt) as Opplysning<*>)
         }
         Gitt("at inntekt er") { data: DataTable ->
 
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<Beløp>(
                     opplysningstype = Minsteinntekt.inntekt12,
                     verdi = data.cell(0, 1).tilBeløp(),
                 ) as Opplysning<*>,
             )
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<Beløp>(
                     opplysningstype = Minsteinntekt.inntekt36,
                     verdi = data.cell(1, 1).tilBeløp(),

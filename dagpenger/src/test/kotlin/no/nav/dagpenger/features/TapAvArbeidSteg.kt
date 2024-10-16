@@ -37,13 +37,13 @@ class TapAvArbeidSteg : No {
     init {
 
         Gitt("at søknadsdatossssss er {string}") { søknadsdato: String ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<LocalDate>(
                     Søknadstidspunkt.søknadsdato,
                     søknadsdato.somLocalDate(),
                 ) as Opplysning<*>,
             )
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<LocalDate>(
                     Søknadstidspunkt.ønsketdato,
                     søknadsdato.somLocalDate(),
@@ -52,17 +52,17 @@ class TapAvArbeidSteg : No {
         }
 
         Gitt("at personen har tapt arbeid") {
-            regelkjøring.leggTil(Faktum(tapAvArbeid, true))
+            opplysninger.leggTil(Faktum(tapAvArbeid, true))
         }
         Og("personen har tapt arbeidsinntekt") {
-            regelkjøring.leggTil(Faktum(kravPåLønn, false))
+            opplysninger.leggTil(Faktum(kravPåLønn, false))
         }
         Og("har fått fastsatt vanlig arbeidstid til {double}") { timer: Double ->
-            regelkjøring.leggTil(Faktum(beregnetArbeidstid, timer))
-            regelkjøring.leggTil(Faktum(beregningsregel6mnd, true))
+            opplysninger.leggTil(Faktum(beregnetArbeidstid, timer))
+            opplysninger.leggTil(Faktum(beregningsregel6mnd, true))
         }
         Og("har ny arbeidstid {double}") { timer: Double ->
-            regelkjøring.leggTil(Faktum(nyArbeidstid, timer))
+            opplysninger.leggTil(Faktum(nyArbeidstid, timer))
         }
         Når("personen søker om dagpenger") { }
         Så("skal personen oppfylle kravet til tap av arbeidsinntekt") {

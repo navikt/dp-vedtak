@@ -46,18 +46,18 @@ class RegelmotorIntegrasjonsTest {
             )
 
         // Sett virkningsdato som en opplysning
-        regelkjøring.leggTil(
+        opplysninger.leggTil(
             Faktum(
                 Virkningsdato.søknadsdato,
                 regelverksdato,
                 Gyldighetsperiode(regelverksdato),
             ),
         )
-        regelkjøring.leggTil(Faktum(Virkningsdato.sisteDagMedArbeidsplikt, regelverksdato))
-        regelkjøring.leggTil(Faktum(Virkningsdato.sisteDagMedLønn, regelverksdato))
+        opplysninger.leggTil(Faktum(Virkningsdato.sisteDagMedArbeidsplikt, regelverksdato))
+        opplysninger.leggTil(Faktum(Virkningsdato.sisteDagMedLønn, regelverksdato))
 
         regelkjøring.evaluer().informasjonsbehov shouldContainAll mapOf(Alderskrav.fødselsdato to listOf())
-        regelkjøring.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
+        opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
 
         val faktiskVirkningsdato = opplysninger.finnOpplysning(virkningsdato)
         with(regelkjøring.evaluer().informasjonsbehov) {
@@ -71,7 +71,7 @@ class RegelmotorIntegrasjonsTest {
         assertEquals(Grunnbeløp.TEST_GRUNNBELØP, opplysninger.finnOpplysning(ReglerForInntektTest.grunnbeløp).verdi)
 
         // Har er ikke lengre gyldig inntekt og må hentes på nytt
-        regelkjøring.leggTil(
+        opplysninger.leggTil(
             Hypotese(
                 ReglerForInntektTest.inntekt12,
                 Beløp(321321.0),
@@ -79,7 +79,7 @@ class RegelmotorIntegrasjonsTest {
                 utledetAv = Utledning(ReglerForInntektTest.inntekt12.innhentMed(virkningsdato), listOf(faktiskVirkningsdato)),
             ),
         )
-        regelkjøring.leggTil(Hypotese(ReglerForInntektTest.inntekt36, Beløp(321321.0), Gyldighetsperiode(9.mai, 12.mai)))
+        opplysninger.leggTil(Hypotese(ReglerForInntektTest.inntekt36, Beløp(321321.0), Gyldighetsperiode(9.mai, 12.mai)))
         assertEquals(0, regelkjøring.evaluer().mangler.size)
 
         assertTrue(opplysninger.har(ReglerForInntektTest.minsteinntekt))
@@ -105,10 +105,10 @@ class RegelmotorIntegrasjonsTest {
         val mangler = regelkjøring.evaluer().mangler
         assertEquals(setOf(Alderskrav.fødselsdato, virkningsdato), mangler)
 
-        regelkjøring.leggTil(Faktum(virkningsdato, LocalDate.of(2020, 2, 29)))
+        opplysninger.leggTil(Faktum(virkningsdato, LocalDate.of(2020, 2, 29)))
         assertEquals(setOf(Alderskrav.fødselsdato), regelkjøring.evaluer().mangler)
 
-        regelkjøring.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
+        opplysninger.leggTil(Faktum(Alderskrav.fødselsdato, LocalDate.of(1953, 2, 10)))
 
         assertTrue(opplysninger.har(Alderskrav.vilkår))
         assertTrue(opplysninger.finnOpplysning(Alderskrav.vilkår).verdi)

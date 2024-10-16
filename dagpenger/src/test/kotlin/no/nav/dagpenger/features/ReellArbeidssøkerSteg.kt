@@ -27,38 +27,38 @@ class ReellArbeidssøkerSteg : No {
     init {
 
         Gitt("at personen søker dagpenger") {
-            regelkjøring.leggTil(Faktum<LocalDate>(Søknadstidspunkt.søknadsdato, 11.mai(2022)) as Opplysning<*>)
-            regelkjøring.leggTil(Faktum<LocalDate>(Søknadstidspunkt.ønsketdato, 11.mai(2022)) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<LocalDate>(Søknadstidspunkt.søknadsdato, 11.mai(2022)) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<LocalDate>(Søknadstidspunkt.ønsketdato, 11.mai(2022)) as Opplysning<*>)
         }
         Gitt("kan jobbe både heltid og deltid") {
-            regelkjøring.leggTil(Faktum<Boolean>(ReellArbeidssøker.kanJobbeDeltid, true) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(ReellArbeidssøker.kanJobbeDeltid, true) as Opplysning<*>)
         }
         Gitt("kan ikke jobbe både heltid og deltid") {
-            regelkjøring.leggTil(Faktum<Boolean>(ReellArbeidssøker.kanJobbeDeltid, false) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(ReellArbeidssøker.kanJobbeDeltid, false) as Opplysning<*>)
         }
         Gitt("kan jobbe i hele Norge") {
-            regelkjøring.leggTil(Faktum<Boolean>(ReellArbeidssøker.kanJobbeHvorSomHelst, true) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(ReellArbeidssøker.kanJobbeHvorSomHelst, true) as Opplysning<*>)
         }
         Gitt("kan ikke jobbe i hele Norge") {
-            regelkjøring.leggTil(Faktum<Boolean>(ReellArbeidssøker.kanJobbeHvorSomHelst, false) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(ReellArbeidssøker.kanJobbeHvorSomHelst, false) as Opplysning<*>)
         }
         Gitt("kan ta alle typer arbeid") {
-            regelkjøring.leggTil(Faktum<Boolean>(ReellArbeidssøker.helseTilAlleTyperArbeid, true) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(ReellArbeidssøker.helseTilAlleTyperArbeid, true) as Opplysning<*>)
         }
         Gitt("kan ikke ta alle typer arbeid") {
-            regelkjøring.leggTil(Faktum<Boolean>(ReellArbeidssøker.helseTilAlleTyperArbeid, false) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(ReellArbeidssøker.helseTilAlleTyperArbeid, false) as Opplysning<*>)
         }
         Men("oppfyller kravet å kun søke lokalt arbeid") {
-            regelkjøring.leggTil(Faktum<Boolean>(ReellArbeidssøker.godkjentLokalArbeidssøker, true) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(ReellArbeidssøker.godkjentLokalArbeidssøker, true) as Opplysning<*>)
         }
         Men("oppfyller kravet til å kun søke deltidssarbeid") {
-            regelkjøring.leggTil(Faktum<Boolean>(ReellArbeidssøker.godkjentDeltidssøker, true) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(ReellArbeidssøker.godkjentDeltidssøker, true) as Opplysning<*>)
         }
         Gitt("er villig til å bytte yrke eller gå ned i lønn") {
-            regelkjøring.leggTil(Faktum<Boolean>(ReellArbeidssøker.villigTilEthvertArbeid, true) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(ReellArbeidssøker.villigTilEthvertArbeid, true) as Opplysning<*>)
         }
         Gitt("er ikke villig til å bytte yrke eller gå ned i lønn") {
-            regelkjøring.leggTil(Faktum<Boolean>(ReellArbeidssøker.villigTilEthvertArbeid, false) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(ReellArbeidssøker.villigTilEthvertArbeid, false) as Opplysning<*>)
         }
 
         Så("skal kravet til reell arbeidssøker være oppfylt") {

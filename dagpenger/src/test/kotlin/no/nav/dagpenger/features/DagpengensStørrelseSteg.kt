@@ -29,13 +29,13 @@ class DagpengensStørrelseSteg : No {
 
     init {
         Gitt("at dagpengegrunnlag er {string}") { grunnlag: String ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum(
                     Søknadstidspunkt.søknadstidspunkt,
                     fraDato,
                 ),
             )
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum(
                     Dagpengegrunnlag.grunnlag,
                     Beløp(grunnlag.toBigDecimal()),
@@ -44,11 +44,11 @@ class DagpengensStørrelseSteg : No {
         }
 
         Og("at søker har ikke barn") {
-            regelkjøring.leggTil(Faktum(antallBarn, 0))
+            opplysninger.leggTil(Faktum(antallBarn, 0))
         }
 
         Gitt("at søker har {int} barn") { antall: Int ->
-            regelkjøring.leggTil(Faktum(antallBarn, antall))
+            opplysninger.leggTil(Faktum(antallBarn, antall))
         }
 
         Så("skal dagpengens uavrundet størrelse uten barnetillegg være {string}") { størrelse: String ->

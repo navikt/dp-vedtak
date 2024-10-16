@@ -25,22 +25,13 @@ private class Regelsettprosess(
 
 class Regelkjøring(
     private val regelverksdato: LocalDate,
-    private val prøvingsdato: LocalDate,
     private val opplysninger: Opplysninger,
     private val forretningsprosess: Forretningsprosess,
 ) {
     constructor(regelverksdato: LocalDate, opplysninger: Opplysninger, vararg regelsett: Regelsett) : this(
         regelverksdato,
-        regelverksdato,
         opplysninger,
         Regelsettprosess(regelsett.toList()),
-    )
-
-    constructor(regelverksdato: LocalDate, opplysninger: Opplysninger, forretningsprosess: Forretningsprosess) : this(
-        regelverksdato,
-        regelverksdato,
-        opplysninger,
-        forretningsprosess,
     )
 
     private val regelsett get() = forretningsprosess.regelsett(opplysninger)
@@ -48,8 +39,6 @@ class Regelkjøring(
     private val muligeRegler: MutableList<Regel<*>> get() = alleRegler.toMutableList()
     private val plan: MutableList<Regel<*>> = mutableListOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
-
-    private val opplysningerPåPrøvingsdato get() = opplysninger.forDato(prøvingsdato)
 
     init {
         val duplikate = muligeRegler.groupBy { it.produserer }.filter { it.value.size > 1 }
@@ -63,7 +52,7 @@ class Regelkjøring(
     @Deprecated("Bruk leggTil rett på opplysninger", ReplaceWith("opplysninger.leggTil(opplysning)"))
     fun leggTil(opplysning: Opplysning<*>) {
         opplysninger.leggTil(opplysning)
-        evaluer()
+        // evaluer()
     }
 
     fun evaluer(): Regelkjøringsrapport {
@@ -83,7 +72,7 @@ class Regelkjøring(
     private fun aktiverRegler() {
         muligeRegler
             .filter {
-                it.kanKjøre(opplysningerPåPrøvingsdato)
+                it.kanKjøre(opplysninger)
             }.forEach {
                 plan.add(it)
             }
@@ -99,7 +88,7 @@ class Regelkjøring(
     }
 
     private fun kjør(regel: Regel<*>) {
-        val opplysning = regel.lagProdukt(opplysningerPåPrøvingsdato)
+        val opplysning = regel.lagProdukt(opplysninger)
         kjørteRegler.add(regel)
         plan.remove(regel)
         opplysninger.leggTilUtledet(opplysning)
@@ -111,7 +100,7 @@ class Regelkjøring(
         val opplysningerMedEksternRegel = graph.findNodesWithEdge { it.data is Ekstern<*> }
         return (opplysningerUtenRegel + opplysningerMedEksternRegel)
             .map { it.data }
-            .filterNot { opplysningerPåPrøvingsdato.har(it) }
+            .filterNot { opplysninger.har(it) }
             .toSet()
     }
 
@@ -122,10 +111,10 @@ class Regelkjøring(
                 muligeRegler.find { regel -> regel.produserer(it) }?.avhengerAv ?: emptyList()
             }.filter { (_, avhengigheter) ->
                 // Finn bare opplysninger hvor alle avhengigheter er tilfredsstilt
-                avhengigheter.all { opplysningerPåPrøvingsdato.har(it) }
+                avhengigheter.all { opplysninger.har(it) }
             }.mapValues { (_, avhengigheter) ->
                 // Finn verdien av avhengighetene
-                avhengigheter.map { opplysningerPåPrøvingsdato.finnOpplysning(it) }
+                avhengigheter.map { opplysninger.finnOpplysning(it) }
             }
 }
 

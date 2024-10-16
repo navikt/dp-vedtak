@@ -11,7 +11,6 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Medlemskap
 import no.nav.dagpenger.regel.Søknadstidspunkt
-import java.time.LocalDate
 
 class MedlemskapSteg : No {
     private val fraDato = 23.mai(2024)
@@ -26,11 +25,11 @@ class MedlemskapSteg : No {
 
     init {
         Gitt("at søker har søkt om dagpenger og er medlem?") {
-            regelkjøring.leggTil(Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>)
+            opplysninger.leggTil(Faktum(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>)
         }
 
         Og("at personen er medlem {boolsk} i folketrygden") { medlem: Boolean ->
-            regelkjøring.leggTil(Faktum<Boolean>(Medlemskap.medlemFolketrygden, medlem) as Opplysning<*>)
+            opplysninger.leggTil(Faktum(Medlemskap.medlemFolketrygden, medlem) as Opplysning<*>)
         }
 
         Så("skal vilkåret om medlemskap være {boolsk}") { utfall: Boolean ->

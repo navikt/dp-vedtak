@@ -24,13 +24,13 @@ class MeldepliktSteg : No {
     init {
         Gitt("at personen søkte {string}") { søknadsdato: String ->
             regelkjøring = Regelkjøring(søknadsdato.somLocalDate(), opplysninger, *regelsett.toTypedArray())
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<LocalDate>(
                     Søknadstidspunkt.søknadsdato,
                     søknadsdato.somLocalDate(),
                 ) as Opplysning<*>,
             )
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<LocalDate>(
                     Søknadstidspunkt.ønsketdato,
                     søknadsdato.somLocalDate(),
@@ -38,7 +38,7 @@ class MeldepliktSteg : No {
             )
         }
         Gitt("personen var registrert? {boolsk} på {string}") { svar: Boolean, registrert: String ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<Boolean>(
                     Meldeplikt.registrertArbeidssøker,
                     svar,

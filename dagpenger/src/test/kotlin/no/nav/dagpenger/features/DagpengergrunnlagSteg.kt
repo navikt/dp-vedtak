@@ -39,7 +39,7 @@ class DagpengergrunnlagSteg : No {
 
     init {
         Gitt("at søknadsdato for dagpenger er {dato}") { søknadsdato: LocalDate ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum(
                     Søknadstidspunkt.søknadstidspunkt,
                     søknadsdato,
@@ -47,13 +47,13 @@ class DagpengergrunnlagSteg : No {
             )
         }
         Gitt("at verneplikt for grunnlag er satt {boolsk}") { verneplikt: Boolean ->
-            regelkjøring.leggTil(Faktum(vurderingAvVerneplikt, verneplikt))
+            opplysninger.leggTil(Faktum(vurderingAvVerneplikt, verneplikt))
         }
 
         Gitt("at inntekt for grunnlag er") { dataTable: DataTable? ->
             val inntektstabell = dataTable!!.asMaps()
             val f = Inntekt(lagInntekt(inntektstabell))
-            regelkjøring.leggTil(Faktum(Dagpengegrunnlag.inntekt, f))
+            opplysninger.leggTil(Faktum(Dagpengegrunnlag.inntekt, f))
         }
 
         Så("beregnet uavrundet grunnlag være {string}") { uavrundetGrunnlag: String ->

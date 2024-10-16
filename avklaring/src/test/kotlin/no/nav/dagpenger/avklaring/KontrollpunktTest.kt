@@ -41,7 +41,7 @@ class KontrollpunktTest {
             this shouldBe Kontrollresultat.OK
         }
 
-        regelkjøring.leggTil(getOpplysning(123) as Opplysning<*>)
+        opplysninger.leggTil(getOpplysning(123) as Opplysning<*>)
         with(kontrollpunkt.evaluer(opplysninger)) {
             this.shouldBeInstanceOf<Kontrollresultat.KreverAvklaring>()
 
@@ -60,7 +60,7 @@ class KontrollpunktTest {
 
         val opplysninger = Opplysninger()
         val regelkjøring = Regelkjøring(1.mai(2024), opplysninger)
-        regelkjøring.leggTil(getOpplysning(321) as Opplysning<*>)
+        opplysninger.leggTil(getOpplysning(321) as Opplysning<*>)
 
         val ding = Avklaringer(kontrollpunkter)
         ding.måAvklares(opplysninger).also { avklaringer ->
@@ -70,7 +70,7 @@ class KontrollpunktTest {
         }
 
         // Saksbehandler endrer opplysningen
-        regelkjøring.leggTil(getOpplysning(123) as Opplysning<*>)
+        opplysninger.leggTil(getOpplysning(123) as Opplysning<*>)
 
         ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 0
@@ -78,7 +78,7 @@ class KontrollpunktTest {
 
         // Opplysningen endres tilbake til tilstand som krever avklaring
         val endretOpplysning = getOpplysning(321)
-        regelkjøring.leggTil(endretOpplysning as Opplysning<*>)
+        opplysninger.leggTil(endretOpplysning as Opplysning<*>)
 
         ding.måAvklares(opplysninger).also { avklaringer ->
             avklaringer.size shouldBe 1
@@ -100,7 +100,7 @@ class KontrollpunktTest {
 
         val opplysninger = Opplysninger()
         val regelkjøring = Regelkjøring(1.mai(2024), opplysninger)
-        regelkjøring.leggTil(Faktum<Boolean>(inntekterInneholderSykepenger, true) as Opplysning<*>)
+        opplysninger.leggTil(Faktum<Boolean>(inntekterInneholderSykepenger, true) as Opplysning<*>)
 
         val ding = Avklaringer(kontrollpunkter)
         ding.måAvklares(opplysninger).also { avklaringer ->
@@ -140,9 +140,9 @@ class KontrollpunktTest {
 
         val opplysninger = Opplysninger()
         val regelkjøring = Regelkjøring(1.mai(2024), opplysninger)
-        regelkjøring.leggTil(Faktum<Boolean>(regel1, false) as Opplysning<*>)
-        regelkjøring.leggTil(Faktum<Boolean>(regel2, false) as Opplysning<*>)
-        regelkjøring.leggTil(Faktum<Boolean>(regel3, false) as Opplysning<*>)
+        opplysninger.leggTil(Faktum<Boolean>(regel1, false) as Opplysning<*>)
+        opplysninger.leggTil(Faktum<Boolean>(regel2, false) as Opplysning<*>)
+        opplysninger.leggTil(Faktum<Boolean>(regel3, false) as Opplysning<*>)
 
         val ding = Avklaringer(kontrollpunkter)
         ding.måAvklares(opplysninger).also { avklaringer ->
@@ -151,7 +151,7 @@ class KontrollpunktTest {
             avklaringer.all { it.kode == BeregningsregelForFVA } shouldBe true
         }
 
-        regelkjøring.leggTil(Faktum<Boolean>(regel1, true) as Opplysning<*>)
+        opplysninger.leggTil(Faktum<Boolean>(regel1, true) as Opplysning<*>)
 
         // Denne avklaringen skal ikke kunne kvitteres ut, den krever endring
         shouldThrow<IllegalArgumentException> {

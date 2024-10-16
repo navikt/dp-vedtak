@@ -24,21 +24,21 @@ class FørsteArbeidsdagTest {
 
     @Test
     fun `Fredag 5 juli  2019 er en arbeidsag`() {
-        regelkjøring.leggTil(Hypotese(dato1, LocalDate.of(2019, 7, 5)))
+        opplysninger.leggTil(Hypotese(dato1, LocalDate.of(2019, 7, 5)))
         val utledet = opplysninger.finnOpplysning(dato2)
         assertEquals(LocalDate.of(2019, 7, 5), utledet.verdi)
     }
 
     @Test
     fun `Fredag 5 mai  2019 er en søndag og dermed blir første arbeidsdag 6 mai`() {
-        regelkjøring.leggTil(Hypotese(dato1, LocalDate.of(2019, 5, 5)))
+        opplysninger.leggTil(Hypotese(dato1, LocalDate.of(2019, 5, 5)))
         val utledet = opplysninger.finnOpplysning(dato2)
         assertEquals(LocalDate.of(2019, 5, 6), utledet.verdi)
     }
 
     @Test
     fun `Første arbeidsdag etter 5 oktober 2024 er mandag 7 oktober 2024`() {
-        regelkjøring.leggTil(Hypotese(dato1, LocalDate.of(2024, 10, 5)))
+        opplysninger.leggTil(Hypotese(dato1, LocalDate.of(2024, 10, 5)))
         val utledet = opplysninger.finnOpplysning(dato2)
         assertEquals(LocalDate.of(2024, 10, 7), utledet.verdi)
     }

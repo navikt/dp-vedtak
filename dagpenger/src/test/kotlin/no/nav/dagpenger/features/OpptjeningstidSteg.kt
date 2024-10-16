@@ -21,13 +21,13 @@ class OpptjeningstidSteg : No {
         Gitt(
             "at søknadstidspunktet er {dato}",
         ) { søknadstidspunktet: LocalDate ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum(
                     Søknadstidspunkt.søknadsdato,
                     søknadstidspunktet,
                 ),
             )
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum(
                     Søknadstidspunkt.ønsketdato,
                     søknadstidspunktet,

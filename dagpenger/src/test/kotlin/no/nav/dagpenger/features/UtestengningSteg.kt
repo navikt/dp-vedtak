@@ -25,10 +25,10 @@ class UtestengningSteg : No {
 
     init {
         Gitt("at søker har søkt om dagpenger") {
-            regelkjøring.leggTil(Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>)
         }
         Gitt("saksbehandler vurderer at søker er {boolsk}") { utestengt: Boolean ->
-            regelkjøring.leggTil(Faktum<Boolean>(Utestengning.utestengt, utestengt) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(Utestengning.utestengt, utestengt) as Opplysning<*>)
         }
         Så("skal kravet om utestengning være {boolsk}") { oppfylt: Boolean ->
             val faktum = opplysninger.finnOpplysning(Utestengning.ikkeUtestengt)

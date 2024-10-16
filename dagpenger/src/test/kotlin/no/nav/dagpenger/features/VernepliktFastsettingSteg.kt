@@ -28,7 +28,7 @@ class VernepliktFastsettingSteg : No {
         Gitt(
             "at søker har søkt om dagpenger under verneplikt {dato}",
         ) { dato: LocalDate ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum(
                     Søknadstidspunkt.søknadstidspunkt,
                     dato,

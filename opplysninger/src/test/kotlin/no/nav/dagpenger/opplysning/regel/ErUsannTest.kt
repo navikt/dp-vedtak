@@ -26,14 +26,14 @@ class ErUsannTest {
 
     @Test
     fun `Opplysning er ikke sann`() {
-        regelkjøring.leggTil(Faktum(a, false))
+        opplysninger.leggTil(Faktum(a, false))
         opplysninger.har(b) shouldBe true
         opplysninger.finnOpplysning(b).verdi shouldBe true
     }
 
     @Test
     fun `Opplysning er sann`() {
-        regelkjøring.leggTil(Faktum(a, true))
+        opplysninger.leggTil(Faktum(a, true))
         opplysninger.har(b) shouldBe true
         opplysninger.finnOpplysning(b).verdi shouldBe false
     }

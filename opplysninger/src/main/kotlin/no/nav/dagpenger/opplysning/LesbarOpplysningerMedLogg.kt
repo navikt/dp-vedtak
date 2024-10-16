@@ -39,4 +39,15 @@ class LesbarOpplysningerMedLogg(
     override fun finnAlle() = TODO()
 
     override fun forDato(gjelderFor: LocalDate) = TODO()
+
+    override fun finnVirkningstidspunkt(
+        prøvingsdato: LocalDate,
+        vararg vilkår: Opplysningstype<Boolean>,
+    ): LocalDate {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? {
+        TODO("Not yet implemented")
+    }
 }

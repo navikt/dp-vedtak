@@ -16,15 +16,23 @@ abstract class Regel<T : Comparable<T>> internal constructor(
         val avhengigheter = opplysninger.finnAlle(avhengerAv)
 
         if (avhengigheter.size != avhengerAv.size) return false
+        if (avhengigheter.erIkkeSammenhengende()) return false
 
-        return if (opplysninger.har(produserer)) {
-            opplysninger.finnOpplysning(produserer).let { produkt ->
-                avhengigheter.any { it.opprettet.isAfter(produkt.opprettet) }
-            }
-        } else {
-            true
+        // Har vi produsert produkt av disse opplysningene før?
+        val produkter = opplysninger.finnAlle().filter { it.er(produserer) }
+
+        if (produkter.isEmpty()) return true
+
+        return produkter.none { produkt ->
+            // Har avhengigheten blitt erstattet og produktet vi allerede har skal oppdateres?
+            avhengigheter.any { it in produkt.utledetAv?.opplysninger.orEmpty() }
         }
     }
+
+    private fun List<Opplysning<*>>.erIkkeSammenhengende() =
+        sortedBy { it.gyldighetsperiode.fom }
+            .zipWithNext()
+            .any { (forrige, neste) -> neste.gyldighetsperiode.fom.isAfter(forrige.gyldighetsperiode.tom) }
 
     abstract override fun toString(): String
 

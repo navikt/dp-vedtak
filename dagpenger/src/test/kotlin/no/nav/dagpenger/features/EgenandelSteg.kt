@@ -28,13 +28,13 @@ class EgenandelSteg : No {
     init {
 
         Gitt("at sats er {string}") { sats: String ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum(
                     Søknadstidspunkt.søknadstidspunkt,
                     fraDato,
                 ),
             )
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum(
                     DagpengenesStørrelse.avrundetDagsMedBarnetillegg,
                     Beløp(sats.toBigDecimal()),

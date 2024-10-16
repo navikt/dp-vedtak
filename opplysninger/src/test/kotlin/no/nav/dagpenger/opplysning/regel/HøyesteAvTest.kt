@@ -25,8 +25,8 @@ class HøyesteAvTest {
         val opplysninger = Opplysninger()
         val regelkjøring = Regelkjøring(23.mai(2024), opplysninger, regelsett)
 
-        regelkjøring.leggTil(Faktum(opplysning1, 1))
-        regelkjøring.leggTil(Faktum(opplysning2, 2))
+        opplysninger.leggTil(Faktum(opplysning1, 1))
+        opplysninger.leggTil(Faktum(opplysning2, 2))
         opplysninger.har(høyeste) shouldBe true
         opplysninger.finnOpplysning(høyeste).verdi shouldBe 2
     }

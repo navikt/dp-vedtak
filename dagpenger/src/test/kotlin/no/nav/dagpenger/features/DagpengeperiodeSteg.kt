@@ -30,7 +30,7 @@ class DagpengeperiodeSteg : No {
 
         Gitt("at søker har har rett til dagpenger fra {string}") { dato: String ->
             val dato = LocalDate.parse(dato, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<LocalDate>(
                     Søknadstidspunkt.søknadstidspunkt,
                     dato,
@@ -38,7 +38,7 @@ class DagpengeperiodeSteg : No {
             )
         }
         Gitt("at søker har {string} siste 12 måneder") { inntekt: String ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<Beløp>(
                     Minsteinntekt.inntekt12,
                     Beløp(inntekt.toBigDecimal()),
@@ -47,7 +47,7 @@ class DagpengeperiodeSteg : No {
         }
 
         Gitt("at søker har {string} siste 36 måneder") { inntekt: String ->
-            regelkjøring.leggTil(
+            opplysninger.leggTil(
                 Faktum<Beløp>(
                     Minsteinntekt.inntekt36,
                     Beløp(inntekt.toBigDecimal()),

@@ -22,8 +22,27 @@ class Opplysninger private constructor(
 
     override fun forDato(gjelderFor: LocalDate): LesbarOpplysninger {
         // TODO: Erstatt med noe collectorgreier får å unngå at opplysninger som er erstattet blir med
-        val opplysningerForDato = opplysninger.filter { it.gyldighetsperiode.inneholder(gjelderFor) }.filterNot { it.erErstattet }
+        val opplysningerForDato =
+            opplysninger
+                .filterNot { it.erErstattet }
+                .filter { it.gyldighetsperiode.inneholder(gjelderFor) }
         return Opplysninger(UUIDv7.ny(), opplysningerForDato)
+    }
+
+    override fun finnVirkningstidspunkt(
+        prøvingsdato: LocalDate,
+        vararg vilkår: Opplysningstype<Boolean>,
+    ): LocalDate {
+        val muligeOpplysninger = opplysninger.filter { it.gyldighetsperiode.overlapp(Gyldighetsperiode(prøvingsdato, LocalDate.MAX)) }
+        val alleVilkår: List<Opplysning<*>> = vilkår.mapNotNull { muligeOpplysninger.find { o -> o.er(it) } }
+        val b = alleVilkår.filter { it.gyldighetsperiode.fom >= prøvingsdato }
+        if (b.size != vilkår.size) {
+            return prøvingsdato
+        }
+        if (b.minOf { it.gyldighetsperiode.tom } < b.maxOf { it.gyldighetsperiode.fom }) {
+            return prøvingsdato
+        }
+        return b.maxOf { it.gyldighetsperiode.fom }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -70,8 +89,8 @@ class Opplysninger private constructor(
     override fun finnAlle() = alleOpplysninger.toList()
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? =
-        alleOpplysninger.singleOrNull { it.er(opplysningstype) } as Opplysning<T>?
+    override fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? =
+        alleOpplysninger.lastOrNull { it.er(opplysningstype) } as Opplysning<T>?
 
     private fun <T : Comparable<T>> Opplysning<T>.overlapperHalenAv(opplysning: Opplysning<T>) =
         this.gyldighetsperiode.fom.isAfter(opplysning.gyldighetsperiode.fom) &&
