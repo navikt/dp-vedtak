@@ -92,7 +92,12 @@ internal class SøknadInnsendtMessage(
         }
     }
 
-    private val kandidater = setOf(678481687)
+    private val kandidater =
+        setOf(
+            678969908,
+            678982085,
+            678996119,
+        )
 
     private fun kandidatplukk(): Boolean =
         (packet["journalpostId"].asInt() in kandidater).also {
