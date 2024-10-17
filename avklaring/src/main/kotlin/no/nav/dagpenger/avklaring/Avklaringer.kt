@@ -42,6 +42,10 @@ class Avklaringer(
         return avklaringer.toList()
     }
 
+    fun nyAvklaring(kode: Avklaringkode) {
+        avklaringer.add(Avklaring(kode))
+    }
+
     fun avklar(
         avklaringId: UUID,
         kilde: Kilde,

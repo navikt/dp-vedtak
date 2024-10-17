@@ -40,11 +40,7 @@ import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
-import no.nav.dagpenger.regel.Behov.Lønnsgaranti
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
-import no.nav.dagpenger.regel.Behov.Ordinær
-import no.nav.dagpenger.regel.Behov.Permittert
-import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
 import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
@@ -457,6 +453,28 @@ internal class PersonMediatorTest {
         }
     }
 
+    @Test
+    fun `kan ikke konkludere når opplysninger gjelder i framtiden`() {
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    innsendt = 1.juni(2024).atTime(12, 0),
+                    søknadstidspunkt = 1.juni(2024),
+                    ønskerFraDato = 30.juni(2024),
+                    registrertFraDato = 1.juli(2024),
+                )
+            løsBehandlingFramTilFerdig(testPerson)
+
+            rapid.harHendelse("forslag_til_vedtak") {
+                with(medNode("avklaringer")) {
+                    this.size() shouldBe 8
+                }
+            }
+        }
+    }
+
     enum class Behandlingslengde {
         Alder,
         Minsteinntekt,
@@ -534,9 +552,9 @@ internal class PersonMediatorTest {
 
         /**
          * Innhenter rettighetstype
+         rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+         testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
          */
-        rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
-        testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
     }
 
     private val Person.aktivBehandling get() = this.behandlinger().first()

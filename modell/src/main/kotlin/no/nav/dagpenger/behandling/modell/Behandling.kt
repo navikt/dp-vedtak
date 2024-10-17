@@ -5,6 +5,7 @@ import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Hendelse
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaringer
+import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.modell.Behandling.BehandlingTilstand.Companion.fraType
 import no.nav.dagpenger.behandling.modell.BehandlingHendelser.AvklaringLukketHendelse
 import no.nav.dagpenger.behandling.modell.PersonObservatør.PersonEvent
@@ -12,7 +13,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.EksternId
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.NyOpplysningHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
@@ -94,6 +95,16 @@ class Behandling private constructor(
             } catch (e: IllegalArgumentException) {
                 throw IllegalArgumentException("Fant flere behandlinger med samme id, id=$behandlingId", e)
             }
+
+        private val manglerKonklusjonAvklaring =
+            Avklaringkode(
+                "ManglerKonklusjon",
+                "Mangler konklusjon",
+                """Vi klarer ikke å finne en konklusjon på behandlingen. Sannsynligvis er ikke alle vilkårene oppfylt 
+                                |på prøvingsdatoen, eller vi mangler opplysninger.
+                """.trimMargin(),
+                false,
+            )
     }
 
     fun tilstand() = Pair(tilstand.type, tilstand.opprettet)
@@ -110,7 +121,7 @@ class Behandling private constructor(
         tilstand.håndter(this, hendelse)
     }
 
-    override fun håndter(hendelse: OpplysningSvarHendelse) {
+    override fun håndter(hendelse: NyOpplysningHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
@@ -192,7 +203,7 @@ class Behandling private constructor(
 
         fun håndter(
             behandling: Behandling,
-            hendelse: OpplysningSvarHendelse,
+            hendelse: NyOpplysningHendelse,
         ): Unit =
             throw IllegalStateException(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
@@ -295,13 +306,10 @@ class Behandling private constructor(
 
         override fun håndter(
             behandling: Behandling,
-            hendelse: OpplysningSvarHendelse,
+            hendelse: NyOpplysningHendelse,
         ) {
             hendelse.kontekst(this)
-            hendelse.opplysninger.forEach { opplysning ->
-                hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
-                behandling.opplysninger.leggTil(opplysning.opplysning())
-            }
+            hendelse.leggTil(behandling.opplysninger)
 
             // Kjør regelkjøring for alle opplysninger
             val rapport = behandling.regelkjøring.evaluer()
@@ -338,6 +346,10 @@ class Behandling private constructor(
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
+                if (!behandling.opplysninger.har(behandling.behandler.avklarer(behandling.opplysninger))) {
+                    behandling.avklaringer.nyAvklaring(manglerKonklusjonAvklaring)
+                }
+
                 if (behandling.aktiveAvklaringer().isEmpty()) {
                     hendelse.info("Har ingen aktive avklaringer, går videre til vedtak.")
                     behandling.tilstand(Ferdig(), hendelse)
@@ -447,15 +459,10 @@ class Behandling private constructor(
 
         override fun håndter(
             behandling: Behandling,
-            hendelse: OpplysningSvarHendelse,
+            hendelse: NyOpplysningHendelse,
         ) {
             hendelse.kontekst(this)
-            hendelse.info("Fikk svar på opplysning i ${this.type.name}.")
-
-            hendelse.opplysninger.forEach { opplysning ->
-                hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
-                behandling.opplysninger.leggTil(opplysning.opplysning())
-            }
+            hendelse.leggTil(behandling.opplysninger)
 
             behandling.tilstand(Redigert(), hendelse)
         }
@@ -490,12 +497,10 @@ class Behandling private constructor(
 
         override fun håndter(
             behandling: Behandling,
-            hendelse: OpplysningSvarHendelse,
+            hendelse: NyOpplysningHendelse,
         ) {
-            hendelse.opplysninger.forEach { opplysning ->
-                hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
-                behandling.opplysninger.leggTil(opplysning.opplysning())
-            }
+            hendelse.kontekst(this)
+            hendelse.leggTil(behandling.opplysninger)
 
             val rapport = behandling.regelkjøring.evaluer()
 
@@ -552,7 +557,7 @@ class Behandling private constructor(
 
         override fun håndter(
             behandling: Behandling,
-            hendelse: OpplysningSvarHendelse,
+            hendelse: NyOpplysningHendelse,
         ) {
             hendelse.kontekst(this)
             hendelse.info("Behandlingen er avbrutt, ignorerer opplysningssvar")

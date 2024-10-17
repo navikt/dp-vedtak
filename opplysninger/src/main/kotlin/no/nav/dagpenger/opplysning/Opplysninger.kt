@@ -57,6 +57,13 @@ class Opplysninger private constructor(
         } ?: opplysninger.add(opplysning)
     }
 
+    fun <T : Comparable<T>> erstatt(
+        erstattes: Opplysning<T>,
+        erstatning: Opplysning<T>,
+    ) {
+        opplysninger.addAll(erstattes.erstattesAv(erstatning))
+    }
+
     override fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T> =
         finnNullableOpplysning(opplysningstype) ?: throw IllegalStateException("Har ikke opplysning $opplysningstype som er gyldig")
 

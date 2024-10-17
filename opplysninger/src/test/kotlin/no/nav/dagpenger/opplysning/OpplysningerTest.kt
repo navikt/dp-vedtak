@@ -101,4 +101,17 @@ class OpplysningerTest {
         opplysninger.forDato(5.mai).finnOpplysning(desimaltall).erstatter shouldBe original
         opplysninger.forDato(15.mai).finnOpplysning(desimaltall).erstatter shouldBe null
     }
+
+    @Test
+    fun `En bestemt opplysning skal kunne byttes ut i sin helhet`() {
+        // Det må være mulig å endre en hel opplysning uten noe smartness
+        val opplysninger = Opplysninger()
+
+        val original = Faktum(desimaltall, 0.5, Gyldighetsperiode(fom = 1.mai, tom = 30.mai))
+        val nyOpplysning = Faktum(desimaltall, 1.5, Gyldighetsperiode(fom = 10.mai, tom = 20.mai))
+        opplysninger.erstatt(original, nyOpplysning)
+
+        opplysninger.forDato(1.mai).har(desimaltall) shouldBe false
+        opplysninger.forDato(15.mai).har(desimaltall) shouldBe true
+    }
 }

@@ -30,6 +30,7 @@ class TestPerson(
     val InntektSiste12Mnd: Int = 1234,
     val InntektSiste36Mnd: Int = 1234,
     internal var ønskerFraDato: LocalDate = søknadstidspunkt,
+    internal val registrertFraDato: LocalDate = søknadstidspunkt,
 ) {
     val inntektId = "01HQTE3GBWCSVYH6S436DYFREN"
     internal val søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"
@@ -185,31 +186,36 @@ class TestPerson(
             sisteAvsluttendeKalenderMåned = YearMonth.from(søknadstidspunkt.minusMonths(2)),
         )
 
-    private val løsninger get() =
-        mapOf(
-            "Fødselsdato" to søknadstidspunkt.minusYears(alder.toLong()),
-            "Søknadstidspunkt" to søknadstidspunkt,
-            "ØnskerDagpengerFraDato" to ønskerFraDato,
-            // Inntekt
-            InntektId to mapOf("verdi" to inntektId),
-            "InntektSiste12Mnd" to InntektSiste12Mnd,
-            "InntektSiste36Mnd" to InntektSiste36Mnd,
-            // Reell arbeidssøker
-            KanJobbeDeltid to true,
-            KanJobbeHvorSomHelst to true,
-            HelseTilAlleTyperJobb to true,
-            VilligTilÅBytteYrke to true,
-            // Arbeidssøkerregistrering
-            RegistrertSomArbeidssøker to true,
-            // Rettighetsype
-            Ordinær to false,
-            Permittert to true,
-            Lønnsgaranti to false,
-            PermittertFiskeforedling to false,
-            // Verneplikt
-            Verneplikt to false,
-            TarUtdanningEllerOpplæring to false,
-            Inntekt to mapOf("verdi" to inntektV1),
-            "Beregnet vanlig arbeidstid per uke før tap" to 40,
-        )
+    private val løsninger
+        get() =
+            mapOf(
+                "Fødselsdato" to søknadstidspunkt.minusYears(alder.toLong()),
+                "Søknadstidspunkt" to søknadstidspunkt,
+                "ØnskerDagpengerFraDato" to ønskerFraDato,
+                // Inntekt
+                InntektId to mapOf("verdi" to inntektId),
+                "InntektSiste12Mnd" to InntektSiste12Mnd,
+                "InntektSiste36Mnd" to InntektSiste36Mnd,
+                // Reell arbeidssøker
+                KanJobbeDeltid to true,
+                KanJobbeHvorSomHelst to true,
+                HelseTilAlleTyperJobb to true,
+                VilligTilÅBytteYrke to true,
+                // Arbeidssøkerregistrering
+                RegistrertSomArbeidssøker to
+                    mapOf(
+                        "verdi" to true,
+                        "gyldigFraOgMed" to registrertFraDato,
+                    ),
+                // Rettighetsype
+                Ordinær to false,
+                Permittert to true,
+                Lønnsgaranti to false,
+                PermittertFiskeforedling to false,
+                // Verneplikt
+                Verneplikt to false,
+                TarUtdanningEllerOpplæring to false,
+                Inntekt to mapOf("verdi" to inntektV1),
+                "Beregnet vanlig arbeidstid per uke før tap" to 40,
+            )
 }
