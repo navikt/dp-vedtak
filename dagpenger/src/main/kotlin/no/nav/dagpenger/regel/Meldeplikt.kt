@@ -6,15 +6,15 @@ import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 
 object Meldeplikt {
-    private val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
     internal val registrertArbeidssøker = Opplysningstype.somBoolsk("Registrert som arbeidssøker".id(RegistrertSomArbeidssøker))
     val registrertPåSøknadstidspunktet = Opplysningstype.somBoolsk("Registrert som arbeidssøker på søknadstidspunktet")
 
     val regelsett =
         Regelsett("Meldeplikt") {
-            regel(registrertArbeidssøker) { innhentMed(søknadstidspunkt) }
+            regel(registrertArbeidssøker) { innhentMed(prøvingsdato) }
             regel(registrertPåSøknadstidspunktet) { erSann(registrertArbeidssøker) }
         }
 }
