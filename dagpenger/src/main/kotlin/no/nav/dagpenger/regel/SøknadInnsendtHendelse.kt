@@ -62,7 +62,8 @@ class SøknadInnsendtHendelse(
         return KravPåDagpenger.kravPåDagpenger
     }
 
-    override fun prøvingsdato(opplysninger: LesbarOpplysninger): LocalDate = opplysninger.finnOpplysning(prøvingsdato).verdi
+    override fun prøvingsdato(opplysninger: LesbarOpplysninger): LocalDate =
+        if (opplysninger.har(prøvingsdato)) opplysninger.finnOpplysning(prøvingsdato).verdi else skjedde
 
     override fun støtterInnvilgelse(opplysninger: LesbarOpplysninger): Boolean =
         opplysninger.har(støtterInnvilgelseOpplysningstype) &&
