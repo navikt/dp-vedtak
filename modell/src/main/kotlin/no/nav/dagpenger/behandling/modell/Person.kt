@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.modell
 
+import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.Aktivitetskontekst
 import no.nav.dagpenger.aktivitetslogg.SpesifikkKontekst
 import no.nav.dagpenger.behandling.modell.Behandling.Companion.finn
@@ -24,6 +25,10 @@ class Person(
 
     constructor(ident: Ident) : this(ident, mutableListOf())
 
+    private companion object {
+        val logger = KotlinLogging.logger { }
+    }
+
     override fun håndter(hendelse: StartHendelse) {
         if (behandlinger.any { it.behandler.eksternId == hendelse.eksternId }) {
             hendelse.varsel("Søknad med eksternId ${hendelse.eksternId} er allerede mottatt")
@@ -32,6 +37,9 @@ class Person(
         hendelse.leggTilKontekst(this)
         val behandling =
             hendelse.behandling().also { behandling ->
+                logger.info {
+                    "Oppretter behandling med behandlingId=${behandling.behandlingId} for hendelse ${hendelse.type} av ${hendelse.eksternId.id}"
+                }
                 behandlinger.add(behandling)
                 observatører.forEach {
                     behandling.registrer(
