@@ -38,7 +38,10 @@ class Person(
         val behandling =
             hendelse.behandling().also { behandling ->
                 logger.info {
-                    "Oppretter behandling med behandlingId=${behandling.behandlingId} for hendelse ${hendelse.type} av ${hendelse.eksternId.id}"
+                    """
+                    Oppretter behandling med behandlingId=${behandling.behandlingId} for 
+                    hendelse ${hendelse.type} av ${hendelse.eksternId.id}
+                    """.trimIndent()
                 }
                 behandlinger.add(behandling)
                 observatører.forEach {
