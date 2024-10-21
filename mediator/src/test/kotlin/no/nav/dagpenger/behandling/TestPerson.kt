@@ -24,12 +24,12 @@ import java.time.YearMonth
 class TestPerson(
     private val ident: String,
     private val rapid: TestRapid,
-    internal val søknadstidspunkt: LocalDate = 5.mai(2021),
+    internal val søknadsdato: LocalDate = 5.mai(2021),
     val alder: Int = 30,
     private val innsendt: LocalDateTime = LocalDateTime.now(),
     val InntektSiste12Mnd: Int = 1234,
     val InntektSiste36Mnd: Int = 1234,
-    internal var ønskerFraDato: LocalDate = søknadstidspunkt,
+    internal var ønskerFraDato: LocalDate = søknadsdato,
 ) {
     val inntektId = "01HQTE3GBWCSVYH6S436DYFREN"
     internal val søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"
@@ -133,6 +133,20 @@ class TestPerson(
         )
     }
 
+    fun nyPrøvingsdato(prøvingsdato: LocalDate) {
+        rapid.sendTestMessage(
+            JsonMessage
+                .newMessage(
+                    "ny_prøvingsdato",
+                    mapOf(
+                        "ident" to ident,
+                        "behandlingId" to behandlingId,
+                        "prøvingsdato" to prøvingsdato,
+                    ),
+                ).toJson(),
+        )
+    }
+
     @Language("JSON")
     private val løsningPåInntekt =
         """
@@ -140,7 +154,7 @@ class TestPerson(
           "inntektsId": "01J677GHJRC2H08Q55DASFD0XX",
           "inntektsListe": [
             {
-              "årMåned": "${YearMonth.from(søknadstidspunkt.minusMonths(2))}",
+              "årMåned": "${YearMonth.from(søknadsdato.minusMonths(2))}",
               "klassifiserteInntekter": [
                 {
                   "beløp": 41600.0,
@@ -150,7 +164,7 @@ class TestPerson(
               "harAvvik": false
             },
             {
-              "årMåned": "${YearMonth.from(søknadstidspunkt.minusMonths(3))}",
+              "årMåned": "${YearMonth.from(søknadsdato.minusMonths(3))}",
               "klassifiserteInntekter": [
                 {
                   "beløp": 403660.0,
@@ -171,7 +185,7 @@ class TestPerson(
             inntektsListe =
                 listOf(
                     KlassifisertInntektMåned(
-                        årMåned = YearMonth.from(søknadstidspunkt.minusMonths(2)),
+                        årMåned = YearMonth.from(søknadsdato.minusMonths(2)),
                         klassifiserteInntekter =
                             listOf(
                                 no.nav.dagpenger.inntekt.v1.KlassifisertInntekt(
@@ -182,34 +196,39 @@ class TestPerson(
                         harAvvik = false,
                     ),
                 ),
-            sisteAvsluttendeKalenderMåned = YearMonth.from(søknadstidspunkt.minusMonths(2)),
+            sisteAvsluttendeKalenderMåned = YearMonth.from(søknadsdato.minusMonths(2)),
         )
 
-    private val løsninger get() =
-        mapOf(
-            "Fødselsdato" to søknadstidspunkt.minusYears(alder.toLong()),
-            "Søknadstidspunkt" to søknadstidspunkt,
-            "ØnskerDagpengerFraDato" to ønskerFraDato,
-            // Inntekt
-            InntektId to mapOf("verdi" to inntektId),
-            "InntektSiste12Mnd" to InntektSiste12Mnd,
-            "InntektSiste36Mnd" to InntektSiste36Mnd,
-            // Reell arbeidssøker
-            KanJobbeDeltid to true,
-            KanJobbeHvorSomHelst to true,
-            HelseTilAlleTyperJobb to true,
-            VilligTilÅBytteYrke to true,
-            // Arbeidssøkerregistrering
-            RegistrertSomArbeidssøker to true,
-            // Rettighetsype
-            Ordinær to false,
-            Permittert to true,
-            Lønnsgaranti to false,
-            PermittertFiskeforedling to false,
-            // Verneplikt
-            Verneplikt to false,
-            TarUtdanningEllerOpplæring to false,
-            Inntekt to mapOf("verdi" to inntektV1),
-            "Beregnet vanlig arbeidstid per uke før tap" to 40,
-        )
+    private val løsninger
+        get() =
+            mapOf(
+                "Fødselsdato" to søknadsdato.minusYears(alder.toLong()),
+                "Søknadstidspunkt" to søknadsdato,
+                "ØnskerDagpengerFraDato" to ønskerFraDato,
+                // Inntekt
+                InntektId to
+                    mapOf(
+                        "verdi" to inntektId,
+                        // "gyldigTilOgMed" to 20.juni(2024),
+                    ),
+                "InntektSiste12Mnd" to InntektSiste12Mnd,
+                "InntektSiste36Mnd" to InntektSiste36Mnd,
+                // Reell arbeidssøker
+                KanJobbeDeltid to true,
+                KanJobbeHvorSomHelst to true,
+                HelseTilAlleTyperJobb to true,
+                VilligTilÅBytteYrke to true,
+                // Arbeidssøkerregistrering
+                RegistrertSomArbeidssøker to true,
+                // Rettighetsype
+                Ordinær to false,
+                Permittert to true,
+                Lønnsgaranti to false,
+                PermittertFiskeforedling to false,
+                // Verneplikt
+                Verneplikt to false,
+                TarUtdanningEllerOpplæring to false,
+                Inntekt to mapOf("verdi" to inntektV1),
+                "Beregnet vanlig arbeidstid per uke før tap" to 40,
+            )
 }

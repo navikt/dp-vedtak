@@ -19,6 +19,7 @@ import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
 import no.nav.dagpenger.regel.Opptjeningstid.justertRapporteringsfrist
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import java.time.LocalDate
@@ -48,7 +49,6 @@ object Minsteinntekt {
     private val førsteMånedAvOpptjeningsperiode =
         Opplysningstype.somDato("Første måned av opptjeningsperiode".id(OpptjeningsperiodeFraOgMed))
 
-    private val virkningsdato = Søknadstidspunkt.søknadstidspunkt
     private val `12mndTerskel` =
         Opplysningstype.somBeløp(
             "Inntektskrav for siste 12 mnd".tekstId("opplysning.arbeidsinntekt-er-over-kravet-for-siste-12-mnd"),
@@ -65,19 +65,19 @@ object Minsteinntekt {
 
     val regelsett =
         Regelsett("Minsteinntekt") {
-            regel(maksPeriodeLengde) { oppslag(virkningsdato) { 36 } }
+            regel(maksPeriodeLengde) { oppslag(prøvingsdato) { 36 } }
             regel(førsteMånedAvOpptjeningsperiode) { trekkFraMånedTilFørste(sisteAvsluttendendeKalenderMåned, maksPeriodeLengde) }
-            regel(inntektId) { innhentMed(virkningsdato, sisteAvsluttendendeKalenderMåned, førsteMånedAvOpptjeningsperiode) }
+            regel(inntektId) { innhentMed(prøvingsdato, sisteAvsluttendendeKalenderMåned, førsteMånedAvOpptjeningsperiode) }
 
-            regel(grunnbeløp) { oppslag(virkningsdato) { grunnbeløpFor(it) } }
+            regel(grunnbeløp) { oppslag(prøvingsdato) { grunnbeløpFor(it) } }
 
             regel(inntekt12) { innhentMed(inntektId) }
-            regel(`12mndTerskelFaktor`) { oppslag(virkningsdato) { finnTerskel(it).nedre } }
+            regel(`12mndTerskelFaktor`) { oppslag(prøvingsdato) { finnTerskel(it).nedre } }
             regel(`12mndTerskel`) { multiplikasjon(grunnbeløp, `12mndTerskelFaktor`) }
             regel(over12mndTerskel) { størreEnnEllerLik(inntekt12, `12mndTerskel`) }
 
             regel(inntekt36) { innhentMed(inntektId) }
-            regel(`36mndTerskelFaktor`) { oppslag(virkningsdato) { finnTerskel(it).øvre } }
+            regel(`36mndTerskelFaktor`) { oppslag(prøvingsdato) { finnTerskel(it).øvre } }
             regel(`36mndTerskel`) { multiplikasjon(grunnbeløp, `36mndTerskelFaktor`) }
             regel(over36mndTerskel) { størreEnnEllerLik(inntekt36, `36mndTerskel`) }
 

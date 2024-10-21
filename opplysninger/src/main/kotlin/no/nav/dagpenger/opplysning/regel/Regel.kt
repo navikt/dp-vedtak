@@ -33,6 +33,8 @@ abstract class Regel<T : Comparable<T>> internal constructor(
     fun produserer(opplysningstype: Opplysningstype<*>) = produserer.er(opplysningstype)
 
     internal fun lagProdukt(opplysninger: LesbarOpplysninger): Opplysning<T> {
+        if (avhengerAv.isEmpty()) return Faktum(produserer, kjør(opplysninger))
+
         val basertPå = opplysninger.finnAlle(avhengerAv)
         val erAlleFaktum = basertPå.all { it is Faktum<*> }
         val utledetAv = Utledning(this, basertPå)

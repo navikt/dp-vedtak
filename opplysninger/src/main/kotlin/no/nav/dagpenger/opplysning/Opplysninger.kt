@@ -28,26 +28,51 @@ class Opplysninger private constructor(
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Comparable<T>> leggTil(opplysning: Opplysning<T>) {
-        val erstattes: Opplysning<T>? = alleOpplysninger.find { it.overlapper(opplysning) } as Opplysning<T>?
-        if (erstattes !== null) {
-            if (opplysning.overlapperHalenAv(erstattes)) {
-                // Overlapp på halen av eksisterende opplysning
-                val forkortet = erstattes.lagErstatning(opplysning)
-                opplysninger.add(forkortet)
-                opplysninger.add(opplysning)
-            } else if (erstattes.harSammegyldighetsperiode(opplysning)) {
-                // Overlapp for samme periode
-                opplysninger.addAll(erstattes.erstattesAv(opplysning))
-            } else if (opplysning.starterFørOgOverlapper(erstattes)) {
-                // Overlapp på starten av eksisterende opplysning
-                erstattes.erstattesAv(opplysning)
-                opplysninger.add(opplysning)
-            } else {
-                throw IllegalArgumentException("Kan ikke legge til opplysning som overlapper med eksisterende opplysning")
-            }
-        } else {
+        val eksisterende = finnNullableOpplysning(opplysning.opplysningstype)
+
+        if (eksisterende == null) {
             opplysninger.add(opplysning)
+            return
         }
+
+        if (basertPåOpplysninger.contains(eksisterende)) {
+            // Endre gyldighetsperiode på gammel opplysning og legg til ny opplysning kant i kant
+            val erstattes: Opplysning<T>? = alleOpplysninger.find { it.overlapper(opplysning) } as Opplysning<T>?
+            if (erstattes !== null) {
+                when {
+                    opplysning.overlapperHalenAv(erstattes) -> {
+                        // Overlapp på halen av eksisterende opplysning
+                        val forkortet = erstattes.lagErstatning(opplysning)
+                        opplysninger.add(forkortet)
+                        opplysninger.add(opplysning)
+                    }
+
+                    erstattes.harSammegyldighetsperiode(opplysning) -> {
+                        // Overlapp for samme periode
+                        opplysninger.addAll(erstattes.erstattesAv(opplysning))
+                    }
+
+                    opplysning.starterFørOgOverlapper(erstattes) -> {
+                        // Overlapp på starten av eksisterende opplysning
+                        erstattes.erstattesAv(opplysning)
+                        opplysninger.add(opplysning)
+                    }
+
+                    else -> {
+                        throw IllegalArgumentException("Kan ikke legge til opplysning som overlapper med eksisterende opplysning")
+                    }
+                }
+                return
+            }
+        }
+
+        if (aktiveOpplysninger.contains(eksisterende)) {
+            // Erstatt hele opplysningen
+            opplysninger.addAll(eksisterende.erstattesAv(opplysning))
+            return
+        }
+
+        opplysninger.add(opplysning)
     }
 
     internal fun <T : Comparable<T>> leggTilUtledet(opplysning: Opplysning<T>) {
@@ -70,8 +95,12 @@ class Opplysninger private constructor(
     override fun finnAlle() = alleOpplysninger.toList()
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? =
-        alleOpplysninger.singleOrNull { it.er(opplysningstype) } as Opplysning<T>?
+    private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? {
+        if (alleOpplysninger.count { it.er(opplysningstype) } > 1) {
+            throw IllegalStateException("Har mer enn 1 opplysning av type $opplysningstype")
+        }
+        return alleOpplysninger.singleOrNull { it.er(opplysningstype) } as Opplysning<T>?
+    }
 
     private fun <T : Comparable<T>> Opplysning<T>.overlapperHalenAv(opplysning: Opplysning<T>) =
         this.gyldighetsperiode.fom.isAfter(opplysning.gyldighetsperiode.fom) &&

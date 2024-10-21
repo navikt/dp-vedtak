@@ -4,9 +4,7 @@ import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
-import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
-import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Alderskrav.HattLukkedeSakerSiste8UkerKontroll
@@ -25,8 +23,10 @@ import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.Rettighetstype
 import no.nav.dagpenger.regel.Søknadsprosess
 import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITid
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBeregningsregelKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
+import no.nav.dagpenger.regel.Virkningstidspunkt.VirkningstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.støtterInnvilgelseOpplysningstype
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -41,7 +41,7 @@ class SøknadInnsendtHendelse(
     opprettet: LocalDateTime,
     private val støtterInnvilgelse: Boolean = false,
 ) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId, opprettet) {
-    override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring = Regelkjøring(skjedde, opplysninger, Søknadsprosess())
+    override fun søknadprosess(): Søknadsprosess = Søknadsprosess()
 
     // todo: Behovet forsvinner når vi forslag til vedtak og vedtak_fattet. De forventer at det vi avklarer er en boolean.
     override fun avklarer(opplysninger: LesbarOpplysninger): Opplysningstype<Boolean> {
@@ -71,23 +71,27 @@ class SøknadInnsendtHendelse(
         val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")
     }
 
+    override fun prøvingsdatoType() = prøvingsdato
+
     override fun behandling() =
         Behandling(
-            this,
-            listOf(
-                Faktum(fagsakIdOpplysningstype, fagsakId, kilde = Systemkilde(meldingsreferanseId, opprettet)),
-                Faktum(
-                    søknadIdOpplysningstype,
-                    this.eksternId.id.toString(),
-                    Gyldighetsperiode(skjedde, skjedde),
-                    kilde = Systemkilde(meldingsreferanseId, opprettet),
+            behandler = this,
+            opplysninger =
+                listOf(
+                    Faktum(prøvingsdato, skjedde, kilde = Systemkilde(meldingsreferanseId, opprettet)),
+                    Faktum(fagsakIdOpplysningstype, fagsakId, kilde = Systemkilde(meldingsreferanseId, opprettet)),
+                    Faktum(
+                        søknadIdOpplysningstype,
+                        this.eksternId.id.toString(),
+                        Gyldighetsperiode(skjedde, skjedde),
+                        kilde = Systemkilde(meldingsreferanseId, opprettet),
+                    ),
+                    Faktum(
+                        støtterInnvilgelseOpplysningstype,
+                        støtterInnvilgelse,
+                        kilde = Systemkilde(meldingsreferanseId, opprettet),
+                    ),
                 ),
-                Faktum(
-                    støtterInnvilgelseOpplysningstype,
-                    støtterInnvilgelse,
-                    kilde = Systemkilde(meldingsreferanseId, opprettet),
-                ),
-            ),
         )
 
     override fun kontrollpunkter() =
@@ -99,10 +103,11 @@ class SøknadInnsendtHendelse(
             MuligGjenopptakKontroll,
             SvangerskapsrelaterteSykepengerKontroll,
             SøknadstidspunktForLangtFramITid,
-            VernepliktKontroll,
-            ØnskerEtterRapporteringsfristKontroll,
             TapArbeidstidBeregningsregelKontroll,
             Totrinnskontroll,
             Under18Kontroll,
+            VernepliktKontroll,
+            VirkningstidspunktForLangtFramITid,
+            ØnskerEtterRapporteringsfristKontroll,
         )
 }

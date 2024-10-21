@@ -36,6 +36,12 @@ class DagpengeperiodeSteg : No {
                     dato,
                 ) as Opplysning<*>,
             )
+            regelkjøring.leggTil(
+                Faktum<LocalDate>(
+                    Søknadstidspunkt.prøvingsdato,
+                    dato,
+                ) as Opplysning<*>,
+            )
         }
         Gitt("at søker har {string} siste 12 måneder") { inntekt: String ->
             regelkjøring.leggTil(

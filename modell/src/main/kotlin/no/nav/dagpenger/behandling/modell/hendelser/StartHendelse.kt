@@ -3,9 +3,8 @@ package no.nav.dagpenger.behandling.modell.hendelser
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
-import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
-import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.regel.Søknadsprosess
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -26,11 +25,13 @@ abstract class StartHendelse(
             "gjelderDato" to skjedde.toString(),
         ) + eksternId.kontekstMap()
 
-    abstract fun regelkjøring(opplysninger: Opplysninger): Regelkjøring
+    abstract fun søknadprosess(): Søknadsprosess
 
     abstract fun avklarer(opplysninger: LesbarOpplysninger): Opplysningstype<*>
 
     abstract fun behandling(): Behandling
 
     abstract fun kontrollpunkter(): List<Kontrollpunkt>
+
+    abstract fun prøvingsdatoType(): Opplysningstype<LocalDate>
 }

@@ -7,6 +7,7 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeGreaterThan
@@ -88,9 +89,9 @@ internal class PersonMediatorTest {
         )
     }
 
-    private val forventetAntallOpplysningerInnvilgelse = 76
-    private val forventetAntallOpplysningerAvslag = 47
-    private val forventetAntallOpplysningerKnockout = 29
+    private val forventetAntallOpplysningerInnvilgelse = 77
+    private val forventetAntallOpplysningerAvslag = 48
+    private val forventetAntallOpplysningerKnockout = 30
 
     @BeforeEach
     fun setUp() {
@@ -105,7 +106,7 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    søknadstidspunkt = 6.mai(2021),
+                    søknadsdato = 6.mai(2021),
                 )
             testPerson.sendSøknad()
             rapid.harHendelse("behandling_opprettet", offset = 2)
@@ -125,7 +126,7 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    søknadstidspunkt = 6.mai(2021),
+                    søknadsdato = 6.mai(2021),
                 )
             løsBehandlingFramTilFerdig(testPerson)
 
@@ -214,7 +215,7 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    søknadstidspunkt = 6.mai(2021),
+                    søknadsdato = 6.mai(2021),
                     InntektSiste12Mnd = 500000,
                 )
             løsBehandlingFramTilMinsteinntekt(testPerson)
@@ -242,7 +243,7 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    søknadstidspunkt = 6.mai(2021),
+                    søknadsdato = 6.mai(2021),
                     InntektSiste12Mnd = 500000,
                 )
             skruPåFeature(Feature.INNVILGELSE)
@@ -300,7 +301,7 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    søknadstidspunkt = 6.mai(2021),
+                    søknadsdato = 6.mai(2021),
                 )
 
             løsBehandlingFramTilFerdig(testPerson)
@@ -333,7 +334,7 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    søknadstidspunkt = 6.mai(2021),
+                    søknadsdato = 6.mai(2021),
                 )
             testPerson.sendSøknad()
             rapid.harHendelse("behandling_opprettet", offset = 2)
@@ -357,7 +358,7 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    søknadstidspunkt = 5.juni(2024),
+                    søknadsdato = 5.juni(2024),
                     innsendt = 5.juni(2024).atTime(12, 0),
                     ønskerFraDato = 10.juni(2024),
                 )
@@ -378,7 +379,7 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    søknadstidspunkt = 7.juni(2024),
+                    søknadsdato = 7.juni(2024),
                     innsendt = 7.juni(2024).atTime(12, 0),
                     ønskerFraDato = 10.juni(2024),
                 )
@@ -398,16 +399,23 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
+                    søknadsdato = 1.juni(2024),
                     innsendt = 1.juni(2024).atTime(12, 0),
-                    søknadstidspunkt = 1.juni(2024),
                     ønskerFraDato = 30.juni(2024),
                 )
             løsBehandlingFramTilFerdig(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
-                with(medNode("avklaringer")) {
-                    this.size() shouldBe 8
-                }
+                medAvklaringer(
+                    "EØSArbeid",
+                    "HattLukkedeSakerSiste8Uker",
+                    "InntektNesteKalendermåned",
+                    "JobbetUtenforNorge",
+                    "MuligGjenopptak",
+                    "SvangerskapsrelaterteSykepenger",
+                    "SøknadstidspunktForLangtFramITid",
+                    "ØnskerEtterRapporteringsfrist",
+                )
             }
         }
 
@@ -418,13 +426,14 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    innsendt = 1.juni(2024).atTime(12, 0),
-                    søknadstidspunkt = 1.juni(2024),
-                    ønskerFraDato = 30.juni(2024),
+                    søknadsdato = 18.oktober(2024),
+                    innsendt = 18.oktober(2024).atTime(12, 0),
+                    ønskerFraDato = 30.desember(2024),
                 )
             løsBehandlingFramTilFerdig(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
+                medDato("prøvingsdato") shouldBe 30.desember(2024)
                 with(medNode("avklaringer")) {
                     this.size() shouldBe 8
                 }
@@ -435,7 +444,7 @@ internal class PersonMediatorTest {
 
             rapid.harHendelse("forslag_til_vedtak") {
                 with(medNode("avklaringer")) {
-                    this.size() shouldBe 7
+                    this.size() shouldBe 6
                 }
             }
             testPerson.løsBehov(
@@ -453,6 +462,40 @@ internal class PersonMediatorTest {
                     it.kilde!!::class shouldBe Saksbehandlerkilde::class
                     (it.kilde!! as Saksbehandlerkilde).ident shouldBe "123"
                 }
+            }
+        }
+    }
+
+    @Test
+    fun `endring av prøvingsdato`() {
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    innsendt = 1.juni(2024).atTime(12, 0),
+                    søknadsdato = 1.juni(2024),
+                    ønskerFraDato = 20.juni(2024),
+                )
+            løsBehandlingFramTilFerdig(testPerson)
+
+            rapid.harHendelse("forslag_til_vedtak") {
+                medDato("prøvingsdato") shouldBe 20.juni(2024)
+            }
+
+            // testPerson.nyPrøvingsdato(22.juni(2024))
+            testPerson.løsBehov("Virkningsdato", 22.juni(2024))
+
+            testPerson.løsBehov(
+                InntektId,
+                mapOf(
+                    "verdi" to testPerson.inntektId,
+                    "gyldigTilOgMed" to 25.juni(2024),
+                ),
+            )
+
+            rapid.harHendelse("forslag_til_vedtak") {
+                medDato("prøvingsdato") shouldBe 22.juni(2024)
             }
         }
     }
@@ -499,7 +542,8 @@ internal class PersonMediatorTest {
          * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
          */
         rapid.harBehov(InntektId) {
-            medDato("Virkningsdato") shouldBe maxOf(testPerson.søknadstidspunkt, testPerson.ønskerFraDato)
+            // TODO: Dette er nå prøvingsdato og bør bytte navn overalt
+            medDato("Virkningsdato") shouldBe maxOf(testPerson.søknadsdato, testPerson.ønskerFraDato)
             /**
              * TODO: Vi må ta vekk opptjeningsperiode fra dp-inntekt og skive om måten dp-inntekt lagrer inntekt på beregningsdato
              * medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
@@ -649,6 +693,11 @@ private class Meldingsinnhold(
     fun medBoolsk(navn: String) = message.get(navn)?.asBoolean()
 
     fun medOpplysning(navn: String) = message.get("opplysninger").single { it["opplysningstype"]["id"].asText() == navn }
+
+    fun medAvklaringer(vararg avklaring: String) =
+        message.get("avklaringer").apply {
+            map { it["type"].asText() } shouldContainExactlyInAnyOrder avklaring.toList()
+        }
 
     fun medVilkår(
         navn: String,

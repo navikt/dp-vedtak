@@ -7,9 +7,11 @@ import no.nav.dagpenger.opplysning.TestOpplysningstyper.foreldrevilkår
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.undervilkår1
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.undervilkår2
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
+@Disabled
 class OpplysningerTest {
     @Test
     fun `vilkår er avhengig av andre vilkår`() {

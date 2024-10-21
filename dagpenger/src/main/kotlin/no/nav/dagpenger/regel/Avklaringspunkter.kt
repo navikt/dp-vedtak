@@ -17,6 +17,12 @@ object Avklaringspunkter {
             beskrivelse = "Søknadstidspunktet ligger mer enn 14 dager fram i tid",
         )
 
+    val VirkningstidspunktForLangtFramITid =
+        Avklaringkode(
+            kode = "VirkningstidspunktForLangtFramItid",
+            tittel = "Virkningstidspunkt ligger for lang fram i tid",
+            beskrivelse = "Virkningstidspunkt ligger mer enn 14 dager fram i tid",
+        )
     val Verneplikt =
         Avklaringkode(
             kode = "Verneplikt",
