@@ -595,6 +595,14 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             hendelse.info("Behandlingen er ferdig, ignorerer avklaringer")
         }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: OpplysningSvarHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er ferdig, ignorerer opplysningssvar")
+        }
     }
 
     private fun tilstand(
