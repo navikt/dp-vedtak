@@ -16,7 +16,7 @@ class PersonRepositoryPostgres(
                 queryOf(
                     //language=PostgreSQL
                     """
-                    SELECT * FROM person WHERE ident = :ident FOR UPDATE
+                    SELECT * FROM person WHERE ident = :ident 
                     """.trimIndent(),
                     mapOf("ident" to ident.identifikator()),
                 ).map { row ->
