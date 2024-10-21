@@ -97,7 +97,11 @@ class Opplysninger private constructor(
     @Suppress("UNCHECKED_CAST")
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? {
         if (alleOpplysninger.count { it.er(opplysningstype) } > 1) {
-            throw IllegalStateException("Har mer enn 1 opplysning av type $opplysningstype")
+            throw IllegalStateException(
+                """Har mer enn 1 opplysning av type $opplysningstype i opplysningerId=$id. 
+                |Basert på=${basertPåOpplysninger.joinToString { it.id.toString() }}
+                """.trimMargin(),
+            )
         }
         return alleOpplysninger.singleOrNull { it.er(opplysningstype) } as Opplysning<T>?
     }
