@@ -39,8 +39,18 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
     private companion object {
         private val opplysningerSomHarByttetNavn =
             listOf(
-                Navnebytte(Opplysningstype.somDato("Søknadstidspunkt".id("Virkningstidspunkt")), søknadstidspunkt),
-                Navnebytte(Opplysningstype.somDato("Søknadsdato".id("Søknadstidspunkt")), søknadsdato),
+                Navnebytte(
+                    fra = Opplysningstype.somDato("Søknadstidspunkt".id("Virkningstidspunkt")),
+                    til = søknadstidspunkt,
+                ),
+                Navnebytte(
+                    fra = Opplysningstype.somDato("Søknadsdato".id("Søknadstidspunkt")),
+                    til = søknadsdato,
+                ),
+                Navnebytte(
+                    fra = Opplysningstype.somDato("Søknadstidspunkt".id("DetEkteSøknadstidspunktet")),
+                    til = søknadstidspunkt,
+                ),
             )
 
         private val logger = KotlinLogging.logger { }
@@ -152,11 +162,11 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             var opplysningstype: Opplysningstype<T> =
                 Opplysningstype(string("type_navn").id(string("type_id"), stringOrNull("tekst_id")), datatype)
 
-            val gammeltNavn = opplysningerSomHarByttetNavn.singleOrNull { it.gammelt == opplysningstype }
+            val gammeltNavn = opplysningerSomHarByttetNavn.singleOrNull { it.fra == opplysningstype }
             if (gammeltNavn != null) {
                 @Suppress("UNCHECKED_CAST")
-                opplysningstype = gammeltNavn.nytt as Opplysningstype<T>
-                logger.info { "Bytter navn på opplysning fra ${gammeltNavn.gammelt.navn} til ${gammeltNavn.nytt.navn}" }
+                opplysningstype = gammeltNavn.til as Opplysningstype<T>
+                logger.info { "Bytter navn på opplysning fra ${gammeltNavn.fra.navn} til ${gammeltNavn.til.navn}" }
             }
 
             val gyldighetsperiode =
@@ -516,6 +526,6 @@ private data class OpplysningRad<T : Comparable<T>>(
 )
 
 private class Navnebytte<T : Comparable<T>>(
-    val gammelt: Opplysningstype<T>,
-    val nytt: Opplysningstype<T>,
+    val fra: Opplysningstype<T>,
+    val til: Opplysningstype<T>,
 )
