@@ -271,10 +271,15 @@ class Behandling private constructor(
             hendelse: PersonHendelse,
         ) {
             behandling.observatører.forEach { it.behandlingStartet() }
-            val regelkjøringsrapport = behandling.regelkjøring.evaluer()
-            hendelse.lagBehov(regelkjøringsrapport.informasjonsbehov)
+            val rapport = behandling.regelkjøring.evaluer()
 
-            if (regelkjøringsrapport.erFerdig()) {
+            rapport.kjørteRegler.forEach { regel: Regel<*> ->
+                hendelse.info(regel.toString())
+            }
+
+            hendelse.lagBehov(rapport.informasjonsbehov)
+
+            if (rapport.erFerdig()) {
                 behandling.tilstand(ForslagTilVedtak(), hendelse)
             }
         }
