@@ -101,7 +101,7 @@ class Opplysninger private constructor(
                 """Har mer enn 1 opplysning av type $opplysningstype i opplysningerId=$id.
                 |Fant ${alleOpplysninger.count { it.er(opplysningstype) }} duplikater blant ${alleOpplysninger.size} opplysninger.
                 |Opplysningene er:
-                |${alleOpplysninger.joinToString("\n") { it.toString() }}
+                |${alleOpplysninger.joinToString("\n") { "id: ${it.id} ," + it.toString() }}
                 |Basert på (${basertPåOpplysninger.size} sett) ${basertPåOpplysninger.joinToString { it.id.toString() }}
                 """.trimMargin(),
             )
