@@ -11,7 +11,10 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-@Disabled
+@Disabled(
+    """Vi har endret på hvordan vi behandler opplysninger. Vi erstatter alltid når det er i samme behandling, 
+        |og endrer kun når de går på tvers av behandlinger""",
+)
 class OpplysningerTest {
     @Test
     fun `vilkår er avhengig av andre vilkår`() {

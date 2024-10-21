@@ -6,11 +6,12 @@ import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.Avklaringspunkter
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -29,12 +30,13 @@ class BehandlingRepositoryPostgresTest {
             fagsakId = 1,
             opprettet = LocalDateTime.now(),
         )
+    private val prøvingsdatoOpplysning = Faktum(prøvingsdato, LocalDate.now())
     private val tidligereOpplysning = Faktum(Opplysningstype.somDesimaltall("tidligere-opplysning"), 1.0)
     private val basertPåBehandling =
         Behandling.rehydrer(
             behandlingId = UUIDv7.ny(),
             behandler = søknadInnsendtHendelse,
-            gjeldendeOpplysninger = Opplysninger(listOf(tidligereOpplysning)),
+            gjeldendeOpplysninger = Opplysninger(listOf(prøvingsdatoOpplysning, tidligereOpplysning)),
             tilstand = Behandling.TilstandType.Ferdig,
             sistEndretTilstand = LocalDateTime.now(),
             avklaringer = emptyList(),

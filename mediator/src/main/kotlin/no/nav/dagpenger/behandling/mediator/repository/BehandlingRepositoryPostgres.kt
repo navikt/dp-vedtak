@@ -5,8 +5,8 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.modell.Behandling
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
 import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse
 import java.util.UUID
 
 class BehandlingRepositoryPostgres(
@@ -38,6 +38,7 @@ class BehandlingRepositoryPostgres(
                         behandlingId = row.uuid("behandling_id"),
                         behandler =
                             when (row.string("hendelse_type")) {
+                                // TODO: Dette er ganske gnøkka. Modellen definerer bare StartHendelse, men vi må lage den konkrete fra Dagpenger
                                 SøknadInnsendtHendelse::class.simpleName ->
                                     SøknadInnsendtHendelse(
                                         meldingsreferanseId = row.uuid("melding_id"),

@@ -6,6 +6,7 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.sisteAv
 import no.nav.dagpenger.opplysning.regel.innhentes
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 
 object Søknadstidspunkt {
     // § 3A-1.Søknadstidspunkt https://lovdata.no/forskrift/1998-09-16-890/§3a-1
@@ -20,8 +21,6 @@ object Søknadstidspunkt {
 
     // TODO: vi må rydde i begrepsbruk, behovsløsere forventer at dette kalles virkningsdato
     val søknadstidspunkt = Opplysningstype.somDato("Søknadstidspunkt".id("DetEkteSøknadstidspunktet"))
-
-    val prøvingsdato = Opplysningstype.somDato("Prøvingsdato".id("Virkningsdato"))
 
     val regelsett =
         Regelsett("Søknadstidspunkt").apply {

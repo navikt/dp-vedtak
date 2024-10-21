@@ -12,13 +12,10 @@ import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.EksternId
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.NyPrøvingsdatoHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
-import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Informasjonsbehov
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
@@ -28,9 +25,6 @@ import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.regel.Regel
 import no.nav.dagpenger.opplysning.verdier.Ulid
-import no.nav.dagpenger.regel.KravPåDagpenger
-import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
-import no.nav.dagpenger.regel.støtterInnvilgelseOpplysningstype
 import no.nav.dagpenger.uuid.UUIDv7
 import java.time.Duration
 import java.time.LocalDateTime
@@ -62,24 +56,17 @@ class Behandling private constructor(
     private val tidligereOpplysninger: List<Opplysninger> = basertPå.map { it.opplysninger }
 
     private val opplysninger: Opplysninger =
-        (gjeldendeOpplysninger + tidligereOpplysninger).apply {
-            if (!har(behandler.prøvingsdatoType())) {
-                leggTil(Faktum(behandler.prøvingsdatoType(), behandler.skjedde))
-            }
-        }
-    private val regelkjøring: Regelkjøring get() = Regelkjøring(prøvingsdato, opplysninger, behandler.søknadprosess())
+        (gjeldendeOpplysninger + tidligereOpplysninger)
+
+    private val regelkjøring: Regelkjøring get() = behandler.regelkjøring(opplysninger)
 
     private val avklaringer = Avklaringer(behandler.kontrollpunkter(), avklaringer)
 
-    var prøvingsdato
-        get() = opplysninger.finnOpplysning(behandler.prøvingsdatoType()).verdi
-        private set(value) = opplysninger.leggTil(Faktum(behandler.prøvingsdatoType(), value))
-
-    fun avklaringer() = avklaringer.avklaringer(opplysninger.forDato(prøvingsdato))
+    fun avklaringer() = avklaringer.avklaringer(opplysninger.forDato(behandler.prøvingsdato(opplysninger)))
 
     fun erAutomatiskBehandlet() = avklaringer().all { it.erAvklart() || it.erAvbrutt() }
 
-    fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger.forDato(prøvingsdato))
+    fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger.forDato(behandler.prøvingsdato(opplysninger)))
 
     companion object {
         fun rehydrer(
@@ -111,12 +98,7 @@ class Behandling private constructor(
 
     fun opplysninger(): LesbarOpplysninger = opplysninger
 
-    override fun håndter(hendelse: SøknadInnsendtHendelse) {
-        hendelse.kontekst(this)
-        tilstand.håndter(this, hendelse)
-    }
-
-    override fun håndter(hendelse: NyPrøvingsdatoHendelse) {
+    override fun håndter(hendelse: StartHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
@@ -200,7 +182,7 @@ class Behandling private constructor(
 
         fun håndter(
             behandling: Behandling,
-            hendelse: SøknadInnsendtHendelse,
+            hendelse: StartHendelse,
         ): Unit =
             throw IllegalStateException(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
@@ -209,14 +191,6 @@ class Behandling private constructor(
         fun håndter(
             behandling: Behandling,
             hendelse: OpplysningSvarHendelse,
-        ): Unit =
-            throw IllegalStateException(
-                "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
-            )
-
-        fun håndter(
-            behandling: Behandling,
-            hendelse: NyPrøvingsdatoHendelse,
         ): Unit =
             throw IllegalStateException(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
@@ -275,7 +249,7 @@ class Behandling private constructor(
 
         override fun håndter(
             behandling: Behandling,
-            hendelse: SøknadInnsendtHendelse,
+            hendelse: StartHendelse,
         ) {
             hendelse.kontekst(this)
             hendelse.info("Mottatt søknad og startet behandling")
@@ -333,15 +307,10 @@ class Behandling private constructor(
                 hendelse.info(regel.toString())
             }
 
-            val støtterInnvilgelse =
-                behandling.opplysninger.har(støtterInnvilgelseOpplysningstype) &&
-                    behandling.opplysninger.finnOpplysning(støtterInnvilgelseOpplysningstype).verdi
-
-            if (!støtterInnvilgelse) {
+            if (!behandling.behandler.støtterInnvilgelse(behandling.opplysninger)) {
                 // TODO: Dette faller bort når vi sjekker alt
                 val kravPåDagpenger =
-                    behandling.opplysninger.har(KravPåDagpenger.kravPåDagpenger) &&
-                        behandling.opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
+                    behandling.behandler.kravPåDagpenger(behandling.opplysninger)
                 if (kravPåDagpenger) {
                     hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
                     behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag"), hendelse)
@@ -350,8 +319,7 @@ class Behandling private constructor(
 
                 // TODO: Dette faller bort når vi sjekker alt
                 val kravTilInntekt =
-                    behandling.opplysninger.har(minsteinntekt) &&
-                        behandling.opplysninger.finnOpplysning(minsteinntekt).verdi
+                    behandling.behandler.minsteinntekt(behandling.opplysninger)
                 if (kravTilInntekt) {
                     hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")
                     behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag på grunn av inntekt"), hendelse)
@@ -410,7 +378,7 @@ class Behandling private constructor(
                 BehandlingHendelser.ForslagTilVedtakHendelse,
                 "Foreslår vedtak",
                 mapOf(
-                    "prøvingsdato" to behandling.prøvingsdato,
+                    "prøvingsdato" to behandling.behandler.prøvingsdato(behandling.opplysninger),
                     "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger)).verdi,
                     "harAvklart" to
                         behandling.opplysninger
@@ -420,17 +388,6 @@ class Behandling private constructor(
                 ),
             )
             behandling.observatører.forEach { it.forslagTilVedtak() }
-        }
-
-        override fun håndter(
-            behandling: Behandling,
-            hendelse: NyPrøvingsdatoHendelse,
-        ) {
-            hendelse.kontekst(this)
-            hendelse.info("Endrer prøvingsdato fra ${behandling.prøvingsdato} til ${hendelse.prøvingsdato}")
-            behandling.prøvingsdato = hendelse.prøvingsdato
-
-            behandling.tilstand(Redigert(), hendelse)
         }
 
         override fun håndter(

@@ -5,19 +5,26 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldBeWithin
 import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.Ferdig
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderBehandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderOpprettelse
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.SøknadId
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
+import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.UUID
 
 internal class BehandlingTest {
     private val ident = "123456789011"
@@ -39,7 +46,7 @@ internal class BehandlingTest {
     @Test
     fun `Behandling basert på tidligere behandlinger`() {
         val behandlingskjede = behandlingskjede(5, søknadInnsendtHendelse)
-        behandlingskjede.opplysninger().finnAlle() shouldHaveSize 6
+        behandlingskjede.opplysninger().finnAlle() shouldHaveSize 5
         behandlingskjede.opplysninger().finnAlle().map {
             it.verdi
         } shouldContainAll listOf(1.0, 2.0, 3.0, 4.0, 5.0)
@@ -127,5 +134,54 @@ internal class BehandlingTest {
         override fun endretTilstand(event: BehandlingObservatør.BehandlingEndretTilstand) {
             endretTilstandEventer.add(event)
         }
+    }
+}
+
+private class SøknadInnsendtHendelse(
+    meldingsreferanseId: UUID,
+    ident: String,
+    søknadId: UUID,
+    gjelderDato: LocalDate,
+    fagsakId: Int,
+    opprettet: LocalDateTime,
+) : StartHendelse(
+        meldingsreferanseId,
+        ident,
+        SøknadId(søknadId),
+        gjelderDato,
+        fagsakId,
+        opprettet,
+    ) {
+    private val opplysningstype = Opplysningstype.somBoolsk("opplysning")
+
+    override fun regelkjøring(opplysninger: Opplysninger) =
+        Regelkjøring(
+            skjedde,
+            opplysninger,
+            Regelsett("test") {
+                regel(opplysningstype) { enAv(Opplysningstype.somBoolsk("trengerDenne")) }
+            },
+        )
+
+    override fun avklarer(opplysninger: LesbarOpplysninger) = opplysningstype
+
+    override fun behandling(): Behandling {
+        TODO("Not yet implemented")
+    }
+
+    override fun kontrollpunkter(): List<Kontrollpunkt> = emptyList()
+
+    override fun prøvingsdato(opplysninger: LesbarOpplysninger) = skjedde
+
+    override fun støtterInnvilgelse(opplysninger: LesbarOpplysninger): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun kravPåDagpenger(opplysninger: LesbarOpplysninger): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun minsteinntekt(opplysninger: LesbarOpplysninger): Boolean {
+        TODO("Not yet implemented")
     }
 }

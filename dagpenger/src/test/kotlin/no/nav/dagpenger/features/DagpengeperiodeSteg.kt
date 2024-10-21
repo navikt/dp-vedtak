@@ -10,6 +10,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import java.time.LocalDate
@@ -38,7 +39,7 @@ class DagpengeperiodeSteg : No {
             )
             regelkjøring.leggTil(
                 Faktum<LocalDate>(
-                    Søknadstidspunkt.prøvingsdato,
+                    prøvingsdato,
                     dato,
                 ) as Opplysning<*>,
             )

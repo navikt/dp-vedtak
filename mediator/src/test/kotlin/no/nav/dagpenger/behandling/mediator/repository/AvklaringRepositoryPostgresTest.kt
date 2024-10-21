@@ -7,9 +7,11 @@ import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -81,7 +83,7 @@ class AvklaringRepositoryPostgresTest {
             Behandling.rehydrer(
                 behandlingId = UUIDv7.ny(),
                 behandler = SøknadInnsendtHendelse(UUIDv7.ny(), "123", UUIDv7.ny(), LocalDate.now(), 1, LocalDateTime.now()),
-                gjeldendeOpplysninger = Opplysninger(emptyList()),
+                gjeldendeOpplysninger = Opplysninger(listOf(Faktum(prøvingsdato, LocalDate.now()))),
                 basertPå = emptyList(),
                 tilstand = TilstandType.UnderBehandling,
                 sistEndretTilstand = LocalDateTime.now(),

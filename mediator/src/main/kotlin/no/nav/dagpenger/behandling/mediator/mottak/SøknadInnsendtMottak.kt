@@ -14,7 +14,7 @@ import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.asUUID
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse
 
 internal class SøknadInnsendtMottak(
     rapidsConnection: RapidsConnection,

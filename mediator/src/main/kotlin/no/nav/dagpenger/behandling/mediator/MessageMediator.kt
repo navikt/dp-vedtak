@@ -13,8 +13,6 @@ import no.nav.dagpenger.behandling.mediator.mottak.AvklaringIkkeRelevantMottak
 import no.nav.dagpenger.behandling.mediator.mottak.BehandlingStårFastMessage
 import no.nav.dagpenger.behandling.mediator.mottak.GodkjennBehandlingMessage
 import no.nav.dagpenger.behandling.mediator.mottak.GodkjennBehandlingMottak
-import no.nav.dagpenger.behandling.mediator.mottak.NyPrøvingsdatoMessage
-import no.nav.dagpenger.behandling.mediator.mottak.NyPrøvingsdatoMottak
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMottak
 import no.nav.dagpenger.behandling.mediator.mottak.PåminnelseMottak
@@ -23,11 +21,10 @@ import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMottak
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.NyPrøvingsdatoHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.opplysning.Opplysningstype
 import java.util.UUID
 
@@ -41,14 +38,13 @@ internal class MessageMediator(
         AvbrytBehandlingMottak(rapidsConnection, this)
         AvklaringIkkeRelevantMottak(rapidsConnection, this)
         OpplysningSvarMottak(rapidsConnection, this, opplysningstyper)
-        NyPrøvingsdatoMottak(rapidsConnection, this)
         PåminnelseMottak(rapidsConnection, this)
         SøknadInnsendtMottak(rapidsConnection, this)
         GodkjennBehandlingMottak(rapidsConnection, this)
     }
 
     override fun behandle(
-        hendelse: SøknadInnsendtHendelse,
+        hendelse: StartHendelse,
         message: SøknadInnsendtMessage,
         context: MessageContext,
     ) {
@@ -80,16 +76,6 @@ internal class MessageMediator(
     override fun behandle(
         hendelse: OpplysningSvarHendelse,
         message: OpplysningSvarMessage,
-        context: MessageContext,
-    ) {
-        behandle(hendelse, message) {
-            hendelseMediator.behandle(it, context)
-        }
-    }
-
-    override fun behandle(
-        hendelse: NyPrøvingsdatoHendelse,
-        message: NyPrøvingsdatoMessage,
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
@@ -132,7 +118,7 @@ internal class MessageMediator(
 
 internal interface IMessageMediator {
     fun behandle(
-        hendelse: SøknadInnsendtHendelse,
+        hendelse: StartHendelse,
         message: SøknadInnsendtMessage,
         context: MessageContext,
     )
@@ -164,12 +150,6 @@ internal interface IMessageMediator {
     fun behandle(
         hendelse: ForslagGodkjentHendelse,
         message: GodkjennBehandlingMessage,
-        context: MessageContext,
-    )
-
-    fun behandle(
-        hendelse: NyPrøvingsdatoHendelse,
-        message: NyPrøvingsdatoMessage,
         context: MessageContext,
     )
 }

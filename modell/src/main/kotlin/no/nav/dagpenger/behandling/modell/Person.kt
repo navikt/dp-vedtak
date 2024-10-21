@@ -9,11 +9,10 @@ import no.nav.dagpenger.behandling.modell.PersonObservatør.PersonEvent
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.NyPrøvingsdatoHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.SøknadInnsendtHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 
 class Person(
     val ident: Ident,
@@ -25,7 +24,7 @@ class Person(
 
     constructor(ident: Ident) : this(ident, mutableListOf())
 
-    override fun håndter(hendelse: SøknadInnsendtHendelse) {
+    override fun håndter(hendelse: StartHendelse) {
         if (behandlinger.any { it.behandler.eksternId == hendelse.eksternId }) {
             hendelse.varsel("Søknad med eksternId ${hendelse.eksternId} er allerede mottatt")
             return
@@ -50,12 +49,6 @@ class Person(
     }
 
     override fun håndter(hendelse: OpplysningSvarHendelse) {
-        hendelse.leggTilKontekst(this)
-        val behandling = behandlinger.finn(hendelse.behandlingId)
-        behandling.håndter(hendelse)
-    }
-
-    override fun håndter(hendelse: NyPrøvingsdatoHendelse) {
         hendelse.leggTilKontekst(this)
         val behandling = behandlinger.finn(hendelse.behandlingId)
         behandling.håndter(hendelse)
