@@ -4,6 +4,7 @@ import kotliquery.Row
 import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
+import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.objectMapper
 import no.nav.dagpenger.opplysning.Boolsk
@@ -27,12 +28,24 @@ import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import org.postgresql.util.PGobject
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
 class OpplysningerRepositoryPostgres : OpplysningerRepository {
+    private companion object {
+        private val opplysningerSomHarByttetNavn =
+            listOf(
+                Navnebytte(Opplysningstype.somDato("Søknadstidspunkt".id("Virkningstidspunkt")), søknadstidspunkt),
+                Navnebytte(Opplysningstype.somDato("Søknadsdato".id("Søknadstidspunkt")), søknadsdato),
+            )
+
+        private val logger = KotlinLogging.logger { }
+    }
+
     override fun hentOpplysninger(opplysningerId: UUID) =
         sessionOf(dataSource)
             .use { session ->
@@ -136,8 +149,15 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val opplysingerId = uuid("opplysninger_id")
             val id = uuid("id")
 
-            val opplysningstype: Opplysningstype<T> =
+            var opplysningstype: Opplysningstype<T> =
                 Opplysningstype(string("type_navn").id(string("type_id"), stringOrNull("tekst_id")), datatype)
+
+            val gammeltNavn = opplysningerSomHarByttetNavn.singleOrNull { it.gammelt == opplysningstype }
+            if (gammeltNavn != null) {
+                @Suppress("UNCHECKED_CAST")
+                opplysningstype = gammeltNavn.nytt as Opplysningstype<T>
+                logger.info { "Bytter navn på opplysning fra ${gammeltNavn.gammelt.navn} til ${gammeltNavn.nytt.navn}" }
+            }
 
             val gyldighetsperiode =
                 Gyldighetsperiode(
@@ -493,4 +513,9 @@ private data class OpplysningRad<T : Comparable<T>>(
     val opprettet: LocalDateTime,
     val erstattetAv: List<UUID>,
     val erstatter: UUID? = null,
+)
+
+private class Navnebytte<T : Comparable<T>>(
+    val gammelt: Opplysningstype<T>,
+    val nytt: Opplysningstype<T>,
 )

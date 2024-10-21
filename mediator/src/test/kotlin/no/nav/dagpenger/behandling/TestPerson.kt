@@ -13,9 +13,11 @@ import no.nav.dagpenger.regel.Behov.Ordinær
 import no.nav.dagpenger.regel.Behov.Permittert
 import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
+import no.nav.dagpenger.regel.Behov.Søknadsdato
 import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
 import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
+import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
 import org.intellij.lang.annotations.Language
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -203,8 +205,8 @@ class TestPerson(
         get() =
             mapOf(
                 "Fødselsdato" to søknadsdato.minusYears(alder.toLong()),
-                "Søknadstidspunkt" to søknadsdato,
-                "ØnskerDagpengerFraDato" to ønskerFraDato,
+                Søknadsdato to søknadsdato,
+                ØnskerDagpengerFraDato to ønskerFraDato,
                 // Inntekt
                 InntektId to
                     mapOf(

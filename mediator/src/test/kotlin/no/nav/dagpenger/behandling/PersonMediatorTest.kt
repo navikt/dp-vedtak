@@ -522,15 +522,15 @@ internal class PersonMediatorTest {
         rapid.harHendelse("behandling_opprettet", offset = 2)
 
         /**
-         * Fastsetter søknadstidspunkt
+         * Fastsetter søknadsdato
          */
-        rapid.harBehov("Søknadstidspunkt") {
+        rapid.harBehov("Søknadsdato") {
             medTekst("søknadId") shouldBe testPerson.søknadId
             medTekst("søknad_uuid") shouldBe testPerson.søknadId
         }
 
-        rapid.harBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
-        testPerson.løsBehov("Fødselsdato", "Søknadstidspunkt", "ØnskerDagpengerFraDato")
+        rapid.harBehov("Fødselsdato", "Søknadsdato", "ØnskerDagpengerFraDato")
+        testPerson.løsBehov("Fødselsdato", "Søknadsdato", "ØnskerDagpengerFraDato")
 
         /**
          * Sjekker om mulig verneplikt
