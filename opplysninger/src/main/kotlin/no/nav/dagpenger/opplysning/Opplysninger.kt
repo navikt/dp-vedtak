@@ -98,8 +98,9 @@ class Opplysninger private constructor(
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? {
         if (alleOpplysninger.count { it.er(opplysningstype) } > 1) {
             throw IllegalStateException(
-                """Har mer enn 1 opplysning av type $opplysningstype i opplysningerId=$id. 
-                |Basert på=${basertPåOpplysninger.joinToString { it.id.toString() }}
+                """Har mer enn 1 opplysning av type $opplysningstype i opplysningerId=$id.
+                |Fant ${alleOpplysninger.count { it.er(opplysningstype) }} duplikater blant ${alleOpplysninger.size} opplysninger.
+                |Basert på (${basertPåOpplysninger.size} sett) ${basertPåOpplysninger.joinToString { it.id.toString() }}
                 """.trimMargin(),
             )
         }
