@@ -60,7 +60,13 @@ class Behandling private constructor(
 
     private val regelkjøring: Regelkjøring get() = behandler.regelkjøring(opplysninger)
 
-    private val avklaringer = Avklaringer(behandler.kontrollpunkter(), avklaringer)
+    private val kontrollpunkter =
+        when (tilstand) {
+            is Avbrutt -> emptyList()
+            is Ferdig -> emptyList()
+            else -> behandler.kontrollpunkter()
+        }
+    private val avklaringer = Avklaringer(kontrollpunkter, avklaringer)
 
     fun avklaringer() = avklaringer.avklaringer(opplysninger.forDato(behandler.prøvingsdato(opplysninger)))
 
@@ -588,6 +594,14 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.info("Behandlingen er ferdig, ignorerer avklaringer")
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: OpplysningSvarHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er ferdig, ignorerer opplysningssvar")
         }
     }
 
