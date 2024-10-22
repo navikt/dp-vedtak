@@ -1,16 +1,24 @@
 package no.nav.dagpenger.behandling.mediator.mottak
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import io.kotest.matchers.shouldBe
+import io.mockk.every
+import io.mockk.mockk
+import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.asUUID
+import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class InnsendingFerdigstiltMottakTest {
+    private val messageMediator = mockk<MessageMediator>(relaxed = true)
+
     private val rapid =
         TestRapid().also {
             InnsendingFerdigstiltMottak(it)
+            SøknadInnsendtMottak(it, messageMediator)
         }
     private val ident = "123123123"
     private val søknadId by lazy { UUID.randomUUID() }
@@ -25,6 +33,14 @@ class InnsendingFerdigstiltMottakTest {
             this["fagsakId"].asInt() shouldBe 123
             this["journalpostId"].asInt() shouldBe 123
             this["søknadId"].asUUID() shouldBe søknadId
+        }
+
+        every {
+            messageMediator.behandle(
+                any<StartHendelse>(),
+                any<SøknadInnsendtMessage>(),
+                any<MessageContext>(),
+            )
         }
     }
 
