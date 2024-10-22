@@ -42,17 +42,13 @@ class TestPerson(
     private fun søknadInnsendt() =
         JsonMessage
             .newMessage(
-                "innsending_ferdigstilt",
+                "søknad_behandlingsklar",
                 mapOf(
-                    "@opprettet" to innsendt,
-                    "type" to "NySøknad",
-                    "fødselsnummer" to ident,
+                    "innsendt" to innsendt,
+                    "ident" to ident,
                     "fagsakId" to 123,
                     "bruk-dp-behandling" to true,
-                    "søknadsData" to
-                        mapOf(
-                            "søknad_uuid" to søknadId,
-                        ),
+                    "søknadId" to søknadId,
                 ),
             ).toJson()
 

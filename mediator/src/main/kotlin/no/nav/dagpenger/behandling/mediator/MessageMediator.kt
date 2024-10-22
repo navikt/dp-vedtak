@@ -13,6 +13,7 @@ import no.nav.dagpenger.behandling.mediator.mottak.AvklaringIkkeRelevantMottak
 import no.nav.dagpenger.behandling.mediator.mottak.BehandlingStårFastMessage
 import no.nav.dagpenger.behandling.mediator.mottak.GodkjennBehandlingMessage
 import no.nav.dagpenger.behandling.mediator.mottak.GodkjennBehandlingMottak
+import no.nav.dagpenger.behandling.mediator.mottak.InnsendingFerdigstiltMottak
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMottak
 import no.nav.dagpenger.behandling.mediator.mottak.PåminnelseMottak
@@ -37,10 +38,11 @@ internal class MessageMediator(
     init {
         AvbrytBehandlingMottak(rapidsConnection, this)
         AvklaringIkkeRelevantMottak(rapidsConnection, this)
+        GodkjennBehandlingMottak(rapidsConnection, this)
+        InnsendingFerdigstiltMottak(rapidsConnection)
         OpplysningSvarMottak(rapidsConnection, this, opplysningstyper)
         PåminnelseMottak(rapidsConnection, this)
         SøknadInnsendtMottak(rapidsConnection, this)
-        GodkjennBehandlingMottak(rapidsConnection, this)
     }
 
     override fun behandle(
