@@ -23,14 +23,14 @@ internal class SøknadInnsendtMottak(
     init {
         River(rapidsConnection)
             .apply {
-                validate { it.demandValue("@event_name", "innsending_ferdigstilt") }
-                validate { it.demandAny("type", listOf("NySøknad")) }
-                validate { it.requireKey("fødselsnummer") }
-                validate { it.requireKey("fagsakId") }
+                validate { it.demandValue("@event_name", "søknad_behandlingsklar") }
                 validate {
-                    it.require("søknadsData") { data ->
-                        data["søknad_uuid"].asUUID()
-                    }
+                    it.requireKey(
+                        "ident",
+                        "innsendt",
+                        "fagsakId",
+                        "søknadId",
+                    )
                 }
                 validate { it.interestedIn("@id", "@opprettet") }
                 validate { it.interestedIn("journalpostId") }
@@ -42,14 +42,14 @@ internal class SøknadInnsendtMottak(
         packet: JsonMessage,
         context: MessageContext,
     ) {
-        val søknadId = packet["søknadsData"]["søknad_uuid"].asUUID().toString()
+        val søknadId = packet["søknadId"].asUUID().toString()
+        Span.current().apply {
+            setAttribute("app.river", name())
+            setAttribute("app.søknadId", søknadId)
+        }
         withLoggingContext("søknadId" to søknadId) {
-            Span.current().apply {
-                setAttribute("app.river", name())
-                setAttribute("app.søknadId", søknadId)
-            }
-            logger.info { "Mottok søknad innsendt hendelse" }
-            sikkerlogg.info { "Mottok søknad innsendt hendelse: ${packet.toJson()}" }
+            logger.info { "Mottok behandlingsklar søknad" }
+            sikkerlogg.info { "Mottok behandlingsklar søknad: ${packet.toJson()}" }
             val message = SøknadInnsendtMessage(packet)
             message.behandle(messageMediator, context)
         }
@@ -64,22 +64,19 @@ internal class SøknadInnsendtMottak(
 internal class SøknadInnsendtMessage(
     private val packet: JsonMessage,
 ) : HendelseMessage(packet) {
-    override val ident get() = packet["fødselsnummer"].asText()
-    private val søknadId = packet["søknadsData"]["søknad_uuid"].asUUID()
+    override val ident get() = packet["ident"].asText()
+    private val søknadId = packet["søknadId"].asUUID()
     private val hendelse: SøknadInnsendtHendelse
         get() {
             return SøknadInnsendtHendelse(
                 id,
                 ident,
                 søknadId = søknadId,
-                gjelderDato = packet["@opprettet"].asLocalDateTime().toLocalDate(),
-                // TODO: Vi burde alltid ha fagsakId, og defaulte til 0 er ikke så lurt
-                fagsakId = packet["fagsakId"].asInt(0),
+                gjelderDato = packet["innsendt"].asLocalDateTime().toLocalDate(),
+                fagsakId = packet["fagsakId"].asInt(),
                 opprettet,
                 støtterInnvilgelse || kandidatplukk(),
-            ).also {
-                if (it.fagsakId == 0) logger.warn { "Søknad mottatt uten fagsakId" }
-            }
+            )
         }
 
     override fun behandle(

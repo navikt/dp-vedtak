@@ -198,12 +198,8 @@ internal class PersonMediatorTest {
             testObservatør.tilstandsendringer.size shouldBe 3
 
             repeat(rapid.inspektør.size) {
-                // @todo: Fjerne hendelse fra aktivitetslogg og bruk observatør for alle hendelser ut.
-                val forventerNøkkelFor = setOf("vedtak_fattet", "behandling_endret_tilstand")
                 withClue("Melding nr $it skal ha nøkkel. Meldingsinnhold: ${rapid.inspektør.message(it)}") {
-                    if (rapid.inspektør.message(it)["@event_name"].asText() in forventerNøkkelFor) {
-                        rapid.inspektør.key(it) shouldBe ident
-                    }
+                    rapid.inspektør.key(it) shouldBe ident
                 }
             }
         }

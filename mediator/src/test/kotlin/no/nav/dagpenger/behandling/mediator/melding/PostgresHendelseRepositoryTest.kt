@@ -17,18 +17,15 @@ internal class PostgresHendelseRepositoryTest {
         // language=JSON
         val originalMessage =
             """{
-            |   "@event_name": "innsending_ferdigstilt",
+            |   "@event_name": "søknad_behandlingsklar",
             |   "@id": "$hendelseId",
-            |   "type": "NySøknad",
-            |   "fødselsnummer": "12345678910",
-            |   "søknadsData": {
-            |    "søknad_uuid": "123e4567-e89b-12d3-a456-426614174000"
-            |   }
+            |   "ident": "12345678910",
+            |   "søknadId": "123e4567-e89b-12d3-a456-426614174000"
             |}
             """.trimMargin()
         val jsonMessage =
             JsonMessage(originalMessage, MessageProblems(originalMessage), mockk(relaxed = true)).also {
-                it.interestedIn("@id", "fødselsnummer", "søknadsData")
+                it.interestedIn("@id", "ident", "søknadId")
             }
         val søknadInnsendtMessage = SøknadInnsendtMessage(jsonMessage)
 
