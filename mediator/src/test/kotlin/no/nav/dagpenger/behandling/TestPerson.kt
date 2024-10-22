@@ -37,7 +37,7 @@ class TestPerson(
     internal val søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"
     private val behandlingId by lazy { rapid.inspektør.field(1, "behandlingId").asText() }
 
-    fun sendSøknad() = rapid.sendTestMessage(søknadInnsendt())
+    fun sendSøknad() = rapid.sendTestMessage(søknadInnsendt(), ident)
 
     private fun søknadInnsendt() =
         JsonMessage
@@ -55,7 +55,7 @@ class TestPerson(
     fun løsBehov(vararg behov: String) {
         val behovSomLøses = løsninger.filterKeys { it in behov }
         require(behovSomLøses.size == behov.size) { "Fant ikke løsning for alle behov: $behov" }
-        rapid.sendTestMessage(løstBehov(behovSomLøses))
+        rapid.sendTestMessage(løstBehov(behovSomLøses), ident)
     }
 
     fun løsBehov(
@@ -63,7 +63,7 @@ class TestPerson(
         løsning: Any,
         data: Map<String, Any> = emptyMap(),
     ) {
-        rapid.sendTestMessage(løstBehov(mapOf(behov to løsning), true, data))
+        rapid.sendTestMessage(løstBehov(mapOf(behov to løsning), true, data), ident)
     }
 
     private fun løstBehov(
@@ -88,7 +88,7 @@ class TestPerson(
         avklaringId: String,
         kode: String,
     ) {
-        rapid.sendTestMessage(avklaringIkkeRelevant(avklaringId, kode))
+        rapid.sendTestMessage(avklaringIkkeRelevant(avklaringId, kode), ident)
     }
 
     private fun avklaringIkkeRelevant(
@@ -115,6 +115,7 @@ class TestPerson(
                         "ident" to ident,
                     ),
                 ).toJson(),
+            ident,
         )
     }
 
@@ -128,20 +129,7 @@ class TestPerson(
                         "ident" to ident,
                     ),
                 ).toJson(),
-        )
-    }
-
-    fun nyPrøvingsdato(prøvingsdato: LocalDate) {
-        rapid.sendTestMessage(
-            JsonMessage
-                .newMessage(
-                    "ny_prøvingsdato",
-                    mapOf(
-                        "ident" to ident,
-                        "behandlingId" to behandlingId,
-                        "prøvingsdato" to prøvingsdato,
-                    ),
-                ).toJson(),
+            ident,
         )
     }
 
