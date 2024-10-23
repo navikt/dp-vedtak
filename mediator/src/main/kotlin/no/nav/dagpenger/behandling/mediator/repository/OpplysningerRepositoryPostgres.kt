@@ -40,6 +40,10 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         private val opplysningerSomHarByttetNavn =
             listOf(
                 Navnebytte(
+                    fra = Opplysningstype.somDato("Søknadstidspunkt".id("Virkningsdato")),
+                    til = søknadstidspunkt,
+                ),
+                Navnebytte(
                     fra = Opplysningstype.somDato("Søknadstidspunkt".id("Virkningstidspunkt")),
                     til = søknadstidspunkt,
                 ),
