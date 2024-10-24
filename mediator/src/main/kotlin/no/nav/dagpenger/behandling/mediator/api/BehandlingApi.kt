@@ -46,6 +46,7 @@ import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.uuid.UUIDv7
 import org.apache.kafka.common.errors.ResourceNotFoundException
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -247,6 +248,7 @@ private class HttpVerdiMapper(
             Heltall -> oppdaterOpplysningRequestDTO.verdi.toInt() as T
             Boolsk -> oppdaterOpplysningRequestDTO.verdi.toBoolean() as T
             Desimaltall -> oppdaterOpplysningRequestDTO.verdi.toDouble() as T
+            Dato -> oppdaterOpplysningRequestDTO.verdi.let { LocalDate.parse(it) } as T
             else -> throw IllegalArgumentException("Datatype $datatype støttes ikke å redigere i APIet enda")
         }
 }

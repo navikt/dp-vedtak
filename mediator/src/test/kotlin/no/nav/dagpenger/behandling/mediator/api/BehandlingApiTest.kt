@@ -99,6 +99,12 @@ internal class BehandlingApiTest {
                                 tilstand = OpplysningSvar.Tilstand.Faktum,
                                 kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
                             ),
+                            OpplysningSvar(
+                                opplysningstype = TestOpplysningstyper.dato,
+                                verdi = LocalDate.now(),
+                                tilstand = OpplysningSvar.Tilstand.Faktum,
+                                kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
+                            ),
                         ),
                 ),
             )
@@ -235,13 +241,13 @@ internal class BehandlingApiTest {
                     .behandlinger()
                     .first()
                     .opplysninger()
-                    .finnOpplysning(TestOpplysningstyper.heltall)
+                    .finnOpplysning(TestOpplysningstyper.dato)
             val response =
                 autentisert(
                     httpMethod = HttpMethod.Put,
                     endepunkt = "/behandling/$behandlingId/opplysning/${opplysning.id}",
                     // language=JSON
-                    body = """{"begrunnelse":"tekst", "verdi": 4 }""",
+                    body = """{"begrunnelse":"tekst", "verdi": "2020-01-01" }""",
                 )
             response.status shouldBe HttpStatusCode.OK
             with(response.bodyAsText()) {
@@ -263,7 +269,7 @@ internal class BehandlingApiTest {
                         JsonMessage(json, MessageProblems(json), mockk(relaxed = true)).also {
                             it.requireKey("ident", "behandlingId", "@løsning")
                         },
-                        setOf(TestOpplysningstyper.heltall),
+                        setOf(TestOpplysningstyper.dato),
                     )
                 }
 
@@ -278,9 +284,9 @@ internal class BehandlingApiTest {
 
             opplysningSvarHendelse.isCaptured shouldBe true
             val redigertOpplysning = opplysningSvarHendelse.captured.opplysninger.first()
-            redigertOpplysning.verdi shouldBe 4
+            redigertOpplysning.verdi shouldBe LocalDate.parse("2020-01-01")
             // TODO: Legge til kilde  (redigertOpplysning.kilde as Saksbehandlerkilde).ident shouldBe "Z123456"
-            redigertOpplysning.opplysningstype shouldBe TestOpplysningstyper.heltall
+            redigertOpplysning.opplysningstype shouldBe TestOpplysningstyper.dato
         }
     }
 
