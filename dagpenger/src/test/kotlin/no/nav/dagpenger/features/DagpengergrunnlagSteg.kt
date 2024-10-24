@@ -16,7 +16,7 @@ import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.regel.RegelverkDagpenger
-import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import no.nav.dagpenger.regel.Verneplikt.vurderingAvVerneplikt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.uavrundetGrunnlag
@@ -39,13 +39,7 @@ class DagpengergrunnlagSteg : No {
 
     init {
         Gitt("at søknadsdato for dagpenger er {dato}") { søknadsdato: LocalDate ->
-            opplysninger
-                .leggTil(
-                    Faktum(
-                        Søknadstidspunkt.søknadstidspunkt,
-                        søknadsdato,
-                    ),
-                ).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(prøvingsdato, søknadsdato)).also { regelkjøring.evaluer() }
         }
         Gitt("at verneplikt for grunnlag er satt {boolsk}") { verneplikt: Boolean ->
             opplysninger.leggTil(Faktum(vurderingAvVerneplikt, verneplikt)).also { regelkjøring.evaluer() }

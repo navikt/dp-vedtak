@@ -11,7 +11,6 @@ import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
-import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -31,13 +30,7 @@ class DagpengeperiodeSteg : No {
 
         Gitt("at søker har har rett til dagpenger fra {string}") { dato: String ->
             val dato = LocalDate.parse(dato, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-            opplysninger
-                .leggTil(
-                    Faktum<LocalDate>(
-                        Søknadstidspunkt.søknadstidspunkt,
-                        dato,
-                    ) as Opplysning<*>,
-                ).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(prøvingsdato, fraDato)).also { regelkjøring.evaluer() }
             opplysninger
                 .leggTil(
                     Faktum<LocalDate>(

@@ -8,9 +8,8 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
-import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import no.nav.dagpenger.regel.Utestengning
-import java.time.LocalDate
 
 class UtestengningSteg : No {
     private val fraDato = 23.mai(2024)
@@ -25,10 +24,7 @@ class UtestengningSteg : No {
 
     init {
         Gitt("at søker har søkt om dagpenger") {
-            opplysninger
-                .leggTil(
-                    Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>,
-                ).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(prøvingsdato, fraDato)).also { regelkjøring.evaluer() }
         }
         Gitt("saksbehandler vurderer at søker er {boolsk}") { utestengt: Boolean ->
             opplysninger.leggTil(Faktum<Boolean>(Utestengning.utestengt, utestengt) as Opplysning<*>).also { regelkjøring.evaluer() }

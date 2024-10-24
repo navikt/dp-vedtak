@@ -4,11 +4,11 @@
 
 ```mermaid
 graph RL
-  A["Kort dagpengeperiode"] -->|"Oppslag"| B["Søknadstidspunkt"]
-  C["Lang dagpengeperiode"] -->|"Oppslag"| B["Søknadstidspunkt"]
-  D["Terskelfaktor for 12 måneder"] -->|"Oppslag"| B["Søknadstidspunkt"]
-  E["Terskelfaktor for 36 måneder"] -->|"Oppslag"| B["Søknadstidspunkt"]
-  F["Divisior"] -->|"Oppslag"| B["Søknadstidspunkt"]
+  A["Kort dagpengeperiode"] -->|"Oppslag"| B["Prøvingsdato"]
+  C["Lang dagpengeperiode"] -->|"Oppslag"| B["Prøvingsdato"]
+  D["Terskelfaktor for 12 måneder"] -->|"Oppslag"| B["Prøvingsdato"]
+  E["Terskelfaktor for 36 måneder"] -->|"Oppslag"| B["Prøvingsdato"]
+  F["Divisior"] -->|"Oppslag"| B["Prøvingsdato"]
   G["Terskel for 12 måneder"] -->|"Multiplikasjon"| H["Grunnbeløp"]
   G["Terskel for 12 måneder"] -->|"Multiplikasjon"| D["Terskelfaktor for 12 måneder"]
   I["Terskel for 36 måneder"] -->|"Multiplikasjon"| H["Grunnbeløp"]
@@ -27,7 +27,7 @@ graph RL
   P["Stønadsuker ved siste 36 måneder"] -->|"HvisSannMedResultat"| A["Kort dagpengeperiode"]
   Q["Antall stønadsuker"] -->|"HøyesteAv"| O["Stønadsuker ved siste 12 måneder"]
   Q["Antall stønadsuker"] -->|"HøyesteAv"| P["Stønadsuker ved siste 36 måneder"]
-  R["Antall dager som skal regnes med i hver uke"] -->|"Oppslag"| B["Søknadstidspunkt"]
+  R["Antall dager som skal regnes med i hver uke"] -->|"Oppslag"| B["Prøvingsdato"]
   S["Antall gjenstående stønadsdager"] -->|"Multiplikasjon"| Q["Antall stønadsuker"]
   S["Antall gjenstående stønadsdager"] -->|"Multiplikasjon"| R["Antall dager som skal regnes med i hver uke"]
 ```

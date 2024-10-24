@@ -9,7 +9,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.RegelverkDagpenger
-import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.antallBarn
@@ -29,13 +29,7 @@ class DagpengensStørrelseSteg : No {
 
     init {
         Gitt("at dagpengegrunnlag er {string}") { grunnlag: String ->
-            opplysninger
-                .leggTil(
-                    Faktum(
-                        Søknadstidspunkt.søknadstidspunkt,
-                        fraDato,
-                    ),
-                ).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(prøvingsdato, fraDato)).also { regelkjøring.evaluer() }
             opplysninger
                 .leggTil(
                     Faktum(

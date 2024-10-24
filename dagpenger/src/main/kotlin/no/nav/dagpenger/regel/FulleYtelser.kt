@@ -8,6 +8,7 @@ import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.ingenAv
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 
 object FulleYtelser {
     val andreYtelser = Opplysningstype.somBoolsk("Oppgitt andre ytelser utenfor NAV i søknaden".id("OppgittAndreYtelserUtenforNav"))
@@ -20,7 +21,7 @@ object FulleYtelser {
         Regelsett("FulleYtelser") {
             regel(andreYtelser) { innhentes }
             regel(vurderingAndreYtelser) { erSann(andreYtelser) }
-            regel(navYtelser) { oppslag(Søknadstidspunkt.søknadstidspunkt) { false } }
+            regel(navYtelser) { oppslag(prøvingsdato) { false } }
 
             regel(ikkeFulleYtelser) {
                 ingenAv(vurderingAndreYtelser, navYtelser)

@@ -8,7 +8,7 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
-import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting
 import java.time.LocalDate
@@ -28,13 +28,7 @@ class VernepliktFastsettingSteg : No {
         Gitt(
             "at søker har søkt om dagpenger under verneplikt {dato}",
         ) { dato: LocalDate ->
-            opplysninger
-                .leggTil(
-                    Faktum(
-                        Søknadstidspunkt.søknadstidspunkt,
-                        dato,
-                    ),
-                ).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(prøvingsdato, dato)).also { regelkjøring.evaluer() }
         }
 
         Så("skal grunnlag være {int}") { grunnlag: Int ->

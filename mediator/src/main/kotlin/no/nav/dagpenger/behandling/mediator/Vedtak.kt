@@ -22,7 +22,7 @@ import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.Rettighetstype
 import no.nav.dagpenger.regel.StreikOgLockout
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
-import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.fastsattVanligArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.nyArbeidstid
@@ -116,7 +116,7 @@ fun lagVedtak(
         ident = ident.identifikator(),
         vedtakstidspunkt = LocalDateTime.now(),
         // TODO: Denne må utledes igjen - virkningstidspunkt = opplysninger.finnOpplysning(virkningstidspunkt).verdi,
-        virkningsdato = opplysninger.finnOpplysning(søknadstidspunkt).verdi,
+        virkningsdato = opplysninger.finnOpplysning(prøvingsdato).verdi,
         // TODO("Vi må få med oss noe greier om saksbehandler og beslutter"),
         behandletAv = emptyList(),
         vilkår = vilkår,

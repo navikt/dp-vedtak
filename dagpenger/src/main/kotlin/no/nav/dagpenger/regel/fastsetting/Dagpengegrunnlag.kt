@@ -24,12 +24,10 @@ import no.nav.dagpenger.opplysning.regel.størreEnn
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Minsteinntekt
-import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import java.time.LocalDate
 
 object Dagpengegrunnlag {
-    val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
-
     val inntekt = Opplysningstype.somInntekt("Inntekt for grunnlag".id(Inntekt))
     val uavrundetGrunnlag = Opplysningstype.somBeløp("Uavrundet grunnlag")
     val grunnlag = Opplysningstype.somBeløp("Grunnlag")
@@ -62,12 +60,12 @@ object Dagpengegrunnlag {
 
     val regelsett =
         Regelsett("Dagpengegrunnlag") {
-            regel(antallÅrI36Måneder) { oppslag(søknadstidspunkt) { 3.0 } }
-            regel(faktorForMaksgrense) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 6.0 } }
+            regel(antallÅrI36Måneder) { oppslag(prøvingsdato) { 3.0 } }
+            regel(faktorForMaksgrense) { oppslag(prøvingsdato) { 6.0 } }
             regel(maksgrenseForGrunnlag) { multiplikasjon(grunnbeløp, faktorForMaksgrense) }
 
             regel(inntekt) { innhentMed(inntektId) }
-            regel(grunnbeløp) { oppslag(søknadstidspunkt) { grunnbeløpFor(it) } }
+            regel(grunnbeløp) { oppslag(prøvingsdato) { grunnbeløpFor(it) } }
             regel(oppjustertinntekt) { oppjuster(grunnbeløp, inntekt) }
             regel(relevanteinntekter) {
                 filtrerRelevanteInntekter(

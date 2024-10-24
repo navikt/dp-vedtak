@@ -9,13 +9,13 @@ import no.nav.dagpenger.opplysning.regel.dato.leggTilÅr
 import no.nav.dagpenger.opplysning.regel.dato.sisteDagIMåned
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
-import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 
 object Alderskrav {
     val fødselsdato = Opplysningstype.somDato("Fødselsdato".id("Fødselsdato", "opplysning.fodselsdato"))
 
-    private val virkningsdato = søknadstidspunkt
+    private val virkningsdato = prøvingsdato
 
     private val aldersgrense = Opplysningstype.somHeltall("Aldersgrense")
     private val sisteMåned = Opplysningstype.somDato("Dato søker når maks alder")

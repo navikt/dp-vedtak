@@ -12,7 +12,7 @@ import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.prosentTerskel
 import no.nav.dagpenger.regel.Behov.HarTaptArbeid
 import no.nav.dagpenger.regel.Behov.KravPåLønn
-import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 
 object TapAvArbeidsinntektOgArbeidstid {
     internal val tapAvArbeid = Opplysningstype.somBoolsk("Har tapt arbeid".id(HarTaptArbeid))
@@ -35,22 +35,22 @@ object TapAvArbeidsinntektOgArbeidstid {
 
     val regelsett =
         Regelsett("Krav til tap av arbeidsinntekt og arbeidstid") {
-            regel(tapAvArbeid) { oppslag(søknadstidspunkt) { true } } // TODO: Satt til true for testing av innvilgelse
-            regel(kravPåLønn) { oppslag(søknadstidspunkt) { false } }
+            regel(tapAvArbeid) { oppslag(prøvingsdato) { true } } // TODO: Satt til true for testing av innvilgelse
+            regel(kravPåLønn) { oppslag(prøvingsdato) { false } }
             regel(ikkeKravPåLønn) { ikke(kravPåLønn) }
             regel(tapAvArbeidsinntekt) { alle(tapAvArbeid, ikkeKravPåLønn) }
 
-            regel(kravTilArbeidstidsreduksjon) { oppslag(søknadstidspunkt) { 50.0 } } // Perm og sånt har andre terskelverdier
+            regel(kravTilArbeidstidsreduksjon) { oppslag(prøvingsdato) { 50.0 } } // Perm og sånt har andre terskelverdier
 
             // TODO: Kun en av disse må være sann. Enforces med Avklaring (i framtiden)
-            regel(beregningsregel6mnd) { oppslag(søknadstidspunkt) { true } } // TODO: Satt til true for testing av innvilgelse
-            regel(beregningsregel12mnd) { oppslag(søknadstidspunkt) { false } }
-            regel(beregningsregel36mnd) { oppslag(søknadstidspunkt) { false } }
+            regel(beregningsregel6mnd) { oppslag(prøvingsdato) { true } } // TODO: Satt til true for testing av innvilgelse
+            regel(beregningsregel12mnd) { oppslag(prøvingsdato) { false } }
+            regel(beregningsregel36mnd) { oppslag(prøvingsdato) { false } }
 
             // TODO: Bør hentes fra noe
-            regel(beregnetArbeidstid) { oppslag(søknadstidspunkt) { 37.5 } } // TODO: Satt til 37.5 for testing av innvilgelse
-            regel(nyArbeidstid) { oppslag(søknadstidspunkt) { 0.0 } }
-            regel(maksimalVanligArbeidstid) { oppslag(søknadstidspunkt) { 40.0 } }
+            regel(beregnetArbeidstid) { oppslag(prøvingsdato) { 37.5 } } // TODO: Satt til 37.5 for testing av innvilgelse
+            regel(nyArbeidstid) { oppslag(prøvingsdato) { 0.0 } }
+            regel(maksimalVanligArbeidstid) { oppslag(prøvingsdato) { 40.0 } }
             // TODO: Legg til maks ønsket arbeidstid
             regel(fastsattVanligArbeidstid) { minstAv(beregnetArbeidstid, maksimalVanligArbeidstid) }
 

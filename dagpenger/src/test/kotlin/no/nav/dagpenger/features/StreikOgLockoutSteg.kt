@@ -9,8 +9,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.StreikOgLockout
-import no.nav.dagpenger.regel.Søknadstidspunkt
-import java.time.LocalDate
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 
 class StreikOgLockoutSteg : No {
     private val fraDato = 23.mai(2024)
@@ -26,10 +25,7 @@ class StreikOgLockoutSteg : No {
     init {
 
         Gitt("at søker har søkt om dagpenger under streik eller lockout") {
-            opplysninger
-                .leggTil(
-                    Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>,
-                ).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(prøvingsdato, fraDato)).also { regelkjøring.evaluer() }
         }
 
         Og("saksbehandler vurderer at søker {boolsk} i streik eller lockout") { deltar: Boolean ->

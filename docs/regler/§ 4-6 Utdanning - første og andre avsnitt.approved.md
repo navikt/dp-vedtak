@@ -4,12 +4,12 @@
 
 ```mermaid
 graph RL
-  A["Deltar i arbeidsmarkedstiltak"] -->|"Oppslag"| B["Søknadstidspunkt"]
-  C["Deltar i opplæring for innvandrere"] -->|"Oppslag"| B["Søknadstidspunkt"]
-  D["Deltar i grunnskoleopplæring, videregående opplæring og opplæring i grunnleggende ferdigheter"] -->|"Oppslag"| B["Søknadstidspunkt"]
-  E["Deltar i høyere yrkesfaglig utdanning"] -->|"Oppslag"| B["Søknadstidspunkt"]
-  F["Deltar i høyere utdanning"] -->|"Oppslag"| B["Søknadstidspunkt"]
-  G["Deltar på kurs mv"] -->|"Oppslag"| B["Søknadstidspunkt"]
+  A["Deltar i arbeidsmarkedstiltak"] -->|"Oppslag"| B["Prøvingsdato"]
+  C["Deltar i opplæring for innvandrere"] -->|"Oppslag"| B["Prøvingsdato"]
+  D["Deltar i grunnskoleopplæring, videregående opplæring og opplæring i grunnleggende ferdigheter"] -->|"Oppslag"| B["Prøvingsdato"]
+  E["Deltar i høyere yrkesfaglig utdanning"] -->|"Oppslag"| B["Prøvingsdato"]
+  F["Deltar i høyere utdanning"] -->|"Oppslag"| B["Prøvingsdato"]
+  G["Deltar på kurs mv"] -->|"Oppslag"| B["Prøvingsdato"]
   H["Godkjent unntak for utdanning eller opplæring?"] -->|"EnAv"| A["Deltar i arbeidsmarkedstiltak"]
   H["Godkjent unntak for utdanning eller opplæring?"] -->|"EnAv"| C["Deltar i opplæring for innvandrere"]
   H["Godkjent unntak for utdanning eller opplæring?"] -->|"EnAv"| D["Deltar i grunnskoleopplæring, videregående opplæring og opplæring i grunnleggende ferdigheter"]

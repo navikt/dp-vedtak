@@ -4,7 +4,7 @@
 
 ```mermaid
 graph RL
-  A["Utestengt"] -->|"Oppslag"| B["Søknadstidspunkt"]
+  A["Utestengt"] -->|"Oppslag"| B["Prøvingsdato"]
   C["Oppfyller krav til ikke utestengt"] -->|"IngenAv"| A["Utestengt"]
 ```
 

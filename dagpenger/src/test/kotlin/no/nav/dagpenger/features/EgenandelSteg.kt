@@ -9,7 +9,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.RegelverkDagpenger
-import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.Egenandel
 
@@ -28,13 +28,7 @@ class EgenandelSteg : No {
     init {
 
         Gitt("at sats er {string}") { sats: String ->
-            opplysninger
-                .leggTil(
-                    Faktum(
-                        Søknadstidspunkt.søknadstidspunkt,
-                        fraDato,
-                    ),
-                ).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(prøvingsdato, fraDato)).also { regelkjøring.evaluer() }
             opplysninger
                 .leggTil(
                     Faktum(

@@ -10,7 +10,7 @@ import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Beløp
-import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -42,20 +42,20 @@ object DagpengenesStørrelse {
 
     val regelsett =
         Regelsett("§ 4-12. Dagpengenes størrelse\n (Sats)") {
-            regel(antallBarn) { oppslag(søknadstidspunkt) { 0 } } // TODO: Satt til 0 for testing av innvilgelse
+            regel(antallBarn) { oppslag(prøvingsdato) { 0 } } // TODO: Satt til 0 for testing av innvilgelse
 
-            regel(barnetilleggetsStørrelse) { oppslag(søknadstidspunkt) { Barnetillegg.forDato(it) } }
+            regel(barnetilleggetsStørrelse) { oppslag(prøvingsdato) { Barnetillegg.forDato(it) } }
             regel(dekningsgrad) {
-                oppslag(søknadstidspunkt) { DagpengensStørrelseFaktor.forDato(it) }
+                oppslag(prøvingsdato) { DagpengensStørrelseFaktor.forDato(it) }
             }
             regel(dagsatsUtenBarnetillegg) { multiplikasjon(grunnlag, dekningsgrad) }
             regel(barnetillegg) { multiplikasjon(barnetilleggetsStørrelse, antallBarn) }
             regel(dagsatsMedBarn) { addisjon(dagsatsUtenBarnetillegg, barnetillegg) }
 
             // Regne ut ukessats
-            regel(arbeidsdagerPerUke) { oppslag(søknadstidspunkt) { 5 } }
-            regel(nittiProsent) { oppslag(søknadstidspunkt) { 0.9 } }
-            regel(antallArbeidsdagerPerÅr) { oppslag(søknadstidspunkt) { 260 } }
+            regel(arbeidsdagerPerUke) { oppslag(prøvingsdato) { 5 } }
+            regel(nittiProsent) { oppslag(prøvingsdato) { 0.9 } }
+            regel(antallArbeidsdagerPerÅr) { oppslag(prøvingsdato) { 260 } }
 
             regel(maksGrunnlag) { multiplikasjon(grunnlag, nittiProsent) }
             regel(maksSats) { divisjon(maksGrunnlag, antallArbeidsdagerPerÅr) }

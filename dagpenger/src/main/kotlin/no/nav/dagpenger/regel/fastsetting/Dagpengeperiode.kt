@@ -9,7 +9,7 @@ import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.regel.Minsteinntekt
-import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 
 object Dagpengeperiode {
     val antallStønadsuker = Opplysningstype.somHeltall("Antall stønadsuker")
@@ -35,11 +35,11 @@ object Dagpengeperiode {
 
     val regelsett =
         Regelsett("Dagpengeperiode") {
-            regel(kortPeriode) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 52 } }
-            regel(langPeriode) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 104 } }
-            regel(terskelFaktor12) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 2.0 } }
-            regel(terskelFaktor36) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 2.0 } }
-            regel(divisor) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 3.0 } }
+            regel(kortPeriode) { oppslag(prøvingsdato) { 52 } }
+            regel(langPeriode) { oppslag(prøvingsdato) { 104 } }
+            regel(terskelFaktor12) { oppslag(prøvingsdato) { 2.0 } }
+            regel(terskelFaktor36) { oppslag(prøvingsdato) { 2.0 } }
+            regel(divisor) { oppslag(prøvingsdato) { 3.0 } }
             regel(terskel12) { multiplikasjon(grunnbeløp, terskelFaktor12) }
             regel(terskel36) { multiplikasjon(grunnbeløp, terskelFaktor36) }
             regel(inntektSnittSiste36) { divisjon(inntektSiste36, divisor) }
@@ -54,7 +54,7 @@ object Dagpengeperiode {
                 høyesteAv(stønadsuker12, stønadsuker36)
             }
 
-            regel(dagerIUka) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 5 } }
+            regel(dagerIUka) { oppslag(prøvingsdato) { 5 } }
             regel(gjenståendeStønadsdager) { multiplikasjon(antallStønadsuker, dagerIUka) }
         }
 }

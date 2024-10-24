@@ -118,6 +118,8 @@ class SøknadInnsendtHendelse(
     companion object {
         val fagsakIdOpplysningstype = Opplysningstype.somHeltall("fagsakId")
         val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")
+
+        // Har Virkningsdato som ID for å være kompatibel med behovløsere
         val prøvingsdato = Opplysningstype.somDato("Prøvingsdato".id("Virkningsdato"))
     }
 }

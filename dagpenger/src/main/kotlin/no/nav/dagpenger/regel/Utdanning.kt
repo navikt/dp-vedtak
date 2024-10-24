@@ -10,6 +10,7 @@ import no.nav.dagpenger.opplysning.regel.erUsann
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 
 object Utdanning {
     // § 4-6 første og andre avsnitt, Utdanning
@@ -18,7 +19,6 @@ object Utdanning {
     private val svartJaPåUtdanning = Opplysningstype.somBoolsk("Har svart ja på spørsmål om utdanning eller opplæring")
     private val svartNeiPåUtdanning = Opplysningstype.somBoolsk("Har svart nei på spørsmål om utdanning eller opplæring")
     private val oppfyllerKravetPåUnntak = Opplysningstype.somBoolsk("Oppfyller kravet på unntak for utdanning eller opplæring")
-    private val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
 
     // Dagpengeforskriften § 4-3. Utdanning og opplæring
     //  § 4-3.(deltakelse i arbeidsmarkedstiltak)
@@ -49,22 +49,22 @@ object Utdanning {
             }
             // TODO: Legg til regler for å om kravet til utdanning skal vurderes
             regel(deltakelseIArbeidsmarkedstiltak) {
-                oppslag(søknadstidspunkt) { false }
+                oppslag(prøvingsdato) { false }
             }
             regel(opplæringForInnvandrere) {
-                oppslag(søknadstidspunkt) { false }
+                oppslag(prøvingsdato) { false }
             }
             regel(grunnskoleopplæring) {
-                oppslag(søknadstidspunkt) { false }
+                oppslag(prøvingsdato) { false }
             }
             regel(høyereYrkesfagligUtdanning) {
-                oppslag(søknadstidspunkt) { false }
+                oppslag(prøvingsdato) { false }
             }
             regel(høyereUtdanning) {
-                oppslag(søknadstidspunkt) { false }
+                oppslag(prøvingsdato) { false }
             }
             regel(deltakelsePåKurs) {
-                oppslag(søknadstidspunkt) { false }
+                oppslag(prøvingsdato) { false }
             }
 
             regel(godkjentUnntakForUtdanning) {

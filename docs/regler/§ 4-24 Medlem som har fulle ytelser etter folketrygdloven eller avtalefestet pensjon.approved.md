@@ -5,7 +5,7 @@
 ```mermaid
 graph RL
   A["Saksbehandler er enig i at brukeren har andre ytelser"] -->|"ErSann"| B["Oppgitt andre ytelser utenfor NAV i søknaden"]
-  C["NAV livsoppholdsytelser"] -->|"Oppslag"| D["Søknadstidspunkt"]
+  C["NAV livsoppholdsytelser"] -->|"Oppslag"| D["Prøvingsdato"]
   E["Ikke fulle ytelser"] -->|"IngenAv"| A["Saksbehandler er enig i at brukeren har andre ytelser"]
   E["Ikke fulle ytelser"] -->|"IngenAv"| C["NAV livsoppholdsytelser"]
 ```

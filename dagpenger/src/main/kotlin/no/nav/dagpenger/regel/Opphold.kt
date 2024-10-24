@@ -5,7 +5,7 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 
 object Opphold {
     var oppholdINorge = Opplysningstype.somBoolsk("Opphold i Norge".id("OppholdINorge"))
@@ -14,8 +14,8 @@ object Opphold {
 
     val regelsett =
         Regelsett("Opphold i Norge") {
-            regel(oppholdINorge) { oppslag(søknadstidspunkt) { true } }
-            regel(unntakForOpphold) { oppslag(søknadstidspunkt) { false } }
+            regel(oppholdINorge) { oppslag(prøvingsdato) { true } }
+            regel(unntakForOpphold) { oppslag(prøvingsdato) { false } }
 
             regel(oppfyllerKravet) { enAv(oppholdINorge, unntakForOpphold) }
         }

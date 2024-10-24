@@ -11,7 +11,7 @@ import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
-import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 
 object ReellArbeidssøker {
     internal val kanJobbeDeltid = Opplysningstype.somBoolsk("Kan jobbe heltid og deltid".id(KanJobbeDeltid))
@@ -34,8 +34,8 @@ object ReellArbeidssøker {
             regel(helseTilAlleTyperArbeid) { innhentes }
             regel(villigTilEthvertArbeid) { innhentes }
 
-            regel(godkjentLokalArbeidssøker) { oppslag(søknadstidspunkt) { false } }
-            regel(godkjentDeltidssøker) { oppslag(søknadstidspunkt) { false } }
+            regel(godkjentLokalArbeidssøker) { oppslag(prøvingsdato) { false } }
+            regel(godkjentDeltidssøker) { oppslag(prøvingsdato) { false } }
 
             regel(oppfyllerKravTilMobilitet) { enAv(kanJobbeHvorSomHelst, godkjentLokalArbeidssøker) }
             regel(oppfyllerKravTilArbeidssøker) { enAv(kanJobbeDeltid, godkjentDeltidssøker) }

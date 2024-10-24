@@ -4,7 +4,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 
 object Egenandel {
     val egenandel = Opplysningstype.somBeløp("Egenandel")
@@ -13,7 +13,7 @@ object Egenandel {
 
     val regelsett =
         Regelsett("§ 4-9. Egenandel") {
-            regel(faktor) { oppslag(Søknadstidspunkt.søknadstidspunkt) { 3.0 } }
+            regel(faktor) { oppslag(prøvingsdato) { 3.0 } }
             regel(egenandel) { multiplikasjon(sats, faktor) }
         }
 }

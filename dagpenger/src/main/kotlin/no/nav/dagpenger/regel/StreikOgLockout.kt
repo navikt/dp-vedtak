@@ -4,6 +4,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.ingenAv
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 
 object StreikOgLockout {
     val deltarIStreikOgLockout = Opplysningstype.somBoolsk("Deltar medlemmet i streik eller er omfattet av lock-out?")
@@ -16,8 +17,8 @@ object StreikOgLockout {
 
     val regelsett =
         Regelsett("StreikOgLockout").apply {
-            regel(deltarIStreikOgLockout) { oppslag(Søknadstidspunkt.søknadstidspunkt) { false } }
-            regel(sammeBedriftOgPåvirket) { oppslag(Søknadstidspunkt.søknadstidspunkt) { false } }
+            regel(deltarIStreikOgLockout) { oppslag(prøvingsdato) { false } }
+            regel(sammeBedriftOgPåvirket) { oppslag(prøvingsdato) { false } }
             regel(ikkeStreikEllerLockout) {
                 // TODO: denne blir feil vei, false = true og true = false
                 ingenAv(deltarIStreikOgLockout, sammeBedriftOgPåvirket)

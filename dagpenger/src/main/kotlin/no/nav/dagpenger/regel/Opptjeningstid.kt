@@ -7,6 +7,7 @@ import no.nav.dagpenger.opplysning.regel.dato.førsteArbeidsdag
 import no.nav.dagpenger.opplysning.regel.dato.sisteAvsluttendeKalenderMåned
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import java.time.LocalDate
 
 /**
@@ -16,8 +17,6 @@ import java.time.LocalDate
  */
 
 object Opptjeningstid {
-    private val søknadstidspunkt = Søknadstidspunkt.søknadstidspunkt
-
     // https://lovdata.no/dokument/NL/lov/2012-06-22-43/%C2%A74#%C2%A74
     private val pliktigRapporteringsfrist = Opplysningstype.somDato("Lovpålagt rapporteringsfrist for A-ordningen")
     val justertRapporteringsfrist = Opplysningstype.somDato("Arbeidsgivers rapporteringsfrist")
@@ -25,12 +24,12 @@ object Opptjeningstid {
 
     val regelsett =
         Regelsett("Opptjeningsperiode") {
-            regel(pliktigRapporteringsfrist) { oppslag(søknadstidspunkt) { Aordningen.rapporteringsfrist(it) } }
+            regel(pliktigRapporteringsfrist) { oppslag(prøvingsdato) { Aordningen.rapporteringsfrist(it) } }
             regel(justertRapporteringsfrist) { førsteArbeidsdag(pliktigRapporteringsfrist) }
-            regel(sisteAvsluttendendeKalenderMåned) { sisteAvsluttendeKalenderMåned(søknadstidspunkt, justertRapporteringsfrist) }
+            regel(sisteAvsluttendendeKalenderMåned) { sisteAvsluttendeKalenderMåned(prøvingsdato, justertRapporteringsfrist) }
         }
 }
 
 private object Aordningen {
-    fun rapporteringsfrist(søknadstidspunkt: LocalDate): LocalDate = LocalDate.of(søknadstidspunkt.year, søknadstidspunkt.month, 5)
+    fun rapporteringsfrist(dato: LocalDate): LocalDate = LocalDate.of(dato.year, dato.month, 5)
 }
