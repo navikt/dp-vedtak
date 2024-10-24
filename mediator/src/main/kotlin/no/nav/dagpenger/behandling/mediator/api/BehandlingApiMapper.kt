@@ -22,6 +22,7 @@ import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import java.time.LocalDate
 
@@ -97,6 +98,7 @@ private val redigerbareOpplysninger =
             setOf(
                 TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid,
                 TapAvArbeidsinntektOgArbeidstid.nyArbeidstid,
+                prøvingsdato,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)
