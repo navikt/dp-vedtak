@@ -90,7 +90,6 @@ internal class PersonMediatorTest {
         )
     }
 
-    private val forventetAntallOpplysningerInnvilgelse = 77
     private val forventetAntallOpplysningerAvslag = 48
     private val forventetAntallOpplysningerKnockout = 30
 
@@ -246,25 +245,23 @@ internal class PersonMediatorTest {
             skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilFerdig(testPerson)
 
-            personRepository.hent(ident.tilPersonIdentfikator()).also {
-                it.shouldNotBeNull()
-                it.behandlinger().size shouldBe 1
-                it
-                    .behandlinger()
-                    .flatMap { behandling -> behandling.opplysninger().finnAlle() }
-                    .size shouldBe forventetAntallOpplysningerInnvilgelse
-            }
+            antallOpplysninger() shouldBe 39
+
             /**
              * Innhenter tar utdanning eller opplæring
              */
             rapid.harBehov(TarUtdanningEllerOpplæring)
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
 
+            antallOpplysninger() shouldBe 83
+
             /**
              * Innhenter inntekt for fastsettelse
              */
             rapid.harBehov(Inntekt)
             testPerson.løsBehov(Inntekt)
+
+            antallOpplysninger() shouldBe 140
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe true
@@ -294,6 +291,12 @@ internal class PersonMediatorTest {
                     sats shouldBeGreaterThan 0
                 }
             }
+        }
+
+    private fun antallOpplysninger() =
+        personRepository.hent(ident.tilPersonIdentfikator())?.let {
+            it.behandlinger().size shouldBe 1
+            it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size
         }
 
     @Test

@@ -7,6 +7,7 @@ import no.nav.dagpenger.opplysning.TestOpplysningstyper.beløpB
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorA
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.faktorB
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.grunntall
+import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -16,6 +17,9 @@ class RegelsettTest {
     private val regelsett
         get() =
             Regelsett("regelsett") {
+                regel(grunntall) { innhentes }
+                regel(faktorA) { innhentes }
+                regel(faktorB) { innhentes }
                 regel(beløpA, 1.januar) { multiplikasjon(grunntall, faktorA) }
                 regel(beløpA, 1.juni) { multiplikasjon(grunntall, faktorB) }
             }
@@ -24,6 +28,8 @@ class RegelsettTest {
     fun `skal si avhengigheter og produserer`() {
         val regelsett =
             Regelsett("regelsett") {
+                regel(faktorA) { innhentes }
+                regel(faktorB) { innhentes }
                 regel(beløpA, 1.januar) { multiplikasjon(grunntall, faktorA) }
                 regel(beløpA, 1.juni) { multiplikasjon(grunntall, faktorB) }
                 regel(beløpB, 1.juni) { multiplikasjon(grunntall, faktorA) }
@@ -46,7 +52,7 @@ class RegelsettTest {
         val opplysninger = Opplysninger()
         val regelkjøring = Regelkjøring(10.januar, opplysninger, regelsett)
 
-        assertEquals(2, regelkjøring.evaluer().mangler.size)
+        assertEquals(3, regelkjøring.evaluer().mangler.size)
         opplysninger.leggTil(Faktum(grunntall, Beløp(3.0))).also { regelkjøring.evaluer() }
         opplysninger.leggTil(Faktum(faktorA, 1.0)).also { regelkjøring.evaluer() }
         opplysninger.finnOpplysning(beløpA).verdi shouldBe Beløp(3.0)

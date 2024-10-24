@@ -48,7 +48,9 @@ class DagpengergrunnlagSteg : No {
         Gitt("at inntekt for grunnlag er") { dataTable: DataTable? ->
             val inntektstabell = dataTable!!.asMaps()
             val f = Inntekt(lagInntekt(inntektstabell))
-            opplysninger.leggTil(Faktum(Dagpengegrunnlag.inntekt, f)).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(Dagpengegrunnlag.inntekt, f))
+            val rapport = regelkjøring.evaluer()
+            println(rapport)
         }
 
         Så("beregnet uavrundet grunnlag være {string}") { uavrundetGrunnlag: String ->

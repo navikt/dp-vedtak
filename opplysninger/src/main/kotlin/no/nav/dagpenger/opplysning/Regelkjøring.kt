@@ -1,6 +1,5 @@
 package no.nav.dagpenger.opplysning
 
-import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import no.nav.dagpenger.opplysning.regel.Ekstern
 import no.nav.dagpenger.opplysning.regel.Regel
 import java.time.LocalDate
@@ -63,6 +62,10 @@ class Regelkjøring(
     fun evaluer(): Regelkjøringsrapport {
         aktiverRegler()
         while (plan.size > 0) {
+            if (plan.any { it is Ekstern<*> }) {
+                // Vi stopper opp for å kjøre behov når vi treffer regler som trenger eksterne opplysninger
+                break
+            }
             kjørRegelPlan()
             aktiverRegler()
         }
@@ -81,14 +84,14 @@ class Regelkjøring(
             }.forEach {
                 plan.add(it)
             }
-        plan.forEach {
-            muligeRegler.remove(it)
-        }
     }
 
     private fun kjørRegelPlan() {
         while (plan.size > 0) {
             kjør(plan.first())
+        }
+        plan.forEach {
+            muligeRegler.remove(it)
         }
     }
 
@@ -100,13 +103,8 @@ class Regelkjøring(
     }
 
     private fun trenger(): Set<Opplysningstype<*>> {
-        val graph = RegeltreBygger(muligeRegler).dag()
-        val opplysningerUtenRegel = graph.findLeafNodes()
-        val opplysningerMedEksternRegel = graph.findNodesWithEdge { it.data is Ekstern<*> }
-        return (opplysningerUtenRegel + opplysningerMedEksternRegel)
-            .map { it.data }
-            .filterNot { opplysningerPåPrøvingsdato.har(it) }
-            .toSet()
+        val eksterneOpplysninger = plan.filterIsInstance<Ekstern<*>>().map { it.produserer }.toSet()
+        return eksterneOpplysninger.filterNot { opplysningerPåPrøvingsdato.har(it) }.toSet()
     }
 
     private fun informasjonsbehov(): Informasjonsbehov =
