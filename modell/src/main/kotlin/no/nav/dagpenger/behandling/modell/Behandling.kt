@@ -74,6 +74,8 @@ class Behandling private constructor(
 
     fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger.forDato(behandler.prøvingsdato(opplysninger)))
 
+    fun kreverTotrinnskontroll() = behandler.kreverTotrinnskontroll(aktiveAvklaringer())
+
     companion object {
         fun rehydrer(
             behandlingId: UUID,

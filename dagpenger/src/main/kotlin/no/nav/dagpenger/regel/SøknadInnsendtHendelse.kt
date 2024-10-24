@@ -1,5 +1,6 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadId
@@ -76,6 +77,10 @@ class SøknadInnsendtHendelse(
     override fun minsteinntekt(opplysninger: LesbarOpplysninger): Boolean =
         opplysninger.har(Minsteinntekt.minsteinntekt) &&
             opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi
+
+    override fun kreverTotrinnskontroll(aktiveAvklaringer: List<Avklaring>): Boolean {
+        return aktiveAvklaringer.any { it.kode == Avklaringspunkter.Totrinnskontroll }
+    }
 
     override fun behandling() =
         Behandling(

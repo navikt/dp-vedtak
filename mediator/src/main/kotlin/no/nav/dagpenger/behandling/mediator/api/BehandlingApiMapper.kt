@@ -34,6 +34,7 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
             this.opplysninger().finnAlle().map { opplysning ->
                 opplysning.tilOpplysningDTO()
             },
+        kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
     )
 
 internal fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =

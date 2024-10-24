@@ -246,6 +246,7 @@ components:
         - behandlingId
         - opplysning
         - tilstand
+        - kreverTotrinnskontroll
       properties:
         behandlingId:
           type: string
@@ -257,6 +258,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Opplysning'
+        kreverTotrinnskontroll:
+            type: boolean
 
     Opplysningstype:
       type: object

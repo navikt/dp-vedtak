@@ -5,6 +5,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.date.shouldBeWithin
 import io.kotest.matchers.maps.shouldContain
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.Ferdig
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderBehandling
@@ -182,6 +183,10 @@ private class SøknadInnsendtHendelse(
     }
 
     override fun minsteinntekt(opplysninger: LesbarOpplysninger): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun kreverTotrinnskontroll(aktiveAvklaringer: List<Avklaring>): Boolean {
         TODO("Not yet implemented")
     }
 }

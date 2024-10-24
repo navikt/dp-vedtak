@@ -278,6 +278,11 @@ internal class PersonMediatorTest {
                 medBoolsk("utfall") shouldBe true
             }
 
+            personRepository.hent(ident.tilPersonIdentfikator()).also {
+                it.shouldNotBeNull()
+                it.behandlinger().first().kreverTotrinnskontroll() shouldBe true
+            }
+
             testPerson.godkjennForslagTilVedtak()
 
             rapid.harHendelse("vedtak_fattet") {

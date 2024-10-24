@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
@@ -42,4 +43,6 @@ abstract class StartHendelse(
     abstract fun kravPåDagpenger(opplysninger: LesbarOpplysninger): Boolean
 
     abstract fun minsteinntekt(opplysninger: LesbarOpplysninger): Boolean
+
+    abstract fun kreverTotrinnskontroll(aktiveAvklaringer: List<Avklaring>): Boolean
 }
