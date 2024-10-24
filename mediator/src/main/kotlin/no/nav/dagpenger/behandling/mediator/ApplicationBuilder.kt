@@ -6,6 +6,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.konfigurasjon.Configuration.config
+import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.mediator.api.ApiMessageContext
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.audit.ApiAuditlogg
@@ -69,6 +70,6 @@ internal class ApplicationBuilder(
     override fun onStartup(rapidsConnection: RapidsConnection) {
         if (config["CLEAN_ON_STARTUP"] == "true") clean()
         runMigration()
-        logger.info { "Starter opp dp-behandling" }
+        logger.info { "Starter opp dp-behandling. Støtter innvilgelse=$støtterInnvilgelse" }
     }
 }
