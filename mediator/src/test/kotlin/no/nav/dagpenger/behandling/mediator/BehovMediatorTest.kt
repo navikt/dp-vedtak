@@ -25,6 +25,7 @@ class BehovMediatorTest {
             mapOf(
                 "test1" to "test1",
                 "felles" to "felles",
+                "@utledetAv" to listOf("test1", "felles"),
             ),
         )
         hendelse.behov(
@@ -33,6 +34,7 @@ class BehovMediatorTest {
             mapOf(
                 "test2" to "test2",
                 "felles" to "felles",
+                "@utledetAv" to listOf("test2", "felles"),
             ),
         )
 
@@ -48,6 +50,9 @@ class BehovMediatorTest {
             this["TestBehov2"].size() shouldBe 2
             this["TestBehov2"]["test2"].asText() shouldBe "test2"
             this["TestBehov2"]["felles"].asText() shouldBe "felles"
+
+            this["@utledetAv"]["TestBehov1"].map { it.asText() }.shouldContainExactly("test1", "felles")
+            this["@utledetAv"]["TestBehov2"].map { it.asText() }.shouldContainExactly("test2", "felles")
         }
     }
 
@@ -60,7 +65,11 @@ class BehovMediatorTest {
         private val aktivitetslogg: Aktivitetslogg = Aktivitetslogg(),
     ) : AktivitetsloggHendelse,
         IAktivitetslogg by aktivitetslogg {
-        override fun toSpesifikkKontekst() = SpesifikkKontekst("test")
+        init {
+            aktivitetslogg.kontekst(this)
+        }
+
+        override fun toSpesifikkKontekst() = SpesifikkKontekst("test", mapOf("kontekst" to "kontekst"))
 
         override fun ident() = "123123"
 

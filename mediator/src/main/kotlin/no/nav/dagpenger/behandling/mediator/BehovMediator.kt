@@ -37,10 +37,24 @@ class BehovMediator {
                     .apply {
                         // Denne lar oss filtrere ut pakker fra andre system som ber om løsning på de samme behovene vi bruker
                         put("@opplysningsbehov", true)
+
+                        // Legg til kontekst
                         putAll(kontekst)
-                        putAll(behovMap)
+
+                        // Legg til hvert behov + detaljer
+                        behovMap.forEach { (behovNavn, detaljer) ->
+                            val avhengigheter = detaljer.filterNot { it.key.startsWith("@") }
+                            put(behovNavn, avhengigheter)
+                        }
+
                         // TODO: Flat ut alle kontekster rett på root i behovet. Dette er for å være kompatibel med gamle behovløsere
-                        behovMap.values.forEach { putAll(it as Map<String, Any>) }
+                        behovMap
+                            .values
+                            .forEach { behov ->
+                                putAll(behov.filterNot { it.key == "@utledetAv" } as Map<String, Any>)
+                            }
+
+                        put("@utledetAv", behovMap.entries.associate { (behovNavn, detaljer) -> behovNavn to detaljer["@utledetAv"] })
                     }.let {
                         JsonMessage
                             .newNeed(behovMap.keys, it + erFinal(behovMap.size))

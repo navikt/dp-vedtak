@@ -5,10 +5,11 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.sisteAv
-import no.nav.dagpenger.opplysning.regel.innhentes
+import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.regel.Behov.Søknadsdato
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.søknadIdOpplysningstype
 
 object Søknadstidspunkt {
     // § 3A-1.Søknadstidspunkt https://lovdata.no/forskrift/1998-09-16-890/§3a-1
@@ -19,8 +20,8 @@ object Søknadstidspunkt {
 
     val regelsett =
         Regelsett("Søknadstidspunkt").apply {
-            regel(søknadsdato) { innhentes }
-            regel(ønsketdato) { innhentes }
+            regel(søknadsdato) { innhentMed(søknadIdOpplysningstype) }
+            regel(ønsketdato) { innhentMed(søknadIdOpplysningstype) }
             regel(søknadstidspunkt) { sisteAv(søknadsdato, ønsketdato) }
             regel(prøvingsdato) { sisteAv(søknadstidspunkt) }
         }

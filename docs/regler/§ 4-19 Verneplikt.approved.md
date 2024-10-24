@@ -4,7 +4,8 @@
 
 ```mermaid
 graph RL
-  A["Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste"] -->|"ErSann"| B["Avtjent verneplikt"]
+  A["Avtjent verneplikt"] -->|"Ekstern"| B["søknadId"]
+  C["Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste"] -->|"ErSann"| A["Avtjent verneplikt"]
 ```
 
 ## Akseptansetester

@@ -5,6 +5,7 @@ import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysning
+import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import java.time.LocalDateTime
 import java.util.UUID
@@ -40,5 +41,30 @@ data class OpplysningSvar<T : Comparable<T>>(
             Tilstand.Hypotese -> Hypotese(opplysningstype, verdi, kilde = kilde, gyldighetsperiode = gyldighetsperiode)
             Tilstand.Faktum -> Faktum(opplysningstype, verdi, kilde = kilde, gyldighetsperiode = gyldighetsperiode)
         }
+    }
+
+    fun leggTil(opplysninger: Opplysninger): Opplysning<T> {
+        val gyldighetsperiode = gyldighetsperiode ?: Gyldighetsperiode()
+        val opplysning =
+            when (tilstand) {
+                Tilstand.Hypotese ->
+                    Hypotese(
+                        opplysningstype,
+                        verdi,
+                        kilde = kilde,
+                        gyldighetsperiode = gyldighetsperiode,
+                    )
+
+                Tilstand.Faktum ->
+                    Faktum(
+                        opplysningstype,
+                        verdi,
+                        kilde = kilde,
+                        gyldighetsperiode = gyldighetsperiode,
+                    )
+            }
+        opplysninger.leggTil(opplysning)
+
+        return opplysning
     }
 }

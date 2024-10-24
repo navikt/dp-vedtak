@@ -5,7 +5,8 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.erSann
-import no.nav.dagpenger.opplysning.regel.innhentes
+import no.nav.dagpenger.opplysning.regel.innhentMed
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.søknadIdOpplysningstype
 
 object Verneplikt {
     val avtjentVerneplikt = Opplysningstype.somBoolsk("Avtjent verneplikt".id("Verneplikt"))
@@ -14,7 +15,7 @@ object Verneplikt {
 
     val regelsett =
         Regelsett("Verneplikt") {
-            regel(avtjentVerneplikt) { innhentes }
+            regel(avtjentVerneplikt) { innhentMed(søknadIdOpplysningstype) }
             regel(vurderingAvVerneplikt) { erSann(avtjentVerneplikt) }
         }
 

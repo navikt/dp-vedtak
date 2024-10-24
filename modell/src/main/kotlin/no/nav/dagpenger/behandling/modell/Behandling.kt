@@ -311,7 +311,7 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             hendelse.opplysninger.forEach { opplysning ->
                 hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
-                behandling.opplysninger.leggTil(opplysning.opplysning())
+                opplysning.leggTil(behandling.opplysninger)
             }
 
             // Kjør regelkjøring for alle opplysninger
@@ -460,7 +460,7 @@ class Behandling private constructor(
 
             hendelse.opplysninger.forEach { opplysning ->
                 hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
-                behandling.opplysninger.leggTil(opplysning.opplysning())
+                opplysning.leggTil(behandling.opplysninger)
             }
 
             behandling.tilstand(Redigert(), hendelse)
@@ -500,7 +500,7 @@ class Behandling private constructor(
         ) {
             hendelse.opplysninger.forEach { opplysning ->
                 hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
-                behandling.opplysninger.leggTil(opplysning.opplysning())
+                opplysning.leggTil(behandling.opplysninger)
             }
 
             val rapport = behandling.regelkjøring.evaluer()
@@ -705,6 +705,6 @@ private fun PersonHendelse.lagBehov(informasjonsbehov: Informasjonsbehov) =
                             else -> avhengighet.verdi
                         }
                     avhengighet.opplysningstype.id to verdi
-                } + this.kontekstMap(),
+                } + this.kontekstMap() + mapOf("@utledetAv" to avhengigheter.map { it.id }),
         )
     }

@@ -24,4 +24,5 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 |TarUtdanningEllerOpplæring | Tar utdanning eller opplæring? | Boolsk|boolean|
 |Verneplikt | Avtjent verneplikt | Boolsk|boolean|
 |VilligTilÅBytteYrke | Villig til å bytte yrke | Boolsk|boolean|
+|søknadId | søknadId | Tekst|String|
 |ØnskerDagpengerFraDato | Ønsker dagpenger fra dato | Dato|LocalDate|
