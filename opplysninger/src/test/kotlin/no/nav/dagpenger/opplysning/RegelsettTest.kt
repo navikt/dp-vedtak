@@ -47,8 +47,8 @@ class RegelsettTest {
         val regelkjøring = Regelkjøring(10.januar, opplysninger, regelsett)
 
         assertEquals(2, regelkjøring.evaluer().mangler.size)
-        regelkjøring.leggTil(Faktum(grunntall, Beløp(3.0)))
-        regelkjøring.leggTil(Faktum(faktorA, 1.0))
+        opplysninger.leggTil(Faktum(grunntall, Beløp(3.0))).also { regelkjøring.evaluer() }
+        opplysninger.leggTil(Faktum(faktorA, 1.0)).also { regelkjøring.evaluer() }
         opplysninger.finnOpplysning(beløpA).verdi shouldBe Beløp(3.0)
     }
 
@@ -58,8 +58,8 @@ class RegelsettTest {
         val regelkjøring = Regelkjøring(10.juni, opplysninger, regelsett)
 
         assertEquals(2, regelkjøring.evaluer().mangler.size)
-        regelkjøring.leggTil(Faktum(grunntall, Beløp(3.0)))
-        regelkjøring.leggTil(Faktum(faktorB, 2.0))
+        opplysninger.leggTil(Faktum(grunntall, Beløp(3.0))).also { regelkjøring.evaluer() }
+        opplysninger.leggTil(Faktum(faktorB, 2.0)).also { regelkjøring.evaluer() }
         opplysninger.finnOpplysning(beløpA).verdi shouldBe Beløp(6.0)
     }
 }

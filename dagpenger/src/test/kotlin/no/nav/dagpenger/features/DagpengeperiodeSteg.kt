@@ -31,35 +31,39 @@ class DagpengeperiodeSteg : No {
 
         Gitt("at søker har har rett til dagpenger fra {string}") { dato: String ->
             val dato = LocalDate.parse(dato, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Søknadstidspunkt.søknadstidspunkt,
-                    dato,
-                ) as Opplysning<*>,
-            )
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    prøvingsdato,
-                    dato,
-                ) as Opplysning<*>,
-            )
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(
+                        Søknadstidspunkt.søknadstidspunkt,
+                        dato,
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(
+                        prøvingsdato,
+                        dato,
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
         Gitt("at søker har {string} siste 12 måneder") { inntekt: String ->
-            regelkjøring.leggTil(
-                Faktum<Beløp>(
-                    Minsteinntekt.inntekt12,
-                    Beløp(inntekt.toBigDecimal()),
-                ) as Opplysning<*>,
-            )
+            opplysninger
+                .leggTil(
+                    Faktum<Beløp>(
+                        Minsteinntekt.inntekt12,
+                        Beløp(inntekt.toBigDecimal()),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
 
         Gitt("at søker har {string} siste 36 måneder") { inntekt: String ->
-            regelkjøring.leggTil(
-                Faktum<Beløp>(
-                    Minsteinntekt.inntekt36,
-                    Beløp(inntekt.toBigDecimal()),
-                ) as Opplysning<*>,
-            )
+            opplysninger
+                .leggTil(
+                    Faktum<Beløp>(
+                        Minsteinntekt.inntekt36,
+                        Beløp(inntekt.toBigDecimal()),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
 
         Så("skal søker ha {int} uker med dagpenger") { uker: Int ->

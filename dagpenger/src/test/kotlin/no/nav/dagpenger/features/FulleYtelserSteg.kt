@@ -26,14 +26,17 @@ class FulleYtelserSteg : No {
     init {
 
         Gitt("har oppgitt i søknaden at søker {boolsk} andre ytelser") { andreYtelser: Boolean ->
-            regelkjøring.leggTil(Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>)
-            regelkjøring.leggTil(Faktum<Boolean>(FulleYtelser.andreYtelser, andreYtelser) as Opplysning<*>)
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum<Boolean>(FulleYtelser.andreYtelser, andreYtelser) as Opplysning<*>).also { regelkjøring.evaluer() }
         }
         Gitt("saksbehandler er {boolsk} i at brukeren har andre ytelser") { enig: Boolean ->
-            regelkjøring.leggTil(Faktum<Boolean>(FulleYtelser.vurderingAndreYtelser, enig) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(FulleYtelser.vurderingAndreYtelser, enig) as Opplysning<*>).also { regelkjøring.evaluer() }
         }
         Gitt("ikke {boolsk} NAV-ytelser") { navYtelser: Boolean ->
-            regelkjøring.leggTil(Faktum<Boolean>(FulleYtelser.navYtelser, navYtelser) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(FulleYtelser.navYtelser, navYtelser) as Opplysning<*>).also { regelkjøring.evaluer() }
         }
         Så("skal søker få {boolsk} om ikke fulle ytelser") { utfall: Boolean ->
             val faktum = opplysninger.finnOpplysning(FulleYtelser.ikkeFulleYtelser)

@@ -23,11 +23,14 @@ class VernepliktSteg : No {
 
     init {
         Gitt("at søker har {boolsk} om dagpenger under verneplikt") { søkt: Boolean ->
-            regelkjøring.leggTil(Faktum<Boolean>(Verneplikt.avtjentVerneplikt, søkt) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(Verneplikt.avtjentVerneplikt, søkt) as Opplysning<*>).also { regelkjøring.evaluer() }
         }
 
         Gitt("saksbehandler vurderer at søker har {boolsk} kravet til verneplikt") { oppfyller: Boolean ->
-            regelkjøring.leggTil(Faktum<Boolean>(Verneplikt.vurderingAvVerneplikt, oppfyller) as Opplysning<*>)
+            opplysninger
+                .leggTil(
+                    Faktum<Boolean>(Verneplikt.vurderingAvVerneplikt, oppfyller) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
 
         Så("skal søker få {boolsk} av verneplikt") { utfall: Boolean ->

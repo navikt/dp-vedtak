@@ -21,18 +21,20 @@ class OpptjeningstidSteg : No {
         Gitt(
             "at søknadstidspunktet er {dato}",
         ) { søknadstidspunktet: LocalDate ->
-            regelkjøring.leggTil(
-                Faktum(
-                    Søknadstidspunkt.søknadsdato,
-                    søknadstidspunktet,
-                ),
-            )
-            regelkjøring.leggTil(
-                Faktum(
-                    Søknadstidspunkt.ønsketdato,
-                    søknadstidspunktet,
-                ),
-            )
+            opplysninger
+                .leggTil(
+                    Faktum(
+                        Søknadstidspunkt.søknadsdato,
+                        søknadstidspunktet,
+                    ),
+                ).also { regelkjøring.evaluer() }
+            opplysninger
+                .leggTil(
+                    Faktum(
+                        Søknadstidspunkt.ønsketdato,
+                        søknadstidspunktet,
+                    ),
+                ).also { regelkjøring.evaluer() }
         }
         Så(
             "er arbeidsgivers pliktige rapporteringsfrist {dato}",

@@ -26,11 +26,14 @@ class MedlemskapSteg : No {
 
     init {
         Gitt("at søker har søkt om dagpenger og er medlem?") {
-            regelkjøring.leggTil(Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>)
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
 
         Og("at personen er medlem {boolsk} i folketrygden") { medlem: Boolean ->
-            regelkjøring.leggTil(Faktum<Boolean>(Medlemskap.medlemFolketrygden, medlem) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(Medlemskap.medlemFolketrygden, medlem) as Opplysning<*>).also { regelkjøring.evaluer() }
         }
 
         Så("skal vilkåret om medlemskap være {boolsk}") { utfall: Boolean ->

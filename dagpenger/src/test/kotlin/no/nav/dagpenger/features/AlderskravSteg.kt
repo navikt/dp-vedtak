@@ -27,26 +27,29 @@ class AlderskravSteg : No {
     init {
 
         Gitt("at fødselsdatoen til søkeren er {string}") { fødselsdato: String ->
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Alderskrav.fødselsdato,
-                    fødselsdato.somLocalDate(),
-                ) as Opplysning<*>,
-            )
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(
+                        Alderskrav.fødselsdato,
+                        fødselsdato.somLocalDate(),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
         Gitt("at virkningstidspunktet er {string}") { virkningsdato: String ->
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Søknadstidspunkt.søknadsdato,
-                    virkningsdato.somLocalDate(),
-                ) as Opplysning<*>,
-            )
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Søknadstidspunkt.ønsketdato,
-                    virkningsdato.somLocalDate(),
-                ) as Opplysning<*>,
-            )
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(
+                        Søknadstidspunkt.søknadsdato,
+                        virkningsdato.somLocalDate(),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(
+                        Søknadstidspunkt.ønsketdato,
+                        virkningsdato.somLocalDate(),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
         Så("skal utfallet være {boolsk}") { utfall: Boolean ->
             Assertions.assertTrue(opplysninger.har(Alderskrav.kravTilAlder))

@@ -60,12 +60,6 @@ class Regelkjøring(
         }
     }
 
-    @Deprecated("Bruk leggTil rett på opplysninger", ReplaceWith("opplysninger.leggTil(opplysning)"))
-    fun leggTil(opplysning: Opplysning<*>) {
-        opplysninger.leggTil(opplysning)
-        evaluer()
-    }
-
     fun evaluer(): Regelkjøringsrapport {
         aktiverRegler()
         while (plan.size > 0) {

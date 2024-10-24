@@ -28,36 +28,38 @@ class OppholdINorgeSteg : No {
     init {
 
         Gitt("at søknadsdatos er {string}") { søknadsdato: String ->
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Søknadstidspunkt.søknadsdato,
-                    søknadsdato.somLocalDate(),
-                ) as Opplysning<*>,
-            )
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Søknadstidspunkt.ønsketdato,
-                    søknadsdato.somLocalDate(),
-                ) as Opplysning<*>,
-            )
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(
+                        Søknadstidspunkt.søknadsdato,
+                        søknadsdato.somLocalDate(),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(
+                        Søknadstidspunkt.ønsketdato,
+                        søknadsdato.somLocalDate(),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
 
         Gitt("at personen oppholder seg i Norge") {
-            regelkjøring.leggTil(Faktum<Boolean>(Opphold.oppholdINorge, true) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(Opphold.oppholdINorge, true) as Opplysning<*>).also { regelkjøring.evaluer() }
         }
         Så("skal vilkåret om opphold i Norge være oppfylt") {
             assertTrue(opplysninger.har(Opphold.oppfyllerKravet))
             assertTrue(opplysninger.finnOpplysning(Opphold.oppfyllerKravet).verdi)
         }
         Gitt("at personen oppholder seg ikke i Norge") {
-            regelkjøring.leggTil(Faktum<Boolean>(Opphold.oppholdINorge, false) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(Opphold.oppholdINorge, false) as Opplysning<*>).also { regelkjøring.evaluer() }
         }
         Så("skal vilkåret om opphold i Norge ikke være oppfylt") {
             assertTrue(opplysninger.har(Opphold.oppfyllerKravet))
             assertFalse(opplysninger.finnOpplysning(Opphold.oppfyllerKravet).verdi)
         }
         Men("at personen oppfyller ett unntak for opphold") {
-            regelkjøring.leggTil(Faktum<Boolean>(Opphold.unntakForOpphold, true) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(Opphold.unntakForOpphold, true) as Opplysning<*>).also { regelkjøring.evaluer() }
         }
     }
 }

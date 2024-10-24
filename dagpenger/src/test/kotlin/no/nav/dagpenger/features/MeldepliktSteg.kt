@@ -14,7 +14,6 @@ import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import org.junit.jupiter.api.Assertions.assertTrue
-import java.time.LocalDate
 
 class MeldepliktSteg : No {
     private val regelsett = listOf(Meldeplikt.regelsett, Søknadstidspunkt.regelsett)
@@ -24,27 +23,22 @@ class MeldepliktSteg : No {
     init {
         Gitt("at personen søkte {string}") { søknadsdato: String ->
             regelkjøring = Regelkjøring(søknadsdato.somLocalDate(), opplysninger, *regelsett.toTypedArray())
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Søknadstidspunkt.søknadsdato,
-                    søknadsdato.somLocalDate(),
-                ) as Opplysning<*>,
-            )
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Søknadstidspunkt.ønsketdato,
-                    søknadsdato.somLocalDate(),
-                ) as Opplysning<*>,
-            )
+            opplysninger
+                .leggTil(Faktum(Søknadstidspunkt.søknadsdato, søknadsdato.somLocalDate()) as Opplysning<*>)
+                .also { regelkjøring.evaluer() }
+            opplysninger
+                .leggTil(Faktum(Søknadstidspunkt.ønsketdato, søknadsdato.somLocalDate()) as Opplysning<*>)
+                .also { regelkjøring.evaluer() }
         }
         Gitt("personen var registrert? {boolsk} på {string}") { svar: Boolean, registrert: String ->
-            regelkjøring.leggTil(
-                Faktum<Boolean>(
-                    Meldeplikt.registrertArbeidssøker,
-                    svar,
-                    Gyldighetsperiode(fom = registrert.somLocalDate()),
-                ) as Opplysning<*>,
-            )
+            opplysninger
+                .leggTil(
+                    Faktum(
+                        Meldeplikt.registrertArbeidssøker,
+                        svar,
+                        Gyldighetsperiode(fom = registrert.somLocalDate()),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
 
         Så("er kravet til meldeplikt {string}") { utfall: String ->

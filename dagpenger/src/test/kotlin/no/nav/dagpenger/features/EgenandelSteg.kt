@@ -28,18 +28,20 @@ class EgenandelSteg : No {
     init {
 
         Gitt("at sats er {string}") { sats: String ->
-            regelkjøring.leggTil(
-                Faktum(
-                    Søknadstidspunkt.søknadstidspunkt,
-                    fraDato,
-                ),
-            )
-            regelkjøring.leggTil(
-                Faktum(
-                    DagpengenesStørrelse.avrundetDagsMedBarnetillegg,
-                    Beløp(sats.toBigDecimal()),
-                ),
-            )
+            opplysninger
+                .leggTil(
+                    Faktum(
+                        Søknadstidspunkt.søknadstidspunkt,
+                        fraDato,
+                    ),
+                ).also { regelkjøring.evaluer() }
+            opplysninger
+                .leggTil(
+                    Faktum(
+                        DagpengenesStørrelse.avrundetDagsMedBarnetillegg,
+                        Beløp(sats.toBigDecimal()),
+                    ),
+                ).also { regelkjøring.evaluer() }
         }
 
         Så("skal egenandel være {string}") { string: String ->

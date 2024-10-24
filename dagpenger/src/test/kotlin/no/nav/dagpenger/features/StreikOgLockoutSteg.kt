@@ -26,15 +26,24 @@ class StreikOgLockoutSteg : No {
     init {
 
         Gitt("at søker har søkt om dagpenger under streik eller lockout") {
-            regelkjøring.leggTil(Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>)
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(Søknadstidspunkt.søknadstidspunkt, fraDato) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
 
         Og("saksbehandler vurderer at søker {boolsk} i streik eller lockout") { deltar: Boolean ->
-            regelkjøring.leggTil(Faktum<Boolean>(StreikOgLockout.deltarIStreikOgLockout, deltar) as Opplysning<*>)
+            opplysninger
+                .leggTil(
+                    Faktum<Boolean>(StreikOgLockout.deltarIStreikOgLockout, deltar) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
 
         Og("saksbehandler vurderer at søker ikke blir {boolsk} av streik eller lockout i samme bedrift") { påvirket: Boolean ->
-            regelkjøring.leggTil(Faktum<Boolean>(StreikOgLockout.sammeBedriftOgPåvirket, påvirket) as Opplysning<*>)
+            opplysninger
+                .leggTil(
+                    Faktum<Boolean>(StreikOgLockout.sammeBedriftOgPåvirket, påvirket) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
 
         Så("skal kravet om å ikke være i streik eller lockout være {boolsk}") { utfall: Boolean ->

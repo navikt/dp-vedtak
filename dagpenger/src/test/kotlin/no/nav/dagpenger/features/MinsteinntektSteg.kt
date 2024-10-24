@@ -30,36 +30,40 @@ class MinsteinntektSteg : No {
     init {
 
         Gitt("at søknadsdato er {string}") { søknadsdato: String ->
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Søknadstidspunkt.søknadsdato,
-                    søknadsdato.somLocalDate(),
-                ) as Opplysning<*>,
-            )
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Søknadstidspunkt.ønsketdato,
-                    søknadsdato.somLocalDate(),
-                ) as Opplysning<*>,
-            )
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(
+                        Søknadstidspunkt.søknadsdato,
+                        søknadsdato.somLocalDate(),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(
+                        Søknadstidspunkt.ønsketdato,
+                        søknadsdato.somLocalDate(),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
         Gitt("at verneplikt er {boolsk}") { verneplikt: Boolean ->
-            regelkjøring.leggTil(Faktum<Boolean>(Verneplikt.avtjentVerneplikt, verneplikt) as Opplysning<*>)
+            opplysninger.leggTil(Faktum<Boolean>(Verneplikt.avtjentVerneplikt, verneplikt) as Opplysning<*>).also { regelkjøring.evaluer() }
         }
         Gitt("at inntekt er") { data: DataTable ->
 
-            regelkjøring.leggTil(
-                Faktum<Beløp>(
-                    opplysningstype = Minsteinntekt.inntekt12,
-                    verdi = data.cell(0, 1).tilBeløp(),
-                ) as Opplysning<*>,
-            )
-            regelkjøring.leggTil(
-                Faktum<Beløp>(
-                    opplysningstype = Minsteinntekt.inntekt36,
-                    verdi = data.cell(1, 1).tilBeløp(),
-                ) as Opplysning<*>,
-            )
+            opplysninger
+                .leggTil(
+                    Faktum<Beløp>(
+                        opplysningstype = Minsteinntekt.inntekt12,
+                        verdi = data.cell(0, 1).tilBeløp(),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
+            opplysninger
+                .leggTil(
+                    Faktum<Beløp>(
+                        opplysningstype = Minsteinntekt.inntekt36,
+                        verdi = data.cell(1, 1).tilBeløp(),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
 
         Så("skal utfallet til minste arbeidsinntekt være {boolsk}") { utfall: Boolean ->

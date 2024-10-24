@@ -26,8 +26,8 @@ class MultiplikasjonTest {
                     regel(beløpA) { multiplikasjon(beløpB, faktorB) }
                 },
             )
-        regelkjøring.leggTil(Faktum(beløpB, Beløp(2.0)))
-        regelkjøring.leggTil(Faktum(faktorB, 2.0))
+        opplysninger.leggTil(Faktum(beløpB, Beløp(2.0))).also { regelkjøring.evaluer() }
+        opplysninger.leggTil(Faktum(faktorB, 2.0)).also { regelkjøring.evaluer() }
         val utledet = opplysninger.finnOpplysning(beløpA)
         assertEquals(Beløp(4.0), utledet.verdi)
     }
@@ -42,8 +42,8 @@ class MultiplikasjonTest {
                     regel(beløpA) { multiplikasjon(beløpB, heltallA) }
                 },
             )
-        regelkjøring.leggTil(Faktum(beløpB, Beløp(2.0)))
-        regelkjøring.leggTil(Faktum(heltallA, 2))
+        opplysninger.leggTil(Faktum(beløpB, Beløp(2.0))).also { regelkjøring.evaluer() }
+        opplysninger.leggTil(Faktum(heltallA, 2)).also { regelkjøring.evaluer() }
         val utledet = opplysninger.finnOpplysning(beløpA)
         assertEquals(Beløp(4.0), utledet.verdi)
     }

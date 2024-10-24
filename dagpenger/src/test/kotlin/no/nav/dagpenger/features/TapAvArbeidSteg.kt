@@ -37,32 +37,34 @@ class TapAvArbeidSteg : No {
     init {
 
         Gitt("at søknadsdatossssss er {string}") { søknadsdato: String ->
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Søknadstidspunkt.søknadsdato,
-                    søknadsdato.somLocalDate(),
-                ) as Opplysning<*>,
-            )
-            regelkjøring.leggTil(
-                Faktum<LocalDate>(
-                    Søknadstidspunkt.ønsketdato,
-                    søknadsdato.somLocalDate(),
-                ) as Opplysning<*>,
-            )
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(
+                        Søknadstidspunkt.søknadsdato,
+                        søknadsdato.somLocalDate(),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
+            opplysninger
+                .leggTil(
+                    Faktum<LocalDate>(
+                        Søknadstidspunkt.ønsketdato,
+                        søknadsdato.somLocalDate(),
+                    ) as Opplysning<*>,
+                ).also { regelkjøring.evaluer() }
         }
 
         Gitt("at personen har tapt arbeid") {
-            regelkjøring.leggTil(Faktum(tapAvArbeid, true))
+            opplysninger.leggTil(Faktum(tapAvArbeid, true)).also { regelkjøring.evaluer() }
         }
         Og("personen har tapt arbeidsinntekt") {
-            regelkjøring.leggTil(Faktum(kravPåLønn, false))
+            opplysninger.leggTil(Faktum(kravPåLønn, false)).also { regelkjøring.evaluer() }
         }
         Og("har fått fastsatt vanlig arbeidstid til {double}") { timer: Double ->
-            regelkjøring.leggTil(Faktum(beregnetArbeidstid, timer))
-            regelkjøring.leggTil(Faktum(beregningsregel6mnd, true))
+            opplysninger.leggTil(Faktum(beregnetArbeidstid, timer)).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(beregningsregel6mnd, true)).also { regelkjøring.evaluer() }
         }
         Og("har ny arbeidstid {double}") { timer: Double ->
-            regelkjøring.leggTil(Faktum(nyArbeidstid, timer))
+            opplysninger.leggTil(Faktum(nyArbeidstid, timer)).also { regelkjøring.evaluer() }
         }
         Når("personen søker om dagpenger") { }
         Så("skal personen oppfylle kravet til tap av arbeidsinntekt") {
