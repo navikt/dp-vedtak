@@ -479,7 +479,6 @@ internal class PersonMediatorTest {
                 medDato("prøvingsdato") shouldBe 20.juni(2024)
             }
 
-            // testPerson.nyPrøvingsdato(22.juni(2024))
             testPerson.løsBehov("Virkningsdato", 22.juni(2024))
 
             testPerson.løsBehov(

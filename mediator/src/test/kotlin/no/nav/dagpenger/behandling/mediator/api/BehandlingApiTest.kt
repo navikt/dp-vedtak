@@ -228,6 +228,7 @@ internal class BehandlingApiTest {
         }
     }
 
+    // TODO: Legg til paramerisert test for alle opplysningstyper
     @Test
     fun `endre opplysningsverdi`() {
         medSikretBehandlingApi {

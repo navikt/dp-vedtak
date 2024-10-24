@@ -8,8 +8,8 @@ import io.opentelemetry.api.trace.Span
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.aktivitetslogg.AktivitetsloggHendelse
 import no.nav.dagpenger.aktivitetslogg.aktivitet.Behov
-import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 
 class BehovMediator {
     private companion object {
@@ -20,7 +20,7 @@ class BehovMediator {
     @WithSpan
     internal fun håndter(
         context: MessageContext,
-        hendelse: PersonHendelse,
+        hendelse: AktivitetsloggHendelse,
     ) {
         hendelse.kontekster().forEach { if (!it.harFunksjonelleFeilEllerVerre()) håndter(context, it.behov()) }
     }
