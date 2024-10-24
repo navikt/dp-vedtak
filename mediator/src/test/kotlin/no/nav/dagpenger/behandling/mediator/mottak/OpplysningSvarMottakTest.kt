@@ -7,6 +7,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.mockk.Called
 import io.mockk.clearMocks
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -14,12 +15,15 @@ import no.nav.dagpenger.behandling.TestOpplysningstyper.boolsk
 import no.nav.dagpenger.behandling.TestOpplysningstyper.inntektA
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
+import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
+import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.uuid.UUIDv7
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.util.UUID
 
 class OpplysningSvarMottakTest {
     private val rapid = TestRapid()
@@ -51,11 +55,11 @@ class OpplysningSvarMottakTest {
             .verdi shouldBe true
         hendelse.captured.opplysninger
             .first()
-            .opplysning()
+            .leggTil(opplysningMock)
             .verdi shouldBe true
         hendelse.captured.opplysninger
             .first()
-            .opplysning()
+            .leggTil(opplysningMock)
             .gyldighetsperiode shouldBe Gyldighetsperiode()
     }
 
@@ -71,6 +75,8 @@ class OpplysningSvarMottakTest {
         hendelse.captured.behandlingId shouldBe behandlingId
         hendelse.captured.opplysninger shouldHaveSize 1
     }
+
+    private val opplysningMock = mockk<Opplysninger>(relaxed = true)
 
     @Test
     fun `tillater svar med opplysning med metadata med fom og tom`() {
@@ -88,11 +94,11 @@ class OpplysningSvarMottakTest {
             .verdi shouldBe true
         hendelse.captured.opplysninger
             .first()
-            .opplysning()
+            .leggTil(opplysningMock)
             .verdi shouldBe true
         hendelse.captured.opplysninger
             .first()
-            .opplysning()
+            .leggTil(opplysningMock)
             .gyldighetsperiode shouldBe
             Gyldighetsperiode(gyldigFraOgMed, gyldigTilOgMed)
     }
@@ -101,7 +107,7 @@ class OpplysningSvarMottakTest {
     fun `Kan ikke besvare opplysning en ikke kjenner til`() {
         shouldThrow<IllegalArgumentException> {
             rapid.sendTestMessage(
-                løsningMedMetadata(gyldigFraOgMed, gyldigTilOgMed, "ukjentOpplysning").toJson(),
+                løsningMedMetadata(gyldigFraOgMed, gyldigTilOgMed, opplysningstype = "ukjentOpplysning").toJson(),
             )
         }
     }
@@ -116,14 +122,14 @@ class OpplysningSvarMottakTest {
 
         hendelse.captured.opplysninger
             .first()
-            .opplysning()
+            .leggTil(opplysningMock)
             .gyldighetsperiode shouldBe
             Gyldighetsperiode(gyldigFraOgMed, LocalDate.MAX)
     }
 
     @Test
     fun `tillater svar med opplysning med metadata med og uten fom`() {
-        rapid.sendTestMessage(løsningMedMetadata(null, gyldigFraOgMed).toJson())
+        rapid.sendTestMessage(løsningMedMetadata(null, gyldigTilOgMed).toJson())
         val hendelse = slot<OpplysningSvarHendelse>()
         verify {
             messageMediator.behandle(capture(hendelse), any(), any())
@@ -131,9 +137,38 @@ class OpplysningSvarMottakTest {
 
         hendelse.captured.opplysninger
             .first()
-            .opplysning()
+            .leggTil(opplysningMock)
             .gyldighetsperiode shouldBe
-            Gyldighetsperiode(LocalDate.MIN, gyldigFraOgMed)
+            Gyldighetsperiode(LocalDate.MIN, gyldigTilOgMed)
+    }
+
+    @Test
+    fun `leser ut hvilke opplysninger som har vært brukt til å utlede opplysningen`() {
+        val faktum = Faktum(boolsk, true)
+        every { opplysningMock.finnOpplysning(any()) } returns faktum
+
+        rapid.sendTestMessage(
+            løsningMedMetadata(
+                null,
+                gyldigTilOgMed,
+                listOf(faktum.id),
+            ).toJson(),
+        )
+
+        val hendelse = slot<OpplysningSvarHendelse>()
+        verify {
+            messageMediator.behandle(capture(hendelse), any(), any())
+        }
+
+        val utledetAv =
+            requireNotNull(
+                hendelse.captured.opplysninger
+                    .first()
+                    .leggTil(opplysningMock)
+                    .utledetAv,
+            )
+        utledetAv.opplysninger shouldHaveSize 1
+        utledetAv.opplysninger.first().opplysningstype shouldBe boolsk
     }
 
     @Test
@@ -180,6 +215,7 @@ class OpplysningSvarMottakTest {
     private fun løsningMedMetadata(
         gyldigFraOgMed: LocalDate?,
         gyldigTilOgMed: LocalDate?,
+        utledetAv: List<UUID> = emptyList(),
         opplysningstype: String = "boolsk",
     ): JsonMessage =
         JsonMessage.newNeed(
@@ -197,6 +233,7 @@ class OpplysningSvarMottakTest {
                                     "gyldigTilOgMed" to gyldigTilOgMed?.toString(),
                                 ).filterValues { it != null },
                         ),
+                    "@utledetAv" to mapOf(opplysningstype to utledetAv.map { it.toString() }),
                 ),
         )
 

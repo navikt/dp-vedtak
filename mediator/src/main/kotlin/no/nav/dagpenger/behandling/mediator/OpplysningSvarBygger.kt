@@ -5,6 +5,7 @@ import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysningstype
+import java.util.UUID
 
 class OpplysningSvarBygger<T : Comparable<T>>(
     private val type: Opplysningstype<T>,
@@ -12,14 +13,16 @@ class OpplysningSvarBygger<T : Comparable<T>>(
     private val kilde: Kilde,
     private val tilstand: OpplysningSvar.Tilstand,
     private val gyldighetsperiode: Gyldighetsperiode,
+    private val utledetAv: List<UUID>,
 ) {
     fun opplysningSvar() =
         OpplysningSvar(
             opplysningstype = type,
             verdi = verdi.map(type.datatype),
-            kilde = kilde,
             tilstand = tilstand,
+            kilde = kilde,
             gyldighetsperiode = gyldighetsperiode,
+            utledetAv = utledetAv,
         )
 
     interface VerdiMapper {

@@ -7,6 +7,7 @@ import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Utledning
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -29,22 +30,16 @@ data class OpplysningSvar<T : Comparable<T>>(
     val tilstand: Tilstand,
     val kilde: Kilde,
     val gyldighetsperiode: Gyldighetsperiode? = null,
+    private val utledetAv: List<UUID> = emptyList(),
 ) {
     enum class Tilstand {
         Hypotese,
         Faktum,
     }
 
-    fun opplysning(): Opplysning<T> {
-        val gyldighetsperiode = gyldighetsperiode ?: Gyldighetsperiode()
-        return when (tilstand) {
-            Tilstand.Hypotese -> Hypotese(opplysningstype, verdi, kilde = kilde, gyldighetsperiode = gyldighetsperiode)
-            Tilstand.Faktum -> Faktum(opplysningstype, verdi, kilde = kilde, gyldighetsperiode = gyldighetsperiode)
-        }
-    }
-
     fun leggTil(opplysninger: Opplysninger): Opplysning<T> {
         val gyldighetsperiode = gyldighetsperiode ?: Gyldighetsperiode()
+        val utledning = Utledning("innhentMed", utledetAv.map { opplysninger.finnOpplysning(it) })
         val opplysning =
             when (tilstand) {
                 Tilstand.Hypotese ->
@@ -53,6 +48,7 @@ data class OpplysningSvar<T : Comparable<T>>(
                         verdi,
                         kilde = kilde,
                         gyldighetsperiode = gyldighetsperiode,
+                        utledetAv = utledning,
                     )
 
                 Tilstand.Faktum ->
@@ -61,6 +57,7 @@ data class OpplysningSvar<T : Comparable<T>>(
                         verdi,
                         kilde = kilde,
                         gyldighetsperiode = gyldighetsperiode,
+                        utledetAv = utledning,
                     )
             }
         opplysninger.leggTil(opplysning)

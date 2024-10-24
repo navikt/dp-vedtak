@@ -269,6 +269,7 @@ internal class BehandlingApiTest {
                     OpplysningSvarMessage(
                         JsonMessage(json, MessageProblems(json), mockk(relaxed = true)).also {
                             it.requireKey("ident", "behandlingId", "@løsning")
+                            it.interestedIn("@utledetAv")
                         },
                         setOf(TestOpplysningstyper.dato),
                     )

@@ -54,6 +54,7 @@ internal class OpplysningSvarMottak(
                 validate { it.requireKey("ident") }
                 validate { it.requireKey("@løsning") }
                 validate { it.requireKey("behandlingId") }
+                validate { it.interestedIn("@utledetAv") }
                 validate { it.requireValue("@final", true) }
                 validate { it.interestedIn("@id", "@opprettet", "@behovId") }
             }.register(this)
@@ -151,6 +152,8 @@ internal class OpplysningSvarMessage(
                         }
                     }
 
+                val utledetAv = packet["@utledetAv"][typeNavn]?.map { it.asUUID() } ?: emptyList()
+
                 val opplysningSvarBygger =
                     OpplysningSvarBygger(
                         opplysningstype,
@@ -158,6 +161,7 @@ internal class OpplysningSvarMessage(
                         kilde,
                         svar.tilstand,
                         svar.gyldighetsperiode,
+                        utledetAv,
                     )
                 val opplysning = opplysningSvarBygger.opplysningSvar()
                 add(opplysning)

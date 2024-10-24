@@ -11,6 +11,7 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeGreaterThan
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
@@ -527,6 +528,9 @@ internal class PersonMediatorTest {
         rapid.harBehov("Søknadsdato") {
             medTekst("søknadId") shouldBe testPerson.søknadId
             medTekst("søknad_uuid") shouldBe testPerson.søknadId
+
+            // @utledetAv flyttes ut av behov og opp i egen nøkkel på rot i pakka
+            medNode("@utledetAv").shouldBeNull()
         }
 
         rapid.harBehov("Fødselsdato", "Søknadsdato", "ØnskerDagpengerFraDato")
