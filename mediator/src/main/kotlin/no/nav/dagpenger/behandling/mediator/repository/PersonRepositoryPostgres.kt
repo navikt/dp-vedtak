@@ -2,7 +2,9 @@ package no.nav.dagpenger.behandling.mediator.repository
 
 import kotliquery.queryOf
 import kotliquery.sessionOf
+import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.behandling.mediator.Metrikk
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Person
 
@@ -10,6 +12,10 @@ class PersonRepositoryPostgres(
     private val behandlingRepository: BehandlingRepository,
 ) : PersonRepository,
     BehandlingRepository by behandlingRepository {
+    private companion object {
+        val logger = KotlinLogging.logger { }
+    }
+
     override fun hent(ident: Ident) =
         sessionOf(dataSource).use { session ->
             session.run(
@@ -22,6 +28,8 @@ class PersonRepositoryPostgres(
                 ).map { row ->
                     val dbIdent = Ident(row.string("ident"))
                     val behandlinger = behandlingerFor(dbIdent)
+                    logger.info { "Hentet person med ${behandlinger.size} behandlinger" }
+                    Metrikk.registrerAntallBehandlinger(behandlinger.size)
                     Person(dbIdent, behandlinger)
                 }.asSingle,
             )
