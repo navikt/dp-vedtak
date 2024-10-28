@@ -493,7 +493,9 @@ internal class PersonMediatorTest {
             // Setter ny prøvingsdato (som kalles Virkningsdato for bakoverkompabilitet med behovsløsere)
             testPerson.endreOpplysning("Virkningsdato", 22.juni(2024))
 
-            rapid.harBehov(InntektId)
+            rapid.harBehov(InntektId) {
+                medDato("Virkningsdato") shouldBe 22.juni(2024)
+            }
             testPerson.løsBehov(
                 InntektId,
                 mapOf(
@@ -504,6 +506,9 @@ internal class PersonMediatorTest {
 
             rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
             rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("RegistrertSomArbeidssøker") {
+                medDato("Virkningsdato") shouldBe 22.juni(2024)
+            }
 
             testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd", "RegistrertSomArbeidssøker")
 
