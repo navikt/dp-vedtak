@@ -62,6 +62,32 @@ class TestPerson(
         rapid.sendTestMessage(løstBehov(behovSomLøses), ident)
     }
 
+    fun endreOpplysning(
+        behov: String,
+        løsning: Any,
+        data: Map<String, Any> = emptyMap(),
+    ) {
+        val message =
+            JsonMessage
+                .newMessage(
+                    "behov",
+                    mapOf(
+                        "ident" to ident,
+                        "behandlingId" to behandlingId,
+                        "søknadId" to søknadId,
+                        "@behov" to listOf(behov),
+                        "@opplysningsbehov" to true,
+                        "@final" to true,
+                        "@løsning" to
+                            mapOf(
+                                behov to løsning,
+                            ),
+                    ) + data,
+                ).toJson()
+
+        rapid.sendTestMessage(message, ident)
+    }
+
     fun løsBehov(
         behov: String,
         løsning: Any,
@@ -86,19 +112,6 @@ class TestPerson(
         jacksonObjectMapper()
             .registerModule(JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-    /*     JsonMessage
-         .newMessage(
-             "behov",
-             mapOf(
-                 "ident" to ident,
-                 "behandlingId" to behandlingId,
-                 "søknadId" to søknadId,
-                 "@opplysningsbehov" to opplysningsbehov,
-                 "@behov" to løsninger.keys.toList(),
-                 "@final" to true,
-                 "@løsning" to løsninger,
-             ) + data,
-         ).toJson()*/
 
     fun markerAvklaringIkkeRelevant(
         avklaringId: String,
