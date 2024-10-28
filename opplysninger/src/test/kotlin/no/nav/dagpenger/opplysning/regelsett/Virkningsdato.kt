@@ -3,6 +3,7 @@ package no.nav.dagpenger.opplysning.regelsett
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.dato.sisteAv
+import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regelsett.Alderskrav.fødselsdato
 
 internal object Virkningsdato {
@@ -14,6 +15,9 @@ internal object Virkningsdato {
     val virkningsdato = Opplysningstype.somDato("Virkningsdato")
     val regelsett =
         Regelsett("alder").apply {
+            regel(søknadsdato) { innhentes }
+            regel(sisteDagMedArbeidsplikt) { innhentes }
+            regel(sisteDagMedLønn) { innhentes }
             regel(virkningsdato) { sisteAv(fødselsdato, søknadsdato, sisteDagMedArbeidsplikt, sisteDagMedLønn) }
         }
 }

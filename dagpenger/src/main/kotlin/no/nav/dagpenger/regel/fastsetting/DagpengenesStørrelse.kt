@@ -65,6 +65,8 @@ object DagpengenesStørrelse {
             regel(avrundetDagsUtenBarnetillegg) { avrund(dagsatsUtenBarnetillegg) } // Arena trenger denne
             regel(ukessats) { multiplikasjon(avrundetDagsMedBarnetillegg, arbeidsdagerPerUke) }
         }
+
+    val ønsketResultat = listOf(ukessats)
 }
 
 private object Barnetillegg {

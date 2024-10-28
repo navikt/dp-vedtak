@@ -122,6 +122,7 @@ object Dagpengegrunnlag {
             regel(harAvkortetPeriode3) { størreEnn(inntektperiode3, maksgrenseForGrunnlag) }
             regel(harAvkortet) { enAv(harAvkortetPeriode1, harAvkortetPeriode2, harAvkortetPeriode3) }
         }
+    val ønsketResultat = listOf(grunnbeløp, harAvkortet)
 }
 
 private fun grunnbeløpFor(it: LocalDate) =

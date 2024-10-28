@@ -23,6 +23,8 @@ class MultiplikasjonTest {
                 1.mai,
                 opplysninger,
                 Regelsett("regelsett") {
+                    regel(beløpB) { innhentes }
+                    regel(faktorB) { innhentes }
                     regel(beløpA) { multiplikasjon(beløpB, faktorB) }
                 },
             )
@@ -39,6 +41,8 @@ class MultiplikasjonTest {
                 1.mai,
                 opplysninger,
                 Regelsett("regelsett") {
+                    regel(beløpB) { innhentes }
+                    regel(heltallA) { innhentes }
                     regel(beløpA) { multiplikasjon(beløpB, heltallA) }
                 },
             )

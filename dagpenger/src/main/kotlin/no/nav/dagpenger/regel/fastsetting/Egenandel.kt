@@ -16,4 +16,6 @@ object Egenandel {
             regel(faktor) { oppslag(prøvingsdato) { 3.0 } }
             regel(egenandel) { multiplikasjon(sats, faktor) }
         }
+
+    val ønsketResultat = listOf(egenandel)
 }

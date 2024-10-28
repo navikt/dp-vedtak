@@ -20,6 +20,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.enAv
+import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -153,6 +154,7 @@ private class SøknadInnsendtHendelse(
         fagsakId,
         opprettet,
     ) {
+    private val opplysningstypeBehov = Opplysningstype.somBoolsk("trengerDenne")
     private val opplysningstype = Opplysningstype.somBoolsk("opplysning")
 
     override fun regelkjøring(opplysninger: Opplysninger) =
@@ -160,7 +162,8 @@ private class SøknadInnsendtHendelse(
             skjedde,
             opplysninger,
             Regelsett("test") {
-                regel(opplysningstype) { enAv(Opplysningstype.somBoolsk("trengerDenne")) }
+                regel(opplysningstypeBehov) { innhentes }
+                regel(opplysningstype) { enAv(opplysningstypeBehov) }
             },
         )
 

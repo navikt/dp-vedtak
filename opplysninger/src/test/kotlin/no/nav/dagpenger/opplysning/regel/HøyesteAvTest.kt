@@ -20,6 +20,8 @@ class HøyesteAvTest {
     fun `høyeste av`() {
         val regelsett =
             Regelsett("Test") {
+                regel(opplysning1) { innhentes }
+                regel(opplysning2) { innhentes }
                 regel(høyeste) { høyeste.høyesteAv(opplysning1, opplysning2) }
             }
         val opplysninger = Opplysninger()

@@ -57,4 +57,6 @@ object Dagpengeperiode {
             regel(dagerIUka) { oppslag(prøvingsdato) { 5 } }
             regel(gjenståendeStønadsdager) { multiplikasjon(antallStønadsuker, dagerIUka) }
         }
+
+    val ønsketResultat = listOf(gjenståendeStønadsdager)
 }

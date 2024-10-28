@@ -27,5 +27,7 @@ object KravPåDagpenger {
         }
 
     val Totrinnskontroll =
-        Kontrollpunkt(Avklaringspunkter.Totrinnskontroll) { it.har(kravPåDagpenger) && it.finnOpplysning(kravPåDagpenger).verdi }
+        Kontrollpunkt(Avklaringspunkter.Totrinnskontroll) {
+            it.har(kravPåDagpenger) && it.finnOpplysning(kravPåDagpenger).verdi
+        }
 }

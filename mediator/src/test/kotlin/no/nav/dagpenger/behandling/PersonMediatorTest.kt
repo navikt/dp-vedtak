@@ -55,6 +55,7 @@ import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
@@ -245,7 +246,7 @@ internal class PersonMediatorTest {
             skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilFerdig(testPerson)
 
-            antallOpplysninger() shouldBe 39
+            antallOpplysninger() shouldBe 77
 
             /**
              * Innhenter tar utdanning eller opplæring
@@ -253,7 +254,7 @@ internal class PersonMediatorTest {
             rapid.harBehov(TarUtdanningEllerOpplæring)
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
 
-            antallOpplysninger() shouldBe 83
+            antallOpplysninger() shouldBe 110
 
             /**
              * Innhenter inntekt for fastsettelse
@@ -261,7 +262,7 @@ internal class PersonMediatorTest {
             rapid.harBehov(Inntekt)
             testPerson.løsBehov(Inntekt)
 
-            antallOpplysninger() shouldBe 140
+            antallOpplysninger() shouldBe 136
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe true
@@ -425,6 +426,7 @@ internal class PersonMediatorTest {
         }
 
     @Test
+    @Disabled("Denne må bruke en opplysning som treffer mindre bredt. Er uansett også testet i prøvingsdatotesten")
     fun `redigering av opplysning i forslag til vedtak`() {
         withMigratedDb {
             val testPerson =
@@ -488,8 +490,10 @@ internal class PersonMediatorTest {
                 medDato("prøvingsdato") shouldBe 20.juni(2024)
             }
 
+            // Setter ny prøvingsdato (som kalles Virkningsdato for bakoverkompabilitet med behovsløsere)
             testPerson.løsBehov("Virkningsdato", 22.juni(2024))
 
+            rapid.harBehov(InntektId)
             testPerson.løsBehov(
                 InntektId,
                 mapOf(
@@ -497,6 +501,11 @@ internal class PersonMediatorTest {
                     "gyldigTilOgMed" to 25.juni(2024),
                 ),
             )
+
+            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+
+            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medDato("prøvingsdato") shouldBe 22.juni(2024)

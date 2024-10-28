@@ -78,16 +78,17 @@ class SøknadInnsendtHendelse(
         opplysninger.har(Minsteinntekt.minsteinntekt) &&
             opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi
 
-    override fun kreverTotrinnskontroll(aktiveAvklaringer: List<Avklaring>): Boolean {
-        return aktiveAvklaringer.any { it.kode == Avklaringspunkter.Totrinnskontroll }
-    }
+    override fun kreverTotrinnskontroll(aktiveAvklaringer: List<Avklaring>): Boolean =
+        aktiveAvklaringer.any {
+            it.kode == Avklaringspunkter.Totrinnskontroll
+        }
 
     override fun behandling() =
         Behandling(
             behandler = this,
             opplysninger =
                 listOf(
-                    Faktum(prøvingsdato, skjedde, kilde = Systemkilde(meldingsreferanseId, opprettet)),
+                    // Faktum(prøvingsdato, skjedde, kilde = Systemkilde(meldingsreferanseId, opprettet)),
                     Faktum(fagsakIdOpplysningstype, fagsakId, kilde = Systemkilde(meldingsreferanseId, opprettet)),
                     Faktum(
                         søknadIdOpplysningstype,
