@@ -94,6 +94,11 @@ class Opplysninger private constructor(
 
     override fun finnAlle() = alleOpplysninger.toList()
 
+    fun foreldreløse(): List<Opplysning<*>> =
+        opplysninger.filter { opplysning ->
+            opplysninger.none { it.utledetAv?.opplysninger?.contains(opplysning) == true }
+        }
+
     @Suppress("UNCHECKED_CAST")
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? {
         if (alleOpplysninger.count { it.er(opplysningstype) } > 1) {

@@ -53,18 +53,6 @@ abstract class Regel<T : Comparable<T>> internal constructor(
         return
     }
 
-    fun avhengighetErErstattet(produkt: Opplysning<*>): Boolean {
-        // Recursively check if any opplysning in the chain is replaced
-        fun isReplacedRecursively(opplysning: Opplysning<*>): Boolean {
-            // Check if this opplysning is replaced or any of its dependencies are replaced
-            return opplysning.erErstattet ||
-                (opplysning.utledetAv?.opplysninger?.any { isReplacedRecursively(it) } ?: false)
-        }
-
-        // Start the recursive check with the provided produkt
-        return isReplacedRecursively(produkt)
-    }
-
     abstract override fun toString(): String
 
     protected abstract fun kjør(opplysninger: LesbarOpplysninger): T

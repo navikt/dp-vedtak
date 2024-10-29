@@ -67,9 +67,9 @@ class Regelkjøring(
     // Finn bare regler som kreves for ønsket resultat
     // Kjører regler i topologisk rekkefølge
     private val gjeldendeRegler: List<Regel<*>> get() = alleRegler
-    private val plan: MutableSet<Regel<*>> = mutableSetOf()
+    private var plan: MutableSet<Regel<*>> = mutableSetOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
-    private val trenger = mutableSetOf<Regel<*>>()
+    private var trenger = setOf<Regel<*>>()
 
     private val opplysningerPåPrøvingsdato get() = opplysninger.forDato(prøvingsdato)
 
@@ -83,16 +83,8 @@ class Regelkjøring(
     }
 
     fun evaluer(): Regelkjøringsrapport {
-        trenger.clear()
         aktiverRegler()
         while (plan.size > 0) {
-            if (plan.all { it is Ekstern<*> }) {
-                // Vi stopper opp for å kjøre behov når vi treffer regler som trenger eksterne opplysninger
-                trenger.addAll(plan)
-                plan.clear()
-
-                break
-            }
             kjørRegelPlan()
             aktiverRegler()
         }
@@ -101,14 +93,19 @@ class Regelkjøring(
             kjørteRegler = kjørteRegler,
             mangler = trenger(),
             informasjonsbehov = informasjonsbehov(),
+            foreldreløse = opplysninger.foreldreløse(),
         )
     }
 
     private fun aktiverRegler() {
+        val produksjonsplan = mutableSetOf<Regel<*>>()
         ønsketResultat.forEach { opplysningstype ->
             val produsent = gjeldendeRegler.single { it.produserer(opplysningstype) }
-            produsent.lagPlan(opplysningerPåPrøvingsdato, plan, gjeldendeRegler)
+            produsent.lagPlan(opplysningerPåPrøvingsdato, produksjonsplan, gjeldendeRegler)
         }
+        val (ekstern, intern) = produksjonsplan.partition { it is Ekstern<*> }
+        plan = intern.toMutableSet()
+        trenger = ekstern.toSet()
     }
 
     private fun kjørRegelPlan() {
@@ -118,11 +115,6 @@ class Regelkjøring(
     }
 
     private fun kjør(regel: Regel<*>) {
-        if (regel is Ekstern<*>) {
-            trenger.add(regel)
-            plan.remove(regel)
-            return
-        }
         val opplysning = regel.lagProdukt(opplysningerPåPrøvingsdato)
         kjørteRegler.add(regel)
         plan.remove(regel)
@@ -152,33 +144,9 @@ data class Regelkjøringsrapport(
     val kjørteRegler: List<Regel<*>>,
     val mangler: Set<Opplysningstype<*>>,
     val informasjonsbehov: Informasjonsbehov,
+    val foreldreløse: List<Opplysning<*>>,
 ) {
     fun manglerOpplysninger(): Boolean = mangler.isNotEmpty()
 
     fun erFerdig(): Boolean = !manglerOpplysninger()
-}
-
-class RegelGraph(
-    regler: List<Regel<*>>,
-) {
-    private val graph = mutableMapOf<Opplysningstype<*>, MutableList<Opplysningstype<*>>>()
-
-    init {
-        regler.forEach { regel ->
-            regel.avhengerAv.forEach { dependency ->
-                graph.computeIfAbsent(dependency) { mutableListOf() }.add(regel.produserer)
-            }
-            graph.putIfAbsent(regel.produserer, mutableListOf()) // Ensure produserer is in the graph
-        }
-    }
-
-    fun toMermaid(): String {
-        val sb = StringBuilder("graph TD\n")
-        graph.forEach { (from, toList) ->
-            toList.forEach { to ->
-                sb.append("    ${from.navn} --> ${to.navn}\n")
-            }
-        }
-        return sb.toString()
-    }
 }
