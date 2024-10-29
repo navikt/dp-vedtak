@@ -7,6 +7,8 @@ class Inntekt(
 ) : Comparable<Inntekt> {
     val id get() = verdi.inntektsId
 
+    override fun toString() = verdi.inntektsId
+
     override fun compareTo(other: Inntekt): Int = verdi.inntektsId.compareTo(other.verdi.inntektsId)
 
     override fun hashCode(): Int = verdi.hashCode()
