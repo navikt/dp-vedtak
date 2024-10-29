@@ -39,7 +39,13 @@ data class OpplysningSvar<T : Comparable<T>>(
 
     fun leggTil(opplysninger: Opplysninger): Opplysning<T> {
         val gyldighetsperiode = gyldighetsperiode ?: Gyldighetsperiode()
-        val utledning = Utledning("innhentMed", utledetAv.map { opplysninger.finnOpplysning(it) })
+        // TODO: Denne må være smartere
+        val utledning =
+            if (utledetAv.isEmpty()) {
+                null
+            } else {
+                Utledning("innhentMed", utledetAv.map { opplysninger.finnOpplysning(it) })
+            }
         val opplysning =
             when (tilstand) {
                 Tilstand.Hypotese ->

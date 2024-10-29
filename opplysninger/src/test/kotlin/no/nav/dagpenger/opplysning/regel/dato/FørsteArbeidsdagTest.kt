@@ -7,6 +7,7 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.dato1
 import no.nav.dagpenger.opplysning.TestOpplysningstyper.dato2
 import no.nav.dagpenger.opplysning.mai
+import no.nav.dagpenger.opplysning.regel.innhentes
 import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,6 +19,7 @@ class FørsteArbeidsdagTest {
             1.mai,
             opplysninger,
             Regelsett("finn første arbeidsdag for en dato") {
+                regel(dato1) { innhentes }
                 regel(dato2) { førsteArbeidsdag(dato1) }
             },
         )

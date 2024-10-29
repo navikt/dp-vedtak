@@ -1,9 +1,8 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.Forretningsprosess
-import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
-import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
@@ -15,34 +14,20 @@ val støtterInnvilgelseOpplysningstype = Opplysningstype.somBoolsk("støtterInnv
 class Søknadsprosess : Forretningsprosess {
     private val regelverk = RegelverkDagpenger
 
-    override fun regelsett(opplysninger: Opplysninger): List<Regelsett> {
-        val opplysningstype = avklar(opplysninger)
+    override fun regelsett() = regelverk.regelsett
 
-        val harKravPåDagpenger =
-            opplysninger.har(KravPåDagpenger.kravPåDagpenger) && opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
+    override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> {
+        val ønsketResultat = mutableListOf<Opplysningstype<*>>()
 
-        val regelsettFor = regelverk.regelsettFor(opplysningstype).toMutableSet()
-        val støtterInnvilgelse =
-            opplysninger.har(støtterInnvilgelseOpplysningstype) &&
-                opplysninger.finnOpplysning(støtterInnvilgelseOpplysningstype).verdi
-
-        if (harKravPåDagpenger && støtterInnvilgelse) {
-            val fastsetting =
-                RegelverkDagpenger.regelsettFor(Dagpengeperiode.antallStønadsuker) +
-                    RegelverkDagpenger.regelsettFor(Dagpengegrunnlag.grunnlag) +
-                    RegelverkDagpenger.regelsettFor(DagpengenesStørrelse.dagsatsMedBarn) +
-                    RegelverkDagpenger.regelsettFor(Egenandel.egenandel)
-            regelsettFor.addAll(fastsetting)
-        }
-
-        return regelsettFor.toList()
-    }
-
-    private fun avklar(opplysninger: Opplysninger): Opplysningstype<Boolean> {
         // Sjekk krav til alder
-        if (!opplysninger.har(Alderskrav.kravTilAlder)) return Alderskrav.kravTilAlder
+        ønsketResultat.add(Alderskrav.kravTilAlder)
+
         // Sjekk krav til minste arbeidsinntekt
-        if (!opplysninger.har(Minsteinntekt.minsteinntekt)) return Minsteinntekt.minsteinntekt
+        ønsketResultat.add(Minsteinntekt.minsteinntekt)
+
+        if (opplysninger.mangler(Alderskrav.kravTilAlder) || opplysninger.mangler(Minsteinntekt.minsteinntekt)) {
+            return ønsketResultat
+        }
 
         val alderskravOppfylt = opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
         val minsteinntektOppfylt = opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi
@@ -53,16 +38,31 @@ class Søknadsprosess : Forretningsprosess {
 
         // Om krav til alder eller arbeidsinntekt ikke er oppfylt er det ingen grunn til å fortsette, men vi må fastsette hvilke tillegskrav Arena trenger.
         if (!alderskravOppfylt || !minsteinntektOppfylt) {
-            return when {
-                opplysninger.mangler(ReellArbeidssøker.kravTilArbeidssøker) -> ReellArbeidssøker.kravTilArbeidssøker
-                opplysninger.mangler(Meldeplikt.registrertPåSøknadstidspunktet) -> Meldeplikt.registrertPåSøknadstidspunktet
-                opplysninger.mangler(Rettighetstype.rettighetstype) -> Rettighetstype.rettighetstype
-                else -> Minsteinntekt.minsteinntekt
-            }
-        } else if (!støtterInnvilgelse) {
-            return Minsteinntekt.minsteinntekt
+            ønsketResultat.addAll(
+                listOf(
+                    ReellArbeidssøker.kravTilArbeidssøker,
+                    Meldeplikt.registrertPåSøknadstidspunktet,
+                    Rettighetstype.rettighetstype,
+                ),
+            )
+            return ønsketResultat
+        }
+        if (!støtterInnvilgelse) {
+            return ønsketResultat
         }
 
-        return KravPåDagpenger.kravPåDagpenger
+        ønsketResultat.add(KravPåDagpenger.kravPåDagpenger)
+
+        val harKravPåDagpenger =
+            opplysninger.har(KravPåDagpenger.kravPåDagpenger) && opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
+
+        if (harKravPåDagpenger && støtterInnvilgelse) {
+            ønsketResultat.addAll(Dagpengegrunnlag.ønsketResultat)
+            ønsketResultat.addAll(Egenandel.ønsketResultat)
+            ønsketResultat.addAll(DagpengenesStørrelse.ønsketResultat)
+            ønsketResultat.addAll(Dagpengeperiode.ønsketResultat)
+        }
+
+        return ønsketResultat
     }
 }

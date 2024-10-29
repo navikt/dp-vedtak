@@ -1,5 +1,9 @@
 package no.nav.dagpenger.behandling
 
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import no.nav.dagpenger.inntekt.v1.KlassifisertInntektMåned
@@ -58,6 +62,32 @@ class TestPerson(
         rapid.sendTestMessage(løstBehov(behovSomLøses), ident)
     }
 
+    fun endreOpplysning(
+        behov: String,
+        løsning: Any,
+        data: Map<String, Any> = emptyMap(),
+    ) {
+        val message =
+            JsonMessage
+                .newMessage(
+                    "behov",
+                    mapOf(
+                        "ident" to ident,
+                        "behandlingId" to behandlingId,
+                        "søknadId" to søknadId,
+                        "@behov" to listOf(behov),
+                        "@opplysningsbehov" to true,
+                        "@final" to true,
+                        "@løsning" to
+                            mapOf(
+                                behov to løsning,
+                            ),
+                    ) + data,
+                ).toJson()
+
+        rapid.sendTestMessage(message, ident)
+    }
+
     fun løsBehov(
         behov: String,
         løsning: Any,
@@ -70,19 +100,18 @@ class TestPerson(
         løsninger: Map<String, Any>,
         opplysningsbehov: Boolean = true,
         data: Map<String, Any> = emptyMap(),
-    ) = JsonMessage
-        .newMessage(
-            "behov",
-            mapOf(
-                "ident" to ident,
-                "behandlingId" to behandlingId,
-                "søknadId" to søknadId,
-                "@opplysningsbehov" to opplysningsbehov,
-                "@behov" to løsninger.keys.toList(),
-                "@final" to true,
-                "@løsning" to løsninger,
-            ) + data,
-        ).toJson()
+    ): String =
+        rapid.inspektør.message(rapid.inspektør.size - 1).run {
+            val lol = this as ObjectNode
+            lol.put("@final", true)
+            lol.putPOJO("@løsning", løsninger)
+            objectMapper.writeValueAsString(lol)
+        }
+
+    private val objectMapper =
+        jacksonObjectMapper()
+            .registerModule(JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 
     fun markerAvklaringIkkeRelevant(
         avklaringId: String,

@@ -18,6 +18,8 @@ internal class EnAvTest {
             1.mai,
             opplysninger,
             Regelsett("regelsett") {
+                regel(boolskB) { innhentes }
+                regel(boolskC) { innhentes }
                 regel(boolskA) { enAv(boolskB, boolskC) }
             },
         )

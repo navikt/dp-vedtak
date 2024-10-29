@@ -9,11 +9,12 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.StreikOgLockout
-import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 class StreikOgLockoutSteg : No {
     private val fraDato = 23.mai(2024)
-    private val regelsett = listOf(StreikOgLockout.regelsett)
+    private val regelsett = listOf(StreikOgLockout.regelsett, Søknadstidspunkt.regelsett)
     private val opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 

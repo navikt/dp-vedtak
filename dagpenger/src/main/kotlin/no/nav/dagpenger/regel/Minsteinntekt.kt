@@ -19,7 +19,7 @@ import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
 import no.nav.dagpenger.regel.Opptjeningstid.justertRapporteringsfrist
-import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import java.time.LocalDate

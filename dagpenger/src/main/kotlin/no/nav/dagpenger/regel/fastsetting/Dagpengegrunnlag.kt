@@ -24,7 +24,7 @@ import no.nav.dagpenger.opplysning.regel.størreEnn
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Minsteinntekt
-import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import java.time.LocalDate
 
 object Dagpengegrunnlag {
@@ -122,6 +122,7 @@ object Dagpengegrunnlag {
             regel(harAvkortetPeriode3) { størreEnn(inntektperiode3, maksgrenseForGrunnlag) }
             regel(harAvkortet) { enAv(harAvkortetPeriode1, harAvkortetPeriode2, harAvkortetPeriode3) }
         }
+    val ønsketResultat = listOf(grunnbeløp, harAvkortet)
 }
 
 private fun grunnbeløpFor(it: LocalDate) =

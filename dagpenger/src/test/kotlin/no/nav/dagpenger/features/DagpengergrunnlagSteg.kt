@@ -16,7 +16,7 @@ import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.regel.RegelverkDagpenger
-import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Verneplikt.vurderingAvVerneplikt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.uavrundetGrunnlag
@@ -48,7 +48,9 @@ class DagpengergrunnlagSteg : No {
         Gitt("at inntekt for grunnlag er") { dataTable: DataTable? ->
             val inntektstabell = dataTable!!.asMaps()
             val f = Inntekt(lagInntekt(inntektstabell))
-            opplysninger.leggTil(Faktum(Dagpengegrunnlag.inntekt, f)).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(Dagpengegrunnlag.inntekt, f))
+            val rapport = regelkjøring.evaluer()
+            println(rapport)
         }
 
         Så("beregnet uavrundet grunnlag være {string}") { uavrundetGrunnlag: String ->

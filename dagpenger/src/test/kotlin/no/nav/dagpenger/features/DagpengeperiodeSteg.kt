@@ -10,14 +10,24 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Minsteinntekt
-import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
+import no.nav.dagpenger.regel.Opptjeningstid
+import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.Verneplikt
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class DagpengeperiodeSteg : No {
     private val fraDato = 10.mai(2022)
-    private val regelsett = listOf(Dagpengeperiode.regelsett, Minsteinntekt.regelsett)
+    private val regelsett =
+        listOf(
+            Dagpengeperiode.regelsett,
+            Minsteinntekt.regelsett,
+            Opptjeningstid.regelsett,
+            Søknadstidspunkt.regelsett,
+            Verneplikt.regelsett,
+        )
     private val opplysninger: Opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 

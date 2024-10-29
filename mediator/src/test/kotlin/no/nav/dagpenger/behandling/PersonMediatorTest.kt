@@ -55,6 +55,7 @@ import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
@@ -90,7 +91,6 @@ internal class PersonMediatorTest {
         )
     }
 
-    private val forventetAntallOpplysningerInnvilgelse = 77
     private val forventetAntallOpplysningerAvslag = 48
     private val forventetAntallOpplysningerKnockout = 30
 
@@ -246,25 +246,23 @@ internal class PersonMediatorTest {
             skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilFerdig(testPerson)
 
-            personRepository.hent(ident.tilPersonIdentfikator()).also {
-                it.shouldNotBeNull()
-                it.behandlinger().size shouldBe 1
-                it
-                    .behandlinger()
-                    .flatMap { behandling -> behandling.opplysninger().finnAlle() }
-                    .size shouldBe forventetAntallOpplysningerInnvilgelse
-            }
+            antallOpplysninger() shouldBe 77
+
             /**
              * Innhenter tar utdanning eller opplæring
              */
             rapid.harBehov(TarUtdanningEllerOpplæring)
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
 
+            antallOpplysninger() shouldBe 110
+
             /**
              * Innhenter inntekt for fastsettelse
              */
             rapid.harBehov(Inntekt)
             testPerson.løsBehov(Inntekt)
+
+            antallOpplysninger() shouldBe 136
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe true
@@ -294,6 +292,12 @@ internal class PersonMediatorTest {
                     sats shouldBeGreaterThan 0
                 }
             }
+        }
+
+    private fun antallOpplysninger() =
+        personRepository.hent(ident.tilPersonIdentfikator())?.let {
+            it.behandlinger().size shouldBe 1
+            it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size
         }
 
     @Test
@@ -422,6 +426,7 @@ internal class PersonMediatorTest {
         }
 
     @Test
+    @Disabled("Denne må bruke en opplysning som treffer mindre bredt. Er uansett også testet i prøvingsdatotesten")
     fun `redigering av opplysning i forslag til vedtak`() {
         withMigratedDb {
             val testPerson =
@@ -485,8 +490,12 @@ internal class PersonMediatorTest {
                 medDato("prøvingsdato") shouldBe 20.juni(2024)
             }
 
-            testPerson.løsBehov("Virkningsdato", 22.juni(2024))
+            // Setter ny prøvingsdato (som kalles Virkningsdato for bakoverkompabilitet med behovsløsere)
+            testPerson.endreOpplysning("Virkningsdato", 22.juni(2024))
 
+            rapid.harBehov(InntektId) {
+                medDato("Virkningsdato") shouldBe 22.juni(2024)
+            }
             testPerson.løsBehov(
                 InntektId,
                 mapOf(
@@ -494,6 +503,14 @@ internal class PersonMediatorTest {
                     "gyldigTilOgMed" to 25.juni(2024),
                 ),
             )
+
+            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("RegistrertSomArbeidssøker") {
+                medDato("Virkningsdato") shouldBe 22.juni(2024)
+            }
+
+            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd", "RegistrertSomArbeidssøker")
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medDato("prøvingsdato") shouldBe 22.juni(2024)

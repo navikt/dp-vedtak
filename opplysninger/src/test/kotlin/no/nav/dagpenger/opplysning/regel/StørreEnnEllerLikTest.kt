@@ -20,6 +20,8 @@ class StørreEnnEllerLikTest {
             1.mai,
             opplysninger,
             Regelsett("regelsett") {
+                regel(beløpA) { innhentes }
+                regel(beløpB) { innhentes }
                 regel(boolskA) { størreEnnEllerLik(beløpA, beløpB) }
             },
         )

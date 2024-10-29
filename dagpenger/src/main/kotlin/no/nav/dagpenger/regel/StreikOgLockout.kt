@@ -4,7 +4,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.ingenAv
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object StreikOgLockout {
     val deltarIStreikOgLockout = Opplysningstype.somBoolsk("Deltar medlemmet i streik eller er omfattet av lock-out?")

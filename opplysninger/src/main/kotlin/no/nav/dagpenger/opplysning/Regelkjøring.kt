@@ -1,6 +1,5 @@
 package no.nav.dagpenger.opplysning
 
-import no.nav.dagpenger.opplysning.dag.RegeltreBygger
 import no.nav.dagpenger.opplysning.regel.Ekstern
 import no.nav.dagpenger.opplysning.regel.Regel
 import java.time.LocalDate
@@ -14,13 +13,18 @@ import java.time.LocalDate
 typealias Informasjonsbehov = Map<Opplysningstype<*>, List<Opplysning<*>>>
 
 interface Forretningsprosess {
-    fun regelsett(opplysninger: Opplysninger): List<Regelsett>
+    fun regelsett(): List<Regelsett>
+
+    fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>>
 }
 
 private class Regelsettprosess(
     val regelsett: List<Regelsett>,
+    val opplysningstypes: List<Opplysningstype<*>> = regelsett.flatMap { it.produserer },
 ) : Forretningsprosess {
-    override fun regelsett(opplysninger: Opplysninger) = regelsett
+    override fun regelsett() = regelsett
+
+    override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> = opplysningstypes
 }
 
 class Regelkjøring(
@@ -33,7 +37,7 @@ class Regelkjøring(
         regelverksdato,
         regelverksdato,
         opplysninger,
-        Regelsettprosess(regelsett.toList()),
+        Regelsettprosess(regelsett.toList(), regelsett.toList().flatMap { it.produserer }),
     )
 
     constructor(regelverksdato: LocalDate, opplysninger: Opplysninger, forretningsprosess: Forretningsprosess) : this(
@@ -43,16 +47,34 @@ class Regelkjøring(
         forretningsprosess,
     )
 
-    private val regelsett get() = forretningsprosess.regelsett(opplysninger)
+    constructor(
+        regelverksdato: LocalDate,
+        opplysninger: Opplysninger,
+        ønskerResultat: List<Opplysningstype<*>>,
+        vararg regelsett: Regelsett,
+    ) : this(
+        regelverksdato,
+        regelverksdato,
+        opplysninger,
+        Regelsettprosess(regelsett.toList(), ønskerResultat),
+    )
+
+    private val regelsett get() = forretningsprosess.regelsett()
     private val alleRegler: List<Regel<*>> get() = regelsett.flatMap { it.regler(regelverksdato) }
-    private val muligeRegler: MutableList<Regel<*>> get() = alleRegler.toMutableList()
-    private val plan: MutableList<Regel<*>> = mutableListOf()
+
+    private val ønsketResultat get() = forretningsprosess.ønsketResultat(opplysninger)
+
+    // Finn bare regler som kreves for ønsket resultat
+    // Kjører regler i topologisk rekkefølge
+    private val gjeldendeRegler: List<Regel<*>> get() = alleRegler
+    private val plan: MutableSet<Regel<*>> = mutableSetOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
+    private val trenger = mutableSetOf<Regel<*>>()
 
     private val opplysningerPåPrøvingsdato get() = opplysninger.forDato(prøvingsdato)
 
     init {
-        val duplikate = muligeRegler.groupBy { it.produserer }.filter { it.value.size > 1 }
+        val duplikate = gjeldendeRegler.groupBy { it.produserer }.filter { it.value.size > 1 }
 
         require(duplikate.isEmpty()) {
             "Regelsett inneholder flere regler som produserer samme opplysningstype. " +
@@ -61,8 +83,16 @@ class Regelkjøring(
     }
 
     fun evaluer(): Regelkjøringsrapport {
+        trenger.clear()
         aktiverRegler()
         while (plan.size > 0) {
+            if (plan.all { it is Ekstern<*> }) {
+                // Vi stopper opp for å kjøre behov når vi treffer regler som trenger eksterne opplysninger
+                trenger.addAll(plan)
+                plan.clear()
+
+                break
+            }
             kjørRegelPlan()
             aktiverRegler()
         }
@@ -75,14 +105,9 @@ class Regelkjøring(
     }
 
     private fun aktiverRegler() {
-        muligeRegler
-            .filter {
-                it.kanKjøre(opplysningerPåPrøvingsdato)
-            }.forEach {
-                plan.add(it)
-            }
-        plan.forEach {
-            muligeRegler.remove(it)
+        ønsketResultat.forEach { opplysningstype ->
+            val produsent = gjeldendeRegler.single { it.produserer(opplysningstype) }
+            produsent.lagPlan(opplysningerPåPrøvingsdato, plan, gjeldendeRegler)
         }
     }
 
@@ -93,6 +118,11 @@ class Regelkjøring(
     }
 
     private fun kjør(regel: Regel<*>) {
+        if (regel is Ekstern<*>) {
+            trenger.add(regel)
+            plan.remove(regel)
+            return
+        }
         val opplysning = regel.lagProdukt(opplysningerPåPrøvingsdato)
         kjørteRegler.add(regel)
         plan.remove(regel)
@@ -100,20 +130,15 @@ class Regelkjøring(
     }
 
     private fun trenger(): Set<Opplysningstype<*>> {
-        val graph = RegeltreBygger(muligeRegler).dag()
-        val opplysningerUtenRegel = graph.findLeafNodes()
-        val opplysningerMedEksternRegel = graph.findNodesWithEdge { it.data is Ekstern<*> }
-        return (opplysningerUtenRegel + opplysningerMedEksternRegel)
-            .map { it.data }
-            .filterNot { opplysningerPåPrøvingsdato.har(it) }
-            .toSet()
+        val eksterneOpplysninger = trenger.map { it.produserer }.toSet()
+        return eksterneOpplysninger
     }
 
     private fun informasjonsbehov(): Informasjonsbehov =
         trenger()
             .associateWith {
                 // Finn regel som produserer opplysningstype og hent ut avhengigheter
-                muligeRegler.find { regel -> regel.produserer(it) }?.avhengerAv ?: emptyList()
+                gjeldendeRegler.find { regel -> regel.produserer(it) }?.avhengerAv ?: emptyList()
             }.filter { (_, avhengigheter) ->
                 // Finn bare opplysninger hvor alle avhengigheter er tilfredsstilt
                 avhengigheter.all { opplysningerPåPrøvingsdato.har(it) }
@@ -131,4 +156,29 @@ data class Regelkjøringsrapport(
     fun manglerOpplysninger(): Boolean = mangler.isNotEmpty()
 
     fun erFerdig(): Boolean = !manglerOpplysninger()
+}
+
+class RegelGraph(
+    regler: List<Regel<*>>,
+) {
+    private val graph = mutableMapOf<Opplysningstype<*>, MutableList<Opplysningstype<*>>>()
+
+    init {
+        regler.forEach { regel ->
+            regel.avhengerAv.forEach { dependency ->
+                graph.computeIfAbsent(dependency) { mutableListOf() }.add(regel.produserer)
+            }
+            graph.putIfAbsent(regel.produserer, mutableListOf()) // Ensure produserer is in the graph
+        }
+    }
+
+    fun toMermaid(): String {
+        val sb = StringBuilder("graph TD\n")
+        graph.forEach { (from, toList) ->
+            toList.forEach { to ->
+                sb.append("    ${from.navn} --> ${to.navn}\n")
+            }
+        }
+        return sb.toString()
+    }
 }

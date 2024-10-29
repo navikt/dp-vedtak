@@ -28,6 +28,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
@@ -136,7 +137,15 @@ class OpplysningerRepositoryPostgresTest {
 
             val baseOpplysning = Faktum(baseOpplysningstype, LocalDate.now())
 
-            val regelsett = Regelsett("Regelsett") { regel(utledetOpplysningstype) { oppslag(baseOpplysningstype) { 5 } } }
+            val regelsett =
+                Regelsett("Regelsett") {
+                    regel(baseOpplysningstype) {
+                        innhentes
+                    }
+                    regel(utledetOpplysningstype) {
+                        oppslag(baseOpplysningstype) { 5 }
+                    }
+                }
             val opplysninger = Opplysninger()
             val regelkjøring = Regelkjøring(LocalDate.now(), opplysninger, regelsett)
             opplysninger.leggTil(baseOpplysning as Opplysning<*>).also { regelkjøring.evaluer() }
@@ -238,7 +247,11 @@ class OpplysningerRepositoryPostgresTest {
 
             val baseOpplysning = Faktum(baseOpplysningstype, LocalDate.now())
 
-            val regelsett = Regelsett("Regelsett") { regel(utledetOpplysningstype) { oppslag(baseOpplysningstype) { 5 } } }
+            val regelsett =
+                Regelsett("Regelsett") {
+                    regel(baseOpplysningstype) { innhentes }
+                    regel(utledetOpplysningstype) { oppslag(baseOpplysningstype) { 5 } }
+                }
             val tidligereOpplysninger = Opplysninger()
             val regelkjøring = Regelkjøring(LocalDate.now(), tidligereOpplysninger, regelsett)
 

@@ -6,7 +6,7 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.innhentMed
-import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.søknadIdOpplysningstype
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 
 object Verneplikt {
     val avtjentVerneplikt = Opplysningstype.somBoolsk("Avtjent verneplikt".id("Verneplikt"))
