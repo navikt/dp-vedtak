@@ -8,12 +8,13 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
-import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Utestengning
 
 class UtestengningSteg : No {
     private val fraDato = 23.mai(2024)
-    private val regelsett = listOf(Utestengning.regelsett)
+    private val regelsett = listOf(Utestengning.regelsett, Søknadstidspunkt.regelsett)
     private val opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 

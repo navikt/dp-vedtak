@@ -1,5 +1,6 @@
 package no.nav.dagpenger.opplysning
 
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.maps.shouldContainAll
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.dag.printer.MermaidPrinter
@@ -90,7 +91,8 @@ class RegelmotorIntegrasjonsTest {
         opplysninger
             .leggTil(Hypotese(ReglerForInntektTest.inntekt36, Beløp(321321.0), Gyldighetsperiode(9.mai, 12.mai)))
             .also { regelkjøring.evaluer() }
-        assertEquals(0, regelkjøring.evaluer().mangler.size)
+
+        regelkjøring.evaluer().mangler.shouldBeEmpty()
 
         assertTrue(opplysninger.har(ReglerForInntektTest.minsteinntekt))
         assertTrue(opplysninger.finnOpplysning(ReglerForInntektTest.minsteinntekt).verdi)
@@ -116,8 +118,9 @@ class RegelmotorIntegrasjonsTest {
         assertEquals(setOf(fødselsdato, søknadsdato, sisteDagMedArbeidsplikt, sisteDagMedLønn), mangler)
 
         // Skal kortslutte behovet for de tre underliggende opplysningene
-        opplysninger.leggTil(Faktum(virkningsdato, LocalDate.of(2020, 2, 29))).also { regelkjøring.evaluer() }
-        assertEquals(setOf(fødselsdato), regelkjøring.evaluer().mangler)
+        opplysninger.leggTil(Faktum(virkningsdato, LocalDate.of(2020, 2, 29)))
+        val evaluer = regelkjøring.evaluer()
+        assertEquals(setOf(fødselsdato), evaluer.mangler)
 
         opplysninger.leggTil(Faktum(fødselsdato, LocalDate.of(1953, 2, 10))).also { regelkjøring.evaluer() }
 
@@ -134,7 +137,7 @@ class RegelmotorIntegrasjonsTest {
     }
 
     @Test
-    fun `asdf`() {
+    fun `Rekjører regler når opplysninger en avhenger av er nyere`() {
         val fraDato = 10.mai
         val opplysninger = Opplysninger()
         val a0 = Opplysningstype.somBoolsk("A0")
@@ -170,6 +173,47 @@ class RegelmotorIntegrasjonsTest {
         opplysninger.leggTil(Faktum(a0, false)).also { regelkjøring.evaluer() }
 
         opplysninger.finnOpplysning(c).verdi shouldBe false
+    }
+
+    @Test
+    fun `Kortslutte del av regeltreet når saksbehandler overstyrer opplysning`() {
+        val fraDato = 10.mai
+        val opplysninger = Opplysninger()
+        val a0 = Opplysningstype.somBoolsk("A0")
+        val a = Opplysningstype.somBoolsk("A")
+        val b = Opplysningstype.somBoolsk("B")
+        val c = Opplysningstype.somBoolsk("C")
+        val d = Opplysningstype.somBoolsk("D")
+        val regelsett =
+            Regelsett("test") {
+                regel(a0) { innhentes }
+                regel(a) { alle(a0) }
+                regel(d) { alle(a0) }
+                regel(b) { alle(a, d) }
+                regel(c) { alle(b) }
+            }
+        val regelkjøring =
+            Regelkjøring(
+                fraDato,
+                opplysninger,
+                object : Forretningsprosess {
+                    override fun regelsett(): List<Regelsett> = listOf(regelsett)
+
+                    override fun ønsketResultat(opplysninger: LesbarOpplysninger) = listOf(c)
+                },
+            )
+
+        opplysninger.leggTil(Faktum(b, true)).also { regelkjøring.evaluer() }
+
+        regelkjøring.evaluer().mangler.shouldBeEmpty()
+
+        opplysninger.har(c) shouldBe true
+        opplysninger.finnOpplysning(c).verdi shouldBe true
+
+        opplysninger.leggTil(Faktum(a0, false)).also { regelkjøring.evaluer() }
+        opplysninger.leggTil(Faktum(d, false)).also { regelkjøring.evaluer() }
+
+        opplysninger.finnOpplysning(c).verdi shouldBe true
     }
 }
 

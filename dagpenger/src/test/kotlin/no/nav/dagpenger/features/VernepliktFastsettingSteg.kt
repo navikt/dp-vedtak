@@ -8,20 +8,36 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
-import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
+import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.Opptjeningstid
+import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting
 import java.time.LocalDate
 
 class VernepliktFastsettingSteg : No {
     private val fraDato = 10.mai(2022)
-    private val regelsett = listOf(VernepliktFastsetting.regelsett, Dagpengegrunnlag.regelsett)
+    private val regelsett =
+        listOf(
+            VernepliktFastsetting.regelsett,
+            Dagpengegrunnlag.regelsett,
+            Søknadstidspunkt.regelsett,
+            Minsteinntekt.regelsett,
+            Opptjeningstid.regelsett,
+        )
     private val opplysninger: Opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 
     @BeforeStep
     fun kjørRegler() {
-        regelkjøring = Regelkjøring(fraDato, opplysninger, *regelsett.toTypedArray())
+        regelkjøring =
+            Regelkjøring(
+                fraDato,
+                opplysninger,
+                listOf(VernepliktFastsetting.vernepliktPeriode, VernepliktFastsetting.vernepliktGrunnlag),
+                *regelsett.toTypedArray(),
+            )
     }
 
     init {

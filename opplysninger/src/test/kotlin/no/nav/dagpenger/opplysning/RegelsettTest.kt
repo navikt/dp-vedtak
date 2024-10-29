@@ -34,14 +34,11 @@ class RegelsettTest {
                 regel(beløpA, 1.juni) { multiplikasjon(grunntall, faktorB) }
                 regel(beløpB, 1.juni) { multiplikasjon(grunntall, faktorA) }
             }
-        regelsett.produserer.shouldContainExactly(beløpA, beløpB)
-        regelsett.avhengerAv.shouldContainExactly(grunntall, faktorA, faktorB)
-        // todo: test at avhengener av ikke inneholder opplysninger en produserer selv. Dette er en svakhet i dag.
+        regelsett.produserer.shouldContainExactly(faktorA, faktorB, beløpA, beløpB)
+        regelsett.avhengerAv.shouldContainExactly(grunntall)
 
         regelsett.produserer(beløpA) shouldBe true
         regelsett.avhengerAv(grunntall) shouldBe true
-        regelsett.avhengerAv(faktorA) shouldBe true
-        regelsett.avhengerAv(faktorB) shouldBe true
 
         regelsett.produserer(grunntall) shouldBe false
         regelsett.avhengerAv(beløpA) shouldBe false
@@ -63,7 +60,7 @@ class RegelsettTest {
         val opplysninger = Opplysninger()
         val regelkjøring = Regelkjøring(10.juni, opplysninger, regelsett)
 
-        assertEquals(2, regelkjøring.evaluer().mangler.size)
+        regelkjøring.evaluer().mangler.shouldContainExactly(grunntall, faktorA, faktorB)
         opplysninger.leggTil(Faktum(grunntall, Beløp(3.0))).also { regelkjøring.evaluer() }
         opplysninger.leggTil(Faktum(faktorB, 2.0)).also { regelkjøring.evaluer() }
         opplysninger.finnOpplysning(beløpA).verdi shouldBe Beløp(6.0)

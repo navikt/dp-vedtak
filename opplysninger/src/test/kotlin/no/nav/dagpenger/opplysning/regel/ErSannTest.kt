@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 class ErSannTest {
     private val regelsett =
         Regelsett("Test") {
+            regel(a) { innhentes }
             regel(b) { erSann(a) }
         }
     private val opplysninger = Opplysninger()

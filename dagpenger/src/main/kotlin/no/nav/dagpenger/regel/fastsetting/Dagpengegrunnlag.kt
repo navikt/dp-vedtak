@@ -24,7 +24,7 @@ import no.nav.dagpenger.opplysning.regel.størreEnn
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Minsteinntekt
-import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import java.time.LocalDate
 
 object Dagpengegrunnlag {

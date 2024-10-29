@@ -20,10 +20,11 @@ interface Forretningsprosess {
 
 private class Regelsettprosess(
     val regelsett: List<Regelsett>,
+    val opplysningstypes: List<Opplysningstype<*>> = regelsett.flatMap { it.produserer },
 ) : Forretningsprosess {
     override fun regelsett() = regelsett
 
-    override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> = regelsett.flatMap { it.produserer }
+    override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> = opplysningstypes
 }
 
 class Regelkjøring(
@@ -36,7 +37,7 @@ class Regelkjøring(
         regelverksdato,
         regelverksdato,
         opplysninger,
-        Regelsettprosess(regelsett.toList()),
+        Regelsettprosess(regelsett.toList(), regelsett.toList().flatMap { it.produserer }),
     )
 
     constructor(regelverksdato: LocalDate, opplysninger: Opplysninger, forretningsprosess: Forretningsprosess) : this(
@@ -44,6 +45,18 @@ class Regelkjøring(
         regelverksdato,
         opplysninger,
         forretningsprosess,
+    )
+
+    constructor(
+        regelverksdato: LocalDate,
+        opplysninger: Opplysninger,
+        ønskerResultat: List<Opplysningstype<*>>,
+        vararg regelsett: Regelsett,
+    ) : this(
+        regelverksdato,
+        regelverksdato,
+        opplysninger,
+        Regelsettprosess(regelsett.toList(), ønskerResultat),
     )
 
     private val regelsett get() = forretningsprosess.regelsett()
@@ -56,6 +69,7 @@ class Regelkjøring(
     private val gjeldendeRegler: List<Regel<*>> get() = alleRegler
     private val plan: MutableSet<Regel<*>> = mutableSetOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
+    private val trenger = mutableSetOf<Regel<*>>()
 
     private val opplysningerPåPrøvingsdato get() = opplysninger.forDato(prøvingsdato)
 
@@ -69,11 +83,14 @@ class Regelkjøring(
     }
 
     fun evaluer(): Regelkjøringsrapport {
+        trenger.clear()
         aktiverRegler()
         while (plan.size > 0) {
             if (plan.all { it is Ekstern<*> }) {
                 // Vi stopper opp for å kjøre behov når vi treffer regler som trenger eksterne opplysninger
                 trenger.addAll(plan)
+                plan.clear()
+
                 break
             }
             kjørRegelPlan()
@@ -106,14 +123,11 @@ class Regelkjøring(
             plan.remove(regel)
             return
         }
-        println("Lager ${regel.produserer.navn}")
         val opplysning = regel.lagProdukt(opplysningerPåPrøvingsdato)
         kjørteRegler.add(regel)
         plan.remove(regel)
         opplysninger.leggTilUtledet(opplysning)
     }
-
-    private val trenger = mutableSetOf<Regel<*>>()
 
     private fun trenger(): Set<Opplysningstype<*>> {
         val eksterneOpplysninger = trenger.map { it.produserer }.toSet()

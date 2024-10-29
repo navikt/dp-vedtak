@@ -10,7 +10,7 @@ import no.nav.dagpenger.opplysning.regel.erUsann
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
-import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.prøvingsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object Utdanning {
     // § 4-6 første og andre avsnitt, Utdanning

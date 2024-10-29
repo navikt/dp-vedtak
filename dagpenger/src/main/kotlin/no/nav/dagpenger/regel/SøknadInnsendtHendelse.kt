@@ -22,6 +22,7 @@ import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.SvangerskapsrelaterteSykepengerKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.ØnskerEtterRapporteringsfristKontroll
 import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITid
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBeregningsregelKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
 import no.nav.dagpenger.regel.Virkningstidspunkt.VirkningstidspunktForLangtFramITid
@@ -64,7 +65,7 @@ class SøknadInnsendtHendelse(
     }
 
     override fun prøvingsdato(opplysninger: LesbarOpplysninger): LocalDate =
-        if (opplysninger.har(prøvingsdato)) opplysninger.finnOpplysning(prøvingsdato).verdi else skjedde
+        if (opplysninger.har(Søknadstidspunkt.prøvingsdato)) opplysninger.finnOpplysning(Søknadstidspunkt.prøvingsdato).verdi else skjedde
 
     override fun støtterInnvilgelse(opplysninger: LesbarOpplysninger): Boolean =
         opplysninger.har(støtterInnvilgelseOpplysningstype) &&
@@ -123,9 +124,5 @@ class SøknadInnsendtHendelse(
 
     companion object {
         val fagsakIdOpplysningstype = Opplysningstype.somHeltall("fagsakId")
-        val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")
-
-        // Har Virkningsdato som ID for å være kompatibel med behovløsere
-        val prøvingsdato = Opplysningstype.somDato("Prøvingsdato".id("Virkningsdato"))
     }
 }

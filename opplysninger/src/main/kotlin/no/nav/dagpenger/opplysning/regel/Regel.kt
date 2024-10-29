@@ -24,8 +24,10 @@ abstract class Regel<T : Comparable<T>> internal constructor(
             }
 
             produkt.utledetAv.opplysninger.forEach { avhengighet ->
-                val produsent = gjeldendeRegler.singleOrNull { it.produserer(avhengighet.opplysningstype) }
-                produsent?.lagPlan(opplysninger, plan, gjeldendeRegler)
+                val produsent =
+                    gjeldendeRegler.singleOrNull { it.produserer(avhengighet.opplysningstype) }
+                        ?: throw IllegalStateException("Fant ikke produsent for $avhengighet")
+                produsent.lagPlan(opplysninger, plan, gjeldendeRegler)
             }
 
             val avhengighetErErstattet = produkt.utledetAv.opplysninger.any { it.erErstattet }
@@ -41,8 +43,10 @@ abstract class Regel<T : Comparable<T>> internal constructor(
                 return
             } else {
                 avhengerAv.forEach { avhengighet ->
-                    val produsent = gjeldendeRegler.singleOrNull { it.produserer(avhengighet) }
-                    produsent?.lagPlan(opplysninger, plan, gjeldendeRegler)
+                    val produsent =
+                        gjeldendeRegler.singleOrNull { it.produserer(avhengighet) }
+                            ?: throw IllegalStateException("Fant ikke produsent for $avhengighet")
+                    produsent.lagPlan(opplysninger, plan, gjeldendeRegler)
                 }
             }
         }
