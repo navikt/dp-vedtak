@@ -89,30 +89,58 @@ class Regelkjøring(
             aktiverRegler()
         }
 
-        println("-------------------")
-        val o = mutableSetOf<Opplysningstype<*>>()
-        o.addAll(ønsketResultat)
-        ønsketResultat.forEach { opplysningstype ->
-            val opplysning = opplysningerPåPrøvingsdato.finnOpplysning(opplysningstype)
-            opplysning.utledetAv?.opplysninger?.forEach { utledetOpplysning ->
-                o.add(utledetOpplysning.opplysningstype)
+        val brukteOpplysninger = muligeOpplysninger()
+        opplysningerPåPrøvingsdato
+            .finnAlle()
+            .filterNot {
+                brukteOpplysninger.contains(it.opplysningstype)
+            }.forEach {
+                opplysninger.fjern(it)
             }
-        }
-
-        opplysningerPåPrøvingsdato.finnAlle().forEach { opplysning ->
-            if (o.contains(opplysning.opplysningstype)) {
-                println("vi beholder $opplysning")
-            } else {
-                println("Vi kaster $opplysning")
-            }
-        }
 
         return Regelkjøringsrapport(
             kjørteRegler = kjørteRegler,
             mangler = trenger(),
             informasjonsbehov = informasjonsbehov(),
-            foreldreløse = opplysninger.foreldreløse(),
+            foreldreløse = opplysninger.fjernet(),
         )
+    }
+
+    private fun muligeOpplysninger(): Set<Opplysningstype<*>> {
+        val brukteOpplysninger = mutableSetOf<Opplysningstype<*>>()
+        brukteOpplysninger.addAll(ønsketResultat)
+        val opplysningerUtenRegel =
+            opplysningerPåPrøvingsdato
+                .finnAlle()
+                .filter { opplysning ->
+                    alleRegler.none { it.produserer(opplysning.opplysningstype) }
+                }.map { it.opplysningstype }
+
+        brukteOpplysninger.addAll(opplysningerUtenRegel)
+
+        val muligeRegler = alleRegler.filterNot { opplysningerUtenRegel.contains(it.produserer) }
+        ønsketResultat.forEach { opplysningstype ->
+            val regel = muligeRegler.single { it.produserer(opplysningstype) }
+            brukteOpplysninger.add(regel.produserer)
+            regel.avhengerAv.forEach { avhengighet ->
+                val avhengigRegel = muligeRegler.single { it.produserer(avhengighet) }
+                brukteOpplysninger.add(avhengigRegel.produserer)
+                leggTilAvhengigRegel(avhengigRegel, brukteOpplysninger, muligeRegler)
+            }
+        }
+        return brukteOpplysninger.toSet()
+    }
+
+    private fun leggTilAvhengigRegel(
+        avhengigRegel: Regel<*>,
+        brukteOpplysninger: MutableSet<Opplysningstype<*>>,
+        muligeRegler: List<Regel<*>>,
+    ) {
+        avhengigRegel.avhengerAv.forEach { avhengighet ->
+            val avhengigRegel = muligeRegler.single { regel -> regel.produserer(avhengighet) }
+            brukteOpplysninger.add(avhengigRegel.produserer)
+            leggTilAvhengigRegel(avhengigRegel, brukteOpplysninger, muligeRegler)
+        }
     }
 
     private fun aktiverRegler() {

@@ -229,8 +229,6 @@ class RegelmotorIntegrasjonsTest {
         val g = Opplysningstype.somBoolsk("g")
         val h = Opplysningstype.somBoolsk("h")
         val i = Opplysningstype.somBoolsk("i")
-        val j = Opplysningstype.somBoolsk("j")
-        val k = Opplysningstype.somBoolsk("k")
 
         val regelsett =
             Regelsett("test av regelsett") {
@@ -241,9 +239,12 @@ class RegelmotorIntegrasjonsTest {
                 regel(d) { alle(g, h) }
                 regel(c) { enAv(f) }
                 regel(b) { enAv(e) }
-                regel(a) { enAv(b, c, d) }
+                regel(a) { alle(b, c, d) }
             }
 
+        val regelDAG = RegeltreBygger(regelsett).dag()
+        val mermaidDiagram = MermaidPrinter(regelDAG).toPrint()
+        println(mermaidDiagram)
         val opplysninger = Opplysninger()
         val regelkjøring =
             Regelkjøring(
@@ -268,10 +269,12 @@ class RegelmotorIntegrasjonsTest {
         opplysninger.leggTil(Faktum(f, true))
         opplysninger.leggTil(Faktum(g, true))
         opplysninger.leggTil(Faktum(h, true))
+        opplysninger.leggTil(Faktum(i, true)) // "fast" opplysning
 
         regelkjøring.evaluer().mangler.shouldBeEmpty()
 
         opplysninger.har(a) shouldBe true
+
         opplysninger.finnOpplysning(a).verdi shouldBe true
 
         opplysninger.leggTil(Faktum(g, false))
@@ -281,6 +284,7 @@ class RegelmotorIntegrasjonsTest {
         opplysninger.har(d) shouldBe true
         opplysninger.finnOpplysning(d).verdi shouldBe false
 
+        opplysninger.har(i) shouldBe true
         opplysninger.har(b) shouldBe false
         opplysninger.har(c) shouldBe false
         opplysninger.har(e) shouldBe false
