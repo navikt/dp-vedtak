@@ -89,6 +89,24 @@ class Regelkjøring(
             aktiverRegler()
         }
 
+        println("-------------------")
+        val o = mutableSetOf<Opplysningstype<*>>()
+        o.addAll(ønsketResultat)
+        ønsketResultat.forEach { opplysningstype ->
+            val opplysning = opplysningerPåPrøvingsdato.finnOpplysning(opplysningstype)
+            opplysning.utledetAv?.opplysninger?.forEach { utledetOpplysning ->
+                o.add(utledetOpplysning.opplysningstype)
+            }
+        }
+
+        opplysningerPåPrøvingsdato.finnAlle().forEach { opplysning ->
+            if (o.contains(opplysning.opplysningstype)) {
+                println("vi beholder $opplysning")
+            } else {
+                println("Vi kaster $opplysning")
+            }
+        }
+
         return Regelkjøringsrapport(
             kjørteRegler = kjørteRegler,
             mangler = trenger(),
