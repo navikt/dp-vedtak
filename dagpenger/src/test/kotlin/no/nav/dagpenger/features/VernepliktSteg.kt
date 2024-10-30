@@ -8,11 +8,12 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.Verneplikt
 
 class VernepliktSteg : No {
     private val fraDato = 23.mai(2024)
-    private val regelsett = listOf(Verneplikt.regelsett)
+    private val regelsett = listOf(Verneplikt.regelsett, Søknadstidspunkt.regelsett)
     private val opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 

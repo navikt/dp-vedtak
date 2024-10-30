@@ -90,6 +90,8 @@ class Regelkjøring(
         }
 
         val brukteOpplysninger = muligeOpplysninger()
+
+        // TODO: La oppførselen ligge i opplysninger
         opplysningerPåPrøvingsdato
             .finnAlle()
             .filterNot {
@@ -137,9 +139,9 @@ class Regelkjøring(
         muligeRegler: List<Regel<*>>,
     ) {
         avhengigRegel.avhengerAv.forEach { avhengighet ->
-            val avhengigRegel = muligeRegler.single { regel -> regel.produserer(avhengighet) }
-            brukteOpplysninger.add(avhengigRegel.produserer)
-            leggTilAvhengigRegel(avhengigRegel, brukteOpplysninger, muligeRegler)
+            val regel = muligeRegler.single { it.produserer(avhengighet) }
+            brukteOpplysninger.add(regel.produserer)
+            leggTilAvhengigRegel(regel, brukteOpplysninger, muligeRegler)
         }
     }
 

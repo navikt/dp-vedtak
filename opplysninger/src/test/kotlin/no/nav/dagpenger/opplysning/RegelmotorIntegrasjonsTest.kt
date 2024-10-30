@@ -285,6 +285,7 @@ class RegelmotorIntegrasjonsTest {
         opplysninger.finnOpplysning(d).verdi shouldBe false
 
         opplysninger.har(i) shouldBe true
+
         opplysninger.har(b) shouldBe false
         opplysninger.har(c) shouldBe false
         opplysninger.har(e) shouldBe false

@@ -90,7 +90,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 mapOf("opplysningerId" to opplysninger.id),
             ).asUpdate,
         )
-        OpplysningRepository(opplysninger.id, tx).lagreOpplysninger(opplysninger.aktiveOpplysninger)
+
+        OpplysningRepository(opplysninger.id, tx).lagreOpplysninger(opplysninger.aktiveOpplysninger, opplysninger.fjernet())
     }
 
     private class OpplysningRepository(
@@ -229,10 +230,14 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 Tekst -> row.string("verdi_string")
             } as T
 
-        fun lagreOpplysninger(opplysninger: List<Opplysning<*>>) {
+        fun lagreOpplysninger(
+            opplysninger: List<Opplysning<*>>,
+            fjernet: List<Opplysning<*>>,
+        ) {
             kildeRespository.lagreKilder(opplysninger.mapNotNull { it.kilde }, tx)
             batchOpplysningstyper(opplysninger.map { it.opplysningstype }).run(tx)
             batchOpplysninger(opplysninger).run(tx)
+            batchOpplysninger(fjernet, true).run(tx)
             lagreErstattetAv(opplysninger).run(tx)
             batchVerdi(opplysninger).run(tx)
             batchOpplysningLink(opplysninger).run(tx)
@@ -314,32 +319,35 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 },
             )
 
-        private fun batchOpplysninger(opplysninger: List<Opplysning<*>>) =
-            BatchStatement(
-                //language=PostgreSQL
-                """
-                WITH ins AS (
-                    SELECT opplysningstype_id FROM opplysningstype WHERE id = :typeId AND navn = :typeNavn AND datatype = :datatype 
-                )
-                INSERT INTO opplysning (id, status, opplysningstype_id, kilde_id, gyldig_fom, gyldig_tom, opprettet)
-                VALUES (:id, :status, (SELECT opplysningstype_id FROM ins), :kilde_id, :fom::timestamp, :tom::timestamp, :opprettet)
-                ON CONFLICT DO NOTHING
-                """.trimIndent(),
-                opplysninger.map { opplysning ->
-                    val gyldighetsperiode: Gyldighetsperiode = opplysning.gyldighetsperiode
-                    mapOf(
-                        "id" to opplysning.id,
-                        "status" to opplysning.javaClass.simpleName,
-                        "typeId" to opplysning.opplysningstype.id,
-                        "typeNavn" to opplysning.opplysningstype.navn,
-                        "datatype" to opplysning.opplysningstype.datatype.navn(),
-                        "kilde_id" to opplysning.kilde?.id,
-                        "fom" to gyldighetsperiode.fom.let { if (it == LocalDate.MIN) null else it },
-                        "tom" to gyldighetsperiode.tom.let { if (it == LocalDate.MAX) null else it },
-                        "opprettet" to opplysning.opprettet,
-                    )
-                },
+        private fun batchOpplysninger(
+            opplysninger: List<Opplysning<*>>,
+            fjernet: Boolean = false,
+        ) = BatchStatement(
+            //language=PostgreSQL
+            """
+            WITH ins AS (
+                SELECT opplysningstype_id FROM opplysningstype WHERE id = :typeId AND navn = :typeNavn AND datatype = :datatype 
             )
+            INSERT INTO opplysning (id, status, opplysningstype_id, kilde_id, gyldig_fom, gyldig_tom, opprettet, fjernet)
+            VALUES (:id, :status, (SELECT opplysningstype_id FROM ins), :kilde_id, :fom::timestamp, :tom::timestamp, :opprettet, :fjernet)
+            ON CONFLICT(id) DO UPDATE SET fjernet = :fjernet
+            """.trimIndent(),
+            opplysninger.map { opplysning ->
+                val gyldighetsperiode: Gyldighetsperiode = opplysning.gyldighetsperiode
+                mapOf(
+                    "id" to opplysning.id,
+                    "status" to opplysning.javaClass.simpleName,
+                    "typeId" to opplysning.opplysningstype.id,
+                    "typeNavn" to opplysning.opplysningstype.navn,
+                    "datatype" to opplysning.opplysningstype.datatype.navn(),
+                    "kilde_id" to opplysning.kilde?.id,
+                    "fom" to gyldighetsperiode.fom.let { if (it == LocalDate.MIN) null else it },
+                    "tom" to gyldighetsperiode.tom.let { if (it == LocalDate.MAX) null else it },
+                    "opprettet" to opplysning.opprettet,
+                    "fjernet" to fjernet,
+                )
+            },
+        )
 
         private fun lagreErstattetAv(opplysninger: List<Opplysning<*>>) =
             BatchStatement(
