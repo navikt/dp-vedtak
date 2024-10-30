@@ -19,6 +19,7 @@ class Opplysninger private constructor(
     constructor(vararg basertPå: Opplysninger) : this(emptyList(), basertPå.toList())
 
     val aktiveOpplysninger get() = opplysninger.toList()
+    private val fjernet = mutableListOf<Opplysning<*>>()
 
     override fun forDato(gjelderFor: LocalDate): LesbarOpplysninger {
         // TODO: Erstatt med noe collectorgreier får å unngå at opplysninger som er erstattet blir med
@@ -93,6 +94,13 @@ class Opplysninger private constructor(
     override fun finnAlle(opplysningstyper: List<Opplysningstype<*>>) = opplysningstyper.mapNotNull { finnNullableOpplysning(it) }
 
     override fun finnAlle() = alleOpplysninger.toList()
+
+    fun fjernet(): List<Opplysning<*>> = fjernet.toList()
+
+    fun fjern(opplysning: Opplysning<*>) {
+        fjernet.add(opplysning)
+        opplysninger.remove(opplysning)
+    }
 
     fun foreldreløse(): List<Opplysning<*>> =
         opplysninger.filter { opplysning ->

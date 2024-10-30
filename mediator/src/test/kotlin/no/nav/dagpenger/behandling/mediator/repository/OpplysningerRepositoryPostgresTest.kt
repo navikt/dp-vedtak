@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.longs.shouldBeLessThan
 import io.kotest.matchers.nulls.shouldBeNull
@@ -350,6 +351,20 @@ class OpplysningerRepositoryPostgresTest {
             fraDb
                 .finnOpplysning(inntektA)
                 .verdi.verdi.inntektsListe shouldBe inntektFaktum.verdi.verdi.inntektsListe
+        }
+    }
+
+    @Test
+    fun `kan fjerne opplysninger`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val heltallFaktum = Faktum(heltall, 10)
+            val opplysninger = Opplysninger(listOf(heltallFaktum))
+            repo.lagreOpplysninger(opplysninger)
+            opplysninger.fjern(heltallFaktum)
+            repo.lagreOpplysninger(opplysninger)
+            val fraDb = repo.hentOpplysninger(opplysninger.id)
+            fraDb.finnAlle().shouldBeEmpty()
         }
     }
 }
