@@ -262,7 +262,7 @@ internal class PersonMediatorTest {
             rapid.harBehov(Inntekt)
             testPerson.løsBehov(Inntekt)
 
-            antallOpplysninger() shouldBe 136
+            antallOpplysninger() shouldBe 137
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe true
