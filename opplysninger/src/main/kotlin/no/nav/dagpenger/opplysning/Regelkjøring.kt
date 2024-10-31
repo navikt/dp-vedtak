@@ -97,7 +97,7 @@ class Regelkjøring(
             .filterNot {
                 brukteOpplysninger.contains(it.opplysningstype)
             }.forEach {
-                opplysninger.fjern(it)
+                it.fjern()
             }
 
         return Regelkjøringsrapport(

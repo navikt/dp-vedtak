@@ -476,44 +476,61 @@ internal class PersonMediatorTest {
     @Test
     fun `endring av prøvingsdato`() {
         withMigratedDb {
+            skruPåFeature(Feature.INNVILGELSE)
             val testPerson =
                 TestPerson(
                     ident,
                     rapid,
                     innsendt = 1.juni(2024).atTime(12, 0),
                     søknadsdato = 1.juni(2024),
-                    ønskerFraDato = 20.juni(2024),
+                    ønskerFraDato = 1.juni(2024),
+                    InntektSiste12Mnd = 500000,
                 )
             løsBehandlingFramTilFerdig(testPerson)
 
+            testPerson.løsBehov(TarUtdanningEllerOpplæring)
+            testPerson.løsBehov(Inntekt)
+
             rapid.harHendelse("forslag_til_vedtak") {
-                medDato("prøvingsdato") shouldBe 20.juni(2024)
+                medDato("prøvingsdato") shouldBe 1.juni(2024)
+                medBoolsk("utfall") shouldBe true
             }
 
             // Setter ny prøvingsdato (som kalles Virkningsdato for bakoverkompabilitet med behovsløsere)
-            testPerson.endreOpplysning("Virkningsdato", 22.juni(2024))
+            val nyPrøvingsdato = 22.februar(2024)
+            testPerson.InntektSiste12Mnd = 0
+            testPerson.endreOpplysning("Virkningsdato", nyPrøvingsdato)
 
             rapid.harBehov(InntektId) {
-                medDato("Virkningsdato") shouldBe 22.juni(2024)
+                medDato("Virkningsdato") shouldBe nyPrøvingsdato
             }
-            testPerson.løsBehov(
-                InntektId,
-                mapOf(
-                    "verdi" to testPerson.inntektId,
-                    "gyldigTilOgMed" to 25.juni(2024),
-                ),
-            )
+            testPerson.løsBehov(InntektId)
 
             rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
             rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
             rapid.harBehov("RegistrertSomArbeidssøker") {
-                medDato("Virkningsdato") shouldBe 22.juni(2024)
+                medDato("Virkningsdato") shouldBe nyPrøvingsdato
             }
 
             testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd", "RegistrertSomArbeidssøker")
+            testPerson.løsBehov(TarUtdanningEllerOpplæring)
+            testPerson.løsBehov(Inntekt)
 
             rapid.harHendelse("forslag_til_vedtak") {
-                medDato("prøvingsdato") shouldBe 22.juni(2024)
+                medDato("prøvingsdato") shouldBe nyPrøvingsdato
+                medBoolsk("utfall") shouldBe false
+            }
+
+            withClue("Skal kun ha opplysninger nødvendig for avslag") {
+                personRepository.hent(ident.tilPersonIdentfikator()).also {
+                    it.shouldNotBeNull()
+                    it
+                        .behandlinger()
+                        .first()
+                        .opplysninger()
+                        .finnAlle()
+                        .shouldHaveSize(forventetAntallOpplysningerAvslag)
+                }
             }
         }
     }

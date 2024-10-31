@@ -11,7 +11,8 @@ class Opplysninger private constructor(
 ) : LesbarOpplysninger {
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
     private val basertPåOpplysninger: List<Opplysning<*>> = basertPå.flatMap { it.basertPåOpplysninger + it.opplysninger }.toList()
-    private val alleOpplysninger: List<Opplysning<*>> get() = (basertPåOpplysninger + opplysninger).filterNot { it.erErstattet }
+    private val alleOpplysninger: List<Opplysning<*>>
+        get() = (basertPåOpplysninger + opplysninger).filterNot { it.erErstattet }.filterNot { it.erFjernet }
 
     constructor() : this(UUIDv7.ny(), emptyList(), emptyList())
     constructor(id: UUID, opplysninger: List<Opplysning<*>>) : this(id, opplysninger, emptyList())
@@ -19,11 +20,14 @@ class Opplysninger private constructor(
     constructor(vararg basertPå: Opplysninger) : this(emptyList(), basertPå.toList())
 
     val aktiveOpplysninger get() = opplysninger.toList()
-    private val fjernet = mutableListOf<Opplysning<*>>()
 
     override fun forDato(gjelderFor: LocalDate): LesbarOpplysninger {
         // TODO: Erstatt med noe collectorgreier får å unngå at opplysninger som er erstattet blir med
-        val opplysningerForDato = opplysninger.filter { it.gyldighetsperiode.inneholder(gjelderFor) }.filterNot { it.erErstattet }
+        val opplysningerForDato =
+            opplysninger
+                .filter { it.gyldighetsperiode.inneholder(gjelderFor) }
+                .filterNot { it.erErstattet }
+                .filterNot { it.erFjernet }
         return Opplysninger(UUIDv7.ny(), opplysningerForDato)
     }
 
@@ -95,17 +99,7 @@ class Opplysninger private constructor(
 
     override fun finnAlle() = alleOpplysninger.toList()
 
-    fun fjernet(): List<Opplysning<*>> = fjernet.toList()
-
-    fun fjern(opplysning: Opplysning<*>) {
-        fjernet.add(opplysning)
-        opplysninger.remove(opplysning)
-    }
-
-    fun foreldreløse(): List<Opplysning<*>> =
-        opplysninger.filter { opplysning ->
-            opplysninger.none { it.utledetAv?.opplysninger?.contains(opplysning) == true }
-        }
+    fun fjernet(): List<Opplysning<*>> = opplysninger.filter { it.erFjernet }
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? {

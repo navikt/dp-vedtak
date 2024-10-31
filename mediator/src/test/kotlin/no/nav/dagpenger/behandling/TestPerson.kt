@@ -33,7 +33,7 @@ class TestPerson(
     internal val søknadsdato: LocalDate = 5.mai(2021),
     val alder: Int = 30,
     private val innsendt: LocalDateTime = LocalDateTime.now(),
-    val InntektSiste12Mnd: Int = 1234,
+    var InntektSiste12Mnd: Int = 1234,
     val InntektSiste36Mnd: Int = 1234,
     internal var ønskerFraDato: LocalDate = søknadsdato,
 ) {

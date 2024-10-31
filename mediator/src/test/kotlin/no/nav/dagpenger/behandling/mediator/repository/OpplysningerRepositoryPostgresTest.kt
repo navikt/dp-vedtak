@@ -359,9 +359,11 @@ class OpplysningerRepositoryPostgresTest {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
             val heltallFaktum = Faktum(heltall, 10)
+            val heltallFaktum2 = Faktum(heltall, 20)
             val opplysninger = Opplysninger(listOf(heltallFaktum))
+            heltallFaktum.erstattesAv(heltallFaktum2)
             repo.lagreOpplysninger(opplysninger)
-            opplysninger.fjern(heltallFaktum)
+            heltallFaktum.fjern()
             repo.lagreOpplysninger(opplysninger)
             val fraDb = repo.hentOpplysninger(opplysninger.id)
             fraDb.finnAlle().shouldBeEmpty()

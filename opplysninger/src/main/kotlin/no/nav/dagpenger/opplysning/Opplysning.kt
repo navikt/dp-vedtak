@@ -25,6 +25,7 @@ sealed class Opplysning<T : Comparable<T>>(
     val opprettet: LocalDateTime,
     private var _erstatter: Opplysning<T>? = null,
     private val _erstattetAv: MutableSet<Opplysning<T>> = mutableSetOf(),
+    private var fjernet: Boolean = false,
 ) : Klassifiserbart by opplysningstype {
     private val defaultRedigering = Redigerbar { opplysningstype.datatype != ULID && !erErstattet }
 
@@ -36,6 +37,8 @@ sealed class Opplysning<T : Comparable<T>>(
 
     val erstattetAv get() = _erstattetAv.toList()
 
+    val erFjernet get() = fjernet
+
     val kanRedigeres: (Redigerbar) -> Boolean get() = { redigerbar -> redigerbar.kanRedigere(this) && defaultRedigering.kanRedigere(this) }
 
     fun overlapper(opplysning: Opplysning<*>) =
@@ -46,6 +49,11 @@ sealed class Opplysning<T : Comparable<T>>(
     override fun hashCode() = id.hashCode()
 
     override fun toString() = "${javaClass.simpleName} om ${opplysningstype.navn} har verdi: $verdi som er $gyldighetsperiode"
+
+    fun fjern() {
+        _erstatter?.fjern()
+        fjernet = true
+    }
 
     fun erstattesAv(vararg erstatning: Opplysning<T>): List<Opplysning<T>> {
         val erstatninger = erstatning.toList().onEach { it._erstatter = this }
