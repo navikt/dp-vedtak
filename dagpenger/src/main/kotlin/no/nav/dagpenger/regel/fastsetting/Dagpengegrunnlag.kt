@@ -37,7 +37,7 @@ object Dagpengegrunnlag {
 
     private val oppjustertinntekt = Opplysningstype.somInntekt("Oppjustert inntekt")
     private val relevanteinntekter = Opplysningstype.somInntekt("Tellende inntekt")
-    val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp for grunnlag")
+    val grunnbeløpForDagpengeGrunnlag = Opplysningstype.somBeløp("Grunnbeløp for grunnlag")
 
     private val inntektId = Minsteinntekt.inntektId
 
@@ -62,11 +62,11 @@ object Dagpengegrunnlag {
         Regelsett("Dagpengegrunnlag") {
             regel(antallÅrI36Måneder) { oppslag(prøvingsdato) { 3.0 } }
             regel(faktorForMaksgrense) { oppslag(prøvingsdato) { 6.0 } }
-            regel(maksgrenseForGrunnlag) { multiplikasjon(grunnbeløp, faktorForMaksgrense) }
+            regel(maksgrenseForGrunnlag) { multiplikasjon(grunnbeløpForDagpengeGrunnlag, faktorForMaksgrense) }
 
             regel(inntekt) { innhentMed(inntektId) }
-            regel(grunnbeløp) { oppslag(prøvingsdato) { grunnbeløpFor(it) } }
-            regel(oppjustertinntekt) { oppjuster(grunnbeløp, inntekt) }
+            regel(grunnbeløpForDagpengeGrunnlag) { oppslag(prøvingsdato) { grunnbeløpFor(it) } }
+            regel(oppjustertinntekt) { oppjuster(grunnbeløpForDagpengeGrunnlag, inntekt) }
             regel(relevanteinntekter) {
                 filtrerRelevanteInntekter(
                     oppjustertinntekt,
@@ -122,7 +122,7 @@ object Dagpengegrunnlag {
             regel(harAvkortetPeriode3) { størreEnn(inntektperiode3, maksgrenseForGrunnlag) }
             regel(harAvkortet) { enAv(harAvkortetPeriode1, harAvkortetPeriode2, harAvkortetPeriode3) }
         }
-    val ønsketResultat = listOf(grunnbeløp, harAvkortet, bruktBeregningsregel)
+    val ønsketResultat = listOf(grunnbeløpForDagpengeGrunnlag, harAvkortet, bruktBeregningsregel)
 }
 
 private fun grunnbeløpFor(it: LocalDate) =

@@ -4,8 +4,8 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.regel.Minsteinntekt.grunnbeløp
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.grunnbeløpForDagpengeGrunnlag
 
 object VernepliktFastsetting {
     private val faktor = Opplysningstype.somHeltall("Faktor")
@@ -15,7 +15,7 @@ object VernepliktFastsetting {
     val regelsett =
         Regelsett("VernepliktFastsetting") {
             regel(faktor) { oppslag(prøvingsdato) { 3 } }
-            regel(vernepliktGrunnlag) { multiplikasjon(grunnbeløp, faktor) }
+            regel(vernepliktGrunnlag) { multiplikasjon(grunnbeløpForDagpengeGrunnlag, faktor) }
             regel(vernepliktPeriode) { oppslag(prøvingsdato) { 26 } }
         }
 
