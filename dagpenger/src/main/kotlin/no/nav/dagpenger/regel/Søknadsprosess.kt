@@ -7,6 +7,7 @@ import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
+import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting
 
 // @todo: Snu avhengighetet  - søknadinnsendtHendelse bør leve i "dagpenger"
 val støtterInnvilgelseOpplysningstype = Opplysningstype.somBoolsk("støtterInnvilgelse")
@@ -29,12 +30,10 @@ class Søknadsprosess : Forretningsprosess {
             return ønsketResultat
         }
 
-        val alderskravOppfylt = opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
-        val minsteinntektOppfylt = opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi
+        val alderskravOppfylt = opplysninger.oppfyller(Alderskrav.kravTilAlder)
+        val minsteinntektOppfylt = opplysninger.oppfyller(Minsteinntekt.minsteinntekt)
 
-        val støtterInnvilgelse =
-            opplysninger.har(støtterInnvilgelseOpplysningstype) &&
-                opplysninger.finnOpplysning(støtterInnvilgelseOpplysningstype).verdi
+        val støtterInnvilgelse = opplysninger.oppfyller(støtterInnvilgelseOpplysningstype)
 
         // Om krav til alder eller arbeidsinntekt ikke er oppfylt er det ingen grunn til å fortsette, men vi må fastsette hvilke tillegskrav Arena trenger.
         if (!alderskravOppfylt || !minsteinntektOppfylt) {
@@ -53,16 +52,22 @@ class Søknadsprosess : Forretningsprosess {
 
         ønsketResultat.add(KravPåDagpenger.kravPåDagpenger)
 
-        val harKravPåDagpenger =
-            opplysninger.har(KravPåDagpenger.kravPåDagpenger) && opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
+        val harKravPåDagpenger = opplysninger.oppfyller(KravPåDagpenger.kravPåDagpenger)
 
-        if (harKravPåDagpenger && støtterInnvilgelse) {
+        if (harKravPåDagpenger) {
             ønsketResultat.addAll(Dagpengegrunnlag.ønsketResultat)
             ønsketResultat.addAll(Egenandel.ønsketResultat)
             ønsketResultat.addAll(DagpengenesStørrelse.ønsketResultat)
             ønsketResultat.addAll(Dagpengeperiode.ønsketResultat)
+
+            if (opplysninger.oppfyller(Verneplikt.avtjentVerneplikt)) {
+                ønsketResultat.addAll(VernepliktFastsetting.ønsketResultat)
+            }
         }
 
         return ønsketResultat
     }
+
+    private fun LesbarOpplysninger.oppfyller(opplysningstype: Opplysningstype<Boolean>) =
+        har(opplysningstype) && finnOpplysning(opplysningstype).verdi
 }
