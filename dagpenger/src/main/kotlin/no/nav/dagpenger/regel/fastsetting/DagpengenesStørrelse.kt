@@ -6,11 +6,13 @@ import no.nav.dagpenger.opplysning.TemporalCollection
 import no.nav.dagpenger.opplysning.regel.addisjon
 import no.nav.dagpenger.opplysning.regel.avrund
 import no.nav.dagpenger.opplysning.regel.divisjon
+import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -33,6 +35,7 @@ object DagpengenesStørrelse {
     val barnetillegg = Opplysningstype.somBeløp("Barnetillegg")
     val dagsatsMedBarn = Opplysningstype.somBeløp("Dagsats med barn")
     val ukessats = Opplysningstype.somBeløp("Ukessats")
+    val barn = Opplysningstype.somBarn("Barn")
     private val maksGrunnlag = Opplysningstype.somBeløp("Maks grunnlag for dagpenger")
     private val antallArbeidsdagerPerÅr = Opplysningstype.somHeltall("Antall arbeidsdager per år")
     private val arbeidsdagerPerUke = Opplysningstype.somHeltall("Antall arbeidsdager per uke")
@@ -42,6 +45,7 @@ object DagpengenesStørrelse {
 
     val regelsett =
         Regelsett("§ 4-12. Dagpengenes størrelse\n (Sats)") {
+            regel(barn) { innhentMed(søknadIdOpplysningstype) }
             regel(antallBarn) { oppslag(prøvingsdato) { 0 } } // TODO: Satt til 0 for testing av innvilgelse
 
             regel(barnetilleggetsStørrelse) { oppslag(prøvingsdato) { Barnetillegg.forDato(it) } }

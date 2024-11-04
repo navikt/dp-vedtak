@@ -1,5 +1,6 @@
 package no.nav.dagpenger.opplysning
 
+import no.nav.dagpenger.opplysning.verdier.AlleBarn
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
@@ -18,6 +19,7 @@ sealed class Datatype<T : Comparable<T>>(
                 "ULID" -> ULID
                 "Penger" -> Penger
                 "Inntekt" -> InntektDataType
+                "Barn" -> BarnDataType
                 "Tekst" -> Tekst
                 else -> throw IllegalArgumentException("Unknown datatype: $datatype")
             }
@@ -43,3 +45,5 @@ data object Penger : Datatype<Beløp>(Beløp::class.java)
 data object InntektDataType : Datatype<Inntekt>(Inntekt::class.java) {
     override fun navn(): String = "Inntekt"
 }
+
+data object BarnDataType : Datatype<AlleBarn>(AlleBarn::class.java)
