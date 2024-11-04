@@ -26,6 +26,7 @@ class OpplysningTypeId(
 class Opplysningstype<T : Comparable<T>>(
     private val opplysningTypeId: OpplysningTypeId,
     val datatype: Datatype<T>,
+    val kanVæreFlere: Boolean = false,
 ) : Klassifiserbart {
     constructor(
         navn: String,
@@ -40,6 +41,8 @@ class Opplysningstype<T : Comparable<T>>(
         fun somHeltall(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Heltall)
 
         fun somHeltall(navn: String) = somHeltall(navn.id(navn))
+
+        fun somFlereHeltall(navn: String) = Opplysningstype(navn.id(navn), Heltall, true)
 
         fun somDesimaltall(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Desimaltall)
 

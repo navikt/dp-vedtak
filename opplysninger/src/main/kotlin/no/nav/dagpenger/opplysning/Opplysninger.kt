@@ -35,7 +35,7 @@ class Opplysninger private constructor(
     fun <T : Comparable<T>> leggTil(opplysning: Opplysning<T>) {
         val eksisterende = finnNullableOpplysning(opplysning.opplysningstype)
 
-        if (eksisterende == null) {
+        if (eksisterende == null || opplysning.opplysningstype.kanVæreFlere) {
             opplysninger.add(opplysning)
             return
         }
@@ -81,21 +81,34 @@ class Opplysninger private constructor(
     }
 
     internal fun <T : Comparable<T>> leggTilUtledet(opplysning: Opplysning<T>) {
-        alleOpplysninger.find { it.overlapper(opplysning) }?.let {
-            val erstattet = it as Opplysning<T>
-            opplysninger.addAll(erstattet.erstattesAv(opplysning))
-        } ?: opplysninger.add(opplysning)
+        val eksisterer = alleOpplysninger.find { it.overlapper(opplysning) }
+        if (eksisterer == null || opplysning.opplysningstype.kanVæreFlere) {
+            opplysninger.add(opplysning)
+            return
+        }
+        @Suppress("UNCHECKED_CAST")
+        val erstattet = eksisterer as Opplysning<T>
+        opplysninger.addAll(erstattet.erstattesAv(opplysning))
     }
 
     override fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T> =
         finnNullableOpplysning(opplysningstype) ?: throw IllegalStateException("Har ikke opplysning $opplysningstype som er gyldig")
 
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Comparable<T>> finnOpplysninger(opplysningstype: Opplysningstype<T>): List<Opplysning<T>> =
+        alleOpplysninger.filter { it.er(opplysningstype) } as List<Opplysning<T>>
+
     override fun finnOpplysning(opplysningId: UUID) =
         opplysninger.singleOrNull { it.id == opplysningId } ?: throw IllegalStateException("Har ikke opplysning $opplysningId")
 
-    override fun har(opplysningstype: Opplysningstype<*>) = finnNullableOpplysning(opplysningstype) != null
+    override fun har(opplysningstype: Opplysningstype<*>) = alleOpplysninger.any { it.er(opplysningstype) }
 
-    override fun finnAlle(opplysningstyper: List<Opplysningstype<*>>) = opplysningstyper.mapNotNull { finnNullableOpplysning(it) }
+    override fun finnAlle(opplysningstyper: List<Opplysningstype<*>>) =
+        opplysningstyper.flatMap { type ->
+            alleOpplysninger.filter {
+                it.er(type)
+            }
+        }
 
     override fun finnAlle() = alleOpplysninger.toList()
 
@@ -103,7 +116,8 @@ class Opplysninger private constructor(
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Comparable<T>> finnNullableOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T>? {
-        if (alleOpplysninger.count { it.er(opplysningstype) } > 1) {
+        val opplysningerUtenDuplikate = alleOpplysninger.filterNot { it.opplysningstype.kanVæreFlere }
+        if (opplysningerUtenDuplikate.count { it.er(opplysningstype) } > 1) {
             throw IllegalStateException(
                 """Har mer enn 1 opplysning av type $opplysningstype i opplysningerId=$id.
                 |Fant ${alleOpplysninger.count { it.er(opplysningstype) }} duplikater blant ${alleOpplysninger.size} opplysninger.
@@ -111,7 +125,7 @@ class Opplysninger private constructor(
                 """.trimMargin(),
             )
         }
-        return alleOpplysninger.singleOrNull { it.er(opplysningstype) } as Opplysning<T>?
+        return opplysningerUtenDuplikate.singleOrNull { it.er(opplysningstype) } as Opplysning<T>?
     }
 
     private fun <T : Comparable<T>> Opplysning<T>.overlapperHalenAv(opplysning: Opplysning<T>) =

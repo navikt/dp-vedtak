@@ -53,6 +53,7 @@ import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
 import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
 import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
+import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import org.junit.jupiter.api.BeforeEach
@@ -135,9 +136,6 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe
-                    forventetAntallOpplysningerAvslag
-
                 it.aktivBehandling.aktivAvklaringer.shouldHaveSize(6)
                 it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe
                     forventetAntallOpplysningerAvslag
@@ -600,8 +598,8 @@ internal class PersonMediatorTest {
             medNode("@utledetAv").shouldBeNull()
         }
 
-        rapid.harBehov("Fødselsdato", "Søknadsdato", "ØnskerDagpengerFraDato")
-        testPerson.løsBehov("Fødselsdato", "Søknadsdato", "ØnskerDagpengerFraDato")
+        rapid.harBehov("Fødselsdato", "Søknadsdato", ØnskerDagpengerFraDato)
+        testPerson.løsBehov("Fødselsdato", "Søknadsdato", ØnskerDagpengerFraDato)
 
         /**
          * Sjekker om mulig verneplikt

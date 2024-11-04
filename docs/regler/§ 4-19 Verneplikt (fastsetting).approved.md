@@ -5,7 +5,7 @@
 ```mermaid
 graph RL
   A["Faktor"] -->|"Oppslag"| B["Prøvingsdato"]
-  C["Grunnlag for verneplikt"] -->|"Multiplikasjon"| D["Grunnbeløp for grunnlag"]
+  C["Grunnlag for verneplikt"] -->|"Multiplikasjon"| D["Grunnbeløp"]
   C["Grunnlag for verneplikt"] -->|"Multiplikasjon"| A["Faktor"]
   E["Vernepliktperiode"] -->|"Oppslag"| B["Prøvingsdato"]
 ```
