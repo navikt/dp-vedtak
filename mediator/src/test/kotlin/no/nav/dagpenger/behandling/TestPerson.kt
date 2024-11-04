@@ -148,6 +148,34 @@ class TestPerson(
         )
     }
 
+    fun sendTilKontroll() {
+        rapid.sendTestMessage(
+            JsonMessage
+                .newMessage(
+                    "oppgave_sendt_til_kontroll",
+                    mapOf(
+                        "behandlingId" to behandlingId,
+                        "ident" to ident,
+                    ),
+                ).toJson(),
+            ident,
+        )
+    }
+
+    fun returnerTilSaksbehandler() {
+        rapid.sendTestMessage(
+            JsonMessage
+                .newMessage(
+                    "oppgave_returnert_til_saksbehandling",
+                    mapOf(
+                        "behandlingId" to behandlingId,
+                        "ident" to ident,
+                    ),
+                ).toJson(),
+            ident,
+        )
+    }
+
     fun godkjennForslagTilVedtak() {
         rapid.sendTestMessage(
             JsonMessage

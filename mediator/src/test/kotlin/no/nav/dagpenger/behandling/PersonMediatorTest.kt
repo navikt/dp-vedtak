@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDate
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainAll
@@ -282,6 +283,7 @@ internal class PersonMediatorTest {
                 it.behandlinger().first().kreverTotrinnskontroll() shouldBe true
             }
 
+            testPerson.sendTilKontroll()
             testPerson.godkjennForslagTilVedtak()
 
             rapid.harHendelse("vedtak_fattet") {
@@ -292,6 +294,37 @@ internal class PersonMediatorTest {
                     sats shouldBeGreaterThan 0
                 }
             }
+        }
+
+    @Test
+    fun `Behandling sendt til kontroll`() =
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    søknadsdato = 6.mai(2021),
+                    InntektSiste12Mnd = 500000,
+                )
+            skruPåFeature(Feature.INNVILGELSE)
+            løsBehandlingFramTilFerdig(testPerson)
+            testPerson.løsBehov(TarUtdanningEllerOpplæring)
+            testPerson.løsBehov(Inntekt)
+
+            testPerson.sendTilKontroll()
+
+            rapid.harHendelse("behandling_endret_tilstand") {
+                medTekst("gjeldendeTilstand") shouldBe "Låst"
+            }
+
+            shouldThrow<IllegalStateException> { testPerson.avbrytBehandling() }
+
+            testPerson.returnerTilSaksbehandler()
+
+            testPerson.sendTilKontroll()
+            testPerson.godkjennForslagTilVedtak()
+
+            rapid.harHendelse("vedtak_fattet")
         }
 
     private fun antallOpplysninger() =

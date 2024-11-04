@@ -14,14 +14,20 @@ import no.nav.dagpenger.behandling.mediator.mottak.BehandlingStårFastMessage
 import no.nav.dagpenger.behandling.mediator.mottak.GodkjennBehandlingMessage
 import no.nav.dagpenger.behandling.mediator.mottak.GodkjennBehandlingMottak
 import no.nav.dagpenger.behandling.mediator.mottak.InnsendingFerdigstiltMottak
+import no.nav.dagpenger.behandling.mediator.mottak.OppgaveReturnertTilSaksbehandler
+import no.nav.dagpenger.behandling.mediator.mottak.OppgaveSendtTilKontroll
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMottak
 import no.nav.dagpenger.behandling.mediator.mottak.PåminnelseMottak
+import no.nav.dagpenger.behandling.mediator.mottak.ReturnerTilSaksbehandlerMessage
+import no.nav.dagpenger.behandling.mediator.mottak.SendtTilKontrollMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMottak
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.LåsHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.LåsOppHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
@@ -43,6 +49,8 @@ internal class MessageMediator(
         OpplysningSvarMottak(rapidsConnection, this, opplysningstyper)
         PåminnelseMottak(rapidsConnection, this)
         SøknadInnsendtMottak(rapidsConnection, this)
+        OppgaveSendtTilKontroll(rapidsConnection, this)
+        OppgaveReturnertTilSaksbehandler(rapidsConnection, this)
     }
 
     override fun behandle(
@@ -98,6 +106,26 @@ internal class MessageMediator(
     override fun behandle(
         hendelse: ForslagGodkjentHendelse,
         message: GodkjennBehandlingMessage,
+        context: MessageContext,
+    ) {
+        behandle(hendelse, message) {
+            hendelseMediator.behandle(it, context)
+        }
+    }
+
+    override fun behandle(
+        hendelse: LåsHendelse,
+        message: SendtTilKontrollMessage,
+        context: MessageContext,
+    ) {
+        behandle(hendelse, message) {
+            hendelseMediator.behandle(it, context)
+        }
+    }
+
+    override fun behandle(
+        hendelse: LåsOppHendelse,
+        message: ReturnerTilSaksbehandlerMessage,
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
@@ -152,6 +180,18 @@ internal interface IMessageMediator {
     fun behandle(
         hendelse: ForslagGodkjentHendelse,
         message: GodkjennBehandlingMessage,
+        context: MessageContext,
+    )
+
+    fun behandle(
+        hendelse: LåsHendelse,
+        message: SendtTilKontrollMessage,
+        context: MessageContext,
+    )
+
+    fun behandle(
+        hendelse: LåsOppHendelse,
+        message: ReturnerTilSaksbehandlerMessage,
         context: MessageContext,
     )
 }

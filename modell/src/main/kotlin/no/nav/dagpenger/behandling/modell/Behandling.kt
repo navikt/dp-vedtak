@@ -12,6 +12,8 @@ import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.EksternId
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.LåsHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.LåsOppHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
@@ -131,6 +133,16 @@ class Behandling private constructor(
         tilstand.håndter(this, hendelse)
     }
 
+    override fun håndter(hendelse: LåsHendelse) {
+        hendelse.kontekst(this)
+        tilstand.håndter(this, hendelse)
+    }
+
+    override fun håndter(hendelse: LåsOppHendelse) {
+        hendelse.kontekst(this)
+        tilstand.håndter(this, hendelse)
+    }
+
     override fun håndter(hendelse: PåminnelseHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
@@ -157,6 +169,7 @@ class Behandling private constructor(
         UnderOpprettelse,
         UnderBehandling,
         ForslagTilVedtak,
+        Låst,
         Avbrutt,
         Ferdig,
         Redigert,
@@ -176,6 +189,7 @@ class Behandling private constructor(
                 TilstandType.UnderOpprettelse -> UnderOpprettelse(opprettet)
                 TilstandType.UnderBehandling -> UnderBehandling(opprettet)
                 TilstandType.ForslagTilVedtak -> ForslagTilVedtak(opprettet)
+                TilstandType.Låst -> Låst(opprettet)
                 TilstandType.Avbrutt -> Avbrutt(opprettet)
                 TilstandType.Ferdig -> Ferdig(opprettet)
                 TilstandType.Redigert -> Redigert(opprettet)
@@ -215,6 +229,22 @@ class Behandling private constructor(
         fun håndter(
             behandling: Behandling,
             hendelse: ForslagGodkjentHendelse,
+        ): Unit =
+            throw IllegalStateException(
+                "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
+            )
+
+        fun håndter(
+            behandling: Behandling,
+            hendelse: LåsHendelse,
+        ): Unit =
+            throw IllegalStateException(
+                "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
+            )
+
+        fun håndter(
+            behandling: Behandling,
+            hendelse: LåsOppHendelse,
         ): Unit =
             throw IllegalStateException(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
@@ -405,6 +435,16 @@ class Behandling private constructor(
 
         override fun håndter(
             behandling: Behandling,
+            hendelse: LåsHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandling sendt til kontroll")
+
+            behandling.tilstand(Låst(), hendelse)
+        }
+
+        override fun håndter(
+            behandling: Behandling,
             hendelse: ForslagGodkjentHendelse,
         ) {
             hendelse.kontekst(this)
@@ -574,6 +614,68 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.info("Behandlingen er avbrutt, ignorerer avklaringer")
+        }
+    }
+
+    private data class Låst(
+        override val opprettet: LocalDateTime = LocalDateTime.now(),
+    ) : BehandlingTilstand {
+        override val type = TilstandType.Låst
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: LåsOppHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen ble ikke godkjent, settes tilbake til forslag")
+
+            behandling.tilstand(ForslagTilVedtak(), hendelse)
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: ForslagGodkjentHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Forslag til vedtak godkjent")
+            // TODO: Hva mer gjør vi når vi har godkjent forslaget?
+            // Sjekke aksjonspunkter/varsel/hypoteser?
+            if (behandling.opplysninger.finnAlle().any { it is Hypotese<*> }) {
+                // TODO: Vi bør sannsynligvis gjøre dette
+                // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
+            }
+
+            // todo : Skulle man ha kvittert ut totrinnskontroll her?
+            behandling.tilstand(Ferdig(), hendelse)
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvbrytBehandlingHendelse,
+        ): Unit = throw IllegalStateException("Kan ikke avbryte en låst behandling")
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvklaringIkkeRelevantHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er låst, ignorerer avklaringer")
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: OpplysningSvarHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er låst, ignorerer opplysningssvar")
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: LåsHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er allerede låst")
         }
     }
 
