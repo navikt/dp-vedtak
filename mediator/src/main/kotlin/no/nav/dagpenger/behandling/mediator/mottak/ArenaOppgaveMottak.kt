@@ -36,9 +36,8 @@ internal class ArenaOppgaveMottak(
         context: MessageContext,
     ) {
         val sakId = packet["after.SAK_ID"].toString()
-        val description = packet["after.DESCRIPTION"].toString()
         withLoggingContext("sakId" to sakId) {
-            logger.info { "Mottok oppgave fra Arena, tekst=$description" }
+            logger.info { "Mottok oppgave fra Arena" }
             sikkerlogg.info { "Mottok oppgave fra Arena. Pakke=${packet.toJson()}" }
         }
     }
