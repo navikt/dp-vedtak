@@ -6,7 +6,6 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
-import mu.withLoggingContext
 
 internal class ArenaOppgaveMottak(
     rapidsConnection: RapidsConnection,
@@ -25,11 +24,11 @@ internal class ArenaOppgaveMottak(
         packet: JsonMessage,
         context: MessageContext,
     ) {
-        val sakId = packet["sak_id"].toString()
-        withLoggingContext("sakId" to sakId) {
-            logger.info { "Mottok oppgave fra Arena" }
-            sikkerlogg.info { "Mottok oppgave fra Arena. Pakke=${packet.toJson()}" }
-        }
+        // val sakId = packet["sak_id"].toString()
+        // withLoggingContext("sakId" to sakId) {
+        logger.info { "Mottok oppgave fra Arena" }
+        sikkerlogg.info { "Mottok oppgave fra Arena. Pakke=${packet.toJson()}" }
+        // }
     }
 
     private companion object {
