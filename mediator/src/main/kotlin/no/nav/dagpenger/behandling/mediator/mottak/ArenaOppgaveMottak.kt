@@ -44,15 +44,16 @@ internal class ArenaOppgaveMottak(
         val sakId = packet["after.SAK_ID"].toString()
         withLoggingContext("sakId" to sakId) {
             logger.info { "Mottok oppgave fra Arena, vurderer om noe skal avbrytes" }
-            sikkerlogg.info { "Mottok oppgave fra Arena. Pakke=${packet.toJson()}" }
 
             val behandling = sakRepository.finnBehandling(sakId.toInt())
             if (behandling == null) {
                 logger.info { "Fant ingen behandling for sakId=$sakId som skal avbrytes" }
                 return@withLoggingContext
             }
+
             val beskrivelse = packet["after.OPPGAVETYPE_BESKRIVELSE"].toString()
             logger.info { "Publiserer avbrytmelding for ${behandling.behandlingId}, mottok oppgave av type=$beskrivelse" }
+            sikkerlogg.info { "Mottok oppgave fra Arena. Pakke=${packet.toJson()}" }
         }
     }
 
