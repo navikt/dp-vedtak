@@ -29,7 +29,7 @@ class ArenaOppgaveMottakTest {
     @Language("JSON")
     private val meldingJSON = """{
       "table": "SIAMO.OPPGAVE_LOGG",
-      "op_type": "I",
+      "op_type": "U",
       "op_ts": "2024-11-05 12:12:46.000000",
       "current_ts": "2024-11-05 12:12:51.325004",
       "pos": "00000003570305543589",
