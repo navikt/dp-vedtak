@@ -22,7 +22,7 @@ internal class ArenaOppgaveMottak(
                 validate {
                     it.requireKey(
                         "after.SAK_ID",
-                        "after.SAK_TYPE",
+                        "after.DESCRIPTION",
                     )
                 }
                 validate { it.require("after.REG_DATO", JsonNode::asArenaDato) }
@@ -36,8 +36,9 @@ internal class ArenaOppgaveMottak(
         context: MessageContext,
     ) {
         val sakId = packet["after.SAK_ID"].toString()
+        val description = packet["after.DESCRIPTION"].toString()
         withLoggingContext("sakId" to sakId) {
-            logger.info { "Mottok oppgave fra Arena" }
+            logger.info { "Mottok oppgave fra Arena, tekst=$description" }
             sikkerlogg.info { "Mottok oppgave fra Arena. Pakke=${packet.toJson()}" }
         }
     }
