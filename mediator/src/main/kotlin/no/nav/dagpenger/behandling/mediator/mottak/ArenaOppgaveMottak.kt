@@ -14,8 +14,9 @@ internal class ArenaOppgaveMottak(
     init {
         River(rapidsConnection)
             .apply {
-                validate { it.demandKey("oppgave_logg_id") }
-                validate { it.requireKey("sak_id") }
+                validate { it.requireKey("op_type", "pos") }
+                // validate { it.demandKey("oppgave_logg_id") }
+                // validate { it.requireKey("sak_id") }
             }.register(this)
     }
 
