@@ -1,9 +1,14 @@
-kafka_pool: nav-dev
+kafka:
+  pool: nav-dev
+  extra_topic: teamdagpenger.journalforing.v1,aapen-arena-dagpengeoppgavelogget-v1-q1
+
 ingresses:
   - https://dp-behandling.intern.dev.nav.no
+
 gcp:
   sql:
     tier: db-custom-1-3840
+
 flyway:
   cleanDisabled: false
 

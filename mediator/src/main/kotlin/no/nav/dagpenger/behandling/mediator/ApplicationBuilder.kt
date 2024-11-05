@@ -11,6 +11,7 @@ import no.nav.dagpenger.behandling.mediator.api.ApiMessageContext
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.audit.ApiAuditlogg
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
+import no.nav.dagpenger.behandling.mediator.mottak.ArenaOppgaveMottak
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringKafkaObservatør
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
@@ -34,6 +35,9 @@ internal class ApplicationBuilder(
         RapidApplication
             .create(config) { engine, rapidsConnection: KafkaRapid ->
                 val aktivitetsloggMediator = AktivitetsloggMediator()
+
+                // Logger bare oppgaver enn så lenge. Bør inn i HendelseMediator
+                ArenaOppgaveMottak(rapidsConnection)
 
                 val personRepository =
                     PersonRepositoryPostgres(

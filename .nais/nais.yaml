@@ -38,6 +38,8 @@ spec:
       value: '{{flyway.cleanDisabled}}'
     - name: CLEAN_ON_STARTUP
       value: "false"
+    - name: KAFKA_EXTRA_TOPIC
+      value: {{kafka.extra_topic}}
   envFrom:
     - secret: dp-behandling-unleash-api-token
   {{#if ingresses}}
@@ -77,7 +79,7 @@ spec:
           - name: behandling
             envVarPrefix: DB
   kafka:
-    pool: "{{ kafka_pool }}"
+    pool: "{{ kafka.pool }}"
   accessPolicy:
     outbound:
       external:
