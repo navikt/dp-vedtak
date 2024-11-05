@@ -21,7 +21,8 @@ internal class ArenaOppgaveMottak(
     init {
         River(rapidsConnection)
             .apply {
-                validate { it.requireKey("op_type", "pos") }
+                validate { it.demandValue("op_type", "U") }
+                validate { it.requireKey("pos") }
                 validate { it.require("op_ts", JsonNode::asArenaDato) }
                 validate {
                     it.requireKey(
@@ -44,7 +45,11 @@ internal class ArenaOppgaveMottak(
             logger.info { "Mottok oppgave fra Arena" }
             sikkerlogg.info { "Mottok oppgave fra Arena. Pakke=${packet.toJson()}" }
 
-            val behandling = sakRepository.finnBehandling(sakId.toInt()) ?: return@withLoggingContext
+            val behandling = sakRepository.finnBehandling(sakId.toInt())
+            if (behandling == null) {
+                logger.info { "Fant ingen aktiv behandling for sakId $sakId" }
+                return@withLoggingContext
+            }
             logger.info { "Publiserer avbrytmelding for ${behandling.behandlingId}" }
         }
     }
