@@ -29,7 +29,16 @@ import java.time.LocalDate
 internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
     BehandlingDTO(
         behandlingId = this.behandlingId,
-        tilstand = BehandlingDTO.Tilstand.valueOf(tilstand().first.name),
+        tilstand =
+            when (this.tilstand().first) {
+                Behandling.TilstandType.UnderOpprettelse -> BehandlingDTO.Tilstand.UnderOpprettelse
+                Behandling.TilstandType.UnderBehandling -> BehandlingDTO.Tilstand.UnderBehandling
+                Behandling.TilstandType.ForslagTilVedtak -> BehandlingDTO.Tilstand.ForslagTilVedtak
+                Behandling.TilstandType.Låst -> BehandlingDTO.Tilstand.Låst
+                Behandling.TilstandType.Avbrutt -> BehandlingDTO.Tilstand.Avbrutt
+                Behandling.TilstandType.Ferdig -> BehandlingDTO.Tilstand.Ferdig
+                Behandling.TilstandType.Redigert -> BehandlingDTO.Tilstand.Redigert
+            },
         opplysning =
             this.opplysninger().finnAlle().map { opplysning ->
                 opplysning.tilOpplysningDTO()
