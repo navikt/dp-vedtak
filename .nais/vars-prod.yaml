@@ -1,6 +1,6 @@
 kafka:
   pool: nav-prod
-  extra_topic: teamdagpenger.journalforing.v1,aapen-arena-dagpengeoppgavelogget-v1-p
+  extra_topic: teamdagpenger.journalforing.v1,teamarenanais.aapen-arena-dagpengeoppgavelogget-v1-p
 
 gcp:
   sql:
