@@ -1,18 +1,29 @@
 package no.nav.dagpenger.behandling.mediator.mottak
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
+import io.mockk.spyk
+import io.mockk.verify
+import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 
 class ArenaOppgaveMottakTest {
+    private val sakRepository = spyk(SakRepository())
+
     private val rapid =
         TestRapid().apply {
-            ArenaOppgaveMottak(this)
+            ArenaOppgaveMottak(this, sakRepository)
         }
 
     @Test
     fun `Leser inn oppgaver`() {
-        rapid.sendTestMessage(meldingJSON)
+        withMigratedDb {
+            rapid.sendTestMessage(meldingJSON)
+
+            verify {
+                sakRepository.finnBehandling(15102351)
+            }
+        }
     }
 
     @Language("JSON")
