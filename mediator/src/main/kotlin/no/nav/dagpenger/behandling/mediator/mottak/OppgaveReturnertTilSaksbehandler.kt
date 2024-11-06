@@ -3,11 +3,9 @@ package no.nav.dagpenger.behandling.mediator.mottak
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
-import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.instrumentation.annotations.WithSpan
-import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
@@ -42,21 +40,9 @@ internal class OppgaveReturnertTilSaksbehandler(
         withLoggingContext(
             "behandlingId" to behandlingId.toString(),
         ) {
-            logger.info { "Behandling sendt til kontroll" }
             val message = ReturnerTilSaksbehandlerMessage(packet)
             message.behandle(messageMediator, context)
         }
-    }
-
-    override fun onError(
-        problems: MessageProblems,
-        context: MessageContext,
-    ) {
-        logger.error { problems }
-    }
-
-    private companion object {
-        private val logger = KotlinLogging.logger {}
     }
 }
 

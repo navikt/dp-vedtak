@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.github.navikt.tbd_libs.rapids_and_rivers.withMDC
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import mu.KotlinLogging
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.mediator.melding.HendelseRepository
 import no.nav.dagpenger.behandling.mediator.mottak.AvbrytBehandlingMessage
@@ -51,6 +52,10 @@ internal class MessageMediator(
         SøknadInnsendtMottak(rapidsConnection, this)
         OppgaveSendtTilKontroll(rapidsConnection, this)
         OppgaveReturnertTilSaksbehandler(rapidsConnection, this)
+    }
+
+    private companion object {
+        private val logger = KotlinLogging.logger {}
     }
 
     override fun behandle(
@@ -139,9 +144,11 @@ internal class MessageMediator(
         håndter: (HENDELSE) -> Unit,
     ) {
         withMDC(message.tracinginfo()) {
+            logger.info { "Behandler hendelse: ${hendelse.javaClass.simpleName}" }
             message.lagreMelding(hendelseRepository)
             håndter(hendelse) // @todo: feilhåndtering
             hendelseRepository.markerSomBehandlet(message.id)
+            logger.info { "Behandlet hendelse: ${hendelse.javaClass.simpleName}" }
         }
     }
 }
