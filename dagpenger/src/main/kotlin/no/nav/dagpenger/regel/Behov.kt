@@ -5,30 +5,31 @@ import kotlin.reflect.KProperty
 object Behov {
     val Søknadsdato by StringConstant()
     val ØnskerDagpengerFraDato by StringConstant()
-
     val InntektId by StringConstant()
+
     val OpptjeningsperiodeFraOgMed by StringConstant()
     val SisteAvsluttendeKalenderMåned by StringConstant()
-
     val KanJobbeDeltid by StringConstant()
+
     val KanJobbeHvorSomHelst by StringConstant()
     val HelseTilAlleTyperJobb by StringConstant()
     val VilligTilÅBytteYrke by StringConstant()
-
     val RegistrertSomArbeidssøker by StringConstant()
 
     val Ordinær by StringConstant()
+
     val Permittert by StringConstant()
     val Lønnsgaranti by StringConstant()
     val PermittertFiskeforedling by StringConstant()
     val TarUtdanningEllerOpplæring by StringConstant()
-
     val Verneplikt by StringConstant()
 
     val HarTaptArbeid by StringConstant()
-    val KravPåLønn by StringConstant()
 
+    val KravPåLønn by StringConstant()
     val Inntekt by StringConstant()
+
+    val Barnetillegg by StringConstant()
 }
 
 class StringConstant {

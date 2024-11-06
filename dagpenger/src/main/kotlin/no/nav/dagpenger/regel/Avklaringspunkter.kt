@@ -106,4 +106,12 @@ object Avklaringspunkter {
             beskrivelse = "Bruker er under 18 og skal ikke ha automatisk behandling",
             kanKvitteres = true,
         )
+
+    val BarnMåGodkjennes =
+        Avklaringkode(
+            kode = "BarnMåGodkjennes",
+            tittel = "Barn må godkjennes for å gi barnetillegg",
+            beskrivelse = "Barn må godkjennes om de skal gi barnetillegg",
+            kanKvitteres = true,
+        )
 }

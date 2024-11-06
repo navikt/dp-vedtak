@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import no.nav.dagpenger.inntekt.v1.KlassifisertInntektMåned
+import no.nav.dagpenger.regel.Behov.Barnetillegg
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.InntektId
@@ -271,6 +272,7 @@ class TestPerson(
                 // Verneplikt
                 Verneplikt to false,
                 TarUtdanningEllerOpplæring to false,
+                Barnetillegg to emptyList<String>(),
                 Inntekt to mapOf("verdi" to inntektV1),
                 "Beregnet vanlig arbeidstid per uke før tap" to 40,
             )

@@ -61,16 +61,13 @@ class OpplysningerRepositoryPostgresTest {
                 Faktum(
                     barn,
                     Barn(
-                        "Ola",
                         fødselsdato = 1.april(2010),
-                        fornavn = "fornavn",
-                        mellomnavn = "mellomnavn",
+                        fornavnOgMellomnavn = "fornavn",
                         etternavn = "etternavn",
-                        land = "NOR",
+                        statsborgerskap = "NOR",
                         kvalifiserer = true,
                     ),
                 )
-
             val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum, desimalltallFaktum, tekstFaktum, barn))
             repo.lagreOpplysninger(opplysninger)
 
@@ -85,7 +82,7 @@ class OpplysningerRepositoryPostgresTest {
             fraDb.finnOpplysning(datoFaktum.opplysningstype).verdi shouldBe datoFaktum.verdi
             fraDb.finnOpplysning(datoFaktum.opplysningstype).kilde?.id shouldBe kildeB.id
             fraDb.finnOpplysning(tekstFaktum.opplysningstype).verdi shouldBe tekstFaktum.verdi
-            fraDb.finnOpplysning(barn.opplysningstype).verdi shouldBe barn.verdi
+            fraDb.finnOpplysninger(barn.opplysningstype)[0].verdi shouldBe barn.verdi
 
             fraDb.finnOpplysning(desimalltallFaktum.opplysningstype).verdi shouldBe desimalltallFaktum.verdi
         }

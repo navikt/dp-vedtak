@@ -135,37 +135,42 @@ internal class OpplysningSvarMessage(
                         throw IllegalArgumentException("Ukjent opplysningstype: $typeNavn")
                     }
 
-                val svar = lagSvar(løsning)
-                val kilde =
-                    when (løsning.has("@kilde")) {
-                        true -> {
-                            val ident =
-                                løsning["@kilde"]["saksbehandler"]?.asText() ?: throw IllegalArgumentException("Mangler saksbehandler")
-                            Saksbehandlerkilde(
-                                meldingsreferanseId = packet["@id"].asUUID(),
-                                opprettet = packet["@opprettet"].asLocalDateTime(),
-                                ident = ident,
-                            )
+                løsning.somListe().map {
+                    val svar = lagSvar(løsning)
+                    val kilde =
+                        when (løsning.has("@kilde")) {
+                            true -> {
+                                val ident =
+                                    løsning["@kilde"]["saksbehandler"]?.asText() ?: throw IllegalArgumentException("Mangler saksbehandler")
+                                Saksbehandlerkilde(
+                                    meldingsreferanseId = packet["@id"].asUUID(),
+                                    opprettet = packet["@opprettet"].asLocalDateTime(),
+                                    ident = ident,
+                                )
+                            }
+
+                            false -> {
+                                Systemkilde(
+                                    meldingsreferanseId = packet["@id"].asUUID(),
+                                    opprettet = packet["@opprettet"].asLocalDateTime(),
+                                )
+                            }
                         }
 
-                        false -> {
-                            Systemkilde(meldingsreferanseId = packet["@id"].asUUID(), opprettet = packet["@opprettet"].asLocalDateTime())
-                        }
-                    }
+                    val utledetAv = packet["@utledetAv"][typeNavn]?.map { it.asUUID() } ?: emptyList()
 
-                val utledetAv = packet["@utledetAv"][typeNavn]?.map { it.asUUID() } ?: emptyList()
-
-                val opplysningSvarBygger =
-                    OpplysningSvarBygger(
-                        opplysningstype,
-                        JsonMapper(svar.verdi),
-                        kilde,
-                        svar.tilstand,
-                        svar.gyldighetsperiode,
-                        utledetAv,
-                    )
-                val opplysning = opplysningSvarBygger.opplysningSvar()
-                add(opplysning)
+                    val opplysningSvarBygger =
+                        OpplysningSvarBygger(
+                            opplysningstype,
+                            JsonMapper(svar.verdi),
+                            kilde,
+                            svar.tilstand,
+                            svar.gyldighetsperiode,
+                            utledetAv,
+                        )
+                    val opplysning = opplysningSvarBygger.opplysningSvar()
+                    add(opplysning)
+                }
             }
         }
 
@@ -184,6 +189,12 @@ internal class OpplysningSvarMessage(
 
         fun lagSvar(jsonNode: JsonNode): Svar = svarStrategier.firstNotNullOf { it.svar(jsonNode) }
     }
+
+    private fun JsonNode.somListe(): List<JsonNode> =
+        when (isArray) {
+            true -> toList()
+            false -> listOf(this)
+        }
 }
 
 private fun interface SvarStrategi {
@@ -224,6 +235,7 @@ private object KomplekstSvar : SvarStrategi {
 private object EnkeltSvar : SvarStrategi {
     override fun svar(svar: JsonNode): Svar? {
         if (svar.isObject) return null
+        if (svar.isArray && svar.isEmpty) return null
         return Svar(svar, Tilstand.Faktum)
     }
 }

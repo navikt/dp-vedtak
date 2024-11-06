@@ -42,6 +42,7 @@ dependencies {
     testImplementation(libs.mock.oauth2.server)
     testImplementation(libs.bundles.postgres.test)
     testImplementation("io.ktor:ktor-server-test-host-jvm:${libs.versions.ktor.get()}")
+    testImplementation("com.approvaltests:approvaltests:22.3.3")
 }
 
 application {
