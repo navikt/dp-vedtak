@@ -19,6 +19,7 @@ import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Opphold
 import no.nav.dagpenger.regel.Opptjeningstid
 import no.nav.dagpenger.regel.ReellArbeidssøker
+import no.nav.dagpenger.regel.Samordning
 import no.nav.dagpenger.regel.StreikOgLockout
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.Utdanning
@@ -58,6 +59,7 @@ fun dokumentasjon(scenario: Scenario) {
             "@regel-dagpengensStørrelse" to DagpengenesStørrelse.regelsett,
             "@regel-egenandel" to Egenandel.regelsett,
             "@regel-verneplikt-fastsetting" to VernepliktFastsetting.regelsett,
+            "@regel-samordning" to Samordning.regelsett,
         )
     val regelsett = regler[test]
     requireNotNull(regelsett) { "Fant ikke regelsett for $test, det må mappes manuelt i RegeltreDokumentasjonPlugin" }

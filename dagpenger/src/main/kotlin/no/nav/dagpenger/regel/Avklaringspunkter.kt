@@ -56,6 +56,13 @@ object Avklaringspunkter {
             beskrivelse = "Personen har lukkede saker i Arena siste 8 uker",
         )
 
+    val Samordnes =
+        Avklaringkode(
+            kode = "Samordning",
+            tittel = "Om reduserte ytelser fra folketrygden som skal samordnes",
+            beskrivelse = "Finne ut om det er noen reduserte ytelser fra folketrygden som skal samordnes",
+        )
+
     val InntektNesteKalendermåned =
         Avklaringkode(
             kode = "InntektNesteKalendermåned",
