@@ -7,6 +7,7 @@ import kotliquery.sessionOf
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.objectMapper
+import no.nav.dagpenger.opplysning.BarnDatatype
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
@@ -25,6 +26,7 @@ import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.Utledning
 import no.nav.dagpenger.opplysning.id
+import no.nav.dagpenger.opplysning.verdier.Barn
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
@@ -224,6 +226,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 Heltall -> row.int("verdi_heltall")
                 ULID -> Ulid(row.string("verdi_string"))
                 Penger -> Beløp(row.string("verdi_string"))
+                BarnDatatype -> objectMapper.readValue(row.string("verdi_jsonb"), Barn::class.java) as T
                 InntektDataType ->
                     Inntekt(
                         row.binaryStream("verdi_jsonb").use {
@@ -423,6 +426,16 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             Heltall -> Pair("verdi_heltall", verdi)
             ULID -> Pair("verdi_string", (verdi as Ulid).verdi)
             Penger -> Pair("verdi_string", (verdi as Beløp).toString())
+            BarnDatatype ->
+                Pair(
+                    "verdi_jsonb",
+                    (verdi as Barn).let {
+                        PGobject().apply {
+                            type = "jsonb"
+                            value = objectMapper.writeValueAsString(it)
+                        }
+                    },
+                )
             InntektDataType ->
                 Pair(
                     "verdi_jsonb",

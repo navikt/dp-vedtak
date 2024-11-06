@@ -7,6 +7,7 @@ import io.kotest.matchers.longs.shouldBeLessThan
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.behandling.TestOpplysningstyper.barn
 import no.nav.dagpenger.behandling.TestOpplysningstyper.baseOpplysningstype
 import no.nav.dagpenger.behandling.TestOpplysningstyper.beløpA
 import no.nav.dagpenger.behandling.TestOpplysningstyper.beløpB
@@ -19,6 +20,7 @@ import no.nav.dagpenger.behandling.TestOpplysningstyper.maksdato
 import no.nav.dagpenger.behandling.TestOpplysningstyper.mindato
 import no.nav.dagpenger.behandling.TestOpplysningstyper.tekst
 import no.nav.dagpenger.behandling.TestOpplysningstyper.utledetOpplysningstype
+import no.nav.dagpenger.behandling.april
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mai
 import no.nav.dagpenger.behandling.objectMapper
@@ -32,6 +34,7 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.opplysning.verdier.Barn
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
@@ -54,8 +57,21 @@ class OpplysningerRepositoryPostgresTest {
             val datoFaktum = Faktum(dato, LocalDate.now(), kilde = kildeB)
             val desimalltallFaktum = Faktum(desimal, 5.5, kilde = kildeB)
             val tekstFaktum = Faktum(tekst, "Dette er en tekst")
+            val barn =
+                Faktum(
+                    barn,
+                    Barn(
+                        "Ola",
+                        fødselsdato = 1.april(2010),
+                        fornavn = "fornavn",
+                        mellomnavn = "mellomnavn",
+                        etternavn = "etternavn",
+                        land = "NOR",
+                        kvalifiserer = true,
+                    ),
+                )
 
-            val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum, desimalltallFaktum, tekstFaktum))
+            val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum, desimalltallFaktum, tekstFaktum, barn))
             repo.lagreOpplysninger(opplysninger)
 
             val fraDb =
@@ -69,6 +85,7 @@ class OpplysningerRepositoryPostgresTest {
             fraDb.finnOpplysning(datoFaktum.opplysningstype).verdi shouldBe datoFaktum.verdi
             fraDb.finnOpplysning(datoFaktum.opplysningstype).kilde?.id shouldBe kildeB.id
             fraDb.finnOpplysning(tekstFaktum.opplysningstype).verdi shouldBe tekstFaktum.verdi
+            fraDb.finnOpplysning(barn.opplysningstype).verdi shouldBe barn.verdi
 
             fraDb.finnOpplysning(desimalltallFaktum.opplysningstype).verdi shouldBe desimalltallFaktum.verdi
         }

@@ -7,6 +7,7 @@ import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
 import no.nav.dagpenger.behandling.modell.Behandling
+import no.nav.dagpenger.opplysning.BarnDatatype
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
@@ -73,6 +74,7 @@ internal fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
                 ULID -> DataTypeDTO.ulid
                 Penger -> DataTypeDTO.penger
                 InntektDataType -> DataTypeDTO.inntekt
+                BarnDatatype -> DataTypeDTO.barn
                 Tekst -> DataTypeDTO.tekst
             },
         kilde =

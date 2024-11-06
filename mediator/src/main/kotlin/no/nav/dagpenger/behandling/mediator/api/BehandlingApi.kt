@@ -34,6 +34,7 @@ import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.opplysning.BarnDatatype
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
@@ -86,6 +87,7 @@ internal fun Application.behandlingApi(
                             ULID -> DataTypeDTO.ulid
                             Penger -> DataTypeDTO.penger
                             InntektDataType -> DataTypeDTO.inntekt
+                            BarnDatatype -> DataTypeDTO.barn
                             Tekst -> DataTypeDTO.tekst
                         },
                     )

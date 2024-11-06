@@ -14,6 +14,7 @@ internal object TestOpplysningstyper {
     val desimal = Opplysningstype.somDesimaltall("Desimal".id("desimaltall"))
     val inntektA = Opplysningstype.somInntekt("Inntekt")
     val tekst = Opplysningstype.somTekst("Tekst")
+    val barn = Opplysningstype.somBarn("Barn")
 
     val beløpA by lazy { Opplysningstype.somBeløp("BeløpA") }
     val beløpB by lazy { Opplysningstype.somBeløp("BeløpB") }

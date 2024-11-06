@@ -21,6 +21,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar.Tilstand
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.objectMapper
+import no.nav.dagpenger.opplysning.BarnDatatype
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
@@ -239,6 +240,7 @@ private class JsonMapper(
             Boolsk -> verdi.asBoolean() as T
             ULID -> Ulid(verdi.asText()) as T
             Penger -> Beløp(verdi.asText().toBigDecimal()) as T
+            BarnDatatype -> objectMapper.convertValue(verdi, no.nav.dagpenger.opplysning.verdier.Barn::class.java) as T
             InntektDataType ->
                 Inntekt(
                     objectMapper.convertValue(verdi, no.nav.dagpenger.inntekt.v1.Inntekt::class.java),
