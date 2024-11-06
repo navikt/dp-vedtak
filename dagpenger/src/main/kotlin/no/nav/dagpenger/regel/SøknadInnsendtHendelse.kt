@@ -11,7 +11,6 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Systemkilde
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.regel.Alderskrav.HattLukkedeSakerSiste8UkerKontroll
 import no.nav.dagpenger.regel.Alderskrav.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.Alderskrav.Under18Kontroll
@@ -26,6 +25,7 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBeregningsregelKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
 import no.nav.dagpenger.regel.Virkningstidspunkt.VirkningstidspunktForLangtFramITid
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.BarnetilleggKontroll
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -107,6 +107,7 @@ class SøknadInnsendtHendelse(
 
     override fun kontrollpunkter() =
         listOf(
+            BarnetilleggKontroll,
             EØSArbeidKontroll,
             HattLukkedeSakerSiste8UkerKontroll,
             InntektNesteKalendermånedKontroll,

@@ -38,6 +38,7 @@ import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.regel.Avklaringspunkter
+import no.nav.dagpenger.regel.Behov.Barnetillegg
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.InntektId
@@ -56,6 +57,7 @@ import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
+import org.approvaltests.Approvals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -246,6 +248,7 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilFerdig(testPerson)
 
             antallOpplysninger() shouldBe 77
+            godkjennOpplysninger("tilKravPåDagpenger")
 
             /**
              * Innhenter tar utdanning eller opplæring
@@ -253,7 +256,13 @@ internal class PersonMediatorTest {
             rapid.harBehov(TarUtdanningEllerOpplæring)
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
 
-            antallOpplysninger() shouldBe 110
+            /**
+             * Henter inn barn som kan gi barnetillegg
+             */
+            rapid.harBehov(Barnetillegg)
+            testPerson.løsBehov(Barnetillegg)
+
+            godkjennOpplysninger("etterUtdanning")
 
             /**
              * Innhenter inntekt for fastsettelse
@@ -261,7 +270,7 @@ internal class PersonMediatorTest {
             rapid.harBehov(Inntekt)
             testPerson.løsBehov(Inntekt)
 
-            antallOpplysninger() shouldBe 137
+            godkjennOpplysninger("etterInntekt")
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe true
@@ -293,6 +302,10 @@ internal class PersonMediatorTest {
                 }
             }
         }
+
+    private fun godkjennOpplysninger(fase: String) {
+        Approvals.verify(aktiveOpplysninger(), Approvals.NAMES.withParameters(fase))
+    }
 
     @Test
     fun `Behandling sendt til kontroll`() =
@@ -329,6 +342,15 @@ internal class PersonMediatorTest {
         personRepository.hent(ident.tilPersonIdentfikator())?.let {
             it.behandlinger().size shouldBe 1
             it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size
+        }
+
+    private fun aktiveOpplysninger() =
+        personRepository.hent(ident.tilPersonIdentfikator())?.let {
+            it.behandlinger().size shouldBe 1
+            it
+                .behandlinger()
+                .flatMap { behandling -> behandling.opplysninger().finnAlle() }
+                .joinToString("\n") { it.opplysningstype.navn }
         }
 
     @Test

@@ -1,16 +1,23 @@
 package no.nav.dagpenger.regel.fastsetting
 
+import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.TemporalCollection
+import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.addisjon
+import no.nav.dagpenger.opplysning.regel.antallAv
 import no.nav.dagpenger.opplysning.regel.avrund
 import no.nav.dagpenger.opplysning.regel.divisjon
+import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.regel.Avklaringspunkter.BarnMåGodkjennes
+import no.nav.dagpenger.regel.Behov.Barnetillegg
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -18,7 +25,8 @@ object DagpengenesStørrelse {
     private val grunnlag = Dagpengegrunnlag.grunnlag
 
     // TODO: Hent antall barn fra søknaden. Hvordan skal saksbehandler godkjenne antall barn?
-    internal val antallBarn = Opplysningstype.somHeltall("Antall barn")
+    internal val barn = Opplysningstype.somBarn("Barn".id(Barnetillegg))
+    internal val antallBarn = Opplysningstype.somHeltall("Antall barn som gir rett til barnetillegg")
     private val barnetilleggetsStørrelse = Opplysningstype.somBeløp("Barnetilleggets størrelse")
 
     /**
@@ -30,7 +38,7 @@ object DagpengenesStørrelse {
     val dagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Dagsats uten barnetillegg")
     val avrundetDagsUtenBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats uten barnetillegg")
     val avrundetDagsMedBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats med barnetillegg")
-    val barnetillegg = Opplysningstype.somBeløp("Barnetillegg")
+    val barnetillegg = Opplysningstype.somBeløp("Barnetillegg i kroner")
     val dagsatsMedBarn = Opplysningstype.somBeløp("Dagsats med barn")
     val ukessats = Opplysningstype.somBeløp("Ukessats")
     private val maksGrunnlag = Opplysningstype.somBeløp("Maks grunnlag for dagpenger")
@@ -42,9 +50,10 @@ object DagpengenesStørrelse {
 
     val regelsett =
         Regelsett("§ 4-12. Dagpengenes størrelse\n (Sats)") {
-            regel(antallBarn) { oppslag(prøvingsdato) { 0 } } // TODO: Satt til 0 for testing av innvilgelse
+            regel(barn) { innhentMed(søknadIdOpplysningstype) }
+            regel(antallBarn) { antallAv(barn) { kvalifiserer } }
 
-            regel(barnetilleggetsStørrelse) { oppslag(prøvingsdato) { Barnetillegg.forDato(it) } }
+            regel(barnetilleggetsStørrelse) { oppslag(prøvingsdato) { BarnetilleggSats.forDato(it) } }
             regel(dekningsgrad) {
                 oppslag(prøvingsdato) { DagpengensStørrelseFaktor.forDato(it) }
             }
@@ -67,9 +76,14 @@ object DagpengenesStørrelse {
         }
 
     val ønsketResultat = listOf(ukessats)
+
+    val BarnetilleggKontroll =
+        Kontrollpunkt(BarnMåGodkjennes) {
+            it.finnOpplysninger(barn).isNotEmpty()
+        }
 }
 
-private object Barnetillegg {
+private object BarnetilleggSats {
     private val satser =
         TemporalCollection<BigDecimal>().apply {
             // Defineres her: https://lovdata.no/pro/#document/SF/forskrift/1998-09-16-890/%C2%A77-1

@@ -70,7 +70,7 @@ class Opplysningstype<T : Comparable<T>>(
 
         fun somBarn(navn: String) = somBarn(navn.id(navn))
 
-        fun somBarn(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, BarnDatatype)
+        fun somBarn(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, BarnDatatype, true)
 
         fun somTekst(navn: String) = somTekst(navn.id(navn))
 
