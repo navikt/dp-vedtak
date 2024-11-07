@@ -272,7 +272,16 @@ class TestPerson(
                 // Verneplikt
                 Verneplikt to false,
                 TarUtdanningEllerOpplæring to false,
-                Barnetillegg to emptyList<String>(),
+                Barnetillegg to
+                    mapOf(
+                        "verdi" to
+                            listOf<Map<String, Any>>(
+                                mapOf(
+                                    "fødselsdato" to 1.januar(2000),
+                                    "kvalifiserer" to true,
+                                ),
+                            ),
+                    ),
                 Inntekt to mapOf("verdi" to inntektV1),
                 "Beregnet vanlig arbeidstid per uke før tap" to 40,
             )
