@@ -35,6 +35,8 @@ import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
+import no.nav.dagpenger.opplysning.verdier.Barn
+import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
@@ -135,42 +137,40 @@ internal class OpplysningSvarMessage(
                         throw IllegalArgumentException("Ukjent opplysningstype: $typeNavn")
                     }
 
-                løsning.somListe().map {
-                    val svar = lagSvar(løsning)
-                    val kilde =
-                        when (løsning.has("@kilde")) {
-                            true -> {
-                                val ident =
-                                    løsning["@kilde"]["saksbehandler"]?.asText() ?: throw IllegalArgumentException("Mangler saksbehandler")
-                                Saksbehandlerkilde(
-                                    meldingsreferanseId = packet["@id"].asUUID(),
-                                    opprettet = packet["@opprettet"].asLocalDateTime(),
-                                    ident = ident,
-                                )
-                            }
-
-                            false -> {
-                                Systemkilde(
-                                    meldingsreferanseId = packet["@id"].asUUID(),
-                                    opprettet = packet["@opprettet"].asLocalDateTime(),
-                                )
-                            }
+                val svar = lagSvar(løsning)
+                val kilde =
+                    when (løsning.has("@kilde")) {
+                        true -> {
+                            val ident =
+                                løsning["@kilde"]["saksbehandler"]?.asText() ?: throw IllegalArgumentException("Mangler saksbehandler")
+                            Saksbehandlerkilde(
+                                meldingsreferanseId = packet["@id"].asUUID(),
+                                opprettet = packet["@opprettet"].asLocalDateTime(),
+                                ident = ident,
+                            )
                         }
 
-                    val utledetAv = packet["@utledetAv"][typeNavn]?.map { it.asUUID() } ?: emptyList()
+                        false -> {
+                            Systemkilde(
+                                meldingsreferanseId = packet["@id"].asUUID(),
+                                opprettet = packet["@opprettet"].asLocalDateTime(),
+                            )
+                        }
+                    }
 
-                    val opplysningSvarBygger =
-                        OpplysningSvarBygger(
-                            opplysningstype,
-                            JsonMapper(svar.verdi),
-                            kilde,
-                            svar.tilstand,
-                            svar.gyldighetsperiode,
-                            utledetAv,
-                        )
-                    val opplysning = opplysningSvarBygger.opplysningSvar()
-                    add(opplysning)
-                }
+                val utledetAv = packet["@utledetAv"][typeNavn]?.map { it.asUUID() } ?: emptyList()
+
+                val opplysningSvarBygger =
+                    OpplysningSvarBygger(
+                        opplysningstype,
+                        JsonMapper(svar.verdi),
+                        kilde,
+                        svar.tilstand,
+                        svar.gyldighetsperiode,
+                        utledetAv,
+                    )
+                val opplysning = opplysningSvarBygger.opplysningSvar()
+                add(opplysning)
             }
         }
 
@@ -235,7 +235,6 @@ private object KomplekstSvar : SvarStrategi {
 private object EnkeltSvar : SvarStrategi {
     override fun svar(svar: JsonNode): Svar? {
         if (svar.isObject) return null
-        if (svar.isArray && svar.isEmpty) return null
         return Svar(svar, Tilstand.Faktum)
     }
 }
@@ -252,7 +251,7 @@ private class JsonMapper(
             Boolsk -> verdi.asBoolean() as T
             ULID -> Ulid(verdi.asText()) as T
             Penger -> Beløp(verdi.asText().toBigDecimal()) as T
-            BarnDatatype -> objectMapper.convertValue(verdi, no.nav.dagpenger.opplysning.verdier.Barn::class.java) as T
+            BarnDatatype -> barnMapper(verdi) as T
             InntektDataType ->
                 Inntekt(
                     objectMapper.convertValue(verdi, no.nav.dagpenger.inntekt.v1.Inntekt::class.java),
@@ -260,4 +259,19 @@ private class JsonMapper(
 
             Tekst -> verdi.asText() as T
         }
+}
+
+private fun barnMapper(verdi: JsonNode): BarnListe {
+    return BarnListe(
+        barn =
+            verdi.map {
+                Barn(
+                    fødselsdato = it["fødselsdato"].asLocalDate(),
+                    fornavnOgMellomnavn = it["fornavnOgMellomnavn"]?.asText(),
+                    etternavn = it["etternavn"]?.asText(),
+                    statsborgerskap = it["statsborgerskap"]?.asText(),
+                    kvalifiserer = it["kvalifiserer"].asBoolean(),
+                )
+            },
+    )
 }

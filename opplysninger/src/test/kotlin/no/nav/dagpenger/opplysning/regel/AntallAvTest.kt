@@ -10,6 +10,7 @@ import no.nav.dagpenger.opplysning.februar
 import no.nav.dagpenger.opplysning.januar
 import no.nav.dagpenger.opplysning.mars
 import no.nav.dagpenger.opplysning.verdier.Barn
+import no.nav.dagpenger.opplysning.verdier.BarnListe
 import org.junit.jupiter.api.Test
 
 class AntallAvTest {
@@ -24,16 +25,28 @@ class AntallAvTest {
     @Test
     fun `teller antall barn som kvalifiser`() {
         val opplysninger = Opplysninger()
-        opplysninger.leggTil(Faktum(barnetype, Barn(fødselsdato = 1.januar(2020), kvalifiserer = true)))
-        opplysninger.leggTil(Faktum(barnetype, Barn(fødselsdato = 1.februar(2020), kvalifiserer = false)))
+        val list =
+            BarnListe(
+                listOf(
+                    Barn(fødselsdato = 1.januar(2020), kvalifiserer = true),
+                    Barn(fødselsdato = 1.februar(2020), kvalifiserer = false),
+                    Barn(fødselsdato = 1.mars(2020), kvalifiserer = false),
+                ),
+            )
+        opplysninger.leggTil(Faktum(barnetype, list))
 
         val regelkjøring = Regelkjøring(1.januar(2020), opplysninger, regelsett)
         regelkjøring.evaluer()
 
         opplysninger.finnOpplysning(antallBarn).verdi shouldBe 1
 
+        val nyListe =
+            BarnListe(
+                list + Barn(fødselsdato = 1.januar(2020), kvalifiserer = true),
+            )
+
         // Legg til nytt barn
-        opplysninger.leggTil(Faktum(barnetype, Barn(fødselsdato = 1.mars(2020), kvalifiserer = true))).also {
+        opplysninger.leggTil(Faktum(barnetype, nyListe)).also {
             regelkjøring.evaluer()
         }
         opplysninger.finnOpplysning(antallBarn).verdi shouldBe 2

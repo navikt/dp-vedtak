@@ -1,6 +1,6 @@
 package no.nav.dagpenger.opplysning
 
-import no.nav.dagpenger.opplysning.verdier.Barn
+import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
@@ -42,7 +42,7 @@ data object ULID : Datatype<Ulid>(Ulid::class.java)
 
 data object Penger : Datatype<Beløp>(Beløp::class.java)
 
-data object BarnDatatype : Datatype<Barn>(Barn::class.java) {
+data object BarnDatatype : Datatype<BarnListe>(BarnListe::class.java) {
     override fun navn(): String = "Barn"
 }
 

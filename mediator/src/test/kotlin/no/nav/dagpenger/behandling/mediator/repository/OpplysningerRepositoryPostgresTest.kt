@@ -35,9 +35,11 @@ import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Barn
+import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import no.nav.dagpenger.regel.Alderskrav.fødselsdato
 import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -60,12 +62,16 @@ class OpplysningerRepositoryPostgresTest {
             val barn =
                 Faktum(
                     barn,
-                    Barn(
-                        fødselsdato = 1.april(2010),
-                        fornavnOgMellomnavn = "fornavn",
-                        etternavn = "etternavn",
-                        statsborgerskap = "NOR",
-                        kvalifiserer = true,
+                    BarnListe(
+                        listOf(
+                            Barn(
+                                fødselsdato = 1.april(2010),
+                                fornavnOgMellomnavn = "fornavn",
+                                etternavn = "etternavn",
+                                statsborgerskap = "NOR",
+                                kvalifiserer = true,
+                            ),
+                        ),
                     ),
                 )
             val opplysninger = Opplysninger(listOf(heltallFaktum, boolskFaktum, datoFaktum, desimalltallFaktum, tekstFaktum, barn))
@@ -82,7 +88,7 @@ class OpplysningerRepositoryPostgresTest {
             fraDb.finnOpplysning(datoFaktum.opplysningstype).verdi shouldBe datoFaktum.verdi
             fraDb.finnOpplysning(datoFaktum.opplysningstype).kilde?.id shouldBe kildeB.id
             fraDb.finnOpplysning(tekstFaktum.opplysningstype).verdi shouldBe tekstFaktum.verdi
-            fraDb.finnOpplysninger(barn.opplysningstype)[0].verdi shouldBe barn.verdi
+            fraDb.finnOpplysning(barn.opplysningstype).verdi shouldBe barn.verdi
 
             fraDb.finnOpplysning(desimalltallFaktum.opplysningstype).verdi shouldBe desimalltallFaktum.verdi
         }

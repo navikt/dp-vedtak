@@ -26,7 +26,7 @@ import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.Utledning
 import no.nav.dagpenger.opplysning.id
-import no.nav.dagpenger.opplysning.verdier.Barn
+import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
@@ -226,7 +226,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 Heltall -> row.int("verdi_heltall")
                 ULID -> Ulid(row.string("verdi_string"))
                 Penger -> Beløp(row.string("verdi_string"))
-                BarnDatatype -> objectMapper.readValue(row.string("verdi_jsonb"), Barn::class.java) as T
+                BarnDatatype -> objectMapper.readValue(row.string("verdi_jsonb"), BarnListe::class.java) as T
                 InntektDataType ->
                     Inntekt(
                         row.binaryStream("verdi_jsonb").use {
@@ -429,7 +429,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             BarnDatatype ->
                 Pair(
                     "verdi_jsonb",
-                    (verdi as Barn).let {
+                    (verdi as BarnListe).let {
                         PGobject().apply {
                             type = "jsonb"
                             value = objectMapper.writeValueAsString(it)
