@@ -277,7 +277,7 @@ internal class PersonMediatorTest {
             }
 
             // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
-            rapid.inspektør.size shouldBe 20
+            rapid.inspektør.size shouldBe 22
 
             rapid.harAvklaring(Avklaringspunkter.Totrinnskontroll) {}
 
@@ -321,6 +321,7 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilFerdig(testPerson)
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
             testPerson.løsBehov(Inntekt)
+            testPerson.løsBehov(Barnetillegg)
 
             testPerson.sendTilKontroll()
 
@@ -543,6 +544,7 @@ internal class PersonMediatorTest {
 
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
             testPerson.løsBehov(Inntekt)
+            testPerson.løsBehov(Barnetillegg)
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medDato("prøvingsdato") shouldBe 1.juni(2024)
