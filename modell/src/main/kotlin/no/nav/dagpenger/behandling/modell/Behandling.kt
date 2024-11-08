@@ -505,6 +505,14 @@ class Behandling private constructor(
 
             behandling.tilstand(Redigert(), hendelse)
         }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: LåsOppHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er ikke låst, ignorerer låsopp")
+        }
     }
 
     private data class Redigert(
