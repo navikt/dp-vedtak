@@ -7,6 +7,7 @@ import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.sisteAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.innhentes
+import no.nav.dagpenger.opplysning.tekstId
 import no.nav.dagpenger.regel.Behov.Søknadsdato
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
 
@@ -15,7 +16,7 @@ object Søknadstidspunkt {
     val søknadsdato = Opplysningstype.somDato("Søknadsdato".id(Søknadsdato, tekstId = "opplysning.soknadsdato"))
     val ønsketdato = Opplysningstype.somDato("Ønsker dagpenger fra dato".id(ØnskerDagpengerFraDato))
 
-    val søknadstidspunkt = Opplysningstype.somDato("Søknadstidspunkt")
+    val søknadstidspunkt = Opplysningstype.somDato("Søknadstidspunkt".tekstId("opplysning.soknadstidspunkt"))
 
     // Har Virkningsdato som ID for å være kompatibel med behovløsere
     val prøvingsdato = Opplysningstype.somDato("Prøvingsdato".id("Virkningsdato"))
