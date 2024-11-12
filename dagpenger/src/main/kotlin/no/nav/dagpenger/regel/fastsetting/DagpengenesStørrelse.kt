@@ -24,7 +24,7 @@ import java.time.LocalDate
 object DagpengenesStørrelse {
     private val grunnlag = Dagpengegrunnlag.grunnlag
 
-    internal val barn = Opplysningstype.somBarn("Barn".id(Barnetillegg))
+    val barn = Opplysningstype.somBarn("Barn".id(Barnetillegg))
     internal val antallBarn = Opplysningstype.somHeltall("Antall barn som gir rett til barnetillegg")
     private val barnetilleggetsStørrelse = Opplysningstype.somBeløp("Barnetilleggets størrelse")
 

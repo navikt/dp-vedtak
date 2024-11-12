@@ -532,6 +532,10 @@ components:
                   type: integer
                 begrunnelse:
                   $ref: '#/components/schemas/Forklaring'
+                barn:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Barn'
             kvoter:
               type: array
               items:
@@ -605,6 +609,15 @@ components:
         vurderingstidspunkt:
           type: string
           format: date-time
+
+    Barn:
+      type: object
+      properties:
+        fødselsdato:
+          type: string
+          format: date
+        kvalifiserer:
+          type: boolean
 
     Kvote:
       type: object

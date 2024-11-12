@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator
 
+import no.nav.dagpenger.behandling.api.models.BarnDTO
 import no.nav.dagpenger.behandling.api.models.KvoteDTO
 import no.nav.dagpenger.behandling.api.models.VedtakDTO
 import no.nav.dagpenger.behandling.api.models.VedtakFastsattDTO
@@ -29,6 +30,7 @@ import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.nyArbeidstid
 import no.nav.dagpenger.regel.Utdanning
 import no.nav.dagpenger.regel.Utestengning
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.barn
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.sats
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
@@ -88,6 +90,10 @@ fun lagVedtak(
                                     .finnOpplysning(sats)
                                     .verdi.verdien
                                     .toInt(),
+                            barn =
+                                opplysninger.finnOpplysning(barn).verdi.map {
+                                    BarnDTO(it.fødselsdato, it.kvalifiserer)
+                                },
                         ),
                     kvoter =
                         listOf(
