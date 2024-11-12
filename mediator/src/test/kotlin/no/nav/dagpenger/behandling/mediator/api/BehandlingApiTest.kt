@@ -41,6 +41,8 @@ import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.opplysning.verdier.Barn
+import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse
@@ -102,6 +104,20 @@ internal class BehandlingApiTest {
                             OpplysningSvar(
                                 opplysningstype = TestOpplysningstyper.dato,
                                 verdi = LocalDate.now(),
+                                tilstand = OpplysningSvar.Tilstand.Faktum,
+                                kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
+                            ),
+                            OpplysningSvar(
+                                opplysningstype = TestOpplysningstyper.barn,
+                                verdi =
+                                    BarnListe(
+                                        listOf(
+                                            Barn(
+                                                LocalDate.now(),
+                                                kvalifiserer = true,
+                                            ),
+                                        ),
+                                    ),
                                 tilstand = OpplysningSvar.Tilstand.Faktum,
                                 kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
                             ),
