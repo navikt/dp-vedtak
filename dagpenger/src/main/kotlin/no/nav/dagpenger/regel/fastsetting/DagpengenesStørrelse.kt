@@ -24,7 +24,6 @@ import java.time.LocalDate
 object DagpengenesStørrelse {
     private val grunnlag = Dagpengegrunnlag.grunnlag
 
-    // TODO: Hent antall barn fra søknaden. Hvordan skal saksbehandler godkjenne antall barn?
     internal val barn = Opplysningstype.somBarn("Barn".id(Barnetillegg))
     internal val antallBarn = Opplysningstype.somHeltall("Antall barn som gir rett til barnetillegg")
     private val barnetilleggetsStørrelse = Opplysningstype.somBeløp("Barnetilleggets størrelse")
