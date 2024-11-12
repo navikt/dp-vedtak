@@ -18,23 +18,19 @@ abstract class Regel<T : Comparable<T>> internal constructor(
         gjeldendeRegler: List<Regel<*>>,
     ) {
         if (opplysninger.har(produserer)) {
-            val produkter = opplysninger.finnOpplysninger(produserer)
-            if (produkter.all { it.utledetAv == null }) {
+            val produkt = opplysninger.finnOpplysning(produserer)
+            if (produkt.utledetAv == null) {
                 return
             }
 
-            produkter.mapNotNull { it.utledetAv }.flatMap { it.opplysninger }.forEach { avhengighet ->
+            produkt.utledetAv.opplysninger.forEach { avhengighet ->
                 val produsent =
                     gjeldendeRegler.singleOrNull { it.produserer(avhengighet.opplysningstype) }
                         ?: throw IllegalStateException("Fant ikke produsent for $avhengighet")
                 produsent.lagPlan(opplysninger, plan, gjeldendeRegler)
             }
 
-            val avhengigheter = opplysninger.finnAlle(avhengerAv)
-            val avhengighetErErstattet =
-                avhengigheter.any { avhengighet ->
-                    avhengighet.opprettet.isAfter(produkter.maxOf { it.opprettet })
-                }
+            val avhengighetErErstattet = produkt.utledetAv.opplysninger.any { it.erErstattet }
 
             if (avhengighetErErstattet) {
                 plan.add(this)
@@ -43,7 +39,7 @@ abstract class Regel<T : Comparable<T>> internal constructor(
         } else {
             val avhengigheter = opplysninger.finnAlle(avhengerAv)
 
-            if (avhengigheter.size >= avhengerAv.size) {
+            if (avhengigheter.size == avhengerAv.size) {
                 plan.add(this)
                 return
             } else {
