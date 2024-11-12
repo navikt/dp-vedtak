@@ -2,7 +2,6 @@ package no.nav.dagpenger.behandling.mediator.repository
 
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.longs.shouldBeLessThan
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -372,22 +371,6 @@ class OpplysningerRepositoryPostgresTest {
             fraDb
                 .finnOpplysning(inntektA)
                 .verdi.verdi.inntektsListe shouldBe inntektFaktum.verdi.verdi.inntektsListe
-        }
-    }
-
-    @Test
-    fun `tillater duplikate opplysninger`() {
-        withMigratedDb {
-            val repo = OpplysningerRepositoryPostgres()
-            val opplysningstype =
-                Opplysningstype.somFlereHeltall("Vakre tall")
-
-            val heltallFaktum = Faktum(opplysningstype, 10)
-            val heltallFaktum2 = Faktum(opplysningstype, 20)
-            val opplysninger = Opplysninger(listOf(heltallFaktum, heltallFaktum2))
-            repo.lagreOpplysninger(opplysninger)
-            val fraDb = repo.hentOpplysninger(opplysninger.id)
-            fraDb.finnAlle().shouldHaveSize(2)
         }
     }
 

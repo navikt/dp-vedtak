@@ -27,11 +27,6 @@ class LesbarOpplysningerMedLogg(
             oppslag.add(this)
         }
 
-    override fun <T : Comparable<T>> finnOpplysninger(opplysningstype: Opplysningstype<T>): List<Opplysning<T>> =
-        opplysninger.finnOpplysninger(opplysningstype).apply {
-            oppslag.addAll(this)
-        }
-
     override fun har(opplysningstype: Opplysningstype<*>) =
         opplysninger.har(opplysningstype).also { harOpplysning ->
             if (harOpplysning) {

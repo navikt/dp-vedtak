@@ -170,7 +170,6 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 Opplysningstype(
                     string("type_navn").id(string("type_id"), stringOrNull("tekst_id")),
                     datatype,
-                    boolean("kan_være_flere"),
                 )
 
             val gammeltNavn = opplysningerSomHarByttetNavn.singleOrNull { it.fra == opplysningstype }
@@ -312,8 +311,8 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             BatchStatement(
                 //language=PostgreSQL
                 """
-                INSERT INTO opplysningstype (id, navn, tekst_id, datatype, kan_være_flere)
-                VALUES (:id, :navn, :tekstId, :datatype, :kanVaereFlere)
+                INSERT INTO opplysningstype (id, navn, tekst_id, datatype)
+                VALUES (:id, :navn, :tekstId, :datatype)
                 ON CONFLICT DO NOTHING 
                 """.trimIndent(),
                 opplysningstyper.map {
@@ -322,7 +321,6 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         "navn" to it.navn,
                         "tekstId" to it.tekstId,
                         "datatype" to it.datatype.navn(),
-                        "kanVaereFlere" to it.kanVæreFlere,
                     )
                 },
             )

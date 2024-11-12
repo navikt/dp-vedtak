@@ -79,7 +79,7 @@ object DagpengenesStørrelse {
 
     val BarnetilleggKontroll =
         Kontrollpunkt(BarnMåGodkjennes) {
-            it.finnOpplysninger(barn).isNotEmpty()
+            it.har(barn) && it.finnOpplysning(barn).verdi.isNotEmpty()
         }
 }
 
