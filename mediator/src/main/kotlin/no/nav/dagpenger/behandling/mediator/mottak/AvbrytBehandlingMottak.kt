@@ -25,7 +25,7 @@ internal class AvbrytBehandlingMottak(
                 validate { it.demandValue("@event_name", "avbryt_behandling") }
                 validate { it.requireKey("ident") }
                 validate { it.requireKey("behandlingId") }
-                validate { it.interestedIn("@id", "@opprettet") }
+                validate { it.interestedIn("@id", "@opprettet", "årsak") }
             }.register(this)
     }
 
@@ -63,8 +63,10 @@ internal class AvbrytBehandlingMottak(
 internal class AvbrytBehandlingMessage(
     packet: JsonMessage,
 ) : HendelseMessage(packet) {
+    private val årsak = packet["årsak"].asText("Avbrutt av datamaskinen")
+
     private val hendelse
-        get() = AvbrytBehandlingHendelse(id, ident, behandlingId, "Avbrutt av datamaskinen", opprettet)
+        get() = AvbrytBehandlingHendelse(id, ident, behandlingId, årsak, opprettet)
     override val ident = packet["ident"].asText()
 
     private val behandlingId = packet["behandlingId"].asUUID()

@@ -10,6 +10,7 @@ import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.mediator.api.ApiMessageContext
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.audit.ApiAuditlogg
+import no.nav.dagpenger.behandling.mediator.jobber.AvbrytInnvilgelse
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.behandling.mediator.mottak.ArenaOppgaveMottak
 import no.nav.dagpenger.behandling.mediator.mottak.SakRepository
@@ -38,6 +39,9 @@ internal class ApplicationBuilder(
 
             // Logger bare oppgaver enn så lenge. Bør inn i HendelseMediator
             ArenaOppgaveMottak(rapidsConnection, SakRepository())
+
+            // Start jobb som avbryter behandlinger som står i innvilgelse for lenge
+            AvbrytInnvilgelse(rapidsConnection).start()
 
             val personRepository =
                 PersonRepositoryPostgres(
