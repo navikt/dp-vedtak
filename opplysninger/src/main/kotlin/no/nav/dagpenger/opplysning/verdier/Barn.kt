@@ -5,7 +5,7 @@ import java.time.LocalDate
 class BarnListe(
     barn: List<Barn>,
 ) : ComparableListe<Barn>(barn) {
-    override fun toString(): String = "Barn(${this.joinToString()})"
+    override fun toString(): String = if (isEmpty()) "Ingen barn" else this.joinToString()
 }
 
 abstract class ComparableListe<T : Comparable<T>>(
