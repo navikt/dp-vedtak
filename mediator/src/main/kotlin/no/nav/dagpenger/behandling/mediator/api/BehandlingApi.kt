@@ -20,6 +20,7 @@ import io.opentelemetry.api.trace.Span
 import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
+import no.nav.dagpenger.behandling.api.models.KvitterAvklaringRequestDTO
 import no.nav.dagpenger.behandling.api.models.KvitteringDTO
 import no.nav.dagpenger.behandling.api.models.OppdaterOpplysningRequestDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningstypeDTO
@@ -33,6 +34,7 @@ import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.opplysning.BarnDatatype
 import no.nav.dagpenger.opplysning.Boolsk
@@ -198,6 +200,45 @@ internal fun Application.behandlingApi(
                             ),
                         )
                     }
+
+                    get("avklaring") {
+                        val behandlingId = call.behandlingId
+                        val behandling =
+                            personRepository.hentBehandling(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+                        call.respond(HttpStatusCode.OK, behandling.avklaringer().map { it.tilAvklaringDTO() })
+                    }
+
+                    put("avklaring/{avklaringId}/kvitter") {
+                        val behandlingId = call.behandlingId
+                        val avklaringId = call.avklaringId
+                        val kvitteringDTO = call.receive<KvitterAvklaringRequestDTO>()
+                        val behandling =
+                            personRepository.hentBehandling(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+
+                        val avklaring =
+                            behandling.avklaringer().singleOrNull { it.id == avklaringId }
+                                ?: throw ResourceNotFoundException("Avklaring ikke funnet")
+
+                        if (!avklaring.kanKvitteres) {
+                            call.respond(HttpStatusCode.BadRequest)
+                            return@put
+                        }
+
+                        hendelseMediator.behandle(
+                            AvklaringKvittertHendelse(
+                                meldingsreferanseId = UUIDv7.ny(),
+                                ident = behandling.behandler.ident,
+                                avklaringId = avklaringId,
+                                behandlingId = behandling.behandlingId,
+                                saksbehandler = call.saksbehandlerId(),
+                                begrunnelse = kvitteringDTO.begrunnelse,
+                                opprettet = LocalDateTime.now(),
+                            ),
+                            messageContext(behandling.behandler.ident),
+                        )
+
+                        call.respond(HttpStatusCode.OK)
+                    }
                 }
             }
         }
@@ -231,6 +272,12 @@ private val ApplicationCall.behandlingId: UUID
     get() {
         val behandlingId = parameters["behandlingId"] ?: throw IllegalArgumentException("BehandlingId må være satt")
         return UUID.fromString(behandlingId)
+    }
+
+private val ApplicationCall.avklaringId: UUID
+    get() {
+        val avklaringId = parameters["avklaringId"] ?: throw IllegalArgumentException("BehandlingId må være satt")
+        return UUID.fromString(avklaringId)
     }
 
 private val OtelTraceIdPlugin =

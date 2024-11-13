@@ -24,7 +24,7 @@ data class Avklaringkode(
     override fun hashCode() = kode.hashCode()
 }
 
-data class Avklaring(
+data class Avklaring internal constructor(
     val id: UUID,
     val kode: Avklaringkode,
     private val historikk: MutableList<Endring> = mutableListOf(UnderBehandling()),
@@ -32,10 +32,11 @@ data class Avklaring(
     constructor(kode: Avklaringkode) : this(UUIDv7.ny(), kode)
 
     private val tilstand get() = endringer.last()
-
     val sistEndret get(): LocalDateTime = endringer.last().endret
 
     val endringer get() = historikk.sorted().toList()
+
+    val kanKvitteres = kode.kanKvitteres
 
     fun måAvklares() = tilstand is UnderBehandling
 
@@ -45,17 +46,20 @@ data class Avklaring(
 
     internal fun avbryt(): Boolean = historikk.add(Avbrutt())
 
-    fun kvittering(saksbehandlerkilde: Saksbehandlerkilde): Boolean {
+    internal fun kvitter(
+        saksbehandlerkilde: Saksbehandlerkilde,
+        begrunnelse: String,
+    ): Boolean {
         kanKvitteresSjekk()
-        return historikk.add(Avklart(avklartAv = saksbehandlerkilde))
+        return historikk.add(Avklart(avklartAv = saksbehandlerkilde, begrunnelse = begrunnelse))
     }
 
-    fun avklar(kilde: Kilde) = historikk.add(Avklart(avklartAv = kilde))
+    internal fun avklar(kilde: Kilde) = historikk.add(Avklart(avklartAv = kilde))
 
-    fun gjenåpne() = historikk.add(UnderBehandling())
+    internal fun gjenåpne() = historikk.add(UnderBehandling())
 
     private fun kanKvitteresSjekk() {
-        require(kode.kanKvitteres) { "Avklaring $kode kan ikke kvitteres ut, krever endring i behandlingen" }
+        require(kanKvitteres) { "Avklaring $kode kan ikke kvitteres ut, krever endring i behandlingen" }
     }
 
     sealed class Endring(
@@ -72,6 +76,7 @@ data class Avklaring(
         class Avklart(
             id: UUID = UUIDv7.ny(),
             val avklartAv: Kilde,
+            val begrunnelse: String = "",
             endret: LocalDateTime = LocalDateTime.now(),
         ) : Endring(id, endret)
 
@@ -88,4 +93,12 @@ data class Avklaring(
     }
 
     override fun hashCode() = kode.hashCode()
+
+    companion object {
+        fun rehydrer(
+            id: UUID,
+            kode: Avklaringkode,
+            historikk: MutableList<Endring>,
+        ) = Avklaring(id, kode, historikk)
+    }
 }

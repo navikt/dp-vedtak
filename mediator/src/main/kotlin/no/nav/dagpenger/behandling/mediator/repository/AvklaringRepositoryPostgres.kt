@@ -4,6 +4,9 @@ import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.dagpenger.avklaring.Avklaring
+import no.nav.dagpenger.avklaring.Avklaring.Endring.Avbrutt
+import no.nav.dagpenger.avklaring.Avklaring.Endring.Avklart
+import no.nav.dagpenger.avklaring.Avklaring.Endring.UnderBehandling
 import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryObserver.NyAvklaringHendelse
@@ -39,7 +42,7 @@ internal class AvklaringRepositoryPostgres private constructor(
                         "behandling_id" to behandlingId,
                     ),
                 ).map { row ->
-                    Avklaring(
+                    Avklaring.rehydrer(
                         id = row.uuid("id"),
                         kode =
                             Avklaringkode(
@@ -72,16 +75,17 @@ internal class AvklaringRepositoryPostgres private constructor(
                 val id = it.uuid("endring_id")
                 val endret = it.localDateTime("endret")
                 when (EndringType.valueOf(it.string("type"))) {
-                    EndringType.UnderBehandling -> Avklaring.Endring.UnderBehandling(id, endret)
+                    EndringType.UnderBehandling -> UnderBehandling(id, endret)
                     EndringType.Avklart ->
-                        Avklaring.Endring.Avklart(
+                        Avklart(
                             id,
                             // Lager en dummy kilde hvis kilde ikke finnes (migrering endret funksjonalitet)
                             kildeRespository.hentKilde(it.uuid("kilde_id")) ?: Saksbehandlerkilde(UUIDv7.ny(), "DIGIDAG"),
+                            it.stringOrNull("begrunnelse") ?: "",
                             endret,
                         )
 
-                    EndringType.Avbrutt -> Avklaring.Endring.Avbrutt(id, endret)
+                    EndringType.Avbrutt -> Avbrutt(id, endret)
                 }
             }.asList,
         )
@@ -120,7 +124,7 @@ internal class AvklaringRepositoryPostgres private constructor(
                     avklaring.endringer.map { endring ->
                         val kildeId =
                             when (endring) {
-                                is Avklaring.Endring.Avklart -> {
+                                is Avklart -> {
                                     endring.avklartAv.let { kilde ->
                                         kildeRespository.lagreKilde(kilde, tx)
                                         kilde.id
@@ -134,8 +138,8 @@ internal class AvklaringRepositoryPostgres private constructor(
                             queryOf(
                                 // language=PostgreSQL
                                 """
-                                INSERT INTO avklaring_endring (endring_id, avklaring_id, endret, type, kilde_id)
-                                VALUES (:endring_id, :avklaring_id, :endret, :endring_type, :kilde_id)
+                                INSERT INTO avklaring_endring (endring_id, avklaring_id, endret, type, kilde_id, begrunnelse)
+                                VALUES (:endring_id, :avklaring_id, :endret, :endring_type, :kilde_id, :begrunnelse)
                                 ON CONFLICT DO NOTHING
                                 """.trimIndent(),
                                 mapOf(
@@ -144,11 +148,12 @@ internal class AvklaringRepositoryPostgres private constructor(
                                     "endret" to endring.endret,
                                     "endring_type" to
                                         when (endring) {
-                                            is Avklaring.Endring.UnderBehandling -> "UnderBehandling"
-                                            is Avklaring.Endring.Avklart -> "Avklart"
-                                            is Avklaring.Endring.Avbrutt -> "Avbrutt"
+                                            is UnderBehandling -> "UnderBehandling"
+                                            is Avklart -> "Avklart"
+                                            is Avbrutt -> "Avbrutt"
                                         },
                                     "kilde_id" to kildeId,
+                                    "begrunnelse" to (endring as? Avklart)?.begrunnelse,
                                 ),
                             ).asUpdate,
                         )

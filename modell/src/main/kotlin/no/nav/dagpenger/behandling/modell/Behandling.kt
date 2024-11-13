@@ -10,6 +10,7 @@ import no.nav.dagpenger.behandling.modell.BehandlingHendelser.AvklaringLukketHen
 import no.nav.dagpenger.behandling.modell.PersonObservatør.PersonEvent
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.EksternId
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.LåsHendelse
@@ -114,6 +115,11 @@ class Behandling private constructor(
     }
 
     override fun håndter(hendelse: AvklaringIkkeRelevantHendelse) {
+        hendelse.kontekst(this)
+        tilstand.håndter(this, hendelse)
+    }
+
+    override fun håndter(hendelse: AvklaringKvittertHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
     }
@@ -253,6 +259,14 @@ class Behandling private constructor(
         fun håndter(
             behandling: Behandling,
             hendelse: AvklaringIkkeRelevantHendelse,
+        ): Unit =
+            throw IllegalStateException(
+                "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
+            )
+
+        fun håndter(
+            behandling: Behandling,
+            hendelse: AvklaringKvittertHendelse,
         ): Unit =
             throw IllegalStateException(
                 "Kan ikke håndtere hendelse ${hendelse.javaClass.simpleName} i tilstand ${this.javaClass.simpleName}",
@@ -489,6 +503,16 @@ class Behandling private constructor(
                 behandling.tilstand(Ferdig(), hendelse)
                 return
             }
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvklaringKvittertHendelse,
+        ) {
+            hendelse.kontekst(this)
+
+            behandling.avklaringer.kvitter(hendelse.avklaringId, hendelse.kilde, hendelse.begrunnelse)
+            hendelse.info("Avklaring er kvittert")
         }
 
         override fun håndter(

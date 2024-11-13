@@ -110,7 +110,7 @@ class KontrollpunktTest {
         }
 
         // Saksbehandler kvittererer ut avklaringen fordi sykepengene ikke er svangerskapsrelaterte
-        ding.avklaringer.first().kvittering(Saksbehandlerkilde(UUIDv7.ny(), "Z123456")).also { kvittert ->
+        ding.avklaringer.first().kvitter(Saksbehandlerkilde(UUIDv7.ny(), "Z123456"), "begrunnelse").also { kvittert ->
             kvittert shouldBe true
         }
 
@@ -155,7 +155,7 @@ class KontrollpunktTest {
 
         // Denne avklaringen skal ikke kunne kvitteres ut, den krever endring
         shouldThrow<IllegalArgumentException> {
-            ding.avklaringer.first().kvittering(Saksbehandlerkilde(UUIDv7.ny(), "Z123456"))
+            ding.avklaringer.first().kvitter(Saksbehandlerkilde(UUIDv7.ny(), "Z123456"), "begrunnelse")
         }
 
         // Nå skal det ikke være avklaringer som må avklares

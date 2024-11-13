@@ -45,7 +45,8 @@ class BehandlingRepositoryPostgresTest {
     private val opplysning2 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning2"), 2.0)
     private val opplysning3 = Faktum(Opplysningstype.somBoolsk("aktiv-opplysning3"), false)
 
-    private val avklaring = Avklaring(UUIDv7.ny(), Avklaringspunkter.JobbetUtenforNorge)
+    private val avklaring =
+        Avklaring.rehydrer(UUIDv7.ny(), Avklaringspunkter.JobbetUtenforNorge, mutableListOf(Avklaring.Endring.UnderBehandling()))
 
     private val behandling =
         Behandling.rehydrer(

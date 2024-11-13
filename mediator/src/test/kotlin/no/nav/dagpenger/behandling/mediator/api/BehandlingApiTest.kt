@@ -39,6 +39,7 @@ import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.opplysning.Faktum
@@ -325,6 +326,37 @@ internal class BehandlingApiTest {
             redigertOpplysning.verdi shouldBe LocalDate.parse("2020-01-01")
             // TODO: Legge til kilde  (redigertOpplysning.kilde as Saksbehandlerkilde).ident shouldBe "Z123456"
             redigertOpplysning.opplysningstype shouldBe TestOpplysningstyper.dato
+        }
+    }
+
+    @Test
+    fun `saksbehandler kan kvittere ut avklaring`() {
+        medSikretBehandlingApi {
+            val messageMediator = mockk<IMessageMediator>(relaxed = true)
+            val kvitteringHendelse = slot<AvklaringKvittertHendelse>()
+
+            val behandlingId = person.behandlinger().first().behandlingId
+            val avklaring =
+                person
+                    .behandlinger()
+                    .first()
+                    .aktiveAvklaringer()
+                    .first()
+            val response =
+                autentisert(
+                    httpMethod = HttpMethod.Put,
+                    endepunkt = "/behandling/$behandlingId/avklaring/${avklaring.id}/kvitter",
+                    // language=JSON
+                    body = """{"begrunnelse":"tekst"}""",
+                )
+
+            response.status shouldBe HttpStatusCode.OK
+
+            verify {
+                hendelseMediator.behandle(capture(kvitteringHendelse), any())
+            }
+
+            kvitteringHendelse.isCaptured shouldBe true
         }
     }
 

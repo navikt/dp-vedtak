@@ -3,6 +3,7 @@ package no.nav.dagpenger.avklaring
 import no.nav.dagpenger.avklaring.Kontrollpunkt.Kontrollresultat.KreverAvklaring
 import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import java.util.UUID
 
 class Avklaringer(
@@ -42,8 +43,16 @@ class Avklaringer(
         return avklaringer.toList()
     }
 
+    fun gjenåpne(avklaringId: UUID): Boolean = avklaringer.find { it.id == avklaringId }?.gjenåpne() ?: false
+
     fun avklar(
         avklaringId: UUID,
         kilde: Kilde,
     ): Boolean = avklaringer.find { it.id == avklaringId }?.avklar(kilde) ?: false
+
+    fun kvitter(
+        avklaringId: UUID,
+        kilde: Saksbehandlerkilde,
+        begrunnelse: String,
+    ): Boolean = avklaringer.find { it.id == avklaringId }?.kvitter(kilde, begrunnelse) ?: false
 }

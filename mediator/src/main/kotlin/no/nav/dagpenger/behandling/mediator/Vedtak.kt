@@ -127,9 +127,9 @@ fun lagVedtak(
         behandletAv = emptyList(),
         vilkår = vilkår,
         fastsatt = fastsatt,
-        opplysninger = opplysninger.finnAlle().map { it.tilOpplysningDTO() },
         gjenstående = VedtakGjenstEndeDTO(),
         utbetalinger = emptyList(),
+        opplysninger = opplysninger.finnAlle().map { it.tilOpplysningDTO() },
     )
 }
 

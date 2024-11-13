@@ -13,7 +13,7 @@ class AvklaringTest {
     fun `avklaring må avklares`() {
         val avklaring = Avklaring(ArbeidIEØS)
         avklaring.måAvklares() shouldBe true
-        avklaring.kvittering(Saksbehandlerkilde(UUIDv7.ny(), "Z123456")) shouldBe true
+        avklaring.kvitter(Saksbehandlerkilde(UUIDv7.ny(), "Z123456"), "begrunnelse") shouldBe true
         avklaring.måAvklares() shouldBe false
     }
 
