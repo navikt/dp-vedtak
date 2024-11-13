@@ -15,6 +15,8 @@ tags:
     description: Operasjoner på opplysningstyper.
   - name: Behandling
     description: Operasjoner på behandlinger.
+  - name: Avklaring
+    description: Operasjoner på avklaringer.
   - name: Vedtak
     description: Drodling rundt hvordan vi tror vedtak, eller resultat på behandlinger, skal se ut.
 
@@ -199,7 +201,70 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/HttpProblem'
-
+  /behandling/{behandlingId}/avklaring:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+    get:
+      description: Hent avklaringer for en behandling
+      operationId: hentAvklaringer
+      tags:
+        - Behandling
+        - Avklaring
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Avklaring'
+          description: OK
+  /behandling/{behandlingId}/avklaring/{avklaringId}/kvitter:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+      - name: avklaringId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Avklaringens id
+    put:
+      description: Kvittér ut en avklaring
+      operationId: kvitterAvklaring
+      tags:
+        - Behandling
+        - Avklaring
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - begrunnelse
+              properties:
+                begrunnelse:
+                  type: string
+      responses:
+        201:
+          description: OK
+        400:
+          description: Avklaringen kan ikke kvitteres ut
+        403:
+          description: Du har ikke tilgang til å kvittere ut denne avklaringen
   /behandling/{behandlingId}/vedtak:
     parameters:
       - name: behandlingId
@@ -220,9 +285,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Vedtak'
+                $ref: '#/components/schemas/Vedtak'
         default:
           description: Feil ved uthenting av vedtak
           content:
@@ -283,6 +346,13 @@ components:
           type: string
         beskrivelse:
           type: string
+        status:
+          type: string
+          enum: [ "Åpen", "Løst", "Kvittert" ]
+        begrunnelse:
+          type: string
+        kvittertAv:
+          $ref: '#/components/schemas/Saksbehandler'
 
     Opplysningstype:
       type: object
@@ -418,7 +488,7 @@ components:
       description: |
         Hvilken datatype opplysningen har, for å kunne validere at verdi er riktig format
     
-
+    
     Kvittering:
       type: object
       required:
