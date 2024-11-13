@@ -206,23 +206,21 @@ internal class BehandlingApiTest {
             behandlingDto.opplysning.shouldNotBeEmpty()
             behandlingDto.opplysning.all { it.redigerbar } shouldBe false
             behandlingDto.aktiveAvklaringer.shouldNotBeEmpty()
+            val aktivAvklaring =
+                behandling
+                    .aktiveAvklaringer()
+                    .first()
             with(behandlingDto.aktiveAvklaringer.first()) {
                 tittel shouldBe
-                    behandling
-                        .aktiveAvklaringer()
-                        .first()
+                    aktivAvklaring
                         .kode.tittel
                 beskrivelse shouldBe
-                    behandling
-                        .aktiveAvklaringer()
-                        .first()
+                    aktivAvklaring
                         .kode.beskrivelse
                 kode shouldBe
-                    behandling
-                        .aktiveAvklaringer()
-                        .first()
+                    aktivAvklaring
                         .kode.kode
-                id shouldBe behandling.aktiveAvklaringer().first().id
+                id shouldBe aktivAvklaring.id
             }
             verify {
                 auditlogg.les(any(), any(), any())
