@@ -62,24 +62,21 @@ internal class AvbrytInnvilgelse(
                     queryOf(
                         //language=PostgreSQL
                         """
-                        SELECT 
-                            p.ident,
-                            b.behandling_id
-                        FROM 
-                            behandling b
-                        JOIN person_behandling pb 
-                            ON pb.behandling_id = b.behandling_id
-                        JOIN person p 
-                            ON p.ident = pb.ident
-                        JOIN behandling_opplysninger bo 
-                            ON bo.behandling_id = b.behandling_id
-                        JOIN opplysningstabell ot 
-                            ON ot.opplysninger_id= bo.opplysninger_id
-                        WHERE 
-                            b.tilstand = '${ForslagTilVedtak.name}'
-                            AND ot.type_id = '${kravPåDagpenger.id}'
-                            AND ot.verdi_boolsk = TRUE
-                            AND b.sist_endret_tilstand < NOW() - INTERVAL '$antallDager DAY'
+                        SELECT p.ident,
+                               b.behandling_id
+                        FROM behandling b
+                                 JOIN person_behandling pb
+                                      ON pb.behandling_id = b.behandling_id
+                                 JOIN person p
+                                      ON p.ident = pb.ident
+                                 JOIN behandling_opplysninger bo
+                                      ON bo.behandling_id = b.behandling_id
+                                 JOIN opplysningstabell ot
+                                      ON ot.opplysninger_id = bo.opplysninger_id
+                        WHERE b.tilstand = '${ForslagTilVedtak.name}'
+                          AND ot.type_id = '${kravPåDagpenger.id}'
+                          AND ot.verdi_boolsk = TRUE
+                          AND b.sist_endret_tilstand < NOW() - INTERVAL '$antallDager DAY'
                         """.trimIndent(),
                     ).map { row ->
                         BehandlingTilAvbryt(
