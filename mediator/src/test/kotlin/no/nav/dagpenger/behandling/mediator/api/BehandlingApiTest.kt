@@ -23,6 +23,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
+import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.TestOpplysningstyper
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.KvitteringDTO
@@ -34,12 +35,14 @@ import no.nav.dagpenger.behandling.mediator.api.TestApplication.testAzureAdToken
 import no.nav.dagpenger.behandling.mediator.audit.Auditlogg
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
+import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvar
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
+import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.verdier.Barn
 import no.nav.dagpenger.opplysning.verdier.BarnListe
@@ -47,6 +50,7 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse
 import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.Verneplikt.avtjentVerneplikt
 import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -56,75 +60,74 @@ import java.time.LocalDateTime
 internal class BehandlingApiTest {
     private val ident = "12345123451"
     private val rapid = spyk(TestRapid())
-    private val person =
-        Person(ident.tilPersonIdentfikator()).also {
-            it.håndter(
-                SøknadInnsendtHendelse(
-                    meldingsreferanseId = UUIDv7.ny(),
-                    ident = ident,
-                    søknadId = UUIDv7.ny(),
-                    gjelderDato = LocalDate.now(),
-                    fagsakId = 1,
-                    opprettet = LocalDateTime.now(),
-                ),
-            )
-            val behandlingId = it.behandlinger().first().behandlingId
-            it.håndter(
-                OpplysningSvarHendelse(
-                    meldingsreferanseId = UUIDv7.ny(),
-                    ident = ident,
-                    behandlingId = behandlingId,
-                    opprettet = LocalDateTime.now(),
-                    opplysninger =
-                        listOf(
-                            OpplysningSvar(
-                                opplysningstype = Søknadstidspunkt.søknadsdato,
-                                verdi = LocalDate.now(),
-                                tilstand = OpplysningSvar.Tilstand.Faktum,
-                                kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
-                            ),
-                            OpplysningSvar(
-                                opplysningstype = Minsteinntekt.inntekt12,
-                                verdi = Beløp(3000.034.toBigDecimal()),
-                                tilstand = OpplysningSvar.Tilstand.Faktum,
-                                kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
-                            ),
-                            OpplysningSvar(
-                                opplysningstype = TestOpplysningstyper.tekst,
-                                verdi = "DETTE ERN TEST ",
-                                tilstand = OpplysningSvar.Tilstand.Faktum,
-                                kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
-                            ),
-                            OpplysningSvar(
-                                opplysningstype = TestOpplysningstyper.heltall,
-                                verdi = 3,
-                                tilstand = OpplysningSvar.Tilstand.Faktum,
-                                kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
-                            ),
-                            OpplysningSvar(
-                                opplysningstype = TestOpplysningstyper.dato,
-                                verdi = LocalDate.now(),
-                                tilstand = OpplysningSvar.Tilstand.Faktum,
-                                kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
-                            ),
-                            OpplysningSvar(
-                                opplysningstype = TestOpplysningstyper.barn,
-                                verdi =
-                                    BarnListe(
-                                        listOf(
-                                            Barn(
-                                                LocalDate.now(),
-                                                kvalifiserer = true,
-                                            ),
+    private val hendelse =
+        SøknadInnsendtHendelse(
+            meldingsreferanseId = UUIDv7.ny(),
+            ident = ident,
+            søknadId = UUIDv7.ny(),
+            gjelderDato = LocalDate.now(),
+            fagsakId = 1,
+            opprettet = LocalDateTime.now(),
+        )
+
+    private val avklaringer =
+        emptyList<Avklaring>()
+    private val behandling =
+        Behandling.rehydrer(
+            behandlingId = UUIDv7.ny(),
+            behandler = hendelse,
+            gjeldendeOpplysninger =
+                Opplysninger(
+                    listOf(
+                        Faktum(
+                            avtjentVerneplikt,
+                            true,
+                        ),
+                        Faktum(
+                            opplysningstype = Søknadstidspunkt.søknadsdato,
+                            verdi = LocalDate.now(),
+                            kilde =
+                                Saksbehandlerkilde(
+                                    UUIDv7.ny(),
+                                    "Z123456",
+                                ),
+                        ),
+                        Faktum(
+                            opplysningstype = Minsteinntekt.inntekt12,
+                            verdi = Beløp(3000.034.toBigDecimal()),
+                        ),
+                        Faktum(
+                            opplysningstype = TestOpplysningstyper.heltall,
+                            verdi = 3,
+                        ),
+                        Faktum(
+                            opplysningstype = TestOpplysningstyper.dato,
+                            verdi = LocalDate.now(),
+                        ),
+                        Faktum(
+                            opplysningstype = TestOpplysningstyper.barn,
+                            verdi =
+                                BarnListe(
+                                    listOf(
+                                        Barn(
+                                            LocalDate.now(),
+                                            kvalifiserer = true,
                                         ),
                                     ),
-                                tilstand = OpplysningSvar.Tilstand.Faktum,
-                                kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
-                            ),
+                                ),
+                            kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
                         ),
+                    ),
                 ),
-            )
-        }
+            basertPå = emptyList(),
+            tilstand = Behandling.TilstandType.UnderBehandling,
+            sistEndretTilstand = LocalDateTime.now(),
+            avklaringer = avklaringer,
+        )
+
+    private val person =
+        Person(ident.tilPersonIdentfikator(), listOf(behandling))
+
     private val personRepository =
         InMemoryPersonRepository().also {
             it.lagre(person)
@@ -198,10 +201,29 @@ internal class BehandlingApiTest {
             val response = autentisert(httpMethod = HttpMethod.Get, endepunkt = "/behandling/$behandlingId")
             response.status shouldBe HttpStatusCode.OK
             response.bodyAsText().shouldNotBeEmpty()
-            val behandling = shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), BehandlingDTO::class.java) }
-            behandling.behandlingId shouldBe behandlingId
-            behandling.opplysning.shouldNotBeEmpty()
-            behandling.opplysning.all { it.redigerbar } shouldBe false
+            val behandlingDto = shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), BehandlingDTO::class.java) }
+            behandlingDto.behandlingId shouldBe behandlingId
+            behandlingDto.opplysning.shouldNotBeEmpty()
+            behandlingDto.opplysning.all { it.redigerbar } shouldBe false
+            behandlingDto.aktiveAvklaringer.shouldNotBeEmpty()
+            with(behandlingDto.aktiveAvklaringer.first()) {
+                tittel shouldBe
+                    behandling
+                        .aktiveAvklaringer()
+                        .first()
+                        .kode.tittel
+                beskrivelse shouldBe
+                    behandling
+                        .aktiveAvklaringer()
+                        .first()
+                        .kode.beskrivelse
+                kode shouldBe
+                    behandling
+                        .aktiveAvklaringer()
+                        .first()
+                        .kode.kode
+                id shouldBe behandling.aktiveAvklaringer().first().id
+            }
             verify {
                 auditlogg.les(any(), any(), any())
             }

@@ -1,5 +1,7 @@
 package no.nav.dagpenger.behandling.mediator.api
 
+import no.nav.dagpenger.avklaring.Avklaring
+import no.nav.dagpenger.behandling.api.models.AvklaringDTO
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
@@ -45,6 +47,18 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
                 opplysning.tilOpplysningDTO()
             },
         kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
+        aktiveAvklaringer =
+            this.aktiveAvklaringer().map { avklaring ->
+                avklaring.tilAvklaringDTO()
+            },
+    )
+
+internal fun Avklaring.tilAvklaringDTO() =
+    AvklaringDTO(
+        id = this.id,
+        kode = this.kode.kode,
+        tittel = this.kode.tittel,
+        beskrivelse = this.kode.beskrivelse,
     )
 
 internal fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
