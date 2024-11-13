@@ -30,6 +30,7 @@ import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import org.postgresql.util.PGobject
@@ -56,6 +57,10 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 Navnebytte(
                     fra = Opplysningstype.somDato("Søknadstidspunkt".id("DetEkteSøknadstidspunktet")),
                     til = søknadstidspunkt,
+                ),
+                Navnebytte(
+                    fra = Opplysningstype.somBoolsk("Er medlemmet påvirket av streik eller lock-out?"),
+                    til = ikkeStreikEllerLockout,
                 ),
             )
 
@@ -434,6 +439,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         }
                     },
                 )
+
             InntektDataType ->
                 Pair(
                     "verdi_jsonb",
