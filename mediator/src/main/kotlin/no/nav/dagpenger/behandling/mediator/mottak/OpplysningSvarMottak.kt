@@ -64,7 +64,7 @@ internal class OpplysningSvarMottak(
     }
 
     private val skipBehovId = listOf("3f596a29-69a3-4e43-a2ef-629e3ee72921")
-    private val skipBehandlingsId = listOf("0191ffac-675a-743c-9042-8e000289a558")
+    private val skipBehandlingsId = listOf("01932552-7eb0-789c-ad83-5076c7a1feeb")
 
     @WithSpan
     override fun onPacket(
@@ -84,7 +84,7 @@ internal class OpplysningSvarMottak(
                 return
             }
             if (skipBehandlingsId.contains(behandlingId.toString())) {
-                logger.info { "Mottok svar på en opplysning som skal ignoreres" }
+                logger.info { "Mottok svar på en behandling som skal ignoreres" }
                 return
             }
             logger.info { "Mottok svar på en opplysning" }
@@ -261,8 +261,8 @@ private class JsonMapper(
         }
 }
 
-private fun barnMapper(verdi: JsonNode): BarnListe {
-    return BarnListe(
+private fun barnMapper(verdi: JsonNode): BarnListe =
+    BarnListe(
         barn =
             verdi.map {
                 Barn(
@@ -274,4 +274,3 @@ private fun barnMapper(verdi: JsonNode): BarnListe {
                 )
             },
     )
-}
