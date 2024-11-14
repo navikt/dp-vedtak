@@ -366,7 +366,19 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 fjernet.map { opplysning ->
                     mapOf("id" to opplysning.id)
                 },
-            )
+            ).also {
+                logger.info {
+                    """"
+                    | *******************************************************************
+                    |
+                    |FJERNET:
+                    | ${fjernet.joinToString(separator = "\n") { it.opplysningstype.navn }}
+                    |
+                    |**********************************************************************
+                    |""
+                    """.trimMargin()
+                }
+            }
 
         private fun lagreErstattetAv(opplysninger: List<Opplysning<*>>) =
             BatchStatement(

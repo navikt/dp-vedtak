@@ -37,6 +37,7 @@ class TestPerson(
     var InntektSiste12Mnd: Int = 1234,
     val InntektSiste36Mnd: Int = 1234,
     internal var ønskerFraDato: LocalDate = søknadsdato,
+    internal var prøvingsdato: LocalDate = søknadsdato,
 ) {
     val inntektId = "01HQTE3GBWCSVYH6S436DYFREN"
     internal val søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"
@@ -243,6 +244,8 @@ class TestPerson(
             sisteAvsluttendeKalenderMåned = YearMonth.from(søknadsdato.minusMonths(2)),
         )
 
+    private val arbeidssøkerRegisterGyldighetsperiode get() = prøvingsdato
+
     private val løsninger
         get() =
             mapOf(
@@ -263,7 +266,12 @@ class TestPerson(
                 HelseTilAlleTyperJobb to true,
                 VilligTilÅBytteYrke to true,
                 // Arbeidssøkerregistrering
-                RegistrertSomArbeidssøker to true,
+                RegistrertSomArbeidssøker to
+                    mapOf(
+                        "verdi" to true,
+                        "gyldigFraOgMed" to arbeidssøkerRegisterGyldighetsperiode,
+                        "gyldigTilOgMed" to arbeidssøkerRegisterGyldighetsperiode,
+                    ),
                 // Rettighetsype
                 Ordinær to false,
                 Permittert to true,

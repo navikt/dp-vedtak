@@ -16,6 +16,7 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
+import mu.KotlinLogging
 import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.konfigurasjon.Feature
@@ -76,6 +77,8 @@ internal class PersonMediatorTest {
                 AvklaringRepositoryPostgres(AvklaringKafkaObservatør(rapid)),
             ),
         )
+
+    private val logger = KotlinLogging.logger { }
 
     private val testObservatør = TestObservatør()
     private val hendelseMediator =
@@ -553,6 +556,17 @@ internal class PersonMediatorTest {
 
             // Setter ny prøvingsdato (som kalles Virkningsdato for bakoverkompabilitet med behovsløsere)
             val nyPrøvingsdato = 22.februar(2024)
+            logger.info {
+                """
+                ******************************************************************
+                
+                Endrer prøvingsdato til $nyPrøvingsdato
+                
+                ******************************************************************
+                """.trimIndent()
+            }
+
+            testPerson.prøvingsdato = nyPrøvingsdato
             testPerson.InntektSiste12Mnd = 0
             testPerson.endreOpplysning("Virkningsdato", nyPrøvingsdato)
 
@@ -584,9 +598,66 @@ internal class PersonMediatorTest {
                         .first()
                         .opplysninger()
                         .finnAlle()
-                        .shouldHaveSize(forventetAntallOpplysningerAvslag)
+                        .shouldHaveSize(forventetAntallOpplysningerAvslag + 2)
                 }
             }
+
+            val nyPrøvingsdato2 = 2.juni(2024)
+            logger.info {
+                """
+                ******************************************************************
+                
+                Endrer prøvingsdato til $nyPrøvingsdato2
+                
+                ******************************************************************
+                """.trimIndent()
+            }
+            testPerson.prøvingsdato = nyPrøvingsdato2
+            testPerson.InntektSiste12Mnd = 0
+            testPerson.endreOpplysning("Virkningsdato", nyPrøvingsdato2)
+
+            rapid.harBehov(InntektId) {
+                medDato("Virkningsdato") shouldBe nyPrøvingsdato2
+            }
+            testPerson.løsBehov(InntektId)
+
+            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("RegistrertSomArbeidssøker") {
+                medDato("Virkningsdato") shouldBe nyPrøvingsdato2
+            }
+
+            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd", "RegistrertSomArbeidssøker")
+            testPerson.løsBehov(TarUtdanningEllerOpplæring)
+            testPerson.løsBehov(Inntekt)
+
+            logger.info {
+                """
+                ******************************************************************
+                
+                Endrer prøvingsdato til $nyPrøvingsdato
+                
+                ******************************************************************
+                """.trimIndent()
+            }
+            testPerson.prøvingsdato = nyPrøvingsdato
+            testPerson.InntektSiste12Mnd = 0
+            testPerson.endreOpplysning("Virkningsdato", nyPrøvingsdato)
+
+            rapid.harBehov(InntektId) {
+                medDato("Virkningsdato") shouldBe nyPrøvingsdato
+            }
+            testPerson.løsBehov(InntektId)
+
+            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("RegistrertSomArbeidssøker") {
+                medDato("Virkningsdato") shouldBe nyPrøvingsdato
+            }
+
+            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd", "RegistrertSomArbeidssøker")
+            testPerson.løsBehov(TarUtdanningEllerOpplæring)
+            testPerson.løsBehov(Inntekt)
         }
     }
 
