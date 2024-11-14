@@ -5,7 +5,6 @@ import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadId
 import no.nav.dagpenger.opplysning.Faktum
-import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
@@ -39,7 +38,8 @@ class SøknadInnsendtHendelse(
     opprettet: LocalDateTime,
     private val støtterInnvilgelse: Boolean = false,
 ) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId, opprettet) {
-    override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring = Regelkjøring(skjedde, opplysninger, Søknadsprosess())
+    override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring =
+        Regelkjøring(prøvingsdato(opplysninger), opplysninger, Søknadsprosess())
 
     // todo: Behovet forsvinner når vi forslag til vedtak og vedtak_fattet. De forventer at det vi avklarer er en boolean.
     override fun avklarer(opplysninger: LesbarOpplysninger): Opplysningstype<Boolean> {
@@ -94,7 +94,6 @@ class SøknadInnsendtHendelse(
                     Faktum(
                         søknadIdOpplysningstype,
                         this.eksternId.id.toString(),
-                        Gyldighetsperiode(skjedde, skjedde),
                         kilde = Systemkilde(meldingsreferanseId, opprettet),
                     ),
                     Faktum(
