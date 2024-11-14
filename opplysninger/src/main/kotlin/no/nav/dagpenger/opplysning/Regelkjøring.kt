@@ -62,16 +62,17 @@ class Regelkjøring(
     private val regelsett get() = forretningsprosess.regelsett()
     private val alleRegler: List<Regel<*>> get() = regelsett.flatMap { it.regler(regelverksdato) }
 
-    private val ønsketResultat get() = forretningsprosess.ønsketResultat(opplysninger)
+    private val opplysningerPåPrøvingsdato get() = opplysninger.forDato(prøvingsdato)
+
+    private val ønsketResultat get() = forretningsprosess.ønsketResultat(opplysningerPåPrøvingsdato)
 
     // Finn bare regler som kreves for ønsket resultat
     // Kjører regler i topologisk rekkefølge
     private val gjeldendeRegler: List<Regel<*>> get() = alleRegler
     private var plan: MutableSet<Regel<*>> = mutableSetOf()
     private val kjørteRegler: MutableList<Regel<*>> = mutableListOf()
-    private var trenger = setOf<Regel<*>>()
 
-    private val opplysningerPåPrøvingsdato get() = opplysninger.forDato(prøvingsdato)
+    private var trenger = setOf<Regel<*>>()
 
     init {
         val duplikate = gjeldendeRegler.groupBy { it.produserer }.filter { it.value.size > 1 }
