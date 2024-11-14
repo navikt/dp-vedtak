@@ -64,6 +64,14 @@ abstract class Regel<T : Comparable<T>> internal constructor(
         if (avhengerAv.isEmpty()) return Faktum(produserer, kjør(opplysninger))
 
         val basertPå = opplysninger.finnAlle(avhengerAv)
+        require(basertPå.size == avhengerAv.size) {
+            """Prøver å lage produktet ${this.produserer}, men mangler avhengigheter for $this. 
+            |Det er mismatch mellom lagPlan() og lagProdukt(). 
+            |Avhengighetene vi trenger er: ${avhengerAv.joinToString { it.id }})}
+            |Avhengighetene vi fant er: ${basertPå.joinToString { it.opplysningstype.id }})}
+            """.trimMargin()
+        }
+
         val erAlleFaktum = basertPå.all { it is Faktum<*> }
         val utledetAv = Utledning(this, basertPå)
         val gyldig =
