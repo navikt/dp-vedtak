@@ -107,6 +107,8 @@ class Behandling private constructor(
 
     fun tilstand() = Pair(tilstand.type, tilstand.opprettet)
 
+    fun harTilstand(tilstand: TilstandType) = this.tilstand.type == tilstand
+
     fun opplysninger(): LesbarOpplysninger = opplysninger
 
     override fun håndter(hendelse: StartHendelse) {
@@ -439,7 +441,10 @@ class Behandling private constructor(
                 mapOf(
                     "prøvingsdato" to prøvingsdato,
                     "utfall" to behandling.opplysninger.finnOpplysning(avklarer).verdi,
-                    "harAvklart" to behandling.opplysninger.finnOpplysning(avklarer).opplysningstype.navn,
+                    "harAvklart" to
+                        behandling.opplysninger
+                            .finnOpplysning(avklarer)
+                            .opplysningstype.navn,
                     "avklaringer" to avklaringer,
                 ),
             )

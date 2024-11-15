@@ -31,6 +31,7 @@ import no.nav.dagpenger.behandling.mediator.api.auth.saksbehandlerId
 import no.nav.dagpenger.behandling.mediator.audit.Auditlogg
 import no.nav.dagpenger.behandling.mediator.lagVedtak
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
+import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.Redigert
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
@@ -179,6 +180,11 @@ internal fun Application.behandlingApi(
                         val oppdaterOpplysningRequestDTO = call.receive<OppdaterOpplysningRequestDTO>()
                         val behandling =
                             personRepository.hentBehandling(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+
+                        require(!behandling.harTilstand(Redigert)) {
+                            "Kan ikke redigere opplysninger før forrige redigering er ferdig"
+                        }
+
                         val opplysning = behandling.opplysninger().finnOpplysning(opplysningId)
                         val svar =
                             OpplysningsSvar(
