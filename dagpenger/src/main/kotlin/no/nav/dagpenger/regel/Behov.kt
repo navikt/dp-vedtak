@@ -30,6 +30,14 @@ object Behov {
     val Inntekt by StringConstant()
 
     val Barnetillegg by StringConstant()
+
+    val Sykepenger by StringConstant()
+    val Pleienger by StringConstant()
+    val Omsorgspenger by StringConstant()
+    val Opplæringspenger by StringConstant()
+    val Uføre by StringConstant()
+    val Foreldrepenger by StringConstant()
+    val Svangerskapspenger by StringConstant()
 }
 
 class StringConstant {
