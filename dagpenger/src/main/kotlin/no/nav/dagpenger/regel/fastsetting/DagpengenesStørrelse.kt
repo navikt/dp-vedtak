@@ -74,7 +74,7 @@ object DagpengenesStørrelse {
             regel(ukessats) { multiplikasjon(avrundetDagsMedBarnetillegg, arbeidsdagerPerUke) }
         }
 
-    val ønsketResultat = listOf(ukessats)
+    val ønsketResultat = listOf(ukessats, avrundetDagsUtenBarnetillegg)
 
     val BarnetilleggKontroll =
         Kontrollpunkt(BarnMåGodkjennes) {

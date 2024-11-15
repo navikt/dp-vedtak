@@ -132,6 +132,7 @@ Maks grunnlag for dagpenger
 Dagsats uten barnetillegg
 Maks dagsats for dagpenger
 Dagsats med barn
+Avrundet dagsats uten barnetillegg
 Dagsats for dagpenger med barnetillegg
 Avrundet dagsats med barnetillegg
 Egenandel

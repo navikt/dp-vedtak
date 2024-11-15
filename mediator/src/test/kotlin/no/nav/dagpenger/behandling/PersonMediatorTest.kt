@@ -139,9 +139,9 @@ internal class PersonMediatorTest {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
                 it.aktivBehandling.aktivAvklaringer.shouldHaveSize(6)
-                it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size shouldBe
-                    forventetAntallOpplysningerAvslag
             }
+
+            godkjennOpplysninger("avslag")
 
             listOf(
                 Avklaringspunkter.EØSArbeid,
@@ -218,14 +218,7 @@ internal class PersonMediatorTest {
                 )
             løsBehandlingFramTilMinsteinntekt(testPerson)
 
-            personRepository.hent(ident.tilPersonIdentfikator()).also {
-                it.shouldNotBeNull()
-                it.behandlinger().size shouldBe 1
-                it
-                    .behandlinger()
-                    .flatMap { behandling -> behandling.opplysninger().finnAlle() }
-                    .size shouldBe forventetAntallOpplysningerKnockout
-            }
+            godkjennOpplysninger("knokcout")
 
             rapid.harHendelse("behandling_avbrutt") {
                 medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
@@ -577,15 +570,7 @@ internal class PersonMediatorTest {
             }
 
             withClue("Skal kun ha opplysninger nødvendig for avslag") {
-                personRepository.hent(ident.tilPersonIdentfikator()).also {
-                    it.shouldNotBeNull()
-                    it
-                        .behandlinger()
-                        .first()
-                        .opplysninger()
-                        .finnAlle()
-                        .shouldHaveSize(forventetAntallOpplysningerAvslag)
-                }
+                godkjennOpplysninger("avslag")
             }
         }
     }
