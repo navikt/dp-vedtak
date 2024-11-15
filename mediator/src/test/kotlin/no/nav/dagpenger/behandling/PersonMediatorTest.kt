@@ -544,28 +544,58 @@ internal class PersonMediatorTest {
                 medBoolsk("utfall") shouldBe true
             }
 
+            godkjennOpplysninger("innvilgelse")
+
             // Setter ny prøvingsdato (som kalles Virkningsdato for bakoverkompabilitet med behovsløsere)
-            val nyPrøvingsdato = 22.februar(2024)
-            testPerson.InntektSiste12Mnd = 0
+            val nyPrøvingsdato = 22.juli(2024)
+            testPerson.prøvingsdato = nyPrøvingsdato
+            // testPerson.InntektSiste12Mnd = 0
             testPerson.endreOpplysning("Virkningsdato", nyPrøvingsdato)
 
             rapid.harBehov(InntektId) {
                 medDato("Virkningsdato") shouldBe nyPrøvingsdato
             }
-            testPerson.løsBehov(InntektId)
-
-            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
             rapid.harBehov("RegistrertSomArbeidssøker") {
                 medDato("Virkningsdato") shouldBe nyPrøvingsdato
             }
+            testPerson.løsBehov(InntektId, "RegistrertSomArbeidssøker")
 
-            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd", "RegistrertSomArbeidssøker")
-            testPerson.løsBehov(TarUtdanningEllerOpplæring)
-            testPerson.løsBehov(Inntekt)
+            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("Inntekt")
+            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd", "Inntekt")
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medDato("prøvingsdato") shouldBe nyPrøvingsdato
+                medBoolsk("utfall") shouldBe true
+            }
+
+            withClue("Skal kun ha opplysninger nødvendig for innvilgelse") {
+                godkjennOpplysninger("innvilgelse-igjen")
+            }
+
+            // Setter ny prøvingsdato (som kalles Virkningsdato for bakoverkompabilitet med behovsløsere)
+            val endaNyerePrøvingsdato = 22.august(2024)
+            testPerson.prøvingsdato = endaNyerePrøvingsdato
+            testPerson.InntektSiste12Mnd = 0
+            testPerson.endreOpplysning("Virkningsdato", endaNyerePrøvingsdato)
+
+            rapid.harBehov(InntektId) {
+                medDato("Virkningsdato") shouldBe endaNyerePrøvingsdato
+            }
+            rapid.harBehov("RegistrertSomArbeidssøker") {
+                medDato("Virkningsdato") shouldBe endaNyerePrøvingsdato
+            }
+            testPerson.løsBehov(InntektId, RegistrertSomArbeidssøker)
+
+            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
+            rapid.harBehov("Inntekt")
+
+            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd", "Inntekt")
+
+            rapid.harHendelse("forslag_til_vedtak") {
+                medDato("prøvingsdato") shouldBe endaNyerePrøvingsdato
                 medBoolsk("utfall") shouldBe false
             }
 

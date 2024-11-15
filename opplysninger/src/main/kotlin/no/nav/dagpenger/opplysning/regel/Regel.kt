@@ -30,7 +30,7 @@ abstract class Regel<T : Comparable<T>> internal constructor(
                 produsent.lagPlan(opplysninger, plan, gjeldendeRegler)
             }
 
-            val avhengighetErErstattet = produkt.utledetAv.opplysninger.any { it.erErstattet }
+            val avhengighetErErstattet = produkt.utledetAv.opplysninger.any { it.erErstattet || it.erFjernet }
 
             if (avhengighetErErstattet) {
                 plan.add(this)

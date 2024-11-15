@@ -208,7 +208,7 @@ class OpplysningerRepositoryPostgresTest {
     }
 
     @Test
-    fun `lagre erstattet opplysning i samme Opplysninger`() {
+    fun `skriver over erstattet opplysning i samme Opplysninger`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
             val opplysning = Faktum(heltall, 10)
@@ -223,7 +223,7 @@ class OpplysningerRepositoryPostgresTest {
                 repo.hentOpplysninger(opplysninger.id).also {
                     Regelkjøring(LocalDate.now(), it)
                 }
-            fraDb.aktiveOpplysninger shouldContainExactly opplysninger.aktiveOpplysninger
+            fraDb.aktiveOpplysninger shouldContainExactly listOf(opplysningErstattet)
             fraDb.finnOpplysning(heltall).verdi shouldBe opplysningErstattet.verdi
         }
     }

@@ -431,16 +431,15 @@ class Behandling private constructor(
                         "begrunnelse" to it.kode.beskrivelse,
                     )
                 }
+            val prøvingsdato = behandling.behandler.prøvingsdato(behandling.opplysninger)
+            val avklarer = behandling.behandler.avklarer(behandling.opplysninger)
             hendelse.hendelse(
                 BehandlingHendelser.ForslagTilVedtakHendelse,
                 "Foreslår vedtak",
                 mapOf(
-                    "prøvingsdato" to behandling.behandler.prøvingsdato(behandling.opplysninger),
-                    "utfall" to behandling.opplysninger.finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger)).verdi,
-                    "harAvklart" to
-                        behandling.opplysninger
-                            .finnOpplysning(behandling.behandler.avklarer(behandling.opplysninger))
-                            .opplysningstype.navn,
+                    "prøvingsdato" to prøvingsdato,
+                    "utfall" to behandling.opplysninger.finnOpplysning(avklarer).verdi,
+                    "harAvklart" to behandling.opplysninger.finnOpplysning(avklarer).opplysningstype.navn,
                     "avklaringer" to avklaringer,
                 ),
             )

@@ -71,22 +71,17 @@ class Opplysninger private constructor(
             }
         }
 
-        if (aktiveOpplysninger.contains(eksisterende)) {
+        if (opplysninger.contains(eksisterende)) {
             // Erstatt hele opplysningen
-            opplysninger.addAll(eksisterende.erstattesAv(opplysning))
+            eksisterende.fjern()
+            opplysninger.add(opplysning)
             return
         }
 
         opplysninger.add(opplysning)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    internal fun <T : Comparable<T>> leggTilUtledet(opplysning: Opplysning<T>) {
-        alleOpplysninger.find { it.overlapper(opplysning) }?.let {
-            val erstattet = it as Opplysning<T>
-            opplysninger.addAll(erstattet.erstattesAv(opplysning))
-        } ?: opplysninger.add(opplysning)
-    }
+    internal fun <T : Comparable<T>> leggTilUtledet(opplysning: Opplysning<T>) = leggTil(opplysning)
 
     override fun <T : Comparable<T>> finnOpplysning(opplysningstype: Opplysningstype<T>): Opplysning<T> =
         finnNullableOpplysning(opplysningstype) ?: throw IllegalStateException("Har ikke opplysning $opplysningstype som er gyldig")

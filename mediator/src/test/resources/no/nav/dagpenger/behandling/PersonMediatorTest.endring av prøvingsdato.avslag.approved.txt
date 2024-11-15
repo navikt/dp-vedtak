@@ -39,10 +39,10 @@ Krav til arbeidssøker
 Oppfyller kravet til alder
 Første måned av opptjeningsperiode
 Inntekt
+Registrert som arbeidssøker
+Registrert som arbeidssøker på søknadstidspunktet
 Arbeidsinntekt siste 12 mnd
 Arbeidsinntekt siste 36 mnd
-Registrert som arbeidssøker
 Arbeidsinntekt er over kravet for siste 12 mnd
 Arbeidsinntekt er over kravet for siste 36 mnd
-Registrert som arbeidssøker på søknadstidspunktet
 Krav til minsteinntekt
