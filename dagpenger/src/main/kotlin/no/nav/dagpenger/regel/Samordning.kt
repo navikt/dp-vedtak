@@ -5,6 +5,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.enAv
+import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.substraksjon
 import no.nav.dagpenger.opplysning.verdier.Beløp
@@ -49,13 +50,13 @@ object Samordning {
         Regelsett(
             "§ 4-25.Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon",
         ) {
-            regel(sykepenger) { oppslag(prøvingsdato) { false } }
-            regel(pleiepenger) { oppslag(prøvingsdato) { false } }
-            regel(omsorgspenger) { oppslag(prøvingsdato) { false } }
-            regel(opplæringspenger) { oppslag(prøvingsdato) { false } }
+            regel(sykepenger) { innhentMed(prøvingsdato) }
+            regel(pleiepenger) { innhentMed(prøvingsdato) }
+            regel(omsorgspenger) { innhentMed(prøvingsdato) }
+            regel(opplæringspenger) { innhentMed(prøvingsdato) }
             regel(uføre) { oppslag(prøvingsdato) { false } }
-            regel(foreldrepenger) { oppslag(prøvingsdato) { false } }
-            regel(svangerskapspenger) { oppslag(prøvingsdato) { false } }
+            regel(foreldrepenger) { innhentMed(prøvingsdato) }
+            regel(svangerskapspenger) { innhentMed(prøvingsdato) }
             regel(sykepengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
             regel(pleiepengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
             regel(omsorgspengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
