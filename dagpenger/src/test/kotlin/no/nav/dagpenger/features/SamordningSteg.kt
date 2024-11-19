@@ -126,7 +126,7 @@ class SamordningSteg : No {
         }
 
         Så("skal at bruker ha {string} i samordnet dagsats") { beløp: String ->
-            opplysninger.finnOpplysning(Samordning.samordnetDagsats).verdi shouldBe Beløp(beløp.toBigDecimal())
+            opplysninger.finnOpplysning(Samordning.sumAndreYtelser).verdi shouldBe Beløp(beløp.toBigDecimal())
         }
     }
 }

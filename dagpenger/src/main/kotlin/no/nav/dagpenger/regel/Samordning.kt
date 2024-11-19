@@ -4,9 +4,13 @@ import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
+import no.nav.dagpenger.opplysning.regel.addisjon
 import no.nav.dagpenger.opplysning.regel.enAv
+import no.nav.dagpenger.opplysning.regel.ingenAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.opplysning.regel.størreEnn
+import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.opplysning.regel.substraksjon
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.Foreldrepenger
@@ -18,6 +22,7 @@ import no.nav.dagpenger.regel.Behov.Sykepenger
 import no.nav.dagpenger.regel.Behov.Uføre
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.barnetillegg
 
 /**
  * § 4-25.Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon
@@ -42,7 +47,12 @@ object Samordning {
     val svangerskapspengerDagsats = Opplysningstype.somBeløp("Svangerskapspenger dagsats")
 
     val avrundetDagsUtenBarnetillegg = DagpengenesStørrelse.avrundetDagsUtenBarnetillegg
+    val sumAndreYtelser = Opplysningstype.somBeløp("Sum andre ytelser")
     val samordnetDagsats = Opplysningstype.somBeløp("Samordnet dagsats")
+    val kanUtbetale = Opplysningstype.somBoolsk("Samordnet dagsats er negativ eller 0")
+    val barnetillegg = DagpengenesStørrelse.barnetillegg
+    val harBarnetillegg = Opplysningstype.somBoolsk("Har barnetillegg")
+    val nullBeløp = Opplysningstype.somBeløp("Beløp er 0")
 
     // Fulle dagpenger minus en/flere av reduserte ytelsene man mottar per samme dag (regnestykket)
     // avrundetDagsUtenBarnetillegg - sykepenger - pleiepenger - omsorgspenger - opplæringspenger - uføre - foreldrepenger - svangerskapspenger
@@ -51,6 +61,7 @@ object Samordning {
         Regelsett(
             "§ 4-25.Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon",
         ) {
+            regel(nullBeløp) { oppslag(prøvingsdato) { Beløp(0.0) } }
             regel(sykepenger) { innhentMed(prøvingsdato) }
             regel(pleiepenger) { innhentMed(prøvingsdato) }
             regel(omsorgspenger) { innhentMed(prøvingsdato) }
@@ -68,9 +79,8 @@ object Samordning {
             regel(uføreDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
             regel(svangerskapspengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
             regel(foreldrepengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
-            regel(samordnetDagsats) {
-                substraksjon(
-                    avrundetDagsUtenBarnetillegg,
+            regel(sumAndreYtelser) {
+                addisjon(
                     sykepengerDagsats,
                     pleiepengerDagsats,
                     omsorgspengerDagsats,
@@ -78,6 +88,23 @@ object Samordning {
                     uføreDagsats,
                     foreldrepengerDagsats,
                     svangerskapspengerDagsats,
+                )
+            }
+
+            regel(samordnetDagsats) {
+                substraksjon(avrundetDagsUtenBarnetillegg, sumAndreYtelser)
+            }
+            regel(kanUtbetale) {
+                størreEnnEllerLik(avrundetDagsUtenBarnetillegg, sumAndreYtelser)
+            }
+            regel(harBarnetillegg) {
+                størreEnn(barnetillegg, nullBeløp)
+            }
+
+            regel(utfallEtterSamordning) {
+                ingenAv(
+                    kanUtbetale,
+                    harBarnetillegg,
                 )
             }
 
@@ -94,10 +121,15 @@ object Samordning {
             }
         }
 
-    val ønsketResultat = listOf(samordnetDagsats, skalSamordnes)
+    val ønsketResultat = listOf(sumAndreYtelser, skalSamordnes)
 
     val SkalSamordnes =
         Kontrollpunkt(Avklaringspunkter.Samordnes) {
             it.har(skalSamordnes) && it.finnOpplysning(skalSamordnes).verdi
+        }
+
+    val UtfallEtterSamordning =
+        Kontrollpunkt(Avklaringspunkter.UtfallEtterSamordning) {
+            it.har(utfallEtterSamordning) && it.finnOpplysning(utfallEtterSamordning).verdi
         }
 }

@@ -6,16 +6,14 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 
 class Addisjon(
     produserer: Opplysningstype<Beløp>,
-    private val ledd1: Opplysningstype<Beløp>,
-    private val ledd2: Opplysningstype<Beløp>,
-) : Regel<Beløp>(produserer, listOf(ledd1, ledd2)) {
+    private val ledd: List<Opplysningstype<Beløp>>,
+) : Regel<Beløp>(produserer, ledd) {
     override fun kjør(opplysninger: LesbarOpplysninger): Beløp {
-        val verdi1 = opplysninger.finnOpplysning(ledd1).verdi
-        val verdi2 = opplysninger.finnOpplysning(ledd2).verdi
-        return verdi1 + verdi2
+        val verdier = ledd.map { opplysninger.finnOpplysning(it).verdi }
+        return Beløp(verdier.sumOf { it.verdien })
     }
 
-    override fun toString(): String = "Addisjon av $ledd1 og $ledd2"
+    override fun toString(): String = "Addisjon av ${ledd.joinToString("+") { it.toString() }}"
 }
 
 fun Opplysningstype<Beløp>.addisjon(
@@ -23,6 +21,11 @@ fun Opplysningstype<Beløp>.addisjon(
     ledd2: Opplysningstype<Beløp>,
 ) = Addisjon(
     this,
-    ledd1,
-    ledd2,
+    listOf(ledd1, ledd2),
 )
+
+fun Opplysningstype<Beløp>.addisjon(vararg ledd: Opplysningstype<Beløp>) =
+    Addisjon(
+        this,
+        ledd.toList(),
+    )
