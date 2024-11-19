@@ -54,9 +54,12 @@ object Samordning {
             regel(pleiepenger) { innhentMed(prøvingsdato) }
             regel(omsorgspenger) { innhentMed(prøvingsdato) }
             regel(opplæringspenger) { innhentMed(prøvingsdato) }
-            regel(uføre) { oppslag(prøvingsdato) { false } }
             regel(foreldrepenger) { innhentMed(prøvingsdato) }
             regel(svangerskapspenger) { innhentMed(prøvingsdato) }
+
+            // TODO: Hent uførestrygd fra pesys.
+            regel(uføre) { oppslag(prøvingsdato) { false } }
+
             regel(sykepengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
             regel(pleiepengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
             regel(omsorgspengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
@@ -90,8 +93,10 @@ object Samordning {
             }
         }
 
+    val ønsketResultat = listOf(samordnetDagsats, skalSamordnes)
+
     val SkalSamordnes =
         Kontrollpunkt(Avklaringspunkter.Samordnes) {
-            it.har(skalSamordnes)
+            it.har(skalSamordnes) && it.finnOpplysning(skalSamordnes).verdi
         }
 }

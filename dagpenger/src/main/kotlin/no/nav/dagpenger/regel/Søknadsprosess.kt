@@ -59,6 +59,7 @@ class Søknadsprosess : Forretningsprosess {
             ønsketResultat.addAll(Egenandel.ønsketResultat)
             ønsketResultat.addAll(DagpengenesStørrelse.ønsketResultat)
             ønsketResultat.addAll(Dagpengeperiode.ønsketResultat)
+            ønsketResultat.addAll(Samordning.ønsketResultat)
 
             if (opplysninger.oppfyller(Verneplikt.avtjentVerneplikt)) {
                 ønsketResultat.addAll(VernepliktFastsetting.ønsketResultat)

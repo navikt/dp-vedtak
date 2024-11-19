@@ -8,16 +8,22 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import no.nav.dagpenger.inntekt.v1.KlassifisertInntektMåned
 import no.nav.dagpenger.regel.Behov.Barnetillegg
+import no.nav.dagpenger.regel.Behov.Foreldrepenger
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
 import no.nav.dagpenger.regel.Behov.Lønnsgaranti
+import no.nav.dagpenger.regel.Behov.Omsorgspenger
+import no.nav.dagpenger.regel.Behov.Opplæringspenger
 import no.nav.dagpenger.regel.Behov.Ordinær
 import no.nav.dagpenger.regel.Behov.Permittert
 import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
+import no.nav.dagpenger.regel.Behov.Pleienger
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
+import no.nav.dagpenger.regel.Behov.Svangerskapspenger
+import no.nav.dagpenger.regel.Behov.Sykepenger
 import no.nav.dagpenger.regel.Behov.Søknadsdato
 import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
 import no.nav.dagpenger.regel.Behov.Verneplikt
@@ -290,5 +296,11 @@ class TestPerson(
                     ),
                 Inntekt to mapOf("verdi" to inntektV1),
                 "Beregnet vanlig arbeidstid per uke før tap" to 40,
+                Sykepenger to false,
+                Omsorgspenger to false,
+                Svangerskapspenger to false,
+                Foreldrepenger to false,
+                Opplæringspenger to false,
+                Pleienger to false,
             )
 }

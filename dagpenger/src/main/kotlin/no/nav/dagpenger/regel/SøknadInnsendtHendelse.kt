@@ -19,6 +19,7 @@ import no.nav.dagpenger.regel.Minsteinntekt.InntektNesteKalendermånedKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.SvangerskapsrelaterteSykepengerKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.ØnskerEtterRapporteringsfristKontroll
+import no.nav.dagpenger.regel.Samordning.SkalSamordnes
 import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBeregningsregelKontroll
@@ -112,6 +113,7 @@ class SøknadInnsendtHendelse(
             InntektNesteKalendermånedKontroll,
             JobbetUtenforNorgeKontroll,
             MuligGjenopptakKontroll,
+            SkalSamordnes,
             SvangerskapsrelaterteSykepengerKontroll,
             SøknadstidspunktForLangtFramITid,
             TapArbeidstidBeregningsregelKontroll,
