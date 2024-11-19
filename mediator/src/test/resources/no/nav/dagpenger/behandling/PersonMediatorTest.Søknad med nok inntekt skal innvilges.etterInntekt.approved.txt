@@ -80,7 +80,6 @@ Har svart ja på spørsmål om utdanning eller opplæring
 Har svart nei på spørsmål om utdanning eller opplæring
 Oppfyller kravet på unntak for utdanning eller opplæring
 Krav til utdanning eller opplæring
-Krav på dagpenger
 Grunnbeløp for grunnlag
 Faktor for maksimalt mulig grunnlag
 Antall år i 36 måneder
@@ -104,6 +103,7 @@ Uføre dagsats
 Foreldrepenger dagsats
 Svangerskapspenger dagsats
 Uføretrygd etter lovens kapittel 12
+Krav på dagpenger
 6 ganger grunnbeløp
 Terskel for 12 måneder
 Snittinntekt siste 36 måneder

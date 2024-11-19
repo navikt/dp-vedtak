@@ -50,24 +50,46 @@ class Søknadsprosess : Forretningsprosess {
             return ønsketResultat
         }
 
-        ønsketResultat.add(KravPåDagpenger.kravPåDagpenger)
+        val vilkår =
+            listOf(
+                Alderskrav.kravTilAlder,
+                Minsteinntekt.minsteinntekt,
+                ReellArbeidssøker.kravTilArbeidssøker,
+                Meldeplikt.registrertPåSøknadstidspunktet,
+                Rettighetstype.rettighetstype,
+                Utdanning.kravTilUtdanning,
+                Utestengning.ikkeUtestengt,
+                StreikOgLockout.ikkeStreikEllerLockout,
+                Medlemskap.oppfyllerMedlemskap,
+                TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid,
+            )
+        ønsketResultat.addAll(
+            vilkår,
+        )
+        if (opplysninger.mangler(vilkår)) {
+            return ønsketResultat
+        }
 
-        val harKravPåDagpenger = opplysninger.oppfyller(KravPåDagpenger.kravPåDagpenger)
-
-        if (harKravPåDagpenger) {
+        if (opplysninger.oppfyller(vilkår)) {
             ønsketResultat.addAll(Dagpengegrunnlag.ønsketResultat)
             ønsketResultat.addAll(Egenandel.ønsketResultat)
             ønsketResultat.addAll(DagpengenesStørrelse.ønsketResultat)
             ønsketResultat.addAll(Dagpengeperiode.ønsketResultat)
             ønsketResultat.addAll(Samordning.ønsketResultat)
-
             if (opplysninger.oppfyller(Verneplikt.avtjentVerneplikt)) {
                 ønsketResultat.addAll(VernepliktFastsetting.ønsketResultat)
             }
         }
 
+        ønsketResultat.add(KravPåDagpenger.kravPåDagpenger)
         return ønsketResultat
     }
+
+    private fun LesbarOpplysninger.mangler(opplysningstype: List<Opplysningstype<Boolean>>): Boolean =
+        opplysningstype.all { this.mangler(it) }
+
+    private fun LesbarOpplysninger.oppfyller(opplysningstype: List<Opplysningstype<Boolean>>): Boolean =
+        opplysningstype.all { oppfyller(it) }
 
     private fun LesbarOpplysninger.oppfyller(opplysningstype: Opplysningstype<Boolean>) =
         har(opplysningstype) && finnOpplysning(opplysningstype).verdi

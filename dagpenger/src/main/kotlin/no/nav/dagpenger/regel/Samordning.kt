@@ -23,6 +23,7 @@ import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
  * § 4-25.Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon
  */
 object Samordning {
+    val utfallEtterSamordning = Opplysningstype.somBoolsk("Utfall etter samordning")
     val sykepenger = Opplysningstype.somBoolsk("Sykepenger etter lovens kapittel 8".id(Sykepenger))
     val pleiepenger = Opplysningstype.somBoolsk("Pleiepenger etter lovens kapittel 9".id(Pleienger))
     val omsorgspenger = Opplysningstype.somBoolsk("Omsorgspenger etter lovens kapittel 9".id(Omsorgspenger))
@@ -57,7 +58,7 @@ object Samordning {
             regel(foreldrepenger) { innhentMed(prøvingsdato) }
             regel(svangerskapspenger) { innhentMed(prøvingsdato) }
 
-            // TODO: Hent uførestrygd fra pesys.
+            // TODO: Hent uførestrygd og barnepenger fra pesys
             regel(uføre) { oppslag(prøvingsdato) { false } }
 
             regel(sykepengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
