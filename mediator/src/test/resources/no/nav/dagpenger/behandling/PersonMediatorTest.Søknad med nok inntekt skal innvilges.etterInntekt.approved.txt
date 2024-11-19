@@ -108,6 +108,7 @@ Krav på dagpenger
 Terskel for 12 måneder
 Snittinntekt siste 36 måneder
 Terskel for 36 måneder
+Sum andre ytelser
 Over terskel for 12 måneder
 Over terskel for 36 måneder
 Stønadsuker ved siste 12 måneder

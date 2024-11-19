@@ -6,7 +6,6 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.addisjon
 import no.nav.dagpenger.opplysning.regel.enAv
-import no.nav.dagpenger.opplysning.regel.ingenAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnn
@@ -102,7 +101,7 @@ object Samordning {
             }
 
             regel(utfallEtterSamordning) {
-                ingenAv(
+                enAv(
                     kanUtbetale,
                     harBarnetillegg,
                 )
@@ -121,15 +120,10 @@ object Samordning {
             }
         }
 
-    val ønsketResultat = listOf(sumAndreYtelser, skalSamordnes)
+    val ønsketResultat = listOf(samordnetDagsats, skalSamordnes)
 
     val SkalSamordnes =
         Kontrollpunkt(Avklaringspunkter.Samordnes) {
             it.har(skalSamordnes) && it.finnOpplysning(skalSamordnes).verdi
-        }
-
-    val UtfallEtterSamordning =
-        Kontrollpunkt(Avklaringspunkter.UtfallEtterSamordning) {
-            it.har(utfallEtterSamordning) && it.finnOpplysning(utfallEtterSamordning).verdi
         }
 }
