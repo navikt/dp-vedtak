@@ -20,6 +20,7 @@ val RegelverkDagpenger =
         Opptjeningstid.regelsett,
         ReellArbeidssøker.regelsett,
         Rettighetstype.regelsett,
+        Samordning.regelsett,
         StreikOgLockout.regelsett,
         Søknadstidspunkt.regelsett,
         TapAvArbeidsinntektOgArbeidstid.regelsett,

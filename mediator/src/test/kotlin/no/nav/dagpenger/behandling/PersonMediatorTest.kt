@@ -39,18 +39,24 @@ import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.regel.Avklaringspunkter
 import no.nav.dagpenger.regel.Behov.Barnetillegg
+import no.nav.dagpenger.regel.Behov.Foreldrepenger
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
 import no.nav.dagpenger.regel.Behov.Lønnsgaranti
+import no.nav.dagpenger.regel.Behov.Omsorgspenger
+import no.nav.dagpenger.regel.Behov.Opplæringspenger
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.Behov.Ordinær
 import no.nav.dagpenger.regel.Behov.Permittert
 import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
+import no.nav.dagpenger.regel.Behov.Pleienger
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
+import no.nav.dagpenger.regel.Behov.Svangerskapspenger
+import no.nav.dagpenger.regel.Behov.Sykepenger
 import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
 import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
@@ -263,6 +269,12 @@ internal class PersonMediatorTest {
             rapid.harBehov(Inntekt)
             testPerson.løsBehov(Inntekt)
 
+            /**
+             * Innhente informasjon om andre ytelser
+             */
+            rapid.harBehov(Sykepenger, Omsorgspenger, Svangerskapspenger, Foreldrepenger, Opplæringspenger, Pleienger)
+            testPerson.løsBehov(Sykepenger, Omsorgspenger, Svangerskapspenger, Foreldrepenger, Opplæringspenger, Pleienger)
+
             godkjennOpplysninger("etterInntekt")
 
             rapid.harHendelse("forslag_til_vedtak") {
@@ -270,7 +282,7 @@ internal class PersonMediatorTest {
             }
 
             // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
-            rapid.inspektør.size shouldBe 22
+            rapid.inspektør.size shouldBe 23
 
             rapid.harAvklaring(Avklaringspunkter.Totrinnskontroll) {}
 
@@ -315,6 +327,7 @@ internal class PersonMediatorTest {
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
             testPerson.løsBehov(Inntekt)
             testPerson.løsBehov(Barnetillegg)
+            testPerson.løsBehov(Sykepenger, Omsorgspenger, Svangerskapspenger, Foreldrepenger, Opplæringspenger, Pleienger)
 
             testPerson.sendTilKontroll()
 
@@ -538,6 +551,7 @@ internal class PersonMediatorTest {
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
             testPerson.løsBehov(Inntekt)
             testPerson.løsBehov(Barnetillegg)
+            testPerson.løsBehov(Sykepenger, Omsorgspenger, Svangerskapspenger, Foreldrepenger, Opplæringspenger, Pleienger)
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medDato("prøvingsdato") shouldBe 1.juni(2024)

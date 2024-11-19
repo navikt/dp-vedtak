@@ -23,6 +23,12 @@ Har svart ja på spørsmål om utdanning eller opplæring
 Har svart nei på spørsmål om utdanning eller opplæring
 Barn
 Antall barn som gir rett til barnetillegg
+Sykepenger etter lovens kapittel 8
+Omsorgspenger etter lovens kapittel 9
+Svangerskapspenger etter lovens kapittel 14
+Foreldrepenger etter lovens kapittel 14
+Opplæringspenger etter lovens kapittel 9
+Pleiepenger etter lovens kapittel 9
 Prøvingsdato
 Aldersgrense
 Lovpålagt rapporteringsfrist for A-ordningen
@@ -66,6 +72,14 @@ Kort dagpengeperiode
 Divisior
 Terskelfaktor for 36 måneder
 Antall dager som skal regnes med i hver uke
+Sykepenger dagsats
+Pleiepenger dagsats
+Omsorgspenger dagsats
+Opplæringspenger dagsats
+Uføre dagsats
+Foreldrepenger dagsats
+Svangerskapspenger dagsats
+Uføretrygd etter lovens kapittel 12
 Dato søker når maks alder
 Arbeidsgivers rapporteringsfrist
 Inntektskrav for siste 12 mnd
@@ -85,6 +99,7 @@ Beregningsregel: Tapt arbeidstid
 Barnetillegg i kroner
 Terskel for 12 måneder
 Terskel for 36 måneder
+Medlem har reduserte ytelser fra folketrygden (Samordning)
 Siste mulige dag bruker kan oppfylle alderskrav
 Siste avsluttende kalendermåned
 Krav til arbeidssøker
@@ -134,6 +149,7 @@ Maks dagsats for dagpenger
 Dagsats med barn
 Avrundet dagsats uten barnetillegg
 Dagsats for dagpenger med barnetillegg
+Samordnet dagsats
 Avrundet dagsats med barnetillegg
 Egenandel
 Ukessats

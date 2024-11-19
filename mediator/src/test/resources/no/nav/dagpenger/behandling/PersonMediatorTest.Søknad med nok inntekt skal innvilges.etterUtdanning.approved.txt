@@ -96,6 +96,14 @@ Kort dagpengeperiode
 Divisior
 Terskelfaktor for 36 måneder
 Antall dager som skal regnes med i hver uke
+Sykepenger dagsats
+Pleiepenger dagsats
+Omsorgspenger dagsats
+Opplæringspenger dagsats
+Uføre dagsats
+Foreldrepenger dagsats
+Svangerskapspenger dagsats
+Uføretrygd etter lovens kapittel 12
 6 ganger grunnbeløp
 Terskel for 12 måneder
 Snittinntekt siste 36 måneder
