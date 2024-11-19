@@ -30,7 +30,7 @@ object Samordning {
     val uføre = Opplysningstype.somBoolsk("Uføretrygd etter lovens kapittel 12".id(Uføre))
     val foreldrepenger = Opplysningstype.somBoolsk("Foreldrepenger etter lovens kapittel 14".id(Foreldrepenger))
     val svangerskapspenger = Opplysningstype.somBoolsk("Svangerskapspenger etter lovens kapittel 14".id(Svangerskapspenger))
-    val skalSamordnes = Opplysningstype.somBoolsk("For medlem som har følgende reduserte ytelser fra folketrygden samme dag")
+    val skalSamordnes = Opplysningstype.somBoolsk("Medlem har reduserte ytelser fra folketrygden (Samordning)")
 
     val sykepengerDagsats = Opplysningstype.somBeløp("Sykepenger dagsats")
     val pleiepengerDagsats = Opplysningstype.somBeløp("Pleiepenger dagsats")

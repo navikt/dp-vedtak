@@ -99,7 +99,7 @@ Beregningsregel: Tapt arbeidstid
 Barnetillegg i kroner
 Terskel for 12 måneder
 Terskel for 36 måneder
-For medlem som har følgende reduserte ytelser fra folketrygden samme dag
+Medlem har reduserte ytelser fra folketrygden (Samordning)
 Siste mulige dag bruker kan oppfylle alderskrav
 Siste avsluttende kalendermåned
 Krav til arbeidssøker
