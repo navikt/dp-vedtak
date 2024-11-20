@@ -19,7 +19,8 @@ import no.nav.dagpenger.regel.Behov.Svangerskapspenger
 import no.nav.dagpenger.regel.Behov.Sykepenger
 import no.nav.dagpenger.regel.Behov.Uføre
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
-import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.avrundetDagsatsUtenBarnetillegg
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.harBarnetillegg
 
 /**
  * § 4-25.Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon
@@ -43,13 +44,9 @@ object Samordning {
     internal val foreldrepengerDagsats = Opplysningstype.somBeløp("Foreldrepenger dagsats")
     internal val svangerskapspengerDagsats = Opplysningstype.somBeløp("Svangerskapspenger dagsats")
 
-    private val avrundetDagsUtenBarnetillegg = DagpengenesStørrelse.avrundetDagsUtenBarnetillegg
     private val sumAndreYtelser = Opplysningstype.somBeløp("Sum andre ytelser")
     internal val samordnetDagsats = Opplysningstype.somBeløp("Samordnet dagsats")
     private val kanUtbetale = Opplysningstype.somBoolsk("Samordnet dagsats er negativ eller 0")
-    private val barnetillegg = DagpengenesStørrelse.barnetillegg
-    private val harBarnetillegg = Opplysningstype.somBoolsk("Har barnetillegg")
-    private val barnetilleggetsStørrelse = DagpengenesStørrelse.barnetilleggetsStørrelse
 
     // Fulle dagpenger minus en/flere av reduserte ytelsene man mottar per samme dag (regnestykket)
     // avrundetDagsUtenBarnetillegg - sykepenger - pleiepenger - omsorgspenger - opplæringspenger - uføre - foreldrepenger - svangerskapspenger
@@ -87,22 +84,10 @@ object Samordning {
                 )
             }
 
-            regel(samordnetDagsats) {
-                substraksjonTilNull(avrundetDagsUtenBarnetillegg, sumAndreYtelser)
-            }
-            regel(kanUtbetale) {
-                størreEnnEllerLik(avrundetDagsUtenBarnetillegg, sumAndreYtelser)
-            }
-            regel(harBarnetillegg) {
-                størreEnnEllerLik(barnetillegg, barnetilleggetsStørrelse)
-            }
+            regel(samordnetDagsats) { substraksjonTilNull(avrundetDagsatsUtenBarnetillegg, sumAndreYtelser) }
+            regel(kanUtbetale) { størreEnnEllerLik(avrundetDagsatsUtenBarnetillegg, sumAndreYtelser) }
 
-            regel(utfallEtterSamordning) {
-                enAv(
-                    kanUtbetale,
-                    harBarnetillegg,
-                )
-            }
+            regel(utfallEtterSamordning) { enAv(kanUtbetale, harBarnetillegg) }
 
             regel(skalSamordnes) {
                 enAv(

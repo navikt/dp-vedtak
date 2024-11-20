@@ -13,12 +13,13 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.antallBarn
-import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.avrundetDagsMedBarnetillegg
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsEtterSamordningMedBarnetillegg
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsUtenBarnetillegg
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.ukessats
 
 class DagpengensStørrelseSteg : No {
     private val fraDato = 10.mai(2024)
-    private val regelsett = RegelverkDagpenger.regelsettFor(avrundetDagsMedBarnetillegg)
+    private val regelsett = RegelverkDagpenger.regelsettFor(ukessats)
     private val opplysninger: Opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 
@@ -52,7 +53,7 @@ class DagpengensStørrelseSteg : No {
         }
 
         Så("skal dagpengens størrelse være {string}") { størrelse: String ->
-            opplysninger.finnOpplysning(avrundetDagsMedBarnetillegg).verdi shouldBe Beløp(størrelse.toBigDecimal())
+            opplysninger.finnOpplysning(dagsatsEtterSamordningMedBarnetillegg).verdi shouldBe Beløp(størrelse.toBigDecimal())
         }
 
         Så("skal ukessats være {string}") { ukessats: String ->

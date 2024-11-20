@@ -62,7 +62,7 @@ internal class BeregningsperiodeFabrikk(
             Arbeidsdag(
                 dato,
                 opplysninger
-                    .finnOpplysning(DagpengenesStørrelse.sats)
+                    .finnOpplysning(DagpengenesStørrelse.dagsatsEtterSamordningMedBarnetillegg)
                     .verdi.verdien
                     .toInt(),
                 opplysninger.finnOpplysning(TapAvArbeidsinntektOgArbeidstid.fastsattVanligArbeidstid).verdi / 5,

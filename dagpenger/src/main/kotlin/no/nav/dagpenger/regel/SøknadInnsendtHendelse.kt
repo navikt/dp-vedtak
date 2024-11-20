@@ -26,6 +26,7 @@ import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBereg
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
 import no.nav.dagpenger.regel.Virkningstidspunkt.VirkningstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.BarnetilleggKontroll
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.NittiProsentOgSamordning
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -113,6 +114,7 @@ class SøknadInnsendtHendelse(
             InntektNesteKalendermånedKontroll,
             JobbetUtenforNorgeKontroll,
             MuligGjenopptakKontroll,
+            NittiProsentOgSamordning,
             SkalSamordnes,
             SvangerskapsrelaterteSykepengerKontroll,
             SøknadstidspunktForLangtFramITid,

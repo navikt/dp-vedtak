@@ -15,16 +15,15 @@ import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Samordning
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
-import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.avrundetDagsMedBarnetillegg
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.ukessats
 import java.time.LocalDate
 
 class SamordningSteg : No {
     private val fraDato = 10.mai(2022)
     private val regelsett =
-        listOf(Samordning.regelsett) +
-            RegelverkDagpenger.regelsettFor(
-                avrundetDagsMedBarnetillegg,
-            )
+        RegelverkDagpenger.regelsettFor(
+            ukessats,
+        )
     private val opplysninger: Opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 
@@ -38,11 +37,11 @@ class SamordningSteg : No {
         Gitt("at søker har søkt om dagpenger og har redusert ytelse") {
             opplysninger
                 .leggTil(
-                    Faktum<LocalDate>(Søknadstidspunkt.søknadsdato, 11.mai(2022)) as Opplysning<*>,
+                    Faktum(Søknadstidspunkt.søknadsdato, 11.mai(2022)) as Opplysning<*>,
                 ).also { regelkjøring.evaluer() }
             opplysninger
                 .leggTil(
-                    Faktum<LocalDate>(Søknadstidspunkt.ønsketdato, 11.mai(2022)) as Opplysning<*>,
+                    Faktum(Søknadstidspunkt.ønsketdato, 11.mai(2022)) as Opplysning<*>,
                 ).also { regelkjøring.evaluer() }
         }
 
@@ -58,13 +57,13 @@ class SamordningSteg : No {
                     )
                 }
 
-            opplysninger.leggTil(Faktum<BarnListe>(DagpengenesStørrelse.barn, BarnListe(barn))).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(DagpengenesStørrelse.barn, BarnListe(barn))).also { regelkjøring.evaluer() }
         }
 
         Gitt("søker har redusert sykepenger {boolsk}") { sykepenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.sykepenger, sykepenger),
+                    Faktum(Samordning.sykepenger, sykepenger),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -81,7 +80,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert pleiepenger {boolsk}") { pleiepenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.pleiepenger, pleiepenger),
+                    Faktum(Samordning.pleiepenger, pleiepenger),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -90,7 +89,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert omsorgspenger {boolsk}") { omsorgspenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.omsorgspenger, omsorgspenger),
+                    Faktum(Samordning.omsorgspenger, omsorgspenger),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -99,7 +98,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert opplæringspenger {boolsk}") { opplæringspenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.opplæringspenger, opplæringspenger),
+                    Faktum(Samordning.opplæringspenger, opplæringspenger),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -108,7 +107,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert uføre {boolsk}") { uføre: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.uføre, uføre),
+                    Faktum(Samordning.uføre, uføre),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -117,7 +116,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert foreldrepenger {boolsk}") { foreldrepenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.foreldrepenger, foreldrepenger),
+                    Faktum(Samordning.foreldrepenger, foreldrepenger),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -126,7 +125,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert svangerskapspenger {boolsk}") { svangerskapspenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.svangerskapspenger, svangerskapspenger),
+                    Faktum(Samordning.svangerskapspenger, svangerskapspenger),
                 ).also {
                     regelkjøring.evaluer()
                 }

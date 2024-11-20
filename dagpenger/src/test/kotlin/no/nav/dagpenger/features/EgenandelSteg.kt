@@ -31,10 +31,7 @@ class EgenandelSteg : No {
             opplysninger.leggTil(Faktum(prøvingsdato, fraDato)).also { regelkjøring.evaluer() }
             opplysninger
                 .leggTil(
-                    Faktum(
-                        DagpengenesStørrelse.avrundetDagsMedBarnetillegg,
-                        Beløp(sats.toBigDecimal()),
-                    ),
+                    Faktum(DagpengenesStørrelse.dagsatsEtterSamordningMedBarnetillegg, Beløp(sats.toBigDecimal())),
                 ).also { regelkjøring.evaluer() }
         }
 

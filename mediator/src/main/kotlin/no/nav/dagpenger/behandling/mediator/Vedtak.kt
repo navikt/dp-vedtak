@@ -31,7 +31,7 @@ import no.nav.dagpenger.regel.Utdanning
 import no.nav.dagpenger.regel.Utestengning
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.barn
-import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.sats
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsEtterSamordningMedBarnetillegg
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
 import java.time.LocalDateTime
@@ -87,7 +87,7 @@ fun lagVedtak(
                         VedtakFastsattSatsDTO(
                             dagsatsMedBarnetillegg =
                                 opplysninger
-                                    .finnOpplysning(sats)
+                                    .finnOpplysning(dagsatsEtterSamordningMedBarnetillegg)
                                     .verdi.verdien
                                     .toInt(),
                             barn =

@@ -63,6 +63,13 @@ Antall år i 36 måneder
 90% av grunnlag for dagpenger
 Antall arbeidsdager per år
 Dekningsgrad
+Sykepenger dagsats
+Pleiepenger dagsats
+Omsorgspenger dagsats
+Opplæringspenger dagsats
+Uføre dagsats
+Foreldrepenger dagsats
+Svangerskapspenger dagsats
 Barnetilleggets størrelse
 Antall dagsats for egenandel
 Antall arbeidsdager per uke
@@ -72,13 +79,6 @@ Kort dagpengeperiode
 Divisior
 Terskelfaktor for 36 måneder
 Antall dager som skal regnes med i hver uke
-Sykepenger dagsats
-Pleiepenger dagsats
-Omsorgspenger dagsats
-Opplæringspenger dagsats
-Uføre dagsats
-Foreldrepenger dagsats
-Svangerskapspenger dagsats
 Uføretrygd etter lovens kapittel 12
 Dato søker når maks alder
 Arbeidsgivers rapporteringsfrist
@@ -96,10 +96,10 @@ Fastsatt arbeidstid per uke før tap
 Tap av arbeidstid er minst terskel
 Beregningsregel: Tapt arbeidstid
 6 ganger grunnbeløp
+Sum andre ytelser
 Barnetillegg i kroner
 Terskel for 12 måneder
 Terskel for 36 måneder
-Sum andre ytelser
 Medlem har reduserte ytelser fra folketrygden (Samordning)
 Siste mulige dag bruker kan oppfylle alderskrav
 Siste avsluttende kalendermåned
@@ -147,10 +147,10 @@ Grunnlag
 Maks grunnlag for dagpenger
 Dagsats uten barnetillegg
 Maks dagsats for dagpenger
-Dagsats med barn
 Avrundet dagsats uten barnetillegg
-Dagsats for dagpenger med barnetillegg
+Avrundet maks dagsats for dagpenger
 Samordnet dagsats
-Avrundet dagsats med barnetillegg
+Dagsats med barn
+Dagsats med barnetillegg etter samordning
 Egenandel
-Ukessats
+Ukessats med barnetillegg etter samordning
