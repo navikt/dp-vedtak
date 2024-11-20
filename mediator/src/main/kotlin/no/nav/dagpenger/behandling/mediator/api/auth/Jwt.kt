@@ -2,7 +2,6 @@ package no.nav.dagpenger.behandling.mediator.api.auth
 
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.auth.Principal
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTCredential
 import io.ktor.server.auth.jwt.JWTPayloadHolder
@@ -11,7 +10,7 @@ import io.ktor.server.auth.parseAuthorizationHeader
 import io.ktor.server.request.ApplicationRequest
 import no.nav.dagpenger.behandling.mediator.api.auth.AuthFactory.issuerFromString
 
-internal fun validator(jwtCredential: JWTCredential): Principal {
+internal fun validator(jwtCredential: JWTCredential): JWTPayloadHolder {
     requirePid(jwtCredential)
     return JWTPrincipal(jwtCredential.payload)
 }
@@ -40,4 +39,10 @@ internal fun ApplicationRequest.jwt(): String =
 internal fun ApplicationCall.optionalIdent(): String? =
     requireNotNull(this.authentication.principal<JWTPrincipal>()).payload.claims["pid"]?.asString()
 
-internal fun ApplicationCall.issuer() = issuerFromString(this.authentication.principal<JWTPrincipal>()?.payload?.issuer)
+internal fun ApplicationCall.issuer() =
+    issuerFromString(
+        this.authentication
+            .principal<JWTPrincipal>()
+            ?.payload
+            ?.issuer,
+    )

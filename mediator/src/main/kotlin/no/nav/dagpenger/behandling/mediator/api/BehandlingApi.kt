@@ -4,7 +4,6 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.application.install
 import io.ktor.server.auth.authenticate
@@ -61,7 +60,7 @@ internal fun Application.behandlingApi(
     opplysningstyper: Set<Opplysningstype<*>>,
     messageContext: (ident: String) -> MessageContext,
 ) {
-    konfigurerApi()
+    authenticationConfig()
     install(OtelTraceIdPlugin)
 
     routing {
