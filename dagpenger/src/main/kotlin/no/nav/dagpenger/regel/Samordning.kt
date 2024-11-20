@@ -102,7 +102,7 @@ object Samordning {
             }
         }
 
-    val ønsketResultat = listOf(samordnetDagsats, skalSamordnes)
+    val ønsketResultat = listOf(samordnetDagsats, skalSamordnes, utfallEtterSamordning)
 
     val SkalSamordnes =
         Kontrollpunkt(Avklaringspunkter.Samordning) {
