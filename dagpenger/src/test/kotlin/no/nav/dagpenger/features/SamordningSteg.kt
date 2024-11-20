@@ -8,21 +8,23 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.verdier.Barn
+import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Samordning
 import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
-import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.avrundetDagsMedBarnetillegg
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.ukessats
 import java.time.LocalDate
 
 class SamordningSteg : No {
     private val fraDato = 10.mai(2022)
     private val regelsett =
-        listOf(Samordning.regelsett) +
-            RegelverkDagpenger.regelsettFor(
-                avrundetDagsMedBarnetillegg,
-            )
+        RegelverkDagpenger.regelsettFor(
+            ukessats,
+        )
     private val opplysninger: Opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 
@@ -36,18 +38,33 @@ class SamordningSteg : No {
         Gitt("at søker har søkt om dagpenger og har redusert ytelse") {
             opplysninger
                 .leggTil(
-                    Faktum<LocalDate>(Søknadstidspunkt.søknadsdato, 11.mai(2022)) as Opplysning<*>,
+                    Faktum(Søknadstidspunkt.søknadsdato, 11.mai(2022)) as Opplysning<*>,
                 ).also { regelkjøring.evaluer() }
             opplysninger
                 .leggTil(
-                    Faktum<LocalDate>(Søknadstidspunkt.ønsketdato, 11.mai(2022)) as Opplysning<*>,
+                    Faktum(Søknadstidspunkt.ønsketdato, 11.mai(2022)) as Opplysning<*>,
                 ).also { regelkjøring.evaluer() }
+        }
+
+        Gitt("har {int} barn") { antall: Int ->
+            val barn =
+                (1..antall).map {
+                    Barn(
+                        fødselsdato = LocalDate.now(),
+                        fornavnOgMellomnavn = "Donlald",
+                        etternavn = "Duck $it",
+                        statsborgerskap = "NOR",
+                        kvalifiserer = true,
+                    )
+                }
+
+            opplysninger.leggTil(Faktum(DagpengenesStørrelse.barn, BarnListe(barn))).also { regelkjøring.evaluer() }
         }
 
         Gitt("søker har redusert sykepenger {boolsk}") { sykepenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.sykepenger, sykepenger),
+                    Faktum(Samordning.sykepenger, sykepenger),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -64,7 +81,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert pleiepenger {boolsk}") { pleiepenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.pleiepenger, pleiepenger),
+                    Faktum(Samordning.pleiepenger, pleiepenger),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -73,7 +90,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert omsorgspenger {boolsk}") { omsorgspenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.omsorgspenger, omsorgspenger),
+                    Faktum(Samordning.omsorgspenger, omsorgspenger),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -82,7 +99,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert opplæringspenger {boolsk}") { opplæringspenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.opplæringspenger, opplæringspenger),
+                    Faktum(Samordning.opplæringspenger, opplæringspenger),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -91,7 +108,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert uføre {boolsk}") { uføre: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.uføre, uføre),
+                    Faktum(Samordning.uføre, uføre),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -100,7 +117,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert foreldrepenger {boolsk}") { foreldrepenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.foreldrepenger, foreldrepenger),
+                    Faktum(Samordning.foreldrepenger, foreldrepenger),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -109,7 +126,7 @@ class SamordningSteg : No {
         Gitt("søker har redusert svangerskapspenger {boolsk}") { svangerskapspenger: Boolean ->
             opplysninger
                 .leggTil(
-                    Faktum<Boolean>(Samordning.svangerskapspenger, svangerskapspenger),
+                    Faktum(Samordning.svangerskapspenger, svangerskapspenger),
                 ).also {
                     regelkjøring.evaluer()
                 }
@@ -118,15 +135,19 @@ class SamordningSteg : No {
             opplysninger.finnOpplysning(Samordning.skalSamordnes).verdi shouldBe samordnet
         }
 
-        Så("gitt at bruker har {string} i dagsats") { beløp: String ->
+        Så("gitt at bruker har {string} i grunnlag") { beløp: String ->
             opplysninger
                 .leggTil(
-                    Faktum(DagpengenesStørrelse.avrundetDagsUtenBarnetillegg, Beløp(beløp.toBigDecimal())),
+                    Faktum(Dagpengegrunnlag.grunnlag, Beløp(beløp.toBigDecimal())),
                 ).also { regelkjøring.evaluer() }
         }
 
         Så("skal at bruker ha {string} i samordnet dagsats") { beløp: String ->
             opplysninger.finnOpplysning(Samordning.samordnetDagsats).verdi shouldBe Beløp(beløp.toBigDecimal())
+        }
+
+        Så("utfall etter samordning skal være {boolsk}") { utfall: Boolean ->
+            opplysninger.finnOpplysning(Samordning.utfallEtterSamordning).verdi shouldBe utfall
         }
     }
 }

@@ -14,7 +14,7 @@ import no.nav.dagpenger.regel.beregning.Beregning.arbeidstimer
 import no.nav.dagpenger.regel.beregning.Beregning.forbruk
 import no.nav.dagpenger.regel.beregning.Beregning.terskel
 import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk
-import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.sats
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsEtterSamordningMedBarnetillegg
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode.antallStønadsuker
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode.gjenståendeStønadsdager
 import no.nav.dagpenger.regel.fastsetting.Egenandel.egenandel
@@ -148,7 +148,7 @@ class BeregningSteg : No {
                 Faktum(antallStønadsuker, args["verdi"]!!.toInt(), gyldighetsperiode)
             },
             "Sats" to { args, gyldighetsperiode ->
-                Faktum(sats, Beløp(args["verdi"]!!.toInt()), gyldighetsperiode)
+                Faktum(dagsatsEtterSamordningMedBarnetillegg, Beløp(args["verdi"]!!.toInt()), gyldighetsperiode)
             },
             "FVA" to { args, gyldighetsperiode ->
                 Faktum(fastsattVanligArbeidstid, args["verdi"]!!.toDouble(), gyldighetsperiode)

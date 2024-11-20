@@ -13,9 +13,12 @@ import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
+import no.nav.dagpenger.opplysning.regel.substraksjonTilNull
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Avklaringspunkter.BarnMåGodkjennes
 import no.nav.dagpenger.regel.Behov.Barnetillegg
+import no.nav.dagpenger.regel.Samordning.samordnetDagsats
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 import java.math.BigDecimal
@@ -26,55 +29,79 @@ object DagpengenesStørrelse {
 
     val barn = Opplysningstype.somBarn("Barn".id(Barnetillegg))
     internal val antallBarn = Opplysningstype.somHeltall("Antall barn som gir rett til barnetillegg")
-    private val barnetilleggetsStørrelse = Opplysningstype.somBeløp("Barnetilleggets størrelse")
+    internal val barnetilleggetsStørrelse = Opplysningstype.somBeløp("Barnetilleggets størrelse i kroner per dag for hvert barn")
 
     /**
      * 1. Hente barn fra søknad
      * 2. Saksbehandler vilkårprøver at en har rett til barnetillegg per barn
      * 3. == antall barn * barnetillegg
      */
-    private val dekningsgrad = Opplysningstype.somDesimaltall("Dekningsgrad")
-    val dagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Dagsats uten barnetillegg")
-    val avrundetDagsUtenBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats uten barnetillegg")
-    val avrundetDagsMedBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats med barnetillegg")
-    val barnetillegg = Opplysningstype.somBeløp("Barnetillegg i kroner")
-    val dagsatsMedBarn = Opplysningstype.somBeløp("Dagsats med barn")
-    val ukessats = Opplysningstype.somBeløp("Ukessats")
-    private val maksGrunnlag = Opplysningstype.somBeløp("Maks grunnlag for dagpenger")
-    private val antallArbeidsdagerPerÅr = Opplysningstype.somHeltall("Antall arbeidsdager per år")
-    private val arbeidsdagerPerUke = Opplysningstype.somHeltall("Antall arbeidsdager per uke")
-    private val maksSats = Opplysningstype.somBeløp("Maks dagsats for dagpenger")
+    private val dekningsgrad = Opplysningstype.somDesimaltall("Faktor for utregning av dagsats etter dagpengegrunnlaget")
+    val dagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Dagsats uten barnetillegg før samordning")
+    private val avrundetDagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats uten barnetillegg før samordning")
+    private val beløpOverMaks =
+        Opplysningstype.somBeløp(
+            "Andel av dagsats med barnetillegg som overstiger maks andel av dagpengegrunnlaget",
+        )
+    val dagsatsEtterNittiProsent =
+        Opplysningstype.somBeløp(
+            "Andel av dagsats med barnetillegg avkortet til maks andel av dagpengegrunnlaget",
+        )
+    val barnetillegg = Opplysningstype.somBeløp("Sum av barnetillegg")
+    private val dagsatsMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg før samordning")
     private val nittiProsent = Opplysningstype.somDesimaltall("90% av grunnlag for dagpenger")
-    val sats = Opplysningstype.somBeløp("Dagsats for dagpenger med barnetillegg")
+    private val antallArbeidsdagerPerÅr = Opplysningstype.somHeltall("Antall arbeidsdager per år")
+    private val maksGrunnlag = Opplysningstype.somBeløp("Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget")
+    private val arbeidsdagerPerUke = Opplysningstype.somHeltall("Antall arbeidsdager per uke")
+    private val maksSats = Opplysningstype.somBeløp("Maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget")
+    private val avrundetMaksSats = Opplysningstype.somBeløp("Avrundet maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget")
+    internal val harBarnetillegg = Opplysningstype.somBoolsk("Har barnetillegg")
+    private val samordnetDagsatsMedBarnetillegg = Opplysningstype.somBeløp("Samordnet dagsats med barnetillegg")
+    val ukessats = Opplysningstype.somBeløp("Ukessats med barnetillegg etter samordning")
+    val dagsatsEtterSamordningMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg etter samordning og 90% regel")
 
     val regelsett =
         Regelsett("§ 4-12. Dagpengenes størrelse\n (Sats)") {
             regel(barn) { innhentMed(søknadIdOpplysningstype) }
             regel(antallBarn) { antallAv(barn) { kvalifiserer } }
 
-            regel(barnetilleggetsStørrelse) { oppslag(prøvingsdato) { BarnetilleggSats.forDato(it) } }
-            regel(dekningsgrad) {
-                oppslag(prøvingsdato) { DagpengensStørrelseFaktor.forDato(it) }
-            }
+            // Regn ut dagsats uten barnetillegg, før samordning
+            regel(dekningsgrad) { oppslag(prøvingsdato) { DagpengensStørrelseFaktor.forDato(it) } }
             regel(dagsatsUtenBarnetillegg) { multiplikasjon(grunnlag, dekningsgrad) }
-            regel(barnetillegg) { multiplikasjon(barnetilleggetsStørrelse, antallBarn) }
-            regel(dagsatsMedBarn) { addisjon(dagsatsUtenBarnetillegg, barnetillegg) }
 
-            // Regne ut ukessats
-            regel(arbeidsdagerPerUke) { oppslag(prøvingsdato) { 5 } }
+            // Avrunder og sender over til samordning
+            regel(avrundetDagsatsUtenBarnetillegg) { avrund(dagsatsUtenBarnetillegg) }
+
+            // Regn ut barnetillegg
+            regel(barnetilleggetsStørrelse) { oppslag(prøvingsdato) { BarnetilleggSats.forDato(it) } }
+            regel(barnetillegg) { multiplikasjon(barnetilleggetsStørrelse, antallBarn) }
+
+            // Regn ut dagsats med barnetillegg, før maks og samordning
+            regel(dagsatsMedBarnetillegg) { addisjon(dagsatsUtenBarnetillegg, barnetillegg) }
+
+            // Regn ut 90% av dagpengegrunnlaget
             regel(nittiProsent) { oppslag(prøvingsdato) { 0.9 } }
             regel(antallArbeidsdagerPerÅr) { oppslag(prøvingsdato) { 260 } }
-
             regel(maksGrunnlag) { multiplikasjon(grunnlag, nittiProsent) }
             regel(maksSats) { divisjon(maksGrunnlag, antallArbeidsdagerPerÅr) }
-            regel(sats) { minstAv(maksSats, dagsatsMedBarn) }
+            regel(avrundetMaksSats) { avrund(maksSats) }
 
-            regel(avrundetDagsMedBarnetillegg) { avrund(sats) }
-            regel(avrundetDagsUtenBarnetillegg) { avrund(dagsatsUtenBarnetillegg) } // Arena trenger denne
-            regel(ukessats) { multiplikasjon(avrundetDagsMedBarnetillegg, arbeidsdagerPerUke) }
+            // Finn beløp som overstiger maksimal mulig dagsats
+            regel(beløpOverMaks) { substraksjonTilNull(dagsatsMedBarnetillegg, avrundetMaksSats) }
+            regel(dagsatsEtterNittiProsent) { substraksjonTilNull(avrundetDagsatsUtenBarnetillegg, beløpOverMaks) }
+
+            // Regn ut samordnet dagsats med barnetillegg, begrenset til 90% av dagpengegrunnlaget
+            regel(samordnetDagsatsMedBarnetillegg) { addisjon(samordnetDagsats, barnetillegg) }
+            regel(dagsatsEtterSamordningMedBarnetillegg) { minstAv(samordnetDagsatsMedBarnetillegg, avrundetMaksSats) }
+
+            // Regn ut ukessats
+            regel(arbeidsdagerPerUke) { oppslag(prøvingsdato) { 5 } }
+            regel(ukessats) { multiplikasjon(dagsatsEtterSamordningMedBarnetillegg, arbeidsdagerPerUke) }
+
+            regel(harBarnetillegg) { størreEnnEllerLik(barnetillegg, barnetilleggetsStørrelse) }
         }
 
-    val ønsketResultat = listOf(ukessats, avrundetDagsUtenBarnetillegg)
+    val ønsketResultat = listOf(ukessats, samordnetDagsats)
 
     val BarnetilleggKontroll =
         Kontrollpunkt(BarnMåGodkjennes) {

@@ -17,14 +17,14 @@ class Regelverk(
         forDato: LocalDate = LocalDate.MIN,
     ): List<Any> = regelsettFor(opplysningstype).flatMap { it.regler(forDato) }
 
-    fun regelsettFor(opplysningstype: Opplysningstype<*>): List<Regelsett> {
+    fun regelsettFor(opplysningstype: Opplysningstype<*>): Set<Regelsett> {
         val nødvendigeRegelsett = mutableSetOf<Regelsett>()
 
         traverseOpplysningstyper(opplysningstype) { regelsett ->
             nødvendigeRegelsett.add(regelsett)
         }
 
-        return nødvendigeRegelsett.toList()
+        return nødvendigeRegelsett.toSet()
     }
 
     fun regeltreFor(opplysningstype: Opplysningstype<*>): DAG<Regelsett, String> {

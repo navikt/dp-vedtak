@@ -4,10 +4,12 @@ import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
+import no.nav.dagpenger.opplysning.regel.addisjon
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.opplysning.regel.substraksjon
+import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
+import no.nav.dagpenger.opplysning.regel.substraksjonTilNull
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.Foreldrepenger
 import no.nav.dagpenger.regel.Behov.Omsorgspenger
@@ -17,32 +19,34 @@ import no.nav.dagpenger.regel.Behov.Svangerskapspenger
 import no.nav.dagpenger.regel.Behov.Sykepenger
 import no.nav.dagpenger.regel.Behov.Uføre
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
-import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsEtterNittiProsent
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.harBarnetillegg
 
 /**
  * § 4-25.Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon
  */
 object Samordning {
-    val utfallEtterSamordning = Opplysningstype.somBoolsk("Utfall etter samordning")
-    val sykepenger = Opplysningstype.somBoolsk("Sykepenger etter lovens kapittel 8".id(Sykepenger))
-    val pleiepenger = Opplysningstype.somBoolsk("Pleiepenger etter lovens kapittel 9".id(Pleienger))
-    val omsorgspenger = Opplysningstype.somBoolsk("Omsorgspenger etter lovens kapittel 9".id(Omsorgspenger))
-    val opplæringspenger = Opplysningstype.somBoolsk("Opplæringspenger etter lovens kapittel 9".id(Opplæringspenger))
-    val uføre = Opplysningstype.somBoolsk("Uføretrygd etter lovens kapittel 12".id(Uføre))
-    val foreldrepenger = Opplysningstype.somBoolsk("Foreldrepenger etter lovens kapittel 14".id(Foreldrepenger))
-    val svangerskapspenger = Opplysningstype.somBoolsk("Svangerskapspenger etter lovens kapittel 14".id(Svangerskapspenger))
-    val skalSamordnes = Opplysningstype.somBoolsk("Medlem har reduserte ytelser fra folketrygden (Samordning)")
+    internal val utfallEtterSamordning = Opplysningstype.somBoolsk("Utfall etter samordning")
+    internal val sykepenger = Opplysningstype.somBoolsk("Sykepenger etter lovens kapittel 8".id(Sykepenger))
+    internal val pleiepenger = Opplysningstype.somBoolsk("Pleiepenger etter lovens kapittel 9".id(Pleienger))
+    internal val omsorgspenger = Opplysningstype.somBoolsk("Omsorgspenger etter lovens kapittel 9".id(Omsorgspenger))
+    internal val opplæringspenger = Opplysningstype.somBoolsk("Opplæringspenger etter lovens kapittel 9".id(Opplæringspenger))
+    internal val uføre = Opplysningstype.somBoolsk("Uføretrygd etter lovens kapittel 12".id(Uføre))
+    internal val foreldrepenger = Opplysningstype.somBoolsk("Foreldrepenger etter lovens kapittel 14".id(Foreldrepenger))
+    internal val svangerskapspenger = Opplysningstype.somBoolsk("Svangerskapspenger etter lovens kapittel 14".id(Svangerskapspenger))
+    internal val skalSamordnes = Opplysningstype.somBoolsk("Medlem har reduserte ytelser fra folketrygden (Samordning)")
 
-    val sykepengerDagsats = Opplysningstype.somBeløp("Sykepenger dagsats")
-    val pleiepengerDagsats = Opplysningstype.somBeløp("Pleiepenger dagsats")
-    val omsorgspengerDagsats = Opplysningstype.somBeløp("Omsorgspenger dagsats")
-    val opplæringspengerDagsats = Opplysningstype.somBeløp("Opplæringspenger dagsats")
-    val uføreDagsats = Opplysningstype.somBeløp("Uføre dagsats")
-    val foreldrepengerDagsats = Opplysningstype.somBeløp("Foreldrepenger dagsats")
-    val svangerskapspengerDagsats = Opplysningstype.somBeløp("Svangerskapspenger dagsats")
+    internal val sykepengerDagsats = Opplysningstype.somBeløp("Sykepenger dagsats")
+    internal val pleiepengerDagsats = Opplysningstype.somBeløp("Pleiepenger dagsats")
+    internal val omsorgspengerDagsats = Opplysningstype.somBeløp("Omsorgspenger dagsats")
+    internal val opplæringspengerDagsats = Opplysningstype.somBeløp("Opplæringspenger dagsats")
+    internal val uføreDagsats = Opplysningstype.somBeløp("Uføre dagsats")
+    internal val foreldrepengerDagsats = Opplysningstype.somBeløp("Foreldrepenger dagsats")
+    internal val svangerskapspengerDagsats = Opplysningstype.somBeløp("Svangerskapspenger dagsats")
 
-    val avrundetDagsUtenBarnetillegg = DagpengenesStørrelse.avrundetDagsUtenBarnetillegg
-    val samordnetDagsats = Opplysningstype.somBeløp("Samordnet dagsats")
+    private val sumAndreYtelser = Opplysningstype.somBeløp("Sum andre ytelser")
+    internal val samordnetDagsats = Opplysningstype.somBeløp("Samordnet dagsats uten barnetillegg")
+    private val kanUtbetale = Opplysningstype.somBoolsk("Samordnet dagsats er negativ eller 0")
 
     // Fulle dagpenger minus en/flere av reduserte ytelsene man mottar per samme dag (regnestykket)
     // avrundetDagsUtenBarnetillegg - sykepenger - pleiepenger - omsorgspenger - opplæringspenger - uføre - foreldrepenger - svangerskapspenger
@@ -68,9 +72,8 @@ object Samordning {
             regel(uføreDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
             regel(svangerskapspengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
             regel(foreldrepengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
-            regel(samordnetDagsats) {
-                substraksjon(
-                    avrundetDagsUtenBarnetillegg,
+            regel(sumAndreYtelser) {
+                addisjon(
                     sykepengerDagsats,
                     pleiepengerDagsats,
                     omsorgspengerDagsats,
@@ -80,6 +83,11 @@ object Samordning {
                     svangerskapspengerDagsats,
                 )
             }
+
+            regel(samordnetDagsats) { substraksjonTilNull(dagsatsEtterNittiProsent, sumAndreYtelser) }
+            regel(kanUtbetale) { størreEnnEllerLik(dagsatsEtterNittiProsent, sumAndreYtelser) }
+
+            regel(utfallEtterSamordning) { enAv(kanUtbetale, harBarnetillegg) }
 
             regel(skalSamordnes) {
                 enAv(
@@ -97,7 +105,7 @@ object Samordning {
     val ønsketResultat = listOf(samordnetDagsats, skalSamordnes)
 
     val SkalSamordnes =
-        Kontrollpunkt(Avklaringspunkter.Samordnes) {
+        Kontrollpunkt(Avklaringspunkter.Samordning) {
             it.har(skalSamordnes) && it.finnOpplysning(skalSamordnes).verdi
         }
 }

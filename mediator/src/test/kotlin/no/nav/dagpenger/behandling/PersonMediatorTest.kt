@@ -246,7 +246,7 @@ internal class PersonMediatorTest {
             skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilFerdig(testPerson)
 
-            antallOpplysninger() shouldBe 77
+            antallOpplysninger() shouldBe 93
             godkjennOpplysninger("tilKravPåDagpenger")
 
             /**

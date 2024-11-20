@@ -15,8 +15,8 @@ Egenskap: § 4-12. Dagpengenes størrelse
     Så skal dagpengens størrelse være "663"
 
   Scenario: Dagpengegrunnlag og mange barn gjør at 90% regelen blir brukt
-    Gitt at dagpengegrunnlag er "70000"
+    Gitt at dagpengegrunnlag er "70001"
     Og at søker har 7 barn
-    Så skal dagpengens uavrundet størrelse uten barnetillegg være "168"
+    Så skal dagpengens uavrundet størrelse uten barnetillegg være "168.0024"
     Så skal dagpengens størrelse være "242"
     Så skal ukessats være "1210"

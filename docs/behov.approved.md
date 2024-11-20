@@ -22,6 +22,7 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 |RegistrertSomArbeidssøker | Registrert som arbeidssøker | Boolsk|boolean|
 |Søknadsdato | Søknadsdato | Dato|LocalDate|
 |TarUtdanningEllerOpplæring | Tar utdanning eller opplæring? | Boolsk|boolean|
+|Utfall etter samordning | Utfall etter samordning | Boolsk|boolean|
 |Verneplikt | Avtjent verneplikt | Boolsk|boolean|
 |VilligTilÅBytteYrke | Villig til å bytte yrke | Boolsk|boolean|
 |søknadId | søknadId | Tekst|String|
