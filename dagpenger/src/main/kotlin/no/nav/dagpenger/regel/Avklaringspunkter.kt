@@ -121,12 +121,4 @@ object Avklaringspunkter {
             beskrivelse = "Barn må godkjennes om de skal gi barnetillegg",
             kanKvitteres = true,
         )
-
-    val KombinasjonSamordningOg90Regel =
-        Avklaringkode(
-            kode = "KombinasjonSamordningOg90Regel",
-            tittel = "Det er en kombinasjon av samordning og 90% regel for barnetillegget",
-            beskrivelse = "Det må sjekkes at endelig sats blir riktig",
-            kanKvitteres = true,
-        )
 }

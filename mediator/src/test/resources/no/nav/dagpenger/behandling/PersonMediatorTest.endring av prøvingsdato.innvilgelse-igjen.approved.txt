@@ -60,8 +60,8 @@ Beregeningsregel: Arbeidstid siste 36 måneder
 Grunnbeløp for grunnlag
 Faktor for maksimalt mulig grunnlag
 Antall år i 36 måneder
-Dekningsgrad
-Barnetilleggets størrelse
+Faktor for utregning av dagsats etter dagpengegrunnlaget
+Barnetilleggets størrelse i kroner per dag for hvert barn
 90% av grunnlag for dagpenger
 Antall arbeidsdager per år
 Sykepenger dagsats
@@ -96,11 +96,12 @@ Fastsatt arbeidstid per uke før tap
 Tap av arbeidstid er minst terskel
 Beregningsregel: Tapt arbeidstid
 6 ganger grunnbeløp
-Barnetillegg i kroner
+Sum av barnetillegg
 Sum andre ytelser
 Terskel for 12 måneder
 Terskel for 36 måneder
 Medlem har reduserte ytelser fra folketrygden (Samordning)
+Har barnetillegg
 Siste mulige dag bruker kan oppfylle alderskrav
 Siste avsluttende kalendermåned
 Krav til arbeidssøker
@@ -129,7 +130,6 @@ Inntektperiode 2
 Inntektperiode 3
 Stønadsuker ved siste 36 måneder
 Antall stønadsuker
-Krav på dagpenger
 Har avkortet grunnlaget i periode 1
 Har avkortet grunnlaget i periode 2
 Har avkortet grunnlaget i periode 3
@@ -144,16 +144,19 @@ Gjennomsnittlig arbeidsinntekt siste 36 måneder
 Uavrundet grunnlag
 Brukt beregningsregel
 Grunnlag
-Dagsats uten barnetillegg
-Maks grunnlag for dagpenger
-Avrundet dagsats uten barnetillegg
-Dagsats med barn
-Maks dagsats for dagpenger
-Avrundet maks dagsats for dagpenger
-Beløp over maks
-Dagsats etter 90 prosent
-Samordnet dagsats
-dagsatsEtterSamordningMedBarnetilleggFørEkstraNittiSjekk
-Dagsats med barnetillegg etter samordning
+Dagsats uten barnetillegg før samordning
+Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget
+Avrundet dagsats uten barnetillegg før samordning
+Dagsats med barnetillegg før samordning
+Maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
+Avrundet maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
+Andel av dagsats med barnetilegg som overstiger maks andel av dagpengegrunnlaget
+Andel av dagsats med barnetilegg avkortet til maks andel av dagpengegrunnlaget
+Samordnet dagsats uten barnetillegg
+Samordnet dagsats er negativ eller 0
+Samordnet dagsats med barnetillegg
+Utfall etter samordning
+Dagsats med barnetillegg etter samordning og 90% regel
+Krav på dagpenger
 Egenandel
 Ukessats med barnetillegg etter samordning

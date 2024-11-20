@@ -45,7 +45,7 @@ object Samordning {
     internal val svangerskapspengerDagsats = Opplysningstype.somBeløp("Svangerskapspenger dagsats")
 
     private val sumAndreYtelser = Opplysningstype.somBeløp("Sum andre ytelser")
-    internal val samordnetDagsats = Opplysningstype.somBeløp("Samordnet dagsats")
+    internal val samordnetDagsats = Opplysningstype.somBeløp("Samordnet dagsats uten barnetillegg")
     private val kanUtbetale = Opplysningstype.somBoolsk("Samordnet dagsats er negativ eller 0")
 
     // Fulle dagpenger minus en/flere av reduserte ytelsene man mottar per samme dag (regnestykket)
