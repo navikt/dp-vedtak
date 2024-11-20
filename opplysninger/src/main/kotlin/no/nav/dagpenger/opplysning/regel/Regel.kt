@@ -62,13 +62,7 @@ abstract class Regel<T : Comparable<T>> internal constructor(
         if (avhengerAv.isEmpty()) return Faktum(produserer, kjør(opplysninger))
 
         val basertPå = opplysninger.finnAlle(avhengerAv)
-        require(basertPå.size == avhengerAv.size) {
-            """Prøver å lage produktet ${this.produserer}, men mangler avhengigheter for $this. 
-            |Det er mismatch mellom lagPlan() og lagProdukt(). 
-            |Avhengighetene vi trenger er: ${avhengerAv.joinToString { it.id }})}
-            |Avhengighetene vi fant er: ${basertPå.joinToString { it.opplysningstype.id }})}
-            """.trimMargin()
-        }
+        requireAlleAvhengigheter(basertPå)
 
         val erAlleFaktum = basertPå.all { it is Faktum<*> }
         val utledetAv = Utledning(this, basertPå)
@@ -88,4 +82,16 @@ abstract class Regel<T : Comparable<T>> internal constructor(
                 )
         }
     }
+
+    private fun requireAlleAvhengigheter(basertPå: List<Opplysning<*>>) =
+        require(basertPå.size == avhengerAv.size) {
+            val manglerAvhengigheter = avhengerAv.toSet() - basertPå.map { it.opplysningstype }.toSet()
+            """
+            Prøver å kjøre ${this::class.simpleName}($produserer), men mangler avhengigheter.
+            Det er mismatch mellom lagPlan() og lagProdukt().
+            - Avhengigheter vi mangler: ${manglerAvhengigheter.joinToString { it.id }}
+            - Avhengigheter vi trenger: ${avhengerAv.joinToString { it.id }}
+            - Avhengigheter vi fant: ${basertPå.joinToString { it.opplysningstype.id }}
+            """.trimIndent()
+        }
 }
