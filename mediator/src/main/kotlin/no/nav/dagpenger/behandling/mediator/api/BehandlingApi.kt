@@ -7,6 +7,8 @@ import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.application.install
 import io.ktor.server.auth.authenticate
+import io.ktor.server.plugins.BadRequestException
+import io.ktor.server.plugins.NotFoundException
 import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -48,7 +50,6 @@ import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.uuid.UUIDv7
-import org.apache.kafka.common.errors.ResourceNotFoundException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -105,7 +106,7 @@ internal fun Application.behandlingApi(
                     val person =
                         personRepository.hent(
                             ident.tilPersonIdentfikator(),
-                        ) ?: throw ResourceNotFoundException("Person ikke funnet")
+                        ) ?: throw NotFoundException("Person ikke funnet")
 
                     auditlogg.les("Listet ut behandlinger", ident, call.saksbehandlerId())
 
@@ -115,9 +116,7 @@ internal fun Application.behandlingApi(
                 route("{behandlingId}") {
                     get {
                         val behandling =
-                            personRepository.hentBehandling(
-                                call.behandlingId,
-                            ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+                            hentBehandling(personRepository, call.behandlingId)
 
                         auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
 
@@ -126,9 +125,7 @@ internal fun Application.behandlingApi(
 
                     get("vedtak") {
                         val behandling =
-                            personRepository.hentBehandling(
-                                call.behandlingId,
-                            ) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+                            hentBehandling(personRepository, call.behandlingId)
 
                         auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
 
@@ -178,10 +175,10 @@ internal fun Application.behandlingApi(
                         val opplysningId = call.opplysningId
                         val oppdaterOpplysningRequestDTO = call.receive<OppdaterOpplysningRequestDTO>()
                         val behandling =
-                            personRepository.hentBehandling(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+                            hentBehandling(personRepository, behandlingId)
 
-                        require(!behandling.harTilstand(Redigert)) {
-                            "Kan ikke redigere opplysninger før forrige redigering er ferdig"
+                        if (behandling.harTilstand(Redigert)) {
+                            throw BadRequestException("Kan ikke redigere opplysninger før forrige redigering er ferdig")
                         }
 
                         val opplysning = behandling.opplysninger().finnOpplysning(opplysningId)
@@ -209,7 +206,7 @@ internal fun Application.behandlingApi(
                     get("avklaring") {
                         val behandlingId = call.behandlingId
                         val behandling =
-                            personRepository.hentBehandling(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+                            hentBehandling(personRepository, behandlingId)
                         call.respond(HttpStatusCode.OK, behandling.avklaringer().map { it.tilAvklaringDTO() })
                     }
 
@@ -218,11 +215,11 @@ internal fun Application.behandlingApi(
                         val avklaringId = call.avklaringId
                         val kvitteringDTO = call.receive<KvitterAvklaringRequestDTO>()
                         val behandling =
-                            personRepository.hentBehandling(behandlingId) ?: throw ResourceNotFoundException("Behandling ikke funnet")
+                            hentBehandling(personRepository, behandlingId)
 
                         val avklaring =
                             behandling.avklaringer().singleOrNull { it.id == avklaringId }
-                                ?: throw ResourceNotFoundException("Avklaring ikke funnet")
+                                ?: throw NotFoundException("Avklaring ikke funnet")
 
                         if (!avklaring.kanKvitteres) {
                             call.respond(HttpStatusCode.BadRequest)
@@ -249,6 +246,11 @@ internal fun Application.behandlingApi(
         }
     }
 }
+
+private fun hentBehandling(
+    personRepository: PersonRepository,
+    behandlingId: UUID,
+) = personRepository.hentBehandling(behandlingId) ?: throw NotFoundException("Behandling ikke funnet")
 
 internal class ApiMessageContext(
     val rapid: MessageContext,
