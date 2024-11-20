@@ -66,7 +66,7 @@ internal class OpplysningSvarMottak(
     }
 
     private val skipBehovId = listOf("ingen-match")
-    private val skipBehandlingsId = listOf("ingen-match")
+    private val skipBehandlingsId = listOf("019348a9-db5c-7813-b96f-f905a89003f1")
 
     @WithSpan
     override fun onPacket(
