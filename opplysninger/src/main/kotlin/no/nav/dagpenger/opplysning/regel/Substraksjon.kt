@@ -31,3 +31,9 @@ fun Opplysningstype<Beløp>.substraksjon(vararg opplysningstype: Opplysningstype
     Substraksjon(this, *opplysningstype) {
         it.reduce { acc, t -> acc - t }
     }
+
+@JvmName("substraksjonBeløpTilNull")
+fun Opplysningstype<Beløp>.substraksjonTilNull(vararg opplysningstype: Opplysningstype<Beløp>) =
+    Substraksjon(this, *opplysningstype) {
+        it.reduce { acc, t -> maxOf(Beløp(0.0), acc - t) }
+    }

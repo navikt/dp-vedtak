@@ -20,5 +20,5 @@ Egenskap: § 4-25.Samordning med reduserte ytelser fra folketrygden, eller redus
     Eksempler:
       | antall barn | sykepenger | pleiepenger | omsorgspenger | opplæringspenger | uføre | foreldrepenger | svangerskapspenger | samordnet | sykepengerDagsats | dagsats | samordnetsats | utfall etter samordning |
       | 0           | Ja         | Nei         | Nei           | Nei              | Nei   | Nei            | Nei                | Ja        | 500               | 1000    | 500           | Ja                      |
-      | 0           | Ja         | Nei         | Nei           | Nei              | Nei   | Nei            | Nei                | Ja        | 1100              | 1000    | -100          | Nei                     |
-      | 2           | Ja         | Nei         | Nei           | Nei              | Nei   | Nei            | Nei                | Ja        | 1100              | 1000    | -100          | Ja                      |
+      | 0           | Ja         | Nei         | Nei           | Nei              | Nei   | Nei            | Nei                | Ja        | 1100              | 1000    | 0             | Nei                     |
+      | 2           | Ja         | Nei         | Nei           | Nei              | Nei   | Nei            | Nei                | Ja        | 1100              | 1000    | 0             | Ja                      |
