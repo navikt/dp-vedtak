@@ -150,8 +150,8 @@ Avrundet dagsats uten barnetillegg før samordning
 Dagsats med barnetillegg før samordning
 Maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
 Avrundet maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
-Andel av dagsats med barnetilegg som overstiger maks andel av dagpengegrunnlaget
-Andel av dagsats med barnetilegg avkortet til maks andel av dagpengegrunnlaget
+Andel av dagsats med barnetillegg som overstiger maks andel av dagpengegrunnlaget
+Andel av dagsats med barnetillegg avkortet til maks andel av dagpengegrunnlaget
 Samordnet dagsats uten barnetillegg
 Samordnet dagsats er negativ eller 0
 Samordnet dagsats med barnetillegg

@@ -39,10 +39,13 @@ object DagpengenesStørrelse {
     private val dekningsgrad = Opplysningstype.somDesimaltall("Faktor for utregning av dagsats etter dagpengegrunnlaget")
     val dagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Dagsats uten barnetillegg før samordning")
     private val avrundetDagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats uten barnetillegg før samordning")
-    private val beløpOverMaks = Opplysningstype.somBeløp("Andel av dagsats med barnetilegg som overstiger maks andel av dagpengegrunnlaget")
+    private val beløpOverMaks =
+        Opplysningstype.somBeløp(
+            "Andel av dagsats med barnetillegg som overstiger maks andel av dagpengegrunnlaget",
+        )
     val dagsatsEtterNittiProsent =
         Opplysningstype.somBeløp(
-            "Andel av dagsats med barnetilegg avkortet til maks andel av dagpengegrunnlaget",
+            "Andel av dagsats med barnetillegg avkortet til maks andel av dagpengegrunnlaget",
         )
     val barnetillegg = Opplysningstype.somBeløp("Sum av barnetillegg")
     private val dagsatsMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg før samordning")
