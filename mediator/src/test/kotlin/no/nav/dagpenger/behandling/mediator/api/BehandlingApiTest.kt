@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.navikt.tbd_libs.naisful.test.TestContext
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
@@ -18,7 +19,6 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.ApplicationTestBuilder
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.spyk
@@ -332,7 +332,6 @@ internal class BehandlingApiTest {
     @Test
     fun `saksbehandler kan kvittere ut avklaring`() {
         medSikretBehandlingApi {
-            val messageMediator = mockk<IMessageMediator>(relaxed = true)
             val kvitteringHendelse = slot<AvklaringKvittertHendelse>()
 
             val behandlingId = person.behandlinger().first().behandlingId
@@ -363,7 +362,7 @@ internal class BehandlingApiTest {
     private fun medSikretBehandlingApi(
         personRepository: PersonRepository = this.personRepository,
         hendelseMediator: HendelseMediator = this.hendelseMediator,
-        test: suspend ApplicationTestBuilder.() -> Unit,
+        test: suspend TestContext.() -> Unit,
     ) {
         System.setProperty("Grupper.saksbehandler", "dagpenger-saksbehandler")
         TestApplication.withMockAuthServerAndTestApplication(

@@ -19,6 +19,7 @@ import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgr
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
+import no.nav.dagpenger.behandling.objectMapper
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.helse.rapids_rivers.RapidApplication
@@ -34,7 +35,7 @@ internal class ApplicationBuilder(
     private val opplysningstyper: Set<Opplysningstype<*>> = RegelverkDagpenger.produserer
 
     private val rapidsConnection: RapidsConnection =
-        RapidApplication.create(config) { engine, rapidsConnection: KafkaRapid ->
+        RapidApplication.create(env = config, objectMapper = objectMapper) { engine, rapidsConnection: KafkaRapid ->
             val aktivitetsloggMediator = AktivitetsloggMediator()
 
             // Logger bare oppgaver enn så lenge. Bør inn i HendelseMediator

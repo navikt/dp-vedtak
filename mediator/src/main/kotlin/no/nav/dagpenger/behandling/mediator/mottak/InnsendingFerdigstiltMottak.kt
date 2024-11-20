@@ -4,7 +4,9 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import io.micrometer.core.instrument.MeterRegistry
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
@@ -30,10 +32,17 @@ internal class InnsendingFerdigstiltMottak(
             }.register(this)
     }
 
+    private companion object {
+        private val logger = KotlinLogging.logger {}
+        private val sikkerlogg = KotlinLogging.logger("tjenestekall.SøknadInnsendtMottak")
+    }
+
     @WithSpan
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
+        metadata: MessageMetadata,
+        meterRegistry: MeterRegistry,
     ) {
         val søknadId = packet["søknadsData"]["søknad_uuid"].asUUID().toString()
         withLoggingContext("søknadId" to søknadId) {
@@ -41,11 +50,6 @@ internal class InnsendingFerdigstiltMottak(
             val message = InnsendingFerdigstiltMessage(packet)
             message.publish(context)
         }
-    }
-
-    private companion object {
-        private val logger = KotlinLogging.logger {}
-        private val sikkerlogg = KotlinLogging.logger("tjenestekall.SøknadInnsendtMottak")
     }
 }
 
