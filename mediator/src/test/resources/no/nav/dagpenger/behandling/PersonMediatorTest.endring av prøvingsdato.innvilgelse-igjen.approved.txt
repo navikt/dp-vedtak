@@ -60,9 +60,10 @@ Beregeningsregel: Arbeidstid siste 36 måneder
 Grunnbeløp for grunnlag
 Faktor for maksimalt mulig grunnlag
 Antall år i 36 måneder
+Dekningsgrad
+Barnetilleggets størrelse
 90% av grunnlag for dagpenger
 Antall arbeidsdager per år
-Dekningsgrad
 Sykepenger dagsats
 Pleiepenger dagsats
 Omsorgspenger dagsats
@@ -70,7 +71,6 @@ Opplæringspenger dagsats
 Uføre dagsats
 Foreldrepenger dagsats
 Svangerskapspenger dagsats
-Barnetilleggets størrelse
 Antall dagsats for egenandel
 Antall arbeidsdager per uke
 Terskelfaktor for 12 måneder
@@ -96,8 +96,8 @@ Fastsatt arbeidstid per uke før tap
 Tap av arbeidstid er minst terskel
 Beregningsregel: Tapt arbeidstid
 6 ganger grunnbeløp
-Sum andre ytelser
 Barnetillegg i kroner
+Sum andre ytelser
 Terskel for 12 måneder
 Terskel for 36 måneder
 Medlem har reduserte ytelser fra folketrygden (Samordning)
@@ -144,13 +144,16 @@ Gjennomsnittlig arbeidsinntekt siste 36 måneder
 Uavrundet grunnlag
 Brukt beregningsregel
 Grunnlag
-Maks grunnlag for dagpenger
 Dagsats uten barnetillegg
-Maks dagsats for dagpenger
+Maks grunnlag for dagpenger
 Avrundet dagsats uten barnetillegg
-Avrundet maks dagsats for dagpenger
-Samordnet dagsats
 Dagsats med barn
+Maks dagsats for dagpenger
+Avrundet maks dagsats for dagpenger
+Beløp over maks
+Dagsats etter 90 prosent
+Samordnet dagsats
+dagsatsEtterSamordningMedBarnetilleggFørEkstraNittiSjekk
 Dagsats med barnetillegg etter samordning
 Egenandel
 Ukessats med barnetillegg etter samordning

@@ -14,6 +14,7 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Samordning
 import no.nav.dagpenger.regel.Søknadstidspunkt
+import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.ukessats
 import java.time.LocalDate
@@ -134,10 +135,10 @@ class SamordningSteg : No {
             opplysninger.finnOpplysning(Samordning.skalSamordnes).verdi shouldBe samordnet
         }
 
-        Så("gitt at bruker har {string} i dagsats") { beløp: String ->
+        Så("gitt at bruker har {string} i grunnlag") { beløp: String ->
             opplysninger
                 .leggTil(
-                    Faktum(DagpengenesStørrelse.avrundetDagsUtenBarnetillegg, Beløp(beløp.toBigDecimal())),
+                    Faktum(Dagpengegrunnlag.grunnlag, Beløp(beløp.toBigDecimal())),
                 ).also { regelkjøring.evaluer() }
         }
 

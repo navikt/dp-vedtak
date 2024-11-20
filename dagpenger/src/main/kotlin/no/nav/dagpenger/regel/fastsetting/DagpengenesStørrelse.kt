@@ -14,6 +14,7 @@ import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
+import no.nav.dagpenger.opplysning.regel.substraksjonTilNull
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Avklaringspunkter.BarnMåGodkjennes
 import no.nav.dagpenger.regel.Avklaringspunkter.KombinasjonSamordningOg90Regel
@@ -39,11 +40,13 @@ object DagpengenesStørrelse {
      */
     private val dekningsgrad = Opplysningstype.somDesimaltall("Dekningsgrad")
     val dagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Dagsats uten barnetillegg")
+    val beløpOverMaks = Opplysningstype.somBeløp("Beløp over maks")
+    val dagsatsEtterNittiProsent = Opplysningstype.somBeløp("Dagsats etter 90 prosent")
     val avrundetDagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats uten barnetillegg")
     val avrundetDagsUtenBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats uten barnetillegg")
     val avrundetDagsMedBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats med barnetillegg")
     val barnetillegg = Opplysningstype.somBeløp("Barnetillegg i kroner")
-    private val dagsatsMedBarn = Opplysningstype.somBeløp("Dagsats med barn")
+    private val dagsatsMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barn")
     private val maksGrunnlag = Opplysningstype.somBeløp("Maks grunnlag for dagpenger")
     private val antallArbeidsdagerPerÅr = Opplysningstype.somHeltall("Antall arbeidsdager per år")
     private val arbeidsdagerPerUke = Opplysningstype.somHeltall("Antall arbeidsdager per uke")
@@ -53,6 +56,10 @@ object DagpengenesStørrelse {
     internal val harBarnetillegg = Opplysningstype.somBoolsk("Har barnetillegg")
     val ukessats = Opplysningstype.somBeløp("Ukessats med barnetillegg etter samordning")
     val dagsatsEtterSamordningMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg etter samordning")
+    val dagsatsEtterSamordningMedBarnetilleggFørEkstraNittiSjekk =
+        Opplysningstype.somBeløp(
+            "dagsatsEtterSamordningMedBarnetilleggFørEkstraNittiSjekk",
+        )
 
     val regelsett =
         Regelsett("§ 4-12. Dagpengenes størrelse\n (Sats)") {
@@ -70,8 +77,8 @@ object DagpengenesStørrelse {
             regel(barnetilleggetsStørrelse) { oppslag(prøvingsdato) { BarnetilleggSats.forDato(it) } }
             regel(barnetillegg) { multiplikasjon(barnetilleggetsStørrelse, antallBarn) }
 
-            // Regn ut samordnet dagsats med barnetillegg
-            regel(dagsatsMedBarn) { addisjon(samordnetDagsats, barnetillegg) }
+            // Regn ut dagsats med barnetillegg, før maks og samordning
+            regel(dagsatsMedBarnetillegg) { addisjon(dagsatsUtenBarnetillegg, barnetillegg) }
 
             // Regn ut 90% av dagpengegrunnlaget
             regel(nittiProsent) { oppslag(prøvingsdato) { 0.9 } }
@@ -80,8 +87,17 @@ object DagpengenesStørrelse {
             regel(maksSats) { divisjon(maksGrunnlag, antallArbeidsdagerPerÅr) }
             regel(avrundetMaksSats) { avrund(maksSats) }
 
+//            regel(beløpOverMaks) { substraksjon(avrundetMaksSats, barnetillegg) }
+//            regel(dagsatsEtterNittiProsent) { minstAv(beløpOverMaks, avrundetDagsUtenBarnetillegg) }
+
+            regel(beløpOverMaks) { substraksjonTilNull(dagsatsMedBarnetillegg, avrundetMaksSats) }
+            regel(dagsatsEtterNittiProsent) { substraksjonTilNull(avrundetDagsatsUtenBarnetillegg, beløpOverMaks) }
+
             // Regn ut samordnet dagsats med barnetillegg, begrenset til 90% av dagpengegrunnlaget
-            regel(dagsatsEtterSamordningMedBarnetillegg) { minstAv(avrundetMaksSats, dagsatsMedBarn) }
+            regel(dagsatsEtterSamordningMedBarnetilleggFørEkstraNittiSjekk) { addisjon(samordnetDagsats, barnetillegg) }
+            regel(
+                dagsatsEtterSamordningMedBarnetillegg,
+            ) { minstAv(dagsatsEtterSamordningMedBarnetilleggFørEkstraNittiSjekk, avrundetMaksSats) }
 
             // regel(avrundetDagsMedBarnetillegg) { avrund(sats) }
             // regel(avrundetDagsUtenBarnetillegg) { avrund(samordnetDagsats) }
@@ -105,9 +121,9 @@ object DagpengenesStørrelse {
         Kontrollpunkt(KombinasjonSamordningOg90Regel) {
             it.har(skalSamordnes) &&
                 it.har(maksSats) &&
-                it.har(dagsatsMedBarn) &&
+                it.har(dagsatsMedBarnetillegg) &&
                 it.finnOpplysning(skalSamordnes).verdi &&
-                it.finnOpplysning(maksSats).verdi > it.finnOpplysning(dagsatsMedBarn).verdi
+                it.finnOpplysning(maksSats).verdi > it.finnOpplysning(dagsatsMedBarnetillegg).verdi
         }
 }
 

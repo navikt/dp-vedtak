@@ -83,9 +83,10 @@ Krav til utdanning eller opplæring
 Grunnbeløp for grunnlag
 Faktor for maksimalt mulig grunnlag
 Antall år i 36 måneder
+Dekningsgrad
+Barnetilleggets størrelse
 90% av grunnlag for dagpenger
 Antall arbeidsdager per år
-Dekningsgrad
 Sykepenger dagsats
 Pleiepenger dagsats
 Omsorgspenger dagsats
@@ -93,7 +94,6 @@ Opplæringspenger dagsats
 Uføre dagsats
 Foreldrepenger dagsats
 Svangerskapspenger dagsats
-Barnetilleggets størrelse
 Antall dagsats for egenandel
 Antall arbeidsdager per uke
 Terskelfaktor for 12 måneder
@@ -134,16 +134,19 @@ Gjennomsnittlig arbeidsinntekt siste 36 måneder
 Uavrundet grunnlag
 Brukt beregningsregel
 Grunnlag
-Maks grunnlag for dagpenger
 Dagsats uten barnetillegg
-Maks dagsats for dagpenger
+Maks grunnlag for dagpenger
 Avrundet dagsats uten barnetillegg
+Maks dagsats for dagpenger
 Avrundet maks dagsats for dagpenger
-Samordnet dagsats
 Barn
 Antall barn som gir rett til barnetillegg
 Barnetillegg i kroner
 Dagsats med barn
+Beløp over maks
+Dagsats etter 90 prosent
+Samordnet dagsats
+dagsatsEtterSamordningMedBarnetilleggFørEkstraNittiSjekk
 Dagsats med barnetillegg etter samordning
 Egenandel
 Ukessats med barnetillegg etter samordning

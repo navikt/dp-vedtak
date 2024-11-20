@@ -19,7 +19,7 @@ import no.nav.dagpenger.regel.Behov.Svangerskapspenger
 import no.nav.dagpenger.regel.Behov.Sykepenger
 import no.nav.dagpenger.regel.Behov.Uføre
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
-import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.avrundetDagsatsUtenBarnetillegg
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsEtterNittiProsent
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.harBarnetillegg
 
 /**
@@ -84,8 +84,8 @@ object Samordning {
                 )
             }
 
-            regel(samordnetDagsats) { substraksjonTilNull(avrundetDagsatsUtenBarnetillegg, sumAndreYtelser) }
-            regel(kanUtbetale) { størreEnnEllerLik(avrundetDagsatsUtenBarnetillegg, sumAndreYtelser) }
+            regel(samordnetDagsats) { substraksjonTilNull(dagsatsEtterNittiProsent, sumAndreYtelser) }
+            regel(kanUtbetale) { størreEnnEllerLik(dagsatsEtterNittiProsent, sumAndreYtelser) }
 
             regel(utfallEtterSamordning) { enAv(kanUtbetale, harBarnetillegg) }
 
