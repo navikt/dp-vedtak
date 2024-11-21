@@ -23,7 +23,7 @@ internal class PåminnelseMottak(
     init {
         River(rapidsConnection)
             .apply {
-                validate { it.demandValue("@event_name", "behandling_står_fast") }
+                precondition { it.requireValue("@event_name", "behandling_står_fast") }
                 validate { it.requireKey("ident", "behandlingId") }
             }.register(this)
     }

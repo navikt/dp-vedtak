@@ -22,7 +22,7 @@ internal class OppgaveSendtTilKontroll(
     init {
         River(rapidsConnection)
             .apply {
-                validate { it.demandValue("@event_name", "oppgave_sendt_til_kontroll") }
+                precondition { it.requireValue("@event_name", "oppgave_sendt_til_kontroll") }
                 validate { it.requireKey("ident") }
                 validate { it.requireKey("behandlingId") }
                 validate { it.interestedIn("@id", "@opprettet") }

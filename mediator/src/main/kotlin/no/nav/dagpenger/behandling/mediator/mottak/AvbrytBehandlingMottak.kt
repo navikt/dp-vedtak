@@ -24,7 +24,7 @@ internal class AvbrytBehandlingMottak(
     init {
         River(rapidsConnection)
             .apply {
-                validate { it.demandValue("@event_name", "avbryt_behandling") }
+                precondition { it.requireValue("@event_name", "avbryt_behandling") }
                 validate { it.requireKey("ident") }
                 validate { it.requireKey("behandlingId") }
                 validate { it.interestedIn("@id", "@opprettet", "årsak") }

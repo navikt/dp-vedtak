@@ -24,7 +24,7 @@ internal class AvklaringIkkeRelevantMottak(
     init {
         River(rapidsConnection)
             .apply {
-                validate { it.demandValue("@event_name", "AvklaringIkkeRelevant") }
+                precondition { it.requireValue("@event_name", "AvklaringIkkeRelevant") }
                 validate { it.requireKey("ident") }
                 validate { it.requireKey("avklaringId", "kode") }
                 validate { it.requireKey("behandlingId") }

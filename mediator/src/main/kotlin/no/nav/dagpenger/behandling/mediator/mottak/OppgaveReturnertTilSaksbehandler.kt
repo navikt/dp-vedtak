@@ -22,7 +22,7 @@ internal class OppgaveReturnertTilSaksbehandler(
     init {
         River(rapidsConnection)
             .apply {
-                validate { it.demandValue("@event_name", "oppgave_returnert_til_saksbehandling") }
+                precondition { it.requireValue("@event_name", "oppgave_returnert_til_saksbehandling") }
                 validate { it.requireKey("ident") }
                 validate { it.requireKey("behandlingId") }
                 validate { it.interestedIn("@id", "@opprettet") }

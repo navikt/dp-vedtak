@@ -23,7 +23,7 @@ internal class ArenaOppgaveMottak(
     init {
         River(rapidsConnection)
             .apply {
-                validate { it.demandValue("op_type", "U") }
+                precondition { it.requireValue("op_type", "U") }
                 validate { it.requireKey("pos") }
                 validate { it.require("op_ts", JsonNode::asArenaDato) }
                 validate {

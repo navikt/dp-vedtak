@@ -24,7 +24,7 @@ internal class GodkjennBehandlingMottak(
     init {
         River(rapidsConnection)
             .apply {
-                validate { it.demandValue("@event_name", "godkjenn_behandling") }
+                precondition { it.requireValue("@event_name", "godkjenn_behandling") }
                 validate { it.requireKey("ident") }
                 validate { it.requireKey("behandlingId") }
                 validate { it.interestedIn("@id", "@opprettet") }
