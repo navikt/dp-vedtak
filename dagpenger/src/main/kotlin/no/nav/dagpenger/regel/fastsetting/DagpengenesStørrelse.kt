@@ -52,7 +52,7 @@ object DagpengenesStørrelse {
     private val nittiProsent = Opplysningstype.somDesimaltall("90% av grunnlag for dagpenger")
     private val antallArbeidsdagerPerÅr = Opplysningstype.somHeltall("Antall arbeidsdager per år")
     private val maksGrunnlag = Opplysningstype.somBeløp("Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget")
-    private val arbeidsdagerPerUke = Opplysningstype.somHeltall("Antall arbeidsdager per uke")
+    val arbeidsdagerPerUke = Opplysningstype.somHeltall("Antall arbeidsdager per uke")
     private val maksSats = Opplysningstype.somBeløp("Maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget")
     private val avrundetMaksSats = Opplysningstype.somBeløp("Avrundet maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget")
     internal val harBarnetillegg = Opplysningstype.somBoolsk("Har barnetillegg")

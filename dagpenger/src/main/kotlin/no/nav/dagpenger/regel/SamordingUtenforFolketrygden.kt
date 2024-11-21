@@ -4,16 +4,20 @@ import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
+import no.nav.dagpenger.opplysning.regel.divisjon
 import no.nav.dagpenger.opplysning.regel.enAv
+import no.nav.dagpenger.opplysning.regel.høyesteAv
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.opplysning.regel.substraksjonTilNull
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.AndreØkonomiskeYtelser
 import no.nav.dagpenger.regel.Behov.OppgittAndreYtelserUtenforNav
-import no.nav.dagpenger.regel.Minsteinntekt.grunnbeløp
-import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.andreYtelser
-import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.skalSamordnesUtenforFolketrygden
+import no.nav.dagpenger.regel.Samordning.samordnetDagsats
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.grunnbeløpForDagpengeGrunnlag
+import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.arbeidsdagerPerUke
 
 object SamordingUtenforFolketrygden {
     val andreYtelser = Opplysningstype.somBoolsk("Oppgitt andre ytelser utenfor NAV i søknaden".id(OppgittAndreYtelserUtenforNav))
@@ -30,15 +34,22 @@ object SamordingUtenforFolketrygden {
         )
 
     val terskelVedSamordning = Opplysningstype.somDesimaltall("Hvor mange prosent av G skal brukes som terskel ved samordning")
-    val treProsentG = Opplysningstype.somBeløp("Beløp tilsvarende nedre terskel av G")
+    val minsteUkessatsEtterSamordning = Opplysningstype.somBeløp("Beløp tilsvarende nedre terskel av G")
     val skalSamordnesUtenforFolketrygden = Opplysningstype.somBoolsk("Skal samordnes med ytelser utenfor folketrygden")
+
+    val sumDetSkalSamordnesMot = Opplysningstype.somBeløp("Penger fra utsida som skal samordnes mot")
+    val denRosaStrekenUnderDenRøde = Opplysningstype.somBeløp("Rosa strek")
+    val redusertUkessatsEtterSamordning = Opplysningstype.somBeløp("Redusert")
+    val samordnetUkessats = Opplysningstype.somBeløp("Samordnet")
+    val enAnnenUkessats = Opplysningstype.somBeløp("Samordnet ukessats uten barnetillegg")
+    val dobbeltSåSamordnetDagsats = Opplysningstype.somBeløp("Samordnet innvending og utvending dagsats uten barnetillegg")
 
     val regelsett =
         Regelsett("§ 4-26.Samordning med ytelser utenfor folketrygden") {
             regel(andreYtelser) { innhentes }
 
             regel(terskelVedSamordning) { oppslag(prøvingsdato) { 0.03 } }
-            regel(treProsentG) { multiplikasjon(grunnbeløp, terskelVedSamordning) }
+            regel(minsteUkessatsEtterSamordning) { multiplikasjon(grunnbeløpForDagpengeGrunnlag, terskelVedSamordning) }
 
             regel(pensjonFraOffentligTjenestepensjonsordning) { oppslag(prøvingsdato) { false } }
             regel(redusertUførepensjon) { oppslag(prøvingsdato) { false } }
@@ -48,6 +59,16 @@ object SamordingUtenforFolketrygden {
             regel(garantilottGFF) { oppslag(prøvingsdato) { false } }
 
             regel(andreØkonomiskeYtelser) { innhentes }
+
+            regel(sumDetSkalSamordnesMot) { oppslag(prøvingsdato) { Beløp(0.0) } }
+            regel(denRosaStrekenUnderDenRøde) { substraksjonTilNull(minsteUkessatsEtterSamordning, sumDetSkalSamordnesMot) }
+
+            regel(enAnnenUkessats) { multiplikasjon(samordnetDagsats, arbeidsdagerPerUke) }
+            regel(redusertUkessatsEtterSamordning) { substraksjonTilNull(enAnnenUkessats, sumDetSkalSamordnesMot) }
+
+            regel(samordnetUkessats) { høyesteAv(redusertUkessatsEtterSamordning, denRosaStrekenUnderDenRøde) }
+
+            regel(dobbeltSåSamordnetDagsats) { divisjon(samordnetUkessats, arbeidsdagerPerUke) }
 
             regel(skalSamordnesUtenforFolketrygden) {
                 enAv(

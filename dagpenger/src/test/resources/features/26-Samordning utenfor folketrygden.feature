@@ -9,3 +9,18 @@ Egenskap: § 4-26.Samordning med ytelser utenfor folketrygden
     Eksempler:
       | ytelse       |
       | andreYtelser |
+
+  Scenariomal: Søker har ytelser utenfor folketrygden som gir samordning
+    Gitt at søker har søkt om dagpenger med andre ytelser
+    Og søker har ukessats "<ukessats>"
+    Og søker har oppgitt ytelse med "<beløp>" utbetalt per uke
+    Så skal vi endre ukessats til "<samordnet ukessats>"
+    Og skal vi endre dagsats til "<samordnet dagsats>"
+    Eksempler:
+      | ukessats | beløp | samordnet ukessats | samordnet dagsats |
+      | 1000     | 500   | 3220.84            | 644.168           |
+      | 3000     | 500   | 3220.84            | 644.168           |
+      | 3800     | 500   | 3300               | 660               |
+      | 3800     | 1500  | 2300               | 460               |
+      | 6000     | 500   | 5500               | 1100              |
+      | 3200     | 15000 | 0                  | 0                 |
