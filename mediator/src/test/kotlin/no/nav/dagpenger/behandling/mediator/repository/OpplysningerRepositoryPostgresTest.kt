@@ -378,6 +378,7 @@ class OpplysningerRepositoryPostgresTest {
     fun `kan fjerne opplysninger`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
+            val vaktmesterRepo = VaktmesterPostgresRepo()
             val heltallFaktum = Faktum(heltall, 10)
             val heltallFaktum2 = Faktum(heltall, 20)
             val opplysninger = Opplysninger(listOf(heltallFaktum))
@@ -387,6 +388,66 @@ class OpplysningerRepositoryPostgresTest {
             repo.lagreOpplysninger(opplysninger)
             val fraDb = repo.hentOpplysninger(opplysninger.id)
             fraDb.finnAlle().shouldBeEmpty()
+            vaktmesterRepo.slettOpplysninger() shouldBe 1
+        }
+    }
+
+    @Test
+    fun `ikke slette mer enn vi skal`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val vaktmesterRepo = VaktmesterPostgresRepo()
+
+            val baseOpplysning = Faktum(baseOpplysningstype, LocalDate.now())
+
+            val regelsett =
+                Regelsett("Regelsett") {
+                    regel(baseOpplysningstype) { innhentes }
+                    regel(utledetOpplysningstype) { oppslag(baseOpplysningstype) { 5 } }
+                }
+            val tidligereOpplysninger = Opplysninger()
+            val regelkjøring = Regelkjøring(LocalDate.now(), tidligereOpplysninger, regelsett)
+
+            tidligereOpplysninger.leggTil(baseOpplysning as Opplysning<*>).also { regelkjøring.evaluer() }
+
+            repo.lagreOpplysninger(tidligereOpplysninger)
+
+            val nyeOpplysninger = Opplysninger(opplysninger = emptyList(), basertPå = listOf(tidligereOpplysninger))
+            val nyRegelkjøring = Regelkjøring(LocalDate.now(), nyeOpplysninger, regelsett)
+            val endretBaseOpplysningstype = Faktum(baseOpplysningstype, LocalDate.now().plusDays(1))
+            nyeOpplysninger.leggTil(endretBaseOpplysningstype as Opplysning<*>).also { nyRegelkjøring.evaluer() }
+            repo.lagreOpplysninger(nyeOpplysninger)
+
+            val fraDb = repo.hentOpplysninger(nyeOpplysninger.id).also { Regelkjøring(LocalDate.now(), it) }
+            fraDb.finnAlle().size shouldBe 2
+
+            with(fraDb.finnOpplysning(utledetOpplysningstype)) {
+                verdi shouldBe 5
+                utledetAv.shouldNotBeNull()
+                utledetAv!!.regel shouldBe "Oppslag"
+                utledetAv!!.opplysninger shouldContainExactly listOf(endretBaseOpplysningstype)
+            }
+            with(fraDb.finnOpplysning(endretBaseOpplysningstype.id)) {
+                id shouldBe endretBaseOpplysningstype.id
+                verdi shouldBe endretBaseOpplysningstype.verdi
+                gyldighetsperiode shouldBe endretBaseOpplysningstype.gyldighetsperiode
+                opplysningstype shouldBe endretBaseOpplysningstype.opplysningstype
+                utledetAv.shouldBeNull()
+            }
+
+            val tidligereOpplysningerFraDb = repo.hentOpplysninger(tidligereOpplysninger.id).also { Regelkjøring(LocalDate.now(), it) }
+            tidligereOpplysningerFraDb.finnAlle().size shouldBe 0
+            tidligereOpplysningerFraDb.aktiveOpplysninger.size shouldBe 2
+            with(tidligereOpplysningerFraDb.finnOpplysning(baseOpplysning.id)) {
+                id shouldBe baseOpplysning.id
+                verdi shouldBe baseOpplysning.verdi
+                gyldighetsperiode shouldBe baseOpplysning.gyldighetsperiode
+                opplysningstype shouldBe baseOpplysning.opplysningstype
+                utledetAv.shouldBeNull()
+                erErstattet shouldBe true
+                erstattetAv shouldBe listOf(endretBaseOpplysningstype)
+            }
+            vaktmesterRepo.slettOpplysninger() shouldBe 0
         }
     }
 }
