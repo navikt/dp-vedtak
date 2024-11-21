@@ -1,5 +1,6 @@
 package no.nav.dagpenger.opplysning
 
+import no.nav.dagpenger.opplysning.regel.Ekstern
 import no.nav.dagpenger.opplysning.regel.Regel
 import java.time.LocalDate
 
@@ -37,6 +38,14 @@ class Regelsett(
         }
 
     fun avhengerAv(opplysningstype: Opplysningstype<*>) = avhengerAv.contains(opplysningstype)
+
+    val behov by lazy {
+        regler
+            .flatMap { it.value.getAll() }
+            .toSet()
+            .filterIsInstance<Ekstern<*>>()
+            .map { it.produserer }
+    }
 
     override fun toString() = "Regelsett(navn=$navn)"
 }

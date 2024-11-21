@@ -1,8 +1,6 @@
 package no.nav.dagpenger.regel
 
 import com.spun.util.persistence.Loader
-import no.nav.dagpenger.opplysning.dag.RegeltreBygger
-import no.nav.dagpenger.opplysning.regel.Ekstern
 import org.approvaltests.Approvals
 import org.approvaltests.core.Options
 import org.approvaltests.namer.NamerWrapper
@@ -12,24 +10,9 @@ import java.nio.file.Paths
 class OpplysningDokumentasjon {
     @Test
     fun `henter ut hvilken informasjon som må innhentes`() {
-        val regler =
-            listOf(
-                Alderskrav.regelsett,
-                Meldeplikt.regelsett,
-                Minsteinntekt.regelsett,
-                Opptjeningstid.regelsett,
-                ReellArbeidssøker.regelsett,
-                KravPåDagpenger.regelsett,
-                Rettighetstype.regelsett,
-                Søknadstidspunkt.regelsett,
-                Verneplikt.regelsett,
-                Utdanning.regelsett,
-            )
+        val regler = RegelverkDagpenger.regelsett
 
-        val dag = RegeltreBygger(*regler.toTypedArray()).dag()
-        val opplysningerUtenRegel = dag.findLeafNodes()
-        val opplysningerMedEksternRegel = dag.findNodesWithEdge { it.data is Ekstern<*> }
-        val behov = opplysningerUtenRegel + opplysningerMedEksternRegel
+        val behov = regler.flatMap { it.behov }
 
         val markdown =
             """
@@ -39,9 +22,11 @@ class OpplysningDokumentasjon {
             >
             >|Behov|Beskrivelse|Logisk datatype|Datatype|
             >|---|---|---|---|
-            ${behov.sortedBy { it.data.id }.joinToString("\n") {
-                ">|${it.data.id} | ${it.data.navn} | ${it.data.datatype}|${it.data.datatype.klasse.simpleName}|"
-            }}
+            ${
+                behov.sortedBy { it.id }.joinToString("\n") {
+                    ">|${it.id} | ${it.navn} | ${it.datatype}|${it.datatype.klasse.simpleName}|"
+                }
+            }
             """.trimMargin(">")
 
         skriv(markdown)
