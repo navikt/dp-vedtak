@@ -18,9 +18,9 @@ Egenskap: § 4-26.Samordning med ytelser utenfor folketrygden
     Og skal vi endre dagsats til "<samordnet dagsats>"
     Eksempler:
       | ukessats | beløp | samordnet ukessats | samordnet dagsats |
-      | 1000     | 500   | 3220.84            | 644.168           |
-      | 3000     | 500   | 3220.84            | 644.168           |
-      | 3800     | 500   | 3300               | 660               |
-      | 3800     | 1500  | 2300               | 460               |
+      | 1000     | 500   | 1000               | 200               |
+      | 3000     | 500   | 3000               | 600               |
+      | 3800     | 500   | 3720.84            | 744.168           |
+      | 3800     | 1500  | 3720.84            | 744.168           |
       | 6000     | 500   | 5500               | 1100              |
-      | 3200     | 15000 | 0                  | 0                 |
+      | 3200     | 15000 | 3200               | 640               |

@@ -13,11 +13,11 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.andreYtelser
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.andreØkonomiskeYtelser
-import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.enAnnenUkessats
-import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.minsteUkessatsEtterSamordning
+import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.nedreGrenseForSamordning
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.samordnetUkessats
+import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.samordnetUkessatsUtenBarnetillegg
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.skalSamordnesUtenforFolketrygden
-import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.sumDetSkalSamordnesMot
+import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.sumAvYtelserUtenforFolketrygden
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.arbeidsdagerPerUke
 
@@ -55,17 +55,17 @@ class SamordningUtenforFolketrygdenSteg : No {
         }
 
         Gitt("søker har ukessats {string}") { sats: String ->
-            opplysninger.leggTil(Faktum(enAnnenUkessats, Beløp(sats.toBigDecimal())))
+            opplysninger.leggTil(Faktum(samordnetUkessatsUtenBarnetillegg, Beløp(sats.toBigDecimal())))
         }
 
         Gitt("søker har oppgitt ytelse med {string} utbetalt per uke") { beløp: String ->
             opplysninger.leggTil(Faktum(andreYtelser, true))
-            opplysninger.leggTil(Faktum(sumDetSkalSamordnesMot, Beløp(beløp.toBigDecimal())))
+            opplysninger.leggTil(Faktum(sumAvYtelserUtenforFolketrygden, Beløp(beløp.toBigDecimal())))
             regelkjøring.evaluer()
         }
 
         Så("skal vi endre ukessats til {string}") { nySats: String ->
-            opplysninger.finnOpplysning(minsteUkessatsEtterSamordning).verdi shouldBe Beløp(3720.84)
+            opplysninger.finnOpplysning(nedreGrenseForSamordning).verdi shouldBe Beløp(3720.84)
             opplysninger.finnOpplysning(samordnetUkessats).verdi shouldBe Beløp(nySats.toBigDecimal())
         }
         Så("skal vi endre dagsats til {string}") { nySats: String ->

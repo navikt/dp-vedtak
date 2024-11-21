@@ -18,7 +18,7 @@ import no.nav.dagpenger.opplysning.regel.substraksjonTilNull
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Avklaringspunkter.BarnMåGodkjennes
 import no.nav.dagpenger.regel.Behov.Barnetillegg
-import no.nav.dagpenger.regel.Samordning.samordnetDagsats
+import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.dagsatsSamordnetUtenforFolketrygden
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 import java.math.BigDecimal
@@ -91,7 +91,7 @@ object DagpengenesStørrelse {
             regel(dagsatsEtterNittiProsent) { substraksjonTilNull(avrundetDagsatsUtenBarnetillegg, beløpOverMaks) }
 
             // Regn ut samordnet dagsats med barnetillegg, begrenset til 90% av dagpengegrunnlaget
-            regel(samordnetDagsatsMedBarnetillegg) { addisjon(samordnetDagsats, barnetillegg) }
+            regel(samordnetDagsatsMedBarnetillegg) { addisjon(dagsatsSamordnetUtenforFolketrygden, barnetillegg) }
             regel(dagsatsEtterSamordningMedBarnetillegg) { minstAv(samordnetDagsatsMedBarnetillegg, avrundetMaksSats) }
 
             // Regn ut ukessats
@@ -101,7 +101,7 @@ object DagpengenesStørrelse {
             regel(harBarnetillegg) { størreEnnEllerLik(barnetillegg, barnetilleggetsStørrelse) }
         }
 
-    val ønsketResultat = listOf(ukessats, samordnetDagsats)
+    val ønsketResultat = listOf(ukessats, dagsatsSamordnetUtenforFolketrygden)
 
     val BarnetilleggKontroll =
         Kontrollpunkt(BarnMåGodkjennes) {

@@ -97,8 +97,10 @@ Har svart ja på spørsmål om utdanning eller opplæring
 Har svart nei på spørsmål om utdanning eller opplæring
 Oppfyller kravet på unntak for utdanning eller opplæring
 Krav til utdanning eller opplæring
-Antall dagsats for egenandel
 Antall arbeidsdager per uke
+Hvor mange prosent av G skal brukes som terskel ved samordning
+Sum av ytelser utenfor folketrygden
+Antall dagsats for egenandel
 Terskelfaktor for 12 måneder
 Lang dagpengeperiode
 Kort dagpengeperiode
@@ -112,6 +114,7 @@ Mottar vartpenger
 Mottar ventelønn
 Mottar etterlønn
 Mottar garantilott fra Garantikassen for fiskere.
+Beløp tilsvarende nedre terskel av G
 Terskel for 12 måneder
 Snittinntekt siste 36 måneder
 Terskel for 36 måneder

@@ -74,8 +74,10 @@ Opplæringspenger dagsats
 Uføre dagsats
 Foreldrepenger dagsats
 Svangerskapspenger dagsats
-Antall dagsats for egenandel
 Antall arbeidsdager per uke
+Hvor mange prosent av G skal brukes som terskel ved samordning
+Sum av ytelser utenfor folketrygden
+Antall dagsats for egenandel
 Terskelfaktor for 12 måneder
 Lang dagpengeperiode
 Kort dagpengeperiode
@@ -107,6 +109,7 @@ Beregningsregel: Tapt arbeidstid
 6 ganger grunnbeløp
 Sum av barnetillegg
 Sum andre ytelser
+Beløp tilsvarende nedre terskel av G
 Terskel for 12 måneder
 Terskel for 36 måneder
 Medlem har reduserte ytelser fra folketrygden (Samordning)
@@ -164,9 +167,14 @@ Andel av dagsats med barnetillegg som overstiger maks andel av dagpengegrunnlage
 Andel av dagsats med barnetillegg avkortet til maks andel av dagpengegrunnlaget
 Samordnet dagsats uten barnetillegg
 Samordnet dagsats er negativ eller 0
-Samordnet dagsats med barnetillegg
+Samordnet ukessats uten barnetillegg
 Utfall etter samordning
-Dagsats med barnetillegg etter samordning og 90% regel
+Minste mulige ukessats som som kan brukes
+Ukessats trukket ned for ytelser utenfor folketrygden
 Krav på dagpenger
+Samordnet ukessats med ytelser utenfor folketrygden
+Dagsats uten barnetillegg samordnet
+Samordnet dagsats med barnetillegg
+Dagsats med barnetillegg etter samordning og 90% regel
 Egenandel
 Ukessats med barnetillegg etter samordning
