@@ -42,7 +42,7 @@ internal class ApplicationBuilder(
             ArenaOppgaveMottak(rapidsConnection, SakRepository())
 
             // Start jobb som avbryter behandlinger som står i innvilgelse for lenge
-            AvbrytInnvilgelse(rapidsConnection).start()
+            AvbrytInnvilgelse(rapidsConnection).start(config["AVBRYT_INNVILGELSE_ETTER_DAGER"]?.toInt() ?: 3)
 
             val personRepository =
                 PersonRepositoryPostgres(

@@ -18,7 +18,12 @@ internal class AvbrytInnvilgelse(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    fun start() {
+    fun start(antallDager: Int) {
+        if (antallDager < 1) {
+            logger.error { "Antall dager er mindre enn 1, starter ikke jobb for å avbryte" }
+            return
+        }
+
         fixedRateTimer(
             name = "Abryter behandlinger som står i forslag til vedtak om innvilgelse",
             daemon = true,
@@ -26,7 +31,7 @@ internal class AvbrytInnvilgelse(
             period = 15.minutes.inWholeMilliseconds,
             action = {
                 try {
-                    avbrytBehandlinger(3)
+                    avbrytBehandlinger(antallDager)
                 } catch (e: Exception) {
                     logger.error(e) { "Sletting av behandlinger feilet" }
                 }
