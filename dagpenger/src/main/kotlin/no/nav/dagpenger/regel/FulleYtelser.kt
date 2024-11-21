@@ -3,33 +3,30 @@ package no.nav.dagpenger.regel
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
-import no.nav.dagpenger.opplysning.regel.erSann
-import no.nav.dagpenger.opplysning.regel.ingenAv
-import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.skalSamordnesUtenforFolketrygden
+import no.nav.dagpenger.regel.Samordning.skalSamordnes
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object FulleYtelser {
-    val andreYtelser = Opplysningstype.somBoolsk("Oppgitt andre ytelser utenfor NAV i søknaden".id("OppgittAndreYtelserUtenforNav"))
-    val vurderingAndreYtelser = Opplysningstype.somBoolsk("Saksbehandler er enig i at brukeren har andre ytelser")
-    val navYtelser = Opplysningstype.somBoolsk("NAV livsoppholdsytelser")
-
-    val ikkeFulleYtelser = Opplysningstype.somBoolsk("Ikke fulle ytelser")
+    val ikkeFulleYtelser = Opplysningstype.somBoolsk("Mottar ikke andre fulle ytelser")
 
     val regelsett =
-        Regelsett("FulleYtelser") {
-            regel(andreYtelser) { innhentes }
-            regel(vurderingAndreYtelser) { erSann(andreYtelser) }
-            regel(navYtelser) { oppslag(prøvingsdato) { false } }
-
-            regel(ikkeFulleYtelser) {
-                ingenAv(vurderingAndreYtelser, navYtelser)
-            }
+        Regelsett("§ 4-24. Medlem som har fulle ytelser etter folketrygdloven eller avtalefestet pensjon") {
+            regel(ikkeFulleYtelser) { oppslag(prøvingsdato) { true } }
         }
 
-    val AndreYtelserKontrollPunkt =
-        Kontrollpunkt(sjekker = Avklaringspunkter.AndreYtelser) { opplysninger ->
-            opplysninger.har(andreYtelser) && opplysninger.finnOpplysning(andreYtelser).verdi
+    val ønsketResultat = listOf(ikkeFulleYtelser)
+
+    val FulleYtelserKontrollpunkt =
+        Kontrollpunkt(sjekker = Avklaringspunkter.FulleYtelser) { opplysninger ->
+            (
+                opplysninger.har(skalSamordnes) &&
+                    opplysninger.finnOpplysning(skalSamordnes).verdi
+            ) ||
+                (
+                    opplysninger.har(skalSamordnesUtenforFolketrygden) &&
+                        opplysninger.finnOpplysning(skalSamordnesUtenforFolketrygden).verdi
+                )
         }
 }

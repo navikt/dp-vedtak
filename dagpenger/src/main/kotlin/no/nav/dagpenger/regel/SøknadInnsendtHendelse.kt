@@ -13,12 +13,14 @@ import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.regel.Alderskrav.HattLukkedeSakerSiste8UkerKontroll
 import no.nav.dagpenger.regel.Alderskrav.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.Alderskrav.Under18Kontroll
+import no.nav.dagpenger.regel.FulleYtelser.FulleYtelserKontrollpunkt
 import no.nav.dagpenger.regel.KravPåDagpenger.Totrinnskontroll
 import no.nav.dagpenger.regel.Minsteinntekt.EØSArbeidKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.InntektNesteKalendermånedKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.SvangerskapsrelaterteSykepengerKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.ØnskerEtterRapporteringsfristKontroll
+import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.YtelserUtenforFolketrygdenKontrollPunkt
 import no.nav.dagpenger.regel.Samordning.SkalSamordnes
 import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
@@ -107,6 +109,7 @@ class SøknadInnsendtHendelse(
 
     override fun kontrollpunkter() =
         listOf(
+            FulleYtelserKontrollpunkt,
             BarnetilleggKontroll,
             EØSArbeidKontroll,
             HattLukkedeSakerSiste8UkerKontroll,
@@ -121,6 +124,7 @@ class SøknadInnsendtHendelse(
             Under18Kontroll,
             VernepliktKontroll,
             VirkningstidspunktForLangtFramITid,
+            YtelserUtenforFolketrygdenKontrollPunkt,
             ØnskerEtterRapporteringsfristKontroll,
         )
 

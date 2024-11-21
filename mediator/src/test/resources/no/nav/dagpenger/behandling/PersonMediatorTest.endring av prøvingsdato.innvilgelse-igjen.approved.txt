@@ -29,6 +29,7 @@ Svangerskapspenger etter lovens kapittel 14
 Foreldrepenger etter lovens kapittel 14
 Opplæringspenger etter lovens kapittel 9
 Pleiepenger etter lovens kapittel 9
+Oppgitt andre ytelser utenfor NAV i søknaden
 Prøvingsdato
 Aldersgrense
 Lovpålagt rapporteringsfrist for A-ordningen
@@ -57,6 +58,7 @@ Krav til prosentvis tap av arbeidstid
 Beregningsregel: Arbeidstid siste 6 måneder
 Beregningsregel: Arbeidstid siste 12 måneder
 Beregeningsregel: Arbeidstid siste 36 måneder
+Mottar ikke andre fulle ytelser
 Grunnbeløp for grunnlag
 Faktor for maksimalt mulig grunnlag
 Antall år i 36 måneder
@@ -80,6 +82,13 @@ Divisior
 Terskelfaktor for 36 måneder
 Antall dager som skal regnes med i hver uke
 Uføretrygd etter lovens kapittel 12
+Mottar pensjon fra en offentlig tjenestepensjonsordning
+Mottar redusert uførepensjon fra offentlig pensjonsordning
+Mottar vartpenger
+Mottar ventelønn
+Mottar etterlønn
+Mottar garantilott fra Garantikassen for fiskere.
+Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn
 Dato søker når maks alder
 Arbeidsgivers rapporteringsfrist
 Inntektskrav for siste 12 mnd
@@ -102,6 +111,7 @@ Terskel for 12 måneder
 Terskel for 36 måneder
 Medlem har reduserte ytelser fra folketrygden (Samordning)
 Har barnetillegg
+Skal samordnes med ytelser utenfor folketrygden
 Siste mulige dag bruker kan oppfylle alderskrav
 Siste avsluttende kalendermåned
 Krav til arbeidssøker

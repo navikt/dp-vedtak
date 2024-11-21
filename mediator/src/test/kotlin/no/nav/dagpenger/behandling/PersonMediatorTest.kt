@@ -47,12 +47,13 @@ import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
 import no.nav.dagpenger.regel.Behov.Lønnsgaranti
 import no.nav.dagpenger.regel.Behov.Omsorgspenger
+import no.nav.dagpenger.regel.Behov.OppgittAndreYtelserUtenforNav
 import no.nav.dagpenger.regel.Behov.Opplæringspenger
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.Behov.Ordinær
 import no.nav.dagpenger.regel.Behov.Permittert
 import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
-import no.nav.dagpenger.regel.Behov.Pleienger
+import no.nav.dagpenger.regel.Behov.Pleiepenger
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
 import no.nav.dagpenger.regel.Behov.Svangerskapspenger
@@ -246,7 +247,7 @@ internal class PersonMediatorTest {
             skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilFerdig(testPerson)
 
-            antallOpplysninger() shouldBe 93
+            antallOpplysninger() shouldBe 94
             godkjennOpplysninger("tilKravPåDagpenger")
 
             /**
@@ -272,8 +273,24 @@ internal class PersonMediatorTest {
             /**
              * Innhente informasjon om andre ytelser
              */
-            rapid.harBehov(Sykepenger, Omsorgspenger, Svangerskapspenger, Foreldrepenger, Opplæringspenger, Pleienger)
-            testPerson.løsBehov(Sykepenger, Omsorgspenger, Svangerskapspenger, Foreldrepenger, Opplæringspenger, Pleienger)
+            rapid.harBehov(
+                Sykepenger,
+                Omsorgspenger,
+                Svangerskapspenger,
+                Foreldrepenger,
+                Opplæringspenger,
+                Pleiepenger,
+                OppgittAndreYtelserUtenforNav,
+            )
+            testPerson.løsBehov(
+                Sykepenger,
+                Omsorgspenger,
+                Svangerskapspenger,
+                Foreldrepenger,
+                Opplæringspenger,
+                Pleiepenger,
+                OppgittAndreYtelserUtenforNav,
+            )
 
             godkjennOpplysninger("etterInntekt")
 
@@ -327,7 +344,19 @@ internal class PersonMediatorTest {
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
             testPerson.løsBehov(Inntekt)
             testPerson.løsBehov(Barnetillegg)
-            testPerson.løsBehov(Sykepenger, Omsorgspenger, Svangerskapspenger, Foreldrepenger, Opplæringspenger, Pleienger)
+            testPerson.løsBehov(
+                Sykepenger,
+                Omsorgspenger,
+                Svangerskapspenger,
+                Foreldrepenger,
+                Opplæringspenger,
+                Pleiepenger,
+                OppgittAndreYtelserUtenforNav,
+            )
+
+            rapid.harHendelse("forslag_til_vedtak") {
+                medBoolsk("utfall") shouldBe true
+            }
 
             testPerson.sendTilKontroll()
 
@@ -551,7 +580,15 @@ internal class PersonMediatorTest {
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
             testPerson.løsBehov(Inntekt)
             testPerson.løsBehov(Barnetillegg)
-            testPerson.løsBehov(Sykepenger, Omsorgspenger, Svangerskapspenger, Foreldrepenger, Opplæringspenger, Pleienger)
+            testPerson.løsBehov(
+                Sykepenger,
+                Omsorgspenger,
+                Svangerskapspenger,
+                Foreldrepenger,
+                Opplæringspenger,
+                Pleiepenger,
+                OppgittAndreYtelserUtenforNav,
+            )
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medDato("prøvingsdato") shouldBe 1.juni(2024)

@@ -49,6 +49,7 @@ Krav til prosentvis tap av arbeidstid
 Beregningsregel: Arbeidstid siste 6 måneder
 Beregningsregel: Arbeidstid siste 12 måneder
 Beregeningsregel: Arbeidstid siste 36 måneder
+Mottar ikke andre fulle ytelser
 Grunnbeløp for grunnlag
 Faktor for maksimalt mulig grunnlag
 Antall år i 36 måneder
@@ -105,6 +106,13 @@ Divisior
 Terskelfaktor for 36 måneder
 Antall dager som skal regnes med i hver uke
 Uføretrygd etter lovens kapittel 12
+Mottar pensjon fra en offentlig tjenestepensjonsordning
+Mottar redusert uførepensjon fra offentlig pensjonsordning
+Mottar vartpenger
+Mottar ventelønn
+Mottar etterlønn
+Mottar garantilott fra Garantikassen for fiskere.
+Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn
 Terskel for 12 måneder
 Snittinntekt siste 36 måneder
 Terskel for 36 måneder

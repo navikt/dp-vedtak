@@ -14,7 +14,7 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.Foreldrepenger
 import no.nav.dagpenger.regel.Behov.Omsorgspenger
 import no.nav.dagpenger.regel.Behov.Opplæringspenger
-import no.nav.dagpenger.regel.Behov.Pleienger
+import no.nav.dagpenger.regel.Behov.Pleiepenger
 import no.nav.dagpenger.regel.Behov.Svangerskapspenger
 import no.nav.dagpenger.regel.Behov.Sykepenger
 import no.nav.dagpenger.regel.Behov.Uføre
@@ -28,7 +28,7 @@ import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.harBarnetillegg
 object Samordning {
     internal val utfallEtterSamordning = Opplysningstype.somBoolsk("Utfall etter samordning")
     internal val sykepenger = Opplysningstype.somBoolsk("Sykepenger etter lovens kapittel 8".id(Sykepenger))
-    internal val pleiepenger = Opplysningstype.somBoolsk("Pleiepenger etter lovens kapittel 9".id(Pleienger))
+    internal val pleiepenger = Opplysningstype.somBoolsk("Pleiepenger etter lovens kapittel 9".id(Pleiepenger))
     internal val omsorgspenger = Opplysningstype.somBoolsk("Omsorgspenger etter lovens kapittel 9".id(Omsorgspenger))
     internal val opplæringspenger = Opplysningstype.somBoolsk("Opplæringspenger etter lovens kapittel 9".id(Opplæringspenger))
     internal val uføre = Opplysningstype.somBoolsk("Uføretrygd etter lovens kapittel 12".id(Uføre))

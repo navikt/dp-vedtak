@@ -3,11 +3,18 @@ package no.nav.dagpenger.regel
 import no.nav.dagpenger.avklaring.Avklaringkode
 
 object Avklaringspunkter {
-    val AndreYtelser: Avklaringkode =
+    val YtelserUtenforFolketrygden: Avklaringkode =
         Avklaringkode(
-            kode = "AndreYtelser",
-            tittel = "Andre ytelser",
-            beskrivelse = "Personen har oppgitt andre ytelser",
+            kode = "YtelserUtenforFolketrygden",
+            tittel = "Bruker har oppgitt ytelser utenfor folketrygden",
+            beskrivelse = "Sjekk hvilke ytelser som er oppgitt utenfor folketrygden og om de skal ha konsekvens for dagpengene",
+        )
+
+    val FulleYtelser: Avklaringkode =
+        Avklaringkode(
+            kode = "FulleYtelser",
+            tittel = "Ta stilling til om bruker har andre fulle ytelser",
+            beskrivelse = "Om bruker har andre fulle ytelser må det velges mellom dagpenger eller disse ytelsene",
         )
 
     val SøknadstidspunktForLangtFramITid =

@@ -49,6 +49,7 @@ Krav til prosentvis tap av arbeidstid
 Beregningsregel: Arbeidstid siste 6 måneder
 Beregningsregel: Arbeidstid siste 12 måneder
 Beregeningsregel: Arbeidstid siste 36 måneder
+Mottar ikke andre fulle ytelser
 Grunnbeløp for grunnlag
 Faktor for maksimalt mulig grunnlag
 Antall år i 36 måneder

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import no.nav.dagpenger.inntekt.v1.KlassifisertInntektMåned
+import no.nav.dagpenger.regel.Behov.AndreØkonomiskeYtelser
 import no.nav.dagpenger.regel.Behov.Barnetillegg
 import no.nav.dagpenger.regel.Behov.Foreldrepenger
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
@@ -16,11 +17,12 @@ import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
 import no.nav.dagpenger.regel.Behov.Lønnsgaranti
 import no.nav.dagpenger.regel.Behov.Omsorgspenger
+import no.nav.dagpenger.regel.Behov.OppgittAndreYtelserUtenforNav
 import no.nav.dagpenger.regel.Behov.Opplæringspenger
 import no.nav.dagpenger.regel.Behov.Ordinær
 import no.nav.dagpenger.regel.Behov.Permittert
 import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
-import no.nav.dagpenger.regel.Behov.Pleienger
+import no.nav.dagpenger.regel.Behov.Pleiepenger
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.Svangerskapspenger
 import no.nav.dagpenger.regel.Behov.Sykepenger
@@ -301,6 +303,8 @@ class TestPerson(
                 Svangerskapspenger to false,
                 Foreldrepenger to false,
                 Opplæringspenger to false,
-                Pleienger to false,
+                Pleiepenger to false,
+                OppgittAndreYtelserUtenforNav to false,
+                AndreØkonomiskeYtelser to false,
             )
 }

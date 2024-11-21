@@ -62,6 +62,7 @@ class Søknadsprosess : Forretningsprosess {
                 StreikOgLockout.ikkeStreikEllerLockout,
                 Medlemskap.oppfyllerMedlemskap,
                 TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid,
+                FulleYtelser.ikkeFulleYtelser,
             )
         ønsketResultat.addAll(
             vilkår,
@@ -76,6 +77,8 @@ class Søknadsprosess : Forretningsprosess {
             ønsketResultat.addAll(DagpengenesStørrelse.ønsketResultat)
             ønsketResultat.addAll(Dagpengeperiode.ønsketResultat)
             ønsketResultat.addAll(Samordning.ønsketResultat)
+            ønsketResultat.addAll(SamordingUtenforFolketrygden.ønsketResultat)
+
             if (opplysninger.oppfyller(Verneplikt.avtjentVerneplikt)) {
                 ønsketResultat.addAll(VernepliktFastsetting.ønsketResultat)
             }

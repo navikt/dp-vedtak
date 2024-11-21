@@ -14,6 +14,7 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 |KanJobbeHvorSomHelst | Kan jobbe i hele Norge | Boolsk|boolean|
 |Krav til tap av arbeidsinntekt og arbeidstid | Krav til tap av arbeidsinntekt og arbeidstid | Boolsk|boolean|
 |Lønnsgaranti | Har rett til dagpenger etter konkurs | Boolsk|boolean|
+|Mottar ikke andre fulle ytelser | Mottar ikke andre fulle ytelser | Boolsk|boolean|
 |Oppfyller krav til ikke utestengt | Oppfyller krav til ikke utestengt | Boolsk|boolean|
 |Oppfyller personen vilkåret om medlemskap? | Oppfyller personen vilkåret om medlemskap? | Boolsk|boolean|
 |Ordinær | Har rett til ordinære dagpenger gjennom arbeidsforhold | Boolsk|boolean|

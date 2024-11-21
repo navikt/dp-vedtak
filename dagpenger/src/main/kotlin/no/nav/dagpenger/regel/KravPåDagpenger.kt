@@ -13,16 +13,17 @@ object KravPåDagpenger {
             regel(kravPåDagpenger) {
                 alle(
                     Alderskrav.kravTilAlder,
+                    FulleYtelser.ikkeFulleYtelser,
+                    Medlemskap.oppfyllerMedlemskap,
+                    Meldeplikt.registrertPåSøknadstidspunktet,
                     Minsteinntekt.minsteinntekt,
                     ReellArbeidssøker.kravTilArbeidssøker,
-                    Meldeplikt.registrertPåSøknadstidspunktet,
                     Rettighetstype.rettighetstype,
+                    Samordning.utfallEtterSamordning,
+                    StreikOgLockout.ikkeStreikEllerLockout,
+                    TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid,
                     Utdanning.kravTilUtdanning,
                     Utestengning.ikkeUtestengt,
-                    StreikOgLockout.ikkeStreikEllerLockout,
-                    Medlemskap.oppfyllerMedlemskap,
-                    TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid,
-                    Samordning.utfallEtterSamordning,
                 )
             }
         }
