@@ -112,7 +112,6 @@ Mottar vartpenger
 Mottar ventelønn
 Mottar etterlønn
 Mottar garantilott fra Garantikassen for fiskere.
-Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn
 Terskel for 12 måneder
 Snittinntekt siste 36 måneder
 Terskel for 36 måneder
@@ -168,5 +167,6 @@ Foreldrepenger etter lovens kapittel 14
 Opplæringspenger etter lovens kapittel 9
 Pleiepenger etter lovens kapittel 9
 Oppgitt andre ytelser utenfor NAV i søknaden
+Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn
 Medlem har reduserte ytelser fra folketrygden (Samordning)
 Skal samordnes med ytelser utenfor folketrygden

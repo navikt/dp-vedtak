@@ -4,6 +4,7 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 
 |Behov|Beskrivelse|Logisk datatype|Datatype|
 |---|---|---|---|
+|AndreØkonomiskeYtelser | Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn | Boolsk|boolean|
 |Barnetillegg | Barn | BarnDatatype|BarnListe|
 |Foreldrepenger | Foreldrepenger etter lovens kapittel 14 | Boolsk|boolean|
 |Fødselsdato | Fødselsdato | Dato|LocalDate|

@@ -11,6 +11,8 @@ import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Behov.AndreØkonomiskeYtelser
 import no.nav.dagpenger.regel.Behov.OppgittAndreYtelserUtenforNav
 import no.nav.dagpenger.regel.Minsteinntekt.grunnbeløp
+import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.andreYtelser
+import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.skalSamordnesUtenforFolketrygden
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object SamordingUtenforFolketrygden {
@@ -45,7 +47,7 @@ object SamordingUtenforFolketrygden {
             regel(etterlønn) { oppslag(prøvingsdato) { false } }
             regel(garantilottGFF) { oppslag(prøvingsdato) { false } }
 
-            regel(andreØkonomiskeYtelser) { oppslag(prøvingsdato) { false } }
+            regel(andreØkonomiskeYtelser) { innhentes }
 
             regel(skalSamordnesUtenforFolketrygden) {
                 enAv(

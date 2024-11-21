@@ -38,6 +38,7 @@ import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.regel.Avklaringspunkter
+import no.nav.dagpenger.regel.Behov.AndreØkonomiskeYtelser
 import no.nav.dagpenger.regel.Behov.Barnetillegg
 import no.nav.dagpenger.regel.Behov.Foreldrepenger
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
@@ -281,6 +282,7 @@ internal class PersonMediatorTest {
                 Opplæringspenger,
                 Pleiepenger,
                 OppgittAndreYtelserUtenforNav,
+                AndreØkonomiskeYtelser,
             )
             testPerson.løsBehov(
                 Sykepenger,
@@ -290,6 +292,7 @@ internal class PersonMediatorTest {
                 Opplæringspenger,
                 Pleiepenger,
                 OppgittAndreYtelserUtenforNav,
+                AndreØkonomiskeYtelser,
             )
 
             godkjennOpplysninger("etterInntekt")
@@ -352,6 +355,7 @@ internal class PersonMediatorTest {
                 Opplæringspenger,
                 Pleiepenger,
                 OppgittAndreYtelserUtenforNav,
+                AndreØkonomiskeYtelser,
             )
 
             rapid.harHendelse("forslag_til_vedtak") {
@@ -588,6 +592,7 @@ internal class PersonMediatorTest {
                 Opplæringspenger,
                 Pleiepenger,
                 OppgittAndreYtelserUtenforNav,
+                AndreØkonomiskeYtelser,
             )
 
             rapid.harHendelse("forslag_til_vedtak") {

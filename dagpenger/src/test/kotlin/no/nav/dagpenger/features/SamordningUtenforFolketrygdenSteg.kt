@@ -10,6 +10,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.andreYtelser
+import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.andreØkonomiskeYtelser
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.skalSamordnesUtenforFolketrygden
 import no.nav.dagpenger.regel.Søknadstidspunkt
 
@@ -40,6 +41,7 @@ class SamordningUtenforFolketrygdenSteg : No {
         }
 
         Gitt("søker har oppgitt ytelse {string}") { ytelse: String ->
+            opplysninger.leggTil(Faktum(andreØkonomiskeYtelser, false))
             when (ytelse) {
                 else -> opplysninger.leggTil(Faktum(andreYtelser, true)).also { regelkjøring.evaluer() }
             }
