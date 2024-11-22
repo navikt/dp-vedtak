@@ -72,6 +72,8 @@ object DagpengenesStørrelse {
 
             // Avrunder og sender over til samordning
             regel(avrundetDagsatsUtenBarnetillegg) { avrund(dagsatsUtenBarnetillegg) }
+            // Regn ut ukessats med barnetillegg som Arena trenger.
+            regel(ukessatMedBarnetillegg) { multiplikasjon(avrundetDagsatsUtenBarnetillegg, arbeidsdagerPerUke) }
 
             // Regn ut barnetillegg
             regel(barnetilleggetsStørrelse) { oppslag(prøvingsdato) { BarnetilleggSats.forDato(it) } }
@@ -79,7 +81,6 @@ object DagpengenesStørrelse {
 
             // Regn ut dagsats med barnetillegg, før maks og samordning
             regel(dagsatsMedBarnetillegg) { addisjon(dagsatsUtenBarnetillegg, barnetillegg) }
-            regel(ukessatMedBarnetillegg) { multiplikasjon(dagsatsMedBarnetillegg, arbeidsdagerPerUke) }
 
             // Regn ut 90% av dagpengegrunnlaget
             regel(nittiProsent) { oppslag(prøvingsdato) { 0.9 } }
