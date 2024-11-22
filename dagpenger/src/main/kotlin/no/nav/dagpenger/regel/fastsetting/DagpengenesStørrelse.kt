@@ -38,6 +38,7 @@ object DagpengenesStørrelse {
      */
     private val dekningsgrad = Opplysningstype.somDesimaltall("Faktor for utregning av dagsats etter dagpengegrunnlaget")
     val dagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Dagsats uten barnetillegg før samordning")
+    val ukessatMedBarnetillegg = Opplysningstype.somBeløp("Avrundet ukessats med barnetillegg før samordning")
     private val avrundetDagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats uten barnetillegg før samordning")
     private val beløpOverMaks =
         Opplysningstype.somBeløp(
@@ -78,6 +79,7 @@ object DagpengenesStørrelse {
 
             // Regn ut dagsats med barnetillegg, før maks og samordning
             regel(dagsatsMedBarnetillegg) { addisjon(dagsatsUtenBarnetillegg, barnetillegg) }
+            regel(ukessatMedBarnetillegg) { multiplikasjon(dagsatsMedBarnetillegg, arbeidsdagerPerUke) }
 
             // Regn ut 90% av dagpengegrunnlaget
             regel(nittiProsent) { oppslag(prøvingsdato) { 0.9 } }
@@ -101,7 +103,7 @@ object DagpengenesStørrelse {
             regel(harBarnetillegg) { størreEnnEllerLik(barnetillegg, barnetilleggetsStørrelse) }
         }
 
-    val ønsketResultat = listOf(ukessats, dagsatsSamordnetUtenforFolketrygden)
+    val ønsketResultat = listOf(ukessats, dagsatsSamordnetUtenforFolketrygden, ukessatMedBarnetillegg)
 
     val BarnetilleggKontroll =
         Kontrollpunkt(BarnMåGodkjennes) {
