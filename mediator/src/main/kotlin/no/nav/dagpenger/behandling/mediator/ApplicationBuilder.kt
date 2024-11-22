@@ -35,7 +35,10 @@ internal class ApplicationBuilder(
     private val opplysningstyper: Set<Opplysningstype<*>> = RegelverkDagpenger.produserer
 
     private val rapidsConnection: RapidsConnection =
-        RapidApplication.create(env = config, objectMapper = objectMapper) { engine, rapidsConnection: KafkaRapid ->
+        RapidApplication.create(
+            env = config,
+            objectMapper = objectMapper,
+        ) { engine, rapidsConnection: KafkaRapid ->
             val aktivitetsloggMediator = AktivitetsloggMediator()
 
             // Logger bare oppgaver enn så lenge. Bør inn i HendelseMediator

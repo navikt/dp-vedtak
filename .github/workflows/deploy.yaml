@@ -43,7 +43,6 @@ jobs:
         id: docker-build-push
         with:
           team: teamdagpenger
-          push_image: true # optional, default true
           tag: ${{ github.sha }}
           dockerfile: mediator/Dockerfile # optional, default Dockerfile
           docker_context: mediator # optional, default .
