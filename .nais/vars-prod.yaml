@@ -6,9 +6,6 @@ gcp:
   sql:
     tier: db-custom-1-3840
 
-flyway:
-  cleanDisabled: true
-
 azure:
   tenant: nav.no
   grupper:

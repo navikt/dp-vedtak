@@ -34,10 +34,6 @@ spec:
       value: -XX:+UseParallelGC -XX:MaxRAMPercentage=35.0 -XX:ActiveProcessorCount=4 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp
     - name: GRUPPER_SAKSBEHANDLER
       value: {{azure.grupper.saksbehandler}}
-    - name: flyway.cleanDisabled
-      value: '{{flyway.cleanDisabled}}'
-    - name: CLEAN_ON_STARTUP
-      value: "false"
     - name: KAFKA_EXTRA_TOPIC
       value: {{kafka.extra_topic}}
     # Avbryt innvilgelse etter x dager. Dette trenger vi en overgangsperiode med Arena

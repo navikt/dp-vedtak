@@ -9,9 +9,6 @@ gcp:
   sql:
     tier: db-custom-1-3840
 
-flyway:
-  cleanDisabled: false
-
 azure:
   tenant: trygdeetaten.no
   grupper:

@@ -3,7 +3,6 @@ package no.nav.dagpenger.behandling.mediator
 import com.github.navikt.tbd_libs.rapids_and_rivers.KafkaRapid
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import mu.KotlinLogging
-import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.clean
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.konfigurasjon.Configuration.config
 import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
@@ -80,7 +79,6 @@ internal class ApplicationBuilder(
     fun stop() = rapidsConnection.stop()
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
-        if (config["CLEAN_ON_STARTUP"] == "true") clean()
         runMigration()
         logger.info { "Starter opp dp-behandling. Støtter innvilgelse=$støtterInnvilgelse" }
     }
