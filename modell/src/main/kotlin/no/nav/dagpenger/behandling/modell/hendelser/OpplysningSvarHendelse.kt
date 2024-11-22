@@ -22,6 +22,12 @@ class OpplysningSvarHendelse(
     init {
         require(opplysninger.isNotEmpty()) { "Må ha minst én opplysning" }
     }
+
+    override fun kontekstMap(): Map<String, String> =
+        mapOf(
+            "behandlingId" to behandlingId.toString(),
+            "opplysninger" to opplysninger.joinToString(", ") { it.opplysningstype.toString() },
+        )
 }
 
 data class OpplysningSvar<T : Comparable<T>>(

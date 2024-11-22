@@ -66,7 +66,7 @@ internal class OpplysningSvarMottak(
     }
 
     private val skipBehovId = listOf("ingen-match")
-    private val skipBehandlingsId = listOf("01935449-d954-7ec5-b792-aef5aff46d23")
+    private val skipBehandlingsId = listOf("ingen-match")
 
     @WithSpan
     override fun onPacket(
@@ -184,7 +184,13 @@ internal class OpplysningSvarMessage(
     ) {
         withLoggingContext(hendelse.kontekstMap()) {
             logger.info { "Behandler svar på opplysninger: ${hendelse.opplysninger.map { it.opplysningstype.id }}" }
-            mediator.behandle(hendelse, this, context)
+            try {
+                mediator.behandle(hendelse, this, context)
+            } catch (e: IllegalStateException) {
+                logger.error(e) {
+                    "Feil ved håndtering av OpplysningSvarHendelse"
+                }
+            }
         }
     }
 
