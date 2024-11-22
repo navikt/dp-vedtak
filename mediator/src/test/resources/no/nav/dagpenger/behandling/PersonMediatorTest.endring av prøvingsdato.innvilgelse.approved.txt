@@ -154,6 +154,7 @@ Sum av barnetillegg
 Dagsats med barnetillegg før samordning
 Har barnetillegg
 Andel av dagsats med barnetillegg som overstiger maks andel av dagpengegrunnlaget
+Avrundet ukessats med barnetillegg før samordning
 Andel av dagsats med barnetillegg avkortet til maks andel av dagpengegrunnlaget
 Samordnet dagsats uten barnetillegg
 Samordnet dagsats er negativ eller 0
