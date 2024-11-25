@@ -103,9 +103,6 @@ internal class PersonMediatorTest {
         )
     }
 
-    private val forventetAntallOpplysningerAvslag = 48
-    private val forventetAntallOpplysningerKnockout = 30
-
     @BeforeEach
     fun setUp() {
         rapid.reset()

@@ -28,6 +28,7 @@ import java.util.UUID
 class OpplysningSvarMottakTest {
     private val rapid = TestRapid()
     private val messageMediator = mockk<MessageMediator>(relaxed = true)
+    private val opplysningMock = mockk<Opplysninger>(relaxed = true)
 
     init {
         OpplysningSvarMottak(rapid, messageMediator, setOf(boolsk, inntektA))
@@ -75,8 +76,6 @@ class OpplysningSvarMottakTest {
         hendelse.captured.behandlingId shouldBe behandlingId
         hendelse.captured.opplysninger shouldHaveSize 1
     }
-
-    private val opplysningMock = mockk<Opplysninger>(relaxed = true)
 
     @Test
     fun `tillater svar med opplysning med metadata med fom og tom`() {

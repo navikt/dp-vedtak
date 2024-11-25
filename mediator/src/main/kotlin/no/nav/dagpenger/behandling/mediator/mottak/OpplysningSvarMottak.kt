@@ -31,6 +31,7 @@ import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.InntektDataType
+import no.nav.dagpenger.opplysning.OpplysningIkkeFunnetException
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
@@ -186,9 +187,9 @@ internal class OpplysningSvarMessage(
             logger.info { "Behandler svar på opplysninger: ${hendelse.opplysninger.map { it.opplysningstype.id }}" }
             try {
                 mediator.behandle(hendelse, this, context)
-            } catch (e: IllegalStateException) {
+            } catch (e: OpplysningIkkeFunnetException) {
                 logger.error(e) {
-                    "Feil ved håndtering av OpplysningSvarHendelse"
+                    "Kan ikke håndtere ${hendelse.javaClass.simpleName} fordi en opplysning ikke ble funnet"
                 }
             }
         }
@@ -199,12 +200,6 @@ internal class OpplysningSvarMessage(
 
         fun lagSvar(jsonNode: JsonNode): Svar = svarStrategier.firstNotNullOf { it.svar(jsonNode) }
     }
-
-    private fun JsonNode.somListe(): List<JsonNode> =
-        when (isArray) {
-            true -> toList()
-            false -> listOf(this)
-        }
 }
 
 private fun interface SvarStrategi {

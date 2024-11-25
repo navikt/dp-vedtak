@@ -1,6 +1,7 @@
 package no.nav.dagpenger.opplysning
 
 import no.nav.dagpenger.uuid.UUIDv7
+import java.lang.Exception
 import java.time.LocalDate
 import java.util.UUID
 
@@ -87,7 +88,8 @@ class Opplysninger private constructor(
         finnNullableOpplysning(opplysningstype) ?: throw IllegalStateException("Har ikke opplysning $opplysningstype som er gyldig")
 
     override fun finnOpplysning(opplysningId: UUID) =
-        opplysninger.singleOrNull { it.id == opplysningId } ?: throw IllegalStateException("Har ikke opplysning med id=$opplysningId")
+        opplysninger.singleOrNull { it.id == opplysningId }
+            ?: throw OpplysningIkkeFunnetException("Har ikke opplysning med id=$opplysningId")
 
     override fun har(opplysningstype: Opplysningstype<*>) = alleOpplysninger.any { it.er(opplysningstype) }
 
@@ -124,3 +126,8 @@ class Opplysninger private constructor(
 
     operator fun plus(tidligereOpplysninger: List<Opplysninger>) = Opplysninger(id, opplysninger, tidligereOpplysninger)
 }
+
+class OpplysningIkkeFunnetException(
+    message: String,
+    exception: Exception? = null,
+) : RuntimeException(message, exception)
