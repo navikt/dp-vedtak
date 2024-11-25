@@ -4,18 +4,22 @@ import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.grunnbelop.Regel
 import no.nav.dagpenger.grunnbelop.forDato
 import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
+import no.nav.dagpenger.inntekt.v1.InntektKlasse
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.trekkFraMånedTilFørste
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
+import no.nav.dagpenger.opplysning.regel.inntekt.SummerPeriode
+import no.nav.dagpenger.opplysning.regel.inntekt.filtrerRelevanteInntekter
+import no.nav.dagpenger.opplysning.regel.inntekt.summerPeriode
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.opplysning.tekstId
 import no.nav.dagpenger.opplysning.verdier.Beløp
-import no.nav.dagpenger.regel.Behov.InntektId
+import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
 import no.nav.dagpenger.regel.Opptjeningstid.justertRapporteringsfrist
@@ -44,7 +48,9 @@ object Minsteinntekt {
     val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp")
 
     private val sisteAvsluttendendeKalenderMåned = Opptjeningstid.sisteAvsluttendendeKalenderMåned
-    internal val inntektId = Opplysningstype.somUlid("Inntekt".id(InntektId))
+    internal val inntektFraSkatt = Opplysningstype.somInntekt("Inntekt fra skatt".id(Inntekt))
+    private val tellendeInntekt = Opplysningstype.somInntekt("Tellende inntekt for opptjening")
+
     private val maksPeriodeLengde = Opplysningstype.somHeltall("Maks lengde på opptjeningsperiode")
     private val førsteMånedAvOpptjeningsperiode =
         Opplysningstype.somDato("Første måned av opptjeningsperiode".id(OpptjeningsperiodeFraOgMed))
@@ -67,16 +73,31 @@ object Minsteinntekt {
         Regelsett("Minsteinntekt") {
             regel(maksPeriodeLengde) { oppslag(prøvingsdato) { 36 } }
             regel(førsteMånedAvOpptjeningsperiode) { trekkFraMånedTilFørste(sisteAvsluttendendeKalenderMåned, maksPeriodeLengde) }
-            regel(inntektId) { innhentMed(prøvingsdato, sisteAvsluttendendeKalenderMåned, førsteMånedAvOpptjeningsperiode) }
+
+            regel(inntektFraSkatt) { innhentMed(prøvingsdato, sisteAvsluttendendeKalenderMåned, førsteMånedAvOpptjeningsperiode) }
+
+            regel(tellendeInntekt) {
+                filtrerRelevanteInntekter(
+                    inntektFraSkatt,
+                    listOf(InntektKlasse.ARBEIDSINNTEKT),
+                )
+            }
 
             regel(grunnbeløp) { oppslag(prøvingsdato) { grunnbeløpFor(it) } }
 
-            regel(inntekt12) { innhentMed(inntektId) }
+            regel(inntekt12) { summerPeriode(tellendeInntekt, SummerPeriode.InntektPeriode.Første) }
             regel(`12mndTerskelFaktor`) { oppslag(prøvingsdato) { finnTerskel(it).nedre } }
             regel(`12mndTerskel`) { multiplikasjon(grunnbeløp, `12mndTerskelFaktor`) }
             regel(over12mndTerskel) { størreEnnEllerLik(inntekt12, `12mndTerskel`) }
 
-            regel(inntekt36) { innhentMed(inntektId) }
+            regel(inntekt36) {
+                summerPeriode(
+                    tellendeInntekt,
+                    SummerPeriode.InntektPeriode.Første,
+                    SummerPeriode.InntektPeriode.Andre,
+                    SummerPeriode.InntektPeriode.Tredje,
+                )
+            }
             regel(`36mndTerskelFaktor`) { oppslag(prøvingsdato) { finnTerskel(it).øvre } }
             regel(`36mndTerskel`) { multiplikasjon(grunnbeløp, `36mndTerskelFaktor`) }
             regel(over36mndTerskel) { størreEnnEllerLik(inntekt36, `36mndTerskel`) }
@@ -91,16 +112,16 @@ object Minsteinntekt {
             .let { Beløp(it) }
 
     val SvangerskapsrelaterteSykepengerKontroll =
-        Kontrollpunkt(Avklaringspunkter.SvangerskapsrelaterteSykepenger) { it.har(inntektId) }
+        Kontrollpunkt(Avklaringspunkter.SvangerskapsrelaterteSykepenger) { it.har(inntektFraSkatt) }
 
     val EØSArbeidKontroll =
-        Kontrollpunkt(Avklaringspunkter.EØSArbeid) { it.har(inntektId) }
+        Kontrollpunkt(Avklaringspunkter.EØSArbeid) { it.har(inntektFraSkatt) }
 
     val JobbetUtenforNorgeKontroll =
-        Kontrollpunkt(Avklaringspunkter.JobbetUtenforNorge) { it.har(inntektId) }
+        Kontrollpunkt(Avklaringspunkter.JobbetUtenforNorge) { it.har(inntektFraSkatt) }
 
     val InntektNesteKalendermånedKontroll =
-        Kontrollpunkt(Avklaringspunkter.InntektNesteKalendermåned) { it.har(inntektId) }
+        Kontrollpunkt(Avklaringspunkter.InntektNesteKalendermåned) { it.har(inntektFraSkatt) }
 
     val ØnskerEtterRapporteringsfristKontroll =
         Kontrollpunkt(Avklaringspunkter.ØnskerEtterRapporteringsfrist) {

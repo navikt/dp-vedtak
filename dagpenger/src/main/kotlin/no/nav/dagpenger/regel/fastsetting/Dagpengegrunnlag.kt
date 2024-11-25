@@ -5,13 +5,11 @@ import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
 import no.nav.dagpenger.inntekt.v1.InntektKlasse
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.avrund
 import no.nav.dagpenger.opplysning.regel.brukt
 import no.nav.dagpenger.opplysning.regel.divisjon
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.høyesteAv
-import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.inntekt.SummerPeriode
 import no.nav.dagpenger.opplysning.regel.inntekt.filtrerRelevanteInntekter
 import no.nav.dagpenger.opplysning.regel.inntekt.oppjuster
@@ -22,13 +20,11 @@ import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnn
 import no.nav.dagpenger.opplysning.verdier.Beløp
-import no.nav.dagpenger.regel.Behov.Inntekt
-import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.Minsteinntekt.inntektFraSkatt
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import java.time.LocalDate
 
 object Dagpengegrunnlag {
-    val inntekt = Opplysningstype.somInntekt("Inntekt for grunnlag".id(Inntekt))
     val uavrundetGrunnlag = Opplysningstype.somBeløp("Uavrundet grunnlag")
     val grunnlag = Opplysningstype.somBeløp("Grunnlag")
     val harAvkortet = Opplysningstype.somBoolsk("Har avkortet grunnlag")
@@ -38,8 +34,6 @@ object Dagpengegrunnlag {
     private val oppjustertinntekt = Opplysningstype.somInntekt("Oppjustert inntekt")
     private val relevanteinntekter = Opplysningstype.somInntekt("Tellende inntekt")
     val grunnbeløpForDagpengeGrunnlag = Opplysningstype.somBeløp("Grunnbeløp for grunnlag")
-
-    private val inntektId = Minsteinntekt.inntektId
 
     private val faktorForMaksgrense = Opplysningstype.somDesimaltall("Faktor for maksimalt mulig grunnlag")
     private val maksgrenseForGrunnlag = Opplysningstype.somBeløp("6 ganger grunnbeløp")
@@ -64,9 +58,8 @@ object Dagpengegrunnlag {
             regel(faktorForMaksgrense) { oppslag(prøvingsdato) { 6.0 } }
             regel(maksgrenseForGrunnlag) { multiplikasjon(grunnbeløpForDagpengeGrunnlag, faktorForMaksgrense) }
 
-            regel(inntekt) { innhentMed(inntektId) }
             regel(grunnbeløpForDagpengeGrunnlag) { oppslag(prøvingsdato) { grunnbeløpFor(it) } }
-            regel(oppjustertinntekt) { oppjuster(grunnbeløpForDagpengeGrunnlag, inntekt) }
+            regel(oppjustertinntekt) { oppjuster(grunnbeløpForDagpengeGrunnlag, inntektFraSkatt) }
             regel(relevanteinntekter) {
                 filtrerRelevanteInntekter(
                     oppjustertinntekt,

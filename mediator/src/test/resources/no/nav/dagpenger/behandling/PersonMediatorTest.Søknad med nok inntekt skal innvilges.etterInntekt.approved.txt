@@ -22,7 +22,8 @@ Oppfyller kravet til alder
 Første måned av opptjeningsperiode
 Avtjent verneplikt
 Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste
-Inntekt
+Inntekt fra skatt
+Tellende inntekt for opptjening
 Arbeidsinntekt siste 12 mnd
 Arbeidsinntekt siste 36 mnd
 Arbeidsinntekt er over kravet for siste 12 mnd
@@ -71,11 +72,29 @@ Oppfyller personen vilkåret om medlemskap?
 Ikke krav på lønn fra tidligere arbeidsgiver
 Fastsatt arbeidstid per uke før tap
 Beregningsregel: Tapt arbeidstid
+Oppjustert inntekt
 6 ganger grunnbeløp
 Sum andre ytelser
 Krav til tap av arbeidsinntekt
 Tap av arbeidstid er minst terskel
+Tellende inntekt
 Krav til tap av arbeidsinntekt og arbeidstid
+Inntektperiode 1
+Inntektperiode 2
+Inntektperiode 3
+Grunnlag siste 12 mnd.
+Avkortet inntektperiode 1
+Avkortet inntektperiode 2
+Avkortet inntektperiode 3
+Inntekt siste 36 måneder
+Gjennomsnittlig arbeidsinntekt siste 36 måneder
+Uavrundet grunnlag
+Grunnlag
+Dagsats uten barnetillegg før samordning
+Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget
+Avrundet dagsats uten barnetillegg før samordning
+Maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
+Avrundet maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
 Kan jobbe heltid og deltid
 Kan jobbe i hele Norge
 Kan ta alle typer arbeid
@@ -97,6 +116,10 @@ Har svart ja på spørsmål om utdanning eller opplæring
 Har svart nei på spørsmål om utdanning eller opplæring
 Oppfyller kravet på unntak for utdanning eller opplæring
 Krav til utdanning eller opplæring
+Har avkortet grunnlaget i periode 1
+Har avkortet grunnlaget i periode 2
+Har avkortet grunnlaget i periode 3
+Brukt beregningsregel
 Antall arbeidsdager per uke
 Hvor mange prosent av G skal brukes som terskel ved samordning
 Sum av ytelser utenfor folketrygden
@@ -114,7 +137,9 @@ Mottar vartpenger
 Mottar ventelønn
 Mottar etterlønn
 Mottar garantilott fra Garantikassen for fiskere.
+Har avkortet grunnlag
 Beløp tilsvarende nedre terskel av G
+Avrundet ukessats med barnetillegg før samordning
 Terskel for 12 måneder
 Snittinntekt siste 36 måneder
 Terskel for 36 måneder
@@ -127,33 +152,8 @@ Antall gjenstående stønadsdager
 Barn
 Antall barn som gir rett til barnetillegg
 Sum av barnetillegg
-Har barnetillegg
-Inntekt for grunnlag
-Oppjustert inntekt
-Tellende inntekt
-Inntektperiode 1
-Inntektperiode 2
-Inntektperiode 3
-Har avkortet grunnlaget i periode 1
-Har avkortet grunnlaget i periode 2
-Har avkortet grunnlaget i periode 3
-Grunnlag siste 12 mnd.
-Avkortet inntektperiode 1
-Avkortet inntektperiode 2
-Avkortet inntektperiode 3
-Har avkortet grunnlag
-Inntekt siste 36 måneder
-Gjennomsnittlig arbeidsinntekt siste 36 måneder
-Uavrundet grunnlag
-Brukt beregningsregel
-Grunnlag
-Dagsats uten barnetillegg før samordning
-Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget
-Avrundet dagsats uten barnetillegg før samordning
 Dagsats med barnetillegg før samordning
-Maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
-Avrundet maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
-Avrundet ukessats med barnetillegg før samordning
+Har barnetillegg
 Andel av dagsats med barnetillegg som overstiger maks andel av dagpengegrunnlaget
 Andel av dagsats med barnetillegg avkortet til maks andel av dagpengegrunnlaget
 Samordnet dagsats uten barnetillegg
