@@ -343,6 +343,7 @@ class Behandling private constructor(
             hendelse: PåminnelseHendelse,
         ) {
             hendelse.kontekst(this)
+            hendelse.info("Mottok påminnelse om at behandlingen står fast")
             val rapport = behandling.regelkjøring.evaluer()
             if (rapport.erFerdig()) {
                 hendelse.logiskFeil("Behandlingen er ferdig men vi er fortsatt i ${this.type.name}")
