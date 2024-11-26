@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling.mediator.api
 
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.api.models.AvklaringDTO
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
@@ -34,32 +35,34 @@ import java.time.LocalDate
 private val logger = KotlinLogging.logger { }
 
 internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
-    BehandlingDTO(
-        behandlingId = this.behandlingId,
-        tilstand =
-            when (this.tilstand().first) {
-                Behandling.TilstandType.UnderOpprettelse -> BehandlingDTO.Tilstand.UnderOpprettelse
-                Behandling.TilstandType.UnderBehandling -> BehandlingDTO.Tilstand.UnderBehandling
-                Behandling.TilstandType.ForslagTilVedtak -> BehandlingDTO.Tilstand.ForslagTilVedtak
-                Behandling.TilstandType.Låst -> BehandlingDTO.Tilstand.Låst
-                Behandling.TilstandType.Avbrutt -> BehandlingDTO.Tilstand.Avbrutt
-                Behandling.TilstandType.Ferdig -> BehandlingDTO.Tilstand.Ferdig
-                Behandling.TilstandType.Redigert -> BehandlingDTO.Tilstand.Redigert
-            },
-        opplysning =
-            this.opplysninger().finnAlle().map { opplysning ->
-                opplysning.tilOpplysningDTO()
-            },
-        kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
-        aktiveAvklaringer =
-            this
-                .aktiveAvklaringer()
-                .map { avklaring ->
-                    avklaring.tilAvklaringDTO()
-                }.also {
-                    logger.info { "Mapper '${it.size}' avklaringer til AvklaringDTO" }
+    withLoggingContext("behandlingId" to this.behandlingId.toString()) {
+        BehandlingDTO(
+            behandlingId = this.behandlingId,
+            tilstand =
+                when (this.tilstand().first) {
+                    Behandling.TilstandType.UnderOpprettelse -> BehandlingDTO.Tilstand.UnderOpprettelse
+                    Behandling.TilstandType.UnderBehandling -> BehandlingDTO.Tilstand.UnderBehandling
+                    Behandling.TilstandType.ForslagTilVedtak -> BehandlingDTO.Tilstand.ForslagTilVedtak
+                    Behandling.TilstandType.Låst -> BehandlingDTO.Tilstand.Låst
+                    Behandling.TilstandType.Avbrutt -> BehandlingDTO.Tilstand.Avbrutt
+                    Behandling.TilstandType.Ferdig -> BehandlingDTO.Tilstand.Ferdig
+                    Behandling.TilstandType.Redigert -> BehandlingDTO.Tilstand.Redigert
                 },
-    )
+            opplysning =
+                this.opplysninger().finnAlle().map { opplysning ->
+                    opplysning.tilOpplysningDTO()
+                },
+            kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
+            aktiveAvklaringer =
+                this
+                    .aktiveAvklaringer()
+                    .map { avklaring ->
+                        avklaring.tilAvklaringDTO()
+                    }.also {
+                        logger.info { "Mapper '${it.size}' avklaringer til AvklaringDTO " }
+                    },
+        )
+    }
 
 internal fun Avklaring.tilAvklaringDTO() =
     AvklaringDTO(
