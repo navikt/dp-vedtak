@@ -9,14 +9,14 @@ import no.nav.dagpenger.opplysning.verdier.Inntekt
 class SummerPeriode(
     produserer: Opplysningstype<Beløp>,
     private val inntekt: Opplysningstype<Inntekt>,
-    private val periode: InntektPeriode,
+    private val periode: Set<InntektPeriode>,
 ) : Regel<Beløp>(produserer, listOf(inntekt)) {
     override fun kjør(opplysninger: LesbarOpplysninger): Beløp {
         val inntekt = opplysninger.finnOpplysning(inntekt).verdi
-        return periode.block(inntekt.verdi)
+        return periode.map { it.block(inntekt.verdi) }.reduce { acc, beløp -> acc + beløp }
     }
 
-    override fun toString() = "Summerer periode ${periode.name} av inntekt $inntekt"
+    override fun toString() = "Summerer periode ${periode.joinToString { "$it" }} av inntekt $inntekt"
 
     enum class InntektPeriode(
         val block: (no.nav.dagpenger.inntekt.v1.Inntekt) -> Beløp,
@@ -47,9 +47,9 @@ class SummerPeriode(
 
 fun Opplysningstype<Beløp>.summerPeriode(
     inntekt: Opplysningstype<Inntekt>,
-    periode: SummerPeriode.InntektPeriode,
+    vararg periode: SummerPeriode.InntektPeriode,
 ) = SummerPeriode(
     this,
     inntekt,
-    periode,
+    periode.toSet(),
 )

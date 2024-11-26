@@ -9,7 +9,6 @@ import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-import io.kotest.matchers.collections.shouldHaveSingleElement
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldBeNull
@@ -43,7 +42,6 @@ import no.nav.dagpenger.regel.Behov.Barnetillegg
 import no.nav.dagpenger.regel.Behov.Foreldrepenger
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.Inntekt
-import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
 import no.nav.dagpenger.regel.Behov.Lønnsgaranti
@@ -200,7 +198,7 @@ internal class PersonMediatorTest {
                 }
             }
 
-            rapid.inspektør.size shouldBe 25
+            rapid.inspektør.size shouldBe 24
 
             testObservatør.tilstandsendringer.size shouldBe 3
 
@@ -229,7 +227,7 @@ internal class PersonMediatorTest {
                 medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
             }
 
-            rapid.inspektør.size shouldBe 14
+            rapid.inspektør.size shouldBe 13
         }
 
     @Test
@@ -245,7 +243,7 @@ internal class PersonMediatorTest {
             skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilFerdig(testPerson)
 
-            antallOpplysninger() shouldBe 94
+            antallOpplysninger() shouldBe 113
             godkjennOpplysninger("tilKravPåDagpenger")
 
             /**
@@ -261,12 +259,6 @@ internal class PersonMediatorTest {
             testPerson.løsBehov(Barnetillegg)
 
             godkjennOpplysninger("etterUtdanning")
-
-            /**
-             * Innhenter inntekt for fastsettelse
-             */
-            rapid.harBehov(Inntekt)
-            testPerson.løsBehov(Inntekt)
 
             /**
              * Innhente informasjon om andre ytelser
@@ -299,7 +291,7 @@ internal class PersonMediatorTest {
             }
 
             // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
-            rapid.inspektør.size shouldBe 23
+            rapid.inspektør.size shouldBe 21
 
             rapid.harAvklaring(Avklaringspunkter.Totrinnskontroll) {}
 
@@ -412,11 +404,10 @@ internal class PersonMediatorTest {
                     avklaring["utfall"].asText() shouldBe "Manuell"
                 }
             }
-
             rapid.inspektør.size shouldBe
                 listOf(
                     "opprettet" to 1,
-                    "behov" to 7,
+                    "behov" to 6,
                     "avklaring" to 6,
                     "forslag" to 1,
                     "event" to 2,
@@ -461,10 +452,15 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilFerdig(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
-                with(medNode("avklaringer")) {
-                    this.size() shouldBe 7
-                    this.shouldHaveSingleElement { it["type"].asText() == Avklaringspunkter.ØnskerEtterRapporteringsfrist.kode }
-                }
+                medAvklaringer(
+                    "EØSArbeid",
+                    "HattLukkedeSakerSiste8Uker",
+                    "InntektNesteKalendermåned",
+                    "JobbetUtenforNorge",
+                    "MuligGjenopptak",
+                    "SvangerskapsrelaterteSykepenger",
+                    "ØnskerEtterRapporteringsfrist",
+                )
             }
         }
 
@@ -482,9 +478,14 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilFerdig(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
-                with(medNode("avklaringer")) {
-                    this.size() shouldBe 6
-                }
+                medAvklaringer(
+                    "EØSArbeid",
+                    "HattLukkedeSakerSiste8Uker",
+                    "InntektNesteKalendermåned",
+                    "JobbetUtenforNorge",
+                    "MuligGjenopptak",
+                    "SvangerskapsrelaterteSykepenger",
+                )
             }
         }
 
@@ -579,7 +580,6 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilFerdig(testPerson)
 
             testPerson.løsBehov(TarUtdanningEllerOpplæring)
-            testPerson.løsBehov(Inntekt)
             testPerson.løsBehov(Barnetillegg)
             testPerson.løsBehov(
                 Sykepenger,
@@ -602,21 +602,27 @@ internal class PersonMediatorTest {
             // Setter ny prøvingsdato (som kalles Virkningsdato for bakoverkompabilitet med behovsløsere)
             val nyPrøvingsdato = 22.juli(2024)
             testPerson.prøvingsdato = nyPrøvingsdato
-            // testPerson.InntektSiste12Mnd = 0
             testPerson.endreOpplysning("Virkningsdato", nyPrøvingsdato)
 
-            rapid.harBehov(InntektId) {
-                medDato("Virkningsdato") shouldBe nyPrøvingsdato
-            }
             rapid.harBehov("RegistrertSomArbeidssøker") {
                 medDato("Virkningsdato") shouldBe nyPrøvingsdato
             }
-            testPerson.løsBehov(InntektId, "RegistrertSomArbeidssøker")
 
-            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-            rapid.harBehov("Inntekt")
-            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd", "Inntekt")
+            rapid.harBehov(Inntekt) {
+                medDato("Virkningsdato") shouldBe nyPrøvingsdato
+            }
+            testPerson.løsBehov(
+                RegistrertSomArbeidssøker,
+                Sykepenger,
+                Omsorgspenger,
+                Svangerskapspenger,
+                Foreldrepenger,
+                Opplæringspenger,
+                Pleiepenger,
+                OppgittAndreYtelserUtenforNav,
+                AndreØkonomiskeYtelser,
+                Inntekt,
+            )
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medDato("prøvingsdato") shouldBe nyPrøvingsdato
@@ -633,19 +639,26 @@ internal class PersonMediatorTest {
             testPerson.InntektSiste12Mnd = 0
             testPerson.endreOpplysning("Virkningsdato", endaNyerePrøvingsdato)
 
-            rapid.harBehov(InntektId) {
-                medDato("Virkningsdato") shouldBe endaNyerePrøvingsdato
-            }
             rapid.harBehov("RegistrertSomArbeidssøker") {
                 medDato("Virkningsdato") shouldBe endaNyerePrøvingsdato
             }
-            testPerson.løsBehov(InntektId, RegistrertSomArbeidssøker)
 
-            rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-            rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-            rapid.harBehov("Inntekt")
+            rapid.harBehov(Inntekt) {
+                medDato("Virkningsdato") shouldBe endaNyerePrøvingsdato
+            }
 
-            testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd", "Inntekt")
+            testPerson.løsBehov(
+                RegistrertSomArbeidssøker,
+                Sykepenger,
+                Omsorgspenger,
+                Svangerskapspenger,
+                Foreldrepenger,
+                Opplæringspenger,
+                Pleiepenger,
+                OppgittAndreYtelserUtenforNav,
+                AndreØkonomiskeYtelser,
+                Inntekt,
+            )
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medDato("prøvingsdato") shouldBe endaNyerePrøvingsdato
@@ -702,7 +715,7 @@ internal class PersonMediatorTest {
         /**
          * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
          */
-        rapid.harBehov(InntektId) {
+        rapid.harBehov(Inntekt) {
             // TODO: Dette er nå prøvingsdato og bør bytte navn overalt
             medDato("Virkningsdato") shouldBe maxOf(testPerson.søknadsdato, testPerson.ønskerFraDato)
             /**
@@ -711,15 +724,7 @@ internal class PersonMediatorTest {
              * opptjeningsperiodeEr(måneder = 36)
              */
         }
-        testPerson.løsBehov(InntektId)
-
-        /**
-         * Sjekker kravene til inntekt
-         */
-        rapid.harBehov("InntektSiste12Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-        rapid.harBehov("InntektSiste36Mnd") { medTekst("InntektId") shouldBe testPerson.inntektId }
-
-        testPerson.løsBehov("InntektSiste12Mnd", "InntektSiste36Mnd")
+        testPerson.løsBehov(Inntekt)
 
         if (behandlingslengde == Behandlingslengde.Minsteinntekt) {
             return
@@ -815,7 +820,15 @@ private fun TestRapid.harBehov(
     melding: Int = 1,
 ) {
     withClue("Siste melding på rapiden skal inneholde behov: ${behov.toList()}") {
-        inspektør.message(inspektør.size - melding)["@behov"].map { it.asText() } shouldContainAll behov.toList()
+        val sisteMelding = inspektør.message(inspektør.size - melding)
+        assert(
+            sisteMelding["@event_name"].asText() == "behov",
+        ) {
+            "Forventet behov '${behov.joinToString {
+                it
+            }}' men siste melding er ikke et behov. Siste melding er ${sisteMelding["@event_name"].asText()}."
+        }
+        sisteMelding["@behov"].map { it.asText() } shouldContainAll behov.toList()
     }
 }
 

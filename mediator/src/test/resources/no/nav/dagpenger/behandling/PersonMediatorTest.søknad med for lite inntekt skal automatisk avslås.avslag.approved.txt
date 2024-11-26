@@ -22,7 +22,8 @@ Oppfyller kravet til alder
 Første måned av opptjeningsperiode
 Avtjent verneplikt
 Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste
-Inntekt
+Inntekt fra skatt
+Tellende inntekt for opptjening
 Arbeidsinntekt siste 12 mnd
 Arbeidsinntekt siste 36 mnd
 Arbeidsinntekt er over kravet for siste 12 mnd

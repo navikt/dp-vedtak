@@ -15,6 +15,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
+import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Verneplikt.vurderingAvVerneplikt
@@ -48,7 +49,7 @@ class DagpengergrunnlagSteg : No {
         Gitt("at inntekt for grunnlag er") { dataTable: DataTable? ->
             val inntektstabell = dataTable!!.asMaps()
             val f = Inntekt(lagInntekt(inntektstabell))
-            opplysninger.leggTil(Faktum(Dagpengegrunnlag.inntekt, f))
+            opplysninger.leggTil(Faktum(Minsteinntekt.inntektFraSkatt, f))
             val rapport = regelkjøring.evaluer()
             println(rapport)
         }

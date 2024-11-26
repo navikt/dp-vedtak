@@ -38,8 +38,9 @@ Siste avsluttende kalendermåned
 Krav til arbeidssøker
 Oppfyller kravet til alder
 Første måned av opptjeningsperiode
-Inntekt
+Inntekt fra skatt
 Registrert som arbeidssøker
+Tellende inntekt for opptjening
 Registrert som arbeidssøker på søknadstidspunktet
 Arbeidsinntekt siste 12 mnd
 Arbeidsinntekt siste 36 mnd

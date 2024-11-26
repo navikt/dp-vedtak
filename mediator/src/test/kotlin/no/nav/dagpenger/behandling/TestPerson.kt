@@ -12,7 +12,6 @@ import no.nav.dagpenger.regel.Behov.Barnetillegg
 import no.nav.dagpenger.regel.Behov.Foreldrepenger
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.Inntekt
-import no.nav.dagpenger.regel.Behov.InntektId
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
 import no.nav.dagpenger.regel.Behov.Lønnsgaranti
@@ -31,7 +30,6 @@ import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
 import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
-import org.intellij.lang.annotations.Language
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -200,57 +198,26 @@ class TestPerson(
         )
     }
 
-    @Language("JSON")
-    private val løsningPåInntekt =
-        """
-        {
-          "inntektsId": "01J677GHJRC2H08Q55DASFD0XX",
-          "inntektsListe": [
-            {
-              "årMåned": "${YearMonth.from(søknadsdato.minusMonths(2))}",
-              "klassifiserteInntekter": [
-                {
-                  "beløp": 41600.0,
-                  "inntektKlasse": "ARBEIDSINNTEKT"
-                }
-              ],
-              "harAvvik": false
-            },
-            {
-              "årMåned": "${YearMonth.from(søknadsdato.minusMonths(3))}",
-              "klassifiserteInntekter": [
-                {
-                  "beløp": 403660.0,
-                  "inntektKlasse": "ARBEIDSINNTEKT"
-                }
-              ],
-              "harAvvik": false
-            }
-          ],
-          "manueltRedigert": false,
-          "sisteAvsluttendeKalenderMåned": "2024-07"
-        }
-        """.trimIndent()
-
-    private val inntektV1 =
-        no.nav.dagpenger.inntekt.v1.Inntekt(
-            inntektsId = "01J677GHJRC2H08Q55DASFD0XX",
-            inntektsListe =
-                listOf(
-                    KlassifisertInntektMåned(
-                        årMåned = YearMonth.from(søknadsdato.minusMonths(2)),
-                        klassifiserteInntekter =
-                            listOf(
-                                no.nav.dagpenger.inntekt.v1.KlassifisertInntekt(
-                                    beløp = InntektSiste12Mnd.toBigDecimal(),
-                                    inntektKlasse = no.nav.dagpenger.inntekt.v1.InntektKlasse.ARBEIDSINNTEKT,
+    private val inntektV1
+        get() =
+            no.nav.dagpenger.inntekt.v1.Inntekt(
+                inntektsId = "01J677GHJRC2H08Q55DASFD0XX",
+                inntektsListe =
+                    listOf(
+                        KlassifisertInntektMåned(
+                            årMåned = YearMonth.from(søknadsdato.minusMonths(2)),
+                            klassifiserteInntekter =
+                                listOf(
+                                    no.nav.dagpenger.inntekt.v1.KlassifisertInntekt(
+                                        beløp = InntektSiste12Mnd.toBigDecimal(),
+                                        inntektKlasse = no.nav.dagpenger.inntekt.v1.InntektKlasse.ARBEIDSINNTEKT,
+                                    ),
                                 ),
-                            ),
-                        harAvvik = false,
+                            harAvvik = false,
+                        ),
                     ),
-                ),
-            sisteAvsluttendeKalenderMåned = YearMonth.from(søknadsdato.minusMonths(2)),
-        )
+                sisteAvsluttendeKalenderMåned = YearMonth.from(søknadsdato.minusMonths(2)),
+            )
 
     private val løsninger
         get() =
@@ -259,13 +226,7 @@ class TestPerson(
                 Søknadsdato to søknadsdato,
                 ØnskerDagpengerFraDato to ønskerFraDato,
                 // Inntekt
-                InntektId to
-                    mapOf(
-                        "verdi" to inntektId,
-                        // "gyldigTilOgMed" to 20.juni(2024),
-                    ),
-                "InntektSiste12Mnd" to InntektSiste12Mnd,
-                "InntektSiste36Mnd" to InntektSiste36Mnd,
+                Inntekt to mapOf("verdi" to inntektV1),
                 // Reell arbeidssøker
                 KanJobbeDeltid to true,
                 KanJobbeHvorSomHelst to true,
@@ -296,7 +257,6 @@ class TestPerson(
                                 ),
                             ),
                     ),
-                Inntekt to mapOf("verdi" to inntektV1),
                 "Beregnet vanlig arbeidstid per uke før tap" to 40,
                 Sykepenger to false,
                 Omsorgspenger to false,

@@ -23,14 +23,6 @@ Har svart ja på spørsmål om utdanning eller opplæring
 Har svart nei på spørsmål om utdanning eller opplæring
 Barn
 Antall barn som gir rett til barnetillegg
-Sykepenger etter lovens kapittel 8
-Omsorgspenger etter lovens kapittel 9
-Svangerskapspenger etter lovens kapittel 14
-Foreldrepenger etter lovens kapittel 14
-Opplæringspenger etter lovens kapittel 9
-Pleiepenger etter lovens kapittel 9
-Oppgitt andre ytelser utenfor NAV i søknaden
-Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn
 Prøvingsdato
 Aldersgrense
 Lovpålagt rapporteringsfrist for A-ordningen
@@ -112,9 +104,7 @@ Sum andre ytelser
 Beløp tilsvarende nedre terskel av G
 Terskel for 12 måneder
 Terskel for 36 måneder
-Medlem har reduserte ytelser fra folketrygden (Samordning)
 Har barnetillegg
-Skal samordnes med ytelser utenfor folketrygden
 Siste mulige dag bruker kan oppfylle alderskrav
 Siste avsluttende kalendermåned
 Krav til arbeidssøker
@@ -123,26 +113,32 @@ Krav til tap av arbeidsinntekt og arbeidstid
 Oppfyller kravet til alder
 Første måned av opptjeningsperiode
 Krav til utdanning eller opplæring
-Inntekt
+Inntekt fra skatt
 Registrert som arbeidssøker
+Sykepenger etter lovens kapittel 8
+Omsorgspenger etter lovens kapittel 9
+Svangerskapspenger etter lovens kapittel 14
+Foreldrepenger etter lovens kapittel 14
+Opplæringspenger etter lovens kapittel 9
+Pleiepenger etter lovens kapittel 9
+Oppgitt andre ytelser utenfor NAV i søknaden
+Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn
+Tellende inntekt for opptjening
 Registrert som arbeidssøker på søknadstidspunktet
+Oppjustert inntekt
+Medlem har reduserte ytelser fra folketrygden (Samordning)
+Skal samordnes med ytelser utenfor folketrygden
 Arbeidsinntekt siste 12 mnd
 Arbeidsinntekt siste 36 mnd
-Inntekt for grunnlag
+Tellende inntekt
 Arbeidsinntekt er over kravet for siste 12 mnd
 Arbeidsinntekt er over kravet for siste 36 mnd
-Oppjustert inntekt
-Over terskel for 12 måneder
-Snittinntekt siste 36 måneder
-Krav til minsteinntekt
-Tellende inntekt
-Stønadsuker ved siste 12 måneder
-Over terskel for 36 måneder
 Inntektperiode 1
 Inntektperiode 2
 Inntektperiode 3
-Stønadsuker ved siste 36 måneder
-Antall stønadsuker
+Over terskel for 12 måneder
+Snittinntekt siste 36 måneder
+Krav til minsteinntekt
 Har avkortet grunnlaget i periode 1
 Har avkortet grunnlaget i periode 2
 Har avkortet grunnlaget i periode 3
@@ -150,10 +146,14 @@ Grunnlag siste 12 mnd.
 Avkortet inntektperiode 1
 Avkortet inntektperiode 2
 Avkortet inntektperiode 3
-Antall gjenstående stønadsdager
+Stønadsuker ved siste 12 måneder
+Over terskel for 36 måneder
 Har avkortet grunnlag
 Inntekt siste 36 måneder
+Stønadsuker ved siste 36 måneder
+Antall stønadsuker
 Gjennomsnittlig arbeidsinntekt siste 36 måneder
+Antall gjenstående stønadsdager
 Uavrundet grunnlag
 Brukt beregningsregel
 Grunnlag
