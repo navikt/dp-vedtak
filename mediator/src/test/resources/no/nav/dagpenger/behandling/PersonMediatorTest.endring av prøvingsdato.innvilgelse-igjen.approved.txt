@@ -179,6 +179,7 @@ Krav på dagpenger
 Samordnet ukessats med ytelser utenfor folketrygden
 Dagsats uten barnetillegg samordnet
 Samordnet dagsats med barnetillegg
+Har samordnet
 Dagsats med barnetillegg etter samordning og 90% regel
 Egenandel
 Ukessats med barnetillegg etter samordning

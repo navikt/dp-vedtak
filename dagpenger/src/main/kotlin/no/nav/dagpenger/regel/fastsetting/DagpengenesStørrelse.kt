@@ -9,6 +9,7 @@ import no.nav.dagpenger.opplysning.regel.addisjon
 import no.nav.dagpenger.opplysning.regel.antallAv
 import no.nav.dagpenger.opplysning.regel.avrund
 import no.nav.dagpenger.opplysning.regel.divisjon
+import no.nav.dagpenger.opplysning.regel.erUlik
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
@@ -60,6 +61,7 @@ object DagpengenesStørrelse {
     private val samordnetDagsatsMedBarnetillegg = Opplysningstype.somBeløp("Samordnet dagsats med barnetillegg")
     val ukessats = Opplysningstype.somBeløp("Ukessats med barnetillegg etter samordning")
     val dagsatsEtterSamordningMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg etter samordning og 90% regel")
+    val harSamordnet = Opplysningstype.somBoolsk("Har samordnet")
 
     val regelsett =
         Regelsett("§ 4-12. Dagpengenes størrelse\n (Sats)") {
@@ -96,6 +98,7 @@ object DagpengenesStørrelse {
             // Regn ut samordnet dagsats med barnetillegg, begrenset til 90% av dagpengegrunnlaget
             regel(samordnetDagsatsMedBarnetillegg) { addisjon(dagsatsSamordnetUtenforFolketrygden, barnetillegg) }
             regel(dagsatsEtterSamordningMedBarnetillegg) { minstAv(samordnetDagsatsMedBarnetillegg, avrundetMaksSats) }
+            regel(harSamordnet) { erUlik(dagsatsEtterNittiProsent, dagsatsSamordnetUtenforFolketrygden) }
 
             // Regn ut ukessats
             regel(arbeidsdagerPerUke) { oppslag(prøvingsdato) { 5 } }
@@ -104,7 +107,7 @@ object DagpengenesStørrelse {
             regel(harBarnetillegg) { størreEnnEllerLik(barnetillegg, barnetilleggetsStørrelse) }
         }
 
-    val ønsketResultat = listOf(ukessats, dagsatsSamordnetUtenforFolketrygden, ukessatMedBarnetillegg)
+    val ønsketResultat = listOf(ukessats, dagsatsSamordnetUtenforFolketrygden, ukessatMedBarnetillegg, harSamordnet)
 
     val BarnetilleggKontroll =
         Kontrollpunkt(BarnMåGodkjennes) {
