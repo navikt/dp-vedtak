@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.api
 
+import mu.KotlinLogging
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.api.models.AvklaringDTO
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
@@ -30,6 +31,8 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import java.time.LocalDate
 
+private val logger = KotlinLogging.logger { }
+
 internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
     BehandlingDTO(
         behandlingId = this.behandlingId,
@@ -49,9 +52,13 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
             },
         kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
         aktiveAvklaringer =
-            this.aktiveAvklaringer().map { avklaring ->
-                avklaring.tilAvklaringDTO()
-            },
+            this
+                .aktiveAvklaringer()
+                .map { avklaring ->
+                    avklaring.tilAvklaringDTO()
+                }.also {
+                    logger.info { "Mapper '${it.size}' avklaringer til AvklaringDTO" }
+                },
     )
 
 internal fun Avklaring.tilAvklaringDTO() =
