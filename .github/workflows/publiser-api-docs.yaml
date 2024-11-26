@@ -3,7 +3,7 @@ name: Publiser API docs
 on:
   push:
     branches:
-      - feature/pages
+      - main
     paths:
       - openapi/src/main/resources/*
 
