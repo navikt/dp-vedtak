@@ -68,6 +68,12 @@ private fun LesbarOpplysninger.samordninger(): List<SamordningDTO> {
                     Samordning.uføreDagsats,
                     Samordning.foreldrepengerDagsats,
                     Samordning.svangerskapspengerDagsats,
+                    SamordingUtenforFolketrygden.pensjonFraOffentligTjenestepensjonsordningBeløp,
+                    SamordingUtenforFolketrygden.redusertUførepensjonBeløp,
+                    SamordingUtenforFolketrygden.vartpengerBeløp,
+                    SamordingUtenforFolketrygden.ventelønnBeløp,
+                    SamordingUtenforFolketrygden.etterlønnBeløp,
+                    SamordingUtenforFolketrygden.garantilottGFFBeløp,
                 ),
             ) as List<Opplysning<Beløp>>
         ).filterNot {
@@ -144,7 +150,7 @@ fun lagVedtak(
                         ),
                 )
 
-            false -> VedtakFastsattDTO(utfall = false)
+            false -> VedtakFastsattDTO(utfall = false, samordning = emptyList())
         }
 
     return VedtakDTO(

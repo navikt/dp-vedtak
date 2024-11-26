@@ -68,7 +68,12 @@ Foreldrepenger dagsats
 Svangerskapspenger dagsats
 Antall arbeidsdager per uke
 Hvor mange prosent av G skal brukes som terskel ved samordning
-Sum av ytelser utenfor folketrygden
+Pensjon fra en offentlig tjenestepensjonsordning beløp
+Uførepensjon fra offentlig pensjonsordning beløp
+Vartpenger beløp
+Ventelønn beløp
+Etterlønn beløp
+Garantilott fra Garantikassen for fiskere beløp
 Antall dagsats for egenandel
 Terskelfaktor for 12 måneder
 Lang dagpengeperiode
@@ -102,6 +107,7 @@ Beregningsregel: Tapt arbeidstid
 Sum av barnetillegg
 Sum andre ytelser
 Beløp tilsvarende nedre terskel av G
+Sum av ytelser utenfor folketrygden
 Terskel for 12 måneder
 Terskel for 36 måneder
 Har barnetillegg

@@ -8,6 +8,7 @@ import no.nav.dagpenger.opplysning.regel.divisjon
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.høyesteAv
 import no.nav.dagpenger.opplysning.regel.innhentes
+import no.nav.dagpenger.opplysning.regel.inntekt.sumAv
 import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
@@ -32,6 +33,17 @@ object SamordingUtenforFolketrygden {
     private val ventelønn = Opplysningstype.somBoolsk("Mottar ventelønn")
     private val etterlønn = Opplysningstype.somBoolsk("Mottar etterlønn")
     private val garantilottGFF = Opplysningstype.somBoolsk("Mottar garantilott fra Garantikassen for fiskere.")
+
+    val pensjonFraOffentligTjenestepensjonsordningBeløp =
+        Opplysningstype.somBeløp(
+            "Pensjon fra en offentlig tjenestepensjonsordning beløp",
+        )
+    val redusertUførepensjonBeløp = Opplysningstype.somBeløp("Uførepensjon fra offentlig pensjonsordning beløp")
+    val vartpengerBeløp = Opplysningstype.somBeløp("Vartpenger beløp")
+    val ventelønnBeløp = Opplysningstype.somBeløp("Ventelønn beløp")
+    val etterlønnBeløp = Opplysningstype.somBeløp("Etterlønn beløp")
+    val garantilottGFFBeløp = Opplysningstype.somBeløp("Garantilott fra Garantikassen for fiskere beløp")
+
     val andreØkonomiskeYtelser =
         Opplysningstype.somBoolsk(
             "Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn".id(AndreØkonomiskeYtelser),
@@ -61,7 +73,23 @@ object SamordingUtenforFolketrygden {
 
             regel(andreØkonomiskeYtelser) { innhentes }
 
-            regel(sumAvYtelserUtenforFolketrygden) { oppslag(prøvingsdato) { Beløp(0.0) } }
+            regel(pensjonFraOffentligTjenestepensjonsordningBeløp) { oppslag(prøvingsdato) { Beløp(0.0) } }
+            regel(redusertUførepensjonBeløp) { oppslag(prøvingsdato) { Beløp(0.0) } }
+            regel(vartpengerBeløp) { oppslag(prøvingsdato) { Beløp(0.0) } }
+            regel(ventelønnBeløp) { oppslag(prøvingsdato) { Beløp(0.0) } }
+            regel(etterlønnBeløp) { oppslag(prøvingsdato) { Beløp(0.0) } }
+            regel(garantilottGFFBeløp) { oppslag(prøvingsdato) { Beløp(0.0) } }
+
+            regel(sumAvYtelserUtenforFolketrygden) {
+                sumAv(
+                    pensjonFraOffentligTjenestepensjonsordningBeløp,
+                    redusertUførepensjonBeløp,
+                    vartpengerBeløp,
+                    ventelønnBeløp,
+                    etterlønnBeløp,
+                    garantilottGFFBeløp,
+                )
+            }
 
             regel(terskelVedSamordning) { oppslag(prøvingsdato) { 0.03 } }
             regel(nedreGrenseForSamordning) { multiplikasjon(grunnbeløpForDagpengeGrunnlag, terskelVedSamordning) }

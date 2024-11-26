@@ -125,7 +125,12 @@ Utbetalt arbeidsinntekt periode 2
 Utbetalt arbeidsinntekt periode 3
 Antall arbeidsdager per uke
 Hvor mange prosent av G skal brukes som terskel ved samordning
-Sum av ytelser utenfor folketrygden
+Pensjon fra en offentlig tjenestepensjonsordning beløp
+Uførepensjon fra offentlig pensjonsordning beløp
+Vartpenger beløp
+Ventelønn beløp
+Etterlønn beløp
+Garantilott fra Garantikassen for fiskere beløp
 Antall dagsats for egenandel
 Terskelfaktor for 12 måneder
 Lang dagpengeperiode
@@ -142,6 +147,7 @@ Mottar etterlønn
 Mottar garantilott fra Garantikassen for fiskere.
 Har avkortet grunnlag
 Beløp tilsvarende nedre terskel av G
+Sum av ytelser utenfor folketrygden
 Avrundet ukessats med barnetillegg før samordning
 Terskel for 12 måneder
 Snittinntekt siste 36 måneder
