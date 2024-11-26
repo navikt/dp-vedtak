@@ -113,7 +113,7 @@ Krav til tap av arbeidsinntekt og arbeidstid
 Oppfyller kravet til alder
 Første måned av opptjeningsperiode
 Krav til utdanning eller opplæring
-Inntekt fra skatt
+Inntektsopplysninger
 Registrert som arbeidssøker
 Sykepenger etter lovens kapittel 8
 Omsorgspenger etter lovens kapittel 9
@@ -123,14 +123,17 @@ Opplæringspenger etter lovens kapittel 9
 Pleiepenger etter lovens kapittel 9
 Oppgitt andre ytelser utenfor NAV i søknaden
 Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn
-Tellende inntekt for opptjening
+Brutto arbeidsinntekt
 Registrert som arbeidssøker på søknadstidspunktet
-Oppjustert inntekt
+Tellende inntekt
 Medlem har reduserte ytelser fra folketrygden (Samordning)
 Skal samordnes med ytelser utenfor folketrygden
 Arbeidsinntekt siste 12 mnd
 Arbeidsinntekt siste 36 mnd
-Tellende inntekt
+Oppjustert inntekt
+Utbetalt arbeidsinntekt periode 1
+Utbetalt arbeidsinntekt periode 2
+Utbetalt arbeidsinntekt periode 3
 Arbeidsinntekt er over kravet for siste 12 mnd
 Arbeidsinntekt er over kravet for siste 36 mnd
 Inntektperiode 1

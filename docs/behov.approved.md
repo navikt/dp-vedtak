@@ -9,7 +9,7 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 |Foreldrepenger | Foreldrepenger etter lovens kapittel 14 | Boolsk|boolean|
 |Fødselsdato | Fødselsdato | Dato|LocalDate|
 |HelseTilAlleTyperJobb | Kan ta alle typer arbeid | Boolsk|boolean|
-|Inntekt | Inntekt fra skatt | InntektDataType|Inntekt|
+|Inntekt | Inntektsopplysninger | InntektDataType|Inntekt|
 |KanJobbeDeltid | Kan jobbe heltid og deltid | Boolsk|boolean|
 |KanJobbeHvorSomHelst | Kan jobbe i hele Norge | Boolsk|boolean|
 |Lønnsgaranti | Har rett til dagpenger etter konkurs | Boolsk|boolean|

@@ -43,6 +43,11 @@ object Dagpengegrunnlag {
 
     private val beløpSiste36 = Opplysningstype.somBeløp("Inntekt siste 36 måneder")
     private val grunnlag36mnd = Opplysningstype.somBeløp("Gjennomsnittlig arbeidsinntekt siste 36 måneder")
+
+    private val utbetaltArbeidsinntektPeriode1 = Opplysningstype.somBeløp("Utbetalt arbeidsinntekt periode 1")
+    private val utbetaltArbeidsinntektPeriode2 = Opplysningstype.somBeløp("Utbetalt arbeidsinntekt periode 2")
+    private val utbetaltArbeidsinntektPeriode3 = Opplysningstype.somBeløp("Utbetalt arbeidsinntekt periode 3")
+
     private val inntektperiode1 = Opplysningstype.somBeløp("Inntektperiode 1")
     private val inntektperiode2 = Opplysningstype.somBeløp("Inntektperiode 2")
     private val inntektperiode3 = Opplysningstype.somBeløp("Inntektperiode 3")
@@ -59,10 +64,10 @@ object Dagpengegrunnlag {
             regel(maksgrenseForGrunnlag) { multiplikasjon(grunnbeløpForDagpengeGrunnlag, faktorForMaksgrense) }
 
             regel(grunnbeløpForDagpengeGrunnlag) { oppslag(prøvingsdato) { grunnbeløpFor(it) } }
-            regel(oppjustertinntekt) { oppjuster(grunnbeløpForDagpengeGrunnlag, inntektFraSkatt) }
+
             regel(relevanteinntekter) {
                 filtrerRelevanteInntekter(
-                    oppjustertinntekt,
+                    inntektFraSkatt,
                     listOf(
                         InntektKlasse.ARBEIDSINNTEKT,
                         InntektKlasse.DAGPENGER,
@@ -74,11 +79,17 @@ object Dagpengegrunnlag {
                     ),
                 )
             }
+            regel(oppjustertinntekt) { oppjuster(grunnbeløpForDagpengeGrunnlag, relevanteinntekter) }
 
-            // Summer hver 12 månedersperiode
-            regel(inntektperiode1) { summerPeriode(relevanteinntekter, SummerPeriode.InntektPeriode.Første) }
-            regel(inntektperiode2) { summerPeriode(relevanteinntekter, SummerPeriode.InntektPeriode.Andre) }
-            regel(inntektperiode3) { summerPeriode(relevanteinntekter, SummerPeriode.InntektPeriode.Tredje) }
+            // Summer hver 12 månedersperiode for utbetalt arbeidsinntekt
+            regel(utbetaltArbeidsinntektPeriode1) { summerPeriode(relevanteinntekter, SummerPeriode.InntektPeriode.Første) }
+            regel(utbetaltArbeidsinntektPeriode2) { summerPeriode(relevanteinntekter, SummerPeriode.InntektPeriode.Andre) }
+            regel(utbetaltArbeidsinntektPeriode3) { summerPeriode(relevanteinntekter, SummerPeriode.InntektPeriode.Tredje) }
+
+            // Summer hver 12 månedersperiode for oppjustert inntekt
+            regel(inntektperiode1) { summerPeriode(oppjustertinntekt, SummerPeriode.InntektPeriode.Første) }
+            regel(inntektperiode2) { summerPeriode(oppjustertinntekt, SummerPeriode.InntektPeriode.Andre) }
+            regel(inntektperiode3) { summerPeriode(oppjustertinntekt, SummerPeriode.InntektPeriode.Tredje) }
 
             regel(uavkortet12mnd) { sumAv(inntektperiode1) }
             regel(uavkortet36mnd) { sumAv(inntektperiode1, inntektperiode2, inntektperiode3) }
@@ -115,7 +126,15 @@ object Dagpengegrunnlag {
             regel(harAvkortetPeriode3) { størreEnn(inntektperiode3, maksgrenseForGrunnlag) }
             regel(harAvkortet) { enAv(harAvkortetPeriode1, harAvkortetPeriode2, harAvkortetPeriode3) }
         }
-    val ønsketResultat = listOf(grunnbeløpForDagpengeGrunnlag, harAvkortet, bruktBeregningsregel)
+    val ønsketResultat =
+        listOf(
+            grunnbeløpForDagpengeGrunnlag,
+            harAvkortet,
+            bruktBeregningsregel,
+            utbetaltArbeidsinntektPeriode1,
+            utbetaltArbeidsinntektPeriode2,
+            utbetaltArbeidsinntektPeriode3,
+        )
 }
 
 private fun grunnbeløpFor(it: LocalDate) =

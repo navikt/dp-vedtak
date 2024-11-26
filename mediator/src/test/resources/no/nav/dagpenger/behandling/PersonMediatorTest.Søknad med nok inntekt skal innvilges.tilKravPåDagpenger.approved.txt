@@ -22,8 +22,8 @@ Oppfyller kravet til alder
 Første måned av opptjeningsperiode
 Avtjent verneplikt
 Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste
-Inntekt fra skatt
-Tellende inntekt for opptjening
+Inntektsopplysninger
+Brutto arbeidsinntekt
 Arbeidsinntekt siste 12 mnd
 Arbeidsinntekt siste 36 mnd
 Arbeidsinntekt er over kravet for siste 12 mnd
@@ -52,6 +52,7 @@ Beregningsregel: Arbeidstid siste 12 måneder
 Beregeningsregel: Arbeidstid siste 36 måneder
 Mottar ikke andre fulle ytelser
 Grunnbeløp for grunnlag
+Tellende inntekt
 Faktor for maksimalt mulig grunnlag
 Antall år i 36 måneder
 Faktor for utregning av dagsats etter dagpengegrunnlaget
@@ -77,11 +78,10 @@ Oppjustert inntekt
 Sum andre ytelser
 Krav til tap av arbeidsinntekt
 Tap av arbeidstid er minst terskel
-Tellende inntekt
-Krav til tap av arbeidsinntekt og arbeidstid
 Inntektperiode 1
 Inntektperiode 2
 Inntektperiode 3
+Krav til tap av arbeidsinntekt og arbeidstid
 Grunnlag siste 12 mnd.
 Avkortet inntektperiode 1
 Avkortet inntektperiode 2

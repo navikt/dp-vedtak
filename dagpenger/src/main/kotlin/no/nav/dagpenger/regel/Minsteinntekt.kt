@@ -48,8 +48,8 @@ object Minsteinntekt {
     val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp")
 
     private val sisteAvsluttendendeKalenderMåned = Opptjeningstid.sisteAvsluttendendeKalenderMåned
-    internal val inntektFraSkatt = Opplysningstype.somInntekt("Inntekt fra skatt".id(Inntekt))
-    private val tellendeInntekt = Opplysningstype.somInntekt("Tellende inntekt for opptjening")
+    internal val inntektFraSkatt = Opplysningstype.somInntekt("Inntektsopplysninger".id(Inntekt))
+    private val tellendeInntekt = Opplysningstype.somInntekt("Brutto arbeidsinntekt")
 
     private val maksPeriodeLengde = Opplysningstype.somHeltall("Maks lengde på opptjeningsperiode")
     private val førsteMånedAvOpptjeningsperiode =
