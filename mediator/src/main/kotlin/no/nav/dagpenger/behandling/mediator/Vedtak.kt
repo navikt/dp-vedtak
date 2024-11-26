@@ -2,6 +2,7 @@ package no.nav.dagpenger.behandling.mediator
 
 import no.nav.dagpenger.behandling.api.models.BarnDTO
 import no.nav.dagpenger.behandling.api.models.KvoteDTO
+import no.nav.dagpenger.behandling.api.models.SamordningDTO
 import no.nav.dagpenger.behandling.api.models.VedtakDTO
 import no.nav.dagpenger.behandling.api.models.VedtakFastsattDTO
 import no.nav.dagpenger.behandling.api.models.VedtakFastsattFastsattVanligArbeidstidDTO
@@ -15,12 +16,15 @@ import no.nav.dagpenger.behandling.modell.hendelser.EksternId
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.Medlemskap
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.Rettighetstype
+import no.nav.dagpenger.regel.SamordingUtenforFolketrygden
+import no.nav.dagpenger.regel.Samordning
 import no.nav.dagpenger.regel.StreikOgLockout
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
@@ -50,6 +54,35 @@ private val autorativKildeForDetViPåEkteMenerErVilkår: List<Opplysningstype<Bo
         Medlemskap.oppfyllerMedlemskap,
         TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid,
     )
+
+private fun LesbarOpplysninger.samordninger(): List<SamordningDTO> {
+    val ytelser: List<Opplysning<Beløp>> =
+        (
+            finnAlle(
+                listOf(
+                    SamordingUtenforFolketrygden.sumAvYtelserUtenforFolketrygden,
+                    Samordning.sykepengerDagsats,
+                    Samordning.pleiepengerDagsats,
+                    Samordning.omsorgspengerDagsats,
+                    Samordning.opplæringspengerDagsats,
+                    Samordning.uføreDagsats,
+                    Samordning.foreldrepengerDagsats,
+                    Samordning.svangerskapspengerDagsats,
+                ),
+            ) as List<Opplysning<Beløp>>
+        ).filterNot {
+            it.verdi == Beløp(0.0)
+        }
+
+    return ytelser.map {
+        SamordningDTO(
+            type = it.opplysningstype.navn,
+            beløp = it.verdi.verdien,
+            // TODO: Vi må mappe til riktig grad
+            grad = 50.toBigDecimal(),
+        )
+    }
+}
 
 fun lagVedtak(
     behandlingId: UUID,
@@ -95,6 +128,7 @@ fun lagVedtak(
                                     BarnDTO(it.fødselsdato, it.kvalifiserer)
                                 },
                         ),
+                    samordning = opplysninger.samordninger(),
                     kvoter =
                         listOf(
                             KvoteDTO(

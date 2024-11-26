@@ -629,6 +629,11 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/Barn'
+            samordning:
+              type: array
+              items:
+                $ref: '#/components/schemas/Samordning'
+
             kvoter:
               type: array
               items:
@@ -680,6 +685,20 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Opplysning'
+
+    Samordning:
+      type: object
+      required:
+        - type
+        - beløp
+        - grad
+      properties:
+        type:
+          type: string
+        beløp:
+          type: number
+        grad:
+          type: number
 
     Forklaring:
       description: En tynn versjon av regeltre og data som førte til resultatet

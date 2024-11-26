@@ -313,6 +313,7 @@ internal class PersonMediatorTest {
                     withClue("Grunnlag bør større enn 0") { grunnlag shouldBeGreaterThan 0 }
                     vanligArbeidstidPerUke shouldBe 37.5
                     sats shouldBeGreaterThan 0
+                    samordning.shouldBeEmpty()
                 }
             }
         }
@@ -914,6 +915,8 @@ private class Meldingsinnhold(
         val grunnlag get() = jsonNode["grunnlag"]["grunnlag"].asInt()
         val vanligArbeidstidPerUke get() = jsonNode["fastsattVanligArbeidstid"]["vanligArbeidstidPerUke"].asDouble()
         val sats get() = jsonNode["sats"]["dagsatsMedBarnetillegg"].asInt()
+
+        val samordning get() = jsonNode["samordning"]
 
         val oppfylt get() = withClue("Utfall skal være true") { utfall shouldBe true }
 
