@@ -133,6 +133,6 @@ object Avklaringspunkter {
         Avklaringkode(
             kode = "ReellArbeidssøkerUnntak",
             tittel = "Søker har svart nei på spørsmål om å være reell arbeidssøker",
-            beskrivelse = "Det må vurderes om søker kvalifiserer til unntakene",
+            beskrivelse = "Det må vurderes om søker kvalifiserer til unntakene til reell arbeidssøker",
         )
 }

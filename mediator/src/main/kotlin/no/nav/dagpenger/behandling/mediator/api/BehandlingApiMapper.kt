@@ -27,7 +27,8 @@ import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
-import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.sumAvYtelserUtenforFolketrygden
+import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentDeltidssøker
+import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentLokalArbeidssøker
 import no.nav.dagpenger.regel.Samordning.sykepengerDagsats
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
@@ -137,8 +138,9 @@ private val redigerbareOpplysninger =
                 TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid,
                 TapAvArbeidsinntektOgArbeidstid.nyArbeidstid,
                 prøvingsdato,
-                sumAvYtelserUtenforFolketrygden,
                 sykepengerDagsats,
+                godkjentLokalArbeidssøker,
+                godkjentDeltidssøker,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)
