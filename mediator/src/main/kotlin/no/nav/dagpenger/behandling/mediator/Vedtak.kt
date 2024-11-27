@@ -60,7 +60,6 @@ private fun LesbarOpplysninger.samordninger(): List<SamordningDTO> {
         (
             finnAlle(
                 listOf(
-                    SamordingUtenforFolketrygden.sumAvYtelserUtenforFolketrygden,
                     Samordning.sykepengerDagsats,
                     Samordning.pleiepengerDagsats,
                     Samordning.omsorgspengerDagsats,
