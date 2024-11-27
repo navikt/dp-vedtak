@@ -1,6 +1,7 @@
 package no.nav.dagpenger.opplysning.regel.inntekt
 
 import no.nav.dagpenger.inntekt.v1.InntektKlasse
+import no.nav.dagpenger.inntekt.v1.KlassifisertInntektMåned
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.regel.Regel
@@ -15,11 +16,15 @@ class FiltrerRelevanteInntekter(
     override fun kjør(opplysninger: LesbarOpplysninger): Inntekt {
         val inntekt = opplysninger.finnOpplysning(this.ufiltrertInntekt).verdi
         val relevanteInntekter =
-            inntekt.verdi.inntektsListe.filter {
-                it.klassifiserteInntekter.any { inntektMåned ->
-                    inntektMåned.inntektKlasse in
-                        inntektsklasser
-                }
+            inntekt.verdi.inntektsListe.map {
+                KlassifisertInntektMåned(
+                    årMåned = it.årMåned,
+                    klassifiserteInntekter =
+                        it.klassifiserteInntekter.filter { inntektMåned ->
+                            inntektMåned.inntektKlasse in inntektsklasser
+                        },
+                    harAvvik = it.harAvvik,
+                )
             }
         return Inntekt(
             no.nav.dagpenger.inntekt.v1.Inntekt(
