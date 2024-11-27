@@ -1,5 +1,6 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
@@ -7,6 +8,7 @@ import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.Avklaringspunkter.ReellArbeidssøkerUnntak
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
 import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
@@ -39,6 +41,7 @@ object ReellArbeidssøker {
 
             regel(oppfyllerKravTilMobilitet) { enAv(kanJobbeHvorSomHelst, godkjentLokalArbeidssøker) }
             regel(oppfyllerKravTilArbeidssøker) { enAv(kanJobbeDeltid, godkjentDeltidssøker) }
+
             regel(kravTilArbeidssøker) {
                 alle(
                     oppfyllerKravTilArbeidssøker,
@@ -47,5 +50,10 @@ object ReellArbeidssøker {
                     villigTilEthvertArbeid,
                 )
             }
+        }
+
+    val ReellArbeidssøkerKontroll =
+        Kontrollpunkt(ReellArbeidssøkerUnntak) {
+            it.har(kravTilArbeidssøker) && !it.finnOpplysning(kravTilArbeidssøker).verdi
         }
 }

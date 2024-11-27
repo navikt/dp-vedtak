@@ -120,7 +120,7 @@ object SamordingUtenforFolketrygden {
 
     val ønsketResultat = listOf(skalSamordnesUtenforFolketrygden, dagsatsSamordnetUtenforFolketrygden)
 
-    val YtelserUtenforFolketrygdenKontrollPunkt =
+    val YtelserUtenforFolketrygdenKontroll =
         Kontrollpunkt(sjekker = Avklaringspunkter.YtelserUtenforFolketrygden) { opplysninger ->
             opplysninger.har(andreYtelser) && opplysninger.finnOpplysning(andreYtelser).verdi
         }
