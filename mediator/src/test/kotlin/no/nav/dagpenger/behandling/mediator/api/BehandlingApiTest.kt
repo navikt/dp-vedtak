@@ -102,8 +102,20 @@ internal class BehandlingApiTest {
                             verdi = 3,
                         ),
                         Faktum(
+                            opplysningstype = TestOpplysningstyper.desimal,
+                            verdi = 3.0,
+                        ),
+                        Faktum(
+                            opplysningstype = TestOpplysningstyper.boolsk,
+                            verdi = true,
+                        ),
+                        Faktum(
                             opplysningstype = TestOpplysningstyper.dato,
                             verdi = LocalDate.now(),
+                        ),
+                        Faktum(
+                            opplysningstype = TestOpplysningstyper.beløpA,
+                            verdi = Beløp(1000.toBigDecimal()),
                         ),
                         Faktum(
                             opplysningstype = TestOpplysningstyper.barn,
@@ -261,6 +273,66 @@ internal class BehandlingApiTest {
             response.bodyAsText().shouldBeEmpty()
             verify {
                 hendelseMediator.behandle(any<ForslagGodkjentHendelse>(), any())
+            }
+        }
+    }
+
+    @Test
+    fun `kan endre alle typer opplysninger som er redigerbare`() {
+        medSikretBehandlingApi {
+            val behandlingId = person.behandlinger().first().behandlingId
+            val opplysninger =
+                listOf(
+                    Pair(TestOpplysningstyper.beløpA, 100),
+                    Pair(TestOpplysningstyper.dato, LocalDate.of(2020, 1, 1)),
+                    Pair(TestOpplysningstyper.heltall, 100),
+                    Pair(TestOpplysningstyper.desimal, 100.12),
+                    Pair(TestOpplysningstyper.boolsk, false),
+                ).map { (opplysning, verdi) ->
+                    Pair(
+                        verdi,
+                        person
+                            .behandlinger()
+                            .first()
+                            .opplysninger()
+                            .finnOpplysning(opplysning),
+                    )
+                }
+            opplysninger.forEach { opplysning ->
+                autentisert(
+                    httpMethod = HttpMethod.Put,
+                    endepunkt = "/behandling/$behandlingId/opplysning/${opplysning.second.id}",
+                    // language=JSON
+                    body = """{"begrunnelse":"tekst", "verdi": "${opplysning.first}" }""",
+                ).status shouldBe HttpStatusCode.OK
+            }
+        }
+    }
+
+    @Test
+    fun `kan ikke endre opplysninger som ikke er redigerbare`() {
+        medSikretBehandlingApi {
+            val behandlingId = person.behandlinger().first().behandlingId
+            val opplysninger =
+                listOf(
+                    Pair(TestOpplysningstyper.barn, 100),
+                ).map { (opplysning, verdi) ->
+                    Pair(
+                        verdi,
+                        person
+                            .behandlinger()
+                            .first()
+                            .opplysninger()
+                            .finnOpplysning(opplysning),
+                    )
+                }
+            opplysninger.forEach { opplysning ->
+                autentisert(
+                    httpMethod = HttpMethod.Put,
+                    endepunkt = "/behandling/$behandlingId/opplysning/${opplysning.second.id}",
+                    // language=JSON
+                    body = """{"begrunnelse":"tekst", "verdi": "${opplysning.first}" }""",
+                ).status shouldBe HttpStatusCode.BadRequest
             }
         }
     }

@@ -304,7 +304,8 @@ private class HttpVerdiMapper(
             Heltall -> oppdaterOpplysningRequestDTO.verdi.toInt() as T
             Boolsk -> oppdaterOpplysningRequestDTO.verdi.toBoolean() as T
             Desimaltall -> oppdaterOpplysningRequestDTO.verdi.toDouble() as T
+            Penger -> oppdaterOpplysningRequestDTO.verdi.toDouble() as T
             Dato -> oppdaterOpplysningRequestDTO.verdi.let { LocalDate.parse(it) } as T
-            else -> throw IllegalArgumentException("Datatype $datatype støttes ikke å redigere i APIet enda")
+            else -> throw BadRequestException("Datatype $datatype støttes ikke å redigere i APIet enda")
         }
 }

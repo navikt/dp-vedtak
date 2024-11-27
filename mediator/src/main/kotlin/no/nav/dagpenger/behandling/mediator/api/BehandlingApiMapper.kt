@@ -28,6 +28,7 @@ import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.sumAvYtelserUtenforFolketrygden
+import no.nav.dagpenger.regel.Samordning.sykepengerDagsats
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import java.time.LocalDate
@@ -137,6 +138,7 @@ private val redigerbareOpplysninger =
                 TapAvArbeidsinntektOgArbeidstid.nyArbeidstid,
                 prøvingsdato,
                 sumAvYtelserUtenforFolketrygden,
+                sykepengerDagsats,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)
