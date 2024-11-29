@@ -56,15 +56,15 @@ internal class ArenaOppgaveMottak(
                 return@withLoggingContext
             }
 
+            sikkerlogg.info {
+                "En oppgave fra Arena, pakke=${packet.toJson()}"
+            }
+
             val beskrivelse = packet["after.OPPGAVETYPE_BESKRIVELSE"].toString()
             val endretAv = packet["after.ENDRET_AV"].toString()
             if (endretAv != "ARBLINJE" && behandling.tilstand == "UNDER_BEHANDLING") {
                 logger.info { "Behandling ${behandling.behandlingId} er under behandling, avbryter" }
                 logger.info { "Publiserer avbrytmelding for ${behandling.behandlingId}, mottok oppgave av type=$beskrivelse" }
-                return@withLoggingContext
-            }
-            sikkerlogg.info {
-                "En oppgave fra Arena endretAv=$endretAv, pakke=${packet.toJson()}"
             }
         }
     }
