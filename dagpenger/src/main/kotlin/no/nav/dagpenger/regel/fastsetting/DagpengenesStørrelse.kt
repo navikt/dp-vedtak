@@ -47,7 +47,7 @@ object DagpengenesStørrelse {
         )
     val dagsatsEtterNittiProsent =
         Opplysningstype.somBeløp(
-            "Andel av dagsats med barnetillegg avkortet til maks andel av dagpengegrunnlaget",
+            "Andel av dagsats uten barnetillegg avkortet til maks andel av dagpengegrunnlaget",
         )
     val barnetillegg = Opplysningstype.somBeløp("Sum av barnetillegg")
     private val dagsatsMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg før samordning")
