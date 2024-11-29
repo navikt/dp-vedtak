@@ -13,6 +13,7 @@ import kotliquery.sessionOf
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.behandling.modell.Behandling.TilstandType
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -56,20 +57,28 @@ internal class ArenaOppgaveMottak(
                 return@withLoggingContext
             }
 
-            sikkerlogg.info {
-                "En oppgave fra Arena, pakke=${packet.toJson()}"
-            }
+            sikkerlogg.info { "En oppgave fra Arena, pakke=${packet.toJson()}" }
 
             val beskrivelse = packet["after.OPPGAVETYPE_BESKRIVELSE"].toString()
             val endretAv = packet["after.ENDRET_AV"].toString()
-            if (endretAv != "ARBLINJE" && behandling.tilstand == "UNDER_BEHANDLING") {
-                logger.info { "Behandling ${behandling.behandlingId} er under behandling, avbryter" }
-                logger.info { "Publiserer avbrytmelding for ${behandling.behandlingId}, mottok oppgave av type=$beskrivelse" }
+
+            if (behandling.tilstand in tilstanderSomKanIgnoreres) {
+                logger.info { "Behandling ${behandling.behandlingId} er allerede i tilstand ${behandling.tilstand}, ignorerer oppgave" }
+                return@withLoggingContext
+            }
+
+            if (endretAv != "ARBLINJE") {
+                logger.info { "(Skal) Publiserer avbrytmelding for ${behandling.behandlingId}, mottok oppgave av type=$beskrivelse" }
             }
         }
     }
 
     private companion object {
+        private val tilstanderSomKanIgnoreres =
+            setOf(
+                TilstandType.Ferdig,
+                TilstandType.Avbrutt,
+            )
         private val logger = KotlinLogging.logger {}
         private val sikkerlogg = KotlinLogging.logger("tjenestekall.ArenaOppgaveMottak")
     }
@@ -96,7 +105,7 @@ class SakRepository {
                     Beeeeehandling(
                         row.string("ident"),
                         row.string("behandling_id"),
-                        row.string("tilstand"),
+                        TilstandType.valueOf(row.string("tilstand")),
                     )
                 }.asSingle,
             )
@@ -105,7 +114,7 @@ class SakRepository {
     data class Beeeeehandling(
         val ident: String,
         val behandlingId: String,
-        val tilstand: String,
+        val tilstand: TilstandType,
     )
 }
 
