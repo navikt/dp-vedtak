@@ -13,13 +13,15 @@ import kotliquery.sessionOf
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.behandling.mediator.mottak.SakRepository.Behandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 internal class ArenaOppgaveMottak(
     rapidsConnection: RapidsConnection,
-    private val sakRepository: SakRepository,
+    private val sakRepository: SakRepositoryPostgres,
 ) : River.PacketListener {
     init {
         River(rapidsConnection)
@@ -53,23 +55,36 @@ internal class ArenaOppgaveMottak(
 
             val behandling = sakRepository.finnBehandling(sakId.toInt())
             if (behandling == null) {
-                logger.info { "Fant ingen behandling for sakId=$sakId som skal avbrytes" }
-                return@withLoggingContext
+                logger.warn { "Fant ingen behandling for sakId=$sakId, det er ganske mystisk." }
+                sikkerlogg.info { "Fant ingen behandling for sakId=$sakId, pakke=${packet.toJson()}" }
+                return
             }
 
-            sikkerlogg.info { "En oppgave fra Arena, pakke=${packet.toJson()}" }
+            if (behandling.tilstand in tilstanderSomKanIgnoreres) {
+                logger.info { "Behandling ${behandling.behandlingId} er allerede i tilstand ${behandling.tilstand}, ignorerer oppgave" }
+                return
+            }
 
             val beskrivelse = packet["after.OPPGAVETYPE_BESKRIVELSE"].toString()
             val endretAv = packet["after.ENDRET_AV"].toString()
 
-            if (behandling.tilstand in tilstanderSomKanIgnoreres) {
-                logger.info { "Behandling ${behandling.behandlingId} er allerede i tilstand ${behandling.tilstand}, ignorerer oppgave" }
-                return@withLoggingContext
+            if (endretAv == "ARBLINJE") {
+                logger.info { "Oppgave er opprettet av Arena, ignorerer" }
+                return
             }
 
-            if (endretAv != "ARBLINJE") {
-                logger.info { "(Skal) Publiserer avbrytmelding for ${behandling.behandlingId}, mottok oppgave av type=$beskrivelse" }
-            }
+            logger.info { "(Skal) Publiserer avbrytmelding for ${behandling.behandlingId}, mottok oppgave av type=$beskrivelse" }
+
+            val avbrytMelding =
+                JsonMessage.newMessage(
+                    "avbryt_behandling",
+                    mapOf(
+                        "ident" to behandling.ident,
+                        "behandlingId" to behandling.behandlingId.toString(),
+                        "årsak" to "Oppgaven er endret i Arena",
+                    ),
+                )
+            // context.publish(behandling.ident, avbrytMelding.toJson())
         }
     }
 
@@ -84,8 +99,22 @@ internal class ArenaOppgaveMottak(
     }
 }
 
-class SakRepository {
-    fun finnBehandling(fagsakId: Int): Beeeeehandling? =
+private var arenaDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSSSSS]")
+
+private fun JsonNode.asArenaDato(): LocalDateTime = asText().let { LocalDateTime.parse(it, arenaDateFormatter) }
+
+interface SakRepository {
+    fun finnBehandling(fagsakId: Int): Behandling?
+
+    data class Behandling(
+        val ident: String,
+        val behandlingId: UUID,
+        val tilstand: TilstandType,
+    )
+}
+
+internal class SakRepositoryPostgres : SakRepository {
+    override fun finnBehandling(fagsakId: Int): Behandling? =
         sessionOf(dataSource).use {
             it.run(
                 queryOf(
@@ -98,26 +127,15 @@ class SakRepository {
                              LEFT JOIN person_behandling pb ON b.behandling_id = pb.behandling_id
                     WHERE type_id = 'fagsakId'
                       AND verdi_heltall = :fagsakId
-                      AND b.tilstand != 'Ferdig'
                     """.trimIndent(),
                     mapOf("fagsakId" to fagsakId),
                 ).map { row ->
-                    Beeeeehandling(
+                    Behandling(
                         row.string("ident"),
-                        row.string("behandling_id"),
+                        row.uuid("behandling_id"),
                         TilstandType.valueOf(row.string("tilstand")),
                     )
                 }.asSingle,
             )
         }
-
-    data class Beeeeehandling(
-        val ident: String,
-        val behandlingId: String,
-        val tilstand: TilstandType,
-    )
 }
-
-private var arenaDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSSSSS]")
-
-private fun JsonNode.asArenaDato(): LocalDateTime = asText().let { LocalDateTime.parse(it, arenaDateFormatter) }
