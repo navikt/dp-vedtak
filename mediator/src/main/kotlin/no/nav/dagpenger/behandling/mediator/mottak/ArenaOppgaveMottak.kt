@@ -56,8 +56,14 @@ internal class ArenaOppgaveMottak(
             }
 
             val beskrivelse = packet["after.OPPGAVETYPE_BESKRIVELSE"].toString()
+            val username = packet["after.USERNAME"].toString()
+            val regUser = packet["after.REG_USER"].toString()
+            val modUser = packet["after.MOD_USER"].toString()
+            val endretAv = packet["after.ENDRET_AV"].toString()
             logger.info { "Publiserer avbrytmelding for ${behandling.behandlingId}, mottok oppgave av type=$beskrivelse" }
-            sikkerlogg.info { "Mottok oppgave fra Arena. Pakke=${packet.toJson()}" }
+            sikkerlogg.info {
+                "En oppgave fra Arena, username=$username, regUser=$regUser, modUser=$modUser, $endretAv, pakke=${packet.toJson()}"
+            }
         }
     }
 
