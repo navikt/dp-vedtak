@@ -31,12 +31,15 @@ Arbeidsinntekt er over kravet for siste 36 mnd
 Krav til minsteinntekt
 Det er godkjent at bruker kun søker deltidsarbeid
 Det er godkjent at bruker kun søk arbeid lokalt
+Nedre grense for ønsket arbeidstid
 Kan jobbe heltid og deltid
 Kan jobbe i hele Norge
 Kan ta alle typer arbeid
 Villig til å bytte yrke
+Brukers ønskede arbeidstid
 Bruker oppfyller kravet til å være arbeidssøker
 Bruker oppfyller kravet til mobilitet
+Ønsket arbeidstid er under terskel
 Krav til arbeidssøker
 Registrert som arbeidssøker
 Registrert som arbeidssøker på søknadstidspunktet

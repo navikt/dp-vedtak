@@ -30,6 +30,7 @@ import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
 import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
+import no.nav.dagpenger.regel.Behov.ØnsketArbeidstid
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -218,6 +219,7 @@ class TestPerson(
                 KanJobbeHvorSomHelst to true,
                 HelseTilAlleTyperJobb to true,
                 VilligTilÅBytteYrke to true,
+                ØnsketArbeidstid to 40.0,
                 // Arbeidssøkerregistrering
                 RegistrertSomArbeidssøker to
                     mapOf(

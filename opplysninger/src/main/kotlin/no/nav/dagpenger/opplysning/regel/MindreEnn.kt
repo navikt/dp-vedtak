@@ -4,7 +4,7 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.verdier.Beløp
 
-class StørreEnnEllerLik<T : Comparable<T>> internal constructor(
+class MindreEnn<T : Comparable<T>> internal constructor(
     produserer: Opplysningstype<Boolean>,
     private val a: Opplysningstype<T>,
     private val b: Opplysningstype<T>,
@@ -12,20 +12,20 @@ class StørreEnnEllerLik<T : Comparable<T>> internal constructor(
     override fun kjør(opplysninger: LesbarOpplysninger): Boolean {
         val a = opplysninger.finnOpplysning(a).verdi
         val b = opplysninger.finnOpplysning(b).verdi
-        return a >= b
+        return a < b
     }
 
-    override fun toString() = "Sjekker om $a er større enn eller lik $b"
+    override fun toString() = "Sjekker om $a er mindre enn $b"
 }
 
-@JvmName("størreEnnEllerLikBeløp")
-fun Opplysningstype<Boolean>.størreEnnEllerLik(
-    er: Opplysningstype<Beløp>,
-    størreEnn: Opplysningstype<Beløp>,
-) = StørreEnnEllerLik(this, er, størreEnn)
-
-@JvmName("størreEnnEllerLikDouble")
-fun Opplysningstype<Boolean>.størreEnnEllerLik(
+@JvmName("mindreEnnDouble")
+fun Opplysningstype<Boolean>.mindreEnn(
     er: Opplysningstype<Double>,
-    størreEnn: Opplysningstype<Double>,
-) = StørreEnnEllerLik(this, er, størreEnn)
+    mindreEnn: Opplysningstype<Double>,
+) = StørreEnn(this, er, mindreEnn)
+
+@JvmName("mindreEnnBeløp")
+fun Opplysningstype<Boolean>.mindreEnn(
+    er: Opplysningstype<Beløp>,
+    mindreEnn: Opplysningstype<Beløp>,
+) = StørreEnn(this, er, mindreEnn)

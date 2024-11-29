@@ -9,6 +9,7 @@ import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.asUUID
 import no.nav.dagpenger.behandling.modell.Behandling
 import org.intellij.lang.annotations.Language
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
@@ -48,6 +49,7 @@ class ArenaOppgaveMottakTest {
     }
 
     @Test
+    @Disabled("Publiserer ikke meldinger før vi er trygg")
     fun `Sender ikke avbryt-melding for oppgaver som ikke tildeles saksbehandler`() {
         withMigratedDb {
             val behandlingId = UUID.randomUUID()

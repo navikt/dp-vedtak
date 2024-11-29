@@ -11,6 +11,7 @@ Kan jobbe heltid og deltid
 Kan jobbe i hele Norge
 Kan ta alle typer arbeid
 Villig til å bytte yrke
+Brukers ønskede arbeidstid
 Har rett til ordinære dagpenger gjennom arbeidsforhold
 Har rett til dagpenger under permittering
 Har rett til dagpenger etter konkurs
@@ -32,6 +33,7 @@ Antall G for krav til 12 mnd arbeidsinntekt
 Antall G for krav til 36 mnd arbeidsinntekt
 Det er godkjent at bruker kun søker deltidsarbeid
 Det er godkjent at bruker kun søk arbeid lokalt
+Nedre grense for ønsket arbeidstid
 Deltar i arbeidsmarkedstiltak
 Deltar i opplæring for innvandrere
 Deltar i grunnskoleopplæring, videregående opplæring og opplæring i grunnleggende ferdigheter
@@ -94,6 +96,7 @@ Inntektskrav for siste 12 mnd
 Inntektskrav for siste 36 mnd
 Bruker oppfyller kravet til å være arbeidssøker
 Bruker oppfyller kravet til mobilitet
+Ønsket arbeidstid er under terskel
 Godkjent unntak for utdanning eller opplæring?
 Oppfyller krav til ikke utestengt
 Er medlemmet ikke påvirket av streik eller lock-out?

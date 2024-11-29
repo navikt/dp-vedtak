@@ -14,6 +14,7 @@ object Behov {
     val HelseTilAlleTyperJobb by StringConstant()
     val VilligTilÅBytteYrke by StringConstant()
     val RegistrertSomArbeidssøker by StringConstant()
+    val ØnsketArbeidstid by StringConstant()
 
     val Ordinær by StringConstant()
 

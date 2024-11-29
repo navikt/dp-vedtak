@@ -19,6 +19,7 @@ import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.SvangerskapsrelaterteSykepengerKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.ØnskerEtterRapporteringsfristKontroll
 import no.nav.dagpenger.regel.ReellArbeidssøker.ReellArbeidssøkerKontroll
+import no.nav.dagpenger.regel.ReellArbeidssøker.ØnsketArbeidstidKontroll
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.YtelserUtenforFolketrygdenKontroll
 import no.nav.dagpenger.regel.Samordning.SkalSamordnes
 import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITid
@@ -121,6 +122,7 @@ class SøknadInnsendtHendelse(
             VirkningstidspunktForLangtFramITid,
             YtelserUtenforFolketrygdenKontroll,
             ØnskerEtterRapporteringsfristKontroll,
+            ØnsketArbeidstidKontroll,
         )
 
     companion object {

@@ -64,9 +64,8 @@ class Søknadsprosess : Forretningsprosess {
                 TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid,
                 FulleYtelser.ikkeFulleYtelser,
             )
-        ønsketResultat.addAll(
-            vilkår,
-        )
+        ønsketResultat.addAll(vilkår)
+
         if (opplysninger.mangler(vilkår)) {
             return ønsketResultat
         }
