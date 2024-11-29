@@ -31,6 +31,7 @@ internal class ArenaOppgaveMottak(
                         "after.SAK_ID",
                         "after.DESCRIPTION",
                         "after.OPPGAVETYPE_BESKRIVELSE",
+                        "after.ENDRET_AV",
                     )
                 }
                 validate { it.require("after.REG_DATO", JsonNode::asArenaDato) }
@@ -56,13 +57,14 @@ internal class ArenaOppgaveMottak(
             }
 
             val beskrivelse = packet["after.OPPGAVETYPE_BESKRIVELSE"].toString()
-            val username = packet["after.USERNAME"].toString()
-            val regUser = packet["after.REG_USER"].toString()
-            val modUser = packet["after.MOD_USER"].toString()
             val endretAv = packet["after.ENDRET_AV"].toString()
-            logger.info { "Publiserer avbrytmelding for ${behandling.behandlingId}, mottok oppgave av type=$beskrivelse" }
+            if (endretAv != "ARBLINJE" && behandling.tilstand == "UNDER_BEHANDLING") {
+                logger.info { "Behandling ${behandling.behandlingId} er under behandling, avbryter" }
+                logger.info { "Publiserer avbrytmelding for ${behandling.behandlingId}, mottok oppgave av type=$beskrivelse" }
+                return@withLoggingContext
+            }
             sikkerlogg.info {
-                "En oppgave fra Arena, username=$username, regUser=$regUser, modUser=$modUser, $endretAv, pakke=${packet.toJson()}"
+                "En oppgave fra Arena endretAv=$endretAv, pakke=${packet.toJson()}"
             }
         }
     }
@@ -80,7 +82,7 @@ class SakRepository {
                 queryOf(
                     //language=PostgreSQL
                     """
-                    SELECT bo.behandling_id, pb.ident
+                    SELECT bo.behandling_id, pb.ident, b.tilstand
                     FROM opplysningstabell
                              LEFT JOIN behandling_opplysninger bo ON opplysningstabell.opplysninger_id = bo.opplysninger_id
                              LEFT JOIN behandling b ON bo.behandling_id = b.behandling_id
@@ -94,6 +96,7 @@ class SakRepository {
                     Beeeeehandling(
                         row.string("ident"),
                         row.string("behandling_id"),
+                        row.string("tilstand"),
                     )
                 }.asSingle,
             )
@@ -102,6 +105,7 @@ class SakRepository {
     data class Beeeeehandling(
         val ident: String,
         val behandlingId: String,
+        val tilstand: String,
     )
 }
 
