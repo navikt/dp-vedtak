@@ -67,8 +67,8 @@ internal class ArenaOppgaveMottak(
                 return
             }
 
-            val beskrivelse = packet["after.OPPGAVETYPE_BESKRIVELSE"].toString()
-            val endretAv = packet["after.ENDRET_AV"].toString()
+            val beskrivelse = packet["after.OPPGAVETYPE_BESKRIVELSE"].asText()
+            val endretAv = packet["after.ENDRET_AV"].asText()
 
             if (endretAv == "ARBLINJE") {
                 logger.info { "Oppgave er opprettet av Arena, ignorerer" }
@@ -92,7 +92,7 @@ internal class ArenaOppgaveMottak(
                         "årsak" to "Oppgaven er endret i Arena",
                     ),
                 )
-            // context.publish(behandling.ident, avbrytMelding.toJson())
+            context.publish(behandling.ident, avbrytMelding.toJson())
         }
     }
 

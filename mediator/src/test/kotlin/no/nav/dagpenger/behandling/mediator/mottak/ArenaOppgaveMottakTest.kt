@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling.mediator.mottak
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
+import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.spyk
@@ -8,7 +9,6 @@ import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mediator.asUUID
 import no.nav.dagpenger.behandling.modell.Behandling
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
@@ -27,7 +27,7 @@ class ArenaOppgaveMottakTest {
                 sakRepository.finnBehandling(15102351)
             } returns null
 
-            rapid.sendTestMessage(meldingJSON)
+            rapid.sendTestMessage(meldingJson())
 
             rapid.inspektør.size shouldBe 0
         }
@@ -41,23 +41,37 @@ class ArenaOppgaveMottakTest {
                 sakRepository.finnBehandling(15102351)
             } returns SakRepository.Behandling("123", behandlingId, Behandling.TilstandType.Ferdig)
 
-            rapid.sendTestMessage(meldingJSON)
+            rapid.sendTestMessage(meldingJson())
 
             rapid.inspektør.size shouldBe 0
         }
     }
 
     @Test
-    @Disabled("Skrudd av mens vi får det til å fungere som det skal")
-    fun `Sender avbryt-melding når behandlinger står i UnderBehandling`() {
+    fun `Sender ikke avbryt-melding for oppgaver som ikke tildeles saksbehandler`() {
         withMigratedDb {
             val behandlingId = UUID.randomUUID()
             every {
                 sakRepository.finnBehandling(15102351)
             } returns SakRepository.Behandling("123", behandlingId, Behandling.TilstandType.UnderBehandling)
 
-            rapid.sendTestMessage(meldingJSON)
+            rapid.sendTestMessage(meldingJson())
 
+            rapid.inspektør.size shouldBe 0
+        }
+    }
+
+    @Test
+    fun `Sender avbryt-melding for oppgaver som tildeles saksbehandler`() {
+        withMigratedDb {
+            val behandlingId = UUID.randomUUID()
+            every {
+                sakRepository.finnBehandling(15102351)
+            } returns SakRepository.Behandling("123", behandlingId, Behandling.TilstandType.UnderBehandling)
+
+            rapid.sendTestMessage(meldingJson("ABC2024"))
+
+            rapid.inspektør.size shouldBeExactly 1
             with(rapid.inspektør.message(0)) {
                 this["@event_name"].asText() shouldBe "avbryt_behandling"
                 this["ident"].asText() shouldBe "123"
@@ -67,7 +81,8 @@ class ArenaOppgaveMottakTest {
     }
 
     @Language("JSON")
-    private val meldingJSON = """{
+    private fun meldingJson(endretAv: String = "ARBLINJE") =
+        """{
       "table": "SIAMO.OPPGAVE_LOGG",
       "op_type": "U",
       "op_ts": "2024-11-05 12:12:46.000000",
@@ -100,7 +115,7 @@ class ArenaOppgaveMottakTest {
         "GSAK_FAGOMRADE": "DAG",
         "GSAK_PRIORITET": "HOY_DAG",
         "OPERASJON": "DEL",
-        "ENDRET_AV": "BDB4416",
+        "ENDRET_AV": "$endretAv",
         "TIDSPUNKT": "2024-11-05 12:12:45",
         "PERSON_ID": 3931114
       },
