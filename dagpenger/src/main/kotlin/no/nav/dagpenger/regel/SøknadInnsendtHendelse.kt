@@ -1,6 +1,5 @@
 package no.nav.dagpenger.regel
 
-import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadId
@@ -14,7 +13,6 @@ import no.nav.dagpenger.regel.Alderskrav.HattLukkedeSakerSiste8UkerKontroll
 import no.nav.dagpenger.regel.Alderskrav.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.Alderskrav.Under18Kontroll
 import no.nav.dagpenger.regel.FulleYtelser.FulleYtelserKontrollpunkt
-import no.nav.dagpenger.regel.KravPåDagpenger.Totrinnskontroll
 import no.nav.dagpenger.regel.Minsteinntekt.EØSArbeidKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.InntektNesteKalendermånedKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
@@ -83,17 +81,13 @@ class SøknadInnsendtHendelse(
         opplysninger.har(Minsteinntekt.minsteinntekt) &&
             opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi
 
-    override fun kreverTotrinnskontroll(aktiveAvklaringer: List<Avklaring>): Boolean =
-        aktiveAvklaringer.any {
-            it.kode == Avklaringspunkter.Totrinnskontroll
-        }
+    override fun kreverTotrinnskontroll(opplysninger: LesbarOpplysninger) = kravPåDagpenger(opplysninger)
 
     override fun behandling() =
         Behandling(
             behandler = this,
             opplysninger =
                 listOf(
-                    // Faktum(prøvingsdato, skjedde, kilde = Systemkilde(meldingsreferanseId, opprettet)),
                     Faktum(fagsakIdOpplysningstype, fagsakId, kilde = Systemkilde(meldingsreferanseId, opprettet)),
                     Faktum(
                         søknadIdOpplysningstype,
@@ -122,7 +116,6 @@ class SøknadInnsendtHendelse(
             SvangerskapsrelaterteSykepengerKontroll,
             SøknadstidspunktForLangtFramITid,
             TapArbeidstidBeregningsregelKontroll,
-            Totrinnskontroll,
             Under18Kontroll,
             VernepliktKontroll,
             VirkningstidspunktForLangtFramITid,

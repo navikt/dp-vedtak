@@ -14,12 +14,15 @@ import no.nav.dagpenger.behandling.modell.PersonObservatør
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.LåsHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.LåsOppHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 
 internal class HendelseMediator(
@@ -200,6 +203,33 @@ internal class HendelseMediator(
             person.håndter(hendelse)
         }
     }
+
+    override fun behandle(
+        hendelse: GodkjennBehandlingHendelse,
+        context: MessageContext,
+    ) {
+        hentPersonOgHåndter(hendelse, context) { person ->
+            person.håndter(hendelse)
+        }
+    }
+
+    override fun behandle(
+        hendelse: BesluttBehandlingHendelse,
+        context: MessageContext,
+    ) {
+        hentPersonOgHåndter(hendelse, context) { person ->
+            person.håndter(hendelse)
+        }
+    }
+
+    override fun behandle(
+        hendelse: SendTilbakeHendelse,
+        context: MessageContext,
+    ) {
+        hentPersonOgHåndter(hendelse, context) { person ->
+            person.håndter(hendelse)
+        }
+    }
 }
 
 internal interface IHendelseMediator {
@@ -245,6 +275,21 @@ internal interface IHendelseMediator {
 
     fun behandle(
         hendelse: LåsOppHendelse,
+        context: MessageContext,
+    )
+
+    fun behandle(
+        hendelse: GodkjennBehandlingHendelse,
+        context: MessageContext,
+    )
+
+    fun behandle(
+        hendelse: BesluttBehandlingHendelse,
+        context: MessageContext,
+    )
+
+    fun behandle(
+        hendelse: SendTilbakeHendelse,
         context: MessageContext,
     )
 }

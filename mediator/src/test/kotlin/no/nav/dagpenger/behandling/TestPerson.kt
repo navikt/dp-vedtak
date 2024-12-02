@@ -35,7 +35,7 @@ import java.time.LocalDateTime
 import java.time.YearMonth
 
 class TestPerson(
-    private val ident: String,
+    internal val ident: String,
     private val rapid: TestRapid,
     internal val søknadsdato: LocalDate = 5.mai(2021),
     val alder: Int = 30,
@@ -47,7 +47,7 @@ class TestPerson(
 ) {
     val inntektId = "01HQTE3GBWCSVYH6S436DYFREN"
     internal val søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"
-    private val behandlingId by lazy { rapid.inspektør.field(1, "behandlingId").asText() }
+    internal val behandlingId by lazy { rapid.inspektør.field(1, "behandlingId").asText() }
 
     fun sendSøknad() = rapid.sendTestMessage(søknadInnsendt(), ident)
 
@@ -175,20 +175,6 @@ class TestPerson(
             JsonMessage
                 .newMessage(
                     "oppgave_returnert_til_saksbehandling",
-                    mapOf(
-                        "behandlingId" to behandlingId,
-                        "ident" to ident,
-                    ),
-                ).toJson(),
-            ident,
-        )
-    }
-
-    fun godkjennForslagTilVedtak() {
-        rapid.sendTestMessage(
-            JsonMessage
-                .newMessage(
-                    "godkjenn_behandling",
                     mapOf(
                         "behandlingId" to behandlingId,
                         "ident" to ident,

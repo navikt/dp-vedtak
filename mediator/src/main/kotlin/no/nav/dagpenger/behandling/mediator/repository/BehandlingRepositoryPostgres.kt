@@ -4,8 +4,10 @@ import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
+import no.nav.dagpenger.behandling.modell.Arbeidssteg
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse
 import java.util.UUID
 
@@ -56,10 +58,38 @@ class BehandlingRepositoryPostgres(
                         tilstand = Behandling.TilstandType.valueOf(row.string("tilstand")),
                         sistEndretTilstand = row.localDateTime("sist_endret_tilstand"),
                         avklaringer = hentAvklaringer(behandlingId),
+                        godkjent = session.hentArbeidssteg(behandlingId, "godkjent"),
+                        besluttet = session.hentArbeidssteg(behandlingId, "besluttet"),
                     )
                 }.asSingle,
             )
         }
+
+    private fun Session.hentArbeidssteg(
+        behandlingId: UUID,
+        steg: String,
+    ) = this.run(
+        queryOf(
+            """
+            SELECT * 
+            FROM behandling_arbeidssteg 
+            WHERE behandling_id = :behandling_id
+            AND oppgave = :steg
+            """.trimIndent(),
+            mapOf(
+                "behandling_id" to behandlingId,
+                "steg" to steg,
+            ),
+        ).map { row ->
+            if (row.stringOrNull("utført_av") == null) {
+                return@map null
+            }
+            Arbeidssteg(
+                utførtAv = Saksbehandler(row.string("utført_av")),
+                utført = row.localDateTime("utført"),
+            )
+        }.asSingle,
+    )
 
     private fun Session.hentBasertPåFor(behandlingId: UUID) =
         this.run(
@@ -151,6 +181,36 @@ class BehandlingRepositoryPostgres(
                     mapOf(
                         "behandling_id" to behandling.behandlingId,
                         "melding_id" to behandling.behandler.meldingsreferanseId,
+                    ),
+                ).asUpdate,
+            )
+            tx.run(
+                queryOf(
+                    // language=PostgreSQL
+                    """
+                    INSERT INTO behandling_arbeidssteg(behandling_id, oppgave, utført_av, utført) 
+                    VALUES (:behandling_id, :oppgave, :utfort_av, :utfort) ON CONFLICT (behandling_id, oppgave) DO UPDATE SET utført_av = :utfort_av, utført = :utfort 
+                    """.trimIndent(),
+                    mapOf(
+                        "behandling_id" to behandling.behandlingId,
+                        "oppgave" to "godkjent",
+                        "utfort_av" to behandling.godkjent?.utførtAv?.ident,
+                        "utfort" to behandling.godkjent?.utført,
+                    ),
+                ).asUpdate,
+            )
+            tx.run(
+                queryOf(
+                    // language=PostgreSQL
+                    """
+                    INSERT INTO behandling_arbeidssteg(behandling_id, oppgave, utført_av, utført) 
+                    VALUES (:behandling_id, :oppgave, :utfort_av, :utfort) ON CONFLICT (behandling_id, oppgave) DO UPDATE SET utført_av = :utfort_av, utført = :utfort 
+                    """.trimIndent(),
+                    mapOf(
+                        "behandling_id" to behandling.behandlingId,
+                        "oppgave" to "besluttet",
+                        "utfort_av" to behandling.besluttet?.utførtAv?.ident,
+                        "utfort" to behandling.besluttet?.utført,
                     ),
                 ).asUpdate,
             )

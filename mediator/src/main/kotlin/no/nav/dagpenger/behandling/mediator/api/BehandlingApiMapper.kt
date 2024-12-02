@@ -49,6 +49,8 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
                     Behandling.TilstandType.Avbrutt -> BehandlingDTO.Tilstand.Avbrutt
                     Behandling.TilstandType.Ferdig -> BehandlingDTO.Tilstand.Ferdig
                     Behandling.TilstandType.Redigert -> BehandlingDTO.Tilstand.Redigert
+                    Behandling.TilstandType.Godkjenning -> BehandlingDTO.Tilstand.Godkjenning
+                    Behandling.TilstandType.Kontroll -> BehandlingDTO.Tilstand.Kontroll
                 },
             opplysning =
                 this.opplysninger().finnAlle().map { opplysning ->
@@ -108,7 +110,7 @@ internal fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
             this.kilde?.let {
                 val registrert = it.registrert
                 when (it) {
-                    is Saksbehandlerkilde -> OpplysningskildeDTO("Saksbehandler", ident = it.ident, registrert = registrert)
+                    is Saksbehandlerkilde -> OpplysningskildeDTO("Saksbehandler", ident = it.saksbehandler.ident, registrert = registrert)
                     is Systemkilde -> OpplysningskildeDTO("System", meldingId = it.meldingsreferanseId, registrert = registrert)
                 }
             },

@@ -11,13 +11,16 @@ import no.nav.dagpenger.behandling.modell.PersonObservatør.PersonEvent
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.EksternId
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.LåsHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.LåsOppHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Informasjonsbehov
@@ -25,7 +28,7 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
-import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.regel.Regel
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.uuid.UUIDv7
@@ -33,11 +36,23 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 
+data class Arbeidssteg(
+    val utførtAv: Saksbehandler,
+    val utført: LocalDateTime = LocalDateTime.now(),
+)
+
+enum class Oppgave {
+    Godkjent,
+    Besluttet,
+}
+
 class Behandling private constructor(
     val behandlingId: UUID,
     val behandler: StartHendelse,
     gjeldendeOpplysninger: Opplysninger,
     val basertPå: List<Behandling> = emptyList(),
+    private var _godkjent: Arbeidssteg? = null,
+    private var _besluttet: Arbeidssteg? = null,
     private var tilstand: BehandlingTilstand,
     avklaringer: List<Avklaring>,
 ) : Aktivitetskontekst,
@@ -46,7 +61,17 @@ class Behandling private constructor(
         behandler: StartHendelse,
         opplysninger: List<Opplysning<*>>,
         basertPå: List<Behandling> = emptyList(),
-    ) : this(UUIDv7.ny(), behandler, Opplysninger(opplysninger), basertPå, UnderOpprettelse(LocalDateTime.now()), emptyList())
+    ) : this(
+        behandlingId = UUIDv7.ny(),
+        behandler = behandler,
+        gjeldendeOpplysninger = Opplysninger(opplysninger),
+        basertPå = basertPå,
+        tilstand = UnderOpprettelse(LocalDateTime.now()),
+        avklaringer = emptyList(),
+    )
+
+    val godkjent get() = _godkjent
+    val besluttet get() = _besluttet
 
     init {
         require(basertPå.all { it.tilstand is Ferdig }) {
@@ -77,7 +102,7 @@ class Behandling private constructor(
 
     fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger.forDato(behandler.prøvingsdato(opplysninger)))
 
-    fun kreverTotrinnskontroll() = behandler.kreverTotrinnskontroll(aktiveAvklaringer())
+    fun kreverTotrinnskontroll() = behandler.kreverTotrinnskontroll(opplysninger)
 
     companion object {
         fun rehydrer(
@@ -88,13 +113,17 @@ class Behandling private constructor(
             tilstand: TilstandType,
             sistEndretTilstand: LocalDateTime,
             avklaringer: List<Avklaring>,
+            godkjent: Arbeidssteg? = null,
+            besluttet: Arbeidssteg? = null,
         ) = Behandling(
-            behandlingId,
-            behandler,
-            gjeldendeOpplysninger,
-            basertPå,
-            fraType(tilstand, sistEndretTilstand),
-            avklaringer,
+            behandlingId = behandlingId,
+            behandler = behandler,
+            gjeldendeOpplysninger = gjeldendeOpplysninger,
+            basertPå = basertPå,
+            tilstand = fraType(tilstand, sistEndretTilstand),
+            avklaringer = avklaringer,
+            _godkjent = godkjent,
+            _besluttet = besluttet,
         )
 
         fun List<Behandling>.finn(behandlingId: UUID) =
@@ -156,6 +185,21 @@ class Behandling private constructor(
         tilstand.håndter(this, hendelse)
     }
 
+    override fun håndter(hendelse: GodkjennBehandlingHendelse) {
+        hendelse.kontekst(this)
+        tilstand.håndter(this, hendelse)
+    }
+
+    override fun håndter(hendelse: BesluttBehandlingHendelse) {
+        hendelse.kontekst(this)
+        tilstand.håndter(this, hendelse)
+    }
+
+    override fun håndter(hendelse: SendTilbakeHendelse) {
+        hendelse.kontekst(this)
+        tilstand.håndter(this, hendelse)
+    }
+
     fun registrer(observatør: BehandlingObservatør) {
         observatører.add(observatør)
     }
@@ -181,6 +225,8 @@ class Behandling private constructor(
         Avbrutt,
         Ferdig,
         Redigert,
+        Godkjenning,
+        Kontroll,
     }
 
     private sealed interface BehandlingTilstand : Aktivitetskontekst {
@@ -201,6 +247,8 @@ class Behandling private constructor(
                 TilstandType.Avbrutt -> Avbrutt(opprettet)
                 TilstandType.Ferdig -> Ferdig(opprettet)
                 TilstandType.Redigert -> Redigert(opprettet)
+                TilstandType.Godkjenning -> Godkjenning(opprettet)
+                TilstandType.Kontroll -> Kontroll(opprettet)
             }
         }
 
@@ -281,6 +329,27 @@ class Behandling private constructor(
             hendelse.info("Behandlingen mottok påminnelse, men tilstanden støtter ikke dette")
         }
 
+        fun håndter(
+            behandling: Behandling,
+            hendelse: GodkjennBehandlingHendelse,
+        ) {
+            hendelse.info("Behandlingen skal godkjennes, men tilstanden støtter ikke dette")
+        }
+
+        fun håndter(
+            behandling: Behandling,
+            hendelse: BesluttBehandlingHendelse,
+        ) {
+            hendelse.info("Behandlingen skal besluttes, men tilstanden støtter ikke dette")
+        }
+
+        fun håndter(
+            behandling: Behandling,
+            hendelse: SendTilbakeHendelse,
+        ) {
+            hendelse.info("Behandlingen skal sendest tilbake fra totrinnskontroll, men tilstanden støtter ikke dette")
+        }
+
         fun leaving(
             behandling: Behandling,
             hendelse: PersonHendelse,
@@ -334,7 +403,7 @@ class Behandling private constructor(
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
-                behandling.tilstand(ForslagTilVedtak(), hendelse)
+                behandling.brut001(hendelse)
             }
         }
 
@@ -390,15 +459,7 @@ class Behandling private constructor(
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
-                if (behandling.aktiveAvklaringer().isEmpty()) {
-                    hendelse.info("Har ingen aktive avklaringer, går videre til vedtak.")
-                    behandling.tilstand(Ferdig(), hendelse)
-                    return
-                }
-
-                // Her vet vi at det skal være avslag på grunn av minste arbeidsinntekt.
-                hendelse.info("Har aktive avklaringer, går videre til forslag til vedtak.")
-                behandling.tilstand(ForslagTilVedtak(), hendelse)
+                behandling.brut001(hendelse)
             }
         }
 
@@ -475,7 +536,7 @@ class Behandling private constructor(
                 // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
             }
 
-            behandling.tilstand(Ferdig(), hendelse)
+            behandling.brut001(hendelse)
         }
 
         override fun håndter(
@@ -494,20 +555,7 @@ class Behandling private constructor(
                 )
             }
 
-            if (behandling.aktiveAvklaringer().isEmpty()) {
-                if (behandling.opplysninger.finnAlle().any { it.kilde is Saksbehandlerkilde }) {
-                    hendelse.info(
-                        """Har ingen aktive avklaringer, men saksbehandler har lagt til opplysninger, 
-                        |så vi kan ikke automatisk fatte vedtak
-                        """.trimMargin(),
-                    )
-                    return
-                }
-
-                hendelse.info("Har ingen aktive avklaringer, går videre til vedtak")
-                behandling.tilstand(Ferdig(), hendelse)
-                return
-            }
+            behandling.brut001(hendelse)
         }
 
         override fun håndter(
@@ -559,7 +607,7 @@ class Behandling private constructor(
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
-                behandling.tilstand(ForslagTilVedtak(), hendelse)
+                behandling.brut001(hendelse)
             }
         }
 
@@ -585,7 +633,7 @@ class Behandling private constructor(
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
-                behandling.tilstand(ForslagTilVedtak(), hendelse)
+                behandling.brut001(hendelse)
             }
         }
 
@@ -667,15 +715,8 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.info("Forslag til vedtak godkjent")
-            // TODO: Hva mer gjør vi når vi har godkjent forslaget?
-            // Sjekke aksjonspunkter/varsel/hypoteser?
-            if (behandling.opplysninger.finnAlle().any { it is Hypotese<*> }) {
-                // TODO: Vi bør sannsynligvis gjøre dette
-                // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
-            }
 
-            // todo : Skulle man ha kvittert ut totrinnskontroll her?
-            behandling.tilstand(Ferdig(), hendelse)
+            behandling.brut001(hendelse)
         }
 
         override fun håndter(
@@ -742,6 +783,109 @@ class Behandling private constructor(
         }
     }
 
+    private class Godkjenning(
+        override val opprettet: LocalDateTime = LocalDateTime.now(),
+    ) : BehandlingTilstand {
+        override val type = TilstandType.Godkjenning
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: GodkjennBehandlingHendelse,
+        ) {
+            behandling._godkjent = Arbeidssteg(hendelse.godkjentAv)
+            behandling.tilstand(Kontroll(), hendelse)
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: OpplysningSvarHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Fikk svar på opplysning i ${this.type.name}.")
+
+            hendelse.opplysninger.forEach { opplysning ->
+                hendelse.info("Mottok svar på opplysning om ${opplysning.opplysningstype}")
+                opplysning.leggTil(behandling.opplysninger)
+            }
+
+            behandling.tilstand(Redigert(), hendelse)
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvbrytBehandlingHendelse,
+        ): Unit = throw IllegalStateException("Kan ikke avbryte en låst behandling")
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvklaringIkkeRelevantHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er låst, ignorerer avklaringer")
+        }
+    }
+
+    private class Kontroll(
+        override val opprettet: LocalDateTime = LocalDateTime.now(),
+    ) : BehandlingTilstand {
+        override val type = TilstandType.Kontroll
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: BesluttBehandlingHendelse,
+        ) {
+            if (behandling.godkjent?.utførtAv == hendelse.besluttetAv) {
+                throw IllegalArgumentException("Beslutter kan ikke være samme som saksbehandler")
+            }
+
+            behandling._besluttet = Arbeidssteg(hendelse.besluttetAv)
+            behandling.tilstand(Ferdig(), hendelse)
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: SendTilbakeHendelse,
+        ) {
+            behandling._godkjent = null
+            behandling.tilstand(Godkjenning(), hendelse)
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvbrytBehandlingHendelse,
+        ): Unit = throw IllegalStateException("Kan ikke avbryte en låst behandling")
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: AvklaringIkkeRelevantHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er låst, ignorerer avklaringer")
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: OpplysningSvarHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Behandlingen er låst, ignorerer opplysningssvar")
+        }
+    }
+
+    // Behandlingen er ferdig og vi må rute til enten ferdig, forslag, eller godkjenning
+    // TODO: Lag et vakrere navn
+    private fun brut001(hendelse: PersonHendelse) {
+        if (this.aktiveAvklaringer().isNotEmpty()) {
+            return tilstand(ForslagTilVedtak(), hendelse)
+        }
+
+        if (!behandler.kreverTotrinnskontroll(opplysninger)) {
+            return tilstand(Ferdig(), hendelse)
+        }
+
+        return tilstand(Godkjenning(), hendelse)
+    }
+
     private fun tilstand(
         nyTilstand: BehandlingTilstand,
         hendelse: PersonHendelse,
@@ -766,6 +910,8 @@ class Behandling private constructor(
                 behandlingAv = behandler,
                 opplysninger = opplysninger,
                 automatiskBehandlet = erAutomatiskBehandlet(),
+                godkjent = godkjent,
+                besluttet = besluttet,
             )
 
         observatører.forEach { it.ferdig(event) }
@@ -792,6 +938,8 @@ interface BehandlingObservatør {
         val behandlingAv: StartHendelse,
         val opplysninger: LesbarOpplysninger,
         val automatiskBehandlet: Boolean,
+        val godkjent: Arbeidssteg? = null,
+        val besluttet: Arbeidssteg? = null,
     ) : PersonEvent()
 
     data class BehandlingEndretTilstand(

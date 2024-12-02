@@ -10,12 +10,15 @@ import no.nav.dagpenger.behandling.modell.PersonObservatør.PersonEvent
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringIkkeRelevantHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.LåsHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.LåsOppHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 
 class Person(
@@ -99,6 +102,24 @@ class Person(
     }
 
     override fun håndter(hendelse: PåminnelseHendelse) {
+        hendelse.leggTilKontekst(this)
+        val behandling = behandlinger.finn(hendelse.behandlingId)
+        behandling.håndter(hendelse)
+    }
+
+    override fun håndter(hendelse: GodkjennBehandlingHendelse) {
+        hendelse.leggTilKontekst(this)
+        val behandling = behandlinger.finn(hendelse.behandlingId)
+        behandling.håndter(hendelse)
+    }
+
+    override fun håndter(hendelse: BesluttBehandlingHendelse) {
+        hendelse.leggTilKontekst(this)
+        val behandling = behandlinger.finn(hendelse.behandlingId)
+        behandling.håndter(hendelse)
+    }
+
+    override fun håndter(hendelse: SendTilbakeHendelse) {
         hendelse.leggTilKontekst(this)
         val behandling = behandlinger.finn(hendelse.behandlingId)
         behandling.håndter(hendelse)

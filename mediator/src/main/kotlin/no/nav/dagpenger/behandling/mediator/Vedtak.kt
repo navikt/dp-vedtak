@@ -1,7 +1,9 @@
 package no.nav.dagpenger.behandling.mediator
 
 import no.nav.dagpenger.behandling.api.models.BarnDTO
+import no.nav.dagpenger.behandling.api.models.BehandletAvDTO
 import no.nav.dagpenger.behandling.api.models.KvoteDTO
+import no.nav.dagpenger.behandling.api.models.SaksbehandlerDTO
 import no.nav.dagpenger.behandling.api.models.SamordningDTO
 import no.nav.dagpenger.behandling.api.models.VedtakDTO
 import no.nav.dagpenger.behandling.api.models.VedtakFastsattDTO
@@ -11,6 +13,7 @@ import no.nav.dagpenger.behandling.api.models.VedtakFastsattSatsDTO
 import no.nav.dagpenger.behandling.api.models.VedtakGjenstEndeDTO
 import no.nav.dagpenger.behandling.api.models.VilkaarDTO
 import no.nav.dagpenger.behandling.mediator.api.tilOpplysningDTO
+import no.nav.dagpenger.behandling.modell.Arbeidssteg
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.hendelser.EksternId
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
@@ -95,6 +98,8 @@ fun lagVedtak(
     søknadId: EksternId<*>,
     opplysninger: LesbarOpplysninger,
     automatisk: Boolean,
+    godkjentAv: Arbeidssteg? = null,
+    besluttetAv: Arbeidssteg? = null,
 ): VedtakDTO {
     val vilkår =
         opplysninger
@@ -104,53 +109,7 @@ fun lagVedtak(
             .map { it.tilVilkårDTO() }
 
     val utfall = vilkår.all { it.status == VilkaarDTO.Status.Oppfylt }
-    val fastsatt =
-        when (utfall) {
-            true ->
-                VedtakFastsattDTO(
-                    utfall = true,
-                    grunnlag =
-                        VedtakFastsattGrunnlagDTO(
-                            opplysninger
-                                .finnOpplysning(Dagpengegrunnlag.grunnlag)
-                                .verdi.verdien
-                                .toInt(),
-                        ),
-                    fastsattVanligArbeidstid =
-                        VedtakFastsattFastsattVanligArbeidstidDTO(
-                            vanligArbeidstidPerUke = opplysninger.finnOpplysning(fastsattVanligArbeidstid).verdi.toBigDecimal(),
-                            nyArbeidstidPerUke = opplysninger.finnOpplysning(nyArbeidstid).verdi.toBigDecimal(),
-                        ),
-                    sats =
-                        VedtakFastsattSatsDTO(
-                            dagsatsMedBarnetillegg =
-                                opplysninger
-                                    .finnOpplysning(dagsatsEtterSamordningMedBarnetillegg)
-                                    .verdi.verdien
-                                    .toInt(),
-                            barn =
-                                opplysninger.finnOpplysning(barn).verdi.map {
-                                    BarnDTO(it.fødselsdato, it.kvalifiserer)
-                                },
-                        ),
-                    samordning = opplysninger.samordninger(),
-                    kvoter =
-                        listOf(
-                            KvoteDTO(
-                                "Dagpengeperiode",
-                                type = KvoteDTO.Type.uker,
-                                opplysninger.finnOpplysning(Dagpengeperiode.antallStønadsuker).verdi.toBigDecimal(),
-                            ),
-                            KvoteDTO(
-                                "Egenandel",
-                                type = KvoteDTO.Type.beløp,
-                                opplysninger.finnOpplysning(Egenandel.egenandel).verdi.verdien,
-                            ),
-                        ),
-                )
-
-            false -> VedtakFastsattDTO(utfall = false, samordning = emptyList())
-        }
+    val fastsatt = vedtakFastsattDTO(utfall, opplysninger)
 
     return VedtakDTO(
         behandlingId = behandlingId,
@@ -162,14 +121,77 @@ fun lagVedtak(
         vedtakstidspunkt = LocalDateTime.now(),
         // TODO: Denne må utledes igjen - virkningstidspunkt = opplysninger.finnOpplysning(virkningstidspunkt).verdi,
         virkningsdato = opplysninger.finnOpplysning(prøvingsdato).verdi,
-        // TODO("Vi må få med oss noe greier om saksbehandler og beslutter"),
-        behandletAv = emptyList(),
+        behandletAv =
+            listOfNotNull(
+                godkjentAv?.let {
+                    BehandletAvDTO(
+                        BehandletAvDTO.Rolle.saksbehandler,
+                        SaksbehandlerDTO(it.utførtAv.ident),
+                    )
+                },
+                besluttetAv?.let {
+                    BehandletAvDTO(
+                        BehandletAvDTO.Rolle.beslutter,
+                        SaksbehandlerDTO(it.utførtAv.ident),
+                    )
+                },
+            ),
         vilkår = vilkår,
         fastsatt = fastsatt,
         gjenstående = VedtakGjenstEndeDTO(),
         utbetalinger = emptyList(),
         opplysninger = opplysninger.finnAlle().map { it.tilOpplysningDTO() },
     )
+}
+
+private fun vedtakFastsattDTO(
+    utfall: Boolean,
+    opplysninger: LesbarOpplysninger,
+) = when (utfall) {
+    true ->
+        VedtakFastsattDTO(
+            utfall = true,
+            grunnlag =
+                VedtakFastsattGrunnlagDTO(
+                    opplysninger
+                        .finnOpplysning(Dagpengegrunnlag.grunnlag)
+                        .verdi.verdien
+                        .toInt(),
+                ),
+            fastsattVanligArbeidstid =
+                VedtakFastsattFastsattVanligArbeidstidDTO(
+                    vanligArbeidstidPerUke = opplysninger.finnOpplysning(fastsattVanligArbeidstid).verdi.toBigDecimal(),
+                    nyArbeidstidPerUke = opplysninger.finnOpplysning(nyArbeidstid).verdi.toBigDecimal(),
+                ),
+            sats =
+                VedtakFastsattSatsDTO(
+                    dagsatsMedBarnetillegg =
+                        opplysninger
+                            .finnOpplysning(dagsatsEtterSamordningMedBarnetillegg)
+                            .verdi.verdien
+                            .toInt(),
+                    barn =
+                        opplysninger.finnOpplysning(barn).verdi.map {
+                            BarnDTO(it.fødselsdato, it.kvalifiserer)
+                        },
+                ),
+            samordning = opplysninger.samordninger(),
+            kvoter =
+                listOf(
+                    KvoteDTO(
+                        "Dagpengeperiode",
+                        type = KvoteDTO.Type.uker,
+                        opplysninger.finnOpplysning(Dagpengeperiode.antallStønadsuker).verdi.toBigDecimal(),
+                    ),
+                    KvoteDTO(
+                        "Egenandel",
+                        type = KvoteDTO.Type.beløp,
+                        opplysninger.finnOpplysning(Egenandel.egenandel).verdi.verdien,
+                    ),
+                ),
+        )
+
+    false -> VedtakFastsattDTO(utfall = false, samordning = emptyList())
 }
 
 private fun Opplysning<Boolean>.tilVilkårDTO(): VilkaarDTO =

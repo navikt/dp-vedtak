@@ -15,6 +15,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Test
@@ -155,7 +156,7 @@ class KontrollpunktTest {
 
         // Denne avklaringen skal ikke kunne kvitteres ut, den krever endring
         shouldThrow<IllegalArgumentException> {
-            ding.avklaringer.first().kvitter(Saksbehandlerkilde(UUIDv7.ny(), "Z123456"), "begrunnelse")
+            ding.avklaringer.first().kvitter(Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("Z123456")), "begrunnelse")
         }
 
         // Nå skal det ikke være avklaringer som må avklares

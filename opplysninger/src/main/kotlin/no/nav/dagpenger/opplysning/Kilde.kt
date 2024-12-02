@@ -22,8 +22,18 @@ class Systemkilde(
 
 class Saksbehandlerkilde(
     meldingsreferanseId: UUID,
-    val ident: String,
+    val saksbehandler: Saksbehandler,
     opprettet: LocalDateTime = LocalDateTime.now(),
     id: UUID = UUIDv7.ny(),
     registrert: LocalDateTime = LocalDateTime.now(),
-) : Kilde(meldingsreferanseId, id, registrert, opprettet)
+) : Kilde(meldingsreferanseId, id, registrert, opprettet) {
+    @Deprecated("Bruk constructor med Saksbehandler")
+    constructor(
+        meldingsreferanseId: UUID,
+        saksbehandler: String,
+    ) : this(meldingsreferanseId, Saksbehandler(saksbehandler))
+}
+
+data class Saksbehandler(
+    val ident: String,
+)

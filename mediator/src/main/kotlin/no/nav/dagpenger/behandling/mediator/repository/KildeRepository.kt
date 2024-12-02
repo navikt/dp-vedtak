@@ -5,6 +5,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.opplysning.Kilde
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
 import java.util.UUID
@@ -53,7 +54,7 @@ internal class KildeRepository {
                             Saksbehandlerkilde::class.java.simpleName ->
                                 Saksbehandlerkilde(
                                     row.uuid("saksbehandler_melding_id"),
-                                    row.string("saksbehandler_ident"),
+                                    Saksbehandler(row.string("saksbehandler_ident")),
                                     opprettet,
                                     kildeId,
                                     registrert,
@@ -125,7 +126,7 @@ internal class KildeRepository {
             kilder.map { kilde ->
                 mapOf(
                     "kildeId" to kilde.id,
-                    "ident" to kilde.ident,
+                    "ident" to kilde.saksbehandler.ident,
                     "meldingId" to kilde.meldingsreferanseId,
                 )
             },

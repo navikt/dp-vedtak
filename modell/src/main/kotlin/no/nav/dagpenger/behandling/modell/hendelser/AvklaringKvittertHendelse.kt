@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.modell.hendelser
 
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import java.time.LocalDateTime
 import java.util.UUID
@@ -24,6 +25,6 @@ class AvklaringKvittertHendelse(
             meldingsreferanseId = meldingsreferanseId,
             opprettet = opprettet,
             registrert = LocalDateTime.now(),
-            ident = saksbehandler,
+            saksbehandler = Saksbehandler(saksbehandler),
         )
 }

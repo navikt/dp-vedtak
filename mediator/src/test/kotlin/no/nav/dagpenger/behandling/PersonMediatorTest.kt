@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDate
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
+import com.github.navikt.tbd_libs.rapids_and_rivers.toUUID
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -28,6 +29,7 @@ import no.nav.dagpenger.behandling.mediator.repository.AvklaringKafkaObservatør
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
+import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderOpprettelse
@@ -35,6 +37,10 @@ import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEndret
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.PersonObservatør
+import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.regel.Avklaringspunkter
 import no.nav.dagpenger.regel.Behov.AndreØkonomiskeYtelser
@@ -63,18 +69,19 @@ import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
+import no.nav.dagpenger.uuid.UUIDv7
 import org.approvaltests.Approvals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Period
 
 internal class PersonMediatorTest {
     private val rapid = TestRapid()
     private val ident = "11109233444"
-
     private val personRepository =
         PersonRepositoryPostgres(
             BehandlingRepositoryPostgres(
@@ -84,6 +91,7 @@ internal class PersonMediatorTest {
         )
 
     private val testObservatør = TestObservatør()
+
     private val hendelseMediator =
         HendelseMediator(
             personRepository = personRepository,
@@ -136,6 +144,7 @@ internal class PersonMediatorTest {
                     rapid,
                     søknadsdato = 6.mai(2021),
                 )
+            val saksbehandler = TestSaksbehandler(testPerson, hendelseMediator, personRepository, rapid)
             løsBehandlingFramTilFerdig(testPerson)
 
             personRepository.hent(ident.tilPersonIdentfikator()).also {
@@ -146,19 +155,7 @@ internal class PersonMediatorTest {
 
             godkjennOpplysninger("avslag")
 
-            listOf(
-                Avklaringspunkter.EØSArbeid,
-                Avklaringspunkter.HattLukkedeSakerSiste8Uker,
-                Avklaringspunkter.InntektNesteKalendermåned,
-                Avklaringspunkter.JobbetUtenforNorge,
-                Avklaringspunkter.MuligGjenopptak,
-                Avklaringspunkter.SvangerskapsrelaterteSykepenger,
-            ).forEach { avklaringkode: Avklaringkode ->
-                rapid.harAvklaring(avklaringkode) {
-                    val avklaringId = medTekst("avklaringId")!!
-                    testPerson.markerAvklaringIkkeRelevant(avklaringId, avklaringkode.kode)
-                }
-            }
+            saksbehandler.lukkAlleAvklaringer()
 
             val person =
                 personRepository.hent(ident.tilPersonIdentfikator()).also {
@@ -240,6 +237,7 @@ internal class PersonMediatorTest {
                     søknadsdato = 6.mai(2021),
                     InntektSiste12Mnd = 500000,
                 )
+            val saksbehandler = TestSaksbehandler(testPerson, hendelseMediator, personRepository, rapid)
             skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilFerdig(testPerson)
 
@@ -291,9 +289,7 @@ internal class PersonMediatorTest {
             }
 
             // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
-            rapid.inspektør.size shouldBe 21
-
-            rapid.harAvklaring(Avklaringspunkter.Totrinnskontroll) {}
+            rapid.inspektør.size shouldBe 20
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe true
@@ -304,8 +300,11 @@ internal class PersonMediatorTest {
                 it.behandlinger().first().kreverTotrinnskontroll() shouldBe true
             }
 
-            testPerson.sendTilKontroll()
-            testPerson.godkjennForslagTilVedtak()
+            // Saksbehandler lukker alle avklaringer
+            saksbehandler.lukkAlleAvklaringer()
+
+            saksbehandler.godkjenn()
+            saksbehandler.beslutt()
 
             rapid.harHendelse("vedtak_fattet") {
                 medFastsattelser {
@@ -315,12 +314,12 @@ internal class PersonMediatorTest {
                     sats shouldBeGreaterThan 0
                     samordning.shouldBeEmpty()
                 }
+                medNode("behandletAv")
+                    .map {
+                        it["behandler"]["ident"].asText()
+                    }.shouldContainExactlyInAnyOrder("NAV987987", "NAV123123")
             }
         }
-
-    private fun godkjennOpplysninger(fase: String) {
-        Approvals.verify(aktiveOpplysninger(), Approvals.NAMES.withParameters(fase))
-    }
 
     @Test
     fun `Behandling sendt til kontroll`() =
@@ -331,6 +330,13 @@ internal class PersonMediatorTest {
                     rapid,
                     søknadsdato = 6.mai(2021),
                     InntektSiste12Mnd = 500000,
+                )
+            val saksbehandler =
+                TestSaksbehandler(
+                    testPerson,
+                    hendelseMediator,
+                    personRepository,
+                    rapid,
                 )
             skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilFerdig(testPerson)
@@ -352,35 +358,22 @@ internal class PersonMediatorTest {
                 medBoolsk("utfall") shouldBe true
             }
 
-            testPerson.sendTilKontroll()
+            saksbehandler.lukkAlleAvklaringer()
+
+            saksbehandler.godkjenn()
 
             rapid.harHendelse("behandling_endret_tilstand") {
-                medTekst("gjeldendeTilstand") shouldBe "Låst"
+                medTekst("gjeldendeTilstand") shouldBe "Kontroll"
             }
 
             shouldThrow<IllegalStateException> { testPerson.avbrytBehandling() }
 
-            testPerson.returnerTilSaksbehandler()
+            saksbehandler.sendTilbake()
 
-            testPerson.sendTilKontroll()
-            testPerson.godkjennForslagTilVedtak()
+            saksbehandler.godkjenn()
+            saksbehandler.beslutt()
 
             rapid.harHendelse("vedtak_fattet")
-        }
-
-    private fun antallOpplysninger() =
-        personRepository.hent(ident.tilPersonIdentfikator())?.let {
-            it.behandlinger().size shouldBe 1
-            it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size
-        }
-
-    private fun aktiveOpplysninger() =
-        personRepository.hent(ident.tilPersonIdentfikator())?.let {
-            it.behandlinger().size shouldBe 1
-            it
-                .behandlinger()
-                .flatMap { behandling -> behandling.opplysninger().finnAlle() }
-                .joinToString("\n") { it.opplysningstype.navn }
         }
 
     @Test
@@ -555,12 +548,17 @@ internal class PersonMediatorTest {
             )
             personRepository.hent(ident.tilPersonIdentfikator()).also { person ->
                 person.shouldNotBeNull()
-                person.behandlinger().first().opplysninger().finnOpplysning(TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid).let {
-                    it.verdi shouldBe 40.0
-                    it.kilde.shouldNotBeNull()
-                    it.kilde!!::class shouldBe Saksbehandlerkilde::class
-                    (it.kilde!! as Saksbehandlerkilde).ident shouldBe "123"
-                }
+                person
+                    .behandlinger()
+                    .first()
+                    .opplysninger()
+                    .finnOpplysning(TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid)
+                    .let {
+                        it.verdi shouldBe 40.0
+                        it.kilde.shouldNotBeNull()
+                        it.kilde!!::class shouldBe Saksbehandlerkilde::class
+                        (it.kilde!! as Saksbehandlerkilde).saksbehandler shouldBe "123"
+                    }
             }
         }
     }
@@ -672,6 +670,21 @@ internal class PersonMediatorTest {
         }
     }
 
+    @Test
+    fun `publiserer tilstandsendinger`() =
+        withMigratedDb {
+            val person = TestPerson(ident, rapid)
+
+            person.sendSøknad()
+
+            rapid.inspektør.message(0).run {
+                this["@event_name"].asText() shouldBe "behandling_endret_tilstand"
+                this["ident"].asText() shouldBe ident
+                this["forrigeTilstand"].asText() shouldBe UnderOpprettelse.name
+                Duration.parse(this["tidBrukt"].asText()).shouldBeGreaterThan(Duration.ZERO)
+            }
+        }
+
     enum class Behandlingslengde {
         Alder,
         Minsteinntekt,
@@ -750,28 +763,93 @@ internal class PersonMediatorTest {
         testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
     }
 
+    private fun antallOpplysninger() =
+        personRepository.hent(ident.tilPersonIdentfikator())?.let {
+            it.behandlinger().size shouldBe 1
+            it.behandlinger().flatMap { behandling -> behandling.opplysninger().finnAlle() }.size
+        }
+
+    private fun aktiveOpplysninger() =
+        personRepository.hent(ident.tilPersonIdentfikator())?.let {
+            it.behandlinger().size shouldBe 1
+            it
+                .behandlinger()
+                .flatMap { behandling -> behandling.opplysninger().finnAlle() }
+                .joinToString("\n") { it.opplysningstype.navn }
+        }
+
+    private fun godkjennOpplysninger(fase: String) {
+        Approvals.verify(aktiveOpplysninger(), Approvals.NAMES.withParameters(fase))
+    }
+
     private val Person.aktivBehandling get() = this.behandlinger().first()
 
     private val Behandling.aktivAvklaringer get() = this.aktiveAvklaringer()
 
-    @Test
-    fun `publiserer tilstandsendinger`() =
-        withMigratedDb {
-            val person = TestPerson(ident, rapid)
+    private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {
+        val periode =
+            Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned)) + Period.ofMonths(1)
+        withClue("Opptjeningsperiode skal være 3 år") { periode.toTotalMonths() shouldBe måneder }
+    }
 
-            person.sendSøknad()
-
-            rapid.inspektør.message(0).run {
-                this["@event_name"].asText() shouldBe "behandling_endret_tilstand"
-                this["ident"].asText() shouldBe ident
-                this["forrigeTilstand"].asText() shouldBe UnderOpprettelse.name
-                Duration.parse(this["tidBrukt"].asText()).shouldBeGreaterThan(Duration.ZERO)
-            }
+    private class TestSaksbehandler(
+        private val testPerson: TestPerson,
+        private val hendelseMediator: HendelseMediator,
+        private val personRepository: PersonRepository,
+        private val rapid: TestRapid,
+    ) {
+        fun beslutt() {
+            hendelseMediator.behandle(
+                BesluttBehandlingHendelse(
+                    meldingsreferanseId = UUIDv7.ny(),
+                    ident = testPerson.ident,
+                    behandlingId = testPerson.behandlingId.toUUID(),
+                    opprettet = LocalDateTime.now(),
+                    besluttetAv = Saksbehandler("NAV987987"),
+                ),
+                rapid,
+            )
         }
 
-    private fun Meldingsinnhold.opptjeningsperiodeEr(måneder: Int) {
-        val periode = Period.between(medDato(OpptjeningsperiodeFraOgMed), medDato(SisteAvsluttendeKalenderMåned)) + Period.ofMonths(1)
-        withClue("Opptjeningsperiode skal være 3 år") { periode.toTotalMonths() shouldBe måneder }
+        fun godkjenn() {
+            hendelseMediator.behandle(
+                GodkjennBehandlingHendelse(
+                    meldingsreferanseId = UUIDv7.ny(),
+                    ident = testPerson.ident,
+                    behandlingId = testPerson.behandlingId.toUUID(),
+                    opprettet = LocalDateTime.now(),
+                    godkjentAv = Saksbehandler("NAV123123"),
+                ),
+                rapid,
+            )
+        }
+
+        fun sendTilbake() {
+            hendelseMediator.behandle(
+                SendTilbakeHendelse(
+                    meldingsreferanseId = UUIDv7.ny(),
+                    ident = testPerson.ident,
+                    behandlingId = testPerson.behandlingId.toUUID(),
+                    opprettet = LocalDateTime.now(),
+                ),
+                rapid,
+            )
+        }
+
+        fun lukkAlleAvklaringer() {
+            val avklaringer: List<Avklaringkode> =
+                personRepository.hent(testPerson.ident.tilPersonIdentfikator())?.behandlinger()?.first().let { behandling ->
+                    behandling.shouldNotBeNull()
+                    behandling.aktiveAvklaringer().map { it.kode }
+                }
+
+            avklaringer.forEach { avklaringkode: Avklaringkode ->
+                rapid.harAvklaring(avklaringkode) {
+                    val avklaringId = medTekst("avklaringId")!!
+                    testPerson.markerAvklaringIkkeRelevant(avklaringId, avklaringkode.kode)
+                }
+            }
+        }
     }
 
     private class TestObservatør : PersonObservatør {
@@ -825,9 +903,11 @@ private fun TestRapid.harBehov(
         assert(
             sisteMelding["@event_name"].asText() == "behov",
         ) {
-            "Forventet behov '${behov.joinToString {
-                it
-            }}' men siste melding er ikke et behov. Siste melding er ${sisteMelding["@event_name"].asText()}."
+            "Forventet behov '${
+                behov.joinToString {
+                    it
+                }
+            }' men siste melding er ikke et behov. Siste melding er ${sisteMelding["@event_name"].asText()}."
         }
         sisteMelding["@behov"].map { it.asText() } shouldContainAll behov.toList()
     }

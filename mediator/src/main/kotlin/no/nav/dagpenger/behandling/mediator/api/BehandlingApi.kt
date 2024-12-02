@@ -137,6 +137,8 @@ internal fun Application.behandlingApi(
                                 behandling.behandler.eksternId,
                                 behandling.opplysninger(),
                                 behandling.erAutomatiskBehandlet(),
+                                behandling.godkjent,
+                                behandling.besluttet,
                             ),
                         )
                     }
