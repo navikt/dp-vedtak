@@ -75,6 +75,7 @@ internal class ArenaOppgaveMottak(
                 return
             }
 
+            sikkerlogg.info { "Fant behandling for sakId=$sakId og avbryter, pakke=${packet.toJson()}" }
             logger.info {
                 """
                 |(Skal) Publiserer avbrytmelding for ${behandling.behandlingId} i tilstand ${behandling.tilstand}, 
