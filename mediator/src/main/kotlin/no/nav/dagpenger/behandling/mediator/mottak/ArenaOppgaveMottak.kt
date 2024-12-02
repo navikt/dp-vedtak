@@ -75,7 +75,7 @@ internal class ArenaOppgaveMottak(
             val endretAv = packet["after.ENDRET_AV"].asText()
 
             if (endretAv == "ARBLINJE") {
-                logger.info { "Oppgave er opprettet av Arena, ignorerer" }
+                logger.info { "Oppgaven er ikke tildelt en saksbehandler enda, ignorerer" }
                 return
             }
 
