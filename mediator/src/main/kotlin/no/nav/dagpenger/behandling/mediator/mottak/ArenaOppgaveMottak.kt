@@ -89,7 +89,7 @@ internal class ArenaOppgaveMottak(
 
             val avbrytMelding =
                 JsonMessage.newMessage(
-                    "avbryt_behandling",
+                    "avbryt_behandling_BETA",
                     mapOf(
                         "ident" to behandling.ident,
                         "behandlingId" to behandling.behandlingId.toString(),
