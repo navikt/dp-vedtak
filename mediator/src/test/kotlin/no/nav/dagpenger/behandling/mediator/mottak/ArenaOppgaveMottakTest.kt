@@ -97,6 +97,9 @@ class ArenaOppgaveMottakTest {
       "op_ts": "2024-11-05 12:12:46.000000",
       "current_ts": "2024-11-05 12:12:51.325004",
       "pos": "00000003570305543589",
+      "before": {
+        "USERNAME": "$endretAv"
+      },
       "after": {
         "OPPGAVE_LOGG_ID": 238763568,
         "TRANS_ID": "148.27.871874",
@@ -104,7 +107,7 @@ class ArenaOppgaveMottakTest {
         "DESCRIPTION": "ABBA",
         "PRIORITY": 1,
         "DUEDATE": "2024-10-03 00:00:00",
-        "USERNAME": "BDB4416",
+        "USERNAME": "$endretAv",
         "KONTOR": "4416",
         "FYLKESNR": 50,
         "OPPRETTET_DATO": "2024-10-03 09:47:32",
