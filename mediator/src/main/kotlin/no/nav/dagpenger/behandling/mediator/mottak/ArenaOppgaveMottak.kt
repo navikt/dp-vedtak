@@ -66,6 +66,8 @@ internal class ArenaOppgaveMottak(
                 return
             }
 
+            sikkerlogg.info { "Fant behandling for sakId=$sakId, pakke=${packet.toJson()}" }
+
             if (behandling.tilstand in tilstanderSomKanIgnoreres) {
                 logger.info { "Behandling ${behandling.behandlingId} er allerede i tilstand ${behandling.tilstand}, ignorerer oppgave" }
                 return
@@ -79,7 +81,6 @@ internal class ArenaOppgaveMottak(
                 return
             }
 
-            sikkerlogg.info { "Fant behandling for sakId=$sakId og avbryter, pakke=${packet.toJson()}" }
             logger.info {
                 """
                 |(Skal) Publiserer avbrytmelding for ${behandling.behandlingId} i tilstand ${behandling.tilstand}, 
