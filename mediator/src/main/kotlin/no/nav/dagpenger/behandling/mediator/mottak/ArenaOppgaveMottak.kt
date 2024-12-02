@@ -29,6 +29,8 @@ internal class ArenaOppgaveMottak(
                 precondition { it.requireValue("op_type", "U") }
                 validate { it.requireKey("pos") }
                 validate { it.require("op_ts", JsonNode::asArenaDato) }
+                validate { it.require("after.REG_DATO", JsonNode::asArenaDato) }
+                validate { it.require("after.MOD_DATO", JsonNode::asArenaDato) }
                 validate {
                     it.requireKey(
                         "after.SAK_ID",
@@ -37,8 +39,8 @@ internal class ArenaOppgaveMottak(
                         "after.ENDRET_AV",
                     )
                 }
-                validate { it.require("after.REG_DATO", JsonNode::asArenaDato) }
-                validate { it.require("after.MOD_DATO", JsonNode::asArenaDato) }
+                // Ignorer oppgaver som ikke er tildelt benk
+                validate { it.require("after.USERNAME") { username -> !username.isNull } }
             }.register(this)
     }
 
@@ -73,7 +75,12 @@ internal class ArenaOppgaveMottak(
                 return
             }
 
-            logger.info { "(Skal) Publiserer avbrytmelding for ${behandling.behandlingId}, mottok oppgave av type=$beskrivelse" }
+            logger.info {
+                """
+                |(Skal) Publiserer avbrytmelding for ${behandling.behandlingId} i tilstand ${behandling.tilstand}, 
+                |mottok oppgave av type=$beskrivelse
+                """.trimMargin()
+            }
 
             val avbrytMelding =
                 JsonMessage.newMessage(
