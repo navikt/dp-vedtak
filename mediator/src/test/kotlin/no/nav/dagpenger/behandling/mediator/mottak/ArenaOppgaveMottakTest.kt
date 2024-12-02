@@ -77,6 +77,15 @@ class ArenaOppgaveMottakTest {
                 this["ident"].asText() shouldBe "123"
                 this["behandlingId"].asUUID() shouldBe behandlingId
             }
+
+            // Samme melding kommer igjen, men nå er saken avbrutt
+            every {
+                sakRepository.finnBehandling(15102351)
+            } returns SakRepository.Behandling("123", behandlingId, Behandling.TilstandType.Avbrutt)
+
+            rapid.sendTestMessage(meldingJson("ABC2024"))
+
+            rapid.inspektør.size shouldBeExactly 1
         }
     }
 

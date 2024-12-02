@@ -40,7 +40,11 @@ internal class ArenaOppgaveMottak(
                     )
                 }
                 // Ignorer oppgaver som ikke er tildelt benk
-                validate { it.require("after.USERNAME") { username -> !username.isNull } }
+                validate {
+                    it.require(
+                        "after.USERNAME",
+                    ) { if (it.isNull) throw IllegalArgumentException("Oppgaven må være tildelt en benk") }
+                }
             }.register(this)
     }
 
