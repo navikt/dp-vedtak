@@ -131,7 +131,67 @@ paths:
           format: uuid
         description: Behandlingens id
     post:
-      summary: Godkjenn en behandling
+      summary: Send behandlingen til beslutter eller vedtak om det ikke kreves totrinnskontroll
+      security:
+        - azureAd: [ ]
+      tags:
+        - Behandling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentForesporsel'
+      responses:
+        201:
+          description: OK
+        default:
+          description: Feil ved henting av behandlinger
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HttpProblem'
+  /behandling/{behandlingId}/beslutt:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+    post:
+      summary: Beslutt en behandling
+      security:
+        - azureAd: [ ]
+      tags:
+        - Behandling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentForesporsel'
+      responses:
+        201:
+          description: OK
+        default:
+          description: Feil ved henting av behandlinger
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HttpProblem'
+  /behandling/{behandlingId}/send-tilbake:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+    post:
+      summary: Send behandlingen tilbake til saksbehandler
       security:
         - azureAd: [ ]
       tags:

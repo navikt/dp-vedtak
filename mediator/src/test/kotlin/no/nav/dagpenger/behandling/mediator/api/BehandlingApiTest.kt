@@ -41,8 +41,10 @@ import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Saksbehandler
@@ -291,7 +293,7 @@ internal class BehandlingApiTest {
     }
 
     @Test
-    fun `godkjenn behandling gitt behandlingId`() {
+    fun `test overgangene for behandling mellom saksbehandler og beslutter`() {
         medSikretBehandlingApi {
             val behandlingId = person.behandlinger().first().behandlingId
             val response =
@@ -303,7 +305,37 @@ internal class BehandlingApiTest {
             response.status shouldBe HttpStatusCode.Created
             response.bodyAsText().shouldBeEmpty()
             verify {
-                hendelseMediator.behandle(any<ForslagGodkjentHendelse>(), any())
+                hendelseMediator.behandle(any<GodkjennBehandlingHendelse>(), any())
+            }
+
+            // Send tilbake til saksbehandler
+            autentisert(
+                httpMethod = HttpMethod.Post,
+                endepunkt = "/behandling/$behandlingId/send-tilbake",
+                body = """{"ident":"09876543311"}""",
+            ).status shouldBe HttpStatusCode.Created
+            verify {
+                hendelseMediator.behandle(any<SendTilbakeHendelse>(), any())
+            }
+
+            // Godkjenn igjen
+            autentisert(
+                httpMethod = HttpMethod.Post,
+                endepunkt = "/behandling/$behandlingId/godkjenn",
+                body = """{"ident":"09876543311"}""",
+            ).status shouldBe HttpStatusCode.Created
+            verify {
+                hendelseMediator.behandle(any<GodkjennBehandlingHendelse>(), any())
+            }
+
+            // Beslutt
+            autentisert(
+                httpMethod = HttpMethod.Post,
+                endepunkt = "/behandling/$behandlingId/beslutt",
+                body = """{"ident":"09876543311"}""",
+            ).status shouldBe HttpStatusCode.Created
+            verify {
+                hendelseMediator.behandle(any<BesluttBehandlingHendelse>(), any())
             }
         }
     }

@@ -211,8 +211,8 @@ class Behandling private constructor(
         Avbrutt,
         Ferdig,
         Redigert,
-        Godkjenning,
-        Kontroll,
+        TilGodkjenning,
+        TilBeslutning,
     }
 
     private sealed interface BehandlingTilstand : Aktivitetskontekst {
@@ -233,8 +233,8 @@ class Behandling private constructor(
                 TilstandType.Avbrutt -> Avbrutt(opprettet)
                 TilstandType.Ferdig -> Ferdig(opprettet)
                 TilstandType.Redigert -> Redigert(opprettet)
-                TilstandType.Godkjenning -> Godkjenning(opprettet)
-                TilstandType.Kontroll -> Kontroll(opprettet)
+                TilstandType.TilGodkjenning -> TilGodkjenning(opprettet)
+                TilstandType.TilBeslutning -> TilBeslutning(opprettet)
             }
         }
 
@@ -318,23 +318,17 @@ class Behandling private constructor(
         fun håndter(
             behandling: Behandling,
             hendelse: GodkjennBehandlingHendelse,
-        ) {
-            hendelse.info("Behandlingen skal godkjennes, men tilstanden støtter ikke dette")
-        }
+        ): Unit = throw IllegalStateException("Behandlingen skal godkjennes, men tilstanden støtter ikke dette")
 
         fun håndter(
             behandling: Behandling,
             hendelse: BesluttBehandlingHendelse,
-        ) {
-            hendelse.info("Behandlingen skal besluttes, men tilstanden støtter ikke dette")
-        }
+        ): Unit = throw IllegalStateException("Behandlingen skal besluttes, men tilstanden støtter ikke dette")
 
         fun håndter(
             behandling: Behandling,
             hendelse: SendTilbakeHendelse,
-        ) {
-            hendelse.info("Behandlingen skal sendest tilbake fra totrinnskontroll, men tilstanden støtter ikke dette")
-        }
+        ): Unit = throw IllegalStateException("Behandlingen skal sendest tilbake fra totrinnskontroll, men tilstanden støtter ikke dette")
 
         fun leaving(
             behandling: Behandling,
@@ -769,17 +763,31 @@ class Behandling private constructor(
         }
     }
 
-    private class Godkjenning(
+    private class TilGodkjenning(
         override val opprettet: LocalDateTime = LocalDateTime.now(),
     ) : BehandlingTilstand {
-        override val type = TilstandType.Godkjenning
+        override val type = TilstandType.TilGodkjenning
+
+        override fun entering(
+            behandling: Behandling,
+            hendelse: PersonHendelse,
+        ) {
+            hendelse.kontekst(this)
+            if (!behandling.behandler.kreverTotrinnskontroll(behandling.opplysninger)) {
+                hendelse.info("Ble godkjent, men krever ikke totrinnskontroll")
+                behandling.tilstand(Ferdig(), hendelse)
+            }
+
+            hendelse.info("Ble godkjent og krever totrinnskontroll")
+        }
 
         override fun håndter(
             behandling: Behandling,
             hendelse: GodkjennBehandlingHendelse,
         ) {
+            hendelse.kontekst(this)
             behandling.godkjent.utførtAv(hendelse.godkjentAv)
-            behandling.tilstand(Kontroll(), hendelse)
+            behandling.tilstand(TilBeslutning(), hendelse)
         }
 
         override fun håndter(
@@ -811,16 +819,16 @@ class Behandling private constructor(
         }
     }
 
-    private class Kontroll(
+    private class TilBeslutning(
         override val opprettet: LocalDateTime = LocalDateTime.now(),
     ) : BehandlingTilstand {
-        override val type = TilstandType.Kontroll
+        override val type = TilstandType.TilBeslutning
 
         override fun håndter(
             behandling: Behandling,
             hendelse: BesluttBehandlingHendelse,
         ) {
-            // require(behandling._godkjent) { "Behandlingen må godkjennes av saksbehandler før den kan besluttes" }
+            hendelse.kontekst(this)
             if (behandling.godkjent.erUtførtAv(hendelse.besluttetAv)) {
                 throw IllegalArgumentException("Beslutter kan ikke være samme som saksbehandler")
             }
@@ -833,8 +841,9 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: SendTilbakeHendelse,
         ) {
+            hendelse.kontekst(this)
             behandling.godkjent.ikkeUtført()
-            behandling.tilstand(Godkjenning(), hendelse)
+            behandling.tilstand(TilGodkjenning(), hendelse)
         }
 
         override fun håndter(
@@ -870,7 +879,7 @@ class Behandling private constructor(
             return tilstand(Ferdig(), hendelse)
         }
 
-        return tilstand(Godkjenning(), hendelse)
+        return tilstand(TilGodkjenning(), hendelse)
     }
 
     private fun tilstand(

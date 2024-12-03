@@ -37,7 +37,9 @@ import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
-import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.opplysning.BarnDatatype
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
@@ -47,6 +49,7 @@ import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.uuid.UUIDv7
@@ -145,9 +148,47 @@ internal fun Application.behandlingApi(
 
                     post("godkjenn") {
                         val identForespørsel = call.receive<IdentForesporselDTO>()
-                        // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
-                        val hendelse = ForslagGodkjentHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId, LocalDateTime.now())
+                        val hendelse =
+                            GodkjennBehandlingHendelse(
+                                UUIDv7.ny(),
+                                identForespørsel.ident,
+                                call.behandlingId,
+                                Saksbehandler(call.saksbehandlerId()),
+                                LocalDateTime.now(),
+                            )
                         hendelse.info("Godkjente behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+
+                        hendelseMediator.behandle(hendelse, messageContext(identForespørsel.ident))
+
+                        call.respond(HttpStatusCode.Created)
+                    }
+                    post("beslutt") {
+                        val identForespørsel = call.receive<IdentForesporselDTO>()
+                        val hendelse =
+                            BesluttBehandlingHendelse(
+                                UUIDv7.ny(),
+                                identForespørsel.ident,
+                                call.behandlingId,
+                                Saksbehandler(call.saksbehandlerId()),
+                                LocalDateTime.now(),
+                            )
+                        hendelse.info("Besluttet behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+
+                        hendelseMediator.behandle(hendelse, messageContext(identForespørsel.ident))
+
+                        hendelse.harAktiviteter()
+
+                        call.respond(HttpStatusCode.Created)
+                    }
+                    post("send-tilbake") {
+                        val identForespørsel = call.receive<IdentForesporselDTO>()
+                        val hendelse = SendTilbakeHendelse(UUIDv7.ny(), identForespørsel.ident, call.behandlingId, LocalDateTime.now())
+                        hendelse.info(
+                            "Sendte behandling tilbake til saksbehandler",
+                            identForespørsel.ident,
+                            call.saksbehandlerId(),
+                            AuditOperasjon.UPDATE,
+                        )
 
                         hendelseMediator.behandle(hendelse, messageContext(identForespørsel.ident))
 
@@ -156,7 +197,7 @@ internal fun Application.behandlingApi(
 
                     post("avbryt") {
                         val identForespørsel = call.receive<IdentForesporselDTO>()
-                        // TODO: Her må vi virkelig finne ut hva vi skal gjøre. Dette er bare en placeholder
+
                         val hendelse =
                             AvbrytBehandlingHendelse(
                                 UUIDv7.ny(),

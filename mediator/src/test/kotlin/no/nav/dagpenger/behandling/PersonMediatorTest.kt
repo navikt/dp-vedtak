@@ -363,7 +363,7 @@ internal class PersonMediatorTest {
             saksbehandler.godkjenn()
 
             rapid.harHendelse("behandling_endret_tilstand") {
-                medTekst("gjeldendeTilstand") shouldBe "Kontroll"
+                medTekst("gjeldendeTilstand") shouldBe "TilBeslutning"
             }
 
             shouldThrow<IllegalStateException> { testPerson.avbrytBehandling() }
@@ -817,8 +817,8 @@ internal class PersonMediatorTest {
                     meldingsreferanseId = UUIDv7.ny(),
                     ident = testPerson.ident,
                     behandlingId = testPerson.behandlingId.toUUID(),
-                    opprettet = LocalDateTime.now(),
                     godkjentAv = Saksbehandler("NAV123123"),
+                    opprettet = LocalDateTime.now(),
                 ),
                 rapid,
             )

@@ -8,7 +8,7 @@ class GodkjennBehandlingHendelse(
     meldingsreferanseId: UUID,
     ident: String,
     override val behandlingId: UUID,
-    opprettet: LocalDateTime,
     val godkjentAv: Saksbehandler,
+    opprettet: LocalDateTime,
 ) : PersonHendelse(meldingsreferanseId, ident, opprettet),
     BehandlingHendelse
