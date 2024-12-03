@@ -768,9 +768,9 @@ class Behandling private constructor(
     ) : BehandlingTilstand {
         override val type = TilstandType.TilGodkjenning
 
-        override fun entering(
+        override fun håndter(
             behandling: Behandling,
-            hendelse: PersonHendelse,
+            hendelse: GodkjennBehandlingHendelse,
         ) {
             hendelse.kontekst(this)
             if (!behandling.behandler.kreverTotrinnskontroll(behandling.opplysninger)) {
@@ -779,13 +779,7 @@ class Behandling private constructor(
             }
 
             hendelse.info("Ble godkjent og krever totrinnskontroll")
-        }
 
-        override fun håndter(
-            behandling: Behandling,
-            hendelse: GodkjennBehandlingHendelse,
-        ) {
-            hendelse.kontekst(this)
             behandling.godkjent.utførtAv(hendelse.godkjentAv)
             behandling.tilstand(TilBeslutning(), hendelse)
         }
