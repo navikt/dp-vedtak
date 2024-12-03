@@ -699,6 +699,13 @@ components:
           type: number
         grad:
           type: number
+      example:
+        - type: "Sykepenger"
+          beløp: 100
+          grad: 20
+        - type: "Pensjon fra en offentlig tjenestepensjonsordning beløp"
+          beløp: 100
+          grad: 0
 
     Forklaring:
       description: En tynn versjon av regeltre og data som førte til resultatet
