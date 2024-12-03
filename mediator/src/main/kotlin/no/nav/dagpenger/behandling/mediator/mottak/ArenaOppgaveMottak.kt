@@ -68,8 +68,7 @@ internal class ArenaOppgaveMottak(
 
             val behandling = sakRepository.finnBehandling(sakId.toInt())
             if (behandling == null) {
-                logger.warn { "Fant ingen behandling for sakId=$sakId, det er ganske mystisk." }
-                sikkerlogg.info { "Fant ingen behandling for sakId=$sakId, pakke=${packet.toJson()}" }
+                logger.info { "Fant ingen behandling for sakId=$sakId, det er sannsynligvis en oppgaver som har blitt laget i Arena." }
                 return
             }
 
