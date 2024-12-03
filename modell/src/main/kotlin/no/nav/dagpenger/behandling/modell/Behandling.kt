@@ -28,7 +28,6 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
-import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.regel.Regel
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.uuid.UUIDv7
@@ -36,23 +35,13 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 
-data class Arbeidssteg(
-    val utførtAv: Saksbehandler,
-    val utført: LocalDateTime = LocalDateTime.now(),
-)
-
-enum class Oppgave {
-    Godkjent,
-    Besluttet,
-}
-
 class Behandling private constructor(
     val behandlingId: UUID,
     val behandler: StartHendelse,
     gjeldendeOpplysninger: Opplysninger,
     val basertPå: List<Behandling> = emptyList(),
-    private var _godkjent: Arbeidssteg? = null,
-    private var _besluttet: Arbeidssteg? = null,
+    val godkjent: Arbeidssteg = Arbeidssteg(Arbeidssteg.Oppgave.Godkjent),
+    val besluttet: Arbeidssteg = Arbeidssteg(Arbeidssteg.Oppgave.Besluttet),
     private var tilstand: BehandlingTilstand,
     avklaringer: List<Avklaring>,
 ) : Aktivitetskontekst,
@@ -69,9 +58,6 @@ class Behandling private constructor(
         tilstand = UnderOpprettelse(LocalDateTime.now()),
         avklaringer = emptyList(),
     )
-
-    val godkjent get() = _godkjent
-    val besluttet get() = _besluttet
 
     init {
         require(basertPå.all { it.tilstand is Ferdig }) {
@@ -113,8 +99,8 @@ class Behandling private constructor(
             tilstand: TilstandType,
             sistEndretTilstand: LocalDateTime,
             avklaringer: List<Avklaring>,
-            godkjent: Arbeidssteg? = null,
-            besluttet: Arbeidssteg? = null,
+            godkjent: Arbeidssteg = Arbeidssteg(Arbeidssteg.Oppgave.Godkjent),
+            besluttet: Arbeidssteg = Arbeidssteg(Arbeidssteg.Oppgave.Besluttet),
         ) = Behandling(
             behandlingId = behandlingId,
             behandler = behandler,
@@ -122,8 +108,8 @@ class Behandling private constructor(
             basertPå = basertPå,
             tilstand = fraType(tilstand, sistEndretTilstand),
             avklaringer = avklaringer,
-            _godkjent = godkjent,
-            _besluttet = besluttet,
+            godkjent = godkjent,
+            besluttet = besluttet,
         )
 
         fun List<Behandling>.finn(behandlingId: UUID) =
@@ -792,7 +778,7 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: GodkjennBehandlingHendelse,
         ) {
-            behandling._godkjent = Arbeidssteg(hendelse.godkjentAv)
+            behandling.godkjent.utførtAv(hendelse.godkjentAv)
             behandling.tilstand(Kontroll(), hendelse)
         }
 
@@ -834,11 +820,12 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: BesluttBehandlingHendelse,
         ) {
-            if (behandling.godkjent?.utførtAv == hendelse.besluttetAv) {
+            // require(behandling._godkjent) { "Behandlingen må godkjennes av saksbehandler før den kan besluttes" }
+            if (behandling.godkjent.erUtførtAv(hendelse.besluttetAv)) {
                 throw IllegalArgumentException("Beslutter kan ikke være samme som saksbehandler")
             }
 
-            behandling._besluttet = Arbeidssteg(hendelse.besluttetAv)
+            behandling.besluttet.utførtAv(hendelse.besluttetAv)
             behandling.tilstand(Ferdig(), hendelse)
         }
 
@@ -846,7 +833,7 @@ class Behandling private constructor(
             behandling: Behandling,
             hendelse: SendTilbakeHendelse,
         ) {
-            behandling._godkjent = null
+            behandling.godkjent.ikkeUtført()
             behandling.tilstand(Godkjenning(), hendelse)
         }
 
@@ -873,7 +860,7 @@ class Behandling private constructor(
     }
 
     // Behandlingen er ferdig og vi må rute til enten ferdig, forslag, eller godkjenning
-    // TODO: Lag et vakrere navn
+// TODO: Lag et vakrere navn
     private fun brut001(hendelse: PersonHendelse) {
         if (this.aktiveAvklaringer().isNotEmpty()) {
             return tilstand(ForslagTilVedtak(), hendelse)
@@ -938,8 +925,8 @@ interface BehandlingObservatør {
         val behandlingAv: StartHendelse,
         val opplysninger: LesbarOpplysninger,
         val automatiskBehandlet: Boolean,
-        val godkjent: Arbeidssteg? = null,
-        val besluttet: Arbeidssteg? = null,
+        val godkjent: Arbeidssteg,
+        val besluttet: Arbeidssteg,
     ) : PersonEvent()
 
     data class BehandlingEndretTilstand(

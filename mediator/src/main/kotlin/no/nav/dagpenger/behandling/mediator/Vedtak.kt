@@ -98,8 +98,8 @@ fun lagVedtak(
     søknadId: EksternId<*>,
     opplysninger: LesbarOpplysninger,
     automatisk: Boolean,
-    godkjentAv: Arbeidssteg? = null,
-    besluttetAv: Arbeidssteg? = null,
+    godkjentAv: Arbeidssteg,
+    besluttetAv: Arbeidssteg,
 ): VedtakDTO {
     val vilkår =
         opplysninger
@@ -123,13 +123,13 @@ fun lagVedtak(
         virkningsdato = opplysninger.finnOpplysning(prøvingsdato).verdi,
         behandletAv =
             listOfNotNull(
-                godkjentAv?.let {
+                godkjentAv.takeIf { it.erUtført }?.let {
                     BehandletAvDTO(
                         BehandletAvDTO.Rolle.saksbehandler,
                         SaksbehandlerDTO(it.utførtAv.ident),
                     )
                 },
-                besluttetAv?.let {
+                besluttetAv.takeIf { it.erUtført }?.let {
                     BehandletAvDTO(
                         BehandletAvDTO.Rolle.beslutter,
                         SaksbehandlerDTO(it.utførtAv.ident),

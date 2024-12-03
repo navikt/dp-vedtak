@@ -58,8 +58,8 @@ class BehandlingRepositoryPostgres(
                         tilstand = Behandling.TilstandType.valueOf(row.string("tilstand")),
                         sistEndretTilstand = row.localDateTime("sist_endret_tilstand"),
                         avklaringer = hentAvklaringer(behandlingId),
-                        godkjent = session.hentArbeidssteg(behandlingId, "godkjent"),
-                        besluttet = session.hentArbeidssteg(behandlingId, "besluttet"),
+                        godkjent = session.hentArbeidssteg(behandlingId, Arbeidssteg.Oppgave.Godkjent),
+                        besluttet = session.hentArbeidssteg(behandlingId, Arbeidssteg.Oppgave.Besluttet),
                     )
                 }.asSingle,
             )
@@ -67,29 +67,30 @@ class BehandlingRepositoryPostgres(
 
     private fun Session.hentArbeidssteg(
         behandlingId: UUID,
-        steg: String,
-    ) = this.run(
-        queryOf(
-            """
-            SELECT * 
-            FROM behandling_arbeidssteg 
-            WHERE behandling_id = :behandling_id
-            AND oppgave = :steg
-            """.trimIndent(),
-            mapOf(
-                "behandling_id" to behandlingId,
-                "steg" to steg,
-            ),
-        ).map { row ->
-            if (row.stringOrNull("utført_av") == null) {
-                return@map null
-            }
-            Arbeidssteg(
-                utførtAv = Saksbehandler(row.string("utført_av")),
-                utført = row.localDateTime("utført"),
-            )
-        }.asSingle,
-    )
+        oppgave: Arbeidssteg.Oppgave,
+    ): Arbeidssteg =
+        this.run(
+            queryOf(
+                //language=PostgreSQL
+                """
+                SELECT * 
+                FROM behandling_arbeidssteg 
+                WHERE behandling_id = :behandling_id
+                AND oppgave = :oppgave
+                """.trimIndent(),
+                mapOf(
+                    "behandling_id" to behandlingId,
+                    "oppgave" to oppgave.name,
+                ),
+            ).map { row ->
+                Arbeidssteg.rehydrer(
+                    Arbeidssteg.TilstandType.valueOf(row.string("tilstand")),
+                    Arbeidssteg.Oppgave.valueOf(row.string("oppgave")),
+                    row.stringOrNull("utført_av")?.let { Saksbehandler(it) },
+                    row.localDateTimeOrNull("utført"),
+                )
+            }.asSingle,
+        ) ?: Arbeidssteg(oppgave)
 
     private fun Session.hentBasertPåFor(behandlingId: UUID) =
         this.run(
@@ -184,36 +185,10 @@ class BehandlingRepositoryPostgres(
                     ),
                 ).asUpdate,
             )
-            tx.run(
-                queryOf(
-                    // language=PostgreSQL
-                    """
-                    INSERT INTO behandling_arbeidssteg(behandling_id, oppgave, utført_av, utført) 
-                    VALUES (:behandling_id, :oppgave, :utfort_av, :utfort) ON CONFLICT (behandling_id, oppgave) DO UPDATE SET utført_av = :utfort_av, utført = :utfort 
-                    """.trimIndent(),
-                    mapOf(
-                        "behandling_id" to behandling.behandlingId,
-                        "oppgave" to "godkjent",
-                        "utfort_av" to behandling.godkjent?.utførtAv?.ident,
-                        "utfort" to behandling.godkjent?.utført,
-                    ),
-                ).asUpdate,
-            )
-            tx.run(
-                queryOf(
-                    // language=PostgreSQL
-                    """
-                    INSERT INTO behandling_arbeidssteg(behandling_id, oppgave, utført_av, utført) 
-                    VALUES (:behandling_id, :oppgave, :utfort_av, :utfort) ON CONFLICT (behandling_id, oppgave) DO UPDATE SET utført_av = :utfort_av, utført = :utfort 
-                    """.trimIndent(),
-                    mapOf(
-                        "behandling_id" to behandling.behandlingId,
-                        "oppgave" to "besluttet",
-                        "utfort_av" to behandling.besluttet?.utførtAv?.ident,
-                        "utfort" to behandling.besluttet?.utført,
-                    ),
-                ).asUpdate,
-            )
+
+            // TODO: kan vi unngå hardkoding her?
+            tx.lageArbeidssteg(behandling.behandlingId, behandling.godkjent)
+            tx.lageArbeidssteg(behandling.behandlingId, behandling.besluttet)
 
             opplysningRepository.lagreOpplysninger(behandling.opplysninger() as Opplysninger, unitOfWork)
 
@@ -249,5 +224,37 @@ class BehandlingRepositoryPostgres(
 
             avklaringRepository.lagreAvklaringer(behandling, unitOfWork)
         }
+    }
+
+    private fun Session.lageArbeidssteg(
+        behandlingId: UUID,
+        arbeidssteg: Arbeidssteg,
+    ) {
+        run(
+            when (arbeidssteg.tilstandType) {
+                Arbeidssteg.TilstandType.IkkeUtført ->
+                    queryOf(
+                        //language=PostgreSQL
+                        """DELETE FROM behandling_arbeidssteg WHERE behandling_id = :behandling_id AND oppgave = :oppgave""",
+                        mapOf("behandling_id" to behandlingId, "oppgave" to arbeidssteg.oppgave.name),
+                    ).asUpdate
+
+                Arbeidssteg.TilstandType.Utført ->
+                    queryOf(
+                        // language=PostgreSQL
+                        """
+                        INSERT INTO behandling_arbeidssteg(behandling_id, oppgave, tilstand, utført_av, utført) 
+                        VALUES (:behandling_id, :oppgave, :tilstand, :utfort_av, :utfort) ON CONFLICT (behandling_id, oppgave) DO UPDATE SET tilstand = :tilstand, utført_av = :utfort_av, utført = :utfort 
+                        """.trimIndent(),
+                        mapOf(
+                            "behandling_id" to behandlingId,
+                            "oppgave" to arbeidssteg.oppgave.name,
+                            "tilstand" to arbeidssteg.tilstandType.name,
+                            "utfort_av" to arbeidssteg.utførtAv.ident,
+                            "utfort" to arbeidssteg.utført,
+                        ),
+                    ).asUpdate
+            },
+        )
     }
 }
