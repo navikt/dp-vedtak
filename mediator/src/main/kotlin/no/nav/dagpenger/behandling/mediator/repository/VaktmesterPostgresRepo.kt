@@ -27,6 +27,7 @@ internal class VaktmesterPostgresRepo {
                         slettOpplysningUtledet(opplysningId).run(tx)
                         slettOpplysningLink(opplysningId).run(tx)
                         slettOpplysningUtledning(opplysningId).run(tx)
+                        slettErstatteAv(opplysningId).run(tx)
                         slettOpplysning(opplysningId).run(tx)
                         antall++
                     }
@@ -40,7 +41,10 @@ internal class VaktmesterPostgresRepo {
         //language=PostgreSQL
         val query =
             """
-            SELECT * FROM opplysning WHERE fjernet = :fjernet
+            SELECT *
+            FROM opplysning
+            WHERE fjernet = true
+            ORDER BY id DESC;
             """.trimIndent()
         val opplysninger =
             tx.run(
@@ -54,6 +58,15 @@ internal class VaktmesterPostgresRepo {
         logger.info { "Fant ${opplysninger.size} opplysninger som er fjernet og som skal slettes" }
         return opplysninger
     }
+
+    private fun slettErstatteAv(opplysningId: UUID) =
+        BatchStatement(
+            //language=PostgreSQL
+            """
+            DELETE FROM opplysning_erstattet_av WHERE erstattet_av = :id
+            """.trimIndent(),
+            listOf(mapOf("id" to opplysningId)),
+        )
 
     private fun slettKilde(
         id: UUID,

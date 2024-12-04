@@ -398,7 +398,9 @@ class OpplysningerRepositoryPostgresTest {
             val repo = OpplysningerRepositoryPostgres()
             val vaktmesterRepo = VaktmesterPostgresRepo()
 
-            val baseOpplysning = Faktum(baseOpplysningstype, LocalDate.now())
+            // Gammel behandling
+            val opprinneligDato = LocalDate.now()
+            val baseOpplysning = Faktum(baseOpplysningstype, opprinneligDato)
 
             val regelsett =
                 Regelsett("Regelsett") {
@@ -409,45 +411,48 @@ class OpplysningerRepositoryPostgresTest {
             val regelkjøring = Regelkjøring(LocalDate.now(), tidligereOpplysninger, regelsett)
 
             tidligereOpplysninger.leggTil(baseOpplysning as Opplysning<*>).also { regelkjøring.evaluer() }
-
             repo.lagreOpplysninger(tidligereOpplysninger)
 
+            // Ny behandling som baseres på den gamle
             val nyeOpplysninger = Opplysninger(opplysninger = emptyList(), basertPå = listOf(tidligereOpplysninger))
-            val nyRegelkjøring = Regelkjøring(LocalDate.now(), nyeOpplysninger, regelsett)
             val endretBaseOpplysningstype = Faktum(baseOpplysningstype, LocalDate.now().plusDays(1))
-            nyeOpplysninger.leggTil(endretBaseOpplysningstype as Opplysning<*>).also { nyRegelkjøring.evaluer() }
+            nyeOpplysninger.leggTil(endretBaseOpplysningstype as Opplysning<*>).also {
+                Regelkjøring(LocalDate.now(), nyeOpplysninger, regelsett).evaluer()
+            }
             repo.lagreOpplysninger(nyeOpplysninger)
 
-            val fraDb = repo.hentOpplysninger(nyeOpplysninger.id).also { Regelkjøring(LocalDate.now(), it) }
+            // Hent lagrede opplysninger fra ny behandling
+            val fraDb = repo.hentOpplysninger(nyeOpplysninger.id)
             fraDb.finnAlle().size shouldBe 2
-
-            with(fraDb.finnOpplysning(utledetOpplysningstype)) {
-                verdi shouldBe 5
-                utledetAv.shouldNotBeNull()
-                utledetAv!!.regel shouldBe "Oppslag"
-                utledetAv!!.opplysninger shouldContainExactly listOf(endretBaseOpplysningstype)
-            }
-            with(fraDb.finnOpplysning(endretBaseOpplysningstype.id)) {
-                id shouldBe endretBaseOpplysningstype.id
-                verdi shouldBe endretBaseOpplysningstype.verdi
-                gyldighetsperiode shouldBe endretBaseOpplysningstype.gyldighetsperiode
-                opplysningstype shouldBe endretBaseOpplysningstype.opplysningstype
-                utledetAv.shouldBeNull()
-            }
-
-            val tidligereOpplysningerFraDb = repo.hentOpplysninger(tidligereOpplysninger.id).also { Regelkjøring(LocalDate.now(), it) }
-            tidligereOpplysningerFraDb.finnAlle().size shouldBe 0
-            tidligereOpplysningerFraDb.aktiveOpplysninger.size shouldBe 2
-            with(tidligereOpplysningerFraDb.finnOpplysning(baseOpplysning.id)) {
-                id shouldBe baseOpplysning.id
-                verdi shouldBe baseOpplysning.verdi
-                gyldighetsperiode shouldBe baseOpplysning.gyldighetsperiode
-                opplysningstype shouldBe baseOpplysning.opplysningstype
-                utledetAv.shouldBeNull()
-                erErstattet shouldBe true
-                erstattetAv shouldBe listOf(endretBaseOpplysningstype)
-            }
             vaktmesterRepo.slettOpplysninger() shouldBe 0
+
+            // Legg til endret opplysning i ny behandling
+            val endretDato = LocalDate.now().plusDays(2)
+            fraDb.leggTil(Faktum(baseOpplysningstype, endretDato)).also {
+                Regelkjøring(LocalDate.now(), fraDb, regelsett).evaluer()
+            }
+            repo.lagreOpplysninger(fraDb)
+
+            // Slett opplysninger som er fjernet kun fra ny behandling
+            vaktmesterRepo.slettOpplysninger() shouldBe 2
+
+            with(repo.hentOpplysninger(nyeOpplysninger.id)) {
+                finnAlle().size shouldBe 2
+                finnOpplysning(baseOpplysningstype).verdi shouldBe endretDato
+            }
+
+            with(repo.hentOpplysninger(tidligereOpplysninger.id)) {
+                finnAlle().size shouldBe 2
+                finnOpplysning(baseOpplysningstype).verdi shouldBe opprinneligDato
+            }
         }
     }
 }
+
+/***
+ * 01939181-cd06-74be-858a-1a50c299e0f1,Base,2024-12-05,gyldig for alltid,null,null,2024-12-04T12:50:23.238729,Faktum om Base har verdi: 2024-12-04 som er gyldig for alltid
+ * 01939181-cd06-74be-858a-1a50c299e0f6,Utledet,5,gyldig for alltid,"Utledning(regel=Oppslag, opplysninger=[Faktum om Base har verdi: 2024-12-05 som er gyldig for alltid])",null,2024-12-04T12:50:23.238926,Faktum om Utledet har verdi: 5 som er gyldig for alltid
+ * 01939181-d90f-795c-b359-e399d53ae063,Base,2024-12-06,gyldig for alltid,null,null,2024-12-04T12:50:26.319015,null
+ * 01939181-d90f-795c-b359-e399d53ae068,Utledet,5,gyldig for alltid,"Utledning(regel=Oppslag, opplysninger=[Faktum om Base har verdi: 2024-12-06 som er gyldig for alltid])",null,2024-12-04T12:50:26.319239,null
+ *
+ */
