@@ -163,7 +163,9 @@ internal class PersonMediatorTest {
                     it.aktivBehandling.aktivAvklaringer.shouldBeEmpty()
                 }
 
-            rapid.harHendelse("vedtak_fattet", 2) {
+            saksbehandler.godkjenn()
+
+            rapid.harHendelse("vedtak_fattet") {
                 medMeldingsInnhold("fastsatt") {
                     medBoolsk("utfall") shouldBe false
                 }
@@ -195,9 +197,9 @@ internal class PersonMediatorTest {
                 }
             }
 
-            rapid.inspektør.size shouldBe 24
+            rapid.inspektør.size shouldBe 25
 
-            testObservatør.tilstandsendringer.size shouldBe 3
+            testObservatør.tilstandsendringer.size shouldBe 4
 
             repeat(rapid.inspektør.size) {
                 withClue("Melding nr $it skal ha nøkkel. Meldingsinnhold: ${rapid.inspektør.message(it)}") {

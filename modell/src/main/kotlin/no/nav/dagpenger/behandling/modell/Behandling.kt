@@ -383,7 +383,7 @@ class Behandling private constructor(
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
-                behandling.brut001(hendelse)
+                behandling.avgjørNesteTilstand(hendelse)
             }
         }
 
@@ -439,7 +439,7 @@ class Behandling private constructor(
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
-                behandling.brut001(hendelse)
+                behandling.avgjørNesteTilstand(hendelse)
             }
         }
 
@@ -516,7 +516,7 @@ class Behandling private constructor(
                 // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
             }
 
-            behandling.brut001(hendelse)
+            behandling.avgjørNesteTilstand(hendelse)
         }
 
         override fun håndter(
@@ -535,7 +535,7 @@ class Behandling private constructor(
                 )
             }
 
-            behandling.brut001(hendelse)
+            behandling.avgjørNesteTilstand(hendelse)
         }
 
         override fun håndter(
@@ -547,7 +547,7 @@ class Behandling private constructor(
             behandling.avklaringer.kvitter(hendelse.avklaringId, hendelse.kilde, hendelse.begrunnelse)
             hendelse.info("Avklaring er kvittert")
 
-            behandling.brut001(hendelse)
+            behandling.avgjørNesteTilstand(hendelse)
         }
 
         override fun håndter(
@@ -589,7 +589,7 @@ class Behandling private constructor(
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
-                behandling.brut001(hendelse)
+                behandling.avgjørNesteTilstand(hendelse)
             }
         }
 
@@ -615,7 +615,7 @@ class Behandling private constructor(
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
-                behandling.brut001(hendelse)
+                behandling.avgjørNesteTilstand(hendelse)
             }
         }
 
@@ -698,7 +698,7 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             hendelse.info("Forslag til vedtak godkjent")
 
-            behandling.brut001(hendelse)
+            behandling.avgjørNesteTilstand(hendelse)
         }
 
         override fun håndter(
@@ -783,6 +783,13 @@ class Behandling private constructor(
             hendelse.info("Ble godkjent og krever totrinnskontroll")
 
             behandling.godkjent.utførtAv(hendelse.godkjentAv)
+
+            // Om behandlingen ikke krever totrinnskontroller vi ferdige
+            if (!behandling.behandler.kreverTotrinnskontroll(behandling.opplysninger)) {
+                return behandling.tilstand(Ferdig(), hendelse)
+            }
+
+            // Behandlinger som krever totrinnskontroll må sendes til beslutning
             behandling.tilstand(TilBeslutning(), hendelse)
         }
 
@@ -864,15 +871,10 @@ class Behandling private constructor(
         }
     }
 
-    // Behandlingen er ferdig og vi må rute til enten ferdig, forslag, eller godkjenning
-    // TODO: Lag et vakrere navn
-    private fun brut001(hendelse: PersonHendelse) {
+    // Behandlingen er ferdig og vi må rute til forslag eller godkjenning
+    private fun avgjørNesteTilstand(hendelse: PersonHendelse) {
         if (this.aktiveAvklaringer().isNotEmpty()) {
             return tilstand(ForslagTilVedtak(), hendelse)
-        }
-
-        if (!behandler.kreverTotrinnskontroll(opplysninger)) {
-            return tilstand(Ferdig(), hendelse)
         }
 
         return tilstand(TilGodkjenning(), hendelse)
