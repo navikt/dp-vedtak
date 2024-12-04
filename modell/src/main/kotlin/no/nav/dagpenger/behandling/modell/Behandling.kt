@@ -546,6 +546,8 @@ class Behandling private constructor(
 
             behandling.avklaringer.kvitter(hendelse.avklaringId, hendelse.kilde, hendelse.begrunnelse)
             hendelse.info("Avklaring er kvittert")
+
+            behandling.brut001(hendelse)
         }
 
         override fun håndter(
