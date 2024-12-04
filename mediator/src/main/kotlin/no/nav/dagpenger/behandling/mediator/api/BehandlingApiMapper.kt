@@ -9,6 +9,7 @@ import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
+import no.nav.dagpenger.behandling.api.models.SaksbehandlerDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.BarnDatatype
@@ -77,11 +78,14 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
     }
 
 internal fun Avklaring.tilAvklaringDTO(): AvklaringDTO {
-    /*val sisteEndring = this.endringer.last().takeIf { it is Avklaring.Endring.Avklart } as Avklaring.Endring.Avklart?
+    val sisteEndring =
+        this.endringer.last().takeIf {
+            it is Avklaring.Endring.Avklart && it.avklartAv is Saksbehandlerkilde
+        } as Avklaring.Endring.Avklart?
     val saksbehandler =
         (sisteEndring?.avklartAv as Saksbehandlerkilde?)?.let {
             SaksbehandlerDTO(it.saksbehandler.ident)
-        }*/
+        }
     return AvklaringDTO(
         id = this.id,
         kode = this.kode.kode,
@@ -93,8 +97,8 @@ internal fun Avklaring.tilAvklaringDTO(): AvklaringDTO {
                 is Avklaring.Endring.Avklart -> AvklaringDTO.Status.Kvittert
                 is Avklaring.Endring.UnderBehandling -> AvklaringDTO.Status.Åpen
             },
-        begrunnelse = null,
-        kvittertAv = null,
+        begrunnelse = sisteEndring?.begrunnelse,
+        kvittertAv = saksbehandler,
     )
 }
 

@@ -24,6 +24,7 @@ import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import no.nav.dagpenger.avklaring.Avklaring
+import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.TestOpplysningstyper
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.KvitteringDTO
@@ -44,7 +45,9 @@ import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.verdier.Barn
 import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
@@ -72,7 +75,35 @@ internal class BehandlingApiTest {
         )
 
     private val avklaringer =
-        emptyList<Avklaring>()
+        listOf(
+            Avklaring.rehydrer(
+                UUIDv7.ny(),
+                Avklaringkode("tittel 1", "beskrivelse ", "kanKvitteres"),
+                mutableListOf(
+                    Avklaring.Endring.Avbrutt(),
+                ),
+            ),
+            Avklaring.rehydrer(
+                UUIDv7.ny(),
+                Avklaringkode("tittel 2", "beskrivelse ", "kanKvitteres"),
+                mutableListOf(
+                    Avklaring.Endring.Avklart(
+                        avklartAv = Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("Z123456")),
+                        begrunnelse = "heia",
+                    ),
+                ),
+            ),
+            Avklaring.rehydrer(
+                UUIDv7.ny(),
+                Avklaringkode("tittel 3", "beskrivelse ", "kanKvitteres"),
+                mutableListOf(
+                    Avklaring.Endring.Avklart(
+                        avklartAv = Systemkilde(UUIDv7.ny(), LocalDateTime.now()),
+                        begrunnelse = "heia",
+                    ),
+                ),
+            ),
+        )
     private val behandling =
         Behandling.rehydrer(
             behandlingId = UUIDv7.ny(),
