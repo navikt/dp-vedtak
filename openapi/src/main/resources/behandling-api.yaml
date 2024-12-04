@@ -285,7 +285,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Avklaring'
           description: OK
-  /behandling/{behandlingId}/avklaring/{avklaringId}/kvitter:
+  /behandling/{behandlingId}/avklaring/{avklaringId}:
     parameters:
       - name: behandlingId
         in: path

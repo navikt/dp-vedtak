@@ -479,7 +479,7 @@ internal class BehandlingApiTest {
             val response =
                 autentisert(
                     httpMethod = HttpMethod.Put,
-                    endepunkt = "/behandling/$behandlingId/avklaring/${avklaring.id}/kvitter",
+                    endepunkt = "/behandling/$behandlingId/avklaring/${avklaring.id}",
                     // language=JSON
                     body = """{"begrunnelse":"tekst"}""",
                 )

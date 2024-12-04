@@ -253,7 +253,7 @@ internal fun Application.behandlingApi(
                         call.respond(HttpStatusCode.OK, behandling.avklaringer().map { it.tilAvklaringDTO() })
                     }
 
-                    put("avklaring/{avklaringId}/kvitter") {
+                    put("avklaring/{avklaringId}") {
                         val behandlingId = call.behandlingId
                         val avklaringId = call.avklaringId
                         val kvitteringDTO = call.receive<KvitterAvklaringRequestDTO>()
