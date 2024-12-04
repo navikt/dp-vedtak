@@ -862,9 +862,9 @@ class Behandling private constructor(
     // Behandlingen er ferdig og vi må rute til enten ferdig, forslag, eller godkjenning
 // TODO: Lag et vakrere navn
     private fun brut001(hendelse: PersonHendelse) {
-        if (this.aktiveAvklaringer().isNotEmpty()) {
+        /*if (this.aktiveAvklaringer().isNotEmpty()) {
             return tilstand(ForslagTilVedtak(), hendelse)
-        }
+        }*/
 
         if (!behandler.kreverTotrinnskontroll(opplysninger)) {
             return tilstand(Ferdig(), hendelse)
