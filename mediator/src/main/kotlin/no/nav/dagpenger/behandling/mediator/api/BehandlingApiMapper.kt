@@ -64,7 +64,15 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
                     .map { avklaring ->
                         avklaring.tilAvklaringDTO()
                     }.also {
-                        logger.info { "Mapper '${it.size}' avklaringer til AvklaringDTO " }
+                        logger.info { "Mapper '${it.size}' (aktive) avklaringer til AvklaringDTO " }
+                    },
+            avklaringer =
+                this
+                    .avklaringer()
+                    .map { avklaring ->
+                        avklaring.tilAvklaringDTO()
+                    }.also {
+                        logger.info { "Mapper '${it.size}' (alle) avklaringer til AvklaringDTO " }
                     },
         )
     }

@@ -311,6 +311,7 @@ components:
         - tilstand
         - kreverTotrinnskontroll
         - aktiveAvklaringer
+        - avklaringer
       properties:
         behandlingId:
           type: string
@@ -325,6 +326,10 @@ components:
         kreverTotrinnskontroll:
           type: boolean
         aktiveAvklaringer:
+          type: array
+          items:
+            $ref: '#/components/schemas/Avklaring'
+        avklaringer:
           type: array
           items:
             $ref: '#/components/schemas/Avklaring'
