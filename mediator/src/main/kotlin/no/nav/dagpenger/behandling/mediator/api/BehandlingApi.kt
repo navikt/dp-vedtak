@@ -282,7 +282,7 @@ internal fun Application.behandlingApi(
                             messageContext(behandling.behandler.ident),
                         )
 
-                        call.respond(HttpStatusCode.OK)
+                        call.respond(HttpStatusCode.NoContent)
                     }
                 }
             }

@@ -319,8 +319,8 @@ paths:
                 begrunnelse:
                   type: string
       responses:
-        201:
-          description: OK
+        204:
+          description: No Content
         400:
           description: Avklaringen kan ikke kvitteres ut
         403:
