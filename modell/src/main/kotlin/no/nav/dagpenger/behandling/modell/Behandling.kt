@@ -522,7 +522,7 @@ class Behandling private constructor(
                 // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
             }
 
-            behandling.brut001(hendelse)
+            behandling.tilstand(Ferdig(), hendelse)
         }
 
         override fun håndter(
@@ -860,11 +860,11 @@ class Behandling private constructor(
     }
 
     // Behandlingen er ferdig og vi må rute til enten ferdig, forslag, eller godkjenning
-// TODO: Lag et vakrere navn
+    // TODO: Lag et vakrere navn
     private fun brut001(hendelse: PersonHendelse) {
-        /*if (this.aktiveAvklaringer().isNotEmpty()) {
+        if (this.aktiveAvklaringer().isNotEmpty()) {
             return tilstand(ForslagTilVedtak(), hendelse)
-        }*/
+        }
 
         if (!behandler.kreverTotrinnskontroll(opplysninger)) {
             return tilstand(Ferdig(), hendelse)
