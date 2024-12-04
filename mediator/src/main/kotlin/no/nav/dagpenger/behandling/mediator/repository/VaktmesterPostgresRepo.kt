@@ -16,8 +16,8 @@ internal class VaktmesterPostgresRepo {
         val låsenøkkel = 121212
     }
 
-    fun slettOpplysninger(): Int {
-        var antall = 0
+    fun slettOpplysninger(): List<UUID> {
+        val antall = mutableListOf<UUID>()
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
                 tx.medLås(låsenøkkel) {
@@ -29,7 +29,7 @@ internal class VaktmesterPostgresRepo {
                         slettOpplysningUtledning(opplysningId).run(tx)
                         slettErstatteAv(opplysningId).run(tx)
                         slettOpplysning(opplysningId).run(tx)
-                        antall++
+                        antall.add(opplysningId)
                     }
                 }
             }

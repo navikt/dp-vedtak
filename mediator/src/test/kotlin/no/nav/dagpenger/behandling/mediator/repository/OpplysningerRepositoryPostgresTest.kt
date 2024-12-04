@@ -31,6 +31,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Barn
@@ -38,7 +39,6 @@ import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
-import no.nav.dagpenger.regel.Alderskrav.fødselsdato
 import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -388,12 +388,12 @@ class OpplysningerRepositoryPostgresTest {
             repo.lagreOpplysninger(opplysninger)
             val fraDb = repo.hentOpplysninger(opplysninger.id)
             fraDb.finnAlle().shouldBeEmpty()
-            vaktmesterRepo.slettOpplysninger() shouldBe 1
+            vaktmesterRepo.slettOpplysninger() shouldContainExactly listOf(heltallFaktum.id)
         }
     }
 
     @Test
-    fun `ikke slette mer enn vi skal`() {
+    fun `ikke slette mer enn vi skal fra tidligere opplysninger `() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
             val vaktmesterRepo = VaktmesterPostgresRepo()
@@ -424,7 +424,7 @@ class OpplysningerRepositoryPostgresTest {
             // Hent lagrede opplysninger fra ny behandling
             val fraDb = repo.hentOpplysninger(nyeOpplysninger.id)
             fraDb.finnAlle().size shouldBe 2
-            vaktmesterRepo.slettOpplysninger() shouldBe 0
+            vaktmesterRepo.slettOpplysninger().shouldBeEmpty()
 
             // Legg til endret opplysning i ny behandling
             val endretDato = LocalDate.now().plusDays(2)
@@ -434,7 +434,7 @@ class OpplysningerRepositoryPostgresTest {
             repo.lagreOpplysninger(fraDb)
 
             // Slett opplysninger som er fjernet kun fra ny behandling
-            vaktmesterRepo.slettOpplysninger() shouldBe 2
+            vaktmesterRepo.slettOpplysninger().size shouldBe 2
 
             with(repo.hentOpplysninger(nyeOpplysninger.id)) {
                 finnAlle().size shouldBe 2
@@ -447,12 +447,48 @@ class OpplysningerRepositoryPostgresTest {
             }
         }
     }
-}
 
-/***
- * 01939181-cd06-74be-858a-1a50c299e0f1,Base,2024-12-05,gyldig for alltid,null,null,2024-12-04T12:50:23.238729,Faktum om Base har verdi: 2024-12-04 som er gyldig for alltid
- * 01939181-cd06-74be-858a-1a50c299e0f6,Utledet,5,gyldig for alltid,"Utledning(regel=Oppslag, opplysninger=[Faktum om Base har verdi: 2024-12-05 som er gyldig for alltid])",null,2024-12-04T12:50:23.238926,Faktum om Utledet har verdi: 5 som er gyldig for alltid
- * 01939181-d90f-795c-b359-e399d53ae063,Base,2024-12-06,gyldig for alltid,null,null,2024-12-04T12:50:26.319015,null
- * 01939181-d90f-795c-b359-e399d53ae068,Utledet,5,gyldig for alltid,"Utledning(regel=Oppslag, opplysninger=[Faktum om Base har verdi: 2024-12-06 som er gyldig for alltid])",null,2024-12-04T12:50:26.319239,null
- *
- */
+    @Test
+    fun `skal slette fjernede opplysninger som er utledet av i flere nivåer`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val vaktmesterRepo = VaktmesterPostgresRepo()
+
+            val a = Opplysningstype.somBoolsk("A")
+            val b = Opplysningstype.somBoolsk("B")
+            val c = Opplysningstype.somBoolsk("C")
+            val d = Opplysningstype.somBoolsk("D")
+
+            val regelsett =
+                Regelsett("Regelsett") {
+                    regel(a) { innhentes }
+                    regel(d) { innhentes }
+                    regel(b) { enAv(a) }
+                    regel(c) { enAv(b, d) }
+                }
+            val opplysninger = Opplysninger()
+            val regelkjøring = Regelkjøring(LocalDate.now(), opplysninger, regelsett)
+
+            val aFaktum = Faktum(a, true)
+            val dFaktum = Faktum(d, false)
+            opplysninger.leggTil(aFaktum)
+            opplysninger.leggTil(dFaktum)
+            regelkjøring.evaluer()
+            val bFaktum = opplysninger.finnOpplysning(b)
+            val cFaktum = opplysninger.finnOpplysning(c)
+
+            repo.lagreOpplysninger(opplysninger)
+
+            vaktmesterRepo.slettOpplysninger().size shouldBe 0
+
+            // Endre opplysning a slik at b og c blir endret (og det originale blir fjernet)
+            val endretAFaktum = Faktum(a, false)
+            opplysninger.leggTil(endretAFaktum).also { regelkjøring.evaluer() }
+            repo.lagreOpplysninger(opplysninger)
+
+            val slettOpplysninger = vaktmesterRepo.slettOpplysninger()
+            slettOpplysninger.size shouldBe 3
+            slettOpplysninger shouldContainExactly listOf(cFaktum.id, bFaktum.id, aFaktum.id)
+        }
+    }
+}
