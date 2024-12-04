@@ -516,7 +516,7 @@ class Behandling private constructor(
                 // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
             }
 
-            behandling.tilstand(Ferdig(), hendelse)
+            behandling.brut001(hendelse)
         }
 
         override fun håndter(

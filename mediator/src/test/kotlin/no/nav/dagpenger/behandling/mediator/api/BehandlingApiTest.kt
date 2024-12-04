@@ -484,7 +484,7 @@ internal class BehandlingApiTest {
                     body = """{"begrunnelse":"tekst"}""",
                 )
 
-            response.status shouldBe HttpStatusCode.OK
+            response.status shouldBe HttpStatusCode.NoContent
 
             verify {
                 hendelseMediator.behandle(capture(kvitteringHendelse), any())
