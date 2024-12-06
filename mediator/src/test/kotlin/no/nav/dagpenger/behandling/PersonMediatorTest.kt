@@ -330,6 +330,25 @@ internal class PersonMediatorTest {
             saksbehandler.godkjenn()
             saksbehandler.beslutt()
 
+            val behandling =
+                personRepository.hent(ident.tilPersonIdentfikator()).run {
+                    shouldNotBeNull()
+                    behandlinger().first()
+                }
+            Approvals.verify(
+                objectMapper.writeValueAsString(
+                    lagVedtak(
+                        behandlingId = behandling.behandlingId,
+                        ident = behandling.behandler.ident.tilPersonIdentfikator(),
+                        søknadId = behandling.behandler.eksternId,
+                        opplysninger = behandling.opplysninger(),
+                        automatisk = behandling.erAutomatiskBehandlet(),
+                        godkjentAv = behandling.godkjent,
+                        besluttetAv = behandling.besluttet,
+                    ).toMap(),
+                ),
+            )
+
             rapid.harHendelse("vedtak_fattet") {
                 medFastsattelser {
                     oppfylt

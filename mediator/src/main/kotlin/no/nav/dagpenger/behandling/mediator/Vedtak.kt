@@ -23,9 +23,11 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Alderskrav
+import no.nav.dagpenger.regel.FulleYtelser
 import no.nav.dagpenger.regel.Medlemskap
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.Opphold
 import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.Rettighetstype
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden
@@ -53,15 +55,22 @@ private fun kapittel4(paragraf: Int) = folketrygdloven("4-$paragraf")
 private val autorativKildeForDetViPåEkteMenerErVilkår: Map<Opplysningstype<Boolean>, String> =
     mapOf(
         Alderskrav.kravTilAlder to kapittel4(23),
-        Minsteinntekt.minsteinntekt to kapittel4(4),
-        ReellArbeidssøker.kravTilArbeidssøker to kapittel4(5),
-        Meldeplikt.registrertPåSøknadstidspunktet to kapittel4(8),
-        Rettighetstype.rettighetstype to "folketrygdloven kapittel 4",
-        Utdanning.kravTilUtdanning to kapittel4(6),
-        Utestengning.ikkeUtestengt to kapittel4(28),
-        StreikOgLockout.ikkeStreikEllerLockout to kapittel4(22),
+        FulleYtelser.ikkeFulleYtelser to kapittel4(24),
         Medlemskap.oppfyllerMedlemskap to kapittel4(2),
-        TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid to kapittel4(3),
+        Meldeplikt.registrertPåSøknadstidspunktet to kapittel4(8),
+        Minsteinntekt.minsteinntekt to kapittel4(4),
+        Opphold.oppfyllerKravet to kapittel4(5),
+        ReellArbeidssøker.kravTilArbeidssøker to kapittel4(5),
+        ReellArbeidssøker.oppfyllerKravTilArbeidsfør to kapittel4(5),
+        ReellArbeidssøker.oppfyllerKravTilArbeidssøker to kapittel4(5),
+        ReellArbeidssøker.oppfyllerKravTilMobilitet to kapittel4(5),
+        ReellArbeidssøker.oppfyllerKravetTilEthvertArbeid to kapittel4(5),
+        Rettighetstype.rettighetstype to "folketrygdloven kapittel 4",
+        StreikOgLockout.ikkeStreikEllerLockout to kapittel4(22),
+        TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntekt to kapittel4(3),
+        TapAvArbeidsinntektOgArbeidstid.kravTilTaptArbeidstid to kapittel4(3),
+        Utdanning.kravTilUtdanning to kapittel4(6),
+        Utestengning.oppfyllerKravetTilIkkeUtestengt to kapittel4(28),
     )
 
 private fun LesbarOpplysninger.samordninger(): List<SamordningDTO> {
