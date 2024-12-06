@@ -249,7 +249,7 @@ internal fun Application.behandlingApi(
                         auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
 
                         logger.info { "Venter på endring i behandling" }
-                        waitForCondition(timeout = 5.seconds, interval = 1.seconds, initialDelay = 500.milliseconds) {
+                        waitForCondition(timeout = 5.seconds, interval = 1.seconds, initialDelay = 1.seconds) {
                             hentBehandling(personRepository, behandlingId).run {
                                 logger.info { "Behandling har tilstand: ${tilstand().first}" }
                                 harTilstand(ForslagTilVedtak) || harTilstand(TilGodkjenning)
