@@ -254,7 +254,7 @@ internal fun Application.behandlingApi(
                                 logger.info {
                                     val slettet = kotlin.runCatching { opplysninger().finnOpplysning(opplysningId) }
                                     when (slettet.isSuccess) {
-                                        true -> "Opplysning er oppdatert $opplysning"
+                                        true -> "Opplysning er oppdatert $opplysning, og er erstattet=${slettet.getOrNull()?.erErstattet}"
                                         false -> "Opplysningen er borte! ${slettet.exceptionOrNull()}"
                                     }
                                 }
