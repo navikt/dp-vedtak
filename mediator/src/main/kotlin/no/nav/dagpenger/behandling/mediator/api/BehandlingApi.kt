@@ -128,8 +128,7 @@ internal fun Application.behandlingApi(
 
                 route("{behandlingId}") {
                     get {
-                        val behandling =
-                            hentBehandling(personRepository, call.behandlingId)
+                        val behandling = hentBehandling(personRepository, call.behandlingId)
 
                         auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
 
@@ -137,8 +136,7 @@ internal fun Application.behandlingApi(
                     }
 
                     get("vedtak") {
-                        val behandling =
-                            hentBehandling(personRepository, call.behandlingId)
+                        val behandling = hentBehandling(personRepository, call.behandlingId)
 
                         auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
 
@@ -227,8 +225,7 @@ internal fun Application.behandlingApi(
                         val behandlingId = call.behandlingId
                         val opplysningId = call.opplysningId
                         val oppdaterOpplysningRequestDTO = call.receive<OppdaterOpplysningRequestDTO>()
-                        val behandling =
-                            hentBehandling(personRepository, behandlingId)
+                        val behandling = hentBehandling(personRepository, behandlingId)
 
                         if (behandling.harTilstand(Redigert)) {
                             throw BadRequestException("Kan ikke redigere opplysninger før forrige redigering er ferdig")
@@ -249,21 +246,13 @@ internal fun Application.behandlingApi(
                         auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
 
                         logger.info { "Venter på endring i behandling" }
-                        waitForCondition(timeout = 5.seconds, interval = 1.seconds, initialDelay = 1.seconds) {
+                        waitForCondition(timeout = 5.seconds, interval = 1.seconds) {
                             hentBehandling(personRepository, behandlingId).run {
                                 val slettet = kotlin.runCatching { opplysninger().finnOpplysning(opplysningId) }
-                                logger.info {
-                                    when (slettet.isSuccess) {
-                                        true -> "Opplysning er oppdatert $opplysning, og er erstattet=${slettet.getOrNull()?.erErstattet}"
-                                        false -> "Opplysningen er borte! ${slettet.exceptionOrNull()}"
-                                    }
-                                }
-                                logger.info { "Behandling har tilstand: ${tilstand().first}" }
                                 if (slettet.isSuccess) {
                                     logger.info { "Fant fortsatt opplysningen som skal erstattes. Vent litt til." }
-                                    return@waitForCondition true
                                 }
-                                harTilstand(ForslagTilVedtak) || harTilstand(TilGodkjenning)
+                                slettet.isSuccess && (harTilstand(ForslagTilVedtak) || harTilstand(TilGodkjenning))
                             }
                         }
                         logger.info { "Svarer med at opplysning er oppdatert" }
@@ -278,8 +267,7 @@ internal fun Application.behandlingApi(
 
                     get("avklaring") {
                         val behandlingId = call.behandlingId
-                        val behandling =
-                            hentBehandling(personRepository, behandlingId)
+                        val behandling = hentBehandling(personRepository, behandlingId)
                         call.respond(HttpStatusCode.OK, behandling.avklaringer().map { it.tilAvklaringDTO() })
                     }
 
@@ -287,8 +275,7 @@ internal fun Application.behandlingApi(
                         val behandlingId = call.behandlingId
                         val avklaringId = call.avklaringId
                         val kvitteringDTO = call.receive<KvitterAvklaringRequestDTO>()
-                        val behandling =
-                            hentBehandling(personRepository, behandlingId)
+                        val behandling = hentBehandling(personRepository, behandlingId)
 
                         val avklaring =
                             behandling.avklaringer().singleOrNull { it.id == avklaringId }
