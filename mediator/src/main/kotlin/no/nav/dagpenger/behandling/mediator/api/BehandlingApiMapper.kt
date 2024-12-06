@@ -33,6 +33,7 @@ import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentLokalArbeidssøker
 import no.nav.dagpenger.regel.Samordning.sykepengerDagsats
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
+import no.nav.dagpenger.regel.Utestengning.utestengt
 import java.time.LocalDate
 
 private val logger = KotlinLogging.logger { }
@@ -169,6 +170,7 @@ private val redigerbareOpplysninger =
                 sykepengerDagsats,
                 godkjentLokalArbeidssøker,
                 godkjentDeltidssøker,
+                utestengt,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)
