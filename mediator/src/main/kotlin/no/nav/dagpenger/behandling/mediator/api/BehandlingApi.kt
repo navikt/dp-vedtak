@@ -255,7 +255,7 @@ internal fun Application.behandlingApi(
                                     val slettet = kotlin.runCatching { opplysninger().finnOpplysning(opplysningId) }
                                     when (slettet.isSuccess) {
                                         true -> "Opplysning er oppdatert $opplysning"
-                                        false -> "Opplysningen er borte!"
+                                        false -> "Opplysningen er borte! ${slettet.exceptionOrNull()}"
                                     }
                                 }
                                 logger.info { "Behandling har tilstand: ${tilstand().first}" }
