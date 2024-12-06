@@ -122,6 +122,8 @@ class Behandling private constructor(
 
     fun tilstand() = Pair(tilstand.type, tilstand.opprettet)
 
+    fun sistEndret() = tilstand.opprettet
+
     fun harTilstand(tilstand: TilstandType) = this.tilstand.type == tilstand
 
     fun opplysninger(): LesbarOpplysninger = opplysninger

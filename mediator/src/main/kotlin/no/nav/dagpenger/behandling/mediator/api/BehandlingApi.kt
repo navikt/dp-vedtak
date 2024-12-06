@@ -252,6 +252,13 @@ internal fun Application.behandlingApi(
                         waitForCondition(timeout = 5.seconds, interval = 1.seconds, initialDelay = 1.seconds) {
                             hentBehandling(personRepository, behandlingId).run {
                                 logger.info { "Behandling har tilstand: ${tilstand().first}" }
+                                logger.info {
+                                    "Endringstidspunkt: ny=${behandling.sistEndret()}, endret=${sistEndret()}, boolsk=${
+                                        sistEndret().isAfter(
+                                            behandling.sistEndret(),
+                                        )
+                                    }"
+                                }
                                 harTilstand(ForslagTilVedtak) || harTilstand(TilGodkjenning)
                             }
                         }
