@@ -89,14 +89,14 @@ internal class ArenaOppgaveMottak(
 
             logger.info {
                 """
-                |(Skal) Publiserer avbrytmelding for ${behandling.behandlingId} i tilstand ${behandling.tilstand}, 
+                |Publiserer avbrytmelding for ${behandling.behandlingId} i tilstand ${behandling.tilstand}, 
                 |mottok oppgave av type=$beskrivelse
                 """.trimMargin()
             }
 
             val avbrytMelding =
                 JsonMessage.newMessage(
-                    "avbryt_behandling_BETA",
+                    "avbryt_behandling",
                     mapOf(
                         "ident" to behandling.ident,
                         "behandlingId" to behandling.behandlingId.toString(),
