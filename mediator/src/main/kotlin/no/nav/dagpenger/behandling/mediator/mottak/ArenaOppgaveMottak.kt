@@ -87,6 +87,11 @@ internal class ArenaOppgaveMottak(
                 return
             }
 
+            if (packet["before.USERNAME"].asText() == packet["after.USERNAME"].asText()) {
+                logger.info { "Oppgaven må endre benk før vi avbryter" }
+                return
+            }
+
             logger.info {
                 """
                 |Publiserer avbrytmelding for ${behandling.behandlingId} i tilstand ${behandling.tilstand}, 

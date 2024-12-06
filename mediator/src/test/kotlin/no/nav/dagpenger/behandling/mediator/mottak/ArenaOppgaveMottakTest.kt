@@ -69,7 +69,7 @@ class ArenaOppgaveMottakTest {
                 sakRepository.finnBehandling(15102351)
             } returns SakRepository.Behandling("123", behandlingId, Behandling.TilstandType.UnderBehandling)
 
-            rapid.sendTestMessage(meldingJson("ABC2024"))
+            rapid.sendTestMessage(meldingJson("ABC2024", "4450"))
 
             rapid.inspektør.size shouldBeExactly 1
             with(rapid.inspektør.message(0)) {
@@ -83,22 +83,24 @@ class ArenaOppgaveMottakTest {
                 sakRepository.finnBehandling(15102351)
             } returns SakRepository.Behandling("123", behandlingId, Behandling.TilstandType.Avbrutt)
 
-            rapid.sendTestMessage(meldingJson("ABC2024"))
+            rapid.sendTestMessage(meldingJson("ABC2024", "ABC2024"))
 
             rapid.inspektør.size shouldBeExactly 1
         }
     }
 
     @Language("JSON")
-    private fun meldingJson(endretAv: String = "ARBLINJE") =
-        """{
+    private fun meldingJson(
+        endretAv: String = "ARBLINJE",
+        endretAvFør: String = endretAv,
+    ) = """{
       "table": "SIAMO.OPPGAVE_LOGG",
       "op_type": "U",
       "op_ts": "2024-11-05 12:12:46.000000",
       "current_ts": "2024-11-05 12:12:51.325004",
       "pos": "00000003570305543589",
       "before": {
-        "USERNAME": "$endretAv"
+        "USERNAME": "$endretAvFør"
       },
       "after": {
         "OPPGAVE_LOGG_ID": 238763568,
