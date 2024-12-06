@@ -251,11 +251,14 @@ internal fun Application.behandlingApi(
                         logger.info { "Venter på endring i behandling" }
                         waitForCondition(timeout = 5.seconds, interval = 1.seconds, initialDelay = 1.seconds) {
                             hentBehandling(personRepository, behandlingId).run {
-                                logger.info { "Behandling har tilstand: ${tilstand().first}" }
                                 logger.info {
                                     val slettet = kotlin.runCatching { opplysninger().finnOpplysning(opplysningId) }
-                                    "Opplysningern er borte! ${slettet.isFailure}"
+                                    when (slettet.isSuccess) {
+                                        true -> "Opplysning er oppdatert $opplysning"
+                                        false -> "Opplysningen er borte!"
+                                    }
                                 }
+                                logger.info { "Behandling har tilstand: ${tilstand().first}" }
                                 harTilstand(ForslagTilVedtak) || harTilstand(TilGodkjenning)
                             }
                         }
