@@ -73,7 +73,7 @@ class ArenaOppgaveMottakTest {
 
             rapid.inspektør.size shouldBeExactly 1
             with(rapid.inspektør.message(0)) {
-                this["@event_name"].asText() shouldBe "avbryt_behandling_BETA"
+                this["@event_name"].asText() shouldBe "avbryt_behandling"
                 this["ident"].asText() shouldBe "123"
                 this["behandlingId"].asUUID() shouldBe behandlingId
             }
