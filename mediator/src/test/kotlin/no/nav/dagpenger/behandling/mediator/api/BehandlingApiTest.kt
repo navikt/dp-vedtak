@@ -166,7 +166,7 @@ internal class BehandlingApiTest {
                     ),
                 ),
             basertPå = emptyList(),
-            tilstand = Behandling.TilstandType.UnderBehandling,
+            tilstand = Behandling.TilstandType.ForslagTilVedtak,
             sistEndretTilstand = LocalDateTime.now(),
             avklaringer = avklaringer,
         )

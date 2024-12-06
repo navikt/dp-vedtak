@@ -18,6 +18,8 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.opentelemetry.api.trace.Span
+import kotlinx.coroutines.delay
+import mu.KotlinLogging
 import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
@@ -32,7 +34,9 @@ import no.nav.dagpenger.behandling.mediator.api.auth.saksbehandlerId
 import no.nav.dagpenger.behandling.mediator.audit.Auditlogg
 import no.nav.dagpenger.behandling.mediator.lagVedtak
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
+import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.ForslagTilVedtak
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.Redigert
+import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.TilGodkjenning
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
 import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
@@ -53,9 +57,15 @@ import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.uuid.UUIDv7
+import java.lang.System.currentTimeMillis
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
+
+private val logger = KotlinLogging.logger { }
 
 internal fun Application.behandlingApi(
     personRepository: PersonRepository,
@@ -236,8 +246,17 @@ internal fun Application.behandlingApi(
                             )
 
                         messageContext(behandling.behandler.ident).publish(svar.toJson())
-
                         auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
+
+                        logger.info { "Venter på endring i behandling" }
+                        waitForCondition(timeout = 5.seconds, interval = 1.seconds, initialDelay = 500.milliseconds) {
+                            hentBehandling(personRepository, behandlingId).run {
+                                logger.info { "Behandling har tilstand: ${tilstand().first}" }
+                                harTilstand(ForslagTilVedtak) || harTilstand(TilGodkjenning)
+                            }
+                        }
+                        logger.info { "Svarer med at opplysning er oppdatert" }
+
                         call.respond(
                             HttpStatusCode.OK,
                             KvitteringDTO(
@@ -351,4 +370,21 @@ private class HttpVerdiMapper(
             Dato -> oppdaterOpplysningRequestDTO.verdi.let { LocalDate.parse(it) } as T
             else -> throw BadRequestException("Datatype $datatype støttes ikke å redigere i APIet enda")
         }
+}
+
+suspend fun waitForCondition(
+    timeout: Duration = 15.seconds,
+    interval: Duration = 500.milliseconds,
+    initialDelay: Duration? = null,
+    checkCondition: suspend () -> Boolean,
+): Boolean {
+    if (initialDelay != null) {
+        delay(initialDelay)
+    }
+    val startTime = currentTimeMillis()
+    while (currentTimeMillis() - startTime < timeout.inWholeMilliseconds) {
+        if (checkCondition()) return true
+        delay(interval) // Wait before trying again
+    }
+    return false
 }
