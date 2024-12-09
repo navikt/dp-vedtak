@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDate
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
@@ -11,6 +12,7 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -24,6 +26,7 @@ import no.nav.dagpenger.behandling.konfigurasjon.skruPåFeature
 import no.nav.dagpenger.behandling.mediator.BehovMediator
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
+import no.nav.dagpenger.behandling.mediator.lagVedtak
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringKafkaObservatør
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgres
@@ -31,6 +34,7 @@ import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostg
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
+import no.nav.dagpenger.behandling.mediator.toMap
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderOpprettelse
 import no.nav.dagpenger.behandling.modell.BehandlingObservatør.BehandlingEndretTilstand
@@ -273,6 +277,8 @@ internal class PersonMediatorTest {
                 OppgittAndreYtelserUtenforNav,
                 AndreØkonomiskeYtelser,
             )
+            testPerson.løsBehov(Sykepenger, true)
+            testPerson.løsBehov("Sykepenger dagsats", 200.0)
             testPerson.løsBehov(
                 Sykepenger,
                 Omsorgspenger,
@@ -291,7 +297,7 @@ internal class PersonMediatorTest {
             }
 
             // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
-            rapid.inspektør.size shouldBe 20
+            rapid.inspektør.size shouldBe 22
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe true
@@ -300,6 +306,22 @@ internal class PersonMediatorTest {
             personRepository.hent(ident.tilPersonIdentfikator()).also {
                 it.shouldNotBeNull()
                 it.behandlinger().first().kreverTotrinnskontroll() shouldBe true
+
+                it.behandlinger().first().run {
+                    val vedtak =
+                        lagVedtak(
+                            behandlingId,
+                            ident = behandler.ident.tilPersonIdentfikator(),
+                            søknadId = behandler.eksternId,
+                            opplysninger = opplysninger(),
+                            automatisk = erAutomatiskBehandlet(),
+                            godkjentAv = godkjent,
+                            besluttetAv = besluttet,
+                        )
+
+                    // Dette er vedtaket som brukes i dp-arena-sink: vedtak_fattet_innvilgelse.json
+                    val json = JsonMessage.newMessage("vedtak_fattet", vedtak.toMap())
+                }
             }
 
             // Saksbehandler lukker alle avklaringer
@@ -314,7 +336,8 @@ internal class PersonMediatorTest {
                     withClue("Grunnlag bør større enn 0") { grunnlag shouldBeGreaterThan 0 }
                     vanligArbeidstidPerUke shouldBe 37.5
                     sats shouldBeGreaterThan 0
-                    samordning.shouldBeEmpty()
+                    samordning.shouldNotBeEmpty()
+                    samordning.first()["type"].asText() shouldBe "Sykepenger dagsats"
                 }
                 medNode("behandletAv")
                     .map {

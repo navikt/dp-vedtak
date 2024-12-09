@@ -1,5 +1,6 @@
 package no.nav.dagpenger.behandling.mediator
 
+import com.fasterxml.jackson.module.kotlin.convertValue
 import no.nav.dagpenger.behandling.api.models.BarnDTO
 import no.nav.dagpenger.behandling.api.models.BehandletAvDTO
 import no.nav.dagpenger.behandling.api.models.KvoteDTO
@@ -16,6 +17,7 @@ import no.nav.dagpenger.behandling.mediator.api.tilOpplysningDTO
 import no.nav.dagpenger.behandling.modell.Arbeidssteg
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.hendelser.EksternId
+import no.nav.dagpenger.behandling.objectMapper
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
@@ -205,3 +207,5 @@ private fun Opplysning<Boolean>.tilVilkårDTO(): VilkaarDTO =
             },
         vurderingstidspunkt = this.opprettet,
     )
+
+fun VedtakDTO.toMap() = objectMapper.convertValue<Map<String, Any>>(this)
