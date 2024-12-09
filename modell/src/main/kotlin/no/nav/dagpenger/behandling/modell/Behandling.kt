@@ -880,11 +880,15 @@ class Behandling private constructor(
 
     // Behandlingen er ferdig og vi må rute til forslag eller godkjenning
     private fun avgjørNesteTilstand(hendelse: PersonHendelse) {
-        if (this.aktiveAvklaringer().isNotEmpty()) {
+        if (aktiveAvklaringer().isNotEmpty()) {
             return tilstand(ForslagTilVedtak(), hendelse)
         }
 
-        return tilstand(TilGodkjenning(), hendelse)
+        if (!erAutomatiskBehandlet()) {
+            return tilstand(TilGodkjenning(), hendelse)
+        }
+
+        return tilstand(Ferdig(), hendelse)
     }
 
     private fun tilstand(
