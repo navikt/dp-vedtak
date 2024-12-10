@@ -18,7 +18,6 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.opentelemetry.api.trace.Span
-import kotlinx.coroutines.delay
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
@@ -59,13 +58,9 @@ import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.uuid.UUIDv7
-import java.lang.System.currentTimeMillis
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 private val logger = KotlinLogging.logger { }
 
@@ -266,13 +261,15 @@ internal fun Application.behandlingApi(
                             auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
 
                             logger.info { "Venter på endring i behandling" }
-                            waitForCondition(timeout = 5.seconds, interval = 1.seconds) {
-                                hentBehandling(personRepository, behandlingId).run {
-                                    val slettet = kotlin.runCatching { opplysninger().finnOpplysning(opplysningId) }
-                                    if (slettet.isSuccess) {
-                                        logger.info { "Fant fortsatt opplysningen som skal erstattes. Vent litt til." }
-                                    }
-                                    slettet.isSuccess && (harTilstand(ForslagTilVedtak) || harTilstand(TilGodkjenning))
+                            ventPåBehandling(personRepository, behandlingId) {
+                                sjekkAt("opplysningen fjernes") {
+                                    runCatching { opplysninger().finnOpplysning(opplysningId) }.isFailure
+                                }
+                                sjekkAt("opplysningen er lagt til") {
+                                    runCatching { opplysninger().finnOpplysning(opplysning.opplysningstype) }.isSuccess
+                                }
+                                sjekkAt("behandlingen er i riktig tilstand") {
+                                    harTilstand(ForslagTilVedtak) || harTilstand(TilGodkjenning)
                                 }
                             }
                             logger.info { "Svarer med at opplysning er oppdatert" }
@@ -328,7 +325,7 @@ internal fun Application.behandlingApi(
     }
 }
 
-private fun hentBehandling(
+internal fun hentBehandling(
     personRepository: PersonRepository,
     behandlingId: UUID,
 ) = personRepository.hentBehandling(behandlingId) ?: throw NotFoundException("Behandling ikke funnet")
@@ -389,21 +386,4 @@ private class HttpVerdiMapper(
             Dato -> oppdaterOpplysningRequestDTO.verdi.let { LocalDate.parse(it) } as T
             else -> throw BadRequestException("Datatype $datatype støttes ikke å redigere i APIet enda")
         }
-}
-
-suspend fun waitForCondition(
-    timeout: Duration = 15.seconds,
-    interval: Duration = 500.milliseconds,
-    initialDelay: Duration? = null,
-    checkCondition: suspend () -> Boolean,
-): Boolean {
-    if (initialDelay != null) {
-        delay(initialDelay)
-    }
-    val startTime = currentTimeMillis()
-    while (currentTimeMillis() - startTime < timeout.inWholeMilliseconds) {
-        if (checkCondition()) return true
-        delay(interval) // Wait before trying again
-    }
-    return false
 }
