@@ -20,6 +20,7 @@ import io.ktor.server.routing.routing
 import io.opentelemetry.api.trace.Span
 import kotlinx.coroutines.delay
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.dagpenger.aktivitetslogg.AuditOperasjon
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.IdentForesporselDTO
@@ -240,45 +241,49 @@ internal fun Application.behandlingApi(
                     put("opplysning/{opplysningId}") {
                         val behandlingId = call.behandlingId
                         val opplysningId = call.opplysningId
-                        val oppdaterOpplysningRequestDTO = call.receive<OppdaterOpplysningRequestDTO>()
-                        val behandling = hentBehandling(personRepository, behandlingId)
+                        withLoggingContext(
+                            "behandlingId" to behandlingId.toString(),
+                        ) {
+                            val oppdaterOpplysningRequestDTO = call.receive<OppdaterOpplysningRequestDTO>()
+                            val behandling = hentBehandling(personRepository, behandlingId)
 
-                        if (behandling.harTilstand(Redigert)) {
-                            throw BadRequestException("Kan ikke redigere opplysninger før forrige redigering er ferdig")
-                        }
-
-                        val opplysning = behandling.opplysninger().finnOpplysning(opplysningId)
-                        val svar =
-                            OpplysningsSvar(
-                                behandlingId,
-                                opplysningId,
-                                opplysning.opplysningstype.id,
-                                behandling.behandler.ident,
-                                HttpVerdiMapper(oppdaterOpplysningRequestDTO).map(opplysning.opplysningstype.datatype),
-                                call.saksbehandlerId(),
-                            )
-
-                        messageContext(behandling.behandler.ident).publish(svar.toJson())
-                        auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
-
-                        logger.info { "Venter på endring i behandling" }
-                        waitForCondition(timeout = 5.seconds, interval = 1.seconds) {
-                            hentBehandling(personRepository, behandlingId).run {
-                                val slettet = kotlin.runCatching { opplysninger().finnOpplysning(opplysningId) }
-                                if (slettet.isSuccess) {
-                                    logger.info { "Fant fortsatt opplysningen som skal erstattes. Vent litt til." }
-                                }
-                                slettet.isSuccess && (harTilstand(ForslagTilVedtak) || harTilstand(TilGodkjenning))
+                            if (behandling.harTilstand(Redigert)) {
+                                throw BadRequestException("Kan ikke redigere opplysninger før forrige redigering er ferdig")
                             }
-                        }
-                        logger.info { "Svarer med at opplysning er oppdatert" }
 
-                        call.respond(
-                            HttpStatusCode.OK,
-                            KvitteringDTO(
-                                behandlingId = behandlingId,
-                            ),
-                        )
+                            val opplysning = behandling.opplysninger().finnOpplysning(opplysningId)
+                            val svar =
+                                OpplysningsSvar(
+                                    behandlingId,
+                                    opplysningId,
+                                    opplysning.opplysningstype.id,
+                                    behandling.behandler.ident,
+                                    HttpVerdiMapper(oppdaterOpplysningRequestDTO).map(opplysning.opplysningstype.datatype),
+                                    call.saksbehandlerId(),
+                                )
+
+                            messageContext(behandling.behandler.ident).publish(svar.toJson())
+                            auditlogg.oppdater("Oppdaterte opplysning", behandling.behandler.ident, call.saksbehandlerId())
+
+                            logger.info { "Venter på endring i behandling" }
+                            waitForCondition(timeout = 5.seconds, interval = 1.seconds) {
+                                hentBehandling(personRepository, behandlingId).run {
+                                    val slettet = kotlin.runCatching { opplysninger().finnOpplysning(opplysningId) }
+                                    if (slettet.isSuccess) {
+                                        logger.info { "Fant fortsatt opplysningen som skal erstattes. Vent litt til." }
+                                    }
+                                    slettet.isSuccess && (harTilstand(ForslagTilVedtak) || harTilstand(TilGodkjenning))
+                                }
+                            }
+                            logger.info { "Svarer med at opplysning er oppdatert" }
+
+                            call.respond(
+                                HttpStatusCode.OK,
+                                KvitteringDTO(
+                                    behandlingId = behandlingId,
+                                ),
+                            )
+                        }
                     }
 
                     get("avklaring") {
