@@ -156,6 +156,13 @@ internal fun Application.behandlingApi(
 
                     post("godkjenn") {
                         val identForespørsel = call.receive<IdentForesporselDTO>()
+                        val behandling = hentBehandling(personRepository, call.behandlingId)
+
+                        // TODO: La dette egentlig komme fra modellen
+                        if (!behandling.harTilstand(TilGodkjenning)) {
+                            throw IllegalStateException("Behandling er ikke til godkjenning")
+                        }
+
                         val hendelse =
                             GodkjennBehandlingHendelse(
                                 UUIDv7.ny(),
@@ -170,6 +177,7 @@ internal fun Application.behandlingApi(
 
                         call.respond(HttpStatusCode.Created)
                     }
+
                     post("beslutt") {
                         val identForespørsel = call.receive<IdentForesporselDTO>()
                         val hendelse =
