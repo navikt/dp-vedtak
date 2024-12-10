@@ -1,15 +1,7 @@
 package no.nav.dagpenger.behandling.mediator
 
-import com.github.navikt.tbd_libs.naisful.FeilResponse
-import com.github.navikt.tbd_libs.naisful.defaultStatusPagesConfig
 import com.github.navikt.tbd_libs.rapids_and_rivers.KafkaRapid
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.plugins.callid.callId
-import io.ktor.server.request.uri
-import io.ktor.server.response.header
-import io.ktor.server.response.respond
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
@@ -29,7 +21,6 @@ import no.nav.dagpenger.behandling.objectMapper
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.helse.rapids_rivers.RapidApplication
-import java.net.URI
 
 internal class ApplicationBuilder(
     config: Map<String, String>,
@@ -40,30 +31,10 @@ internal class ApplicationBuilder(
 
     // TODO: Last alle regler ved startup. Dette må inn i ett register.
     private val opplysningstyper: Set<Opplysningstype<*>> = RegelverkDagpenger.produserer
-
     private val rapidsConnection: RapidsConnection =
         RapidApplication.create(
             env = config,
             objectMapper = objectMapper,
-            builder = {
-                withStatusPagesConfig {
-                    defaultStatusPagesConfig()
-                    exception<IllegalStateException> { call, cause ->
-                        call.response.header("Content-Type", ContentType.Application.ProblemJson.toString())
-                        call.respond(
-                            HttpStatusCode.Forbidden,
-                            FeilResponse(
-                                status = HttpStatusCode.Forbidden,
-                                type = URI("urn:error:Forbidden"),
-                                detail = cause.message,
-                                instance = URI(call.request.uri),
-                                callId = call.callId,
-                                stacktrace = cause.stackTraceToString(),
-                            ),
-                        )
-                    }
-                }
-            },
         ) { engine, rapidsConnection: KafkaRapid ->
             val aktivitetsloggMediator = AktivitetsloggMediator()
 

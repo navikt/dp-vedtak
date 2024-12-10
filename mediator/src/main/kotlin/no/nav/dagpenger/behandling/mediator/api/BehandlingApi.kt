@@ -36,6 +36,7 @@ import no.nav.dagpenger.behandling.mediator.lagVedtak
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.ForslagTilVedtak
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.Redigert
+import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.TilBeslutning
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.TilGodkjenning
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Ident.Companion.tilPersonIdentfikator
@@ -160,7 +161,7 @@ internal fun Application.behandlingApi(
 
                         // TODO: La dette egentlig komme fra modellen
                         if (!behandling.harTilstand(TilGodkjenning)) {
-                            throw IllegalStateException("Behandling er ikke til godkjenning")
+                            throw BadRequestException("Behandlingen er ikke klar til å godkjennes")
                         }
 
                         val hendelse =
@@ -180,6 +181,13 @@ internal fun Application.behandlingApi(
 
                     post("beslutt") {
                         val identForespørsel = call.receive<IdentForesporselDTO>()
+                        val behandling = hentBehandling(personRepository, call.behandlingId)
+
+                        // TODO: La dette egentlig komme fra modellen
+                        if (!behandling.harTilstand(TilBeslutning)) {
+                            // throw BadRequestException("Behandlingen er ikke til beslutning enda")
+                        }
+
                         val hendelse =
                             BesluttBehandlingHendelse(
                                 UUIDv7.ny(),
