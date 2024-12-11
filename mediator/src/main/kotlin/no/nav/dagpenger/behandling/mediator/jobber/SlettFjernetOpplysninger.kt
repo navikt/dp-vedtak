@@ -15,11 +15,11 @@ internal object SlettFjernetOpplysninger {
             name = "Slett fjernet opplysninger",
             daemon = true,
             initialDelay = randomInitialDelay(),
-            period = 15.Minutt,
+            period = 15.minutes.inWholeMilliseconds,
             action = {
                 try {
-                    vaktmesterRepository.loggOpplysningerSomSkalSlettes().also {
-                        logger.info { "Skal slette ${it.size} fjernede opplysninger" }
+                    vaktmesterRepository.slettOpplysninger().also {
+                        logger.info { "Har slettet ${it.size} fjernede opplysninger" }
                     }
                 } catch (e: Exception) {
                     logger.error { "Sletting av fjernet opplysninger feilet: $e" }
@@ -27,8 +27,6 @@ internal object SlettFjernetOpplysninger {
             },
         )
     }
-
-    private val Int.Minutt get() = this * 1000L * 60L
 }
 
 private fun randomInitialDelay() = Random.nextInt(1..10).minutes.inWholeMilliseconds
