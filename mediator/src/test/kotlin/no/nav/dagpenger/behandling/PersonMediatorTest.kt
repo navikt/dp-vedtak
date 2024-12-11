@@ -163,6 +163,8 @@ internal class PersonMediatorTest {
             }
 
             godkjennOpplysninger("avslag")
+
+            vedtakJson()
         }
 
     @Test
@@ -295,6 +297,7 @@ internal class PersonMediatorTest {
             saksbehandler.beslutt()
 
             rapid.harHendelse("vedtak_fattet") {
+                medBoolsk("automatisk") shouldBe false
                 medFastsattelser {
                     oppfylt
                     withClue("Grunnlag bør større enn 0") { grunnlag shouldBeGreaterThan 0 }
