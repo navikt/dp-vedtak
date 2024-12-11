@@ -470,31 +470,7 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             hendelse.info("Alle opplysninger mottatt, lager forslag til vedtak")
 
-            // TODO: Shim for å gi STSB avklaringer på lik måte osm før
-            val avklaringer =
-                behandling.aktiveAvklaringer().map {
-                    mapOf(
-                        "type" to it.kode.kode,
-                        "utfall" to "Manuell",
-                        "begrunnelse" to it.kode.beskrivelse,
-                    )
-                }
-            val prøvingsdato = behandling.behandler.prøvingsdato(behandling.opplysninger)
-            val avklarer = behandling.behandler.avklarer(behandling.opplysninger)
-            hendelse.hendelse(
-                BehandlingHendelser.ForslagTilVedtakHendelse,
-                "Foreslår vedtak",
-                mapOf(
-                    "prøvingsdato" to prøvingsdato,
-                    "utfall" to behandling.opplysninger.finnOpplysning(avklarer).verdi,
-                    "harAvklart" to
-                        behandling.opplysninger
-                            .finnOpplysning(avklarer)
-                            .opplysningstype.navn,
-                    "avklaringer" to avklaringer,
-                ),
-            )
-            behandling.observatører.forEach { it.forslagTilVedtak() }
+            behandling.distribuerForslag(hendelse)
         }
 
         override fun håndter(
@@ -888,7 +864,35 @@ class Behandling private constructor(
             return tilstand(TilGodkjenning(), hendelse)
         }
 
+        if (kreverTotrinnskontroll()) {
+            return tilstand(TilGodkjenning(), hendelse)
+        }
+
         return tilstand(Ferdig(), hendelse)
+    }
+
+    private fun distribuerForslag(hendelse: PersonHendelse) {
+        val avklaringer =
+            aktiveAvklaringer().map {
+                mapOf(
+                    "type" to it.kode.kode,
+                    "utfall" to "Manuell",
+                    "begrunnelse" to it.kode.beskrivelse,
+                )
+            }
+        val prøvingsdato = behandler.prøvingsdato(opplysninger)
+        val avklarer = behandler.avklarer(opplysninger)
+        hendelse.hendelse(
+            BehandlingHendelser.ForslagTilVedtakHendelse,
+            "Foreslår vedtak",
+            mapOf(
+                "prøvingsdato" to prøvingsdato,
+                "utfall" to opplysninger.finnOpplysning(avklarer).verdi,
+                "harAvklart" to opplysninger.finnOpplysning(avklarer).opplysningstype.navn,
+                "avklaringer" to avklaringer,
+            ),
+        )
+        observatører.forEach { it.forslagTilVedtak() }
     }
 
     private fun tilstand(
