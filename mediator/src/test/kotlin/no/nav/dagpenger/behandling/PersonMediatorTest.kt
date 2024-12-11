@@ -159,7 +159,7 @@ internal class PersonMediatorTest {
                 medMeldingsInnhold("fastsatt") {
                     medBoolsk("utfall") shouldBe false
                 }
-                medNode("vilkår").size() shouldBe 1
+                medNode("vilkår").size() shouldBe 2
             }
 
             godkjennOpplysninger("avslag")
@@ -226,7 +226,7 @@ internal class PersonMediatorTest {
                 }
             }
 
-            rapid.inspektør.size shouldBe 24
+            rapid.inspektør.size shouldBe 23
 
             testObservatør.tilstandsendringer.size shouldBe 3
 
@@ -279,7 +279,7 @@ internal class PersonMediatorTest {
             }
 
             // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
-            rapid.inspektør.size shouldBe 22
+            rapid.inspektør.size shouldBe 21
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medBoolsk("utfall") shouldBe true
@@ -382,7 +382,7 @@ internal class PersonMediatorTest {
             rapid.inspektør.size shouldBe
                 listOf(
                     "opprettet" to 1,
-                    "behov" to 6,
+                    "behov" to 5,
                     "avklaring" to 6,
                     "forslag" to 1,
                     "event" to 2,
@@ -652,6 +652,11 @@ internal class PersonMediatorTest {
         rapid.harHendelse("behandling_opprettet", offset = 2)
 
         /**
+         * Innhenter rettighetstype
+         */
+        rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
+
+        /**
          * Fastsetter søknadsdato
          */
         rapid.harBehov("Søknadsdato") {
@@ -663,7 +668,15 @@ internal class PersonMediatorTest {
         }
 
         rapid.harBehov("Fødselsdato", "Søknadsdato", ØnskerDagpengerFraDato)
-        testPerson.løsBehov("Fødselsdato", "Søknadsdato", ØnskerDagpengerFraDato)
+        testPerson.løsBehov(
+            "Fødselsdato",
+            "Søknadsdato",
+            ØnskerDagpengerFraDato,
+            Ordinær,
+            Permittert,
+            Lønnsgaranti,
+            PermittertFiskeforedling,
+        )
 
         if (behandlingslengde == Behandlingslengde.Alder) {
             return
@@ -704,12 +717,6 @@ internal class PersonMediatorTest {
          */
         rapid.harBehov(RegistrertSomArbeidssøker)
         testPerson.løsBehov(RegistrertSomArbeidssøker)
-
-        /**
-         * Innhenter rettighetstype
-         */
-        rapid.harBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
-        testPerson.løsBehov(Ordinær, Permittert, Lønnsgaranti, PermittertFiskeforedling)
 
         if (behandlingslengde == Behandlingslengde.Minsteinntekt) {
             return

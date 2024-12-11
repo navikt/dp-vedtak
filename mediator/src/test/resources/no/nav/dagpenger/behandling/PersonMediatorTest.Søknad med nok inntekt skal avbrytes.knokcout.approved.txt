@@ -4,8 +4,15 @@ støtterInnvilgelse
 Fødselsdato
 Søknadsdato
 Ønsker dagpenger fra dato
+Har rett til ordinære dagpenger gjennom arbeidsforhold
+Har rett til dagpenger under permittering
+Har rett til dagpenger etter konkurs
+Har rett til dagpenger under permittering i fiskeforedlingsindustri
+Har rett til ordinære dagpenger uten arbeidsforhold
 Søknadstidspunkt
+Har rett til ordinære dagpenger
 Prøvingsdato
+Rettighetstype
 Aldersgrense
 Dato søker når maks alder
 Siste mulige dag bruker kan oppfylle alderskrav

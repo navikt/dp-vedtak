@@ -4,8 +4,15 @@ støtterInnvilgelse
 Fødselsdato
 Søknadsdato
 Ønsker dagpenger fra dato
+Har rett til ordinære dagpenger gjennom arbeidsforhold
+Har rett til dagpenger under permittering
+Har rett til dagpenger etter konkurs
+Har rett til dagpenger under permittering i fiskeforedlingsindustri
+Har rett til ordinære dagpenger uten arbeidsforhold
 Søknadstidspunkt
+Har rett til ordinære dagpenger
 Prøvingsdato
+Rettighetstype
 Aldersgrense
 Dato søker når maks alder
 Siste mulige dag bruker kan oppfylle alderskrav
@@ -107,13 +114,6 @@ Oppfyller kravet til å ta ethvert arbeid
 Krav til arbeidssøker
 Registrert som arbeidssøker
 Registrert som arbeidssøker på søknadstidspunktet
-Har rett til ordinære dagpenger gjennom arbeidsforhold
-Har rett til dagpenger under permittering
-Har rett til dagpenger etter konkurs
-Har rett til dagpenger under permittering i fiskeforedlingsindustri
-Har rett til ordinære dagpenger uten arbeidsforhold
-Har rett til ordinære dagpenger
-Rettighetstype
 Tar utdanning eller opplæring?
 Har svart ja på spørsmål om utdanning eller opplæring
 Har svart nei på spørsmål om utdanning eller opplæring

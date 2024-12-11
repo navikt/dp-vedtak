@@ -18,7 +18,10 @@ class Søknadsprosess : Forretningsprosess {
     override fun regelsett() = regelverk.regelsett
 
     override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> {
-        val ønsketResultat = mutableListOf<Opplysningstype<*>>()
+        val ønsketResultat =
+            mutableListOf<Opplysningstype<*>>(
+                Rettighetstype.rettighetstype,
+            )
 
         // Sjekk krav til alder
         ønsketResultat.add(Alderskrav.kravTilAlder)
@@ -45,7 +48,6 @@ class Søknadsprosess : Forretningsprosess {
                 listOf(
                     ReellArbeidssøker.kravTilArbeidssøker,
                     Meldeplikt.registrertPåSøknadstidspunktet,
-                    Rettighetstype.rettighetstype,
                 ),
             )
             return ønsketResultat
@@ -63,7 +65,6 @@ class Søknadsprosess : Forretningsprosess {
                 Minsteinntekt.minsteinntekt,
                 Opphold.oppfyllerKravet,
                 ReellArbeidssøker.kravTilArbeidssøker,
-                Rettighetstype.rettighetstype,
                 StreikOgLockout.ikkeStreikEllerLockout,
                 TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid,
                 Utdanning.kravTilUtdanning,
