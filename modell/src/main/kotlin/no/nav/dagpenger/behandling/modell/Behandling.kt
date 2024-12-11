@@ -750,6 +750,16 @@ class Behandling private constructor(
     ) : BehandlingTilstand {
         override val type = TilstandType.TilGodkjenning
 
+        override fun entering(
+            behandling: Behandling,
+            hendelse: PersonHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Har et nytt forslag til vedtak som må godkjennes")
+
+            behandling.distribuerForslag(hendelse)
+        }
+
         override fun håndter(
             behandling: Behandling,
             hendelse: GodkjennBehandlingHendelse,
