@@ -18,8 +18,8 @@ internal object SlettFjernetOpplysninger {
             period = 15.Minutt,
             action = {
                 try {
-                    vaktmesterRepository.slettOpplysninger().also {
-                        logger.info { "Slettet ${it.size} fjernede opplysninger" }
+                    vaktmesterRepository.loggOpplysningerSomSkalSlettes().also {
+                        logger.info { "Skal slette ${it.size} fjernede opplysninger" }
                     }
                 } catch (e: Exception) {
                     logger.error { "Sletting av fjernet opplysninger feilet: $e" }

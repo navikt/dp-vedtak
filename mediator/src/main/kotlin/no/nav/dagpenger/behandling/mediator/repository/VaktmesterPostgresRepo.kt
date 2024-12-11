@@ -37,6 +37,20 @@ internal class VaktmesterPostgresRepo {
         return antall
     }
 
+    fun loggOpplysningerSomSkalSlettes(): List<UUID> {
+        val antall = mutableListOf<UUID>()
+        using(sessionOf(dataSource)) { session ->
+            session.transaction { tx ->
+                tx.medLås(låsenøkkel) {
+                    hentAlleOpplysningerSomErFjernet(tx).forEach { (opplysningId, kildeId) ->
+                        antall.add(opplysningId)
+                    }
+                }
+            }
+        }
+        return antall
+    }
+
     private fun hentAlleOpplysningerSomErFjernet(tx: TransactionalSession): List<Pair<UUID, UUID?>> {
         //language=PostgreSQL
         val query =
@@ -44,7 +58,7 @@ internal class VaktmesterPostgresRepo {
             SELECT *
             FROM opplysning
             WHERE fjernet = true
-            ORDER BY id DESC;
+            ORDER BY opprettet DESC;
             """.trimIndent()
         val opplysninger =
             tx.run(

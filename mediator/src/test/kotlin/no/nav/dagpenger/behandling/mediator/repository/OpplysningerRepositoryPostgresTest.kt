@@ -425,16 +425,18 @@ class OpplysningerRepositoryPostgresTest {
             val fraDb = repo.hentOpplysninger(nyeOpplysninger.id)
             fraDb.finnAlle().size shouldBe 2
             vaktmesterRepo.slettOpplysninger().shouldBeEmpty()
+            val utledet = fraDb.finnOpplysning(utledetOpplysningstype)
 
             // Legg til endret opplysning i ny behandling
             val endretDato = LocalDate.now().plusDays(2)
-            fraDb.leggTil(Faktum(baseOpplysningstype, endretDato)).also {
+            fraDb.leggTil(Faktum(baseOpplysningstype, endretDato, Gyldighetsperiode(LocalDate.now().minusDays(1)))).also {
                 Regelkjøring(LocalDate.now(), fraDb, regelsett).evaluer()
             }
+
             repo.lagreOpplysninger(fraDb)
 
             // Slett opplysninger som er fjernet kun fra ny behandling
-            vaktmesterRepo.slettOpplysninger().size shouldBe 2
+            vaktmesterRepo.slettOpplysninger().shouldContainExactly(utledet.id, endretBaseOpplysningstype.id)
 
             with(repo.hentOpplysninger(nyeOpplysninger.id)) {
                 finnAlle().size shouldBe 2
