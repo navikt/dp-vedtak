@@ -28,6 +28,7 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.regel.Regel
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.uuid.UUIDv7
@@ -84,7 +85,8 @@ class Behandling private constructor(
 
     fun avklaringer() = avklaringer.avklaringer(opplysninger.forDato(behandler.prøvingsdato(opplysninger)))
 
-    fun erAutomatiskBehandlet() = avklaringer().all { it.erAvklart() || it.erAvbrutt() }
+    fun erAutomatiskBehandlet() =
+        avklaringer().none { it.løstAvSaksbehandler() } && opplysninger().finnAlle().none { it.kilde is Saksbehandlerkilde }
 
     fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger.forDato(behandler.prøvingsdato(opplysninger)))
 
