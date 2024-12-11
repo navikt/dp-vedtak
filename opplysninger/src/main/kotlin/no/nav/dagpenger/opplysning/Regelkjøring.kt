@@ -149,7 +149,9 @@ class Regelkjøring(
     private fun aktiverRegler() {
         val produksjonsplan = mutableSetOf<Regel<*>>()
         ønsketResultat.forEach { opplysningstype ->
-            val produsent = gjeldendeRegler.single { it.produserer(opplysningstype) }
+            val produsent =
+                gjeldendeRegler.singleOrNull { it.produserer(opplysningstype) }
+                    ?: throw IllegalArgumentException("Fant ikke regel som produserer $opplysningstype")
             produsent.lagPlan(opplysningerPåPrøvingsdato, produksjonsplan, gjeldendeRegler)
         }
         val (ekstern, intern) = produksjonsplan.partition { it is Ekstern<*> }
