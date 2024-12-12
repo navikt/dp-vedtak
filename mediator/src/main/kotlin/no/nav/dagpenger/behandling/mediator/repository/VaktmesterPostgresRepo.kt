@@ -67,33 +67,6 @@ internal class VaktmesterPostgresRepo {
             listOf(mapOf("id" to opplysningId)),
         )
 
-    private fun slettKilde(id: UUID) =
-        BatchStatement(
-            //language=PostgreSQL
-            """
-            DELETE FROM kilde WHERE id = :id
-            """.trimIndent(),
-            listOf(mapOf("id" to id)),
-        )
-
-    private fun slettKildeSystem(id: UUID) =
-        BatchStatement(
-            //language=PostgreSQL
-            """
-            DELETE FROM kilde_system WHERE kilde_id = :id
-            """.trimIndent(),
-            listOf(mapOf("id" to id)),
-        )
-
-    private fun slettKildeSaksbehandler(id: UUID) =
-        BatchStatement(
-            //language=PostgreSQL
-            """
-            DELETE FROM kilde_saksbehandler WHERE kilde_id = :id
-            """.trimIndent(),
-            listOf(mapOf("id" to id)),
-        )
-
     private fun slettOpplysningVerdi(id: UUID) =
         BatchStatement(
             //language=PostgreSQL
