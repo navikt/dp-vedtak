@@ -91,6 +91,13 @@ object Avklaringspunkter {
             beskrivelse = "Personen har åpne saker i Arena som kan være gjenopptak",
         )
 
+    val IkkeRegistrertSomArbeidsøker =
+        Avklaringkode(
+            kode = "IkkeRegistrertSomArbeidsøker",
+            tittel = "Ikke registrert som arbeidssøker",
+            beskrivelse = "Personen er ikke registrert som arbeidssøker",
+        )
+
     val SvangerskapsrelaterteSykepenger =
         Avklaringkode(
             kode = "SvangerskapsrelaterteSykepenger",
