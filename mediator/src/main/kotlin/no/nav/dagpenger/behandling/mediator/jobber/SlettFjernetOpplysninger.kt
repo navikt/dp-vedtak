@@ -18,10 +18,11 @@ internal object SlettFjernetOpplysninger {
             period = 15.minutes.inWholeMilliseconds,
             action = {
                 try {
-                    logger.info { "Slette jobben er stoppet." }
-//                    vaktmesterRepository.slettOpplysninger().also {
-//                        logger.info { "Har slettet ${it.size} fjernede opplysninger" }
-//                    }
+                    if (System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp") {
+                        vaktmesterRepository.slettOpplysninger().also {
+                            logger.info { "Har slettet ${it.size} fjernede opplysninger" }
+                        }
+                    }
                 } catch (e: Exception) {
                     logger.error { "Sletting av fjernet opplysninger feilet: $e" }
                 }

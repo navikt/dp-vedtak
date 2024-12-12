@@ -21,8 +21,7 @@ internal class VaktmesterPostgresRepo {
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
                 tx.medLås(låsenøkkel) {
-                    hentAlleOpplysningerSomErFjernet(tx).forEach { (opplysningId, kildeId) ->
-                        kildeId?.let { slettKilde(it, tx) }
+                    hentAlleOpplysningerSomErFjernet(tx).forEach { opplysningId ->
                         slettOpplysningVerdi(opplysningId).run(tx)
                         slettOpplysningUtledet(opplysningId).run(tx)
                         slettOpplysningLink(opplysningId).run(tx)
@@ -37,7 +36,7 @@ internal class VaktmesterPostgresRepo {
         return antall
     }
 
-    private fun hentAlleOpplysningerSomErFjernet(tx: TransactionalSession): List<Pair<UUID, UUID?>> {
+    private fun hentAlleOpplysningerSomErFjernet(tx: TransactionalSession): List<UUID> {
         //language=PostgreSQL
         val query =
             """
@@ -52,7 +51,7 @@ internal class VaktmesterPostgresRepo {
                     query,
                     mapOf("fjernet" to true),
                 ).map { row ->
-                    Pair(row.uuid("id"), row.uuidOrNull("kilde_id"))
+                    row.uuid("id")
                 }.asList,
             )
         logger.info { "Fant ${opplysninger.size} opplysninger som er fjernet og som skal slettes" }
@@ -66,42 +65,6 @@ internal class VaktmesterPostgresRepo {
             DELETE FROM opplysning_erstattet_av WHERE erstattet_av = :id
             """.trimIndent(),
             listOf(mapOf("id" to opplysningId)),
-        )
-
-    private fun slettKilde(
-        id: UUID,
-        tx: TransactionalSession,
-    ) {
-        slettKildeSaksbehandler(id).run(tx)
-        slettKildeSystem(id).run(tx)
-        slettKilde(id).run(tx)
-    }
-
-    private fun slettKilde(id: UUID) =
-        BatchStatement(
-            //language=PostgreSQL
-            """
-            DELETE FROM kilde WHERE id = :id
-            """.trimIndent(),
-            listOf(mapOf("id" to id)),
-        )
-
-    private fun slettKildeSystem(id: UUID) =
-        BatchStatement(
-            //language=PostgreSQL
-            """
-            DELETE FROM kilde_system WHERE kilde_id = :id
-            """.trimIndent(),
-            listOf(mapOf("id" to id)),
-        )
-
-    private fun slettKildeSaksbehandler(id: UUID) =
-        BatchStatement(
-            //language=PostgreSQL
-            """
-            DELETE FROM kilde_saksbehandler WHERE kilde_id = :id
-            """.trimIndent(),
-            listOf(mapOf("id" to id)),
         )
 
     private fun slettOpplysningVerdi(id: UUID) =
