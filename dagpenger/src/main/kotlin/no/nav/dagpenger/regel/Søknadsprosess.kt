@@ -21,6 +21,7 @@ class Søknadsprosess : Forretningsprosess {
         val ønsketResultat =
             mutableListOf<Opplysningstype<*>>(
                 Rettighetstype.rettighetstype,
+                Meldeplikt.registrertPåSøknadstidspunktet,
             )
 
         // Sjekk krav til alder
@@ -47,7 +48,6 @@ class Søknadsprosess : Forretningsprosess {
             ønsketResultat.addAll(
                 listOf(
                     ReellArbeidssøker.kravTilArbeidssøker,
-                    Meldeplikt.registrertPåSøknadstidspunktet,
                 ),
             )
             return ønsketResultat
@@ -61,7 +61,6 @@ class Søknadsprosess : Forretningsprosess {
                 Alderskrav.kravTilAlder,
                 FulleYtelser.ikkeFulleYtelser,
                 Medlemskap.oppfyllerMedlemskap,
-                Meldeplikt.registrertPåSøknadstidspunktet,
                 Minsteinntekt.minsteinntekt,
                 Opphold.oppfyllerKravet,
                 ReellArbeidssøker.kravTilArbeidssøker,

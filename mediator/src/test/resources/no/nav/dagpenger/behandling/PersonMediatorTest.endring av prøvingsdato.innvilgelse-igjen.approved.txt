@@ -134,8 +134,8 @@ Opplæringspenger etter lovens kapittel 9
 Pleiepenger etter lovens kapittel 9
 Oppgitt andre ytelser utenfor NAV i søknaden
 Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn
-Brutto arbeidsinntekt
 Registrert som arbeidssøker på søknadstidspunktet
+Brutto arbeidsinntekt
 Tellende inntekt
 Medlem har reduserte ytelser fra folketrygden (Samordning)
 Skal samordnes med ytelser utenfor folketrygden

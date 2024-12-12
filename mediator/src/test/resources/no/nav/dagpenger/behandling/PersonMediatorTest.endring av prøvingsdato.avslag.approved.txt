@@ -42,8 +42,8 @@ Oppfyller kravet til alder
 Første måned av opptjeningsperiode
 Inntektsopplysninger
 Registrert som arbeidssøker
-Brutto arbeidsinntekt
 Registrert som arbeidssøker på søknadstidspunktet
+Brutto arbeidsinntekt
 Arbeidsinntekt siste 12 mnd
 Arbeidsinntekt siste 36 mnd
 Arbeidsinntekt er over kravet for siste 12 mnd

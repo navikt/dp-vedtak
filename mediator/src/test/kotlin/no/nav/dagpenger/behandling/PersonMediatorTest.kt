@@ -159,7 +159,7 @@ internal class PersonMediatorTest {
                 medMeldingsInnhold("fastsatt") {
                     medBoolsk("utfall") shouldBe false
                 }
-                medNode("vilkår").size() shouldBe 2
+                medNode("vilkår").size() shouldBe 3
             }
 
             godkjennOpplysninger("avslag")
@@ -255,7 +255,7 @@ internal class PersonMediatorTest {
                 medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
             }
 
-            rapid.inspektør.size shouldBe 13
+            rapid.inspektør.size shouldBe 14
         }
 
     @Test
@@ -678,6 +678,12 @@ internal class PersonMediatorTest {
             PermittertFiskeforedling,
         )
 
+        /**
+         * Sjekker kravet til registrering som arbeidssøker
+         */
+        rapid.harBehov(RegistrertSomArbeidssøker)
+        testPerson.løsBehov(RegistrertSomArbeidssøker)
+
         if (behandlingslengde == Behandlingslengde.Alder) {
             return
         }
@@ -711,12 +717,6 @@ internal class PersonMediatorTest {
          */
         rapid.harBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
         testPerson.løsBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
-
-        /**
-         * Sjekker kravet til registrering som arbeidssøker
-         */
-        rapid.harBehov(RegistrertSomArbeidssøker)
-        testPerson.løsBehov(RegistrertSomArbeidssøker)
 
         if (behandlingslengde == Behandlingslengde.Minsteinntekt) {
             return
