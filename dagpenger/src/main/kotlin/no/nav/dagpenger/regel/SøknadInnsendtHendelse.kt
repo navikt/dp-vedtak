@@ -86,7 +86,12 @@ class SøknadInnsendtHendelse(
         opplysninger.har(Minsteinntekt.minsteinntekt) &&
             opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi
 
-    override fun kreverTotrinnskontroll(opplysninger: LesbarOpplysninger) = kravPåDagpenger(opplysninger)
+    fun alder(opplysninger: LesbarOpplysninger): Boolean =
+        opplysninger.har(Alderskrav.kravTilAlder) &&
+            opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
+
+    override fun kreverTotrinnskontroll(opplysninger: LesbarOpplysninger) =
+        !(minsteinntekt(opplysninger) == false || alder(opplysninger) == false)
 
     override fun behandling() =
         Behandling(
