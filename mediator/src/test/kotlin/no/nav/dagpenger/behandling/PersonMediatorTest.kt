@@ -211,7 +211,7 @@ internal class PersonMediatorTest {
                 medVilkår("Oppfyller kravet til alder") {
                     erOppfylt()
                 }
-                medVilkår("Krav til minsteinntekt") {
+                medVilkår("Oppfyller kravet til minsteinntekt eller verneplikt") {
                     erIkkeOppfylt()
                 }
                 medVilkår("Krav til arbeidssøker") {
@@ -354,7 +354,7 @@ internal class PersonMediatorTest {
                     oppfylt shouldBe true
                     vanligArbeidstidPerUke shouldBe 37.5
                     grunnlag shouldBe 319197
-                    // periode("Dagpengeperiode").shouldBeNull()
+                    periode("Dagpengeperiode").shouldBeNull()
                     periode("Verneplikt") shouldBe 26
                     sats shouldBeGreaterThan 0
                 }
@@ -747,12 +747,6 @@ internal class PersonMediatorTest {
         }
 
         /**
-         * Sjekker om mulig verneplikt
-         */
-        rapid.harBehov(Verneplikt)
-        testPerson.løsBehov(Verneplikt)
-
-        /**
          * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
          */
         rapid.harBehov(Inntekt) {
@@ -769,6 +763,12 @@ internal class PersonMediatorTest {
         if (behandlingslengde == Behandlingslengde.AvbruddInntekt) {
             return
         }
+
+        /**
+         * Sjekker om mulig verneplikt
+         */
+        rapid.harBehov(Verneplikt)
+        testPerson.løsBehov(Verneplikt)
 
         /**
          * Sjekker kravene til reell arbeidssøker
