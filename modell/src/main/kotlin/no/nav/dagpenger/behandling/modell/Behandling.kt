@@ -86,7 +86,9 @@ class Behandling private constructor(
     fun avklaringer() = avklaringer.avklaringer(opplysninger.forDato(behandler.prøvingsdato(opplysninger)))
 
     fun erAutomatiskBehandlet() =
-        avklaringer().none { it.løstAvSaksbehandler() } && opplysninger().finnAlle().none { it.kilde is Saksbehandlerkilde }
+        avklaringer().none { it.løstAvSaksbehandler() } &&
+            opplysninger().finnAlle().none { it.kilde is Saksbehandlerkilde } &&
+            !godkjent.erUtført
 
     fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger.forDato(behandler.prøvingsdato(opplysninger)))
 
