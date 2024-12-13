@@ -24,6 +24,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.FulleYtelser
+import no.nav.dagpenger.regel.KravPåDagpenger.kravPåDagpenger
 import no.nav.dagpenger.regel.Medlemskap
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt
@@ -206,7 +207,18 @@ private fun vedtakFastsattDTO(
                 ),
         )
 
-    false -> VedtakFastsattDTO(utfall = false, samordning = emptyList())
+    false ->
+        VedtakFastsattDTO(
+            utfall = false,
+            fastsattVanligArbeidstid =
+                opplysninger.har(kravPåDagpenger).takeIf { it }?.let {
+                    VedtakFastsattFastsattVanligArbeidstidDTO(
+                        vanligArbeidstidPerUke = opplysninger.finnOpplysning(fastsattVanligArbeidstid).verdi.toBigDecimal(),
+                        nyArbeidstidPerUke = opplysninger.finnOpplysning(nyArbeidstid).verdi.toBigDecimal(),
+                    )
+                },
+            samordning = emptyList(),
+        )
 }
 
 private fun Opplysning<Boolean>.tilVilkårDTO(hjemmel: String?): VilkaarDTO =
