@@ -163,10 +163,25 @@ class Regelkjøring(
     }
 
     private fun kjør(regel: Regel<*>) {
-        val opplysning = regel.lagProdukt(opplysningerPåPrøvingsdato)
-        kjørteRegler.add(regel)
-        plan.remove(regel)
-        opplysninger.leggTilUtledet(opplysning)
+        try {
+            val opplysning = regel.lagProdukt(opplysningerPåPrøvingsdato)
+            kjørteRegler.add(regel)
+            plan.remove(regel)
+            opplysninger.leggTilUtledet(opplysning)
+        } catch (e: IllegalArgumentException) {
+            if (e.message?.startsWith("Prøver å kjøre") == true) {
+                throw IllegalArgumentException(
+                    """Lager produkt, men mangler avhengigheter. 
+                    |KjørteRegler:
+                    |${kjørteRegler.joinToString("\n")}
+                    |Plan:
+                    |${plan.joinToString("\n")}
+                    """.trimMargin(),
+                    e,
+                )
+            }
+            throw e
+        }
     }
 
     private fun trenger(): Set<Opplysningstype<*>> {
