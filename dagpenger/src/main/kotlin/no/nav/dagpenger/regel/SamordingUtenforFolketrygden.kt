@@ -122,6 +122,6 @@ object SamordingUtenforFolketrygden {
 
     val YtelserUtenforFolketrygdenKontroll =
         Kontrollpunkt(sjekker = Avklaringspunkter.YtelserUtenforFolketrygden) { opplysninger ->
-            opplysninger.har(andreYtelser) && opplysninger.finnOpplysning(andreYtelser).verdi
+            opplysninger.har(skalSamordnesUtenforFolketrygden) && opplysninger.finnOpplysning(skalSamordnesUtenforFolketrygden).verdi
         }
 }
