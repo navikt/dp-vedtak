@@ -12,6 +12,8 @@ class Opplysninger private constructor(
 ) : LesbarOpplysninger {
     private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
     private val basertPåOpplysninger: List<Opplysning<*>> = basertPå.flatMap { it.basertPåOpplysninger + it.opplysninger }.toList()
+
+    // TODO: Vi må se på om denne kan få bedre ytelse
     private val alleOpplysninger: List<Opplysning<*>>
         get() = (basertPåOpplysninger + opplysninger).filterNot { it.erErstattet }.filterNot { it.erFjernet }
 
