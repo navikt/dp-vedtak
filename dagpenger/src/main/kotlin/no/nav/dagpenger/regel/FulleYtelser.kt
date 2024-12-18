@@ -20,13 +20,8 @@ object FulleYtelser {
 
     val FulleYtelserKontrollpunkt =
         Kontrollpunkt(sjekker = Avklaringspunkter.FulleYtelser) { opplysninger ->
-            (
-                opplysninger.har(skalSamordnes) &&
-                    opplysninger.finnOpplysning(skalSamordnes).verdi
-            ) ||
-                (
-                    opplysninger.har(skalSamordnesUtenforFolketrygden) &&
-                        opplysninger.finnOpplysning(skalSamordnesUtenforFolketrygden).verdi
-                )
+            listOf(skalSamordnes, skalSamordnesUtenforFolketrygden).any {
+                opplysninger.har(it) && opplysninger.finnOpplysning(it).verdi
+            }
         }
 }
