@@ -16,10 +16,14 @@ import no.nav.dagpenger.uuid.UUIDv7
 import java.util.UUID
 
 internal class AvklaringRepositoryPostgres private constructor(
-    private val observatører: MutableList<AvklaringRepositoryObserver>,
+    private val observatører: MutableList<AvklaringRepositoryObserver> = mutableListOf(),
     private val kildeRespository: KildeRepository = KildeRepository(),
 ) : AvklaringRepository {
     constructor(vararg observatører: AvklaringRepositoryObserver) : this(observatører.toMutableList())
+
+    fun registerObserver(observer: AvklaringRepositoryObserver) {
+        observatører.add(observer)
+    }
 
     override fun lagreAvklaringer(
         behandling: Behandling,
