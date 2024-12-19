@@ -1,7 +1,12 @@
 package no.nav.dagpenger.behandling.mediator
 
+import com.github.navikt.tbd_libs.naisful.naisApp
 import com.github.navikt.tbd_libs.rapids_and_rivers.KafkaRapid
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import io.micrometer.core.instrument.Clock
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import io.prometheus.metrics.model.registry.PrometheusRegistry
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
@@ -36,10 +41,49 @@ internal class ApplicationBuilder(
     private val rapidsConnection: RapidsConnection =
         RapidApplication.create(
             env = config,
-            objectMapper = objectMapper,
-        ) { engine, rapidsConnection: KafkaRapid ->
-            val aktivitetsloggMediator = AktivitetsloggMediator()
+            builder = {
+                withKtor { preStopHook, rapid ->
+                    naisApp(
+                        meterRegistry =
+                            PrometheusMeterRegistry(
+                                PrometheusConfig.DEFAULT,
+                                PrometheusRegistry.defaultRegistry,
+                                Clock.SYSTEM,
+                            ),
+                        objectMapper = objectMapper,
+                        applicationLogger = KotlinLogging.logger("ApplicationLogger"),
+                        callLogger = KotlinLogging.logger("CallLogger"),
+                        aliveCheck = rapid::isReady,
+                        readyCheck = rapid::isReady,
+                        preStopHook = preStopHook::handlePreStopRequest,
+                    ) {
+                        val personRepository =
+                            PersonRepositoryPostgres(
+                                BehandlingRepositoryPostgres(
+                                    OpplysningerRepositoryPostgres(),
+                                    AvklaringRepositoryPostgres(AvklaringKafkaObservatør(rapid)),
+                                ),
+                            )
 
+                        val hendelseMediator = HendelseMediator(personRepository)
+
+                        MessageMediator(
+                            rapidsConnection = rapid,
+                            hendelseMediator = hendelseMediator,
+                            hendelseRepository = PostgresHendelseRepository(),
+                            opplysningstyper = opplysningstyper,
+                        )
+
+                        behandlingApi(
+                            personRepository = personRepository,
+                            hendelseMediator = hendelseMediator,
+                            auditlogg = ApiAuditlogg(AktivitetsloggMediator(), rapid),
+                            opplysningstyper = opplysningstyper,
+                        ) { ident: String -> ApiMessageContext(rapid, ident) }
+                    }
+                }
+            },
+        ) { _, rapidsConnection: KafkaRapid ->
             // Logger bare oppgaver enn så lenge. Bør inn i HendelseMediator
             ArenaOppgaveMottak(rapidsConnection, SakRepositoryPostgres())
 
@@ -48,29 +92,6 @@ internal class ApplicationBuilder(
 
             // Start jobb som sletter fjernet opplysninger
             SlettFjernetOpplysninger.slettOpplysninger(VaktmesterPostgresRepo())
-
-            val personRepository =
-                PersonRepositoryPostgres(
-                    BehandlingRepositoryPostgres(
-                        OpplysningerRepositoryPostgres(),
-                        AvklaringRepositoryPostgres(AvklaringKafkaObservatør(rapidsConnection)),
-                    ),
-                )
-
-            val hendelseMediator = HendelseMediator(personRepository)
-            engine.application.behandlingApi(
-                personRepository = personRepository,
-                hendelseMediator = hendelseMediator,
-                auditlogg = ApiAuditlogg(aktivitetsloggMediator, rapidsConnection),
-                opplysningstyper = opplysningstyper,
-            ) { ident: String -> ApiMessageContext(rapidsConnection, ident) }
-
-            MessageMediator(
-                rapidsConnection = rapidsConnection,
-                hendelseMediator = hendelseMediator,
-                hendelseRepository = PostgresHendelseRepository(),
-                opplysningstyper = opplysningstyper,
-            )
         }
 
     init {
