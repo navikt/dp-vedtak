@@ -13,6 +13,7 @@ import no.nav.dagpenger.regel.Alderskrav.HattLukkedeSakerSiste8UkerKontroll
 import no.nav.dagpenger.regel.Alderskrav.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.Alderskrav.Under18Kontroll
 import no.nav.dagpenger.regel.FulleYtelser.FulleYtelserKontrollpunkt
+import no.nav.dagpenger.regel.Meldeplikt.IkkeRegistrertSomArbeidsøkerKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.EØSArbeidKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.InntektNesteKalendermånedKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
@@ -47,14 +48,18 @@ class SøknadInnsendtHendelse(
     override fun avklarer(opplysninger: LesbarOpplysninger): Opplysningstype<Boolean> {
         // Sjekk krav til alder
         if (!opplysninger.har(Alderskrav.kravTilAlder)) return Alderskrav.kravTilAlder
+        val alderskravOppfylt = opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
+
+        if (!alderskravOppfylt) {
+            return Alderskrav.kravTilAlder
+        }
+
         // Sjekk krav til minste arbeidsinntekt
         if (!opplysninger.har(Minsteinntekt.minsteinntekt)) return Minsteinntekt.minsteinntekt
-
-        val alderskravOppfylt = opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
         val minsteinntektOppfylt = opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi
 
         // Om krav til alder eller arbeidsinntekt ikke er oppfylt er det ingen grunn til å fortsette, men vi må fastsette hvilke tillegskrav Arena trenger.
-        if (!alderskravOppfylt || !minsteinntektOppfylt) {
+        if (!minsteinntektOppfylt) {
             return when {
                 opplysninger.mangler(ReellArbeidssøker.kravTilArbeidssøker) -> ReellArbeidssøker.kravTilArbeidssøker
                 opplysninger.mangler(Meldeplikt.registrertPåSøknadstidspunktet) -> Meldeplikt.registrertPåSøknadstidspunktet
@@ -81,7 +86,12 @@ class SøknadInnsendtHendelse(
         opplysninger.har(Minsteinntekt.minsteinntekt) &&
             opplysninger.finnOpplysning(Minsteinntekt.minsteinntekt).verdi
 
-    override fun kreverTotrinnskontroll(opplysninger: LesbarOpplysninger) = kravPåDagpenger(opplysninger)
+    fun alder(opplysninger: LesbarOpplysninger): Boolean =
+        opplysninger.har(Alderskrav.kravTilAlder) &&
+            opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
+
+    override fun kreverTotrinnskontroll(opplysninger: LesbarOpplysninger) =
+        !(minsteinntekt(opplysninger) == false || alder(opplysninger) == false)
 
     override fun behandling() =
         Behandling(
@@ -108,6 +118,7 @@ class SøknadInnsendtHendelse(
             EØSArbeidKontroll,
             FulleYtelserKontrollpunkt,
             HattLukkedeSakerSiste8UkerKontroll,
+            IkkeRegistrertSomArbeidsøkerKontroll,
             InntektNesteKalendermånedKontroll,
             JobbetUtenforNorgeKontroll,
             MuligGjenopptakKontroll,

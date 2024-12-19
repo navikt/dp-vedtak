@@ -4,7 +4,14 @@ støtterInnvilgelse
 Fødselsdato
 Søknadsdato
 Ønsker dagpenger fra dato
+Har rett til ordinære dagpenger gjennom arbeidsforhold
+Har rett til dagpenger under permittering
+Har rett til dagpenger etter konkurs
+Har rett til dagpenger under permittering i fiskeforedlingsindustri
+Har rett til ordinære dagpenger uten arbeidsforhold
 Søknadstidspunkt
+Har rett til ordinære dagpenger
+Rettighetstype
 Avtjent verneplikt
 Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste
 Kan jobbe heltid og deltid
@@ -13,13 +20,6 @@ Kan ta alle typer arbeid
 Villig til å bytte yrke
 Oppfyller kravet til å være arbeidsfør
 Oppfyller kravet til å ta ethvert arbeid
-Har rett til ordinære dagpenger gjennom arbeidsforhold
-Har rett til dagpenger under permittering
-Har rett til dagpenger etter konkurs
-Har rett til dagpenger under permittering i fiskeforedlingsindustri
-Har rett til ordinære dagpenger uten arbeidsforhold
-Har rett til ordinære dagpenger
-Rettighetstype
 Prøvingsdato
 Aldersgrense
 Lovpålagt rapporteringsfrist for A-ordningen
@@ -42,8 +42,8 @@ Oppfyller kravet til alder
 Første måned av opptjeningsperiode
 Inntektsopplysninger
 Registrert som arbeidssøker
-Brutto arbeidsinntekt
 Registrert som arbeidssøker på søknadstidspunktet
+Brutto arbeidsinntekt
 Arbeidsinntekt siste 12 mnd
 Arbeidsinntekt siste 36 mnd
 Arbeidsinntekt er over kravet for siste 12 mnd

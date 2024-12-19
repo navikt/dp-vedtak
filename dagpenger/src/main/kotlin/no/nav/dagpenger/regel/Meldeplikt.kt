@@ -1,5 +1,6 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
@@ -16,5 +17,10 @@ object Meldeplikt {
         Regelsett("Meldeplikt") {
             regel(registrertArbeidssøker) { innhentMed(prøvingsdato) }
             regel(registrertPåSøknadstidspunktet) { erSann(registrertArbeidssøker) }
+        }
+
+    val IkkeRegistrertSomArbeidsøkerKontroll =
+        Kontrollpunkt(Avklaringspunkter.IkkeRegistrertSomArbeidsøker) {
+            it.har(registrertPåSøknadstidspunktet) && !it.finnOpplysning(registrertPåSøknadstidspunktet).verdi
         }
 }

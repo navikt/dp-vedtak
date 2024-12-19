@@ -27,7 +27,10 @@ class Saksbehandlerkilde(
     id: UUID = UUIDv7.ny(),
     registrert: LocalDateTime = LocalDateTime.now(),
 ) : Kilde(meldingsreferanseId, id, registrert, opprettet) {
-    @Deprecated("Bruk constructor med Saksbehandler")
+    @Deprecated(
+        "Bruk constructor med Saksbehandler",
+        replaceWith = ReplaceWith("Saksbehandlerkilde(meldingsreferanseId, Saksbehandler(saksbehandler))"),
+    )
     constructor(
         meldingsreferanseId: UUID,
         saksbehandler: String,
