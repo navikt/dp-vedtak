@@ -24,6 +24,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.3")
 
     implementation(libs.rapids.and.rivers)
+    implementation("com.github.navikt.tbd-libs:naisful-app:2024.11.29-15.07-105481e3")
+
     implementation(libs.konfig)
     implementation(libs.kotlin.logging)
     implementation("io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations:2.1.0")
