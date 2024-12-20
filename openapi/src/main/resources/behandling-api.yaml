@@ -414,6 +414,8 @@ components:
         status:
           type: string
           enum: [ "Åpen", "Løst", "Kvittert" ]
+        maskinelt:
+          type: boolean
         begrunnelse:
           type: string
         kvittertAv:

@@ -98,6 +98,7 @@ internal fun Avklaring.tilAvklaringDTO(): AvklaringDTO {
                 is Avklaring.Endring.Avklart -> AvklaringDTO.Status.Kvittert
                 is Avklaring.Endring.UnderBehandling -> AvklaringDTO.Status.Åpen
             },
+        maskinelt = saksbehandler == null,
         begrunnelse = sisteEndring?.begrunnelse,
         kvittertAv = saksbehandler,
     )
