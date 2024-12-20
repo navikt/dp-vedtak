@@ -149,6 +149,10 @@ class Person(
         private val ident: String,
         private val delegate: PersonObservatør,
     ) : PersonObservatør {
+        override fun forslagTilVedtak(event: BehandlingObservatør.BehandlingForslagTilVedtak) {
+            event.medIdent { delegate.forslagTilVedtak(it) }
+        }
+
         override fun ferdig(event: BehandlingFerdig) {
             event.medIdent { delegate.ferdig(it) }
         }

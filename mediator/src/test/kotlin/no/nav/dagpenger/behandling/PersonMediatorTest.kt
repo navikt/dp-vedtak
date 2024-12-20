@@ -47,7 +47,6 @@ import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.opplysning.Saksbehandler
-import no.nav.dagpenger.regel.Avklaringspunkter
 import no.nav.dagpenger.regel.Behov.AndreØkonomiskeYtelser
 import no.nav.dagpenger.regel.Behov.Barnetillegg
 import no.nav.dagpenger.regel.Behov.Foreldrepenger
@@ -275,14 +274,18 @@ internal class PersonMediatorTest {
             godkjennOpplysninger("etterInntekt")
 
             rapid.harHendelse("forslag_til_vedtak") {
-                medBoolsk("utfall") shouldBe true
+                medFastsettelser {
+                    oppfylt
+                }
             }
 
             // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
             rapid.inspektør.size shouldBe 21
 
             rapid.harHendelse("forslag_til_vedtak") {
-                medBoolsk("utfall") shouldBe true
+                medFastsettelser {
+                    oppfylt
+                }
             }
 
             personRepository.hent(ident.tilPersonIdentfikator()).also {
@@ -298,7 +301,7 @@ internal class PersonMediatorTest {
 
             rapid.harHendelse("vedtak_fattet") {
                 medBoolsk("automatisk") shouldBe false
-                medFastsattelser {
+                medFastsettelser {
                     oppfylt
                     withClue("Grunnlag bør større enn 0") { grunnlag shouldBeGreaterThan 0 }
                     vanligArbeidstidPerUke shouldBe 37.5
@@ -336,7 +339,9 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilInnvilgelse(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
-                medBoolsk("utfall") shouldBe true
+                medFastsettelser {
+                    this.oppfylt
+                }
             }
 
             saksbehandler.lukkAlleAvklaringer()
@@ -370,14 +375,7 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilMinsteinntekt(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
-                medTekst("søknadId") shouldBe testPerson.søknadId
-                with(medNode("avklaringer")) {
-                    this.size() shouldBe 6
-                    val avklaring = this.first()
-                    avklaring["type"].asText() shouldBe Avklaringspunkter.HattLukkedeSakerSiste8Uker.kode
-                    avklaring["begrunnelse"].asText() shouldBe Avklaringspunkter.HattLukkedeSakerSiste8Uker.beskrivelse
-                    avklaring["utfall"].asText() shouldBe "Manuell"
-                }
+                åpneAvklaringer().values shouldHaveSize 6
             }
             rapid.inspektør.size shouldBe
                 listOf(
@@ -426,8 +424,10 @@ internal class PersonMediatorTest {
                 )
             løsBehandlingFramTilMinsteinntekt(testPerson)
 
-            rapid.harHendelse("forslag_til_vedtak") {
-                medAvklaringer(
+            rapid.harHendelse("forslag_til_vedtak")
+
+            åpneAvklaringer().values.shouldContainExactlyInAnyOrder(
+                listOf(
                     "EØSArbeid",
                     "HattLukkedeSakerSiste8Uker",
                     "InntektNesteKalendermåned",
@@ -435,8 +435,8 @@ internal class PersonMediatorTest {
                     "MuligGjenopptak",
                     "SvangerskapsrelaterteSykepenger",
                     "ØnskerEtterRapporteringsfrist",
-                )
-            }
+                ),
+            )
         }
 
     @Test
@@ -452,16 +452,18 @@ internal class PersonMediatorTest {
                 )
             løsBehandlingFramTilMinsteinntekt(testPerson)
 
-            rapid.harHendelse("forslag_til_vedtak") {
-                medAvklaringer(
+            rapid.harHendelse("forslag_til_vedtak")
+
+            åpneAvklaringer().values.shouldContainExactlyInAnyOrder(
+                listOf(
                     "EØSArbeid",
                     "HattLukkedeSakerSiste8Uker",
                     "InntektNesteKalendermåned",
                     "JobbetUtenforNorge",
                     "MuligGjenopptak",
                     "SvangerskapsrelaterteSykepenger",
-                )
-            }
+                ),
+            )
         }
 
     @Test
@@ -477,8 +479,9 @@ internal class PersonMediatorTest {
                 )
             løsBehandlingFramTilMinsteinntekt(testPerson)
 
-            rapid.harHendelse("forslag_til_vedtak") {
-                medAvklaringer(
+            rapid.harHendelse("forslag_til_vedtak")
+            åpneAvklaringer().values.shouldContainExactlyInAnyOrder(
+                listOf(
                     "EØSArbeid",
                     "HattLukkedeSakerSiste8Uker",
                     "InntektNesteKalendermåned",
@@ -487,8 +490,8 @@ internal class PersonMediatorTest {
                     "SvangerskapsrelaterteSykepenger",
                     "SøknadstidspunktForLangtFramITid",
                     "ØnskerEtterRapporteringsfrist",
-                )
-            }
+                ),
+            )
         }
 
     @Test
@@ -507,8 +510,10 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilInnvilgelse(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
-                medDato("prøvingsdato") shouldBe 1.juni(2024)
-                medBoolsk("utfall") shouldBe true
+                medFastsettelser {
+                    oppfylt
+                }
+                medOpplysning<LocalDate>("Prøvingsdato") shouldBe 1.juni(2024)
             }
 
             godkjennOpplysninger("innvilgelse")
@@ -539,8 +544,10 @@ internal class PersonMediatorTest {
             )
 
             rapid.harHendelse("forslag_til_vedtak") {
-                medDato("prøvingsdato") shouldBe nyPrøvingsdato
-                medBoolsk("utfall") shouldBe true
+                medFastsettelser {
+                    oppfylt
+                }
+                medOpplysning<LocalDate>("Prøvingsdato") shouldBe nyPrøvingsdato
             }
 
             withClue("Skal kun ha opplysninger nødvendig for innvilgelse") {
@@ -575,8 +582,10 @@ internal class PersonMediatorTest {
             )
 
             rapid.harHendelse("forslag_til_vedtak") {
-                medDato("prøvingsdato") shouldBe endaNyerePrøvingsdato
-                medBoolsk("utfall") shouldBe false
+                medFastsettelser {
+                    `ikke oppfylt`
+                }
+                medOpplysning<LocalDate>("Prøvingsdato") shouldBe endaNyerePrøvingsdato
             }
 
             withClue("Skal kun ha opplysninger nødvendig for avslag") {
@@ -867,7 +876,7 @@ internal class PersonMediatorTest {
     private fun åpneAvklaringer(): Map<String, String> {
         val behandling = personRepository.hent(ident.tilPersonIdentfikator())?.behandlinger()?.first()
         behandling.shouldNotBeNull()
-        return behandling.aktiveAvklaringer().associate { it.id.toString() to it.kode.toString() }
+        return behandling.aktiveAvklaringer().associate { it.id.toString() to it.kode.kode }
     }
 
     private fun TestRapid.harAvklaring(
@@ -939,7 +948,7 @@ internal class PersonMediatorTest {
     ) {
         fun medNode(navn: String) = message.get(navn)
 
-        fun medFastsattelser(block: Fastsettelser.() -> Unit) {
+        fun medFastsettelser(block: Fastsettelser.() -> Unit) {
             Fastsettelser(medNode("fastsatt")).apply { block() }
         }
 
@@ -956,12 +965,7 @@ internal class PersonMediatorTest {
 
         fun medBoolsk(navn: String) = message.get(navn)?.asBoolean()
 
-        fun medOpplysning(navn: String) = message.get("opplysninger").single { it["opplysningstype"]["id"].asText() == navn }
-
-        fun medAvklaringer(vararg avklaring: String) =
-            message.get("avklaringer").apply {
-                map { it["type"].asText() } shouldContainExactlyInAnyOrder avklaring.toList()
-            }
+        fun medOpplysning(navn: String) = message.get("opplysninger").single { it["navn"].asText() == navn }
 
         fun medVilkår(
             navn: String,
