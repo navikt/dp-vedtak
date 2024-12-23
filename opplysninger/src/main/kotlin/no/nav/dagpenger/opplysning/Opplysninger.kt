@@ -1,36 +1,36 @@
 package no.nav.dagpenger.opplysning
 
+import no.nav.dagpenger.opplysning.Opplysning.Companion.bareAktive
+import no.nav.dagpenger.opplysning.Opplysning.Companion.gyldigeFor
 import no.nav.dagpenger.uuid.UUIDv7
 import java.lang.Exception
 import java.time.LocalDate
 import java.util.UUID
+import kotlin.collections.filter
+import kotlin.collections.filterNot
+import kotlin.collections.find
+import kotlin.collections.toList
 
 class Opplysninger private constructor(
     override val id: UUID,
-    opplysninger: List<Opplysning<*>> = emptyList(),
+    initielleOpplysninger: List<Opplysning<*>> = emptyList(),
     basertPå: List<Opplysninger> = emptyList(),
 ) : LesbarOpplysninger {
-    private val opplysninger: MutableList<Opplysning<*>> = opplysninger.toMutableList()
-    private val basertPåOpplysninger: List<Opplysning<*>> = basertPå.flatMap { it.basertPåOpplysninger + it.opplysninger }.toList()
-
-    // TODO: Vi må se på om denne kan få bedre ytelse
-    private val alleOpplysninger: List<Opplysning<*>>
-        get() = (basertPåOpplysninger + opplysninger).filterNot { it.erErstattet }.filterNot { it.erFjernet }
-
     constructor() : this(UUIDv7.ny(), emptyList(), emptyList())
     constructor(id: UUID, opplysninger: List<Opplysning<*>>) : this(id, opplysninger, emptyList())
     constructor(opplysninger: List<Opplysning<*>>, basertPå: List<Opplysninger> = emptyList()) : this(UUIDv7.ny(), opplysninger, basertPå)
     constructor(vararg basertPå: Opplysninger) : this(emptyList(), basertPå.toList())
 
+    private val basertPåOpplysninger: List<Opplysning<*>> =
+        basertPå.flatMap { it.basertPåOpplysninger + it.opplysninger }.bareAktive()
+
+    private val opplysninger: MutableList<Opplysning<*>> = initielleOpplysninger.toMutableList()
+    private val alleOpplysninger = CachedList { basertPåOpplysninger + opplysninger.bareAktive() }
+
     val aktiveOpplysninger get() = opplysninger.toList()
 
     override fun forDato(gjelderFor: LocalDate): LesbarOpplysninger {
-        // TODO: Erstatt med noe collectorgreier får å unngå at opplysninger som er erstattet blir med
-        val opplysningerForDato =
-            opplysninger
-                .filter { it.gyldighetsperiode.inneholder(gjelderFor) }
-                .filterNot { it.erErstattet }
-                .filterNot { it.erFjernet }
+        val opplysningerForDato = opplysninger.bareAktive().gyldigeFor(gjelderFor)
         return Opplysninger(UUIDv7.ny(), opplysningerForDato)
     }
 
@@ -40,6 +40,7 @@ class Opplysninger private constructor(
 
         if (eksisterende == null) {
             opplysninger.add(opplysning)
+            alleOpplysninger.refresh()
             return
         }
 
@@ -70,6 +71,7 @@ class Opplysninger private constructor(
                         throw IllegalArgumentException("Kan ikke legge til opplysning som overlapper med eksisterende opplysning")
                     }
                 }
+                alleOpplysninger.refresh()
                 return
             }
         }
@@ -78,10 +80,12 @@ class Opplysninger private constructor(
             // Erstatt hele opplysningen
             eksisterende.fjern()
             opplysninger.add(opplysning)
+            alleOpplysninger.refresh()
             return
         }
 
         opplysninger.add(opplysning)
+        alleOpplysninger.refresh()
     }
 
     internal fun <T : Comparable<T>> leggTilUtledet(opplysning: Opplysning<T>) = leggTil(opplysning)
@@ -127,6 +131,16 @@ class Opplysninger private constructor(
             opplysning.gyldighetsperiode.inneholder(this.gyldighetsperiode.tom)
 
     operator fun plus(tidligereOpplysninger: List<Opplysninger>) = Opplysninger(id, opplysninger, tidligereOpplysninger)
+
+    fun fjern(opplysningstyper: Set<Opplysningstype<*>>) {
+        opplysninger
+            .filterNot {
+                opplysningstyper.contains(it.opplysningstype)
+            }.forEach {
+                it.fjern()
+            }
+        alleOpplysninger.refresh()
+    }
 }
 
 class OpplysningIkkeFunnetException(

@@ -11,7 +11,7 @@ class DagensDato internal constructor(
     override fun lagPlan(
         opplysninger: LesbarOpplysninger,
         plan: MutableSet<Regel<*>>,
-        gjeldendeRegler: List<Regel<*>>,
+        produsenter: Map<Opplysningstype<out Comparable<*>>, Regel<*>>,
     ) {
         if (opplysninger.har(produserer)) return
         val dag = opplysninger.finnOpplysning(produserer).verdi

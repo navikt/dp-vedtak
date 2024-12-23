@@ -91,15 +91,7 @@ class Regelkjøring(
         }
 
         val brukteOpplysninger = muligeOpplysninger()
-
-        // TODO: La oppførselen ligge i opplysninger
-        opplysningerPåPrøvingsdato
-            .finnAlle()
-            .filterNot {
-                brukteOpplysninger.contains(it.opplysningstype)
-            }.forEach {
-                it.fjern()
-            }
+        opplysninger.fjern(brukteOpplysninger)
 
         return Regelkjøringsrapport(
             kjørteRegler = kjørteRegler,
@@ -148,11 +140,12 @@ class Regelkjøring(
 
     private fun aktiverRegler() {
         val produksjonsplan = mutableSetOf<Regel<*>>()
+        val produsenter = gjeldendeRegler.associateBy { it.produserer }
         ønsketResultat.forEach { opplysningstype ->
             val produsent =
-                gjeldendeRegler.singleOrNull { it.produserer(opplysningstype) }
+                produsenter[opplysningstype]
                     ?: throw IllegalArgumentException("Fant ikke regel som produserer $opplysningstype")
-            produsent.lagPlan(opplysningerPåPrøvingsdato, produksjonsplan, gjeldendeRegler)
+            produsent.lagPlan(opplysningerPåPrøvingsdato, produksjonsplan, produsenter)
         }
         val (ekstern, intern) = produksjonsplan.partition { it is Ekstern<*> }
         plan = intern.toMutableSet()

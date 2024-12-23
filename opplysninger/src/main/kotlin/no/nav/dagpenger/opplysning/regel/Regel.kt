@@ -15,8 +15,10 @@ abstract class Regel<T : Comparable<T>> internal constructor(
     internal open fun lagPlan(
         opplysninger: LesbarOpplysninger,
         plan: MutableSet<Regel<*>>,
-        gjeldendeRegler: List<Regel<*>>,
+        produsenter: Map<Opplysningstype<*>, Regel<*>>,
     ) {
+        if (plan.contains(this)) return
+
         if (opplysninger.har(produserer)) {
             val produkt = opplysninger.finnOpplysning(produserer)
             if (produkt.utledetAv == null) {
@@ -24,8 +26,8 @@ abstract class Regel<T : Comparable<T>> internal constructor(
             }
 
             produkt.utledetAv.opplysninger.forEach { avhengighet ->
-                val produsent = gjeldendeRegler.singleOrNull { it.produserer(avhengighet.opplysningstype) }
-                produsent?.lagPlan(opplysninger, plan, gjeldendeRegler)
+                val produsent = produsenter[avhengighet.opplysningstype]
+                produsent?.lagPlan(opplysninger, plan, produsenter)
             }
 
             val avhengighetErErstattet = produkt.utledetAv.opplysninger.any { it.erErstattet || it.erFjernet }
@@ -42,10 +44,8 @@ abstract class Regel<T : Comparable<T>> internal constructor(
                 return
             } else {
                 avhengerAv.forEach { avhengighet ->
-                    val produsent =
-                        gjeldendeRegler.singleOrNull { it.produserer(avhengighet) }
-                            ?: throw IllegalStateException("Fant ikke produsent for $avhengighet")
-                    produsent.lagPlan(opplysninger, plan, gjeldendeRegler)
+                    val produsent = produsenter[avhengighet] ?: throw IllegalStateException("Fant ikke produsent for $avhengighet")
+                    produsent.lagPlan(opplysninger, plan, produsenter)
                 }
             }
         }
