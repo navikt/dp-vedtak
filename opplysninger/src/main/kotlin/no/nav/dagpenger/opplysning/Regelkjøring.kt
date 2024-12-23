@@ -104,23 +104,26 @@ class Regelkjøring(
     private fun muligeOpplysninger(): Set<Opplysningstype<*>> {
         val brukteOpplysninger = mutableSetOf<Opplysningstype<*>>()
         brukteOpplysninger.addAll(ønsketResultat)
+
+        val regelMap = alleRegler.associateBy { it.produserer }
+
         val opplysningerUtenRegel =
             opplysningerPåPrøvingsdato
                 .finnAlle()
-                .filter { opplysning ->
-                    alleRegler.none { it.produserer(opplysning.opplysningstype) }
-                }.map { it.opplysningstype }
+                .filter { opplysning -> opplysning.opplysningstype !in regelMap }
+                .map { it.opplysningstype }
 
         brukteOpplysninger.addAll(opplysningerUtenRegel)
 
         val muligeRegler = alleRegler.filterNot { opplysningerUtenRegel.contains(it.produserer) }
+
         ønsketResultat.forEach { opplysningstype ->
-            val regel = muligeRegler.single { it.produserer(opplysningstype) }
+            val regel = regelMap[opplysningstype] ?: throw IllegalStateException("Fant ikke regel for $opplysningstype")
             brukteOpplysninger.add(regel.produserer)
             regel.avhengerAv.forEach { avhengighet ->
-                val avhengigRegel = muligeRegler.single { it.produserer(avhengighet) }
+                val avhengigRegel = regelMap[avhengighet] ?: throw IllegalStateException("Fant ikke regel for $avhengighet")
                 brukteOpplysninger.add(avhengigRegel.produserer)
-                leggTilAvhengigRegel(avhengigRegel, brukteOpplysninger, muligeRegler)
+                leggTilAvhengigRegel(avhengigRegel, brukteOpplysninger, muligeRegler, regelMap)
             }
         }
         return brukteOpplysninger.toSet()
@@ -130,11 +133,12 @@ class Regelkjøring(
         avhengigRegel: Regel<*>,
         brukteOpplysninger: MutableSet<Opplysningstype<*>>,
         muligeRegler: List<Regel<*>>,
+        regelMap: Map<Opplysningstype<out Comparable<*>>, Regel<*>>,
     ) {
         avhengigRegel.avhengerAv.forEach { avhengighet ->
-            val regel = muligeRegler.single { it.produserer(avhengighet) }
+            val regel = regelMap[avhengighet] ?: throw IllegalStateException("Fant ikke regel for $avhengighet")
             brukteOpplysninger.add(regel.produserer)
-            leggTilAvhengigRegel(regel, brukteOpplysninger, muligeRegler)
+            leggTilAvhengigRegel(regel, brukteOpplysninger, muligeRegler, regelMap)
         }
     }
 
