@@ -67,6 +67,12 @@ sealed class Opplysning<T : Comparable<T>>(
     }
 
     abstract fun lagErstatning(opplysning: Opplysning<T>): Opplysning<T>
+
+    companion object {
+        fun Collection<Opplysning<*>>.bareAktive() = filterNot { it.erErstattet || it.erFjernet }
+
+        fun Collection<Opplysning<*>>.gyldigeFor(dato: LocalDate) = filter { it.gyldighetsperiode.inneholder(dato) }
+    }
 }
 
 class Hypotese<T : Comparable<T>>(

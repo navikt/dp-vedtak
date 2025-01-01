@@ -1,5 +1,6 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
@@ -13,8 +14,13 @@ object Meldeplikt {
     val registrertPåSøknadstidspunktet = Opplysningstype.somBoolsk("Registrert som arbeidssøker på søknadstidspunktet")
 
     val regelsett =
-        Regelsett("Meldeplikt") {
+        Regelsett("§ 4-8. Meldeplikt og møteplikt") {
             regel(registrertArbeidssøker) { innhentMed(prøvingsdato) }
             regel(registrertPåSøknadstidspunktet) { erSann(registrertArbeidssøker) }
+        }
+
+    val IkkeRegistrertSomArbeidsøkerKontroll =
+        Kontrollpunkt(Avklaringspunkter.IkkeRegistrertSomArbeidsøker) {
+            it.har(registrertPåSøknadstidspunktet) && !it.finnOpplysning(registrertPåSøknadstidspunktet).verdi
         }
 }

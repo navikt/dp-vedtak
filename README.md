@@ -10,7 +10,7 @@
 - Starte behandling
 - Innhente opplysninger som trengs for å ferdigstille behandling
 - Si ifra når behandling er opprettet
-- Si ifra når behandling har nok opplysninger til å kunne ferdigstilles. (Bekrefte opplysninger (Gjøre hypoteser til faktum))
+- Si ifra når behandling har nok opplysninger til å kunne ferdigstilles. (Bekrefte opplysninger (Kvittere avklaringer))
 - Har tilstand som vet hva som skal til for å ferdigstille behandling og lage vedtak/forslag til vedtak
 
 ## Dokumentasjon

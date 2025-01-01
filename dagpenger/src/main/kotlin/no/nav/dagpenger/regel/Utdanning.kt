@@ -44,28 +44,15 @@ object Utdanning {
 
     val regelsett =
         Regelsett("§ 4-6 første og andre avsnitt, Utdanning") {
-            regel(tarUtdanning) {
-                innhentMed()
-            }
+            regel(tarUtdanning) { innhentMed() }
+
             // TODO: Legg til regler for å om kravet til utdanning skal vurderes
-            regel(deltakelseIArbeidsmarkedstiltak) {
-                oppslag(prøvingsdato) { false }
-            }
-            regel(opplæringForInnvandrere) {
-                oppslag(prøvingsdato) { false }
-            }
-            regel(grunnskoleopplæring) {
-                oppslag(prøvingsdato) { false }
-            }
-            regel(høyereYrkesfagligUtdanning) {
-                oppslag(prøvingsdato) { false }
-            }
-            regel(høyereUtdanning) {
-                oppslag(prøvingsdato) { false }
-            }
-            regel(deltakelsePåKurs) {
-                oppslag(prøvingsdato) { false }
-            }
+            regel(deltakelseIArbeidsmarkedstiltak) { oppslag(prøvingsdato) { false } }
+            regel(opplæringForInnvandrere) { oppslag(prøvingsdato) { false } }
+            regel(grunnskoleopplæring) { oppslag(prøvingsdato) { false } }
+            regel(høyereYrkesfagligUtdanning) { oppslag(prøvingsdato) { false } }
+            regel(høyereUtdanning) { oppslag(prøvingsdato) { false } }
+            regel(deltakelsePåKurs) { oppslag(prøvingsdato) { false } }
 
             regel(godkjentUnntakForUtdanning) {
                 enAv(
@@ -77,17 +64,9 @@ object Utdanning {
                     deltakelsePåKurs,
                 )
             }
-            regel(svartJaPåUtdanning) {
-                erSann(tarUtdanning)
-            }
-            regel(svartNeiPåUtdanning) {
-                erUsann(tarUtdanning)
-            }
-            regel(oppfyllerKravetPåUnntak) {
-                alle(svartJaPåUtdanning, godkjentUnntakForUtdanning)
-            }
-            regel(kravTilUtdanning) {
-                enAv(oppfyllerKravetPåUnntak, svartNeiPåUtdanning)
-            }
+            regel(svartJaPåUtdanning) { erSann(tarUtdanning) }
+            regel(svartNeiPåUtdanning) { erUsann(tarUtdanning) }
+            regel(oppfyllerKravetPåUnntak) { alle(svartJaPåUtdanning, godkjentUnntakForUtdanning) }
+            regel(kravTilUtdanning) { enAv(oppfyllerKravetPåUnntak, svartNeiPåUtdanning) }
         }
 }

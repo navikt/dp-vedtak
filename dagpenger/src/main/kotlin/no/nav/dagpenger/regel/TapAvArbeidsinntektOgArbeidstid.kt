@@ -34,7 +34,7 @@ object TapAvArbeidsinntektOgArbeidstid {
     val kravTilTapAvArbeidsinntektOgArbeidstid = Opplysningstype.somBoolsk("Krav til tap av arbeidsinntekt og arbeidstid")
 
     val regelsett =
-        Regelsett("Krav til tap av arbeidsinntekt og arbeidstid") {
+        Regelsett("§ 4-3. Krav til tap av arbeidsinntekt og arbeidstid") {
             regel(tapAvArbeid) { oppslag(prøvingsdato) { true } } // TODO: Satt til true for testing av innvilgelse
             regel(kravPåLønn) { oppslag(prøvingsdato) { false } }
             regel(ikkeKravPåLønn) { ikke(kravPåLønn) }
@@ -51,6 +51,7 @@ object TapAvArbeidsinntektOgArbeidstid {
             regel(beregnetArbeidstid) { oppslag(prøvingsdato) { 37.5 } } // TODO: Satt til 37.5 for testing av innvilgelse
             regel(nyArbeidstid) { oppslag(prøvingsdato) { 0.0 } }
             regel(maksimalVanligArbeidstid) { oppslag(prøvingsdato) { 40.0 } }
+
             // TODO: Legg til maks ønsket arbeidstid
             regel(fastsattVanligArbeidstid) { minstAv(beregnetArbeidstid, maksimalVanligArbeidstid) }
 

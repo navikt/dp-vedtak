@@ -28,6 +28,7 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.regel.Regel
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.uuid.UUIDv7
@@ -84,7 +85,10 @@ class Behandling private constructor(
 
     fun avklaringer() = avklaringer.avklaringer(opplysninger.forDato(behandler.prøvingsdato(opplysninger)))
 
-    fun erAutomatiskBehandlet() = avklaringer().all { it.erAvklart() || it.erAvbrutt() }
+    fun erAutomatiskBehandlet() =
+        avklaringer().none { it.løstAvSaksbehandler() } &&
+            opplysninger().finnAlle().none { it.kilde is Saksbehandlerkilde } &&
+            !godkjent.erUtført
 
     fun aktiveAvklaringer() = avklaringer.måAvklares(opplysninger.forDato(behandler.prøvingsdato(opplysninger)))
 
@@ -468,31 +472,7 @@ class Behandling private constructor(
             hendelse.kontekst(this)
             hendelse.info("Alle opplysninger mottatt, lager forslag til vedtak")
 
-            // TODO: Shim for å gi STSB avklaringer på lik måte osm før
-            val avklaringer =
-                behandling.aktiveAvklaringer().map {
-                    mapOf(
-                        "type" to it.kode.kode,
-                        "utfall" to "Manuell",
-                        "begrunnelse" to it.kode.beskrivelse,
-                    )
-                }
-            val prøvingsdato = behandling.behandler.prøvingsdato(behandling.opplysninger)
-            val avklarer = behandling.behandler.avklarer(behandling.opplysninger)
-            hendelse.hendelse(
-                BehandlingHendelser.ForslagTilVedtakHendelse,
-                "Foreslår vedtak",
-                mapOf(
-                    "prøvingsdato" to prøvingsdato,
-                    "utfall" to behandling.opplysninger.finnOpplysning(avklarer).verdi,
-                    "harAvklart" to
-                        behandling.opplysninger
-                            .finnOpplysning(avklarer)
-                            .opplysningstype.navn,
-                    "avklaringer" to avklaringer,
-                ),
-            )
-            behandling.observatører.forEach { it.forslagTilVedtak() }
+            behandling.emitForslagTilVedtak()
         }
 
         override fun håndter(
@@ -772,6 +752,16 @@ class Behandling private constructor(
     ) : BehandlingTilstand {
         override val type = TilstandType.TilGodkjenning
 
+        override fun entering(
+            behandling: Behandling,
+            hendelse: PersonHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Har et nytt forslag til vedtak som må godkjennes")
+
+            behandling.emitForslagTilVedtak()
+        }
+
         override fun håndter(
             behandling: Behandling,
             hendelse: GodkjennBehandlingHendelse,
@@ -878,11 +868,19 @@ class Behandling private constructor(
 
     // Behandlingen er ferdig og vi må rute til forslag eller godkjenning
     private fun avgjørNesteTilstand(hendelse: PersonHendelse) {
-        if (this.aktiveAvklaringer().isNotEmpty()) {
+        if (aktiveAvklaringer().isNotEmpty()) {
             return tilstand(ForslagTilVedtak(), hendelse)
         }
 
-        return tilstand(TilGodkjenning(), hendelse)
+        if (!erAutomatiskBehandlet()) {
+            return tilstand(TilGodkjenning(), hendelse)
+        }
+
+        if (kreverTotrinnskontroll()) {
+            return tilstand(TilGodkjenning(), hendelse)
+        }
+
+        return tilstand(Ferdig(), hendelse)
     }
 
     private fun tilstand(
@@ -899,6 +897,21 @@ class Behandling private constructor(
         emitVedtaksperiodeEndret(forrigeTilstand)
 
         tilstand.entering(this, hendelse)
+    }
+
+    private fun emitForslagTilVedtak() {
+        val event =
+            BehandlingObservatør.BehandlingForslagTilVedtak(
+                behandlingId = behandlingId,
+                søknadId = behandler.eksternId,
+                behandlingAv = behandler,
+                opplysninger = opplysninger,
+                automatiskBehandlet = erAutomatiskBehandlet(),
+                godkjent = godkjent,
+                besluttet = besluttet,
+            )
+
+        observatører.forEach { it.forslagTilVedtak(event) }
     }
 
     private fun emitFerdig() {
@@ -931,6 +944,16 @@ class Behandling private constructor(
 }
 
 interface BehandlingObservatør {
+    data class BehandlingForslagTilVedtak(
+        val behandlingId: UUID,
+        val søknadId: EksternId<*>,
+        val behandlingAv: StartHendelse,
+        val opplysninger: LesbarOpplysninger,
+        val automatiskBehandlet: Boolean,
+        val godkjent: Arbeidssteg,
+        val besluttet: Arbeidssteg,
+    ) : PersonEvent()
+
     data class BehandlingFerdig(
         val behandlingId: UUID,
         val søknadId: EksternId<*>,
@@ -951,7 +974,7 @@ interface BehandlingObservatør {
 
     fun behandlingStartet() {}
 
-    fun forslagTilVedtak() {}
+    fun forslagTilVedtak(event: BehandlingForslagTilVedtak) {}
 
     fun avbrutt() {}
 

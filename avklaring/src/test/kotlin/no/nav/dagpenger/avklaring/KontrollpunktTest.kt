@@ -61,7 +61,8 @@ class KontrollpunktTest {
 
         val opplysninger = Opplysninger()
         val regelkjøring = Regelkjøring(1.mai(2024), opplysninger)
-        opplysninger.leggTil(getOpplysning(321) as Opplysning<*>).also { regelkjøring.evaluer() }
+        opplysninger.leggTil(getOpplysning(321))
+        regelkjøring.evaluer()
 
         val ding = Avklaringer(kontrollpunkter)
         ding.måAvklares(opplysninger).also { avklaringer ->
@@ -101,7 +102,7 @@ class KontrollpunktTest {
 
         val opplysninger = Opplysninger()
         val regelkjøring = Regelkjøring(1.mai(2024), opplysninger)
-        opplysninger.leggTil(Faktum<Boolean>(inntekterInneholderSykepenger, true) as Opplysning<*>).also { regelkjøring.evaluer() }
+        opplysninger.leggTil(Faktum(inntekterInneholderSykepenger, true)).also { regelkjøring.evaluer() }
 
         val ding = Avklaringer(kontrollpunkter)
         ding.måAvklares(opplysninger).also { avklaringer ->
@@ -152,7 +153,7 @@ class KontrollpunktTest {
             avklaringer.all { it.kode == BeregningsregelForFVA } shouldBe true
         }
 
-        opplysninger.leggTil(Faktum<Boolean>(regel1, true) as Opplysning<*>).also { regelkjøring.evaluer() }
+        opplysninger.leggTil(Faktum(regel1, true)).also { regelkjøring.evaluer() }
 
         // Denne avklaringen skal ikke kunne kvitteres ut, den krever endring
         shouldThrow<IllegalArgumentException> {

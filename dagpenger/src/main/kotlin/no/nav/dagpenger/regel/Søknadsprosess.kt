@@ -18,15 +18,23 @@ class Søknadsprosess : Forretningsprosess {
     override fun regelsett() = regelverk.regelsett
 
     override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> {
-        val ønsketResultat = mutableListOf<Opplysningstype<*>>()
+        val ønsketResultat =
+            mutableListOf<Opplysningstype<*>>(
+                Rettighetstype.rettighetstype,
+                Meldeplikt.registrertPåSøknadstidspunktet,
+            )
 
         // Sjekk krav til alder
         ønsketResultat.add(Alderskrav.kravTilAlder)
 
+        if (opplysninger.mangler(Alderskrav.kravTilAlder) || !opplysninger.oppfyller(Alderskrav.kravTilAlder)) {
+            return ønsketResultat
+        }
+
         // Sjekk krav til minste arbeidsinntekt
         ønsketResultat.add(Minsteinntekt.minsteinntekt)
 
-        if (opplysninger.mangler(Alderskrav.kravTilAlder) || opplysninger.mangler(Minsteinntekt.minsteinntekt)) {
+        if (opplysninger.mangler(Minsteinntekt.minsteinntekt)) {
             return ønsketResultat
         }
 
@@ -40,8 +48,6 @@ class Søknadsprosess : Forretningsprosess {
             ønsketResultat.addAll(
                 listOf(
                     ReellArbeidssøker.kravTilArbeidssøker,
-                    Meldeplikt.registrertPåSøknadstidspunktet,
-                    Rettighetstype.rettighetstype,
                 ),
             )
             return ønsketResultat
@@ -55,11 +61,9 @@ class Søknadsprosess : Forretningsprosess {
                 Alderskrav.kravTilAlder,
                 FulleYtelser.ikkeFulleYtelser,
                 Medlemskap.oppfyllerMedlemskap,
-                Meldeplikt.registrertPåSøknadstidspunktet,
                 Minsteinntekt.minsteinntekt,
                 Opphold.oppfyllerKravet,
                 ReellArbeidssøker.kravTilArbeidssøker,
-                Rettighetstype.rettighetstype,
                 StreikOgLockout.ikkeStreikEllerLockout,
                 TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid,
                 Utdanning.kravTilUtdanning,

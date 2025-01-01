@@ -316,5 +316,9 @@ graph RL
   CM["Oppfyller krav til ikke utestengt"] -->|"IngenAv"| GM["Bruker er utestengt fra dagpenger"]
   GN["Avtjent verneplikt"] -->|"Ekstern"| AJ["søknadId"]
   CZ["Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste"] -->|"ErSann"| GN["Avtjent verneplikt"]
-  GO["EttBeregnetVirkningstidspunkt"] -->|"FraOgMedForOpplysning"| CB["Krav på dagpenger"]
+  GO["Faktor"] -->|"Oppslag"| B["Prøvingsdato"]
+  GP["Grunnlag for verneplikt"] -->|"Multiplikasjon"| J["Grunnbeløp for grunnlag"]
+  GP["Grunnlag for verneplikt"] -->|"Multiplikasjon"| GO["Faktor"]
+  GQ["Vernepliktperiode"] -->|"Oppslag"| B["Prøvingsdato"]
+  GR["EttBeregnetVirkningstidspunkt"] -->|"FraOgMedForOpplysning"| CB["Krav på dagpenger"]
 ```

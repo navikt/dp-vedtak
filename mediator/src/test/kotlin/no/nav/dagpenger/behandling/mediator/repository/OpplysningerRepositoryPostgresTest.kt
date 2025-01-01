@@ -31,6 +31,7 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.verdier.Barn
@@ -38,7 +39,6 @@ import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
-import no.nav.dagpenger.regel.Alderskrav.fødselsdato
 import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -378,6 +378,7 @@ class OpplysningerRepositoryPostgresTest {
     fun `kan fjerne opplysninger`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
+            val vaktmesterRepo = VaktmesterPostgresRepo()
             val heltallFaktum = Faktum(heltall, 10)
             val heltallFaktum2 = Faktum(heltall, 20)
             val opplysninger = Opplysninger(listOf(heltallFaktum))
@@ -387,6 +388,109 @@ class OpplysningerRepositoryPostgresTest {
             repo.lagreOpplysninger(opplysninger)
             val fraDb = repo.hentOpplysninger(opplysninger.id)
             fraDb.finnAlle().shouldBeEmpty()
+            vaktmesterRepo.slettOpplysninger() shouldContainExactly listOf(heltallFaktum.id)
+        }
+    }
+
+    @Test
+    fun `ikke slette mer enn vi skal fra tidligere opplysninger `() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val vaktmesterRepo = VaktmesterPostgresRepo()
+
+            // Gammel behandling
+            val opprinneligDato = LocalDate.now()
+            val baseOpplysning = Faktum(baseOpplysningstype, opprinneligDato)
+
+            val regelsett =
+                Regelsett("Regelsett") {
+                    regel(baseOpplysningstype) { innhentes }
+                    regel(utledetOpplysningstype) { oppslag(baseOpplysningstype) { 5 } }
+                }
+            val tidligereOpplysninger = Opplysninger()
+            val regelkjøring = Regelkjøring(LocalDate.now(), tidligereOpplysninger, regelsett)
+
+            tidligereOpplysninger.leggTil(baseOpplysning as Opplysning<*>).also { regelkjøring.evaluer() }
+            repo.lagreOpplysninger(tidligereOpplysninger)
+
+            // Ny behandling som baseres på den gamle
+            val nyeOpplysninger = Opplysninger(opplysninger = emptyList(), basertPå = listOf(tidligereOpplysninger))
+            val endretBaseOpplysningstype = Faktum(baseOpplysningstype, LocalDate.now().plusDays(1))
+            nyeOpplysninger.leggTil(endretBaseOpplysningstype as Opplysning<*>).also {
+                Regelkjøring(LocalDate.now(), nyeOpplysninger, regelsett).evaluer()
+            }
+            repo.lagreOpplysninger(nyeOpplysninger)
+
+            // Hent lagrede opplysninger fra ny behandling
+            val fraDb = repo.hentOpplysninger(nyeOpplysninger.id)
+            fraDb.finnAlle().size shouldBe 2
+            vaktmesterRepo.slettOpplysninger().shouldBeEmpty()
+            val utledet = fraDb.finnOpplysning(utledetOpplysningstype)
+
+            // Legg til endret opplysning i ny behandling
+            val endretDato = LocalDate.now().plusDays(2)
+            fraDb.leggTil(Faktum(baseOpplysningstype, endretDato, Gyldighetsperiode(LocalDate.now().minusDays(1)))).also {
+                Regelkjøring(LocalDate.now(), fraDb, regelsett).evaluer()
+            }
+
+            repo.lagreOpplysninger(fraDb)
+
+            // Slett opplysninger som er fjernet kun fra ny behandling
+            vaktmesterRepo.slettOpplysninger().shouldContainExactly(utledet.id, endretBaseOpplysningstype.id)
+
+            with(repo.hentOpplysninger(nyeOpplysninger.id)) {
+                finnAlle().size shouldBe 2
+                finnOpplysning(baseOpplysningstype).verdi shouldBe endretDato
+            }
+
+            with(repo.hentOpplysninger(tidligereOpplysninger.id)) {
+                finnAlle().size shouldBe 2
+                finnOpplysning(baseOpplysningstype).verdi shouldBe opprinneligDato
+            }
+        }
+    }
+
+    @Test
+    fun `skal slette fjernede opplysninger som er utledet av i flere nivåer`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val vaktmesterRepo = VaktmesterPostgresRepo()
+
+            val a = Opplysningstype.somBoolsk("A")
+            val b = Opplysningstype.somBoolsk("B")
+            val c = Opplysningstype.somBoolsk("C")
+            val d = Opplysningstype.somBoolsk("D")
+
+            val regelsett =
+                Regelsett("Regelsett") {
+                    regel(a) { innhentes }
+                    regel(d) { innhentes }
+                    regel(b) { enAv(a) }
+                    regel(c) { enAv(b, d) }
+                }
+            val opplysninger = Opplysninger()
+            val regelkjøring = Regelkjøring(LocalDate.now(), opplysninger, regelsett)
+
+            val aFaktum = Faktum(a, true)
+            val dFaktum = Faktum(d, false)
+            opplysninger.leggTil(aFaktum)
+            opplysninger.leggTil(dFaktum)
+            regelkjøring.evaluer()
+            val bFaktum = opplysninger.finnOpplysning(b)
+            val cFaktum = opplysninger.finnOpplysning(c)
+
+            repo.lagreOpplysninger(opplysninger)
+
+            vaktmesterRepo.slettOpplysninger().size shouldBe 0
+
+            // Endre opplysning a slik at b og c blir endret (og det originale blir fjernet)
+            val endretAFaktum = Faktum(a, false)
+            opplysninger.leggTil(endretAFaktum).also { regelkjøring.evaluer() }
+            repo.lagreOpplysninger(opplysninger)
+
+            val slettOpplysninger = vaktmesterRepo.slettOpplysninger()
+            slettOpplysninger.size shouldBe 3
+            slettOpplysninger shouldContainExactly listOf(cFaktum.id, bFaktum.id, aFaktum.id)
         }
     }
 }

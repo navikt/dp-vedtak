@@ -14,7 +14,9 @@ import no.nav.dagpenger.behandling.modell.Behandling.TilstandType
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.regel.Alderskrav.kravTilAlder
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.uuid.UUIDv7
@@ -65,9 +67,9 @@ class AvklaringRepositoryPostgresTest {
 
             val avklaring = avklaring(kode1)
             val avklaringer = Avklaringer(emptyList(), listOf(avklaring))
-            avklaringer.kvitter(avklaring.id, Saksbehandlerkilde(UUIDv7.ny(), "123"), "begrunnelse")
+            avklaringer.kvitter(avklaring.id, Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("123")), "begrunnelse")
             avklaringer.gjenåpne(avklaring.id)
-            avklaringer.avklar(avklaring.id, Saksbehandlerkilde(UUIDv7.ny(), "123"))
+            avklaringer.avklar(avklaring.id, Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("123")))
 
             val forventedeTilstander = listOf("UnderBehandling", "Avklart", "UnderBehandling", "Avklart")
             avklaring.endringer.map { it::class.simpleName!! } shouldBe forventedeTilstander
@@ -108,7 +110,13 @@ class AvklaringRepositoryPostgresTest {
             Behandling.rehydrer(
                 behandlingId = UUIDv7.ny(),
                 behandler = SøknadInnsendtHendelse(UUIDv7.ny(), "123", UUIDv7.ny(), LocalDate.now(), 1, LocalDateTime.now()),
-                gjeldendeOpplysninger = Opplysninger(listOf(Faktum(prøvingsdato, LocalDate.now()))),
+                gjeldendeOpplysninger =
+                    Opplysninger(
+                        listOf(
+                            Faktum(prøvingsdato, LocalDate.now()),
+                            Faktum(kravTilAlder, false),
+                        ),
+                    ),
                 basertPå = emptyList(),
                 tilstand = TilstandType.ForslagTilVedtak,
                 sistEndretTilstand = LocalDateTime.now(),
