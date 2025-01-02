@@ -7,7 +7,6 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Utledning
-import kotlin.collections.singleOrNull
 
 abstract class Regel<T : Comparable<T>> internal constructor(
     internal val produserer: Opplysningstype<T>,
@@ -39,11 +38,11 @@ abstract class Regel<T : Comparable<T>> internal constructor(
             }
 
             // Sjekk om regelen har fått nye avhengigheter
-            val regelForProdukt = gjeldendeRegler.single { it.produserer(produkt.opplysningstype) }
-            if (regelForProdukt.avhengerAv != produkt.utledetAv.opplysninger.map { it.opplysningstype }) {
-                regelForProdukt.avhengerAv.map { avhengighet ->
-                    val produsent = gjeldendeRegler.singleOrNull { it.produserer(avhengighet) }
-                    produsent?.lagPlan(opplysninger, plan, gjeldendeRegler)
+            val regelForProdukt = produsenter[produkt.opplysningstype]
+            if (regelForProdukt?.avhengerAv != produkt.utledetAv.opplysninger.map { it.opplysningstype }) {
+                regelForProdukt?.avhengerAv?.map { avhengighet ->
+                    val avhengigRegel = produsenter[avhengighet]
+                    avhengigRegel?.lagPlan(opplysninger, plan, produsenter)
                 }
                 plan.add(this)
                 return

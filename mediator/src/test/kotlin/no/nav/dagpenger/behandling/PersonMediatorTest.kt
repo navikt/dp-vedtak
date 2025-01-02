@@ -334,7 +334,9 @@ internal class PersonMediatorTest {
             løsBehandlingFramTilInnvilgelse(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
-                medBoolsk("utfall") shouldBe true
+                medFastsettelser {
+                    oppfylt
+                }
             }
 
             personRepository.hent(ident.tilPersonIdentfikator()).also {
@@ -350,8 +352,8 @@ internal class PersonMediatorTest {
 
             rapid.harHendelse("vedtak_fattet") {
                 medBoolsk("automatisk") shouldBe false
-                medFastsattelser {
-                    oppfylt shouldBe true
+                medFastsettelser {
+                    oppfylt
                     vanligArbeidstidPerUke shouldBe 37.5
                     grunnlag shouldBe 319197
                     periode("Dagpengeperiode").shouldBeNull()
