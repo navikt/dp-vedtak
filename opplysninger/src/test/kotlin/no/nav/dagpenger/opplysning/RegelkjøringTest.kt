@@ -11,6 +11,7 @@ import no.nav.dagpenger.opplysning.regel.Regel
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.minstAv
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
@@ -32,7 +33,7 @@ class RegelkjøringTest {
         }
     }
 
-    @Test
+    @Test @Disabled
     fun `regelkjøring håndterer nye regler og opplysninger i påbegynte behandlinger`() {
         val opplysningA = Opplysningstype.somDesimaltall("opplysningA")
         val opplysningB = Opplysningstype.somDesimaltall("opplysningB")

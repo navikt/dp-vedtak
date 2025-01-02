@@ -25,6 +25,7 @@ abstract class Regel<T : Comparable<T>> internal constructor(
     ) {
         if (plan.contains(this)) return
 
+        @Suppress("ktlint:standard:no-consecutive-comments")
         if (opplysninger.har(produserer)) {
             val produkt = opplysninger.finnOpplysning(produserer)
             if (produkt.utledetAv == null) {
@@ -38,7 +39,7 @@ abstract class Regel<T : Comparable<T>> internal constructor(
             }
 
             // Sjekk om regelen har fått nye avhengigheter
-            val regelForProdukt = produsenter[produkt.opplysningstype]
+            /* val regelForProdukt = produsenter[produkt.opplysningstype]
             if (regelForProdukt?.avhengerAv != produkt.utledetAv.opplysninger.map { it.opplysningstype }) {
                 regelForProdukt?.avhengerAv?.map { avhengighet ->
                     val avhengigRegel = produsenter[avhengighet]
@@ -46,7 +47,7 @@ abstract class Regel<T : Comparable<T>> internal constructor(
                 }
                 plan.add(this)
                 return
-            }
+            }*/
 
             // Om en avhengighet er erstattet, må denne regelen kjøres på nytt
             if (produkt.utledetAv.opplysninger.any { it.erErstattet || it.erFjernet }) {
