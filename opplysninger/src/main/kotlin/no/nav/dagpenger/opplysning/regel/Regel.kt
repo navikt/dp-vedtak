@@ -10,7 +10,8 @@ import no.nav.dagpenger.opplysning.Utledning
 
 abstract class Regel<T : Comparable<T>> internal constructor(
     internal val produserer: Opplysningstype<T>,
-    internal val avhengerAv: List<Opplysningstype<*>> = emptyList(), // todo: Bør dette være et Set? Vi er ikke avhengig av rekkefølge
+    // todo: Bør dette være et Set? Vi er ikke avhengig av rekkefølge
+    internal val avhengerAv: List<Opplysningstype<*>> = emptyList(),
 ) {
     init {
         require(avhengerAv.none { it == produserer }) {
