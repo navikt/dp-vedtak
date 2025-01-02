@@ -44,10 +44,9 @@ abstract class Regel<T : Comparable<T>> internal constructor(
             val regelForProdukt = produsenter[produkt.opplysningstype]
             if (regelForProdukt?.avhengerAv != produkt.utledetAv.opplysninger.map { it.opplysningstype }) {
                 logger.info {
-                    "Regel ${this::class.simpleName} har fått nye avhengigheter for ${produkt.opplysningstype.navn}. " +
-                        "Trenger ${regelForProdukt?.avhengerAv?.joinToString {
-                            it.navn
-                        } ?: "ingen"} og har ${produkt.utledetAv.opplysninger.joinToString { it.opplysningstype.navn }}"
+                    "Regel: '${this::class.simpleName}' har fått nye avhengigheter for '${produkt.opplysningstype.navn}' \n. " +
+                        "Trenger ${regelForProdukt?.avhengerAv?.joinToString("\n") { it.navn}
+                            ?: "ingen"} \n Har: ${produkt.utledetAv.opplysninger.joinToString("\n") { it.opplysningstype.navn }}"
                 }
                 regelForProdukt?.avhengerAv?.map { avhengighet ->
                     val avhengigRegel = produsenter[avhengighet]
