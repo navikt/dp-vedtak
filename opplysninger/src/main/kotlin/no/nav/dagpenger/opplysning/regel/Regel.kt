@@ -1,6 +1,5 @@
 package no.nav.dagpenger.opplysning.regel
 
-import mu.KotlinLogging
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Hypotese
@@ -11,15 +10,13 @@ import no.nav.dagpenger.opplysning.Utledning
 
 abstract class Regel<T : Comparable<T>> internal constructor(
     internal val produserer: Opplysningstype<T>,
-    internal val avhengerAv: List<Opplysningstype<*>> = emptyList(),
+    internal val avhengerAv: List<Opplysningstype<*>> = emptyList(), // todo: Bør dette være et Set? Vi er ikke avhengig av rekkefølge
 ) {
     init {
         require(avhengerAv.none { it == produserer }) {
             "Regel ${this::class.java.simpleName} kan ikke produsere samme opplysning ${produserer.navn} den er avhengig av"
         }
     }
-
-    private val logger = KotlinLogging.logger { }
 
     internal open fun lagPlan(
         opplysninger: LesbarOpplysninger,
@@ -42,12 +39,11 @@ abstract class Regel<T : Comparable<T>> internal constructor(
 
             // Sjekk om regelen har fått nye avhengigheter
             val regelForProdukt = produsenter[produkt.opplysningstype]
-            if (regelForProdukt?.avhengerAv != produkt.utledetAv.opplysninger.map { it.opplysningstype }) {
-                logger.info {
-                    "Regel: '${this::class.simpleName}' har fått nye avhengigheter for '${produkt.opplysningstype.navn}' \n. " +
-                        "Trenger ${regelForProdukt?.avhengerAv?.joinToString("\n") { it.navn}
-                            ?: "ingen"} \n Har: ${produkt.utledetAv.opplysninger.joinToString("\n") { it.opplysningstype.navn }}"
-                }
+            if (regelForProdukt?.avhengerAv?.toSet() !=
+                produkt.utledetAv.opplysninger
+                    .map { it.opplysningstype }
+                    .toSet()
+            ) {
                 regelForProdukt?.avhengerAv?.map { avhengighet ->
                     val avhengigRegel = produsenter[avhengighet]
                     avhengigRegel?.lagPlan(opplysninger, plan, produsenter)
