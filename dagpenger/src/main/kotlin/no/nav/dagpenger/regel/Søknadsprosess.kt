@@ -72,6 +72,7 @@ class Søknadsprosess : Forretningsprosess {
                 Utestengning.oppfyllerKravetTilIkkeUtestengt,
             )
         ønsketResultat.addAll(VernepliktFastsetting.ønsketResultat)
+        ønsketResultat.addAll(Dagpengegrunnlag.ønsketResultat)
         ønsketResultat.addAll(
             vilkår,
         )
