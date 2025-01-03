@@ -96,6 +96,7 @@ Mottar vartpenger
 Mottar ventelønn
 Mottar etterlønn
 Mottar garantilott fra Garantikassen for fiskere.
+Periode som gis ved verneplikt
 Dato søker når maks alder
 Arbeidsgivers rapporteringsfrist
 Inntektskrav for siste 12 mnd

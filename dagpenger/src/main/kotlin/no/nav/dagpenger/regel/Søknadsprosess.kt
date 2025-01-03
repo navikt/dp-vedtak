@@ -85,10 +85,7 @@ class Søknadsprosess : Forretningsprosess {
             ønsketResultat.addAll(Dagpengeperiode.ønsketResultat)
             ønsketResultat.addAll(Samordning.ønsketResultat)
             ønsketResultat.addAll(SamordingUtenforFolketrygden.ønsketResultat)
-
-            if (opplysninger.oppfyller(Verneplikt.oppfyllerKravetTilVerneplikt)) {
-                ønsketResultat.addAll(VernepliktFastsetting.ønsketResultat)
-            }
+            ønsketResultat.addAll(VernepliktFastsetting.ønsketResultat)
         }
 
         ønsketResultat.add(KravPåDagpenger.kravPåDagpenger)
