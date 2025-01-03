@@ -40,13 +40,13 @@ Avtjent verneplikt
 Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste
 Oppfyller kravet til minsteinntekt eller verneplikt
 Grunnbeløp for grunnlag
-Antall G som gis som grunnlag ved verneplikt
-Periode som gis ved verneplikt
-Fastsatt vanlig arbeidstid for verneplikt
-Grunnlag for verneplikt hvis kravet ikke er oppfylt
 Tellende inntekt
 Faktor for maksimalt mulig grunnlag
 Antall år i 36 måneder
+Antall G som gis som grunnlag ved verneplikt
+Grunnlag for verneplikt hvis kravet ikke er oppfylt
+Periode som gis ved verneplikt
+Fastsatt vanlig arbeidstid for verneplikt
 Mottar ikke andre fulle ytelser
 Er personen medlem av folketrygden
 Opphold i Norge
@@ -81,9 +81,9 @@ Opplæringspenger dagsats
 Uføre dagsats
 Foreldrepenger dagsats
 Svangerskapspenger dagsats
-Grunnlag for gis ved verneplikt
 Oppjustert inntekt
 6 ganger grunnbeløp
+Grunnlag for gis ved verneplikt
 Utbetalt arbeidsinntekt periode 1
 Utbetalt arbeidsinntekt periode 2
 Utbetalt arbeidsinntekt periode 3
@@ -94,10 +94,10 @@ Ikke krav på lønn fra tidligere arbeidsgiver
 Beregningsregel: Tapt arbeidstid
 Godkjent unntak for utdanning eller opplæring?
 Oppfyller krav til ikke utestengt
-Grunnlag for verneplikt hvis kravet er oppfylt
 Inntektperiode 1
 Inntektperiode 2
 Inntektperiode 3
+Grunnlag for verneplikt hvis kravet er oppfylt
 Krav til tap av arbeidsinntekt
 Grunnlag siste 12 mnd.
 Avkortet inntektperiode 1
@@ -112,8 +112,8 @@ Gjennomsnittlig arbeidsinntekt siste 36 måneder
 Uavrundet grunnlag
 Grunnlag ved ordinære dagpenger
 Brukt beregningsregel
-Grunnlaget for verneplikt er høyere enn dagpengegrunnlaget
 Grunnlag
+Grunnlaget for verneplikt er høyere enn dagpengegrunnlaget
 Fastsatt vanlig arbeidstid etter ordinær eller verneplikt
 Dagsats uten barnetillegg før samordning
 Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget
