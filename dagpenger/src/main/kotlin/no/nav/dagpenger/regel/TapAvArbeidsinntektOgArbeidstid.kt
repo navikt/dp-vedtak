@@ -6,6 +6,7 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.enAv
+import no.nav.dagpenger.opplysning.regel.hvisSannMedResultat
 import no.nav.dagpenger.opplysning.regel.ikke
 import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.oppslag
@@ -13,6 +14,8 @@ import no.nav.dagpenger.opplysning.regel.prosentTerskel
 import no.nav.dagpenger.regel.Behov.HarTaptArbeid
 import no.nav.dagpenger.regel.Behov.KravPåLønn
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagForVernepliktErGunstigst
+import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktFastsattVanligArbeidstid
 
 object TapAvArbeidsinntektOgArbeidstid {
     internal val tapAvArbeid = Opplysningstype.somBoolsk("Har tapt arbeid".id(HarTaptArbeid))
@@ -30,11 +33,15 @@ object TapAvArbeidsinntektOgArbeidstid {
     val fastsattVanligArbeidstid = Opplysningstype.somDesimaltall("Fastsatt arbeidstid per uke før tap")
     val nyArbeidstid = Opplysningstype.somDesimaltall("Ny arbeidstid per uke")
     val kravTilTaptArbeidstid: Opplysningstype<Boolean> = Opplysningstype.somBoolsk("Tap av arbeidstid er minst terskel")
+    internal val ordinærEllerVernepliktArbeidstid =
+        Opplysningstype.somDesimaltall(
+            "Fastsatt vanlig arbeidstid etter ordinær eller verneplikt",
+        )
 
     val kravTilTapAvArbeidsinntektOgArbeidstid = Opplysningstype.somBoolsk("Krav til tap av arbeidsinntekt og arbeidstid")
 
     val regelsett =
-        Regelsett("§ 4-3. Krav til tap av arbeidsinntekt og arbeidstid") {
+        Regelsett("§ 4-3 Krav til tap av arbeidsinntekt og arbeidstid") {
             regel(tapAvArbeid) { oppslag(prøvingsdato) { true } } // TODO: Satt til true for testing av innvilgelse
             regel(kravPåLønn) { oppslag(prøvingsdato) { false } }
             regel(ikkeKravPåLønn) { ikke(kravPåLønn) }
@@ -49,11 +56,17 @@ object TapAvArbeidsinntektOgArbeidstid {
 
             // TODO: Bør hentes fra noe
             regel(beregnetArbeidstid) { oppslag(prøvingsdato) { 37.5 } } // TODO: Satt til 37.5 for testing av innvilgelse
+
+            // FVA fra verneplikt overstyrer ordinær FVA om verneplikt er gunstigst
+            regel(ordinærEllerVernepliktArbeidstid) {
+                hvisSannMedResultat(grunnlagForVernepliktErGunstigst, vernepliktFastsattVanligArbeidstid, beregnetArbeidstid)
+            }
+
             regel(nyArbeidstid) { oppslag(prøvingsdato) { 0.0 } }
             regel(maksimalVanligArbeidstid) { oppslag(prøvingsdato) { 40.0 } }
 
             // TODO: Legg til maks ønsket arbeidstid
-            regel(fastsattVanligArbeidstid) { minstAv(beregnetArbeidstid, maksimalVanligArbeidstid) }
+            regel(fastsattVanligArbeidstid) { minstAv(ordinærEllerVernepliktArbeidstid, maksimalVanligArbeidstid) }
 
             regel(kravTilTaptArbeidstid) { prosentTerskel(nyArbeidstid, fastsattVanligArbeidstid, kravTilArbeidstidsreduksjon) }
 

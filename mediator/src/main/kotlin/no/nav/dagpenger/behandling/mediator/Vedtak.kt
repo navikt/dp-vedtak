@@ -25,9 +25,10 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.FulleYtelser
 import no.nav.dagpenger.regel.KravPåDagpenger.kravPåDagpenger
+import no.nav.dagpenger.regel.KravPåDagpenger.minsteinntektEllerVerneplikt
 import no.nav.dagpenger.regel.Medlemskap
 import no.nav.dagpenger.regel.Meldeplikt
-import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
 import no.nav.dagpenger.regel.Opphold
 import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.Rettighetstype
@@ -46,6 +47,8 @@ import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.barn
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsEtterSamordningMedBarnetillegg
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
+import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagForVernepliktErGunstigst
+import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktPeriode
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -59,7 +62,7 @@ private val autorativKildeForDetViPåEkteMenerErVilkår: Map<Opplysningstype<Boo
         FulleYtelser.ikkeFulleYtelser to kapittel4(24),
         Medlemskap.oppfyllerMedlemskap to kapittel4(2),
         Meldeplikt.registrertPåSøknadstidspunktet to kapittel4(8),
-        Minsteinntekt.minsteinntekt to kapittel4(4),
+        minsteinntektEllerVerneplikt to kapittel4(4),
         Opphold.oppfyllerKravet to kapittel4(5),
         ReellArbeidssøker.kravTilArbeidssøker to kapittel4(5),
         ReellArbeidssøker.oppfyllerKravTilArbeidsfør to kapittel4(5),
@@ -132,7 +135,6 @@ fun lagVedtak(
         søknadId = søknadId.id.toString(),
         fagsakId = opplysninger.finnOpplysning(fagsakIdOpplysningstype).verdi.toString(),
         automatisk = automatisk,
-        // TODO("Dette må være når vedtaket har gått til Ferdig"),
         ident = ident.identifikator(),
         vedtakstidspunkt = LocalDateTime.now(),
         // TODO: Denne må utledes igjen - virkningstidspunkt = opplysninger.finnOpplysning(virkningstidspunkt).verdi,
@@ -193,15 +195,24 @@ private fun vedtakFastsattDTO(
                 ),
             samordning = opplysninger.samordninger(),
             kvoter =
-                listOf(
-                    KvoteDTO(
-                        "Dagpengeperiode",
-                        type = KvoteDTO.Type.uker,
-                        opplysninger.finnOpplysning(Dagpengeperiode.antallStønadsuker).verdi.toBigDecimal(),
-                    ),
+                listOfNotNull(
+                    opplysninger.finnOpplysning(minsteinntekt).takeIf { it.verdi }?.let {
+                        KvoteDTO(
+                            "Dagpengeperiode",
+                            KvoteDTO.Type.uker,
+                            opplysninger.finnOpplysning(Dagpengeperiode.ordinærPeriode).verdi.toBigDecimal(),
+                        )
+                    },
+                    opplysninger.finnOpplysning(grunnlagForVernepliktErGunstigst).takeIf { it.verdi }?.let {
+                        KvoteDTO(
+                            "Verneplikt",
+                            KvoteDTO.Type.uker,
+                            opplysninger.finnOpplysning(vernepliktPeriode).verdi.toBigDecimal(),
+                        )
+                    },
                     KvoteDTO(
                         "Egenandel",
-                        type = KvoteDTO.Type.beløp,
+                        KvoteDTO.Type.beløp,
                         opplysninger.finnOpplysning(Egenandel.egenandel).verdi.verdien,
                     ),
                 ),

@@ -590,10 +590,6 @@ class Behandling private constructor(
                 hendelse.info(regel.toString())
             }
 
-            hendelse.info(
-                "Fant ${rapport.foreldreløse.size} foreldreløse regler=${rapport.foreldreløse.joinToString("\n") { it.toString() }}",
-            )
-
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
@@ -983,8 +979,6 @@ interface BehandlingObservatør {
     fun endretTilstand(event: BehandlingEndretTilstand) {}
 }
 
-// TODO: Vi bør ha bedre kontroll på navnene og kanskje henge sammen med behov?
-@Suppress("ktlint:standard:enum-entry-name-case")
 sealed class BehandlingHendelser(
     override val name: String,
 ) : Hendelse.Hendelsetype {

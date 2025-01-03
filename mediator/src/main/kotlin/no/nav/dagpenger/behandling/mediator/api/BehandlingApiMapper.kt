@@ -36,7 +36,7 @@ import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.Utestengning.utestengt
-import no.nav.dagpenger.regel.Verneplikt.vurderingAvVerneplikt
+import no.nav.dagpenger.regel.Verneplikt.oppfyllerKravetTilVerneplikt
 import java.time.LocalDate
 
 private val logger = KotlinLogging.logger { }
@@ -177,7 +177,7 @@ private val redigerbareOpplysninger =
                 prøvingsdato,
                 sykepengerDagsats,
                 utestengt,
-                vurderingAvVerneplikt,
+                oppfyllerKravetTilVerneplikt,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)

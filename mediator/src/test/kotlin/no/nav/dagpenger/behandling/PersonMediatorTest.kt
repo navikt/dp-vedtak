@@ -211,7 +211,7 @@ internal class PersonMediatorTest {
                 medVilkår("Oppfyller kravet til alder") {
                     erOppfylt()
                 }
-                medVilkår("Krav til minsteinntekt") {
+                medVilkår("Oppfyller kravet til minsteinntekt eller verneplikt") {
                     erIkkeOppfylt()
                 }
                 medVilkår("Krav til arbeidssøker") {
@@ -308,6 +308,57 @@ internal class PersonMediatorTest {
                     sats shouldBeGreaterThan 0
                     samordning.shouldNotBeEmpty()
                     samordning.first()["type"].asText() shouldBe "Sykepenger dagsats"
+                }
+                medNode("behandletAv")
+                    .map {
+                        it["behandler"]["ident"].asText()
+                    }.shouldContainExactlyInAnyOrder("NAV987987", "NAV123123")
+            }
+
+            vedtakJson()
+        }
+
+    @Test
+    fun `Søknad med som oppfyller kravet til verneplikt skal innvilges`() =
+        withMigratedDb {
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    søknadsdato = 6.mai(2021),
+                    InntektSiste12Mnd = 50000,
+                    søkerVerneplikt = true,
+                )
+            val saksbehandler = TestSaksbehandler(testPerson, hendelseMediator, personRepository, rapid)
+            skruPåFeature(Feature.INNVILGELSE)
+            løsBehandlingFramTilInnvilgelse(testPerson)
+
+            rapid.harHendelse("forslag_til_vedtak") {
+                medFastsettelser {
+                    oppfylt
+                }
+            }
+
+            personRepository.hent(ident.tilPersonIdentfikator()).also {
+                it.shouldNotBeNull()
+                it.behandlinger().first().kreverTotrinnskontroll() shouldBe true
+            }
+
+            // Saksbehandler lukker alle avklaringer
+            saksbehandler.lukkAlleAvklaringer()
+
+            saksbehandler.godkjenn()
+            saksbehandler.beslutt()
+
+            rapid.harHendelse("vedtak_fattet") {
+                medBoolsk("automatisk") shouldBe false
+                medFastsettelser {
+                    oppfylt
+                    vanligArbeidstidPerUke shouldBe 37.5
+                    grunnlag shouldBe 319197
+                    periode("Dagpengeperiode").shouldBeNull()
+                    periode("Verneplikt") shouldBe 26
+                    sats shouldBeGreaterThan 0
                 }
                 medNode("behandletAv")
                     .map {
@@ -502,10 +553,10 @@ internal class PersonMediatorTest {
                 TestPerson(
                     ident,
                     rapid,
-                    innsendt = 1.juni(2024).atTime(12, 0),
                     søknadsdato = 1.juni(2024),
-                    ønskerFraDato = 1.juni(2024),
+                    innsendt = 1.juni(2024).atTime(12, 0),
                     InntektSiste12Mnd = 500000,
+                    ønskerFraDato = 1.juni(2024),
                 )
             løsBehandlingFramTilInnvilgelse(testPerson)
 
@@ -698,12 +749,6 @@ internal class PersonMediatorTest {
         }
 
         /**
-         * Sjekker om mulig verneplikt
-         */
-        rapid.harBehov(Verneplikt)
-        testPerson.løsBehov(Verneplikt)
-
-        /**
          * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
          */
         rapid.harBehov(Inntekt) {
@@ -716,6 +761,12 @@ internal class PersonMediatorTest {
              */
         }
         testPerson.løsBehov(Inntekt)
+
+        /**
+         * Sjekker om mulig verneplikt
+         */
+        rapid.harBehov(Verneplikt)
+        testPerson.løsBehov(Verneplikt)
 
         if (behandlingslengde == Behandlingslengde.AvbruddInntekt) {
             return
@@ -1008,6 +1059,8 @@ internal class PersonMediatorTest {
             val grunnlag get() = jsonNode["grunnlag"]["grunnlag"].asInt()
             val vanligArbeidstidPerUke get() = jsonNode["fastsattVanligArbeidstid"]["vanligArbeidstidPerUke"].asDouble()
             val sats get() = jsonNode["sats"]["dagsatsMedBarnetillegg"].asInt()
+
+            fun periode(navn: String) = jsonNode["kvoter"].find { it["navn"].asText() == navn }?.get("verdi")?.asInt()
 
             val samordning get() = jsonNode["samordning"]
 

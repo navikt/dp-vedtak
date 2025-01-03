@@ -10,8 +10,15 @@ import no.nav.dagpenger.opplysning.Utledning
 
 abstract class Regel<T : Comparable<T>> internal constructor(
     internal val produserer: Opplysningstype<T>,
+    // todo: Bør dette være et Set? Vi er ikke avhengig av rekkefølge
     internal val avhengerAv: List<Opplysningstype<*>> = emptyList(),
 ) {
+    init {
+        require(avhengerAv.none { it == produserer }) {
+            "Regel ${this::class.java.simpleName} kan ikke produsere samme opplysning ${produserer.navn} den er avhengig av"
+        }
+    }
+
     internal open fun lagPlan(
         opplysninger: LesbarOpplysninger,
         plan: MutableSet<Regel<*>>,
@@ -25,14 +32,29 @@ abstract class Regel<T : Comparable<T>> internal constructor(
                 return
             }
 
+            // Underliggende opplysninger må vurdere seg selv
             produkt.utledetAv.opplysninger.forEach { avhengighet ->
                 val produsent = produsenter[avhengighet.opplysningstype]
                 produsent?.lagPlan(opplysninger, plan, produsenter)
             }
 
-            val avhengighetErErstattet = produkt.utledetAv.opplysninger.any { it.erErstattet || it.erFjernet }
+            // Sjekk om regelen har fått nye avhengigheter
+            val regelForProdukt = produsenter[produkt.opplysningstype]
+            if (regelForProdukt?.avhengerAv?.toSet() !=
+                produkt.utledetAv.opplysninger
+                    .map { it.opplysningstype }
+                    .toSet()
+            ) {
+                regelForProdukt?.avhengerAv?.map { avhengighet ->
+                    val avhengigRegel = produsenter[avhengighet]
+                    avhengigRegel?.lagPlan(opplysninger, plan, produsenter)
+                }
+                plan.add(this)
+                return
+            }
 
-            if (avhengighetErErstattet) {
+            // Om en avhengighet er erstattet, må denne regelen kjøres på nytt
+            if (produkt.utledetAv.opplysninger.any { it.erErstattet || it.erFjernet }) {
                 plan.add(this)
                 return
             }
