@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling.mediator
 
 import com.fasterxml.jackson.module.kotlin.convertValue
+import mu.KotlinLogging
 import no.nav.dagpenger.behandling.api.models.BarnDTO
 import no.nav.dagpenger.behandling.api.models.BehandletAvDTO
 import no.nav.dagpenger.behandling.api.models.KvoteDTO
@@ -111,6 +112,8 @@ private fun LesbarOpplysninger.samordninger(): List<SamordningDTO> {
     }
 }
 
+private val logger = KotlinLogging.logger { }
+
 fun lagVedtak(
     behandlingId: UUID,
     ident: Ident,
@@ -128,6 +131,9 @@ fun lagVedtak(
             .map { it.tilVilkårDTO(autorativKildeForDetViPåEkteMenerErVilkår[it.opplysningstype]) }
 
     val utfall = vilkår.all { it.status == VilkaarDTO.Status.Oppfylt }
+    logger.info {
+        "VedtakDTO med utfall $utfall, dette var alle vilkårene ${vilkår.joinToString("\n") { it.navn + " -> " + it.status.name }}"
+    }
     val fastsatt = vedtakFastsattDTO(utfall, opplysninger)
 
     return VedtakDTO(
