@@ -25,13 +25,13 @@ spec:
     max: 2
   resources:
     limits:
-      memory: 2048Mi
+      memory: 512Mi
     requests:
       cpu: 50m
-      memory: 512Mi
+      memory: 384Mi
   env:
     - name: JDK_JAVA_OPTIONS
-      value: -XX:+UseParallelGC -XX:MaxRAMPercentage=25.0 -XX:ActiveProcessorCount=4
+      value: -XX:+UseParallelGC -XX:MaxRAMPercentage=35.0 -XX:ActiveProcessorCount=4
     - name: GRUPPER_SAKSBEHANDLER
       value: {{azure.grupper.saksbehandler}}
     - name: KAFKA_EXTRA_TOPIC
