@@ -25,13 +25,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 class TapAvArbeidSteg : No {
     private val fraDato = 10.mai(2022)
     private val regelsett = RegelverkDagpenger.regelsettFor(kravTilTaptArbeidstid)
-        /*listOf(
-            TapAvArbeidsinntektOgArbeidstid.regelsett,
-            Søknadstidspunkt.regelsett,
-            VernepliktFastsetting.regelsett,
-            Dagpengegrunnlag.regelsett,
-            Minsteinntekt.regelsett,
-        )*/
 
     private val opplysninger = Opplysninger()
 

@@ -49,7 +49,6 @@ import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagForVernepliktErGunstigst
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktPeriode
-import java.lang.ProcessBuilder.Redirect.to
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -63,8 +62,6 @@ private val autorativKildeForDetViPåEkteMenerErVilkår: Map<Opplysningstype<Boo
         FulleYtelser.ikkeFulleYtelser to kapittel4(24),
         Medlemskap.oppfyllerMedlemskap to kapittel4(2),
         Meldeplikt.registrertPåSøknadstidspunktet to kapittel4(8),
-        // TODO: Vi må håndtere slik at minsteinntekt kommer for seg selv, men må være en OR mot verneplikt
-        // Minsteinntekt.minsteinntekt to kapittel4(4),
         minsteinntektEllerVerneplikt to kapittel4(4),
         Opphold.oppfyllerKravet to kapittel4(5),
         ReellArbeidssøker.kravTilArbeidssøker to kapittel4(5),
@@ -130,7 +127,6 @@ fun lagVedtak(
             .filter { it.opplysningstype in autorativKildeForDetViPåEkteMenerErVilkår.keys }
             .map { it.tilVilkårDTO(autorativKildeForDetViPåEkteMenerErVilkår[it.opplysningstype]) }
 
-    // TODO: Vi må håndtere slik at minsteinntekt kommer for seg selv, men må være en OR mot verneplikt
     val utfall = vilkår.all { it.status == VilkaarDTO.Status.Oppfylt }
     val fastsatt = vedtakFastsattDTO(utfall, opplysninger)
 
