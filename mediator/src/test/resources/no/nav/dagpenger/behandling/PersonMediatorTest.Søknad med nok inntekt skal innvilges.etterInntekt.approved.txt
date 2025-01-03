@@ -84,6 +84,9 @@ Svangerskapspenger dagsats
 Grunnlag for gis ved verneplikt
 Oppjustert inntekt
 6 ganger grunnbeløp
+Utbetalt arbeidsinntekt periode 1
+Utbetalt arbeidsinntekt periode 2
+Utbetalt arbeidsinntekt periode 3
 Oppfyller kravet til medlemskap
 Oppfyller kravet til opphold i Norge
 Er medlemmet ikke påvirket av streik eller lock-out?
@@ -100,10 +103,15 @@ Grunnlag siste 12 mnd.
 Avkortet inntektperiode 1
 Avkortet inntektperiode 2
 Avkortet inntektperiode 3
+Har avkortet grunnlaget i periode 1
+Har avkortet grunnlaget i periode 2
+Har avkortet grunnlaget i periode 3
 Inntekt siste 36 måneder
+Har avkortet grunnlag
 Gjennomsnittlig arbeidsinntekt siste 36 måneder
 Uavrundet grunnlag
 Grunnlag ved ordinære dagpenger
+Brukt beregningsregel
 Grunnlaget for verneplikt er høyere enn dagpengegrunnlaget
 Grunnlag
 Fastsatt vanlig arbeidstid etter ordinær eller verneplikt
@@ -129,13 +137,6 @@ Har svart ja på spørsmål om utdanning eller opplæring
 Har svart nei på spørsmål om utdanning eller opplæring
 Oppfyller kravet på unntak for utdanning eller opplæring
 Krav til utdanning eller opplæring
-Har avkortet grunnlaget i periode 1
-Har avkortet grunnlaget i periode 2
-Har avkortet grunnlaget i periode 3
-Brukt beregningsregel
-Utbetalt arbeidsinntekt periode 1
-Utbetalt arbeidsinntekt periode 2
-Utbetalt arbeidsinntekt periode 3
 Antall arbeidsdager per uke
 Hvor mange prosent av G skal brukes som terskel ved samordning
 Pensjon fra en offentlig tjenestepensjonsordning beløp
@@ -159,7 +160,6 @@ Mottar vartpenger
 Mottar ventelønn
 Mottar etterlønn
 Mottar garantilott fra Garantikassen for fiskere.
-Har avkortet grunnlag
 Beløp tilsvarende nedre terskel av G
 Sum av ytelser utenfor folketrygden
 Terskel for 12 måneder
