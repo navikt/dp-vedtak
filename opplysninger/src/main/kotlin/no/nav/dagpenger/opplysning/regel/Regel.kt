@@ -45,11 +45,14 @@ abstract class Regel<T : Comparable<T>> internal constructor(
                     .map { it.opplysningstype }
                     .toSet()
             ) {
-                regelForProdukt?.avhengerAv?.map { avhengighet ->
-                    val avhengigRegel = produsenter[avhengighet]
-                    avhengigRegel?.lagPlan(opplysninger, plan, produsenter)
+                if (regelForProdukt?.avhengerAv?.any { opplysninger.mangler(it) } == true) {
+                    regelForProdukt.avhengerAv.map { avhengighet ->
+                        val avhengigRegel = produsenter[avhengighet]
+                        avhengigRegel?.lagPlan(opplysninger, plan, produsenter)
+                    }
+                } else {
+                    plan.add(this)
                 }
-                plan.add(this)
                 return
             }
 
