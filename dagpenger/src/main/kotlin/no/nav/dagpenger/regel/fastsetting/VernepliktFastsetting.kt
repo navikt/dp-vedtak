@@ -37,5 +37,11 @@ object VernepliktFastsetting {
             regel(grunnlagForVernepliktErGunstigst) { størreEnn(grunnlagHvisVerneplikt, dagpengegrunnlag) }
         }
 
-    val ønsketResultat = listOf(vernepliktGrunnlag, vernepliktPeriode, vernepliktFastsattVanligArbeidstid, grunnlagForVernepliktErGunstigst)
+    val ønsketResultat =
+        listOf(
+            vernepliktGrunnlag,
+            vernepliktPeriode,
+            vernepliktFastsattVanligArbeidstid,
+            grunnlagForVernepliktErGunstigst,
+        )
 }

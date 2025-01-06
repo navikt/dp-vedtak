@@ -1,5 +1,6 @@
 package no.nav.dagpenger.opplysning
 
+import mu.KotlinLogging
 import no.nav.dagpenger.opplysning.regel.Ekstern
 import no.nav.dagpenger.opplysning.regel.Regel
 import java.time.LocalDate
@@ -33,6 +34,10 @@ class Regelkjøring(
     private val opplysninger: Opplysninger,
     private val forretningsprosess: Forretningsprosess,
 ) {
+    companion object {
+        private val logger = KotlinLogging.logger { }
+    }
+
     constructor(regelverksdato: LocalDate, opplysninger: Opplysninger, vararg regelsett: Regelsett) : this(
         regelverksdato,
         regelverksdato,
@@ -163,10 +168,22 @@ class Regelkjøring(
     }
 
     private fun kjør(regel: Regel<*>) {
-        val opplysning = regel.lagProdukt(opplysningerPåPrøvingsdato)
-        kjørteRegler.add(regel)
-        plan.remove(regel)
-        opplysninger.leggTilUtledet(opplysning)
+        try {
+            val opplysning = regel.lagProdukt(opplysningerPåPrøvingsdato)
+            kjørteRegler.add(regel)
+            plan.remove(regel)
+            opplysninger.leggTilUtledet(opplysning)
+        } catch (e: IllegalArgumentException) {
+            logger.info {
+                """
+                Skal kjøre: 
+                ${plan.joinToString("\n") { it.produserer.navn }}
+                Har kjørt: 
+                ${kjørteRegler.joinToString("\n") { it.produserer.navn }}
+                """.trimIndent()
+            }
+            throw e
+        }
     }
 
     private fun trenger(): Set<Opplysningstype<*>> {

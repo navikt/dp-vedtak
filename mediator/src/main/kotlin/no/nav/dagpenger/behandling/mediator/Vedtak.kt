@@ -206,16 +206,25 @@ private fun vedtakFastsattDTO(
                         KvoteDTO(
                             "Dagpengeperiode",
                             KvoteDTO.Type.uker,
-                            opplysninger.finnOpplysning(Dagpengeperiode.ordinærPeriode).verdi.toBigDecimal(),
+                            runCatching { opplysninger.finnOpplysning(Dagpengeperiode.ordinærPeriode).verdi.toBigDecimal() }.getOrElse {
+                                opplysninger
+                                    .finnOpplysning(
+                                        Dagpengeperiode.antallStønadsuker,
+                                    ).verdi
+                                    .toBigDecimal()
+                            },
                         )
                     },
-                    opplysninger.finnOpplysning(grunnlagForVernepliktErGunstigst).takeIf { it.verdi }?.let {
-                        KvoteDTO(
-                            "Verneplikt",
-                            KvoteDTO.Type.uker,
-                            opplysninger.finnOpplysning(vernepliktPeriode).verdi.toBigDecimal(),
-                        )
-                    },
+                    runCatching { opplysninger.finnOpplysning(grunnlagForVernepliktErGunstigst) }
+                        .getOrNull()
+                        .takeIf { it?.verdi == true }
+                        ?.let {
+                            KvoteDTO(
+                                "Verneplikt",
+                                KvoteDTO.Type.uker,
+                                opplysninger.finnOpplysning(vernepliktPeriode).verdi.toBigDecimal(),
+                            )
+                        },
                     KvoteDTO(
                         "Egenandel",
                         KvoteDTO.Type.beløp,

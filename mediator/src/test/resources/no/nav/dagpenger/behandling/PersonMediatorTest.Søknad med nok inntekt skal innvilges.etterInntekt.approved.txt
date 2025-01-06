@@ -39,14 +39,6 @@ Krav til minsteinntekt
 Avtjent verneplikt
 Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste
 Oppfyller kravet til minsteinntekt eller verneplikt
-Grunnbeløp for grunnlag
-Antall G som gis som grunnlag ved verneplikt
-Periode som gis ved verneplikt
-Fastsatt vanlig arbeidstid for verneplikt
-Grunnlag for verneplikt hvis kravet ikke er oppfylt
-Tellende inntekt
-Faktor for maksimalt mulig grunnlag
-Antall år i 36 måneder
 Mottar ikke andre fulle ytelser
 Er personen medlem av folketrygden
 Opphold i Norge
@@ -58,6 +50,13 @@ Ledig ved samme bedrift eller arbeidsplass, og blir påvirket av utfallet?
 Har tapt arbeid
 Krav på lønn fra tidligere arbeidsgiver
 Ny arbeidstid per uke
+Grunnbeløp for grunnlag
+Antall G som gis som grunnlag ved verneplikt
+Grunnlag for verneplikt hvis kravet ikke er oppfylt
+Tellende inntekt
+Faktor for maksimalt mulig grunnlag
+Antall år i 36 måneder
+Fastsatt vanlig arbeidstid for verneplikt
 Beregnet vanlig arbeidstid per uke før tap
 Maksimal vanlig arbeidstid
 Krav til prosentvis tap av arbeidstid
@@ -81,21 +80,21 @@ Opplæringspenger dagsats
 Uføre dagsats
 Foreldrepenger dagsats
 Svangerskapspenger dagsats
-Grunnlag for gis ved verneplikt
-Oppjustert inntekt
-6 ganger grunnbeløp
 Oppfyller kravet til medlemskap
 Oppfyller kravet til opphold i Norge
 Er medlemmet ikke påvirket av streik eller lock-out?
 Ikke krav på lønn fra tidligere arbeidsgiver
+Grunnlag for gis ved verneplikt
+Oppjustert inntekt
+6 ganger grunnbeløp
 Beregningsregel: Tapt arbeidstid
 Godkjent unntak for utdanning eller opplæring?
 Oppfyller krav til ikke utestengt
+Krav til tap av arbeidsinntekt
 Grunnlag for verneplikt hvis kravet er oppfylt
 Inntektperiode 1
 Inntektperiode 2
 Inntektperiode 3
-Krav til tap av arbeidsinntekt
 Grunnlag siste 12 mnd.
 Avkortet inntektperiode 1
 Avkortet inntektperiode 2
@@ -159,6 +158,7 @@ Mottar vartpenger
 Mottar ventelønn
 Mottar etterlønn
 Mottar garantilott fra Garantikassen for fiskere.
+Periode som gis ved verneplikt
 Har avkortet grunnlag
 Beløp tilsvarende nedre terskel av G
 Sum av ytelser utenfor folketrygden

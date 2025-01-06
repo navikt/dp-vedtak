@@ -33,13 +33,6 @@ Maks lengde på opptjeningsperiode
 Grunnbeløp
 Antall G for krav til 12 mnd arbeidsinntekt
 Antall G for krav til 36 mnd arbeidsinntekt
-Grunnbeløp for grunnlag
-Antall G som gis som grunnlag ved verneplikt
-Periode som gis ved verneplikt
-Fastsatt vanlig arbeidstid for verneplikt
-Grunnlag for verneplikt hvis kravet ikke er oppfylt
-Faktor for maksimalt mulig grunnlag
-Antall år i 36 måneder
 Mottar ikke andre fulle ytelser
 Er personen medlem av folketrygden
 Opphold i Norge
@@ -51,6 +44,12 @@ Ledig ved samme bedrift eller arbeidsplass, og blir påvirket av utfallet?
 Har tapt arbeid
 Krav på lønn fra tidligere arbeidsgiver
 Ny arbeidstid per uke
+Grunnbeløp for grunnlag
+Antall G som gis som grunnlag ved verneplikt
+Grunnlag for verneplikt hvis kravet ikke er oppfylt
+Faktor for maksimalt mulig grunnlag
+Antall år i 36 måneder
+Fastsatt vanlig arbeidstid for verneplikt
 Beregnet vanlig arbeidstid per uke før tap
 Maksimal vanlig arbeidstid
 Krav til prosentvis tap av arbeidstid
@@ -97,13 +96,11 @@ Mottar vartpenger
 Mottar ventelønn
 Mottar etterlønn
 Mottar garantilott fra Garantikassen for fiskere.
+Periode som gis ved verneplikt
 Dato søker når maks alder
 Arbeidsgivers rapporteringsfrist
 Inntektskrav for siste 12 mnd
 Inntektskrav for siste 36 mnd
-Grunnlag for gis ved verneplikt
-Grunnlag for verneplikt hvis kravet er oppfylt
-6 ganger grunnbeløp
 Oppfyller kravet til medlemskap
 Oppfyller kravet til opphold i Norge
 Oppfyller kravet til heltid- og deltidsarbeid
@@ -111,6 +108,9 @@ Oppfyller kravet til mobilitet
 Er medlemmet ikke påvirket av streik eller lock-out?
 Ikke krav på lønn fra tidligere arbeidsgiver
 Krav til tap av arbeidsinntekt
+Grunnlag for gis ved verneplikt
+Grunnlag for verneplikt hvis kravet er oppfylt
+6 ganger grunnbeløp
 Beregningsregel: Tapt arbeidstid
 Godkjent unntak for utdanning eller opplæring?
 Oppfyller krav til ikke utestengt
