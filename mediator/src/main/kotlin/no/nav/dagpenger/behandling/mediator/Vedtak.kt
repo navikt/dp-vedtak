@@ -219,12 +219,12 @@ private fun vedtakFastsattDTO(
                         .getOrNull()
                         .takeIf { it?.verdi == true }
                         ?.let {
-                        KvoteDTO(
-                            "Verneplikt",
-                            KvoteDTO.Type.uker,
-                            opplysninger.finnOpplysning(vernepliktPeriode).verdi.toBigDecimal(),
-                        )
-                    },
+                            KvoteDTO(
+                                "Verneplikt",
+                                KvoteDTO.Type.uker,
+                                opplysninger.finnOpplysning(vernepliktPeriode).verdi.toBigDecimal(),
+                            )
+                        },
                     KvoteDTO(
                         "Egenandel",
                         KvoteDTO.Type.beløp,
