@@ -45,6 +45,33 @@ internal class BehandlingTest {
     }
 
     @Test
+    fun `hvilke behandlinger som skal føre til totrinnskontroll`() {
+        // innvilgelse krever totrinnskontroll
+        kreverTotrinnskontroll(true, true, true) shouldBe true
+
+        // innvilgelse som mangler inntekt krever totrinnskontroll (bug)
+        kreverTotrinnskontroll(true, false, true) shouldBe true
+
+        // avslag på inntekt krever ikke totrinnskontroll
+        kreverTotrinnskontroll(false, false, true) shouldBe false
+
+        // avslag på inntekt krever ikke totrinnskontroll
+        kreverTotrinnskontroll(false, true, true) shouldBe true
+
+        // avslag på alder krever ikke totrinnskontroll
+        kreverTotrinnskontroll(false, true, false) shouldBe false
+
+        // avslag på både inntekt og alder krever ikke totrinnskontroll
+        kreverTotrinnskontroll(false, false, false) shouldBe false
+    }
+
+    fun kreverTotrinnskontroll(
+        kravPåDagpenger: Boolean,
+        minsteinntekt: Boolean,
+        alder: Boolean,
+    ) = kravPåDagpenger || (minsteinntekt && alder)
+
+    @Test
     fun `Behandling basert på tidligere behandlinger`() {
         val behandlingskjede = behandlingskjede(5, søknadInnsendtHendelse)
         behandlingskjede.opplysninger().finnAlle() shouldHaveSize 5

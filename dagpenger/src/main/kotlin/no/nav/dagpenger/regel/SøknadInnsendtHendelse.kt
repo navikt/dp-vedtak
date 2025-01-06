@@ -92,7 +92,7 @@ class SøknadInnsendtHendelse(
             opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
 
     override fun kreverTotrinnskontroll(opplysninger: LesbarOpplysninger) =
-        !(minsteinntekt(opplysninger) == false || alder(opplysninger) == false)
+        kravPåDagpenger(opplysninger) || (minsteinntekt(opplysninger) && alder(opplysninger))
 
     override fun behandling() =
         Behandling(
