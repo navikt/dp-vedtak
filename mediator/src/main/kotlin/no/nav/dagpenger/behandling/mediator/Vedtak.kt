@@ -215,7 +215,10 @@ private fun vedtakFastsattDTO(
                             },
                         )
                     },
-                    opplysninger.finnOpplysning(grunnlagForVernepliktErGunstigst).takeIf { it.verdi }?.let {
+                    runCatching { opplysninger.finnOpplysning(grunnlagForVernepliktErGunstigst) }
+                        .getOrNull()
+                        .takeIf { it?.verdi == true }
+                        ?.let {
                         KvoteDTO(
                             "Verneplikt",
                             KvoteDTO.Type.uker,
