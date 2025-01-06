@@ -178,6 +178,8 @@ class Regelkjøring(
                 """
                 Skal kjøre: 
                 ${plan.joinToString("\n") { it.produserer.navn }}
+                Har kjørt: 
+                ${kjørteRegler.joinToString("\n") { it.produserer.navn }}
                 """.trimIndent()
             }
             throw e
