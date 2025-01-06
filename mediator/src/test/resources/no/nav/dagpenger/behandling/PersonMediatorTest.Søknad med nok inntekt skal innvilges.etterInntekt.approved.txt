@@ -39,14 +39,6 @@ Krav til minsteinntekt
 Avtjent verneplikt
 Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste
 Oppfyller kravet til minsteinntekt eller verneplikt
-Grunnbeløp for grunnlag
-Tellende inntekt
-Faktor for maksimalt mulig grunnlag
-Antall år i 36 måneder
-Antall G som gis som grunnlag ved verneplikt
-Grunnlag for verneplikt hvis kravet ikke er oppfylt
-Periode som gis ved verneplikt
-Fastsatt vanlig arbeidstid for verneplikt
 Mottar ikke andre fulle ytelser
 Er personen medlem av folketrygden
 Opphold i Norge
@@ -58,6 +50,13 @@ Ledig ved samme bedrift eller arbeidsplass, og blir påvirket av utfallet?
 Har tapt arbeid
 Krav på lønn fra tidligere arbeidsgiver
 Ny arbeidstid per uke
+Grunnbeløp for grunnlag
+Antall G som gis som grunnlag ved verneplikt
+Grunnlag for verneplikt hvis kravet ikke er oppfylt
+Tellende inntekt
+Faktor for maksimalt mulig grunnlag
+Antall år i 36 måneder
+Fastsatt vanlig arbeidstid for verneplikt
 Beregnet vanlig arbeidstid per uke før tap
 Maksimal vanlig arbeidstid
 Krav til prosentvis tap av arbeidstid
@@ -81,39 +80,31 @@ Opplæringspenger dagsats
 Uføre dagsats
 Foreldrepenger dagsats
 Svangerskapspenger dagsats
-Oppjustert inntekt
-6 ganger grunnbeløp
-Grunnlag for gis ved verneplikt
-Utbetalt arbeidsinntekt periode 1
-Utbetalt arbeidsinntekt periode 2
-Utbetalt arbeidsinntekt periode 3
 Oppfyller kravet til medlemskap
 Oppfyller kravet til opphold i Norge
 Er medlemmet ikke påvirket av streik eller lock-out?
 Ikke krav på lønn fra tidligere arbeidsgiver
+Grunnlag for gis ved verneplikt
+Oppjustert inntekt
+6 ganger grunnbeløp
 Beregningsregel: Tapt arbeidstid
 Godkjent unntak for utdanning eller opplæring?
 Oppfyller krav til ikke utestengt
+Krav til tap av arbeidsinntekt
+Grunnlag for verneplikt hvis kravet er oppfylt
 Inntektperiode 1
 Inntektperiode 2
 Inntektperiode 3
-Grunnlag for verneplikt hvis kravet er oppfylt
-Krav til tap av arbeidsinntekt
 Grunnlag siste 12 mnd.
 Avkortet inntektperiode 1
 Avkortet inntektperiode 2
 Avkortet inntektperiode 3
-Har avkortet grunnlaget i periode 1
-Har avkortet grunnlaget i periode 2
-Har avkortet grunnlaget i periode 3
 Inntekt siste 36 måneder
-Har avkortet grunnlag
 Gjennomsnittlig arbeidsinntekt siste 36 måneder
 Uavrundet grunnlag
 Grunnlag ved ordinære dagpenger
-Brukt beregningsregel
-Grunnlag
 Grunnlaget for verneplikt er høyere enn dagpengegrunnlaget
+Grunnlag
 Fastsatt vanlig arbeidstid etter ordinær eller verneplikt
 Dagsats uten barnetillegg før samordning
 Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget
@@ -137,6 +128,13 @@ Har svart ja på spørsmål om utdanning eller opplæring
 Har svart nei på spørsmål om utdanning eller opplæring
 Oppfyller kravet på unntak for utdanning eller opplæring
 Krav til utdanning eller opplæring
+Har avkortet grunnlaget i periode 1
+Har avkortet grunnlaget i periode 2
+Har avkortet grunnlaget i periode 3
+Brukt beregningsregel
+Utbetalt arbeidsinntekt periode 1
+Utbetalt arbeidsinntekt periode 2
+Utbetalt arbeidsinntekt periode 3
 Antall arbeidsdager per uke
 Hvor mange prosent av G skal brukes som terskel ved samordning
 Pensjon fra en offentlig tjenestepensjonsordning beløp
@@ -160,6 +158,8 @@ Mottar vartpenger
 Mottar ventelønn
 Mottar etterlønn
 Mottar garantilott fra Garantikassen for fiskere.
+Periode som gis ved verneplikt
+Har avkortet grunnlag
 Beløp tilsvarende nedre terskel av G
 Sum av ytelser utenfor folketrygden
 Terskel for 12 måneder

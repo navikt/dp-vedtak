@@ -43,6 +43,5 @@ object VernepliktFastsetting {
             vernepliktPeriode,
             vernepliktFastsattVanligArbeidstid,
             grunnlagForVernepliktErGunstigst,
-            grunnlagHvisVerneplikt,
         )
 }
