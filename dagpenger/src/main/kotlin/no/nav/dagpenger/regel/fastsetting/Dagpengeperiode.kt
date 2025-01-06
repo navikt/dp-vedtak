@@ -12,7 +12,7 @@ import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object Dagpengeperiode {
-    private val antallStønadsuker = Opplysningstype.somHeltall("Antall stønadsuker")
+    val antallStønadsuker = Opplysningstype.somHeltall("Antall stønadsuker")
     private val gjenståendeStønadsdager = Opplysningstype.somHeltall("Antall gjenstående stønadsdager")
     val ordinærPeriode = Opplysningstype.somHeltall("Antall stønadsuker som gis ved ordinære dagpenger")
     private val dagerIUka = Opplysningstype.somHeltall("Antall dager som skal regnes med i hver uke")
