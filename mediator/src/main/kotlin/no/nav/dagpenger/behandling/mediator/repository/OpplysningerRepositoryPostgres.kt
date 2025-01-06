@@ -35,7 +35,6 @@ import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
-import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode.ordinærPeriode
 import org.postgresql.util.PGobject
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -64,10 +63,6 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 Navnebytte(
                     fra = Opplysningstype.somBoolsk("Er medlemmet påvirket av streik eller lock-out?"),
                     til = ikkeStreikEllerLockout,
-                ),
-                Navnebytte(
-                    fra = Opplysningstype.somHeltall("Antall stønadsuker"),
-                    til = ordinærPeriode,
                 ),
             )
 
