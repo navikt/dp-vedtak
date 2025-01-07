@@ -30,6 +30,7 @@ import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentes
@@ -52,9 +53,9 @@ class OpplysningerRepositoryPostgresTest {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
             val heltallFaktum = Faktum(heltall, 10)
-            val kildeA = Saksbehandlerkilde(UUIDv7.ny(), "foo")
+            val kildeA = Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("foo"))
             val boolskFaktum = Faktum(boolsk, true, kilde = kildeA)
-            val kildeB = Saksbehandlerkilde(UUIDv7.ny(), "bar")
+            val kildeB = Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("bar"))
             val datoFaktum = Faktum(dato, LocalDate.now(), kilde = kildeB)
             val desimalltallFaktum = Faktum(desimal, 5.5, kilde = kildeB)
             val tekstFaktum = Faktum(tekst, "Dette er en tekst")
@@ -113,7 +114,7 @@ class OpplysningerRepositoryPostgresTest {
     fun `lagrer grenseverdier for dato opplysninger`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
-            val kilde = Saksbehandlerkilde(UUIDv7.ny(), "foo")
+            val kilde = Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("foo"))
             val maksDatoFaktum = Faktum(maksdato, LocalDate.MAX, kilde = kilde)
             val minDatoFaktum = Faktum(mindato, LocalDate.MIN, kilde = kilde)
             val opplysninger = Opplysninger(listOf(maksDatoFaktum, minDatoFaktum))

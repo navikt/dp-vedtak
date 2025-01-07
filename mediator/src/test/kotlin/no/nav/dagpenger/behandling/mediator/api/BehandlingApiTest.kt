@@ -124,7 +124,7 @@ internal class BehandlingApiTest {
                             kilde =
                                 Saksbehandlerkilde(
                                     UUIDv7.ny(),
-                                    "Z123456",
+                                    Saksbehandler("Z123456"),
                                 ),
                         ),
                         Faktum(
@@ -162,7 +162,7 @@ internal class BehandlingApiTest {
                                         ),
                                     ),
                                 ),
-                            kilde = Saksbehandlerkilde(UUIDv7.ny(), "Z123456"),
+                            kilde = Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("Z123456")),
                         ),
                     ),
                 ),
