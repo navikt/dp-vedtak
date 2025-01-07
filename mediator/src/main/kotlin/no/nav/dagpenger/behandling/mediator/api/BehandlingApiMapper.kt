@@ -31,10 +31,12 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.FulleYtelser.ikkeFulleYtelser
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentDeltidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentLokalArbeidssøker
+import no.nav.dagpenger.regel.Samordning.samordnetArbeidstid
 import no.nav.dagpenger.regel.Samordning.sykepengerDagsats
 import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.minimumVanligArbeidstid
 import no.nav.dagpenger.regel.Utestengning.utestengt
 import no.nav.dagpenger.regel.Verneplikt.oppfyllerKravetTilVerneplikt
 import java.time.LocalDate
@@ -178,6 +180,8 @@ private val redigerbareOpplysninger =
                 sykepengerDagsats,
                 utestengt,
                 oppfyllerKravetTilVerneplikt,
+                samordnetArbeidstid,
+                minimumVanligArbeidstid,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)

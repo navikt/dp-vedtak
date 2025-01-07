@@ -4,10 +4,10 @@ import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.verdier.Beløp
 
-class StørreEnnEllerLik internal constructor(
+class StørreEnnEllerLik<T : Comparable<T>> internal constructor(
     produserer: Opplysningstype<Boolean>,
-    private val a: Opplysningstype<Beløp>,
-    private val b: Opplysningstype<Beløp>,
+    private val a: Opplysningstype<T>,
+    private val b: Opplysningstype<T>,
 ) : Regel<Boolean>(produserer, listOf(a, b)) {
     override fun kjør(opplysninger: LesbarOpplysninger): Boolean {
         val a = opplysninger.finnOpplysning(a).verdi
@@ -18,7 +18,14 @@ class StørreEnnEllerLik internal constructor(
     override fun toString() = "Sjekker om $a er større enn eller lik $b"
 }
 
+@JvmName("størreEnnEllerLikBeløp")
 fun Opplysningstype<Boolean>.størreEnnEllerLik(
     er: Opplysningstype<Beløp>,
     størreEnn: Opplysningstype<Beløp>,
+) = StørreEnnEllerLik(this, er, størreEnn)
+
+@JvmName("størreEnnEllerLikDouble")
+fun Opplysningstype<Boolean>.størreEnnEllerLik(
+    er: Opplysningstype<Double>,
+    størreEnn: Opplysningstype<Double>,
 ) = StørreEnnEllerLik(this, er, størreEnn)
