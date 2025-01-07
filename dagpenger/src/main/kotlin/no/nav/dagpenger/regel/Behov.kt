@@ -27,6 +27,7 @@ object Behov {
 
     val KravPåLønn by StringConstant()
     val Inntekt by StringConstant()
+    val ØnsketArbeidstid by StringConstant()
 
     val Barnetillegg by StringConstant()
 

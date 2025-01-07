@@ -71,6 +71,7 @@ import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
 import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
+import no.nav.dagpenger.regel.Behov.ØnsketArbeidstid
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.uuid.UUIDv7
 import org.approvaltests.Approvals
@@ -280,7 +281,7 @@ internal class PersonMediatorTest {
             }
 
             // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
-            rapid.inspektør.size shouldBe 21
+            rapid.inspektør.size shouldBe 22
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medFastsettelser {
@@ -793,6 +794,12 @@ internal class PersonMediatorTest {
          */
         rapid.harBehov(Barnetillegg)
         testPerson.løsBehov(Barnetillegg)
+
+        /**
+         * Henter inn barn som kan gi barnetillegg
+         */
+        rapid.harBehov(ØnsketArbeidstid)
+        testPerson.løsBehov(ØnsketArbeidstid)
 
         /**
          * Innhente informasjon om andre ytelser

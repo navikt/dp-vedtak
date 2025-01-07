@@ -75,12 +75,7 @@ object Minsteinntekt {
 
             regel(inntektFraSkatt) { innhentMed(prøvingsdato, sisteAvsluttendendeKalenderMåned, førsteMånedAvOpptjeningsperiode) }
 
-            regel(tellendeInntekt) {
-                filtrerRelevanteInntekter(
-                    inntektFraSkatt,
-                    listOf(InntektKlasse.ARBEIDSINNTEKT),
-                )
-            }
+            regel(tellendeInntekt) { filtrerRelevanteInntekter(inntektFraSkatt, listOf(InntektKlasse.ARBEIDSINNTEKT)) }
 
             regel(grunnbeløp) { oppslag(prøvingsdato) { grunnbeløpFor(it) } }
 

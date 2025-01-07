@@ -29,3 +29,4 @@ Dette er opplysninger som blir innhentet som en del av dagpengebehandlingen. De 
 |VilligTilÅBytteYrke | Villig til å bytte yrke | Boolsk|boolean|
 |søknadId | søknadId | Tekst|String|
 |ØnskerDagpengerFraDato | Ønsker dagpenger fra dato | Dato|LocalDate|
+|ØnsketArbeidstid | Ønsket arbeidstid | Desimaltall|double|

@@ -17,6 +17,7 @@ import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.kravTilTaptArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.nyArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.tapAvArbeid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.ønsketArbeidstid
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagForVernepliktErGunstigst
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktFastsattVanligArbeidstid
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -43,6 +44,7 @@ class TapAvArbeidSteg : No {
 
             opplysninger.leggTil(Faktum(grunnlagForVernepliktErGunstigst, false))
             opplysninger.leggTil(Faktum(vernepliktFastsattVanligArbeidstid, 0.0))
+            opplysninger.leggTil(Faktum(ønsketArbeidstid, 40.0))
         }
 
         Gitt("at personen har tapt arbeid") {

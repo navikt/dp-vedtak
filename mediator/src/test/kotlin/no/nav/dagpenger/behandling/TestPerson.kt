@@ -30,6 +30,7 @@ import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
 import no.nav.dagpenger.regel.Behov.Verneplikt
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
+import no.nav.dagpenger.regel.Behov.ØnsketArbeidstid
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -218,6 +219,7 @@ class TestPerson(
                 "Fødselsdato" to søknadsdato.minusYears(alder.toLong()),
                 Søknadsdato to søknadsdato,
                 ØnskerDagpengerFraDato to ønskerFraDato,
+                ØnsketArbeidstid to 40.0,
                 // Inntekt
                 Inntekt to mapOf("verdi" to inntektV1),
                 // Reell arbeidssøker

@@ -50,6 +50,7 @@ Ledig ved samme bedrift eller arbeidsplass, og blir påvirket av utfallet?
 Har tapt arbeid
 Krav på lønn fra tidligere arbeidsgiver
 Ny arbeidstid per uke
+Maksimal vanlig arbeidstid
 Grunnbeløp for grunnlag
 Antall G som gis som grunnlag ved verneplikt
 Grunnlag for verneplikt hvis kravet ikke er oppfylt
@@ -58,11 +59,12 @@ Faktor for maksimalt mulig grunnlag
 Antall år i 36 måneder
 Fastsatt vanlig arbeidstid for verneplikt
 Beregnet vanlig arbeidstid per uke før tap
-Maksimal vanlig arbeidstid
+Antall timer arbeidstiden skal samordnes mot
 Krav til prosentvis tap av arbeidstid
 Beregningsregel: Arbeidstid siste 6 måneder
 Beregningsregel: Arbeidstid siste 12 måneder
 Beregeningsregel: Arbeidstid siste 36 måneder
+Minimum vanlig arbeidstid
 Deltar i arbeidsmarkedstiltak
 Deltar i opplæring for innvandrere
 Deltar i grunnskoleopplæring, videregående opplæring og opplæring i grunnleggende ferdigheter
@@ -87,6 +89,7 @@ Ikke krav på lønn fra tidligere arbeidsgiver
 Grunnlag for gis ved verneplikt
 Oppjustert inntekt
 6 ganger grunnbeløp
+Samordnet beregnet arbeidstid
 Beregningsregel: Tapt arbeidstid
 Godkjent unntak for utdanning eller opplæring?
 Oppfyller krav til ikke utestengt
@@ -108,12 +111,9 @@ Grunnlag
 Fastsatt vanlig arbeidstid etter ordinær eller verneplikt
 Dagsats uten barnetillegg før samordning
 Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget
-Fastsatt arbeidstid per uke før tap
 Avrundet dagsats uten barnetillegg før samordning
 Maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
-Tap av arbeidstid er minst terskel
 Avrundet maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
-Krav til tap av arbeidsinntekt og arbeidstid
 Kan jobbe heltid og deltid
 Kan jobbe i hele Norge
 Kan ta alle typer arbeid
@@ -128,6 +128,18 @@ Har svart ja på spørsmål om utdanning eller opplæring
 Har svart nei på spørsmål om utdanning eller opplæring
 Oppfyller kravet på unntak for utdanning eller opplæring
 Krav til utdanning eller opplæring
+Barn
+Antall barn som gir rett til barnetillegg
+Sum av barnetillegg
+Dagsats med barnetillegg før samordning
+Har barnetillegg
+Andel av dagsats med barnetillegg som overstiger maks andel av dagpengegrunnlaget
+Andel av dagsats uten barnetillegg avkortet til maks andel av dagpengegrunnlaget
+Ønsket arbeidstid
+Fastsatt arbeidstid per uke før tap
+Tap av arbeidstid er minst terskel
+Fastsatt vanlig arbeidstid er minst minimum arbeidstid
+Krav til tap av arbeidsinntekt og arbeidstid
 Har avkortet grunnlaget i periode 1
 Har avkortet grunnlaget i periode 2
 Har avkortet grunnlaget i periode 3
@@ -162,6 +174,7 @@ Periode som gis ved verneplikt
 Har avkortet grunnlag
 Beløp tilsvarende nedre terskel av G
 Sum av ytelser utenfor folketrygden
+Avrundet ukessats med barnetillegg før samordning
 Terskel for 12 måneder
 Snittinntekt siste 36 måneder
 Terskel for 36 måneder
@@ -172,14 +185,6 @@ Stønadsuker ved siste 36 måneder
 Antall stønadsuker
 Antall stønadsuker som gis ved ordinære dagpenger
 Antall gjenstående stønadsdager
-Barn
-Antall barn som gir rett til barnetillegg
-Sum av barnetillegg
-Dagsats med barnetillegg før samordning
-Har barnetillegg
-Andel av dagsats med barnetillegg som overstiger maks andel av dagpengegrunnlaget
-Avrundet ukessats med barnetillegg før samordning
-Andel av dagsats uten barnetillegg avkortet til maks andel av dagpengegrunnlaget
 Sykepenger dagsats
 Sum andre ytelser
 Samordnet dagsats uten barnetillegg

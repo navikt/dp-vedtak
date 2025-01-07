@@ -9,6 +9,7 @@ import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
+import no.nav.dagpenger.opplysning.regel.substraksjon
 import no.nav.dagpenger.opplysning.regel.substraksjonTilNull
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.Foreldrepenger
@@ -18,7 +19,11 @@ import no.nav.dagpenger.regel.Behov.Pleiepenger
 import no.nav.dagpenger.regel.Behov.Svangerskapspenger
 import no.nav.dagpenger.regel.Behov.Sykepenger
 import no.nav.dagpenger.regel.Behov.Uføre
+import no.nav.dagpenger.regel.Samordning.samordnetDagsats
+import no.nav.dagpenger.regel.Samordning.skalSamordnes
+import no.nav.dagpenger.regel.Samordning.utfallEtterSamordning
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsEtterNittiProsent
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.harBarnetillegg
 
@@ -47,6 +52,8 @@ object Samordning {
     private val sumAndreYtelser = Opplysningstype.somBeløp("Sum andre ytelser")
     internal val samordnetDagsats = Opplysningstype.somBeløp("Samordnet dagsats uten barnetillegg")
     private val kanUtbetale = Opplysningstype.somBoolsk("Samordnet dagsats er negativ eller 0")
+    val samordnetArbeidstid = Opplysningstype.somDesimaltall("Antall timer arbeidstiden skal samordnes mot")
+    val samordnetBeregnetArbeidstid = Opplysningstype.somDesimaltall("Samordnet beregnet arbeidstid")
 
     // Fulle dagpenger minus en/flere av reduserte ytelsene man mottar per samme dag (regnestykket)
     // avrundetDagsUtenBarnetillegg - sykepenger - pleiepenger - omsorgspenger - opplæringspenger - uføre - foreldrepenger - svangerskapspenger
@@ -64,6 +71,9 @@ object Samordning {
 
             // TODO: Hent uførestrygd og barnepenger fra pesys
             regel(uføre) { oppslag(prøvingsdato) { false } }
+
+            regel(samordnetArbeidstid) { oppslag(prøvingsdato) { 0.0 } }
+            regel(samordnetBeregnetArbeidstid) { substraksjon(beregnetArbeidstid, samordnetArbeidstid) }
 
             regel(sykepengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
             regel(pleiepengerDagsats) { oppslag(prøvingsdato) { Beløp(0.0) } }
