@@ -11,6 +11,7 @@ import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryObserver.NyAvklaringHendelse
 import no.nav.dagpenger.behandling.modell.Behandling
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.uuid.UUIDv7
 import java.util.UUID
@@ -84,7 +85,7 @@ internal class AvklaringRepositoryPostgres private constructor(
                         Avklart(
                             id,
                             // Lager en dummy kilde hvis kilde ikke finnes (migrering endret funksjonalitet)
-                            kildeRespository.hentKilde(it.uuid("kilde_id")) ?: Saksbehandlerkilde(UUIDv7.ny(), "DIGIDAG"),
+                            kildeRespository.hentKilde(it.uuid("kilde_id")) ?: Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("DIGIDAG")),
                             it.stringOrNull("begrunnelse") ?: "",
                             endret,
                         )

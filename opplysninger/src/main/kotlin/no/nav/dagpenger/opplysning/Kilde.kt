@@ -26,16 +26,7 @@ class Saksbehandlerkilde(
     opprettet: LocalDateTime = LocalDateTime.now(),
     id: UUID = UUIDv7.ny(),
     registrert: LocalDateTime = LocalDateTime.now(),
-) : Kilde(meldingsreferanseId, id, registrert, opprettet) {
-    @Deprecated(
-        "Bruk constructor med Saksbehandler",
-        replaceWith = ReplaceWith("Saksbehandlerkilde(meldingsreferanseId, Saksbehandler(saksbehandler))"),
-    )
-    constructor(
-        meldingsreferanseId: UUID,
-        saksbehandler: String,
-    ) : this(meldingsreferanseId, Saksbehandler(saksbehandler))
-}
+) : Kilde(meldingsreferanseId, id, registrert, opprettet)
 
 data class Saksbehandler(
     val ident: String,

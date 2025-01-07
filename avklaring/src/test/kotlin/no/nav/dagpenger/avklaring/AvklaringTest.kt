@@ -3,6 +3,7 @@ package no.nav.dagpenger.avklaring
 import io.kotest.matchers.shouldBe
 import no.nav.dagpenger.avklaring.TestAvklaringer.ArbeidIEØS
 import no.nav.dagpenger.avklaring.TestAvklaringer.TestIkke123
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -13,7 +14,7 @@ class AvklaringTest {
     fun `avklaring må avklares`() {
         val avklaring = Avklaring(ArbeidIEØS)
         avklaring.måAvklares() shouldBe true
-        avklaring.kvitter(Saksbehandlerkilde(UUIDv7.ny(), "Z123456"), "begrunnelse") shouldBe true
+        avklaring.kvitter(Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("X123456")), "begrunnelse") shouldBe true
         avklaring.måAvklares() shouldBe false
     }
 
@@ -33,7 +34,7 @@ class AvklaringTest {
     @Test
     fun `endringer sorteres etter tid`() {
         val underBehandling = Avklaring.Endring.UnderBehandling()
-        val avklart = Avklaring.Endring.Avklart(avklartAv = Saksbehandlerkilde(UUIDv7.ny(), "X123456"))
+        val avklart = Avklaring.Endring.Avklart(avklartAv = Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("X123456")))
         val avklaring =
             Avklaring(
                 id = UUIDv7.ny(),
