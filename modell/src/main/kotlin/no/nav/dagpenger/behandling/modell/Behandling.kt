@@ -529,13 +529,6 @@ class Behandling private constructor(
             behandling.avklaringer.kvitter(hendelse.avklaringId, hendelse.kilde, hendelse.begrunnelse)
             hendelse.info("Avklaring er kvittert")
 
-            // Kjør regelkjøring for alle opplysninger. Dette for å se om vi er har ny regler vi skal re-evaluere. (kodeendringer)
-            val rapport = behandling.regelkjøring.evaluer()
-
-            rapport.kjørteRegler.forEach { regel: Regel<*> ->
-                hendelse.info(regel.toString())
-            }
-
             behandling.avgjørNesteTilstand(hendelse)
         }
 
