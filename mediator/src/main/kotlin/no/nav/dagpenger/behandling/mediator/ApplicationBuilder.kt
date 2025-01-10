@@ -78,7 +78,6 @@ internal class ApplicationBuilder(
                 }
             },
         ) { engine, rapidsConnection: KafkaRapid ->
-
             // Logger bare oppgaver enn så lenge. Bør inn i HendelseMediator
             ArenaOppgaveMottak(rapidsConnection, SakRepositoryPostgres())
 
