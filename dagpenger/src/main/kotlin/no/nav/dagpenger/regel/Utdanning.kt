@@ -22,23 +22,23 @@ object Utdanning {
 
     // Dagpengeforskriften § 4-3. Utdanning og opplæring
     //  § 4-3.(deltakelse i arbeidsmarkedstiltak)
-    internal val deltakelseIArbeidsmarkedstiltak = Opplysningstype.somBoolsk("Deltar i arbeidsmarkedstiltak")
+    val deltakelseIArbeidsmarkedstiltak = Opplysningstype.somBoolsk("Deltar i arbeidsmarkedstiltak")
 
     // § 4-3a.(opplæring for innvandrere)
-    internal val opplæringForInnvandrere = Opplysningstype.somBoolsk("Deltar i opplæring for innvandrere")
+    val opplæringForInnvandrere = Opplysningstype.somBoolsk("Deltar i opplæring for innvandrere")
 
     // § 4-3b.(grunnskoleopplæring, videregående opplæring og opplæring i grunnleggende ferdigheter)
-    internal val grunnskoleopplæring =
+    val grunnskoleopplæring =
         Opplysningstype.somBoolsk("Deltar i grunnskoleopplæring, videregående opplæring og opplæring i grunnleggende ferdigheter")
 
     // § 4-3c.(høyere yrkesfaglig utdanning)
-    internal val høyereYrkesfagligUtdanning = Opplysningstype.somBoolsk("Deltar i høyere yrkesfaglig utdanning")
+    val høyereYrkesfagligUtdanning = Opplysningstype.somBoolsk("Deltar i høyere yrkesfaglig utdanning")
 
     // § 4-3d.(høyere utdanning)
-    internal val høyereUtdanning = Opplysningstype.somBoolsk("Deltar i høyere utdanning")
+    val høyereUtdanning = Opplysningstype.somBoolsk("Deltar i høyere utdanning")
 
     // § 4-3e.(deltakelse på kurs mv
-    internal val deltakelsePåKurs = Opplysningstype.somBoolsk("Deltar på kurs mv")
+    val deltakelsePåKurs = Opplysningstype.somBoolsk("Deltar på kurs mv")
 
     val kravTilUtdanning = Opplysningstype.somBoolsk("Krav til utdanning eller opplæring")
 

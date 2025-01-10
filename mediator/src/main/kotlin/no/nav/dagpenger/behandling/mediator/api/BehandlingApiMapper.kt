@@ -37,6 +37,12 @@ import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.minimumVanligArbeidstid
+import no.nav.dagpenger.regel.Utdanning.deltakelseIArbeidsmarkedstiltak
+import no.nav.dagpenger.regel.Utdanning.deltakelsePåKurs
+import no.nav.dagpenger.regel.Utdanning.grunnskoleopplæring
+import no.nav.dagpenger.regel.Utdanning.høyereUtdanning
+import no.nav.dagpenger.regel.Utdanning.høyereYrkesfagligUtdanning
+import no.nav.dagpenger.regel.Utdanning.opplæringForInnvandrere
 import no.nav.dagpenger.regel.Utestengning.utestengt
 import no.nav.dagpenger.regel.Verneplikt.oppfyllerKravetTilVerneplikt
 import java.time.LocalDate
@@ -182,6 +188,13 @@ private val redigerbareOpplysninger =
                 oppfyllerKravetTilVerneplikt,
                 samordnetArbeidstid,
                 minimumVanligArbeidstid,
+                // Utdanning
+                deltakelseIArbeidsmarkedstiltak,
+                opplæringForInnvandrere,
+                grunnskoleopplæring,
+                høyereYrkesfagligUtdanning,
+                høyereUtdanning,
+                deltakelsePåKurs,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)
