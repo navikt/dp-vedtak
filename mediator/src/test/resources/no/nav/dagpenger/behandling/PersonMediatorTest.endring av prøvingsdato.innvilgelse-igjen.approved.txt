@@ -114,7 +114,7 @@ Krav til tap av arbeidsinntekt
 Grunnlag for gis ved verneplikt
 Grunnlag for verneplikt hvis kravet er oppfylt
 6 ganger grunnbeløp
-Samordnet beregnet arbeidstid
+Samordnet fastsatt arbeidstid
 Beregningsregel: Tapt arbeidstid
 Godkjent unntak for utdanning eller opplæring?
 Oppfyller krav til ikke utestengt
