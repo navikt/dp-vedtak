@@ -53,7 +53,7 @@ object Samordning {
     internal val samordnetDagsats = Opplysningstype.somBeløp("Samordnet dagsats uten barnetillegg")
     private val kanUtbetale = Opplysningstype.somBoolsk("Samordnet dagsats er negativ eller 0")
     val samordnetArbeidstid = Opplysningstype.somDesimaltall("Antall timer arbeidstiden skal samordnes mot")
-    val samordnetBeregnetArbeidstid = Opplysningstype.somDesimaltall("Samordnet beregnet arbeidstid")
+    val samordnetBeregnetArbeidstid = Opplysningstype.somDesimaltall("Samordnet fastsatt arbeidstid")
 
     // Fulle dagpenger minus en/flere av reduserte ytelsene man mottar per samme dag (regnestykket)
     // avrundetDagsUtenBarnetillegg - sykepenger - pleiepenger - omsorgspenger - opplæringspenger - uføre - foreldrepenger - svangerskapspenger
