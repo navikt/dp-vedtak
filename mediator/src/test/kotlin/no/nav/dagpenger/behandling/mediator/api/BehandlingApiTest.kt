@@ -26,7 +26,7 @@ import io.mockk.verify
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.TestOpplysningstyper
-import no.nav.dagpenger.behandling.api.models.BehandlingDTO
+import no.nav.dagpenger.behandling.api.models.BehandlingOpplysningerDTO
 import no.nav.dagpenger.behandling.api.models.KvitteringDTO
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
@@ -248,7 +248,7 @@ internal class BehandlingApiTest {
             val response = autentisert(httpMethod = HttpMethod.Get, endepunkt = "/behandling/$behandlingId")
             response.status shouldBe HttpStatusCode.OK
             response.bodyAsText().shouldNotBeEmpty()
-            val behandlingDto = shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), BehandlingDTO::class.java) }
+            val behandlingDto = shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), BehandlingOpplysningerDTO::class.java) }
             behandlingDto.behandlingId shouldBe behandlingId
             behandlingDto.opplysning.shouldNotBeEmpty()
             behandlingDto.opplysning.all { it.redigerbar } shouldBe false

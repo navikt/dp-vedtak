@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.api.models.AvklaringDTO
-import no.nav.dagpenger.behandling.api.models.BehandlingDTO
+import no.nav.dagpenger.behandling.api.models.BehandlingOpplysningerDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
@@ -49,21 +49,21 @@ import java.time.LocalDate
 
 private val logger = KotlinLogging.logger { }
 
-internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
+internal fun Behandling.tilBehandlingDTO(): BehandlingOpplysningerDTO =
     withLoggingContext("behandlingId" to this.behandlingId.toString()) {
-        BehandlingDTO(
+        BehandlingOpplysningerDTO(
             behandlingId = this.behandlingId,
             tilstand =
                 when (this.tilstand().first) {
-                    Behandling.TilstandType.UnderOpprettelse -> BehandlingDTO.Tilstand.UnderOpprettelse
-                    Behandling.TilstandType.UnderBehandling -> BehandlingDTO.Tilstand.UnderBehandling
-                    Behandling.TilstandType.ForslagTilVedtak -> BehandlingDTO.Tilstand.ForslagTilVedtak
-                    Behandling.TilstandType.Låst -> BehandlingDTO.Tilstand.Låst
-                    Behandling.TilstandType.Avbrutt -> BehandlingDTO.Tilstand.Avbrutt
-                    Behandling.TilstandType.Ferdig -> BehandlingDTO.Tilstand.Ferdig
-                    Behandling.TilstandType.Redigert -> BehandlingDTO.Tilstand.Redigert
-                    Behandling.TilstandType.TilGodkjenning -> BehandlingDTO.Tilstand.TilGodkjenning
-                    Behandling.TilstandType.TilBeslutning -> BehandlingDTO.Tilstand.TilBeslutning
+                    Behandling.TilstandType.UnderOpprettelse -> BehandlingOpplysningerDTO.Tilstand.UnderOpprettelse
+                    Behandling.TilstandType.UnderBehandling -> BehandlingOpplysningerDTO.Tilstand.UnderBehandling
+                    Behandling.TilstandType.ForslagTilVedtak -> BehandlingOpplysningerDTO.Tilstand.ForslagTilVedtak
+                    Behandling.TilstandType.Låst -> BehandlingOpplysningerDTO.Tilstand.Låst
+                    Behandling.TilstandType.Avbrutt -> BehandlingOpplysningerDTO.Tilstand.Avbrutt
+                    Behandling.TilstandType.Ferdig -> BehandlingOpplysningerDTO.Tilstand.Ferdig
+                    Behandling.TilstandType.Redigert -> BehandlingOpplysningerDTO.Tilstand.Redigert
+                    Behandling.TilstandType.TilGodkjenning -> BehandlingOpplysningerDTO.Tilstand.TilGodkjenning
+                    Behandling.TilstandType.TilBeslutning -> BehandlingOpplysningerDTO.Tilstand.TilBeslutning
                 },
             opplysning =
                 this.opplysninger().finnAlle().map { opplysning ->
