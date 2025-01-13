@@ -40,7 +40,6 @@ class SøknadInnsendtHendelse(
     gjelderDato: LocalDate,
     fagsakId: Int,
     opprettet: LocalDateTime,
-    private val støtterInnvilgelse: Boolean = false,
 ) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId, opprettet) {
     override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring =
         Regelkjøring(prøvingsdato(opplysninger), opplysninger, Søknadsprosess())
@@ -48,19 +47,15 @@ class SøknadInnsendtHendelse(
     override fun prøvingsdato(opplysninger: LesbarOpplysninger): LocalDate =
         if (opplysninger.har(Søknadstidspunkt.prøvingsdato)) opplysninger.finnOpplysning(Søknadstidspunkt.prøvingsdato).verdi else skjedde
 
-    override fun støtterInnvilgelse(opplysninger: LesbarOpplysninger): Boolean =
-        opplysninger.har(støtterInnvilgelseOpplysningstype) &&
-            opplysninger.finnOpplysning(støtterInnvilgelseOpplysningstype).verdi
-
-    override fun kravPåDagpenger(opplysninger: LesbarOpplysninger): Boolean =
+    private fun kravPåDagpenger(opplysninger: LesbarOpplysninger): Boolean =
         opplysninger.har(KravPåDagpenger.kravPåDagpenger) &&
             opplysninger.finnOpplysning(KravPåDagpenger.kravPåDagpenger).verdi
 
-    override fun minsteinntekt(opplysninger: LesbarOpplysninger): Boolean =
+    private fun minsteinntekt(opplysninger: LesbarOpplysninger): Boolean =
         opplysninger.har(minsteinntektEllerVerneplikt) &&
             opplysninger.finnOpplysning(minsteinntektEllerVerneplikt).verdi
 
-    fun alder(opplysninger: LesbarOpplysninger): Boolean =
+    private fun alder(opplysninger: LesbarOpplysninger): Boolean =
         opplysninger.har(Alderskrav.kravTilAlder) &&
             opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
 
@@ -76,11 +71,6 @@ class SøknadInnsendtHendelse(
                     Faktum(
                         søknadIdOpplysningstype,
                         this.eksternId.id.toString(),
-                        kilde = Systemkilde(meldingsreferanseId, opprettet),
-                    ),
-                    Faktum(
-                        støtterInnvilgelseOpplysningstype,
-                        støtterInnvilgelse,
                         kilde = Systemkilde(meldingsreferanseId, opprettet),
                     ),
                 ),

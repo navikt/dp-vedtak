@@ -10,9 +10,6 @@ import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting
 
-// @todo: Snu avhengighetet  - søknadinnsendtHendelse bør leve i "dagpenger"
-val støtterInnvilgelseOpplysningstype = Opplysningstype.somBoolsk("støtterInnvilgelse")
-
 class Søknadsprosess : Forretningsprosess {
     private val regelverk = RegelverkDagpenger
 
@@ -42,8 +39,6 @@ class Søknadsprosess : Forretningsprosess {
         val alderskravOppfylt = opplysninger.oppfyller(Alderskrav.kravTilAlder)
         val minsteinntektOppfylt = opplysninger.oppfyller(minsteinntektEllerVerneplikt)
 
-        val støtterInnvilgelse = opplysninger.oppfyller(støtterInnvilgelseOpplysningstype)
-
         // Om krav til alder eller arbeidsinntekt ikke er oppfylt er det ingen grunn til å fortsette, men vi må fastsette hvilke tillegskrav Arena trenger.
         if (!alderskravOppfylt || !minsteinntektOppfylt) {
             ønsketResultat.addAll(
@@ -51,9 +46,6 @@ class Søknadsprosess : Forretningsprosess {
                     ReellArbeidssøker.kravTilArbeidssøker,
                 ),
             )
-            return ønsketResultat
-        }
-        if (!støtterInnvilgelse) {
             return ønsketResultat
         }
 

@@ -27,7 +27,6 @@ import no.nav.dagpenger.behandling.api.models.KvitterAvklaringRequestDTO
 import no.nav.dagpenger.behandling.api.models.KvitteringDTO
 import no.nav.dagpenger.behandling.api.models.OppdaterOpplysningRequestDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningstypeDTO
-import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.mediator.IHendelseMediator
 import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.VerdiMapper
 import no.nav.dagpenger.behandling.mediator.api.auth.saksbehandlerId
@@ -81,9 +80,7 @@ internal fun Application.behandlingApi(
         get("/features") {
             call.respond(
                 HttpStatusCode.OK,
-                mapOf(
-                    "støtterInnvilgelse" to støtterInnvilgelse,
-                ),
+                emptyMap<String, Boolean>(),
             )
         }
         get("/opplysningstyper") {

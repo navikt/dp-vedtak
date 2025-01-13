@@ -9,11 +9,9 @@ import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import io.prometheus.metrics.model.registry.PrometheusRegistry
 import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
-import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.mediator.api.ApiMessageContext
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.audit.ApiAuditlogg
-import no.nav.dagpenger.behandling.mediator.jobber.AvbrytInnvilgelse
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.behandling.mediator.mottak.ArenaOppgaveMottak
 import no.nav.dagpenger.behandling.mediator.mottak.SakRepositoryPostgres
@@ -81,9 +79,6 @@ internal class ApplicationBuilder(
             // Logger bare oppgaver enn så lenge. Bør inn i HendelseMediator
             ArenaOppgaveMottak(rapidsConnection, SakRepositoryPostgres())
 
-            // Start jobb som avbryter behandlinger som står i innvilgelse for lenge
-            AvbrytInnvilgelse(rapidsConnection).start(config["AVBRYT_INNVILGELSE_ETTER_DAGER"]?.toInt() ?: 3)
-
             // Start jobb som sletter fjernet opplysninger
             // SlettFjernetOpplysninger.slettOpplysninger(VaktmesterPostgresRepo())
 
@@ -111,6 +106,6 @@ internal class ApplicationBuilder(
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration()
-        logger.info { "Starter opp dp-behandling. Støtter innvilgelse=$støtterInnvilgelse" }
+        logger.info { "Starter opp dp-behandling" }
     }
 }

@@ -1,6 +1,5 @@
 fagsakId
 søknadId
-støtterInnvilgelse
 Fødselsdato
 Søknadsdato
 Ønsker dagpenger fra dato

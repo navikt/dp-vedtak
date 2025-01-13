@@ -22,7 +22,6 @@ import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
-import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.Informasjonsbehov
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
@@ -422,26 +421,6 @@ class Behandling private constructor(
                 hendelse.info(regel.toString())
             }
 
-            if (!behandling.behandler.støtterInnvilgelse(behandling.opplysninger)) {
-                // TODO: Dette faller bort når vi sjekker alt
-                val kravPåDagpenger =
-                    behandling.behandler.kravPåDagpenger(behandling.opplysninger)
-                if (kravPåDagpenger) {
-                    hendelse.info("Behandling fører ikke til avslag, det støtter vi ikke enda")
-                    behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag"), hendelse)
-                    return
-                }
-
-                // TODO: Dette faller bort når vi sjekker alt
-                val kravTilInntekt =
-                    behandling.behandler.minsteinntekt(behandling.opplysninger)
-                if (kravTilInntekt) {
-                    hendelse.info("Behandling er avslag, men kravet til inntekt er oppfylt, det støtter vi ikke enda")
-                    behandling.tilstand(Avbrutt(årsak = "Førte ikke til avslag på grunn av inntekt"), hendelse)
-                    return
-                }
-            }
-
             hendelse.lagBehov(rapport.informasjonsbehov)
 
             if (rapport.erFerdig()) {
@@ -491,12 +470,6 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.info("Forslag til vedtak godkjent")
-            // TODO: Hva mer gjør vi når vi har godkjent forslaget?
-            // Sjekke aksjonspunkter/varsel/hypoteser?
-            if (behandling.opplysninger.finnAlle().any { it is Hypotese<*> }) {
-                // TODO: Vi bør sannsynligvis gjøre dette
-                // throw IllegalStateException("Forslaget inneholder hypoteser, kan ikke godkjennes")
-            }
 
             behandling.avgjørNesteTilstand(hendelse)
         }

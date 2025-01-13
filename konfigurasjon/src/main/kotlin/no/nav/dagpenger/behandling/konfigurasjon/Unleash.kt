@@ -6,11 +6,9 @@ import io.getunleash.DefaultUnleash
 import io.getunleash.FakeUnleash
 import io.getunleash.Unleash
 import io.getunleash.util.UnleashConfig
-import mu.KotlinLogging
 import no.nav.dagpenger.behandling.konfigurasjon.Configuration.properties
 import java.net.InetAddress
 
-private val logger = KotlinLogging.logger { }
 internal val unleash: Unleash =
     if (properties.getOrNull(Key("UNLEASH_SERVER_API_URL", stringType)) == null) {
         FakeUnleash()
@@ -43,16 +41,4 @@ fun skruAvFeatures() {
 
 enum class Feature(
     val navn: String,
-) {
-    INNVILGELSE("dp-behandling.innvilgelse"),
-}
-
-val støtterInnvilgelse
-    get() =
-        unleash.isEnabled(Feature.INNVILGELSE.navn).also {
-            if (it) {
-                logger.info("Feature dp-behandling.innvilgelse er aktivert")
-            } else {
-                logger.info("Feature dp-behandling.innvilgelse er deaktivert")
-            }
-        }
+)

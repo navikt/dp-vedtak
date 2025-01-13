@@ -33,12 +33,5 @@ abstract class StartHendelse(
 
     abstract fun prøvingsdato(opplysninger: LesbarOpplysninger): LocalDate
 
-    // TODO: Disse er midlertidlige til vi kan skru på innvilgelse som normalt
-    abstract fun støtterInnvilgelse(opplysninger: LesbarOpplysninger): Boolean
-
-    abstract fun kravPåDagpenger(opplysninger: LesbarOpplysninger): Boolean
-
-    abstract fun minsteinntekt(opplysninger: LesbarOpplysninger): Boolean
-
     abstract fun kreverTotrinnskontroll(opplysninger: LesbarOpplysninger): Boolean
 }

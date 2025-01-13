@@ -21,9 +21,7 @@ import io.mockk.mockk
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
-import no.nav.dagpenger.behandling.konfigurasjon.Feature
 import no.nav.dagpenger.behandling.konfigurasjon.skruAvFeatures
-import no.nav.dagpenger.behandling.konfigurasjon.skruPåFeature
 import no.nav.dagpenger.behandling.mediator.BehovMediator
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
@@ -140,7 +138,6 @@ internal class PersonMediatorTest {
     @Test
     fun `søknad med for høy alder skal automatisk avslås`() =
         withMigratedDb {
-            skruPåFeature(Feature.INNVILGELSE)
             val testPerson =
                 TestPerson(
                     ident,
@@ -170,7 +167,6 @@ internal class PersonMediatorTest {
     @Test
     fun `søknad med for lite inntekt skal automatisk avslås`() =
         withMigratedDb {
-            skruPåFeature(Feature.INNVILGELSE)
             val testPerson =
                 TestPerson(
                     ident,
@@ -238,27 +234,6 @@ internal class PersonMediatorTest {
         }
 
     @Test
-    fun `Søknad med nok inntekt skal avbrytes`() =
-        withMigratedDb {
-            val testPerson =
-                TestPerson(
-                    ident,
-                    rapid,
-                    søknadsdato = 6.mai(2021),
-                    InntektSiste12Mnd = 500000,
-                )
-            løsBehandlingFramTilAvbruddInntekt(testPerson)
-
-            godkjennOpplysninger("knokcout")
-
-            rapid.harHendelse("behandling_avbrutt") {
-                medTekst("årsak") shouldBe "Førte ikke til avslag på grunn av inntekt"
-            }
-
-            rapid.inspektør.size shouldBe 14
-        }
-
-    @Test
     fun `Søknad med nok inntekt skal innvilges`() =
         withMigratedDb {
             val testPerson =
@@ -269,7 +244,6 @@ internal class PersonMediatorTest {
                     InntektSiste12Mnd = 500000,
                 )
             val saksbehandler = TestSaksbehandler(testPerson, hendelseMediator, personRepository, rapid)
-            skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilInnvilgelse(testPerson)
 
             godkjennOpplysninger("etterInntekt")
@@ -331,7 +305,6 @@ internal class PersonMediatorTest {
                     søkerVerneplikt = true,
                 )
             val saksbehandler = TestSaksbehandler(testPerson, hendelseMediator, personRepository, rapid)
-            skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilInnvilgelse(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
@@ -387,7 +360,6 @@ internal class PersonMediatorTest {
                     personRepository,
                     rapid,
                 )
-            skruPåFeature(Feature.INNVILGELSE)
             løsBehandlingFramTilInnvilgelse(testPerson)
 
             rapid.harHendelse("forslag_til_vedtak") {
@@ -549,7 +521,6 @@ internal class PersonMediatorTest {
     @Test
     fun `endring av prøvingsdato`() {
         withMigratedDb {
-            skruPåFeature(Feature.INNVILGELSE)
             val testPerson =
                 TestPerson(
                     ident,

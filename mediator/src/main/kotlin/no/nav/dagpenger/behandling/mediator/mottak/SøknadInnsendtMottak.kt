@@ -11,7 +11,6 @@ import io.opentelemetry.api.trace.Span
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.behandling.konfigurasjon.støtterInnvilgelse
 import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.asUUID
@@ -79,7 +78,6 @@ internal class SøknadInnsendtMessage(
                 gjelderDato = packet["innsendt"].asLocalDateTime().toLocalDate(),
                 fagsakId = packet["fagsakId"].asInt(),
                 opprettet,
-                støtterInnvilgelse || kandidatplukk(),
             )
         }
 
@@ -92,18 +90,6 @@ internal class SøknadInnsendtMessage(
             mediator.behandle(hendelse, this, context)
         }
     }
-
-    private val kandidater =
-        setOf(
-            678969908,
-            678982085,
-            678996119,
-        )
-
-    private fun kandidatplukk(): Boolean =
-        (packet["journalpostId"].asInt() in kandidater).also {
-            if (it) logger.info { "Fant en søknad som er kandidat. " }
-        }
 
     private companion object {
         private val logger = KotlinLogging.logger {}

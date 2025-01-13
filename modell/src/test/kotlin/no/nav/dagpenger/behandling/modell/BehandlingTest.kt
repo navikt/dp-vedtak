@@ -201,18 +201,6 @@ private class SøknadInnsendtHendelse(
 
     override fun prøvingsdato(opplysninger: LesbarOpplysninger) = skjedde
 
-    override fun støtterInnvilgelse(opplysninger: LesbarOpplysninger): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun kravPåDagpenger(opplysninger: LesbarOpplysninger): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun minsteinntekt(opplysninger: LesbarOpplysninger): Boolean {
-        TODO("Not yet implemented")
-    }
-
     override fun kreverTotrinnskontroll(opplysninger: LesbarOpplysninger): Boolean {
         TODO("Not yet implemented")
     }
