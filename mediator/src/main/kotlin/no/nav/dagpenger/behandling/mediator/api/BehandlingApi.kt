@@ -43,6 +43,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.AvbrytBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.RekjørBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.opplysning.BarnDatatype
 import no.nav.dagpenger.opplysning.Boolsk
@@ -229,6 +230,24 @@ internal fun Application.behandlingApi(
 
                         call.respond(HttpStatusCode.Created)
                     }
+
+                    post("rekjor") {
+                        val identForespørsel = call.receive<IdentForesporselDTO>()
+
+                        val hendelse =
+                            RekjørBehandlingHendelse(
+                                UUIDv7.ny(),
+                                identForespørsel.ident,
+                                call.behandlingId,
+                                LocalDateTime.now(),
+                            )
+                        hendelse.info("Rekjør behandling", identForespørsel.ident, call.saksbehandlerId(), AuditOperasjon.UPDATE)
+
+                        hendelseMediator.behandle(hendelse, messageContext(identForespørsel.ident))
+
+                        call.respond(HttpStatusCode.Created)
+                    }
+
                     get("opplysning") {
                         val behandling = hentBehandling(personRepository, call.behandlingId)
 

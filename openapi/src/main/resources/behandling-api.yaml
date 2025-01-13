@@ -86,7 +86,7 @@ paths:
                 $ref: '#/components/schemas/Behandling'
           description: OK
         default:
-          description: Feil ved henting av behandlinger
+          description: Feil ved henting av behandling
           content:
             application/problem+json:
               schema:
@@ -116,7 +116,7 @@ paths:
         201:
           description: OK
         default:
-          description: Feil ved henting av behandlinger
+          description: Feil ved avbryt av behandling
           content:
             application/problem+json:
               schema:
@@ -146,7 +146,7 @@ paths:
         201:
           description: OK
         default:
-          description: Feil ved henting av behandlinger
+          description: Feil ved godkjenn av behandling
           content:
             application/problem+json:
               schema:
@@ -176,7 +176,7 @@ paths:
         201:
           description: OK
         default:
-          description: Feil ved henting av behandlinger
+          description: Feil ved beslutt av behandling
           content:
             application/problem+json:
               schema:
@@ -206,7 +206,37 @@ paths:
         201:
           description: OK
         default:
-          description: Feil ved henting av behandlinger
+          description: Feil ved send tilbake behandling
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HttpProblem'
+  /behandling/{behandlingId}/rekjor:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+    post:
+      summary: Rekjør en behandling med gjeldende regelverk
+      security:
+        - azureAd: [ ]
+      tags:
+        - Behandling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentForesporsel'
+      responses:
+        201:
+          description: OK
+        default:
+          description: Feil ved rekjøring av behandlinger
           content:
             application/problem+json:
               schema:
@@ -234,7 +264,7 @@ paths:
                 $ref: '#/components/schemas/BehandlingOpplysninger'
           description: OK
         default:
-          description: Feil ved henting av behandlinger
+          description: Feil ved henting av opplysninger for en behandling
           content:
             application/problem+json:
               schema:

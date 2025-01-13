@@ -44,6 +44,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.RekjørBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
@@ -282,6 +283,24 @@ internal class BehandlingApiTest {
             response.bodyAsText().shouldBeEmpty()
             verify {
                 hendelseMediator.behandle(any<AvbrytBehandlingHendelse>(), any())
+            }
+        }
+    }
+
+    @Test
+    fun `rekjør behandling med gitt behandlingId`() {
+        medSikretBehandlingApi {
+            val behandlingId = person.behandlinger().first().behandlingId
+            val response =
+                autentisert(
+                    httpMethod = HttpMethod.Post,
+                    endepunkt = "/behandling/$behandlingId/rekjor",
+                    body = """{"ident":"09876543311"}""",
+                )
+            response.status shouldBe HttpStatusCode.Created
+            response.bodyAsText().shouldBeEmpty()
+            verify {
+                hendelseMediator.behandle(any<RekjørBehandlingHendelse>(), any())
             }
         }
     }
