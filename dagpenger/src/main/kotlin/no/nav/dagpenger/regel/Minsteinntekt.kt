@@ -69,7 +69,7 @@ object Minsteinntekt {
     val minsteinntekt = Opplysningstype.somBoolsk("Krav til minsteinntekt".tekstId("opplysning.krav-til-minsteinntekt"))
 
     val regelsett =
-        Regelsett("§ 4-4 Minsteinntekt") {
+        Regelsett("§ 4-4. Krav til minsteinntekt") {
             regel(maksPeriodeLengde) { oppslag(prøvingsdato) { 36 } }
             regel(førsteMånedAvOpptjeningsperiode) { trekkFraMånedTilFørste(sisteAvsluttendendeKalenderMåned, maksPeriodeLengde) }
 

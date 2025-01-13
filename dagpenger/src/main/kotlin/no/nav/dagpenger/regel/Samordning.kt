@@ -60,7 +60,7 @@ object Samordning {
 
     val regelsett =
         Regelsett(
-            "§ 4-25.Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon",
+            "§ 4-25. Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon",
         ) {
             regel(sykepenger) { innhentMed(prøvingsdato) }
             regel(pleiepenger) { innhentMed(prøvingsdato) }

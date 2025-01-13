@@ -429,7 +429,8 @@ components:
         - opplysning
         - tilstand
         - kreverTotrinnskontroll
-        - aktiveAvklaringer
+        - vilkår
+        - fastsettelser
         - avklaringer
       properties:
         behandlingId:
@@ -666,7 +667,6 @@ components:
       description: |
         Hvilken datatype opplysningen har, for å kunne validere at verdi er riktig format
     
-    
     Kvittering:
       type: object
       required:
@@ -676,7 +676,6 @@ components:
         behandlingId:
           type: string
           format: uuid
-
 
     HttpProblem:
       type: object

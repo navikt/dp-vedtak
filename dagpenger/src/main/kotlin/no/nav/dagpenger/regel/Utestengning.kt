@@ -11,7 +11,7 @@ object Utestengning {
     val oppfyllerKravetTilIkkeUtestengt = Opplysningstype.somBoolsk("Oppfyller krav til ikke utestengt")
 
     val regelsett =
-        Regelsett("Utestengning") {
+        Regelsett("§ 4-28. Utestengning") {
             regel(utestengt) { oppslag(prøvingsdato) { false } }
             regel(oppfyllerKravetTilIkkeUtestengt) { ikke(utestengt) }
         }

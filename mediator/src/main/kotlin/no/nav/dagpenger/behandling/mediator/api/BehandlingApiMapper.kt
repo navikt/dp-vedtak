@@ -25,6 +25,8 @@ import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Redigerbar
+import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.Tekst
@@ -48,11 +50,13 @@ import no.nav.dagpenger.regel.Utdanning.opplæringForInnvandrere
 import no.nav.dagpenger.regel.Utestengning.utestengt
 import no.nav.dagpenger.regel.Verneplikt.oppfyllerKravetTilVerneplikt
 import java.time.LocalDate
+import kotlin.collections.map
 
 private val logger = KotlinLogging.logger { }
 
 internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
     withLoggingContext("behandlingId" to this.behandlingId.toString()) {
+        val opplysningliste = this.opplysninger().finnAlle()
         BehandlingDTO(
             behandlingId = this.behandlingId,
             tilstand =
@@ -67,28 +71,8 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
                     Behandling.TilstandType.TilGodkjenning -> BehandlingDTO.Tilstand.TilGodkjenning
                     Behandling.TilstandType.TilBeslutning -> BehandlingDTO.Tilstand.TilBeslutning
                 },
-            vilkår =
-                listOf(
-                    RegelsettDTO(
-                        "Vilkår",
-                        avklaringer = emptyList(),
-                        opplysninger =
-                            this.opplysninger().finnAlle().map { opplysning ->
-                                opplysning.tilOpplysningDTO()
-                            },
-                    ),
-                ),
-            fastsettelser =
-                listOf(
-                    RegelsettDTO(
-                        "Fastsettelse",
-                        avklaringer = emptyList(),
-                        opplysninger =
-                            this.opplysninger().finnAlle().map { opplysning ->
-                                opplysning.tilOpplysningDTO()
-                            },
-                    ),
-                ),
+            vilkår = behandler.regelverk.regelsettAvType(RegelsettType.Vilkår).map { it.tilRegelsettDTO(opplysningliste) },
+            fastsettelser = behandler.regelverk.regelsettAvType(RegelsettType.Fastsettelse).map { it.tilRegelsettDTO(opplysningliste) },
             kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
             avklaringer =
                 this
@@ -100,6 +84,19 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
                     },
         )
     }
+
+private fun Regelsett.tilRegelsettDTO(opplysninger: List<Opplysning<*>>): RegelsettDTO {
+    val produserer = opplysninger.filter { opplysning -> opplysning.opplysningstype in produserer }
+
+    return RegelsettDTO(
+        navn,
+        avklaringer = emptyList(),
+        opplysninger =
+            produserer.map { opplysning ->
+                opplysning.tilOpplysningDTO()
+            },
+    )
+}
 
 internal fun Behandling.tilBehandlingOpplysningerDTO(): BehandlingOpplysningerDTO =
     withLoggingContext("behandlingId" to this.behandlingId.toString()) {

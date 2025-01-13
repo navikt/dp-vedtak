@@ -4,10 +4,18 @@ import no.nav.dagpenger.opplysning.regel.Ekstern
 import no.nav.dagpenger.opplysning.regel.Regel
 import java.time.LocalDate
 
+enum class RegelsettType {
+    Vilkår,
+    Fastsettelse,
+}
+
 class Regelsett(
     val navn: String,
+    val type: RegelsettType,
     block: Regelsett.() -> Unit = {},
 ) {
+    constructor(navn: String, block: Regelsett.() -> Unit = {}) : this(navn, RegelsettType.Vilkår, block)
+
     private val regler: MutableMap<Opplysningstype<*>, TemporalCollection<Regel<*>>> = mutableMapOf()
 
     init {

@@ -2,6 +2,7 @@ package no.nav.dagpenger.regel.fastsetting
 
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.regel.hvisSannMedResultat
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
@@ -11,6 +12,10 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Verneplikt.oppfyllerKravetTilVerneplikt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.grunnbeløpForDagpengeGrunnlag
+import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagForVernepliktErGunstigst
+import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktFastsattVanligArbeidstid
+import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktGrunnlag
+import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktPeriode
 
 object VernepliktFastsetting {
     private val antallG = Opplysningstype.somDesimaltall("Antall G som gis som grunnlag ved verneplikt")
@@ -22,7 +27,7 @@ object VernepliktFastsetting {
     val grunnlagForVernepliktErGunstigst = Opplysningstype.somBoolsk("Grunnlaget for verneplikt er høyere enn dagpengegrunnlaget")
 
     val regelsett =
-        Regelsett("VernepliktFastsetting") {
+        Regelsett("§ 4-19. Dagpenger etter avtjent verneplikt", RegelsettType.Fastsettelse) {
             regel(antallG) { oppslag(prøvingsdato) { 3.0 } }
             regel(vernepliktGrunnlag) { multiplikasjon(grunnbeløpForDagpengeGrunnlag, antallG) }
             regel(vernepliktPeriode) { oppslag(prøvingsdato) { 26 } }

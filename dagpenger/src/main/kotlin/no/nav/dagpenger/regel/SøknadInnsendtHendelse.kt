@@ -41,8 +41,10 @@ class SøknadInnsendtHendelse(
     fagsakId: Int,
     opprettet: LocalDateTime,
 ) : StartHendelse(meldingsreferanseId, ident, SøknadId(søknadId), gjelderDato, fagsakId, opprettet) {
+    override val forretningsprosess = Søknadsprosess()
+
     override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring =
-        Regelkjøring(prøvingsdato(opplysninger), opplysninger, Søknadsprosess())
+        Regelkjøring(prøvingsdato(opplysninger), opplysninger, forretningsprosess)
 
     override fun prøvingsdato(opplysninger: LesbarOpplysninger): LocalDate =
         if (opplysninger.har(Søknadstidspunkt.prøvingsdato)) opplysninger.finnOpplysning(Søknadstidspunkt.prøvingsdato).verdi else skjedde

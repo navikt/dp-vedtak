@@ -12,12 +12,14 @@ import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderOpprettel
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadId
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Forretningsprosess
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.Regelverk
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.uuid.UUIDv7
@@ -182,15 +184,30 @@ private class SøknadInnsendtHendelse(
     ) {
     private val opplysningstypeBehov = Opplysningstype.somBoolsk("trengerDenne")
     private val opplysningstype = Opplysningstype.somBoolsk("opplysning")
+    override val forretningsprosess: Forretningsprosess
+        get() =
+            object : Forretningsprosess {
+                override val regelverk: Regelverk
+                    get() = TODO("Not yet implemented")
+
+                override fun regelsett() = listOf(regelsett)
+
+                override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> {
+                    TODO("Not yet implemented")
+                }
+            }
+
+    private val regelsett =
+        Regelsett("test") {
+            regel(opplysningstypeBehov) { innhentes }
+            regel(opplysningstype) { enAv(opplysningstypeBehov) }
+        }
 
     override fun regelkjøring(opplysninger: Opplysninger) =
         Regelkjøring(
             skjedde,
             opplysninger,
-            Regelsett("test") {
-                regel(opplysningstypeBehov) { innhentes }
-                regel(opplysningstype) { enAv(opplysningstypeBehov) }
-            },
+            regelsett,
         )
 
     override fun behandling(): Behandling {

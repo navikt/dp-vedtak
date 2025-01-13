@@ -159,6 +159,9 @@ class RegelmotorIntegrasjonsTest {
                 fraDato,
                 opplysninger,
                 object : Forretningsprosess {
+                    override val regelverk: Regelverk
+                        get() = TODO("Not yet implemented")
+
                     override fun regelsett(): List<Regelsett> = listOf(regelsett)
 
                     override fun ønsketResultat(opplysninger: LesbarOpplysninger) = listOf(c)
@@ -198,6 +201,9 @@ class RegelmotorIntegrasjonsTest {
                 fraDato,
                 opplysninger,
                 object : Forretningsprosess {
+                    override val regelverk: Regelverk
+                        get() = TODO("Not yet implemented")
+
                     override fun regelsett(): List<Regelsett> = listOf(regelsett)
 
                     override fun ønsketResultat(opplysninger: LesbarOpplysninger) = listOf(c)
@@ -251,6 +257,9 @@ class RegelmotorIntegrasjonsTest {
                 fraDato,
                 opplysninger,
                 object : Forretningsprosess {
+                    override val regelverk: Regelverk
+                        get() = TODO("Not yet implemented")
+
                     override fun regelsett(): List<Regelsett> = listOf(regelsett)
 
                     override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> {
@@ -294,6 +303,9 @@ class RegelmotorIntegrasjonsTest {
 }
 
 private class TestProsess : Forretningsprosess {
+    override val regelverk: Regelverk
+        get() = TODO("Not yet implemented")
+
     override fun regelsett(): List<Regelsett> = listOf(Alderskrav.regelsett, Virkningsdato.regelsett)
 
     override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> = listOf(Alderskrav.vilkår, virkningsdato)
