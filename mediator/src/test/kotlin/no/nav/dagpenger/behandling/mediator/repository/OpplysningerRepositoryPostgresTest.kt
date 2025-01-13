@@ -494,4 +494,61 @@ class OpplysningerRepositoryPostgresTest {
             slettOpplysninger shouldContainExactly listOf(cFaktum.id, bFaktum.id, aFaktum.id)
         }
     }
+
+    @Test
+    fun `bugf ix`() {
+        withMigratedDb {
+            val repo = OpplysningerRepositoryPostgres()
+            val vaktmesterRepo = VaktmesterPostgresRepo()
+
+            val a = Opplysningstype.somBoolsk("A")
+            val b = Opplysningstype.somBoolsk("B")
+            val c = Opplysningstype.somBoolsk("C")
+            val d = Opplysningstype.somBoolsk("D")
+
+            val regelsett =
+                Regelsett("Regelsett") {
+                    regel(a) { innhentes }
+                    regel(d) { innhentes }
+                    regel(b) { enAv(a) }
+                    regel(c) { enAv(b, d) }
+                }
+            val opplysninger = Opplysninger()
+            val regelkjøring = Regelkjøring(LocalDate.now(), opplysninger, regelsett)
+
+            val aFaktum = Faktum(a, true)
+            val dFaktum = Faktum(d, false)
+            opplysninger.leggTil(aFaktum)
+            opplysninger.leggTil(dFaktum)
+            regelkjøring.evaluer()
+
+            repo.lagreOpplysninger(opplysninger)
+
+            // ----
+            val opplysninger2 = Opplysninger()
+            val regelkjøring2 = Regelkjøring(LocalDate.now(), opplysninger2, regelsett)
+
+            val qFaktum = Faktum(a, true)
+            val wFaktum = Faktum(d, false)
+            opplysninger2.leggTil(qFaktum)
+            opplysninger2.leggTil(wFaktum)
+            regelkjøring2.evaluer()
+
+            repo.lagreOpplysninger(opplysninger2)
+
+            // -----
+
+            val endretAFaktum = Faktum(a, false)
+            opplysninger.leggTil(endretAFaktum).also { regelkjøring.evaluer() }
+            repo.lagreOpplysninger(opplysninger)
+
+            // ------
+
+            val endretQFaktum = Faktum(a, false)
+            opplysninger2.leggTil(endretQFaktum).also { regelkjøring2.evaluer() }
+            repo.lagreOpplysninger(opplysninger2)
+
+            vaktmesterRepo.slettOpplysninger().size shouldBe 6
+        }
+    }
 }
