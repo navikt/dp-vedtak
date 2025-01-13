@@ -10,6 +10,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.LåsHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.LåsOppHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.RekjørBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 
@@ -31,6 +32,8 @@ interface BehandlingHåndter {
     fun håndter(hendelse: AvklaringIkkeRelevantHendelse)
 
     fun håndter(hendelse: PåminnelseHendelse)
+
+    fun håndter(hendelse: RekjørBehandlingHendelse)
 
     fun håndter(hendelse: AvklaringKvittertHendelse)
 

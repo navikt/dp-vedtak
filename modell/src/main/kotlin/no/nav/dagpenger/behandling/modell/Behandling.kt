@@ -20,6 +20,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.LåsOppHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.RekjørBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.opplysning.Informasjonsbehov
@@ -176,6 +177,11 @@ class Behandling private constructor(
         tilstand.håndter(this, hendelse)
     }
 
+    override fun håndter(hendelse: RekjørBehandlingHendelse) {
+        hendelse.kontekst(this)
+        tilstand.håndter(this, hendelse)
+    }
+
     override fun håndter(hendelse: GodkjennBehandlingHendelse) {
         hendelse.kontekst(this)
         tilstand.håndter(this, hendelse)
@@ -322,6 +328,13 @@ class Behandling private constructor(
 
         fun håndter(
             behandling: Behandling,
+            hendelse: RekjørBehandlingHendelse,
+        ) {
+            hendelse.info("Behandlingen mottok beskjed om rekjøring, men tilstanden støtter ikke dette")
+        }
+
+        fun håndter(
+            behandling: Behandling,
             hendelse: GodkjennBehandlingHendelse,
         ): Unit = throw IllegalStateException("Behandlingen skal godkjennes, men tilstanden støtter ikke dette")
 
@@ -403,6 +416,15 @@ class Behandling private constructor(
                 hendelse.logiskFeil("Behandlingen er ferdig men vi er fortsatt i ${this.type.name}")
             }
             hendelse.lagBehov(rapport.informasjonsbehov)
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: RekjørBehandlingHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Mottok beskjed om rekjøring av behandling")
+            behandling.tilstand(Redigert(), hendelse)
         }
 
         override fun håndter(
@@ -517,6 +539,15 @@ class Behandling private constructor(
                 opplysning.leggTil(behandling.opplysninger)
             }
 
+            behandling.tilstand(Redigert(), hendelse)
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: RekjørBehandlingHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Mottok beskjed om rekjøring av behandling")
             behandling.tilstand(Redigert(), hendelse)
         }
     }
@@ -783,6 +814,15 @@ class Behandling private constructor(
         ) {
             hendelse.kontekst(this)
             hendelse.info("Behandlingen er låst, ignorerer avklaringer")
+        }
+
+        override fun håndter(
+            behandling: Behandling,
+            hendelse: RekjørBehandlingHendelse,
+        ) {
+            hendelse.kontekst(this)
+            hendelse.info("Mottok beskjed om rekjøring av behandling")
+            behandling.tilstand(Redigert(), hendelse)
         }
     }
 

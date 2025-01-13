@@ -14,16 +14,16 @@ import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.asUUID
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
-import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.RekjørBehandlingHendelse
 
-internal class PåminnelseMottak(
+internal class RekjørBehandlingMottak(
     rapidsConnection: RapidsConnection,
     private val messageMediator: MessageMediator,
 ) : River.PacketListener {
     init {
         River(rapidsConnection)
             .apply {
-                precondition { it.requireValue("@event_name", "behandling_står_fast") }
+                precondition { it.requireValue("@event_name", "rekjør_behandling") }
                 validate { it.requireKey("ident", "behandlingId") }
             }.register(this)
     }
@@ -42,31 +42,28 @@ internal class PåminnelseMottak(
                 setAttribute("app.river", name())
                 setAttribute("app.behandlingId", behandlingId.toString())
             }
-            logger.info { "Mottok hendelse om at behandlingen står fast" }
-            sikkerlogg.info { "Mottok hendelse om at behandlingen står fast: ${packet.toJson()}" }
+            logger.info { "Mottok hendelse om at behandlingen skal rekjøres" }
+            sikkerlogg.info { "Mottok hendelse om at behandlingen skal rekjøres: ${packet.toJson()}" }
 
-            // Hopp over behandling vi aldri har hørt om før
-            if (behandlingId.toString() == "019126ab-a0ec-7a34-9e0b-5ec963185ee0") return
-
-            val message = BehandlingStårFastMessage(packet)
+            val message = RekjørBehandlingMessage(packet)
             message.behandle(messageMediator, context)
         }
     }
 
     private companion object {
         private val logger = KotlinLogging.logger {}
-        private val sikkerlogg = KotlinLogging.logger("tjenestekall.PåminnelseMottak")
+        private val sikkerlogg = KotlinLogging.logger("tjenestekall.RekjørBehandlingMottak")
     }
 }
 
-internal class BehandlingStårFastMessage(
+internal class RekjørBehandlingMessage(
     private val packet: JsonMessage,
 ) : HendelseMessage(packet) {
     override val ident get() = packet["ident"].asText()
 
     private val hendelse
         get() =
-            PåminnelseHendelse(
+            RekjørBehandlingHendelse(
                 id,
                 ident,
                 packet["behandlingId"].asUUID(),
@@ -78,7 +75,7 @@ internal class BehandlingStårFastMessage(
         context: MessageContext,
     ) {
         withLoggingContext(hendelse.kontekstMap()) {
-            logger.info { "Behandler PåminnelseHendelse" }
+            logger.info { "Behandler RekjørBehandlingHendelse" }
             mediator.behandle(hendelse, this, context)
         }
     }

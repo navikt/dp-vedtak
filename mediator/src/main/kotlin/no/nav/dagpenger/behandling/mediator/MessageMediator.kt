@@ -20,6 +20,8 @@ import no.nav.dagpenger.behandling.mediator.mottak.OppgaveSendtTilKontroll
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMessage
 import no.nav.dagpenger.behandling.mediator.mottak.OpplysningSvarMottak
 import no.nav.dagpenger.behandling.mediator.mottak.PåminnelseMottak
+import no.nav.dagpenger.behandling.mediator.mottak.RekjørBehandlingMessage
+import no.nav.dagpenger.behandling.mediator.mottak.RekjørBehandlingMottak
 import no.nav.dagpenger.behandling.mediator.mottak.ReturnerTilSaksbehandlerMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SendtTilKontrollMessage
 import no.nav.dagpenger.behandling.mediator.mottak.SøknadInnsendtMessage
@@ -32,6 +34,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.LåsOppHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.RekjørBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.opplysning.Opplysningstype
 import java.util.UUID
@@ -49,6 +52,7 @@ internal class MessageMediator(
         InnsendingFerdigstiltMottak(rapidsConnection)
         OpplysningSvarMottak(rapidsConnection, this, opplysningstyper)
         PåminnelseMottak(rapidsConnection, this)
+        RekjørBehandlingMottak(rapidsConnection, this)
         SøknadInnsendtMottak(rapidsConnection, this)
         OppgaveSendtTilKontroll(rapidsConnection, this)
         OppgaveReturnertTilSaksbehandler(rapidsConnection, this)
@@ -101,6 +105,16 @@ internal class MessageMediator(
     override fun behandle(
         hendelse: PåminnelseHendelse,
         message: BehandlingStårFastMessage,
+        context: MessageContext,
+    ) {
+        behandle(hendelse, message) {
+            hendelseMediator.behandle(it, context)
+        }
+    }
+
+    override fun behandle(
+        hendelse: RekjørBehandlingHendelse,
+        message: RekjørBehandlingMessage,
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
@@ -181,6 +195,12 @@ internal interface IMessageMediator {
     fun behandle(
         hendelse: PåminnelseHendelse,
         message: BehandlingStårFastMessage,
+        context: MessageContext,
+    )
+
+    fun behandle(
+        hendelse: RekjørBehandlingHendelse,
+        message: RekjørBehandlingMessage,
         context: MessageContext,
     )
 

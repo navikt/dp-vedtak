@@ -18,6 +18,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.LåsOppHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.RekjørBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 
@@ -102,6 +103,12 @@ class Person(
     }
 
     override fun håndter(hendelse: PåminnelseHendelse) {
+        hendelse.leggTilKontekst(this)
+        val behandling = behandlinger.finn(hendelse.behandlingId)
+        behandling.håndter(hendelse)
+    }
+
+    override fun håndter(hendelse: RekjørBehandlingHendelse) {
         hendelse.leggTilKontekst(this)
         val behandling = behandlinger.finn(hendelse.behandlingId)
         behandling.håndter(hendelse)
