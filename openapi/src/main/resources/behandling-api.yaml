@@ -438,16 +438,16 @@ components:
         tilstand:
           type: string
           enum: [ "UnderOpprettelse", "UnderBehandling", "Redigert", "ForslagTilVedtak", "Låst", "Avbrutt", "Ferdig", "TilGodkjenning", "TilBeslutning" ]
-        opplysning:
-          type: array
-          items:
-            $ref: '#/components/schemas/Opplysning'
         kreverTotrinnskontroll:
           type: boolean
-        aktiveAvklaringer:
+        vilkår:
           type: array
           items:
-            $ref: '#/components/schemas/Avklaring'
+            $ref: '#/components/schemas/Regelsett'
+        fastsettelser:
+          type: array
+          items:
+            $ref: '#/components/schemas/Regelsett'
         avklaringer:
           type: array
           items:
@@ -528,6 +528,27 @@ components:
     OpplysningsId:
       type: string
       format: uuid
+
+    Regelsett:
+      type: object
+      required:
+        - navn
+        - avklaringer
+        - opplysninger
+      properties:
+        navn:
+          type: string
+        status:
+          type: string
+          enum: [ "Oppfylt", "HarAvklaring", "IkkeOppfylt", "Info" ]
+        avklaringer:
+          type: array
+          items:
+            $ref: '#/components/schemas/Avklaring'
+        opplysninger:
+          type: array
+          items:
+            $ref: '#/components/schemas/Opplysning'
 
     Opplysning:
       type: object

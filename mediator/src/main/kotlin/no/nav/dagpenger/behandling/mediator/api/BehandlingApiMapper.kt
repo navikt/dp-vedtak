@@ -4,11 +4,13 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.api.models.AvklaringDTO
+import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.BehandlingOpplysningerDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
+import no.nav.dagpenger.behandling.api.models.RegelsettDTO
 import no.nav.dagpenger.behandling.api.models.SaksbehandlerDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
 import no.nav.dagpenger.behandling.modell.Behandling
@@ -49,7 +51,57 @@ import java.time.LocalDate
 
 private val logger = KotlinLogging.logger { }
 
-internal fun Behandling.tilBehandlingDTO(): BehandlingOpplysningerDTO =
+internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
+    withLoggingContext("behandlingId" to this.behandlingId.toString()) {
+        BehandlingDTO(
+            behandlingId = this.behandlingId,
+            tilstand =
+                when (this.tilstand().first) {
+                    Behandling.TilstandType.UnderOpprettelse -> BehandlingDTO.Tilstand.UnderOpprettelse
+                    Behandling.TilstandType.UnderBehandling -> BehandlingDTO.Tilstand.UnderBehandling
+                    Behandling.TilstandType.ForslagTilVedtak -> BehandlingDTO.Tilstand.ForslagTilVedtak
+                    Behandling.TilstandType.Låst -> BehandlingDTO.Tilstand.Låst
+                    Behandling.TilstandType.Avbrutt -> BehandlingDTO.Tilstand.Avbrutt
+                    Behandling.TilstandType.Ferdig -> BehandlingDTO.Tilstand.Ferdig
+                    Behandling.TilstandType.Redigert -> BehandlingDTO.Tilstand.Redigert
+                    Behandling.TilstandType.TilGodkjenning -> BehandlingDTO.Tilstand.TilGodkjenning
+                    Behandling.TilstandType.TilBeslutning -> BehandlingDTO.Tilstand.TilBeslutning
+                },
+            vilkår =
+                listOf(
+                    RegelsettDTO(
+                        "Vilkår",
+                        avklaringer = emptyList(),
+                        opplysninger =
+                            this.opplysninger().finnAlle().map { opplysning ->
+                                opplysning.tilOpplysningDTO()
+                            },
+                    ),
+                ),
+            fastsettelser =
+                listOf(
+                    RegelsettDTO(
+                        "Fastsettelse",
+                        avklaringer = emptyList(),
+                        opplysninger =
+                            this.opplysninger().finnAlle().map { opplysning ->
+                                opplysning.tilOpplysningDTO()
+                            },
+                    ),
+                ),
+            kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
+            avklaringer =
+                this
+                    .avklaringer()
+                    .map { avklaring ->
+                        avklaring.tilAvklaringDTO()
+                    }.also {
+                        logger.info { "Mapper '${it.size}' (alle) avklaringer til AvklaringDTO " }
+                    },
+        )
+    }
+
+internal fun Behandling.tilBehandlingOpplysningerDTO(): BehandlingOpplysningerDTO =
     withLoggingContext("behandlingId" to this.behandlingId.toString()) {
         BehandlingOpplysningerDTO(
             behandlingId = this.behandlingId,
