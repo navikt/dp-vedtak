@@ -11,9 +11,7 @@ object Medlemskap {
     val oppfyllerMedlemskap = Opplysningstype.somBoolsk("Oppfyller kravet til medlemskap")
 
     val regelsett =
-        Regelsett(
-            "Medlemskap",
-        ) {
+        Regelsett("§ 4-2. Opphold i Norge") {
             regel(medlemFolketrygden) { oppslag(prøvingsdato) { true } }
             regel(oppfyllerMedlemskap) { erSann(medlemFolketrygden) }
         }
