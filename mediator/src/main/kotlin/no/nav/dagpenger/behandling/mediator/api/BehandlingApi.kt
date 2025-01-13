@@ -232,6 +232,13 @@ internal fun Application.behandlingApi(
 
                         call.respond(HttpStatusCode.Created)
                     }
+                    get("opplysning") {
+                        val behandling = hentBehandling(personRepository, call.behandlingId)
+
+                        auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
+
+                        call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
+                    }
 
                     put("opplysning/{opplysningId}") {
                         val behandlingId = call.behandlingId
