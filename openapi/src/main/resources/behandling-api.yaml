@@ -211,6 +211,34 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/HttpProblem'
+  /behandling/{behandlingId}/opplysning:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+    get:
+      summary: Hent opplysninger for en spesifikk behandling
+      security:
+        - azureAd: [ ]
+      tags:
+        - Behandling
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BehandlingOpplysninger'
+          description: OK
+        default:
+          description: Feil ved henting av behandlinger
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HttpProblem'
   /behandling/{behandlingId}/opplysning/{opplysningId}:
     parameters:
       - name: behandlingId
@@ -363,7 +391,39 @@ components:
         ident:
           type: string
           pattern: '^\d{11}$'
+
     Behandling:
+      type: object
+      required:
+        - behandlingId
+        - opplysning
+        - tilstand
+        - kreverTotrinnskontroll
+        - aktiveAvklaringer
+        - avklaringer
+      properties:
+        behandlingId:
+          type: string
+          format: uuid
+        tilstand:
+          type: string
+          enum: [ "UnderOpprettelse", "UnderBehandling", "Redigert", "ForslagTilVedtak", "Låst", "Avbrutt", "Ferdig", "TilGodkjenning", "TilBeslutning" ]
+        opplysning:
+          type: array
+          items:
+            $ref: '#/components/schemas/Opplysning'
+        kreverTotrinnskontroll:
+          type: boolean
+        aktiveAvklaringer:
+          type: array
+          items:
+            $ref: '#/components/schemas/Avklaring'
+        avklaringer:
+          type: array
+          items:
+            $ref: '#/components/schemas/Avklaring'
+
+    BehandlingOpplysninger:
       type: object
       required:
         - behandlingId
