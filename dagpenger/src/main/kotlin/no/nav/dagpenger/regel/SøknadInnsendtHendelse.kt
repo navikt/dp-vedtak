@@ -45,33 +45,6 @@ class SøknadInnsendtHendelse(
     override fun regelkjøring(opplysninger: Opplysninger): Regelkjøring =
         Regelkjøring(prøvingsdato(opplysninger), opplysninger, Søknadsprosess())
 
-    // todo: Behovet forsvinner når vi forslag til vedtak og vedtak_fattet. De forventer at det vi avklarer er en boolean.
-    override fun avklarer(opplysninger: LesbarOpplysninger): Opplysningstype<Boolean> {
-        // Sjekk krav til alder
-        if (!opplysninger.har(Alderskrav.kravTilAlder)) return Alderskrav.kravTilAlder
-        val alderskravOppfylt = opplysninger.finnOpplysning(Alderskrav.kravTilAlder).verdi
-
-        if (!alderskravOppfylt) {
-            return Alderskrav.kravTilAlder
-        }
-
-        // Sjekk krav til minste arbeidsinntekt
-        if (!opplysninger.har(minsteinntektEllerVerneplikt)) return minsteinntektEllerVerneplikt
-        val minsteinntektOppfylt = opplysninger.finnOpplysning(minsteinntektEllerVerneplikt).verdi
-
-        // Om krav til alder eller arbeidsinntekt ikke er oppfylt er det ingen grunn til å fortsette, men vi må fastsette hvilke tillegskrav Arena trenger.
-        if (!minsteinntektOppfylt) {
-            return when {
-                opplysninger.mangler(ReellArbeidssøker.kravTilArbeidssøker) -> ReellArbeidssøker.kravTilArbeidssøker
-                opplysninger.mangler(Meldeplikt.registrertPåSøknadstidspunktet) -> Meldeplikt.registrertPåSøknadstidspunktet
-                opplysninger.mangler(Rettighetstype.rettighetstype) -> Rettighetstype.rettighetstype
-                else -> minsteinntektEllerVerneplikt
-            }
-        }
-
-        return KravPåDagpenger.kravPåDagpenger
-    }
-
     override fun prøvingsdato(opplysninger: LesbarOpplysninger): LocalDate =
         if (opplysninger.har(Søknadstidspunkt.prøvingsdato)) opplysninger.finnOpplysning(Søknadstidspunkt.prøvingsdato).verdi else skjedde
 

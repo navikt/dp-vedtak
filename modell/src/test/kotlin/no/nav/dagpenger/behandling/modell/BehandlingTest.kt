@@ -193,8 +193,6 @@ private class SøknadInnsendtHendelse(
             },
         )
 
-    override fun avklarer(opplysninger: LesbarOpplysninger) = opplysningstype
-
     override fun behandling(): Behandling {
         TODO("Not yet implemented")
     }

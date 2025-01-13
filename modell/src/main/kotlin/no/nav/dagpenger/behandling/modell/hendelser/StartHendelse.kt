@@ -4,7 +4,6 @@ import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysninger
-import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -27,8 +26,6 @@ abstract class StartHendelse(
         ) + eksternId.kontekstMap()
 
     abstract fun regelkjøring(opplysninger: Opplysninger): Regelkjøring
-
-    abstract fun avklarer(opplysninger: LesbarOpplysninger): Opplysningstype<*>
 
     abstract fun behandling(): Behandling
 
