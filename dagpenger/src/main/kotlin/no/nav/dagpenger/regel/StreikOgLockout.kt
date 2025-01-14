@@ -19,6 +19,6 @@ object StreikOgLockout {
         Regelsett("§ 4-22. Bortfall ved streik og lock-out").apply {
             regel(deltarIStreikOgLockout) { oppslag(prøvingsdato) { false } }
             regel(sammeBedriftOgPåvirket) { oppslag(prøvingsdato) { false } }
-            regel(ikkeStreikEllerLockout) { ingenAv(deltarIStreikOgLockout, sammeBedriftOgPåvirket) }
+            utfall(ikkeStreikEllerLockout) { ingenAv(deltarIStreikOgLockout, sammeBedriftOgPåvirket) }
         }
 }

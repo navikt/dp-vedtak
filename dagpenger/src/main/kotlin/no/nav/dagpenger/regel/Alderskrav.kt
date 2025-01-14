@@ -29,7 +29,8 @@ object Alderskrav {
             regel(aldersgrense) { oppslag(virkningsdato) { 67 } }
             regel(sisteMåned) { leggTilÅr(fødselsdato, aldersgrense) }
             regel(sisteDagIMåned) { sisteDagIMåned(sisteMåned) }
-            regel(kravTilAlder) { førEllerLik(virkningsdato, sisteDagIMåned) }
+
+            utfall(kravTilAlder) { førEllerLik(virkningsdato, sisteDagIMåned) }
         }
 
     val MuligGjenopptakKontroll =

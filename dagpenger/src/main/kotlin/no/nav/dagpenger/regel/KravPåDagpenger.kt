@@ -14,10 +14,9 @@ object KravPåDagpenger {
 
     val regelsett =
         Regelsett("Krav på dagpenger") {
-
             regel(minsteinntektEllerVerneplikt) { enAv(minsteinntekt, oppfyllerKravetTilVerneplikt) }
 
-            regel(kravPåDagpenger) {
+            utfall(kravPåDagpenger) {
                 alle(
                     Alderskrav.kravTilAlder,
                     FulleYtelser.ikkeFulleYtelser,

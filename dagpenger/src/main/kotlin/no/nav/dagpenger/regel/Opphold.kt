@@ -17,6 +17,6 @@ object Opphold {
             regel(oppholdINorge) { oppslag(prøvingsdato) { true } }
             regel(unntakForOpphold) { oppslag(prøvingsdato) { false } }
 
-            regel(oppfyllerKravet) { enAv(oppholdINorge, unntakForOpphold) }
+            utfall(oppfyllerKravet) { enAv(oppholdINorge, unntakForOpphold) }
         }
 }

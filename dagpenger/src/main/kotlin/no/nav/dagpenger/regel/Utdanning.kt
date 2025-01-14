@@ -67,6 +67,7 @@ object Utdanning {
             regel(svartJaPåUtdanning) { erSann(tarUtdanning) }
             regel(svartNeiPåUtdanning) { erUsann(tarUtdanning) }
             regel(oppfyllerKravetPåUnntak) { alle(svartJaPåUtdanning, godkjentUnntakForUtdanning) }
-            regel(kravTilUtdanning) { enAv(oppfyllerKravetPåUnntak, svartNeiPåUtdanning) }
+
+            utfall(kravTilUtdanning) { enAv(oppfyllerKravetPåUnntak, svartNeiPåUtdanning) }
         }
 }

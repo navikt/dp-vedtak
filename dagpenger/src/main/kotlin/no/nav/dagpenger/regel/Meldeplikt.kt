@@ -16,7 +16,7 @@ object Meldeplikt {
     val regelsett =
         Regelsett("§ 4-8. Meldeplikt og møteplikt") {
             regel(registrertArbeidssøker) { innhentMed(prøvingsdato) }
-            regel(registrertPåSøknadstidspunktet) { erSann(registrertArbeidssøker) }
+            utfall(registrertPåSøknadstidspunktet) { erSann(registrertArbeidssøker) }
         }
 
     val IkkeRegistrertSomArbeidsøkerKontroll =

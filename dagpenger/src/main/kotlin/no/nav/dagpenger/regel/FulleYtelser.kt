@@ -13,7 +13,7 @@ object FulleYtelser {
 
     val regelsett =
         Regelsett("§ 4-24. Medlem som har fulle ytelser etter folketrygdloven eller avtalefestet pensjon") {
-            regel(ikkeFulleYtelser) { oppslag(prøvingsdato) { true } }
+            utfall(ikkeFulleYtelser) { oppslag(prøvingsdato) { true } }
         }
 
     val ønsketResultat = listOf(ikkeFulleYtelser)

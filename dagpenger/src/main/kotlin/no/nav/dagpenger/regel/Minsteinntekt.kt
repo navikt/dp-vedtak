@@ -96,7 +96,7 @@ object Minsteinntekt {
             regel(`36mndTerskel`) { multiplikasjon(grunnbeløp, `36mndTerskelFaktor`) }
             regel(over36mndTerskel) { størreEnnEllerLik(inntekt36, `36mndTerskel`) }
 
-            regel(minsteinntekt) { enAv(over12mndTerskel, over36mndTerskel) }
+            utfall(minsteinntekt) { enAv(over12mndTerskel, over36mndTerskel) }
 
             avklaring(Avklaringspunkter.SvangerskapsrelaterteSykepenger)
             avklaring(Avklaringspunkter.InntektNesteKalendermåned)

@@ -99,7 +99,7 @@ object Samordning {
 
             regel(utfallEtterSamordning) { enAv(kanUtbetale, harBarnetillegg) }
 
-            regel(skalSamordnes) {
+            utfall(skalSamordnes) {
                 enAv(
                     sykepenger,
                     pleiepenger,

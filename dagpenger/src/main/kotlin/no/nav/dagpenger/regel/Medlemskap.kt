@@ -13,6 +13,6 @@ object Medlemskap {
     val regelsett =
         Regelsett("§ 4-2. Opphold i Norge") {
             regel(medlemFolketrygden) { oppslag(prøvingsdato) { true } }
-            regel(oppfyllerMedlemskap) { erSann(medlemFolketrygden) }
+            utfall(oppfyllerMedlemskap) { erSann(medlemFolketrygden) }
         }
 }

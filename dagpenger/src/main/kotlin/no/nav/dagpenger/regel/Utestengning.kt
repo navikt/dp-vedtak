@@ -13,6 +13,6 @@ object Utestengning {
     val regelsett =
         Regelsett("§ 4-28. Utestengning") {
             regel(utestengt) { oppslag(prøvingsdato) { false } }
-            regel(oppfyllerKravetTilIkkeUtestengt) { ikke(utestengt) }
+            utfall(oppfyllerKravetTilIkkeUtestengt) { ikke(utestengt) }
         }
 }

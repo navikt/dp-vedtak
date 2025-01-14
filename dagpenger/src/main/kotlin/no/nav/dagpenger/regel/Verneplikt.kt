@@ -16,7 +16,7 @@ object Verneplikt {
     val regelsett =
         Regelsett("§ 4-19. Dagpenger etter avtjent verneplikt") {
             regel(avtjentVerneplikt) { innhentMed(søknadIdOpplysningstype) }
-            regel(oppfyllerKravetTilVerneplikt) { erSann(avtjentVerneplikt) }
+            utfall(oppfyllerKravetTilVerneplikt) { erSann(avtjentVerneplikt) }
         }
 
     val VernepliktKontroll =

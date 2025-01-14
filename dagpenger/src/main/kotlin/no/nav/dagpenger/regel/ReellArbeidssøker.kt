@@ -51,7 +51,7 @@ object ReellArbeidssøker {
             regel(oppfyllerKravTilArbeidsfør) { enAv(erArbeidsfør) }
             regel(oppfyllerKravetTilEthvertArbeid) { enAv(villigTilEthvertArbeid) }
 
-            regel(kravTilArbeidssøker) {
+            utfall(kravTilArbeidssøker) {
                 alle(
                     oppfyllerKravTilArbeidssøker,
                     oppfyllerKravTilMobilitet,
