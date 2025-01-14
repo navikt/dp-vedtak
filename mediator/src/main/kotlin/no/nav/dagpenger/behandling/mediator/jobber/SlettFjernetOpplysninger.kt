@@ -15,7 +15,7 @@ internal object SlettFjernetOpplysninger {
             name = "Slett fjernet opplysninger",
             daemon = true,
             initialDelay = randomInitialDelay(),
-            period = 15.minutes.inWholeMilliseconds,
+            period = 5.minutes.inWholeMilliseconds,
             action = {
                 try {
                     if (System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp") {
@@ -31,4 +31,4 @@ internal object SlettFjernetOpplysninger {
     }
 }
 
-private fun randomInitialDelay() = Random.nextInt(1..10).minutes.inWholeMilliseconds
+private fun randomInitialDelay() = Random.nextInt(1..2).minutes.inWholeMilliseconds
