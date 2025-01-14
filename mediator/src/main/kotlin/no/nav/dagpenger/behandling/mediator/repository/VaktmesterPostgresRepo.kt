@@ -18,7 +18,7 @@ internal class VaktmesterPostgresRepo {
         private val logger = KotlinLogging.logger {}
     }
 
-    fun slettOpplysninger(antall: Int = 10): List<UUID> {
+    fun slettOpplysninger(antall: Int = 1): List<UUID> {
         val slettet = mutableListOf<UUID>()
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
@@ -92,7 +92,7 @@ internal class VaktmesterPostgresRepo {
                     }.asList,
                 )
             }
-        logger.info { "Fant ${kandidater.size} opplysningsett  som inneholder opplysninger som er fjernet og som skal slettes" }
+        logger.info { "Fant ${kandidater.size} opplysningsett som inneholder opplysninger som er fjernet og som skal slettes" }
         return opplysninger
     }
 
@@ -123,8 +123,6 @@ internal class VaktmesterPostgresRepo {
                     )
                 }.asList,
             )
-
-        logger.info { "Skal slette opplysninger tilhørende opplysinger_id: ${opplysningerIder.joinToString("\n") { it.toString() }}" }
         return opplysningerIder
     }
 
