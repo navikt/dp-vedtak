@@ -56,7 +56,15 @@ private val logger = KotlinLogging.logger { }
 
 internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
     withLoggingContext("behandlingId" to this.behandlingId.toString()) {
-        val opplysningliste = this.opplysninger().finnAlle()
+        val opplysninger = this.opplysninger().finnAlle().toSet()
+        val avklaringer = avklaringer().toSet()
+        val spesifikkeAvklaringskoder =
+            behandler.regelverk.regelsett
+                .asSequence()
+                .flatMap { it.avklaringer() }
+                .toSet()
+        val generelleAvklaringer = avklaringer.filterNot { it.kode in spesifikkeAvklaringskoder }
+
         BehandlingDTO(
             behandlingId = this.behandlingId,
             tilstand =
@@ -71,30 +79,30 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
                     Behandling.TilstandType.TilGodkjenning -> BehandlingDTO.Tilstand.TilGodkjenning
                     Behandling.TilstandType.TilBeslutning -> BehandlingDTO.Tilstand.TilBeslutning
                 },
-            vilkår = behandler.regelverk.regelsettAvType(RegelsettType.Vilkår).map { it.tilRegelsettDTO(opplysningliste) },
-            fastsettelser = behandler.regelverk.regelsettAvType(RegelsettType.Fastsettelse).map { it.tilRegelsettDTO(opplysningliste) },
+            vilkår =
+                behandler.regelverk
+                    .regelsettAvType(RegelsettType.Vilkår)
+                    .map { it.tilRegelsettDTO(opplysninger, avklaringer) },
+            fastsettelser =
+                behandler.regelverk
+                    .regelsettAvType(RegelsettType.Fastsettelse)
+                    .map { it.tilRegelsettDTO(opplysninger, avklaringer) },
             kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
-            avklaringer =
-                this
-                    .avklaringer()
-                    .map { avklaring ->
-                        avklaring.tilAvklaringDTO()
-                    }.also {
-                        logger.info { "Mapper '${it.size}' (alle) avklaringer til AvklaringDTO " }
-                    },
-            opplysninger =
-                this.opplysninger().finnAlle().map { opplysning ->
-                    opplysning.tilOpplysningDTO()
-                },
+            avklaringer = generelleAvklaringer.map { it.tilAvklaringDTO() },
+            opplysninger = opplysninger.map { it.tilOpplysningDTO() },
         )
     }
 
-private fun Regelsett.tilRegelsettDTO(opplysninger: List<Opplysning<*>>): RegelsettDTO {
+private fun Regelsett.tilRegelsettDTO(
+    opplysninger: Set<Opplysning<*>>,
+    avklaringer: Set<Avklaring>,
+): RegelsettDTO {
     val produserer = opplysninger.filter { opplysning -> opplysning.opplysningstype in produserer }
+    val egneAvklaringer = avklaringer()
 
     return RegelsettDTO(
         navn,
-        avklaringer = avklaringer().map { it.kode },
+        avklaringer = avklaringer.filter { it.kode in egneAvklaringer }.map { it.tilAvklaringDTO() },
         opplysninger = produserer.map { opplysning -> opplysning.id },
     )
 }

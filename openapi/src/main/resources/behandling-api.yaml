@@ -554,7 +554,7 @@ components:
           type: array
           description: Hvilke avklaringer som skal vises i dette regelsettet
           items:
-            $ref: '#/components/schemas/AvklaringKode'
+            $ref: '#/components/schemas/Avklaring'
         opplysninger:
           type: array
           items:
