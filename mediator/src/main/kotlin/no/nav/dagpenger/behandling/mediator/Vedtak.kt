@@ -27,7 +27,6 @@ import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.FulleYtelser
 import no.nav.dagpenger.regel.KravPåDagpenger.kravPåDagpenger
 import no.nav.dagpenger.regel.KravPåDagpenger.minsteinntektEllerVerneplikt
-import no.nav.dagpenger.regel.Medlemskap
 import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
 import no.nav.dagpenger.regel.Opphold
@@ -61,7 +60,7 @@ private val autorativKildeForDetViPåEkteMenerErVilkår: Map<Opplysningstype<Boo
     mapOf(
         Alderskrav.kravTilAlder to kapittel4(23),
         FulleYtelser.ikkeFulleYtelser to kapittel4(24),
-        Medlemskap.oppfyllerMedlemskap to kapittel4(2),
+        Opphold.oppfyllerMedlemskap to kapittel4(2),
         Meldeplikt.registrertPåSøknadstidspunktet to kapittel4(8),
         minsteinntektEllerVerneplikt to kapittel4(4),
         Opphold.oppfyllerKravet to kapittel4(5),

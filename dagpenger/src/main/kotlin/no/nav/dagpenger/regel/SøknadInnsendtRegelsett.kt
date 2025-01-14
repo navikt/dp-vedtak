@@ -16,7 +16,6 @@ val RegelverkDagpenger =
         Egenandel.regelsett,
         FulleYtelser.regelsett,
         KravPåDagpenger.regelsett,
-        Medlemskap.regelsett,
         Meldeplikt.regelsett,
         Minsteinntekt.regelsett,
         Opphold.regelsett,
