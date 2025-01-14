@@ -453,6 +453,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Avklaring'
+        opplysninger:
+          type: array
+          items:
+            $ref: '#/components/schemas/Opplysning'
 
     BehandlingOpplysninger:
       type: object

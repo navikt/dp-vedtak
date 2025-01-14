@@ -82,6 +82,10 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
                     }.also {
                         logger.info { "Mapper '${it.size}' (alle) avklaringer til AvklaringDTO " }
                     },
+            opplysninger =
+                this.opplysninger().finnAlle().map { opplysning ->
+                    opplysning.tilOpplysningDTO()
+                },
         )
     }
 
@@ -209,8 +213,7 @@ internal fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
                     opplysninger = utledning.opplysninger.map { it.id },
                 )
             },
-        redigerbar =
-            this.kanRedigeres(redigerbareOpplysninger),
+        redigerbar = this.kanRedigeres(redigerbareOpplysninger),
     )
 
 private fun LocalDate.tilApiDato(): LocalDate? =
