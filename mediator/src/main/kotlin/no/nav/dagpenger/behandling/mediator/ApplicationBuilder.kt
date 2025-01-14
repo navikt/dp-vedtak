@@ -12,6 +12,7 @@ import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.mediator.api.ApiMessageContext
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
 import no.nav.dagpenger.behandling.mediator.audit.ApiAuditlogg
+import no.nav.dagpenger.behandling.mediator.jobber.SlettFjernetOpplysninger
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
 import no.nav.dagpenger.behandling.mediator.mottak.ArenaOppgaveMottak
 import no.nav.dagpenger.behandling.mediator.mottak.SakRepositoryPostgres
@@ -20,6 +21,7 @@ import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgr
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
+import no.nav.dagpenger.behandling.mediator.repository.VaktmesterPostgresRepo
 import no.nav.dagpenger.behandling.objectMapper
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.RegelverkDagpenger
@@ -80,7 +82,7 @@ internal class ApplicationBuilder(
             ArenaOppgaveMottak(rapidsConnection, SakRepositoryPostgres())
 
             // Start jobb som sletter fjernet opplysninger
-            // SlettFjernetOpplysninger.slettOpplysninger(VaktmesterPostgresRepo())
+            SlettFjernetOpplysninger.slettOpplysninger(VaktmesterPostgresRepo())
 
             avklaringRepository.registerObserver(
                 AvklaringKafkaObservatør(

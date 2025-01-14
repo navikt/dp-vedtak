@@ -19,7 +19,7 @@ internal object SlettFjernetOpplysninger {
             action = {
                 try {
                     if (System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp") {
-                        vaktmesterRepository.slettOpplysninger().also {
+                        vaktmesterRepository.slettOpplysninger(antall = 1).also {
                             logger.info { "Har slettet ${it.size} fjernede opplysninger" }
                         }
                     }
