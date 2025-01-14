@@ -14,7 +14,9 @@ import java.time.LocalDate
 typealias Informasjonsbehov = Map<Opplysningstype<*>, List<Opplysning<*>>>
 
 interface Forretningsprosess {
-    fun regelsett(): List<Regelsett>
+    val regelverk: Regelverk
+
+    fun regelsett() = regelverk.regelsett
 
     fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>>
 }
@@ -23,6 +25,9 @@ private class Regelsettprosess(
     val regelsett: List<Regelsett>,
     val opplysningstypes: List<Opplysningstype<*>> = regelsett.flatMap { it.produserer },
 ) : Forretningsprosess {
+    override val regelverk: Regelverk
+        get() = TODO("Not yet implemented")
+
     override fun regelsett() = regelsett
 
     override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> = opplysningstypes

@@ -3,6 +3,7 @@ package no.nav.dagpenger.regel.fastsetting
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.RegelsettType.Fastsettelse
 import no.nav.dagpenger.opplysning.TemporalCollection
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.addisjon
@@ -63,7 +64,7 @@ object DagpengenesStørrelse {
     val harSamordnet = Opplysningstype.somBoolsk("Har samordnet")
 
     val regelsett =
-        Regelsett("§ 4-12. Dagpengenes størrelse (Sats)") {
+        Regelsett("§ 4-12. Dagpengenes størrelse", Fastsettelse) {
             regel(barn) { innhentMed(søknadIdOpplysningstype) }
             regel(antallBarn) { antallAv(barn) { kvalifiserer } }
 

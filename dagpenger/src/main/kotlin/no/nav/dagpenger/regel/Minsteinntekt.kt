@@ -69,7 +69,7 @@ object Minsteinntekt {
     val minsteinntekt = Opplysningstype.somBoolsk("Krav til minsteinntekt".tekstId("opplysning.krav-til-minsteinntekt"))
 
     val regelsett =
-        Regelsett("§ 4-4 Minsteinntekt") {
+        Regelsett("§ 4-4. Krav til minsteinntekt") {
             regel(maksPeriodeLengde) { oppslag(prøvingsdato) { 36 } }
             regel(førsteMånedAvOpptjeningsperiode) { trekkFraMånedTilFørste(sisteAvsluttendendeKalenderMåned, maksPeriodeLengde) }
 
@@ -97,6 +97,10 @@ object Minsteinntekt {
             regel(over36mndTerskel) { størreEnnEllerLik(inntekt36, `36mndTerskel`) }
 
             regel(minsteinntekt) { enAv(over12mndTerskel, over36mndTerskel) }
+
+            avklaring(Avklaringspunkter.SvangerskapsrelaterteSykepenger)
+            avklaring(Avklaringspunkter.InntektNesteKalendermåned)
+            avklaring(Avklaringspunkter.ØnskerEtterRapporteringsfrist)
         }
 
     private fun grunnbeløpFor(it: LocalDate) =

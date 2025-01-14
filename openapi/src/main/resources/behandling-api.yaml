@@ -429,8 +429,10 @@ components:
         - opplysning
         - tilstand
         - kreverTotrinnskontroll
-        - aktiveAvklaringer
+        - vilkår
+        - fastsettelser
         - avklaringer
+        - opplysninger
       properties:
         behandlingId:
           type: string
@@ -438,20 +440,24 @@ components:
         tilstand:
           type: string
           enum: [ "UnderOpprettelse", "UnderBehandling", "Redigert", "ForslagTilVedtak", "Låst", "Avbrutt", "Ferdig", "TilGodkjenning", "TilBeslutning" ]
-        opplysning:
-          type: array
-          items:
-            $ref: '#/components/schemas/Opplysning'
         kreverTotrinnskontroll:
           type: boolean
-        aktiveAvklaringer:
+        vilkår:
           type: array
           items:
-            $ref: '#/components/schemas/Avklaring'
+            $ref: '#/components/schemas/Regelsett'
+        fastsettelser:
+          type: array
+          items:
+            $ref: '#/components/schemas/Regelsett'
         avklaringer:
           type: array
           items:
             $ref: '#/components/schemas/Avklaring'
+        opplysninger:
+          type: array
+          items:
+            $ref: '#/components/schemas/Opplysning'
 
     BehandlingOpplysninger:
       type: object
@@ -496,7 +502,7 @@ components:
           type: string
           format: uuid
         kode:
-          type: string
+          $ref: '#/components/schemas/AvklaringKode'
         tittel:
           type: string
         beskrivelse:
@@ -528,6 +534,31 @@ components:
     OpplysningsId:
       type: string
       format: uuid
+
+    AvklaringKode:
+      type: string
+
+    Regelsett:
+      type: object
+      required:
+        - navn
+        - avklaringer
+        - opplysninger
+      properties:
+        navn:
+          type: string
+        status:
+          type: string
+          enum: [ "Oppfylt", "HarAvklaring", "IkkeOppfylt", "Info" ]
+        avklaringer:
+          type: array
+          description: Hvilke avklaringer som skal vises i dette regelsettet
+          items:
+            $ref: '#/components/schemas/AvklaringKode'
+        opplysninger:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpplysningsId'
 
     Opplysning:
       type: object
@@ -645,7 +676,6 @@ components:
       description: |
         Hvilken datatype opplysningen har, for å kunne validere at verdi er riktig format
     
-    
     Kvittering:
       type: object
       required:
@@ -655,7 +685,6 @@ components:
         behandlingId:
           type: string
           format: uuid
-
 
     HttpProblem:
       type: object

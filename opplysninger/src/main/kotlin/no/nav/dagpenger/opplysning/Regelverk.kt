@@ -12,10 +12,12 @@ class Regelverk(
     val produserer = regelsett.flatMap { it.produserer }.toSet()
     val regelsett = regelsett.toList()
 
-    fun reglerFor(
+    internal fun reglerFor(
         opplysningstype: Opplysningstype<*>,
         forDato: LocalDate = LocalDate.MIN,
     ): List<Any> = regelsettFor(opplysningstype).flatMap { it.regler(forDato) }
+
+    fun regelsettAvType(type: RegelsettType) = regelsett.filter { it.type == type }
 
     fun regelsettFor(opplysningstype: Opplysningstype<*>): Set<Regelsett> {
         val nødvendigeRegelsett = mutableSetOf<Regelsett>()

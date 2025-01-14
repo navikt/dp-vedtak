@@ -13,7 +13,7 @@ object Opphold {
     val oppfyllerKravet = Opplysningstype.somBoolsk("Oppfyller kravet til opphold i Norge")
 
     val regelsett =
-        Regelsett("Opphold i Norge") {
+        Regelsett("§ 4-2. Opphold i Norge") {
             regel(oppholdINorge) { oppslag(prøvingsdato) { true } }
             regel(unntakForOpphold) { oppslag(prøvingsdato) { false } }
 

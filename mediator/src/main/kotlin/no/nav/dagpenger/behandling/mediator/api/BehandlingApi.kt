@@ -118,7 +118,7 @@ internal fun Application.behandlingApi(
 
                     auditlogg.les("Listet ut behandlinger", ident, call.saksbehandlerId())
 
-                    call.respond(HttpStatusCode.OK, person.behandlinger().map { it.tilBehandlingDTO() })
+                    call.respond(HttpStatusCode.OK, person.behandlinger().map { it.tilBehandlingOpplysningerDTO() })
                 }
 
                 route("{behandlingId}") {
@@ -253,7 +253,7 @@ internal fun Application.behandlingApi(
 
                         auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
 
-                        call.respond(HttpStatusCode.OK, behandling.tilBehandlingDTO())
+                        call.respond(HttpStatusCode.OK, behandling.tilBehandlingOpplysningerDTO())
                     }
 
                     put("opplysning/{opplysningId}") {

@@ -2,6 +2,7 @@ package no.nav.dagpenger.regel.fastsetting
 
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.regel.divisjon
 import no.nav.dagpenger.opplysning.regel.hvisSannMedResultat
 import no.nav.dagpenger.opplysning.regel.høyesteAv
@@ -10,6 +11,7 @@ import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode.ordinærPeriode
 
 object Dagpengeperiode {
     val antallStønadsuker = Opplysningstype.somHeltall("Antall stønadsuker")
@@ -37,7 +39,7 @@ object Dagpengeperiode {
     private val ingenOrdinærPeriode = Opplysningstype.somHeltall("Stønadsuker når kravet til minste arbeidsinntekt ikke er oppfylt")
 
     val regelsett =
-        Regelsett("Dagpengeperiode") {
+        Regelsett("§ 4-15. Antall stønadsuker (stønadsperiode)", RegelsettType.Fastsettelse) {
             regel(kortPeriode) { oppslag(prøvingsdato) { 52 } }
             regel(langPeriode) { oppslag(prøvingsdato) { 104 } }
             regel(terskelFaktor12) { oppslag(prøvingsdato) { 2.0 } }

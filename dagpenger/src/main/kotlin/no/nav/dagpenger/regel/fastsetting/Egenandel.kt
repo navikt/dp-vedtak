@@ -2,6 +2,7 @@ package no.nav.dagpenger.regel.fastsetting
 
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
@@ -12,7 +13,7 @@ object Egenandel {
     private val faktor = Opplysningstype.somDesimaltall("Antall dagsats for egenandel")
 
     val regelsett =
-        Regelsett("§ 4-9. Egenandel") {
+        Regelsett("§ 4-9. Egenandel", RegelsettType.Fastsettelse) {
             regel(faktor) { oppslag(prøvingsdato) { 3.0 } }
             regel(egenandel) { multiplikasjon(sats, faktor) }
         }

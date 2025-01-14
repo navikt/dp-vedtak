@@ -5,6 +5,7 @@ import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
 import no.nav.dagpenger.inntekt.v1.InntektKlasse
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.RegelsettType.Fastsettelse
 import no.nav.dagpenger.opplysning.regel.avrund
 import no.nav.dagpenger.opplysning.regel.brukt
 import no.nav.dagpenger.opplysning.regel.divisjon
@@ -60,7 +61,7 @@ object Dagpengegrunnlag {
     internal val bruktBeregningsregel = Opplysningstype.somTekst("Brukt beregningsregel")
 
     val regelsett =
-        Regelsett("Dagpengegrunnlag") {
+        Regelsett("§ 4-11. Dagpengegrunnlag", Fastsettelse) {
             regel(antallÅrI36Måneder) { oppslag(prøvingsdato) { 3.0 } }
             regel(faktorForMaksgrense) { oppslag(prøvingsdato) { 6.0 } }
             regel(maksgrenseForGrunnlag) { multiplikasjon(grunnbeløpForDagpengeGrunnlag, faktorForMaksgrense) }

@@ -24,7 +24,7 @@ object Alderskrav {
     val kravTilAlder = Opplysningstype.somBoolsk("Oppfyller kravet til alder")
 
     val regelsett =
-        Regelsett("Alder") {
+        Regelsett("§ 4-23. Bortfall på grunn av alder") {
             regel(fødselsdato) { innhentes }
             regel(aldersgrense) { oppslag(virkningsdato) { 67 } }
             regel(sisteMåned) { leggTilÅr(fødselsdato, aldersgrense) }

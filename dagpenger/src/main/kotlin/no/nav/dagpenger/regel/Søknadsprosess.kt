@@ -11,7 +11,7 @@ import no.nav.dagpenger.regel.fastsetting.Egenandel
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting
 
 class Søknadsprosess : Forretningsprosess {
-    private val regelverk = RegelverkDagpenger
+    override val regelverk = RegelverkDagpenger
 
     override fun regelsett() = regelverk.regelsett
 

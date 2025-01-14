@@ -1,5 +1,6 @@
 package no.nav.dagpenger.avklaring
 
+import no.nav.dagpenger.opplysning.Avklaringkode
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.LesbarOpplysningerMedLogg
 import java.time.LocalDateTime
