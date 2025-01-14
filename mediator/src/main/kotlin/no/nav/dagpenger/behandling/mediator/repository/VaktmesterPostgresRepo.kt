@@ -80,18 +80,19 @@ internal class VaktmesterPostgresRepo {
             """.trimIndent()
 
         val opplysninger =
-            kandidater.onEach { kandidat ->
-                session.run(
-                    queryOf(
-                        query,
-                        mapOf("opplysninger_id" to kandidat.opplysningerId),
-                    ).map { row ->
-                        kandidat.leggTil(
-                            row.uuid("id"),
-                        )
-                    }.asList,
-                )
-            }
+            kandidater
+                .onEach { kandidat ->
+                    session.run(
+                        queryOf(
+                            query,
+                            mapOf("opplysninger_id" to kandidat.opplysningerId),
+                        ).map { row ->
+                            kandidat.leggTil(
+                                row.uuid("id"),
+                            )
+                        }.asList,
+                    )
+                }.filterNot { it.behandlingId.toString() == "01932f46-c4d3-755e-a4da-c572945a93b4" }
         logger.info { "Fant ${kandidater.size} opplysningsett som inneholder opplysninger som er fjernet og som skal slettes" }
         return opplysninger
     }
