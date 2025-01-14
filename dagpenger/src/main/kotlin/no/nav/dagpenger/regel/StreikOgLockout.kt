@@ -17,7 +17,7 @@ object StreikOgLockout {
 
     val regelsett =
         Regelsett(
-            "4-22 Bortfall ved streik og lock-out",
+            "4-22 Streik og lock-out",
             "§ 4-22. Bortfall ved streik og lock-out",
         ).apply {
             regel(deltarIStreikOgLockout) { oppslag(prøvingsdato) { false } }
