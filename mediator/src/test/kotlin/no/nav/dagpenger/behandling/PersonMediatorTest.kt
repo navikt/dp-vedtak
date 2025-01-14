@@ -33,6 +33,7 @@ import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostg
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
+import no.nav.dagpenger.behandling.mediator.repository.VaktmesterPostgresRepo
 import no.nav.dagpenger.behandling.mediator.toMap
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderOpprettelse
@@ -521,6 +522,7 @@ internal class PersonMediatorTest {
     @Test
     fun `endring av prøvingsdato`() {
         withMigratedDb {
+            val vaktmester = VaktmesterPostgresRepo()
             val testPerson =
                 TestPerson(
                     ident,
@@ -614,6 +616,10 @@ internal class PersonMediatorTest {
             withClue("Skal kun ha opplysninger nødvendig for avslag") {
                 godkjennOpplysninger("avslag")
             }
+
+            // Sletter opplysninger som ikke lenger er relevante
+            val slettedeOpplysninger = vaktmester.slettOpplysninger()
+            slettedeOpplysninger.shouldNotBeEmpty()
         }
     }
 
