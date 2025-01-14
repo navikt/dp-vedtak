@@ -496,7 +496,7 @@ class OpplysningerRepositoryPostgresTest {
     }
 
     @Test
-    fun `bugf ix`() {
+    fun `Sletter flere sett med opplysninger`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
             val vaktmesterRepo = VaktmesterPostgresRepo()
