@@ -1,7 +1,6 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
 import kotliquery.Session
-import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
@@ -21,9 +20,10 @@ internal class VaktmesterPostgresRepo {
     fun slettOpplysninger(antall: Int = 1): List<UUID> {
         val slettet = mutableListOf<UUID>()
         using(sessionOf(dataSource)) { session ->
-            session.transaction { tx ->
-                tx.medLås(låsenøkkel) {
-                    hentAlleOpplysningerSomErFjernet(tx, antall).forEach { kandidat ->
+            val kandidater = hentAlleOpplysningerSomErFjernet(session, antall)
+            kandidater.forEach { kandidat ->
+                session.transaction { tx ->
+                    tx.medLås(låsenøkkel) {
                         withLoggingContext(
                             "behandlingId" to kandidat.behandlingId.toString(),
                             "opplysningerId" to kandidat.opplysningerId.toString(),
@@ -42,7 +42,7 @@ internal class VaktmesterPostgresRepo {
                                 }
                                 slettet.add(opplysningId)
                             }
-                            logger.info { "Slettet ${kandidat.opplysninger().size} opplysninger " }
+                            logger.info { "Slettet ${kandidat.opplysninger().size} opplysninger" }
                         }
                     }
                 }
@@ -64,10 +64,10 @@ internal class VaktmesterPostgresRepo {
     }
 
     private fun hentAlleOpplysningerSomErFjernet(
-        tx: TransactionalSession,
+        session: Session,
         antall: Int,
     ): List<Kandidater> {
-        val kandidater = hentOpplysningerIder(tx, antall)
+        val kandidater = hentOpplysningerIder(session, antall)
 
         //language=PostgreSQL
         val query =
@@ -81,7 +81,7 @@ internal class VaktmesterPostgresRepo {
 
         val opplysninger =
             kandidater.onEach { kandidat ->
-                tx.run(
+                session.run(
                     queryOf(
                         query,
                         mapOf("opplysninger_id" to kandidat.opplysningerId),
@@ -97,7 +97,7 @@ internal class VaktmesterPostgresRepo {
     }
 
     private fun hentOpplysningerIder(
-        tx: TransactionalSession,
+        session: Session,
         antall: Int,
     ): List<Kandidater> {
         //language=PostgreSQL
@@ -112,7 +112,7 @@ internal class VaktmesterPostgresRepo {
             """.trimIndent()
 
         val opplysningerIder =
-            tx.run(
+            session.run(
                 queryOf(
                     test,
                     mapOf("antall" to antall),
