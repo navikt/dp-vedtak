@@ -6,6 +6,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
@@ -22,19 +23,26 @@ internal class VaktmesterPostgresRepo {
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
                 tx.medLås(låsenøkkel) {
-                    hentAlleOpplysningerSomErFjernet(tx, antall).forEach { opplysninger ->
-                        opplysninger.forEach { opplysningId ->
-                            val liste = mutableListOf<BatchStatement>()
-                            liste.add(slettOpplysningVerdi(opplysningId))
-                            liste.add(slettOpplysningUtledet(opplysningId))
-                            liste.add(slettOpplysningLink(opplysningId))
-                            liste.add(slettOpplysningUtledning(opplysningId))
-                            liste.add(slettErstatteAv(opplysningId))
-                            liste.add(slettOpplysning(opplysningId))
-                            liste.forEach { batch ->
-                                batch.run(tx)
+                    hentAlleOpplysningerSomErFjernet(tx, antall).forEach { kandidat ->
+                        withLoggingContext(
+                            "behandlingId" to kandidat.behandlingId.toString(),
+                            "opplysningerId" to kandidat.opplysningerId.toString(),
+                        ) {
+                            logger.info { "Skal slette ${kandidat.opplysninger().size} opplysninger " }
+                            kandidat.opplysninger().forEach { opplysningId ->
+                                val statements = mutableListOf<BatchStatement>()
+                                statements.add(slettOpplysningVerdi(opplysningId))
+                                statements.add(slettOpplysningUtledet(opplysningId))
+                                statements.add(slettOpplysningLink(opplysningId))
+                                statements.add(slettOpplysningUtledning(opplysningId))
+                                statements.add(slettErstatteAv(opplysningId))
+                                statements.add(slettOpplysning(opplysningId))
+                                statements.forEach { batch ->
+                                    batch.run(tx)
+                                }
+                                slettet.add(opplysningId)
                             }
-                            slettet.add(opplysningId)
+                            logger.info { "Slettet ${kandidat.opplysninger().size} opplysninger " }
                         }
                     }
                 }
@@ -43,11 +51,23 @@ internal class VaktmesterPostgresRepo {
         return slettet
     }
 
+    internal data class Kandidater(
+        val behandlingId: UUID?,
+        val opplysningerId: UUID,
+        private val opplysninger: MutableList<UUID> = mutableListOf(),
+    ) {
+        fun leggTil(uuid: UUID) {
+            opplysninger.add(uuid)
+        }
+
+        fun opplysninger() = opplysninger.toList()
+    }
+
     private fun hentAlleOpplysningerSomErFjernet(
         tx: TransactionalSession,
         antall: Int,
-    ): List<List<UUID>> {
-        val opplysningerIder = hentOpplysningerIder(tx, antall)
+    ): List<Kandidater> {
+        val kandidater = hentOpplysningerIder(tx, antall)
 
         //language=PostgreSQL
         val query =
@@ -55,37 +75,39 @@ internal class VaktmesterPostgresRepo {
             SELECT id
             FROM opplysning
             INNER JOIN opplysninger_opplysning op ON opplysning.id = op.opplysning_id
-            WHERE fjernet = true AND op.opplysninger_id = :opplysninger_id
+            WHERE fjernet = TRUE AND op.opplysninger_id = :opplysninger_id
             ORDER BY op.opplysninger_id, opprettet DESC;
             """.trimIndent()
 
         val opplysninger =
-            opplysningerIder.map { id ->
+            kandidater.onEach { kandidat ->
                 tx.run(
                     queryOf(
                         query,
-                        mapOf("opplysninger_id" to id),
+                        mapOf("opplysninger_id" to kandidat.opplysningerId),
                     ).map { row ->
-                        row.uuid("id")
+                        kandidat.leggTil(
+                            row.uuid("id"),
+                        )
                     }.asList,
                 )
             }
-
-        logger.info { "Fant ${opplysninger.size} opplysninger som er fjernet og som skal slettes" }
+        logger.info { "Fant ${kandidater.size} opplysningsett  som inneholder opplysninger som er fjernet og som skal slettes" }
         return opplysninger
     }
 
     private fun hentOpplysningerIder(
         tx: TransactionalSession,
         antall: Int,
-    ): List<UUID> {
+    ): List<Kandidater> {
         //language=PostgreSQL
         val test =
             """
-            SELECT DISTINCT (op.opplysninger_id) AS opplysinger_id
+            SELECT DISTINCT (op.opplysninger_id) AS opplysinger_id, b.behandling_id
             FROM opplysning
-            INNER JOIN opplysninger_opplysning op ON opplysning.id = op.opplysning_id
-            WHERE fjernet = true
+                INNER JOIN opplysninger_opplysning op ON opplysning.id = op.opplysning_id
+                LEFT OUTER JOIN behandling_opplysninger b ON b.opplysninger_id = op.opplysninger_id
+            WHERE fjernet = TRUE
             LIMIT :antall;
             """.trimIndent()
 
@@ -95,7 +117,10 @@ internal class VaktmesterPostgresRepo {
                     test,
                     mapOf("antall" to antall),
                 ).map { row ->
-                    row.uuid("opplysinger_id")
+                    Kandidater(
+                        row.uuidOrNull("behandling_id"),
+                        row.uuid("opplysinger_id"),
+                    )
                 }.asList,
             )
 
