@@ -9,13 +9,13 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
-import no.nav.dagpenger.regel.Medlemskap
+import no.nav.dagpenger.regel.Opphold
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 class MedlemskapSteg : No {
     private val fraDato = 23.mai(2024)
-    private val regelsett = listOf(Medlemskap.regelsett, Søknadstidspunkt.regelsett)
+    private val regelsett = listOf(Opphold.regelsett, Søknadstidspunkt.regelsett)
     private val opplysninger = Opplysninger()
     private lateinit var regelkjøring: Regelkjøring
 
@@ -30,11 +30,11 @@ class MedlemskapSteg : No {
         }
 
         Og("at personen er medlem {boolsk} i folketrygden") { medlem: Boolean ->
-            opplysninger.leggTil(Faktum(Medlemskap.medlemFolketrygden, medlem) as Opplysning<*>).also { regelkjøring.evaluer() }
+            opplysninger.leggTil(Faktum(Opphold.medlemFolketrygden, medlem) as Opplysning<*>).also { regelkjøring.evaluer() }
         }
 
         Så("skal vilkåret om medlemskap være {boolsk}") { utfall: Boolean ->
-            val faktum = opplysninger.finnOpplysning(Medlemskap.oppfyllerMedlemskap)
+            val faktum = opplysninger.finnOpplysning(Opphold.oppfyllerMedlemskap)
             withClue("Vilkåret om medlemskap skal være $utfall") {
                 faktum.verdi shouldBe utfall
             }

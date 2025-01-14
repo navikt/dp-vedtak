@@ -24,6 +24,7 @@ import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.dagsatsSamordnetUtenf
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.grunnlag
+import no.nav.dagpenger.regel.folketrygden
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -64,7 +65,10 @@ object DagpengenesStørrelse {
     val harSamordnet = Opplysningstype.somBoolsk("Har samordnet")
 
     val regelsett =
-        Regelsett("§ 4-12. Dagpengenes størrelse", Fastsettelse) {
+        Regelsett(
+            folketrygden.hjemmel(4, 12, "Dagpengenes størrelse", "4-12 Sats og barnetillegg"),
+            Fastsettelse,
+        ) {
             regel(barn) { innhentMed(søknadIdOpplysningstype) }
             regel(antallBarn) { antallAv(barn) { kvalifiserer } }
 

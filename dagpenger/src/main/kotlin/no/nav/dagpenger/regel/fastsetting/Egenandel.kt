@@ -6,6 +6,7 @@ import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.folketrygden
 
 object Egenandel {
     val egenandel = Opplysningstype.somBeløp("Egenandel")
@@ -13,7 +14,10 @@ object Egenandel {
     private val faktor = Opplysningstype.somDesimaltall("Antall dagsats for egenandel")
 
     val regelsett =
-        Regelsett("§ 4-9. Egenandel", RegelsettType.Fastsettelse) {
+        Regelsett(
+            folketrygden.hjemmel(4, 9, "Egenandel", "4-9 Egenandel"),
+            RegelsettType.Fastsettelse,
+        ) {
             regel(faktor) { oppslag(prøvingsdato) { 3.0 } }
             regel(egenandel) { multiplikasjon(sats, faktor) }
         }

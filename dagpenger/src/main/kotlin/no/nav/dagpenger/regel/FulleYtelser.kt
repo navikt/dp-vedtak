@@ -12,8 +12,15 @@ object FulleYtelser {
     val ikkeFulleYtelser = Opplysningstype.somBoolsk("Mottar ikke andre fulle ytelser")
 
     val regelsett =
-        Regelsett("§ 4-24. Medlem som har fulle ytelser etter folketrygdloven eller avtalefestet pensjon") {
-            regel(ikkeFulleYtelser) { oppslag(prøvingsdato) { true } }
+        Regelsett(
+            folketrygden.hjemmel(
+                4,
+                24,
+                "Medlem som har fulle ytelser etter folketrygdloven eller avtalefestet pensjon",
+                "4-24 Fulle ytelser",
+            ),
+        ) {
+            utfall(ikkeFulleYtelser) { oppslag(prøvingsdato) { true } }
         }
 
     val ønsketResultat = listOf(ikkeFulleYtelser)

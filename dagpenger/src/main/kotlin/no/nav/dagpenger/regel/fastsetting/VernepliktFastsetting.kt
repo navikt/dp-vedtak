@@ -16,6 +16,7 @@ import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagForVerne
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktFastsattVanligArbeidstid
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktGrunnlag
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktPeriode
+import no.nav.dagpenger.regel.folketrygden
 
 object VernepliktFastsetting {
     private val antallG = Opplysningstype.somDesimaltall("Antall G som gis som grunnlag ved verneplikt")
@@ -27,7 +28,10 @@ object VernepliktFastsetting {
     val grunnlagForVernepliktErGunstigst = Opplysningstype.somBoolsk("Grunnlaget for verneplikt er høyere enn dagpengegrunnlaget")
 
     val regelsett =
-        Regelsett("§ 4-19. Dagpenger etter avtjent verneplikt", RegelsettType.Fastsettelse) {
+        Regelsett(
+            folketrygden.hjemmel(4, 19, "Dagpenger etter avtjent verneplikt", "4-19 Dagpenger ved verneplikt"),
+            RegelsettType.Fastsettelse,
+        ) {
             regel(antallG) { oppslag(prøvingsdato) { 3.0 } }
             regel(vernepliktGrunnlag) { multiplikasjon(grunnbeløpForDagpengeGrunnlag, antallG) }
             regel(vernepliktPeriode) { oppslag(prøvingsdato) { 26 } }

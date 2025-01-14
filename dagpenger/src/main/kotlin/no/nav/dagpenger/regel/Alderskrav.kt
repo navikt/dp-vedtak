@@ -9,6 +9,7 @@ import no.nav.dagpenger.opplysning.regel.dato.leggTilÅr
 import no.nav.dagpenger.opplysning.regel.dato.sisteDagIMåned
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.Alderskrav.sisteDagIMåned
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 
@@ -24,12 +25,15 @@ object Alderskrav {
     val kravTilAlder = Opplysningstype.somBoolsk("Oppfyller kravet til alder")
 
     val regelsett =
-        Regelsett("§ 4-23. Bortfall på grunn av alder") {
+        Regelsett(
+            folketrygden.hjemmel(4, 23, "Bortfall på grunn av alder", "4-23 Alder"),
+        ) {
             regel(fødselsdato) { innhentes }
             regel(aldersgrense) { oppslag(virkningsdato) { 67 } }
             regel(sisteMåned) { leggTilÅr(fødselsdato, aldersgrense) }
             regel(sisteDagIMåned) { sisteDagIMåned(sisteMåned) }
-            regel(kravTilAlder) { førEllerLik(virkningsdato, sisteDagIMåned) }
+
+            utfall(kravTilAlder) { førEllerLik(virkningsdato, sisteDagIMåned) }
         }
 
     val MuligGjenopptakKontroll =

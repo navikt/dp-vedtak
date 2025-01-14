@@ -43,7 +43,14 @@ object Utdanning {
     val kravTilUtdanning = Opplysningstype.somBoolsk("Krav til utdanning eller opplæring")
 
     val regelsett =
-        Regelsett("§ 4-6. Dagpenger under utdanning, opplæring, etablering av egen virksomhet m.v.") {
+        Regelsett(
+            folketrygden.hjemmel(
+                kapittel = 4,
+                paragraf = 6,
+                tittel = "Dagpenger under utdanning, opplæring, etablering av egen virksomhet m.v",
+                kortnavn = "4-6 Utdanning og etablering",
+            ),
+        ) {
             regel(tarUtdanning) { innhentMed() }
 
             // TODO: Legg til regler for å om kravet til utdanning skal vurderes
@@ -67,6 +74,7 @@ object Utdanning {
             regel(svartJaPåUtdanning) { erSann(tarUtdanning) }
             regel(svartNeiPåUtdanning) { erUsann(tarUtdanning) }
             regel(oppfyllerKravetPåUnntak) { alle(svartJaPåUtdanning, godkjentUnntakForUtdanning) }
-            regel(kravTilUtdanning) { enAv(oppfyllerKravetPåUnntak, svartNeiPåUtdanning) }
+
+            utfall(kravTilUtdanning) { enAv(oppfyllerKravetPåUnntak, svartNeiPåUtdanning) }
         }
 }

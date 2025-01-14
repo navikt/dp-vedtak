@@ -3,26 +3,12 @@ package no.nav.dagpenger.avklaring
 import no.nav.dagpenger.avklaring.Avklaring.Endring.Avbrutt
 import no.nav.dagpenger.avklaring.Avklaring.Endring.Avklart
 import no.nav.dagpenger.avklaring.Avklaring.Endring.UnderBehandling
+import no.nav.dagpenger.opplysning.Avklaringkode
 import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.uuid.UUIDv7
 import java.time.LocalDateTime
 import java.util.UUID
-
-data class Avklaringkode(
-    val kode: String,
-    val tittel: String,
-    val beskrivelse: String,
-    val kanKvitteres: Boolean = true,
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Avklaringkode) return false
-        return kode == other.kode
-    }
-
-    override fun hashCode() = kode.hashCode()
-}
 
 data class Avklaring internal constructor(
     val id: UUID,

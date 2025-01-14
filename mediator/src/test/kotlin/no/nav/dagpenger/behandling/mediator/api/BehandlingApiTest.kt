@@ -10,6 +10,7 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
@@ -24,7 +25,6 @@ import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import no.nav.dagpenger.avklaring.Avklaring
-import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.TestOpplysningstyper
 import no.nav.dagpenger.behandling.api.models.AvklaringDTO
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
@@ -47,6 +47,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.RekjørBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
+import no.nav.dagpenger.opplysning.Avklaringkode
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Saksbehandler
@@ -55,6 +56,7 @@ import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.verdier.Barn
 import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.regel.Avklaringspunkter
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse
 import no.nav.dagpenger.regel.Søknadstidspunkt
@@ -101,6 +103,16 @@ internal class BehandlingApiTest {
             Avklaring.rehydrer(
                 UUIDv7.ny(),
                 Avklaringkode("tittel 3", "beskrivelse ", "kanKvitteres"),
+                mutableListOf(
+                    Avklaring.Endring.Avklart(
+                        avklartAv = Systemkilde(UUIDv7.ny(), LocalDateTime.now()),
+                        begrunnelse = "heia",
+                    ),
+                ),
+            ),
+            Avklaring.rehydrer(
+                UUIDv7.ny(),
+                Avklaringspunkter.InntektNesteKalendermåned,
                 mutableListOf(
                     Avklaring.Endring.Avklart(
                         avklartAv = Systemkilde(UUIDv7.ny(), LocalDateTime.now()),
@@ -253,9 +265,15 @@ internal class BehandlingApiTest {
             val behandlingDto = shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), BehandlingDTO::class.java) }
             behandlingDto.behandlingId shouldBe behandlingId
             behandlingDto.vilkår.shouldNotBeEmpty()
-            behandlingDto.vilkår.all { it.opplysninger.all { it.redigerbar } } shouldBe false
+            behandlingDto.opplysninger.all { it.redigerbar } shouldBe false
             behandlingDto.avklaringer.shouldNotBeEmpty()
 
+            with(behandlingDto.vilkår.single { it.navn == "4-4 Minsteinntekt" }) {
+                avklaringer shouldHaveSize 1
+                avklaringer.single().kode shouldBe "InntektNesteKalendermåned"
+            }
+
+            behandlingDto.avklaringer shouldHaveSize 4
             val aktivAvklaring = behandling.aktiveAvklaringer().first()
 
             with(behandlingDto.avklaringer.first { it.status == AvklaringDTO.Status.Åpen }) {

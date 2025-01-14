@@ -1,11 +1,11 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
 import kotliquery.Session
-import kotliquery.TransactionalSession
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import kotliquery.using
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import java.util.UUID
 
@@ -14,48 +14,120 @@ private val logger = KotlinLogging.logger {}
 internal class VaktmesterPostgresRepo {
     companion object {
         val låsenøkkel = 121212
+        private val logger = KotlinLogging.logger {}
     }
 
-    fun slettOpplysninger(): List<UUID> {
-        val antall = mutableListOf<UUID>()
+    fun slettOpplysninger(antall: Int = 1): List<UUID> {
+        val slettet = mutableListOf<UUID>()
         using(sessionOf(dataSource)) { session ->
-            session.transaction { tx ->
-                tx.medLås(låsenøkkel) {
-                    hentAlleOpplysningerSomErFjernet(tx).forEach { opplysningId ->
-                        slettOpplysningVerdi(opplysningId).run(tx)
-                        slettOpplysningUtledet(opplysningId).run(tx)
-                        slettOpplysningLink(opplysningId).run(tx)
-                        slettOpplysningUtledning(opplysningId).run(tx)
-                        slettErstatteAv(opplysningId).run(tx)
-                        slettOpplysning(opplysningId).run(tx)
-                        antall.add(opplysningId)
+            val kandidater = session.hentOpplysningerSomErFjernet(antall)
+            kandidater.forEach { kandidat ->
+                session.transaction { tx ->
+                    tx.medLås(låsenøkkel) {
+                        withLoggingContext(
+                            "behandlingId" to kandidat.behandlingId.toString(),
+                            "opplysningerId" to kandidat.opplysningerId.toString(),
+                        ) {
+                            logger.info { "Skal slette ${kandidat.opplysninger().size} opplysninger " }
+                            kandidat.opplysninger().forEach { opplysningId ->
+                                val statements = mutableListOf<BatchStatement>()
+                                statements.add(slettOpplysningVerdi(opplysningId))
+                                statements.add(slettOpplysningUtledet(opplysningId))
+                                statements.add(slettOpplysningLink(opplysningId))
+                                statements.add(slettOpplysningUtledning(opplysningId))
+                                statements.add(slettErstatteAv(opplysningId))
+                                statements.add(slettOpplysning(opplysningId))
+                                statements.forEach { batch ->
+                                    batch.run(tx)
+                                }
+                                slettet.add(opplysningId)
+                            }
+                            logger.info { "Slettet ${kandidat.opplysninger().size} opplysninger" }
+                        }
                     }
                 }
             }
         }
-        return antall
+        return slettet
     }
 
-    private fun hentAlleOpplysningerSomErFjernet(tx: TransactionalSession): List<UUID> {
+    internal data class Kandidat(
+        val behandlingId: UUID?,
+        val opplysningerId: UUID,
+        private val opplysninger: MutableList<UUID> = mutableListOf(),
+    ) {
+        fun leggTil(uuid: UUID) {
+            opplysninger.add(uuid)
+        }
+
+        fun opplysninger() = opplysninger.toList()
+    }
+
+    private fun Session.hentOpplysningerSomErFjernet(antall: Int): List<Kandidat> {
+        val kandidater = this.hentOpplysningerIder(antall)
+
         //language=PostgreSQL
         val query =
             """
-            SELECT *
+            SELECT id
             FROM opplysning
-            WHERE fjernet = true
-            ORDER BY opprettet DESC;
+            INNER JOIN opplysninger_opplysning op ON opplysning.id = op.opplysning_id
+            WHERE fjernet = TRUE AND op.opplysninger_id = :opplysninger_id
+            ORDER BY op.opplysninger_id, opprettet DESC;
             """.trimIndent()
+
         val opplysninger =
-            tx.run(
+            kandidater
+                .onEach { kandidat ->
+                    this.run(
+                        queryOf(
+                            query,
+                            mapOf("opplysninger_id" to kandidat.opplysningerId),
+                        ).map { row ->
+                            kandidat.leggTil(
+                                row.uuid("id"),
+                            )
+                        }.asList,
+                    )
+                }
+        logger.info {
+            val antallOpplysinger: Int =
+                kandidater
+                    .map {
+                        it.opplysninger().size
+                    }.reduce { acc, i -> acc + i }
+            "Fant ${kandidater.size} opplysningsett for behandlinger ${kandidater.map {
+                it.behandlingId
+            }} som inneholder $antallOpplysinger opplysninger som er fjernet og som skal slettes"
+        }
+        return opplysninger
+    }
+
+    private fun Session.hentOpplysningerIder(antall: Int): List<Kandidat> {
+        //language=PostgreSQL
+        val test =
+            """
+            SELECT DISTINCT (op.opplysninger_id) AS opplysinger_id, b.behandling_id
+            FROM opplysning
+                INNER JOIN opplysninger_opplysning op ON opplysning.id = op.opplysning_id
+                LEFT OUTER JOIN behandling_opplysninger b ON b.opplysninger_id = op.opplysninger_id
+            WHERE fjernet = TRUE AND op.opplysninger_id != '01932f46-c4d3-755e-a4da-c572945a93b5'
+            LIMIT :antall;
+            """.trimIndent()
+
+        val opplysningerIder =
+            this.run(
                 queryOf(
-                    query,
-                    mapOf("fjernet" to true),
+                    test,
+                    mapOf("antall" to antall),
                 ).map { row ->
-                    row.uuid("id")
+                    Kandidat(
+                        row.uuidOrNull("behandling_id"),
+                        row.uuid("opplysinger_id"),
+                    )
                 }.asList,
             )
-        logger.info { "Fant ${opplysninger.size} opplysninger som er fjernet og som skal slettes" }
-        return opplysninger
+        return opplysningerIder
     }
 
     private fun slettErstatteAv(opplysningId: UUID) =

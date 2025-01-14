@@ -61,7 +61,9 @@ object SamordingUtenforFolketrygden {
     val dagsatsSamordnetUtenforFolketrygden = Opplysningstype.somBeløp("Dagsats uten barnetillegg samordnet")
 
     val regelsett =
-        Regelsett("§ 4-26. Samordning med ytelser utenfor folketrygden") {
+        Regelsett(
+            folketrygden.hjemmel(4, 26, "Samordning med ytelser utenfor folketrygden", "4-26 Samordning utenfor folketrygden"),
+        ) {
             regel(andreYtelser) { innhentes }
 
             regel(pensjonFraOffentligTjenestepensjonsordning) { oppslag(prøvingsdato) { false } }
@@ -104,7 +106,7 @@ object SamordingUtenforFolketrygden {
 
             regel(dagsatsSamordnetUtenforFolketrygden) { divisjon(samordnetUkessats, arbeidsdagerPerUke) }
 
-            regel(skalSamordnesUtenforFolketrygden) {
+            utfall(skalSamordnesUtenforFolketrygden) {
                 enAv(
                     andreYtelser,
                     pensjonFraOffentligTjenestepensjonsordning,

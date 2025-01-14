@@ -1,0 +1,2 @@
+CREATE INDEX idx_opplysninger_opplysning_id ON opplysninger_opplysning (opplysning_id);
+CREATE INDEX idx_opplysninger_opplysninger_id ON opplysninger_opplysning (opplysninger_id);

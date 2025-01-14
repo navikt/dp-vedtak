@@ -7,6 +7,8 @@ import no.nav.dagpenger.behandling.api.models.AvklaringDTO
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.BehandlingOpplysningerDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
+import no.nav.dagpenger.behandling.api.models.HjemmelDTO
+import no.nav.dagpenger.behandling.api.models.LovkildeDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
@@ -56,7 +58,15 @@ private val logger = KotlinLogging.logger { }
 
 internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
     withLoggingContext("behandlingId" to this.behandlingId.toString()) {
-        val opplysningliste = this.opplysninger().finnAlle()
+        val opplysninger = this.opplysninger().finnAlle().toSet()
+        val avklaringer = avklaringer().toSet()
+        val spesifikkeAvklaringskoder =
+            behandler.regelverk.regelsett
+                .asSequence()
+                .flatMap { it.avklaringer() }
+                .toSet()
+        val generelleAvklaringer = avklaringer.filterNot { it.kode in spesifikkeAvklaringskoder }
+
         BehandlingDTO(
             behandlingId = this.behandlingId,
             tilstand =
@@ -71,35 +81,60 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
                     Behandling.TilstandType.TilGodkjenning -> BehandlingDTO.Tilstand.TilGodkjenning
                     Behandling.TilstandType.TilBeslutning -> BehandlingDTO.Tilstand.TilBeslutning
                 },
-            vilkår = behandler.regelverk.regelsettAvType(RegelsettType.Vilkår).map { it.tilRegelsettDTO(opplysningliste) },
-            fastsettelser = behandler.regelverk.regelsettAvType(RegelsettType.Fastsettelse).map { it.tilRegelsettDTO(opplysningliste) },
+            vilkår =
+                behandler.regelverk
+                    .regelsettAvType(RegelsettType.Vilkår)
+                    .map { it.tilRegelsettDTO(opplysninger, avklaringer) }
+                    .sortedBy { it.hjemmel.paragraf.toInt() },
+            fastsettelser =
+                behandler.regelverk
+                    .regelsettAvType(RegelsettType.Fastsettelse)
+                    .map { it.tilRegelsettDTO(opplysninger, avklaringer) }
+                    .sortedBy { it.hjemmel.paragraf.toInt() },
             kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
-            avklaringer =
-                this
-                    .avklaringer()
-                    .map { avklaring ->
-                        avklaring.tilAvklaringDTO()
-                    }.also {
-                        logger.info { "Mapper '${it.size}' (alle) avklaringer til AvklaringDTO " }
-                    },
-            opplysninger =
-                this.opplysninger().finnAlle().map { opplysning ->
-                    opplysning.tilOpplysningDTO()
-                },
+            avklaringer = generelleAvklaringer.map { it.tilAvklaringDTO() },
+            opplysninger = opplysninger.map { it.tilOpplysningDTO() },
         )
     }
 
-private fun Regelsett.tilRegelsettDTO(opplysninger: List<Opplysning<*>>): RegelsettDTO {
+private fun Regelsett.tilRegelsettDTO(
+    opplysninger: Set<Opplysning<*>>,
+    avklaringer: Set<Avklaring>,
+): RegelsettDTO {
     val produserer = opplysninger.filter { opplysning -> opplysning.opplysningstype in produserer }
+    val avklaringskoder = avklaringer()
+    val egneAvklaringer = avklaringer.filter { it.kode in avklaringskoder }
+
+    val opplysningMedUtfall = opplysninger.singleOrNull { it.opplysningstype == utfall }
+    var status = tilStatus(opplysningMedUtfall?.verdi as Boolean?)
+
+    if (egneAvklaringer.any { it.måAvklares() }) {
+        status = RegelsettDTO.Status.HarAvklaring
+    }
 
     return RegelsettDTO(
-        navn,
-        avklaringer = emptyList(),
-        opplysninger =
-            produserer.map { opplysning ->
-                opplysning.tilOpplysningDTO()
-            },
+        navn = hjemmel.kortnavn,
+        hjemmel =
+            HjemmelDTO(
+                kilde = LovkildeDTO(hjemmel.kilde.navn, hjemmel.kilde.kortnavn),
+                kapittel = hjemmel.kapittel.toString(),
+                paragraf = hjemmel.paragraf.toString(),
+                tittel = hjemmel.toString(),
+            ),
+        avklaringer = egneAvklaringer.map { it.tilAvklaringDTO() },
+        opplysningIder = produserer.map { opplysning -> opplysning.id },
+        status = status,
     )
+}
+
+private fun tilStatus(utfall: Boolean?): RegelsettDTO.Status {
+    if (utfall == null) return RegelsettDTO.Status.Info
+
+    return if (utfall) {
+        RegelsettDTO.Status.Oppfylt
+    } else {
+        RegelsettDTO.Status.IkkeOppfylt
+    }
 }
 
 internal fun Behandling.tilBehandlingOpplysningerDTO(): BehandlingOpplysningerDTO =

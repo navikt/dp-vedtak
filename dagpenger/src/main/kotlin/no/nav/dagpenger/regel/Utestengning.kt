@@ -11,8 +11,10 @@ object Utestengning {
     val oppfyllerKravetTilIkkeUtestengt = Opplysningstype.somBoolsk("Oppfyller krav til ikke utestengt")
 
     val regelsett =
-        Regelsett("§ 4-28. Utestengning") {
+        Regelsett(
+            folketrygden.hjemmel(4, 28, "Utestengning", "4-28 Utestengning"),
+        ) {
             regel(utestengt) { oppslag(prøvingsdato) { false } }
-            regel(oppfyllerKravetTilIkkeUtestengt) { ikke(utestengt) }
+            utfall(oppfyllerKravetTilIkkeUtestengt) { ikke(utestengt) }
         }
 }

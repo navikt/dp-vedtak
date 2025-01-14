@@ -37,7 +37,9 @@ object ReellArbeidssøker {
     val kravTilArbeidssøker = Opplysningstype.somBoolsk("Krav til arbeidssøker")
 
     val regelsett =
-        Regelsett("§ 4-5. Reelle arbeidssøkere") {
+        Regelsett(
+            folketrygden.hjemmel(4, 5, "Reelle arbeidssøkere", "4-5 Reell arbeidssøker"),
+        ) {
             regel(kanJobbeDeltid) { innhentes }
             regel(kanJobbeHvorSomHelst) { innhentes }
             regel(erArbeidsfør) { innhentes }
@@ -51,7 +53,7 @@ object ReellArbeidssøker {
             regel(oppfyllerKravTilArbeidsfør) { enAv(erArbeidsfør) }
             regel(oppfyllerKravetTilEthvertArbeid) { enAv(villigTilEthvertArbeid) }
 
-            regel(kravTilArbeidssøker) {
+            utfall(kravTilArbeidssøker) {
                 alle(
                     oppfyllerKravTilArbeidssøker,
                     oppfyllerKravTilMobilitet,

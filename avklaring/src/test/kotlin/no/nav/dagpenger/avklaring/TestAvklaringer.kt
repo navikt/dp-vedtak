@@ -1,5 +1,7 @@
 package no.nav.dagpenger.avklaring
 
+import no.nav.dagpenger.opplysning.Avklaringkode
+
 object TestAvklaringer {
     val ArbeidIEØS =
         Avklaringkode(

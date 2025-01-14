@@ -2,6 +2,7 @@ package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.førsteArbeidsdag
 import no.nav.dagpenger.opplysning.regel.dato.sisteAvsluttendeKalenderMåned
@@ -23,7 +24,10 @@ object Opptjeningstid {
     val sisteAvsluttendendeKalenderMåned = Opplysningstype.somDato("Siste avsluttende kalendermåned".id(SisteAvsluttendeKalenderMåned))
 
     val regelsett =
-        Regelsett("Opptjeningsperiode") {
+        Regelsett(
+            aOpplynsingsLoven.hjemmel(1, 2, "Frist for levering av opplysninger", "Opptjeningsperiode"),
+            RegelsettType.Fastsettelse,
+        ) {
             regel(pliktigRapporteringsfrist) { oppslag(prøvingsdato) { Aordningen.rapporteringsfrist(it) } }
             regel(justertRapporteringsfrist) { førsteArbeidsdag(pliktigRapporteringsfrist) }
             regel(sisteAvsluttendendeKalenderMåned) { sisteAvsluttendeKalenderMåned(prøvingsdato, justertRapporteringsfrist) }

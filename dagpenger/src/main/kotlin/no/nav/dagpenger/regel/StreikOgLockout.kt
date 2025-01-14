@@ -16,9 +16,11 @@ object StreikOgLockout {
     val ikkeStreikEllerLockout = Opplysningstype.somBoolsk("Er medlemmet ikke påvirket av streik eller lock-out?")
 
     val regelsett =
-        Regelsett("§ 4-22. Bortfall ved streik og lock-out").apply {
+        Regelsett(
+            folketrygden.hjemmel(4, 22, "Bortfall ved streik og lock-out", "4-22 Streik og lock-out"),
+        ).apply {
             regel(deltarIStreikOgLockout) { oppslag(prøvingsdato) { false } }
             regel(sammeBedriftOgPåvirket) { oppslag(prøvingsdato) { false } }
-            regel(ikkeStreikEllerLockout) { ingenAv(deltarIStreikOgLockout, sammeBedriftOgPåvirket) }
+            utfall(ikkeStreikEllerLockout) { ingenAv(deltarIStreikOgLockout, sammeBedriftOgPåvirket) }
         }
 }

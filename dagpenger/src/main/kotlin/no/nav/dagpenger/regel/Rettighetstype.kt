@@ -2,6 +2,7 @@ package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.ingenAv
@@ -26,7 +27,10 @@ object Rettighetstype {
     val rettighetstype = Opplysningstype.somBoolsk("Rettighetstype".id("Rettighetstype"))
 
     val regelsett =
-        Regelsett("Rettighetstype") {
+        Regelsett(
+            folketrygden.hjemmel(0, 0, "Rettighetstype", "Rettighetstype"),
+            RegelsettType.Fastsettelse,
+        ) {
             regel(ordinærArbeid) { innhentes }
             regel(permittering) { innhentes }
             regel(lønnsgaranti) { innhentes }

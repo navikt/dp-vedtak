@@ -432,6 +432,7 @@ components:
         - vilkår
         - fastsettelser
         - avklaringer
+        - opplysninger
       properties:
         behandlingId:
           type: string
@@ -501,7 +502,7 @@ components:
           type: string
           format: uuid
         kode:
-          type: string
+          $ref: '#/components/schemas/AvklaringKode'
         tittel:
           type: string
         beskrivelse:
@@ -534,26 +535,63 @@ components:
       type: string
       format: uuid
 
+    AvklaringKode:
+      type: string
+
     Regelsett:
       type: object
       required:
         - navn
+        - hjemmel
         - avklaringer
         - opplysninger
       properties:
         navn:
+          description: Kort navn som beskriver regelsettet
           type: string
+        hjemmel:
+          description: Hvilken hjemmel er regelsettet basert på
+          $ref: '#/components/schemas/Hjemmel'
         status:
           type: string
           enum: [ "Oppfylt", "HarAvklaring", "IkkeOppfylt", "Info" ]
         avklaringer:
           type: array
+          description: Hvilke avklaringer som skal vises i dette regelsettet
           items:
             $ref: '#/components/schemas/Avklaring'
-        opplysninger:
+        opplysningIder:
           type: array
           items:
-            $ref: '#/components/schemas/Opplysning'
+            $ref: '#/components/schemas/OpplysningsId'
+
+    Hjemmel:
+      type: object
+      required:
+        - kilde
+        - kapittel
+        - paragraf
+      properties:
+        kilde:
+          description: Lov, forskrift, eller rundskriv
+          $ref: '#/components/schemas/Lovkilde'
+        kapittel:
+          type: string
+        paragraf:
+          type: string
+        tittel:
+          type: string
+
+    Lovkilde:
+      type: object
+      required:
+        - navn
+        - kortnavn
+      properties:
+        navn:
+          type: string
+        kortnavn:
+          type: string
 
     Opplysning:
       type: object

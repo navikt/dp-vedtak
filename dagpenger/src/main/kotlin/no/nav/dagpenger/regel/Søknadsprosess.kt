@@ -53,7 +53,6 @@ class Søknadsprosess : Forretningsprosess {
             listOf(
                 Alderskrav.kravTilAlder,
                 FulleYtelser.ikkeFulleYtelser,
-                Medlemskap.oppfyllerMedlemskap,
                 Meldeplikt.registrertPåSøknadstidspunktet,
                 minsteinntektEllerVerneplikt,
                 Opphold.oppfyllerKravet,

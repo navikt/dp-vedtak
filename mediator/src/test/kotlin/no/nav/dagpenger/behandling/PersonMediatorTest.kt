@@ -19,7 +19,6 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import no.nav.dagpenger.avklaring.Avklaring
-import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.konfigurasjon.skruAvFeatures
 import no.nav.dagpenger.behandling.mediator.BehovMediator
@@ -33,6 +32,7 @@ import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostg
 import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepositoryPostgres
+import no.nav.dagpenger.behandling.mediator.repository.VaktmesterPostgresRepo
 import no.nav.dagpenger.behandling.mediator.toMap
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderOpprettelse
@@ -44,6 +44,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.AvklaringKvittertHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
+import no.nav.dagpenger.opplysning.Avklaringkode
 import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.regel.Behov.AndreØkonomiskeYtelser
 import no.nav.dagpenger.regel.Behov.Barnetillegg
@@ -521,6 +522,7 @@ internal class PersonMediatorTest {
     @Test
     fun `endring av prøvingsdato`() {
         withMigratedDb {
+            val vaktmester = VaktmesterPostgresRepo()
             val testPerson =
                 TestPerson(
                     ident,
@@ -614,6 +616,10 @@ internal class PersonMediatorTest {
             withClue("Skal kun ha opplysninger nødvendig for avslag") {
                 godkjennOpplysninger("avslag")
             }
+
+            // Sletter opplysninger som ikke lenger er relevante
+            val slettedeOpplysninger = vaktmester.slettOpplysninger()
+            slettedeOpplysninger.shouldNotBeEmpty()
         }
     }
 

@@ -19,9 +19,6 @@ import no.nav.dagpenger.regel.Behov.Pleiepenger
 import no.nav.dagpenger.regel.Behov.Svangerskapspenger
 import no.nav.dagpenger.regel.Behov.Sykepenger
 import no.nav.dagpenger.regel.Behov.Uføre
-import no.nav.dagpenger.regel.Samordning.samordnetDagsats
-import no.nav.dagpenger.regel.Samordning.skalSamordnes
-import no.nav.dagpenger.regel.Samordning.utfallEtterSamordning
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsEtterNittiProsent
@@ -60,7 +57,12 @@ object Samordning {
 
     val regelsett =
         Regelsett(
-            "§ 4-25. Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon",
+            folketrygden.hjemmel(
+                kapittel = 4,
+                paragraf = 25,
+                tittel = "Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon",
+                kortnavn = "4-25 Samordning reduserte ytelser",
+            ),
         ) {
             regel(sykepenger) { innhentMed(prøvingsdato) }
             regel(pleiepenger) { innhentMed(prøvingsdato) }
@@ -99,7 +101,7 @@ object Samordning {
 
             regel(utfallEtterSamordning) { enAv(kanUtbetale, harBarnetillegg) }
 
-            regel(skalSamordnes) {
+            utfall(skalSamordnes) {
                 enAv(
                     sykepenger,
                     pleiepenger,

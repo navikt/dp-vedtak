@@ -52,7 +52,9 @@ object TapAvArbeidsinntektOgArbeidstid {
     val kravTilTapAvArbeidsinntektOgArbeidstid = Opplysningstype.somBoolsk("Krav til tap av arbeidsinntekt og arbeidstid")
 
     val regelsett =
-        Regelsett("§ 4-3. Krav til tap av arbeidsinntekt og arbeidstid") {
+        Regelsett(
+            folketrygden.hjemmel(4, 3, "Krav til tap av arbeidsinntekt og arbeidstid", "4-3 Tap av arbeidsinntekt og arbeidstid"),
+        ) {
             regel(ønsketArbeidstid) { innhentMed(søknadIdOpplysningstype) }
 
             regel(tapAvArbeid) { oppslag(prøvingsdato) { true } } // TODO: Satt til true for testing av innvilgelse
@@ -93,7 +95,7 @@ object TapAvArbeidsinntektOgArbeidstid {
 
             regel(beregningsregel) { enAv(beregningsregel6mnd, beregningsregel12mnd, beregningsregel36mnd) }
 
-            regel(kravTilTapAvArbeidsinntektOgArbeidstid) {
+            utfall(kravTilTapAvArbeidsinntektOgArbeidstid) {
                 alle(kravTilTapAvArbeidsinntekt, kravTilTaptArbeidstid, beregningsregel, kravTilMinstTaptArbeidstid)
             }
         }
