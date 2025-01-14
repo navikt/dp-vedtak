@@ -546,6 +546,10 @@ components:
         - opplysninger
       properties:
         navn:
+          description: Kort navn som beskriver regelsettet
+          type: string
+        hjemmel:
+          description: Hvilken hjemmel er regelsettet basert på
           type: string
         status:
           type: string

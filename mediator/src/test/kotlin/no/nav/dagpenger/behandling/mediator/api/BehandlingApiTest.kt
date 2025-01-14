@@ -268,7 +268,7 @@ internal class BehandlingApiTest {
             behandlingDto.opplysninger.all { it.redigerbar } shouldBe false
             behandlingDto.avklaringer.shouldNotBeEmpty()
 
-            with(behandlingDto.vilkår.single { it.navn == "§ 4-4. Krav til minsteinntekt" }) {
+            with(behandlingDto.vilkår.single { it.navn == "4-4 Minsteinntekt" }) {
                 avklaringer shouldHaveSize 1
                 avklaringer.single().kode shouldBe "InntektNesteKalendermåned"
             }

@@ -61,7 +61,11 @@ object Dagpengegrunnlag {
     internal val bruktBeregningsregel = Opplysningstype.somTekst("Brukt beregningsregel")
 
     val regelsett =
-        Regelsett("§ 4-11. Dagpengegrunnlag", Fastsettelse) {
+        Regelsett(
+            "4-11 Dagpengegrunnlag",
+            "§ 4-11. Dagpengegrunnlag",
+            Fastsettelse,
+        ) {
             regel(antallÅrI36Måneder) { oppslag(prøvingsdato) { 3.0 } }
             regel(faktorForMaksgrense) { oppslag(prøvingsdato) { 6.0 } }
             regel(maksgrenseForGrunnlag) { multiplikasjon(grunnbeløpForDagpengeGrunnlag, faktorForMaksgrense) }

@@ -27,7 +27,11 @@ object VernepliktFastsetting {
     val grunnlagForVernepliktErGunstigst = Opplysningstype.somBoolsk("Grunnlaget for verneplikt er høyere enn dagpengegrunnlaget")
 
     val regelsett =
-        Regelsett("§ 4-19. Dagpenger etter avtjent verneplikt", RegelsettType.Fastsettelse) {
+        Regelsett(
+            "4-19 Dagpenger ved verneplikt",
+            "§ 4-19. Dagpenger etter avtjent verneplikt",
+            RegelsettType.Fastsettelse,
+        ) {
             regel(antallG) { oppslag(prøvingsdato) { 3.0 } }
             regel(vernepliktGrunnlag) { multiplikasjon(grunnbeløpForDagpengeGrunnlag, antallG) }
             regel(vernepliktPeriode) { oppslag(prøvingsdato) { 26 } }

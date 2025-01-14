@@ -24,7 +24,11 @@ object Opptjeningstid {
     val sisteAvsluttendendeKalenderMåned = Opplysningstype.somDato("Siste avsluttende kalendermåned".id(SisteAvsluttendeKalenderMåned))
 
     val regelsett =
-        Regelsett("Opptjeningsperiode", RegelsettType.Fastsettelse) {
+        Regelsett(
+            "Opptjeningsperiode",
+            "A-opplysningsloven § 4. Frist for levering av opplysninger",
+            RegelsettType.Fastsettelse,
+        ) {
             regel(pliktigRapporteringsfrist) { oppslag(prøvingsdato) { Aordningen.rapporteringsfrist(it) } }
             regel(justertRapporteringsfrist) { førsteArbeidsdag(pliktigRapporteringsfrist) }
             regel(sisteAvsluttendendeKalenderMåned) { sisteAvsluttendeKalenderMåned(prøvingsdato, justertRapporteringsfrist) }

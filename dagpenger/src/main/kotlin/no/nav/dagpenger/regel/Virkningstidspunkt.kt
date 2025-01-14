@@ -12,7 +12,10 @@ object Virkningstidspunkt {
     val dagensDato = Opplysningstype.somDato("Dagens dato")
 
     val regelsett =
-        Regelsett("Dagpengeforskriften § 3A-1. Søknadstidspunkt").apply {
+        Regelsett(
+            "3A-1 Søknadstidspunkt",
+            "Dagpengeforskriften § 3A-1. Søknadstidspunkt",
+        ).apply {
             regel(dagensDato) { finnDagensDato }
             regel(virkningstidspunkt) { fraOgMed(KravPåDagpenger.kravPåDagpenger) }
         }

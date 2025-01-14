@@ -37,7 +37,10 @@ object ReellArbeidssøker {
     val kravTilArbeidssøker = Opplysningstype.somBoolsk("Krav til arbeidssøker")
 
     val regelsett =
-        Regelsett("§ 4-5. Reelle arbeidssøkere") {
+        Regelsett(
+            "4-5 Reell arbeidssøker",
+            "§ 4-5. Reelle arbeidssøkere",
+        ) {
             regel(kanJobbeDeltid) { innhentes }
             regel(kanJobbeHvorSomHelst) { innhentes }
             regel(erArbeidsfør) { innhentes }

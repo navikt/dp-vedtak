@@ -43,7 +43,10 @@ object Utdanning {
     val kravTilUtdanning = Opplysningstype.somBoolsk("Krav til utdanning eller opplæring")
 
     val regelsett =
-        Regelsett("§ 4-6. Dagpenger under utdanning, opplæring, etablering av egen virksomhet m.v.") {
+        Regelsett(
+            "4-6 Utdanning og etablering",
+            "§ 4-6. Dagpenger under utdanning, opplæring, etablering av egen virksomhet m.v.",
+        ) {
             regel(tarUtdanning) { innhentMed() }
 
             // TODO: Legg til regler for å om kravet til utdanning skal vurderes

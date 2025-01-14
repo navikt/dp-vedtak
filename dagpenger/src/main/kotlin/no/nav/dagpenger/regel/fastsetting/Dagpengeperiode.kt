@@ -39,7 +39,11 @@ object Dagpengeperiode {
     private val ingenOrdinærPeriode = Opplysningstype.somHeltall("Stønadsuker når kravet til minste arbeidsinntekt ikke er oppfylt")
 
     val regelsett =
-        Regelsett("§ 4-15. Antall stønadsuker (stønadsperiode)", RegelsettType.Fastsettelse) {
+        Regelsett(
+            "4-15 Periode",
+            "§ 4-15. Antall stønadsuker (stønadsperiode)",
+            RegelsettType.Fastsettelse,
+        ) {
             regel(kortPeriode) { oppslag(prøvingsdato) { 52 } }
             regel(langPeriode) { oppslag(prøvingsdato) { 104 } }
             regel(terskelFaktor12) { oppslag(prøvingsdato) { 2.0 } }

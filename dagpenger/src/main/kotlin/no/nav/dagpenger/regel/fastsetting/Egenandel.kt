@@ -13,7 +13,11 @@ object Egenandel {
     private val faktor = Opplysningstype.somDesimaltall("Antall dagsats for egenandel")
 
     val regelsett =
-        Regelsett("§ 4-9. Egenandel", RegelsettType.Fastsettelse) {
+        Regelsett(
+            "4-9 Egenandel",
+            "§ 4-9. Egenandel",
+            RegelsettType.Fastsettelse,
+        ) {
             regel(faktor) { oppslag(prøvingsdato) { 3.0 } }
             regel(egenandel) { multiplikasjon(sats, faktor) }
         }

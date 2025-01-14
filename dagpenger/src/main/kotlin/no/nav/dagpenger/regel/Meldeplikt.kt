@@ -14,7 +14,10 @@ object Meldeplikt {
     val registrertPåSøknadstidspunktet = Opplysningstype.somBoolsk("Registrert som arbeidssøker på søknadstidspunktet")
 
     val regelsett =
-        Regelsett("§ 4-8. Meldeplikt og møteplikt") {
+        Regelsett(
+            "4-8 Meldeplikt",
+            "§ 4-8. Meldeplikt og møteplikt",
+        ) {
             regel(registrertArbeidssøker) { innhentMed(prøvingsdato) }
             utfall(registrertPåSøknadstidspunktet) { erSann(registrertArbeidssøker) }
         }

@@ -64,7 +64,11 @@ object DagpengenesStørrelse {
     val harSamordnet = Opplysningstype.somBoolsk("Har samordnet")
 
     val regelsett =
-        Regelsett("§ 4-12. Dagpengenes størrelse", Fastsettelse) {
+        Regelsett(
+            "4-12 Sats",
+            "§ 4-12. Dagpengenes størrelse",
+            Fastsettelse,
+        ) {
             regel(barn) { innhentMed(søknadIdOpplysningstype) }
             regel(antallBarn) { antallAv(barn) { kvalifiserer } }
 

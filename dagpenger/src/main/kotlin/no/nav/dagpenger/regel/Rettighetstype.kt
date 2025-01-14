@@ -27,7 +27,11 @@ object Rettighetstype {
     val rettighetstype = Opplysningstype.somBoolsk("Rettighetstype".id("Rettighetstype"))
 
     val regelsett =
-        Regelsett("Rettighetstype", RegelsettType.Fastsettelse) {
+        Regelsett(
+            "Rettighetstype",
+            "Rettighetstype",
+            RegelsettType.Fastsettelse,
+        ) {
             regel(ordinærArbeid) { innhentes }
             regel(permittering) { innhentes }
             regel(lønnsgaranti) { innhentes }

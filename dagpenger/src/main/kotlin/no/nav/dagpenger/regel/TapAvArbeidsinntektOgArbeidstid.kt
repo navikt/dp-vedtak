@@ -52,7 +52,10 @@ object TapAvArbeidsinntektOgArbeidstid {
     val kravTilTapAvArbeidsinntektOgArbeidstid = Opplysningstype.somBoolsk("Krav til tap av arbeidsinntekt og arbeidstid")
 
     val regelsett =
-        Regelsett("§ 4-3. Krav til tap av arbeidsinntekt og arbeidstid") {
+        Regelsett(
+            "4-3 Tap av arbeidsinntekt og arbeidstid",
+            "§ 4-3. Krav til tap av arbeidsinntekt og arbeidstid",
+        ) {
             regel(ønsketArbeidstid) { innhentMed(søknadIdOpplysningstype) }
 
             regel(tapAvArbeid) { oppslag(prøvingsdato) { true } } // TODO: Satt til true for testing av innvilgelse

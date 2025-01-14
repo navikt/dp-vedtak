@@ -14,7 +14,10 @@ object Verneplikt {
         Opplysningstype.somBoolsk("Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste")
 
     val regelsett =
-        Regelsett("§ 4-19. Dagpenger etter avtjent verneplikt") {
+        Regelsett(
+            "4-19 Verneplikt",
+            "§ 4-19. Dagpenger etter avtjent verneplikt",
+        ) {
             regel(avtjentVerneplikt) { innhentMed(søknadIdOpplysningstype) }
             utfall(oppfyllerKravetTilVerneplikt) { erSann(avtjentVerneplikt) }
         }
