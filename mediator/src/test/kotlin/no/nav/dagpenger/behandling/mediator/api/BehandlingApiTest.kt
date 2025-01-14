@@ -24,7 +24,6 @@ import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import no.nav.dagpenger.avklaring.Avklaring
-import no.nav.dagpenger.avklaring.Avklaringkode
 import no.nav.dagpenger.behandling.TestOpplysningstyper
 import no.nav.dagpenger.behandling.api.models.AvklaringDTO
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
@@ -47,6 +46,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.RekjørBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
+import no.nav.dagpenger.opplysning.Avklaringkode
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Saksbehandler
@@ -253,7 +253,7 @@ internal class BehandlingApiTest {
             val behandlingDto = shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), BehandlingDTO::class.java) }
             behandlingDto.behandlingId shouldBe behandlingId
             behandlingDto.vilkår.shouldNotBeEmpty()
-            behandlingDto.vilkår.all { it.opplysninger.all { it.redigerbar } } shouldBe false
+            behandlingDto.opplysninger.all { it.redigerbar } shouldBe false
             behandlingDto.avklaringer.shouldNotBeEmpty()
 
             val aktivAvklaring = behandling.aktiveAvklaringer().first()

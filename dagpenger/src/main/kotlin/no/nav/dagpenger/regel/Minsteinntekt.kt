@@ -97,6 +97,10 @@ object Minsteinntekt {
             regel(over36mndTerskel) { størreEnnEllerLik(inntekt36, `36mndTerskel`) }
 
             regel(minsteinntekt) { enAv(over12mndTerskel, over36mndTerskel) }
+
+            avklaring(Avklaringspunkter.SvangerskapsrelaterteSykepenger)
+            avklaring(Avklaringspunkter.InntektNesteKalendermåned)
+            avklaring(Avklaringspunkter.ØnskerEtterRapporteringsfrist)
         }
 
     private fun grunnbeløpFor(it: LocalDate) =

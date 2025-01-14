@@ -1,6 +1,6 @@
 package no.nav.dagpenger.regel
 
-import no.nav.dagpenger.avklaring.Avklaringkode
+import no.nav.dagpenger.opplysning.Avklaringkode
 
 object Avklaringspunkter {
     val YtelserUtenforFolketrygden: Avklaringkode =

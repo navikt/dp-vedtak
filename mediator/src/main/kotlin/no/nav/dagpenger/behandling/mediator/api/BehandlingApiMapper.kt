@@ -94,11 +94,8 @@ private fun Regelsett.tilRegelsettDTO(opplysninger: List<Opplysning<*>>): Regels
 
     return RegelsettDTO(
         navn,
-        avklaringer = emptyList(),
-        opplysninger =
-            produserer.map { opplysning ->
-                opplysning.tilOpplysningDTO()
-            },
+        avklaringer = avklaringer().map { it.kode },
+        opplysninger = produserer.map { opplysning -> opplysning.id },
     )
 }
 
