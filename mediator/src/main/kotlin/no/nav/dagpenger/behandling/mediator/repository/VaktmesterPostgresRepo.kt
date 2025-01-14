@@ -20,7 +20,7 @@ internal class VaktmesterPostgresRepo {
     fun slettOpplysninger(antall: Int = 1): List<UUID> {
         val slettet = mutableListOf<UUID>()
         using(sessionOf(dataSource)) { session ->
-            val kandidater = hentAlleOpplysningerSomErFjernet(session, antall)
+            val kandidater = session.hentOpplysningerSomErFjernet(antall)
             kandidater.forEach { kandidat ->
                 session.transaction { tx ->
                     tx.medLås(låsenøkkel) {
@@ -63,11 +63,8 @@ internal class VaktmesterPostgresRepo {
         fun opplysninger() = opplysninger.toList()
     }
 
-    private fun hentAlleOpplysningerSomErFjernet(
-        session: Session,
-        antall: Int,
-    ): List<Kandidat> {
-        val kandidater = hentOpplysningerIder(session, antall)
+    private fun Session.hentOpplysningerSomErFjernet(antall: Int): List<Kandidat> {
+        val kandidater = this.hentOpplysningerIder(antall)
 
         //language=PostgreSQL
         val query =
@@ -82,7 +79,7 @@ internal class VaktmesterPostgresRepo {
         val opplysninger =
             kandidater
                 .onEach { kandidat ->
-                    session.run(
+                    this.run(
                         queryOf(
                             query,
                             mapOf("opplysninger_id" to kandidat.opplysningerId),
@@ -106,10 +103,7 @@ internal class VaktmesterPostgresRepo {
         return opplysninger
     }
 
-    private fun hentOpplysningerIder(
-        session: Session,
-        antall: Int,
-    ): List<Kandidat> {
+    private fun Session.hentOpplysningerIder(antall: Int): List<Kandidat> {
         //language=PostgreSQL
         val test =
             """
@@ -122,7 +116,7 @@ internal class VaktmesterPostgresRepo {
             """.trimIndent()
 
         val opplysningerIder =
-            session.run(
+            this.run(
                 queryOf(
                     test,
                     mapOf("antall" to antall),
