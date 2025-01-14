@@ -19,7 +19,7 @@ class Regelsett(
     private val regler: MutableMap<Opplysningstype<*>, TemporalCollection<Regel<*>>> = mutableMapOf()
     private val avklaringer: MutableSet<Avklaringkode> = mutableSetOf()
     private var _utfall: Opplysningstype<Boolean>? = null
-    val utfall = _utfall
+    val utfall get() = _utfall
 
     init {
         block()
