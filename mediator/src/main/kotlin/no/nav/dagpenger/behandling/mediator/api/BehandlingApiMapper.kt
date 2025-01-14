@@ -82,11 +82,13 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
             vilkår =
                 behandler.regelverk
                     .regelsettAvType(RegelsettType.Vilkår)
-                    .map { it.tilRegelsettDTO(opplysninger, avklaringer) },
+                    .map { it.tilRegelsettDTO(opplysninger, avklaringer) }
+                    .sortedBy { it.navn },
             fastsettelser =
                 behandler.regelverk
                     .regelsettAvType(RegelsettType.Fastsettelse)
-                    .map { it.tilRegelsettDTO(opplysninger, avklaringer) },
+                    .map { it.tilRegelsettDTO(opplysninger, avklaringer) }
+                    .sortedBy { it.navn },
             kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
             avklaringer = generelleAvklaringer.map { it.tilAvklaringDTO() },
             opplysninger = opplysninger.map { it.tilOpplysningDTO() },
