@@ -13,8 +13,12 @@ object FulleYtelser {
 
     val regelsett =
         Regelsett(
-            "4-24 Fulle ytelser",
-            "§ 4-24. Medlem som har fulle ytelser etter folketrygdloven eller avtalefestet pensjon",
+            folketrygden.hjemmel(
+                4,
+                24,
+                "Medlem som har fulle ytelser etter folketrygdloven eller avtalefestet pensjon",
+                "4-24 Fulle ytelser",
+            ),
         ) {
             utfall(ikkeFulleYtelser) { oppslag(prøvingsdato) { true } }
         }

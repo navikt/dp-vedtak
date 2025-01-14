@@ -38,8 +38,7 @@ object ReellArbeidssøker {
 
     val regelsett =
         Regelsett(
-            "4-5 Reell arbeidssøker",
-            "§ 4-5. Reelle arbeidssøkere",
+            folketrygden.hjemmel(4, 5, "Reelle arbeidssøkere", "4-5 Reell arbeidssøker"),
         ) {
             regel(kanJobbeDeltid) { innhentes }
             regel(kanJobbeHvorSomHelst) { innhentes }

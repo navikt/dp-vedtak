@@ -28,8 +28,7 @@ object Rettighetstype {
 
     val regelsett =
         Regelsett(
-            "Rettighetstype",
-            "Rettighetstype",
+            folketrygden.hjemmel(0, 0, "Rettighetstype", "Rettighetstype"),
             RegelsettType.Fastsettelse,
         ) {
             regel(ordinærArbeid) { innhentes }

@@ -25,8 +25,7 @@ object Opptjeningstid {
 
     val regelsett =
         Regelsett(
-            "Opptjeningsperiode",
-            "A-opplysningsloven § 4. Frist for levering av opplysninger",
+            aOpplynsingsLoven.hjemmel(1, 2, "Frist for levering av opplysninger", "Opptjeningsperiode"),
             RegelsettType.Fastsettelse,
         ) {
             regel(pliktigRapporteringsfrist) { oppslag(prøvingsdato) { Aordningen.rapporteringsfrist(it) } }

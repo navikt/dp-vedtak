@@ -44,8 +44,12 @@ object Utdanning {
 
     val regelsett =
         Regelsett(
-            "4-6 Utdanning og etablering",
-            "§ 4-6. Dagpenger under utdanning, opplæring, etablering av egen virksomhet m.v.",
+            folketrygden.hjemmel(
+                kapittel = 4,
+                paragraf = 6,
+                tittel = "Dagpenger under utdanning, opplæring, etablering av egen virksomhet m.v",
+                kortnavn = "4-6 Utdanning og etablering",
+            ),
         ) {
             regel(tarUtdanning) { innhentMed() }
 

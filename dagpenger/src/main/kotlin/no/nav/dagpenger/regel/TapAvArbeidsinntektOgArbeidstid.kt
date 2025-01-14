@@ -53,8 +53,7 @@ object TapAvArbeidsinntektOgArbeidstid {
 
     val regelsett =
         Regelsett(
-            "4-3 Tap av arbeidsinntekt og arbeidstid",
-            "§ 4-3. Krav til tap av arbeidsinntekt og arbeidstid",
+            folketrygden.hjemmel(4, 3, "Krav til tap av arbeidsinntekt og arbeidstid", "4-3 Tap av arbeidsinntekt og arbeidstid"),
         ) {
             regel(ønsketArbeidstid) { innhentMed(søknadIdOpplysningstype) }
 

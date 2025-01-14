@@ -17,8 +17,7 @@ object StreikOgLockout {
 
     val regelsett =
         Regelsett(
-            "4-22 Streik og lock-out",
-            "§ 4-22. Bortfall ved streik og lock-out",
+            folketrygden.hjemmel(4, 22, "Bortfall ved streik og lock-out", "4-22 Streik og lock-out"),
         ).apply {
             regel(deltarIStreikOgLockout) { oppslag(prøvingsdato) { false } }
             regel(sammeBedriftOgPåvirket) { oppslag(prøvingsdato) { false } }

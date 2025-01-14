@@ -7,6 +7,8 @@ import no.nav.dagpenger.behandling.api.models.AvklaringDTO
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.BehandlingOpplysningerDTO
 import no.nav.dagpenger.behandling.api.models.DataTypeDTO
+import no.nav.dagpenger.behandling.api.models.HjemmelDTO
+import no.nav.dagpenger.behandling.api.models.LovkildeDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
@@ -83,12 +85,12 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
                 behandler.regelverk
                     .regelsettAvType(RegelsettType.Vilkår)
                     .map { it.tilRegelsettDTO(opplysninger, avklaringer) }
-                    .sortedBy { it.navn },
+                    .sortedBy { it.hjemmel.kapittel },
             fastsettelser =
                 behandler.regelverk
                     .regelsettAvType(RegelsettType.Fastsettelse)
                     .map { it.tilRegelsettDTO(opplysninger, avklaringer) }
-                    .sortedBy { it.navn },
+                    .sortedBy { it.hjemmel.kapittel },
             kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
             avklaringer = generelleAvklaringer.map { it.tilAvklaringDTO() },
             opplysninger = opplysninger.map { it.tilOpplysningDTO() },
@@ -111,8 +113,14 @@ private fun Regelsett.tilRegelsettDTO(
     }
 
     return RegelsettDTO(
-        navn = navn,
-        hjemmel = hjemmel,
+        navn = hjemmel.kortnavn,
+        hjemmel =
+            HjemmelDTO(
+                kilde = LovkildeDTO(hjemmel.kilde.navn, hjemmel.kilde.kortnavn),
+                kapittel = hjemmel.kapittel.toString(),
+                paragraf = hjemmel.paragraf.toString(),
+                tittel = hjemmel.toString(),
+            ),
         avklaringer = egneAvklaringer.map { it.tilAvklaringDTO() },
         opplysningIder = produserer.map { opplysning -> opplysning.id },
         status = status,

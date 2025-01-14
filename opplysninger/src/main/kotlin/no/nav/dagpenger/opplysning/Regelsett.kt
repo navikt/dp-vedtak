@@ -9,19 +9,47 @@ enum class RegelsettType {
     Fastsettelse,
 }
 
-class Regelsett(
+data class Lovkilde(
     val navn: String,
-    val hjemmel: String,
+    val kortnavn: String,
+) {
+    fun hjemmel(
+        kapittel: Int,
+        paragraf: Int,
+        tittel: String,
+        kortnavn: String,
+    ) = Hjemmel(this, kapittel, paragraf, tittel, kortnavn)
+
+    override fun toString() = kortnavn
+}
+
+data class Hjemmel(
+    val kilde: Lovkilde,
+    val kapittel: Int,
+    val paragraf: Int,
+    val tittel: String,
+    val kortnavn: String,
+) {
+    override fun toString() = "$kilde § $kapittel-$paragraf. $tittel"
+}
+
+class Regelsett(
+    val hjemmel: Hjemmel,
     val type: RegelsettType,
     block: Regelsett.() -> Unit = {},
 ) {
-    constructor(navn: String, block: Regelsett.() -> Unit = {}) : this(navn, navn, RegelsettType.Vilkår, block)
-    constructor(navn: String, hjemmel: String, block: Regelsett.() -> Unit = {}) : this(navn, hjemmel, RegelsettType.Vilkår, block)
+    constructor(
+        navn: String,
+        block: Regelsett.() -> Unit = {},
+    ) : this(Hjemmel(Lovkilde(navn, navn), 0, 0, navn, navn), RegelsettType.Vilkår, block)
+
+    constructor(hjemmel: Hjemmel, block: Regelsett.() -> Unit = {}) : this(hjemmel, RegelsettType.Vilkår, block)
 
     private val regler: MutableMap<Opplysningstype<*>, TemporalCollection<Regel<*>>> = mutableMapOf()
     private val avklaringer: MutableSet<Avklaringkode> = mutableSetOf()
     private var _utfall: Opplysningstype<Boolean>? = null
     val utfall get() = _utfall
+    val navn = hjemmel.kortnavn
 
     init {
         block()
@@ -72,5 +100,5 @@ class Regelsett(
             .map { it.produserer }
     }
 
-    override fun toString() = "Regelsett(navn=$navn)"
+    override fun toString() = "Regelsett(navn=${hjemmel.kortnavn})"
 }

@@ -24,6 +24,7 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Minsteinntekt.inntektFraSkatt
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagHvisVerneplikt
+import no.nav.dagpenger.regel.folketrygden
 import java.time.LocalDate
 
 object Dagpengegrunnlag {
@@ -62,8 +63,7 @@ object Dagpengegrunnlag {
 
     val regelsett =
         Regelsett(
-            "4-11 Dagpengegrunnlag",
-            "§ 4-11. Dagpengegrunnlag",
+            folketrygden.hjemmel(4, 11, "Dagpengegrunnlag", "4-11 Dagpengegrunnlag"),
             Fastsettelse,
         ) {
             regel(antallÅrI36Måneder) { oppslag(prøvingsdato) { 3.0 } }

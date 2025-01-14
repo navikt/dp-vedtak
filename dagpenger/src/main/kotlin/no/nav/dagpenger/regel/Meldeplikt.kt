@@ -15,8 +15,7 @@ object Meldeplikt {
 
     val regelsett =
         Regelsett(
-            "4-8 Meldeplikt",
-            "§ 4-8. Meldeplikt og møteplikt",
+            folketrygden.hjemmel(4, 8, "Meldeplikt og møteplikt", "4-8 Meldeplikt"),
         ) {
             regel(registrertArbeidssøker) { innhentMed(prøvingsdato) }
             utfall(registrertPåSøknadstidspunktet) { erSann(registrertArbeidssøker) }

@@ -9,6 +9,7 @@ import no.nav.dagpenger.opplysning.regel.dato.leggTilÅr
 import no.nav.dagpenger.opplysning.regel.dato.sisteDagIMåned
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.Alderskrav.sisteDagIMåned
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 
@@ -25,8 +26,7 @@ object Alderskrav {
 
     val regelsett =
         Regelsett(
-            "4-23 Alder",
-            "§ 4-23. Bortfall på grunn av alder",
+            folketrygden.hjemmel(4, 23, "Bortfall på grunn av alder", "4-23 Alder"),
         ) {
             regel(fødselsdato) { innhentes }
             regel(aldersgrense) { oppslag(virkningsdato) { 67 } }

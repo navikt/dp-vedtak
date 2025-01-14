@@ -70,8 +70,7 @@ object Minsteinntekt {
 
     val regelsett =
         Regelsett(
-            "4-4 Minsteinntekt",
-            "§ 4-4. Krav til minsteinntekt",
+            folketrygden.hjemmel(4, 4, "Krav til minsteinntekt", "4-4 Minsteinntekt"),
         ) {
             regel(maksPeriodeLengde) { oppslag(prøvingsdato) { 36 } }
             regel(førsteMånedAvOpptjeningsperiode) { trekkFraMånedTilFørste(sisteAvsluttendendeKalenderMåned, maksPeriodeLengde) }

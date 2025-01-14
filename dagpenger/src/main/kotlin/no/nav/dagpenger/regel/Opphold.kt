@@ -21,8 +21,7 @@ object Opphold {
 
     val regelsett =
         Regelsett(
-            "4-2 Opphold",
-            "§ 4-2. Opphold i Norge",
+            folketrygden.hjemmel(4, 2, "Opphold i Norge", "4-2 Opphold"),
         ) {
             regel(oppholdINorge) { oppslag(prøvingsdato) { true } }
             regel(unntakForOpphold) { oppslag(prøvingsdato) { false } }

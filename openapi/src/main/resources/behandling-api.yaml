@@ -542,6 +542,7 @@ components:
       type: object
       required:
         - navn
+        - hjemmel
         - avklaringer
         - opplysninger
       properties:
@@ -550,7 +551,7 @@ components:
           type: string
         hjemmel:
           description: Hvilken hjemmel er regelsettet basert på
-          type: string
+          $ref: '#/components/schemas/Hjemmel'
         status:
           type: string
           enum: [ "Oppfylt", "HarAvklaring", "IkkeOppfylt", "Info" ]
@@ -563,6 +564,34 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OpplysningsId'
+
+    Hjemmel:
+      type: object
+      required:
+        - kilde
+        - kapittel
+        - paragraf
+      properties:
+        kilde:
+          description: Lov, forskrift, eller rundskriv
+          $ref: '#/components/schemas/Lovkilde'
+        kapittel:
+          type: string
+        paragraf:
+          type: string
+        tittel:
+          type: string
+
+    Lovkilde:
+      type: object
+      required:
+        - navn
+        - kortnavn
+      properties:
+        navn:
+          type: string
+        kortnavn:
+          type: string
 
     Opplysning:
       type: object

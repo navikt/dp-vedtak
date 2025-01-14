@@ -12,6 +12,7 @@ import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.regel.Minsteinntekt
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode.ordinærPeriode
+import no.nav.dagpenger.regel.folketrygden
 
 object Dagpengeperiode {
     val antallStønadsuker = Opplysningstype.somHeltall("Antall stønadsuker")
@@ -40,8 +41,7 @@ object Dagpengeperiode {
 
     val regelsett =
         Regelsett(
-            "4-15 Periode",
-            "§ 4-15. Antall stønadsuker (stønadsperiode)",
+            folketrygden.hjemmel(4, 15, "Antall stønadsuker (stønadsperiode)", "4-15 Periode"),
             RegelsettType.Fastsettelse,
         ) {
             regel(kortPeriode) { oppslag(prøvingsdato) { 52 } }
