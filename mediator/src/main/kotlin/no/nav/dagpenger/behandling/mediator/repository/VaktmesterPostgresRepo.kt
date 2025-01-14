@@ -92,7 +92,7 @@ internal class VaktmesterPostgresRepo {
                             )
                         }.asList,
                     )
-                }.filter { it.behandlingId.toString() != "01932f46-c4d3-755e-a4da-c572945a93b4" }
+                }
         logger.info {
             val antallOpplysinger: Int =
                 kandidater
@@ -101,7 +101,7 @@ internal class VaktmesterPostgresRepo {
                     }.reduce { acc, i -> acc + i }
             "Fant ${kandidater.size} opplysningsett for behandlinger ${kandidater.map {
                 it.behandlingId
-            }} som inneholder  $antallOpplysinger opplysninger som er fjernet og som skal slettes"
+            }} som inneholder $antallOpplysinger opplysninger som er fjernet og som skal slettes"
         }
         return opplysninger
     }
@@ -117,7 +117,7 @@ internal class VaktmesterPostgresRepo {
             FROM opplysning
                 INNER JOIN opplysninger_opplysning op ON opplysning.id = op.opplysning_id
                 LEFT OUTER JOIN behandling_opplysninger b ON b.opplysninger_id = op.opplysninger_id
-            WHERE fjernet = TRUE
+            WHERE fjernet = TRUE AND op.opplysninger_id != '01932f46-c4d3-755e-a4da-c572945a93b5'
             LIMIT :antall;
             """.trimIndent()
 
