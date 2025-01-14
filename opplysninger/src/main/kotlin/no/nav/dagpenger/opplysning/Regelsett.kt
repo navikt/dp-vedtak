@@ -18,6 +18,8 @@ class Regelsett(
 
     private val regler: MutableMap<Opplysningstype<*>, TemporalCollection<Regel<*>>> = mutableMapOf()
     private val avklaringer: MutableSet<Avklaringkode> = mutableSetOf()
+    private var _utfall: Opplysningstype<Boolean>? = null
+    val utfall = _utfall
 
     init {
         block()
@@ -27,7 +29,15 @@ class Regelsett(
 
     fun avklaring(avklaringkode: Avklaringkode) = avklaringer.add(avklaringkode)
 
-    fun avklaringer() = avklaringer.toList()
+    fun avklaringer() = avklaringer.toSet()
+
+    fun utfall(
+        produserer: Opplysningstype<Boolean>,
+        gjelderFraOgMed: LocalDate = LocalDate.MIN,
+        block: Opplysningstype<Boolean>.() -> Regel<*>,
+    ) = regel(produserer, gjelderFraOgMed, block).also {
+        _utfall = produserer
+    }
 
     fun <T : Comparable<T>> regel(
         produserer: Opplysningstype<T>,

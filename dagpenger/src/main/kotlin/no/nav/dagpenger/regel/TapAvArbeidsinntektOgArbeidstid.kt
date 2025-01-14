@@ -93,7 +93,7 @@ object TapAvArbeidsinntektOgArbeidstid {
 
             regel(beregningsregel) { enAv(beregningsregel6mnd, beregningsregel12mnd, beregningsregel36mnd) }
 
-            regel(kravTilTapAvArbeidsinntektOgArbeidstid) {
+            utfall(kravTilTapAvArbeidsinntektOgArbeidstid) {
                 alle(kravTilTapAvArbeidsinntekt, kravTilTaptArbeidstid, beregningsregel, kravTilMinstTaptArbeidstid)
             }
         }

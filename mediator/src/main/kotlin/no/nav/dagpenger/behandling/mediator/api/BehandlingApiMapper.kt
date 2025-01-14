@@ -100,13 +100,32 @@ private fun Regelsett.tilRegelsettDTO(
     avklaringer: Set<Avklaring>,
 ): RegelsettDTO {
     val produserer = opplysninger.filter { opplysning -> opplysning.opplysningstype in produserer }
-    val egneAvklaringer = avklaringer()
+    val avklaringskoder = avklaringer()
+    val egneAvklaringer = avklaringer.filter { it.kode in avklaringskoder }
+
+    val opplysningMedUtfall = opplysninger.singleOrNull { it.opplysningstype == utfall }
+    var status = tilStatus(opplysningMedUtfall?.verdi as Boolean?)
+
+    if (egneAvklaringer.any { it.måAvklares() }) {
+        status = RegelsettDTO.Status.HarAvklaring
+    }
 
     return RegelsettDTO(
         navn,
-        avklaringer = avklaringer.filter { it.kode in egneAvklaringer }.map { it.tilAvklaringDTO() },
-        opplysninger = produserer.map { opplysning -> opplysning.id },
+        avklaringer = egneAvklaringer.map { it.tilAvklaringDTO() },
+        opplysningIder = produserer.map { opplysning -> opplysning.id },
+        status = status,
     )
+}
+
+private fun tilStatus(utfall: Boolean?): RegelsettDTO.Status {
+    if (utfall == null) return RegelsettDTO.Status.Info
+
+    return if (utfall) {
+        RegelsettDTO.Status.Oppfylt
+    } else {
+        RegelsettDTO.Status.IkkeOppfylt
+    }
 }
 
 internal fun Behandling.tilBehandlingOpplysningerDTO(): BehandlingOpplysningerDTO =
