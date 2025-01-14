@@ -23,13 +23,13 @@ internal class VaktmesterPostgresRepo {
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
                 tx.medLås(låsenøkkel) {
-                    hentAlleOpplysningerSomErFjernet(tx, antall).forEach { kandidater ->
+                    hentAlleOpplysningerSomErFjernet(tx, antall).forEach { kandidat ->
                         withLoggingContext(
-                            "behandlingId" to kandidater.behandlingId.toString(),
-                            "opplysningerId" to kandidater.opplysningerId.toString(),
+                            "behandlingId" to kandidat.behandlingId.toString(),
+                            "opplysningerId" to kandidat.opplysningerId.toString(),
                         ) {
-                            logger.info { "Skal slette ${kandidater.opplysninger().size} opplysninger " }
-                            kandidater.opplysninger().forEach { opplysningId ->
+                            logger.info { "Skal slette ${kandidat.opplysninger().size} opplysninger " }
+                            kandidat.opplysninger().forEach { opplysningId ->
                                 val statements = mutableListOf<BatchStatement>()
                                 statements.add(slettOpplysningVerdi(opplysningId))
                                 statements.add(slettOpplysningUtledet(opplysningId))
@@ -42,7 +42,7 @@ internal class VaktmesterPostgresRepo {
                                 }
                                 slettet.add(opplysningId)
                             }
-                            logger.info { "Slettet ${kandidater.opplysninger().size} opplysninger " }
+                            logger.info { "Slettet ${kandidat.opplysninger().size} opplysninger " }
                         }
                     }
                 }
