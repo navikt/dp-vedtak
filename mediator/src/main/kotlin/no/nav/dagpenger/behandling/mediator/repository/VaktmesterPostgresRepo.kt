@@ -51,7 +51,7 @@ internal class VaktmesterPostgresRepo {
         return slettet
     }
 
-    internal data class Kandidater(
+    internal data class Kandidat(
         val behandlingId: UUID?,
         val opplysningerId: UUID,
         private val opplysninger: MutableList<UUID> = mutableListOf(),
@@ -66,7 +66,7 @@ internal class VaktmesterPostgresRepo {
     private fun hentAlleOpplysningerSomErFjernet(
         session: Session,
         antall: Int,
-    ): List<Kandidater> {
+    ): List<Kandidat> {
         val kandidater = hentOpplysningerIder(session, antall)
 
         //language=PostgreSQL
@@ -92,15 +92,24 @@ internal class VaktmesterPostgresRepo {
                             )
                         }.asList,
                     )
-                }.filterNot { it.behandlingId.toString() == "01932f46-c4d3-755e-a4da-c572945a93b4" }
-        logger.info { "Fant ${kandidater.size} opplysningsett som inneholder opplysninger som er fjernet og som skal slettes" }
+                }.filter { it.behandlingId.toString() != "01932f46-c4d3-755e-a4da-c572945a93b4" }
+        logger.info {
+            val antallOpplysinger: Int =
+                kandidater
+                    .map {
+                        it.opplysninger().size
+                    }.reduce { acc, i -> acc + i }
+            "Fant ${kandidater.size} opplysningsett for behandlinger ${kandidater.map {
+                it.behandlingId
+            }} som inneholder  $antallOpplysinger opplysninger som er fjernet og som skal slettes"
+        }
         return opplysninger
     }
 
     private fun hentOpplysningerIder(
         session: Session,
         antall: Int,
-    ): List<Kandidater> {
+    ): List<Kandidat> {
         //language=PostgreSQL
         val test =
             """
@@ -118,7 +127,7 @@ internal class VaktmesterPostgresRepo {
                     test,
                     mapOf("antall" to antall),
                 ).map { row ->
-                    Kandidater(
+                    Kandidat(
                         row.uuidOrNull("behandling_id"),
                         row.uuid("opplysinger_id"),
                     )
