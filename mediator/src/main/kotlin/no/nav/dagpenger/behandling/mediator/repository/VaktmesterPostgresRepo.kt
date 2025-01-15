@@ -32,7 +32,6 @@ internal class VaktmesterPostgresRepo {
                 "0193aa5c-314b-7b70-bd00-766b012d252f",
                 "019391b4-73e7-7512-847f-73a1f805ab80",
                 "019391c0-d9f5-78d9-8704-02f749bfb17c",
-                "01932f46-c4d3-755e-a4da-c572945a93b5",
             )
     }
 
@@ -130,7 +129,7 @@ internal class VaktmesterPostgresRepo {
             FROM opplysning
                 INNER JOIN opplysninger_opplysning op ON opplysning.id = op.opplysning_id
                 LEFT OUTER JOIN behandling_opplysninger b ON b.opplysninger_id = op.opplysninger_id
-            WHERE fjernet = TRUE AND op.opplysninger_id != ANY(:skip_opplysninger::uuid[])
+            WHERE fjernet = TRUE AND op.opplysninger_id NOT IN (SELECT unnest(:skip_opplysninger::uuid[]))
             LIMIT :antall;
             """.trimIndent()
 
