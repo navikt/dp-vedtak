@@ -498,7 +498,6 @@ components:
         - tittel
         - beskrivelse
         - status
-        - status2
         - maskinelt
         - sistEndret
       properties:
@@ -559,6 +558,8 @@ components:
         hjemmel:
           description: Hvilken hjemmel er regelsettet basert på
           $ref: '#/components/schemas/Hjemmel'
+        relevant:
+          type: boolean
         status:
           type: string
           enum: [ "Oppfylt", "HarAvklaring", "IkkeOppfylt", "Info" ]

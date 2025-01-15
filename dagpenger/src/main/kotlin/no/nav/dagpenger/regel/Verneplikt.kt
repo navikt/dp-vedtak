@@ -6,6 +6,7 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.innhentMed
+import no.nav.dagpenger.regel.KravPåDagpenger.kravPåDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 
 object Verneplikt {
@@ -21,6 +22,16 @@ object Verneplikt {
             utfall(oppfyllerKravetTilVerneplikt) { erSann(avtjentVerneplikt) }
 
             avklaring(Avklaringspunkter.Verneplikt)
+
+            relevantHvis {
+                val harKrav = it.har(kravPåDagpenger) && it.finnOpplysning(kravPåDagpenger).verdi
+
+                if (harKrav) {
+                    it.finnOpplysning(avtjentVerneplikt).verdi == false
+                } else {
+                    true
+                }
+            }
         }
 
     val VernepliktKontroll =

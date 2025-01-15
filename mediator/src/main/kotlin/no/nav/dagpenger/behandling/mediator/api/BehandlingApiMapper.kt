@@ -24,6 +24,7 @@ import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Hypotese
 import no.nav.dagpenger.opplysning.InntektDataType
+import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Redigerbar
@@ -84,12 +85,12 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
             vilkår =
                 behandler.regelverk
                     .regelsettAvType(RegelsettType.Vilkår)
-                    .map { it.tilRegelsettDTO(opplysninger, avklaringer) }
+                    .map { it.tilRegelsettDTO(opplysninger, avklaringer, opplysninger()) }
                     .sortedBy { it.hjemmel.paragraf.toInt() },
             fastsettelser =
                 behandler.regelverk
                     .regelsettAvType(RegelsettType.Fastsettelse)
-                    .map { it.tilRegelsettDTO(opplysninger, avklaringer) }
+                    .map { it.tilRegelsettDTO(opplysninger, avklaringer, opplysninger()) }
                     .sortedBy { it.hjemmel.paragraf.toInt() },
             kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
             avklaringer = generelleAvklaringer.map { it.tilAvklaringDTO() },
@@ -100,6 +101,7 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
 private fun Regelsett.tilRegelsettDTO(
     opplysninger: Set<Opplysning<*>>,
     avklaringer: Set<Avklaring>,
+    lesbarOpplysninger: LesbarOpplysninger,
 ): RegelsettDTO {
     val produserer = opplysninger.filter { opplysning -> opplysning.opplysningstype in produserer }
     val avklaringskoder = avklaringer()
@@ -111,6 +113,8 @@ private fun Regelsett.tilRegelsettDTO(
     if (egneAvklaringer.any { it.måAvklares() }) {
         status = RegelsettDTO.Status.HarAvklaring
     }
+
+    val erRelevant = erRelevant(lesbarOpplysninger)
 
     return RegelsettDTO(
         navn = hjemmel.kortnavn,
@@ -124,6 +128,7 @@ private fun Regelsett.tilRegelsettDTO(
         avklaringer = egneAvklaringer.map { it.tilAvklaringDTO() },
         opplysningIder = produserer.map { opplysning -> opplysning.id },
         status = status,
+        relevant = erRelevant,
     )
 }
 
