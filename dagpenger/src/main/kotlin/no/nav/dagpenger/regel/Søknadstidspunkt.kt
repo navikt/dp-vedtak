@@ -10,7 +10,6 @@ import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.tekstId
 import no.nav.dagpenger.regel.Behov.Søknadsdato
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
-import no.nav.dagpenger.regel.forskriftTilFolketrygden
 
 object Søknadstidspunkt {
     // § 3A-1.Søknadstidspunkt https://lovdata.no/forskrift/1998-09-16-890/§3a-1
