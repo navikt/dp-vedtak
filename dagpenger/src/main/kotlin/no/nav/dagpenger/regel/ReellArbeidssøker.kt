@@ -61,6 +61,8 @@ object ReellArbeidssøker {
                     oppfyllerKravetTilEthvertArbeid,
                 )
             }
+
+            avklaring(ReellArbeidssøkerUnntak)
         }
 
     val ReellArbeidssøkerKontroll =
