@@ -18,7 +18,7 @@ internal object SlettFjernetOpplysninger {
             period = 5.minutes.inWholeMilliseconds,
             action = {
                 try {
-                    if (System.getenv("NAIS_CLUSTER_NAME") == "skrudd-av") {
+                    if (System.getenv("NAIS_CLUSTER_NAME") == "dev-gcp") {
                         vaktmesterRepository.slettOpplysninger(antall = 10)
                     } else {
                         logger.info { "Sletting av fjernet opplysninger er skrudd av" }
