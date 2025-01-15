@@ -108,12 +108,13 @@ internal class VaktmesterPostgresRepo {
                         }.asList,
                     )
                 }
+        val antallOpplysinger: Int =
+            kandidater
+                .takeIf { it.isNotEmpty() }
+                ?.map {
+                    it.opplysninger().size
+                }?.reduce { acc, i -> acc + i } ?: 0
         logger.info {
-            val antallOpplysinger: Int =
-                kandidater
-                    .map {
-                        it.opplysninger().size
-                    }.reduce { acc, i -> acc + i }
             "Fant ${kandidater.size} opplysningsett for behandlinger ${kandidater.map {
                 it.behandlingId
             }} som inneholder $antallOpplysinger opplysninger som er fjernet og som skal slettes"
