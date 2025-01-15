@@ -178,28 +178,30 @@ internal fun Behandling.tilBehandlingOpplysningerDTO(): BehandlingOpplysningerDT
     }
 
 internal fun Avklaring.tilAvklaringDTO(): AvklaringDTO {
-    val sisteEndring =
-        this.endringer.last().takeIf {
+    val sisteEndring = this.endringer.last()
+    val saksbehandlerEndring =
+        sisteEndring.takeIf {
             it is Avklaring.Endring.Avklart && it.avklartAv is Saksbehandlerkilde
         } as Avklaring.Endring.Avklart?
     val saksbehandler =
-        (sisteEndring?.avklartAv as Saksbehandlerkilde?)?.let {
-            SaksbehandlerDTO(it.saksbehandler.ident)
-        }
+        (saksbehandlerEndring?.avklartAv as Saksbehandlerkilde?)
+            ?.let { SaksbehandlerDTO(it.saksbehandler.ident) }
+
     return AvklaringDTO(
         id = this.id,
         kode = this.kode.kode,
         tittel = this.kode.tittel,
         beskrivelse = this.kode.beskrivelse,
         status =
-            when (this.endringer.last()) {
-                is Avklaring.Endring.Avbrutt -> AvklaringDTO.Status.Løst
-                is Avklaring.Endring.Avklart -> AvklaringDTO.Status.Kvittert
+            when (sisteEndring) {
+                is Avklaring.Endring.Avbrutt -> AvklaringDTO.Status.Avbrutt
+                is Avklaring.Endring.Avklart -> AvklaringDTO.Status.Avklart
                 is Avklaring.Endring.UnderBehandling -> AvklaringDTO.Status.Åpen
             },
-        maskinelt = this.endringer.last() !is Avklaring.Endring.UnderBehandling && saksbehandler == null,
-        begrunnelse = sisteEndring?.begrunnelse,
-        kvittertAv = saksbehandler,
+        maskinelt = sisteEndring !is Avklaring.Endring.UnderBehandling && saksbehandler == null,
+        begrunnelse = saksbehandlerEndring?.begrunnelse,
+        avklartAv = saksbehandler,
+        sistEndret = sisteEndring.endret,
     )
 }
 
