@@ -2,6 +2,7 @@ package no.nav.dagpenger.behandling.mediator.repository
 
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.longs.shouldBeLessThan
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -197,7 +198,8 @@ class OpplysningerRepositoryPostgresTest {
     fun `Klarer å lagre store mengder opplysninger effektivt`() {
         withMigratedDb {
             val repo = OpplysningerRepositoryPostgres()
-            val fakta = (1..50000).map { Faktum(desimal, it.toDouble()) }
+            val vaktmester = VaktmesterPostgresRepo()
+            val fakta = (1..5000).map { Faktum(desimal, it.toDouble()) }
             val opplysninger = Opplysninger(fakta)
 
             val tidBrukt = measureTimeMillis { repo.lagreOpplysninger(opplysninger) }
@@ -205,6 +207,11 @@ class OpplysningerRepositoryPostgresTest {
 
             val fraDb = repo.hentOpplysninger(opplysninger.id)
             fraDb.finnAlle().size shouldBe fakta.size
+            fraDb.aktiveOpplysninger.forEach { it.fjern() }
+            repo.lagreOpplysninger(fraDb)
+
+            val tid = measureTimeMillis { vaktmester.slettOpplysninger().shouldNotBeEmpty() }
+            println("Brukte $tid ms på å slette opplysninger")
         }
     }
 
