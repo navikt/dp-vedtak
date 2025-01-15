@@ -112,6 +112,10 @@ object Samordning {
                     svangerskapspenger,
                 )
             }
+
+            relevantHvis {
+                it.har(skalSamordnes) && it.finnOpplysning(skalSamordnes).verdi
+            }
         }
 
     val ønsketResultat = listOf(samordnetDagsats, skalSamordnes, utfallEtterSamordning)
