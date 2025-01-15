@@ -498,6 +498,7 @@ components:
         - tittel
         - beskrivelse
         - status
+        - status2
         - maskinelt
         - sistEndret
       properties:
@@ -511,6 +512,9 @@ components:
         beskrivelse:
           type: string
         status:
+          type: string
+          enum: [ "Åpen", "Løst", "Kvittert" ]
+        status2:
           type: string
           enum: [ "Åpen", "Avbrutt", "Avklart" ]
         maskinelt:

@@ -194,9 +194,15 @@ internal fun Avklaring.tilAvklaringDTO(): AvklaringDTO {
         beskrivelse = this.kode.beskrivelse,
         status =
             when (sisteEndring) {
-                is Avklaring.Endring.Avbrutt -> AvklaringDTO.Status.Avbrutt
-                is Avklaring.Endring.Avklart -> AvklaringDTO.Status.Avklart
+                is Avklaring.Endring.Avbrutt -> AvklaringDTO.Status.Løst
+                is Avklaring.Endring.Avklart -> AvklaringDTO.Status.Kvittert
                 is Avklaring.Endring.UnderBehandling -> AvklaringDTO.Status.Åpen
+            },
+        status2 =
+            when (sisteEndring) {
+                is Avklaring.Endring.Avbrutt -> AvklaringDTO.Status2.Avbrutt
+                is Avklaring.Endring.Avklart -> AvklaringDTO.Status2.Avklart
+                is Avklaring.Endring.UnderBehandling -> AvklaringDTO.Status2.Åpen
             },
         maskinelt = sisteEndring !is Avklaring.Endring.UnderBehandling && saksbehandler == null,
         begrunnelse = saksbehandlerEndring?.begrunnelse,
