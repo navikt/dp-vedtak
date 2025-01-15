@@ -27,7 +27,7 @@ object Verneplikt {
                 val harKrav = it.har(kravPåDagpenger) && it.finnOpplysning(kravPåDagpenger).verdi
 
                 if (harKrav) {
-                    it.finnOpplysning(avtjentVerneplikt).verdi == false
+                    it.finnOpplysning(oppfyllerKravetTilVerneplikt).verdi == false
                 } else {
                     true
                 }
