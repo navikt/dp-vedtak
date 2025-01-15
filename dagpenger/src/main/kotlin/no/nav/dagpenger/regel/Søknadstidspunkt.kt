@@ -10,6 +10,7 @@ import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.tekstId
 import no.nav.dagpenger.regel.Behov.Søknadsdato
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
+import no.nav.dagpenger.regel.forskriftTilFolketrygden
 
 object Søknadstidspunkt {
     // § 3A-1.Søknadstidspunkt https://lovdata.no/forskrift/1998-09-16-890/§3a-1
@@ -23,7 +24,9 @@ object Søknadstidspunkt {
     val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")
 
     val regelsett =
-        Regelsett("Søknadstidspunkt").apply {
+        Regelsett(
+            forskriftTilFolketrygden.hjemmel(3, 1, "Søknadstidspunkt", "§3A-1 Søknadstidspunkt"),
+        ).apply {
             regel(søknadIdOpplysningstype) { innhentes }
             regel(søknadsdato) { innhentMed(søknadIdOpplysningstype) }
             regel(ønsketdato) { innhentMed(søknadIdOpplysningstype) }
