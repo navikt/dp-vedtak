@@ -33,6 +33,7 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
+import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import org.postgresql.util.PGobject
@@ -47,6 +48,10 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 Navnebytte(
                     fra = Opplysningstype.somDato("Søknadstidspunkt".id("Virkningsdato")),
                     til = søknadstidspunkt,
+                ),
+                Navnebytte(
+                    fra = Opplysningstype.somDato("Prøvingsdato".id("Virkningsdato")),
+                    til = prøvingsdato,
                 ),
                 Navnebytte(
                     fra = Opplysningstype.somDato("Søknadstidspunkt".id("Virkningstidspunkt")),

@@ -18,8 +18,7 @@ object Søknadstidspunkt {
 
     val søknadstidspunkt = Opplysningstype.somDato("Søknadstidspunkt".tekstId("opplysning.soknadstidspunkt"))
 
-    // Har Virkningsdato som ID for å være kompatibel med behovløsere
-    val prøvingsdato = Opplysningstype.somDato("Prøvingsdato".id("Virkningsdato"))
+    val prøvingsdato = Opplysningstype.somDato("Prøvingsdato".id("Prøvingsdato"))
     val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")
 
     val regelsett =

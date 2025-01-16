@@ -9,14 +9,12 @@ import no.nav.dagpenger.opplysning.regel.dato.leggTilÅr
 import no.nav.dagpenger.opplysning.regel.dato.sisteDagIMåned
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.regel.Alderskrav.sisteDagIMåned
-import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 
 object Alderskrav {
     val fødselsdato = Opplysningstype.somDato("Fødselsdato".id("Fødselsdato", "opplysning.fodselsdato"))
 
-    private val virkningsdato = prøvingsdato
+    private val prøvingsdato = Søknadstidspunkt.prøvingsdato
 
     private val aldersgrense = Opplysningstype.somHeltall("Aldersgrense")
     private val sisteMåned = Opplysningstype.somDato("Dato søker når maks alder")
@@ -29,11 +27,11 @@ object Alderskrav {
             folketrygden.hjemmel(4, 23, "Bortfall på grunn av alder", "4-23 Alder"),
         ) {
             regel(fødselsdato) { innhentes }
-            regel(aldersgrense) { oppslag(virkningsdato) { 67 } }
+            regel(aldersgrense) { oppslag(prøvingsdato) { 67 } }
             regel(sisteMåned) { leggTilÅr(fødselsdato, aldersgrense) }
             regel(sisteDagIMåned) { sisteDagIMåned(sisteMåned) }
 
-            utfall(kravTilAlder) { førEllerLik(virkningsdato, sisteDagIMåned) }
+            utfall(kravTilAlder) { førEllerLik(prøvingsdato, sisteDagIMåned) }
         }
 
     val MuligGjenopptakKontroll =

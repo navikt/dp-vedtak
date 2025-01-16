@@ -543,17 +543,16 @@ internal class PersonMediatorTest {
 
             godkjennOpplysninger("innvilgelse")
 
-            // Setter ny prøvingsdato (som kalles Virkningsdato for bakoverkompabilitet med behovsløsere)
             val nyPrøvingsdato = 22.juli(2024)
             testPerson.prøvingsdato = nyPrøvingsdato
-            testPerson.endreOpplysning("Virkningsdato", nyPrøvingsdato)
+            testPerson.endreOpplysning("Prøvingsdato", nyPrøvingsdato)
 
             rapid.harBehov("RegistrertSomArbeidssøker") {
-                medDato("Virkningsdato") shouldBe nyPrøvingsdato
+                medDato("Prøvingsdato") shouldBe nyPrøvingsdato
             }
 
             rapid.harBehov(Inntekt) {
-                medDato("Virkningsdato") shouldBe nyPrøvingsdato
+                medDato("Prøvingsdato") shouldBe nyPrøvingsdato
             }
             testPerson.løsBehov(
                 RegistrertSomArbeidssøker,
@@ -579,18 +578,17 @@ internal class PersonMediatorTest {
                 godkjennOpplysninger("innvilgelse-igjen")
             }
 
-            // Setter ny prøvingsdato (som kalles Virkningsdato for bakoverkompabilitet med behovsløsere)
             val endaNyerePrøvingsdato = 22.august(2024)
             testPerson.prøvingsdato = endaNyerePrøvingsdato
             testPerson.InntektSiste12Mnd = 0
-            testPerson.endreOpplysning("Virkningsdato", endaNyerePrøvingsdato)
+            testPerson.endreOpplysning("Prøvingsdato", endaNyerePrøvingsdato)
 
             rapid.harBehov("RegistrertSomArbeidssøker") {
-                medDato("Virkningsdato") shouldBe endaNyerePrøvingsdato
+                medDato("Prøvingsdato") shouldBe endaNyerePrøvingsdato
             }
 
             rapid.harBehov(Inntekt) {
-                medDato("Virkningsdato") shouldBe endaNyerePrøvingsdato
+                medDato("Prøvingsdato") shouldBe endaNyerePrøvingsdato
             }
 
             testPerson.løsBehov(
@@ -730,8 +728,7 @@ internal class PersonMediatorTest {
          * Fastsetter opptjeningsperiode og inntekt. Pt brukes opptjeningsperiode generert fra dp-inntekt
          */
         rapid.harBehov(Inntekt) {
-            // TODO: Dette er nå prøvingsdato og bør bytte navn overalt
-            medDato("Virkningsdato") shouldBe maxOf(testPerson.søknadsdato, testPerson.ønskerFraDato)
+            medDato("Prøvingsdato") shouldBe maxOf(testPerson.søknadsdato, testPerson.ønskerFraDato)
             /**
              * TODO: Vi må ta vekk opptjeningsperiode fra dp-inntekt og skive om måten dp-inntekt lagrer inntekt på beregningsdato
              * medDato(OpptjeningsperiodeFraOgMed) shouldBe 1.april(2018)
