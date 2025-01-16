@@ -1,5 +1,6 @@
 package no.nav.dagpenger.regel.fastsetting
 
+import no.nav.dagpenger.opplysning.Opplysningsformål.Mellomsteg
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.RegelsettType
@@ -19,12 +20,16 @@ import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktPeriod
 import no.nav.dagpenger.regel.folketrygden
 
 object VernepliktFastsetting {
-    private val antallG = Opplysningstype.somDesimaltall("Antall G som gis som grunnlag ved verneplikt")
-    internal val vernepliktGrunnlag = Opplysningstype.somBeløp("Grunnlag for gis ved verneplikt")
-    val vernepliktPeriode = Opplysningstype.somHeltall("Periode som gis ved verneplikt")
-    internal val vernepliktFastsattVanligArbeidstid = Opplysningstype.somDesimaltall("Fastsatt vanlig arbeidstid for verneplikt")
+    private val antallG = Opplysningstype.somDesimaltall("Antall G som gis som grunnlag ved verneplikt", Mellomsteg)
+    internal val vernepliktGrunnlag = Opplysningstype.somBeløp("Grunnlag for gis ved verneplikt", Mellomsteg)
+    val vernepliktPeriode = Opplysningstype.somHeltall("Periode som gis ved verneplikt", Mellomsteg)
+    internal val vernepliktFastsattVanligArbeidstid =
+        Opplysningstype.somDesimaltall(
+            "Fastsatt vanlig arbeidstid for verneplikt",
+            Mellomsteg,
+        )
     internal val grunnlagHvisVerneplikt = Opplysningstype.somBeløp("Grunnlag for verneplikt hvis kravet er oppfylt")
-    internal val grunnlagUtenVerneplikt = Opplysningstype.somBeløp("Grunnlag for verneplikt hvis kravet ikke er oppfylt")
+    internal val grunnlagUtenVerneplikt = Opplysningstype.somBeløp("Grunnlag for verneplikt hvis kravet ikke er oppfylt", Mellomsteg)
     val grunnlagForVernepliktErGunstigst = Opplysningstype.somBoolsk("Grunnlaget for verneplikt er høyere enn dagpengegrunnlaget")
 
     val regelsett =
