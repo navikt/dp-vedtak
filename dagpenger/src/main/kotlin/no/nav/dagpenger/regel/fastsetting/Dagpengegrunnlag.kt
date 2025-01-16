@@ -35,7 +35,7 @@ object Dagpengegrunnlag {
 
     val grunnbeløpForDagpengeGrunnlag = Opplysningstype.somBeløp("Grunnbeløp for grunnlag", Mellomsteg)
     private val faktorForMaksgrense = Opplysningstype.somDesimaltall("Faktor for maksimalt mulig grunnlag", Mellomsteg)
-    private val maksgrenseForGrunnlag = Opplysningstype.somBeløp("6 ganger grunnbeløp")
+    private val maksgrenseForGrunnlag = Opplysningstype.somBeløp("6 ganger grunnbeløp", Mellomsteg)
 
     private val antallÅrI36Måneder = Opplysningstype.somDesimaltall("Antall år i 36 måneder", Mellomsteg)
 
