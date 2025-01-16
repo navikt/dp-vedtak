@@ -31,5 +31,4 @@ val RegelverkDagpenger =
         Utestengning.regelsett,
         Verneplikt.regelsett,
         VernepliktFastsetting.regelsett,
-        Virkningstidspunkt.regelsett,
     )
