@@ -108,7 +108,7 @@ object SamordingUtenforFolketrygden {
 
             regel(dagsatsSamordnetUtenforFolketrygden) { divisjon(samordnetUkessats, arbeidsdagerPerUke) }
 
-            utfall(skalSamordnesUtenforFolketrygden) {
+            regel(skalSamordnesUtenforFolketrygden) {
                 enAv(
                     andreYtelser,
                     pensjonFraOffentligTjenestepensjonsordning,
