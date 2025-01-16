@@ -44,6 +44,10 @@ object VernepliktFastsetting {
 
             // Kriteriet om vi skal bruke grunnlag og FVA fra verneplikt eller dagpengegrunnlag
             regel(grunnlagForVernepliktErGunstigst) { størreEnn(grunnlagHvisVerneplikt, dagpengegrunnlag) }
+
+            relevantHvis {
+                it.har(oppfyllerKravetTilVerneplikt) && it.finnOpplysning(oppfyllerKravetTilVerneplikt).verdi
+            }
         }
 
     val ønsketResultat =
