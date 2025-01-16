@@ -56,12 +56,15 @@ object Dagpengegrunnlag {
     private val avkortetperiode2 = Opplysningstype.somBeløp("Avkortet inntektperiode 2", Mellomsteg)
     private val avkortetperiode3 = Opplysningstype.somBeløp("Avkortet inntektperiode 3", Mellomsteg)
 
-    internal val bruktBeregningsregel = Opplysningstype.somTekst("Brukt beregningsregel")
+    val harAvkortetPeriode1 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 1", Mellomsteg)
+    val harAvkortetPeriode2 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 2", Mellomsteg)
+    val harAvkortetPeriode3 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 3", Mellomsteg)
+    val harAvkortet = Opplysningstype.somBoolsk("Har avkortet grunnlag")
 
-    val uavrundetGrunnlag = Opplysningstype.somBeløp("Uavrundet grunnlag")
+    internal val bruktBeregningsregel = Opplysningstype.somTekst("Brukt beregningsregel")
+    val uavrundetGrunnlag = Opplysningstype.somBeløp("Uavrundet grunnlag", Mellomsteg)
     val dagpengegrunnlag = Opplysningstype.somBeløp("Grunnlag ved ordinære dagpenger")
     val grunnlag = Opplysningstype.somBeløp("Grunnlag")
-    val harAvkortet = Opplysningstype.somBoolsk("Har avkortet grunnlag")
     val uavkortet12mnd = Opplysningstype.somBeløp("Uavkortet grunnlag siste 12 mnd", Legacy)
     val uavkortet36mnd = Opplysningstype.somBeløp("Uavkortet grunnlag siste 36 mnd", Legacy)
 
@@ -130,10 +133,6 @@ object Dagpengegrunnlag {
 
             // Velg høyeste grunnlag av ordinært grunnlag og verneplikt
             regel(grunnlag) { høyesteAv(dagpengegrunnlag, grunnlagHvisVerneplikt) }
-
-            val harAvkortetPeriode1 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 1")
-            val harAvkortetPeriode2 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 2")
-            val harAvkortetPeriode3 = Opplysningstype.somBoolsk("Har avkortet grunnlaget i periode 3")
 
             // Fastsett om grunnlaget er avkortet
             regel(harAvkortetPeriode1) { størreEnn(inntektperiode1, maksgrenseForGrunnlag) }
