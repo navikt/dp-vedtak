@@ -128,7 +128,7 @@ private fun Regelsett.tilRegelsettDTO(
         avklaringer = egneAvklaringer.map { it.tilAvklaringDTO() },
         opplysningIder = produserer.map { opplysning -> opplysning.id },
         status = status,
-        relevant = erRelevant,
+        relevantForVedtak = erRelevant,
     )
 }
 

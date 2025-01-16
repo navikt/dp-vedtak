@@ -558,7 +558,7 @@ components:
         hjemmel:
           description: Hvilken hjemmel er regelsettet basert på
           $ref: '#/components/schemas/Hjemmel'
-        relevant:
+        relevantForVedtak:
           type: boolean
         status:
           type: string
