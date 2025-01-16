@@ -73,6 +73,7 @@ private val autorativKildeForDetViPåEkteMenerErVilkår: Map<Opplysningstype<Boo
         StreikOgLockout.ikkeStreikEllerLockout to kapittel4(22),
         TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntekt to kapittel4(3),
         TapAvArbeidsinntektOgArbeidstid.kravTilTaptArbeidstid to kapittel4(3),
+        TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeidsinntektOgArbeidstid to kapittel4(3),
         Utdanning.kravTilUtdanning to kapittel4(6),
         Utestengning.oppfyllerKravetTilIkkeUtestengt to kapittel4(28),
     )
