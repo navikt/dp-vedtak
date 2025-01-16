@@ -5,6 +5,8 @@ import no.nav.dagpenger.grunnbelop.Regel
 import no.nav.dagpenger.grunnbelop.forDato
 import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
 import no.nav.dagpenger.inntekt.v1.InntektKlasse
+import no.nav.dagpenger.opplysning.Opplysningsformål.Mellomsteg
+import no.nav.dagpenger.opplysning.Opplysningsformål.Register
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
@@ -23,14 +25,15 @@ import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
 import no.nav.dagpenger.regel.Opptjeningstid.justertRapporteringsfrist
+import no.nav.dagpenger.regel.Opptjeningstid.sisteAvsluttendendeKalenderMåned
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import java.time.LocalDate
 
 object Minsteinntekt {
-    private val `12mndTerskelFaktor` = Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd arbeidsinntekt")
-    private val `36mndTerskelFaktor` = Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd arbeidsinntekt")
+    private val `12mndTerskelFaktor` = Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd arbeidsinntekt", Mellomsteg)
+    private val `36mndTerskelFaktor` = Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd arbeidsinntekt", Mellomsteg)
     val inntekt12 =
         Opplysningstype.somBeløp(
             "Arbeidsinntekt siste 12 mnd".id(
@@ -45,23 +48,24 @@ object Minsteinntekt {
                 tekstId = "opplysning.arbeidsinntekt-siste-36-mnd",
             ),
         )
-    val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp")
+    val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp", Mellomsteg)
 
-    private val sisteAvsluttendendeKalenderMåned = Opptjeningstid.sisteAvsluttendendeKalenderMåned
-    internal val inntektFraSkatt = Opplysningstype.somInntekt("Inntektsopplysninger".id(Inntekt))
-    private val tellendeInntekt = Opplysningstype.somInntekt("Brutto arbeidsinntekt")
+    internal val inntektFraSkatt = Opplysningstype.somInntekt("Inntektsopplysninger".id(Inntekt), Register)
+    private val tellendeInntekt = Opplysningstype.somInntekt("Brutto arbeidsinntekt", Mellomsteg)
 
-    private val maksPeriodeLengde = Opplysningstype.somHeltall("Maks lengde på opptjeningsperiode")
+    private val maksPeriodeLengde = Opplysningstype.somHeltall("Maks lengde på opptjeningsperiode", Mellomsteg)
     private val førsteMånedAvOpptjeningsperiode =
         Opplysningstype.somDato("Første måned av opptjeningsperiode".id(OpptjeningsperiodeFraOgMed))
 
     private val `12mndTerskel` =
         Opplysningstype.somBeløp(
             "Inntektskrav for siste 12 mnd".tekstId("opplysning.arbeidsinntekt-er-over-kravet-for-siste-12-mnd"),
+            Mellomsteg,
         )
     private val `36mndTerskel` =
         Opplysningstype.somBeløp(
             "Inntektskrav for siste 36 mnd".tekstId("opplysning.arbeidsinntekt-er-over-kravet-for-siste-36-mnd"),
+            Mellomsteg,
         )
     private val over12mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 12 mnd")
     private val over36mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 36 mnd")
