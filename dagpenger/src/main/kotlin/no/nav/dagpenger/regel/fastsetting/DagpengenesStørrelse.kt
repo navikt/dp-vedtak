@@ -57,7 +57,7 @@ object DagpengenesStørrelse {
             Mellomsteg,
         )
     val barnetillegg = Opplysningstype.somBeløp("Sum av barnetillegg", Mellomsteg)
-    private val dagsatsMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg før samordning")
+    private val dagsatsMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg før samordning", Mellomsteg)
     private val nittiProsent = Opplysningstype.somDesimaltall("90% av grunnlag for dagpenger", Mellomsteg)
     private val antallArbeidsdagerPerÅr = Opplysningstype.somHeltall("Antall arbeidsdager per år", Mellomsteg)
     private val maksGrunnlag = Opplysningstype.somBeløp("Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget", Mellomsteg)
