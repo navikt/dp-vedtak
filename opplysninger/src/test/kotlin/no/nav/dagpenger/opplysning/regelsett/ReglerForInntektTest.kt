@@ -19,7 +19,7 @@ internal object ReglerForInntektTest {
     val inntekt36 = Opplysningstype.somBeløp("Inntekt siste 36 mnd".id("inntekt36mnd"))
     val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp")
 
-    private val virkningsdato = Virkningsdato.virkningsdato
+    private val prøvingsdato = Prøvingsdato.prøvingsdato
     private val antattRapporteringsFrist = Opplysningstype.somDato("Antatt rapporteringsfrist")
     private val reellRapporteringsFrist = Opplysningstype.somDato("Reell rapporteringsfrist")
     private val sisteAvsluttendeKalenderMåned = Opplysningstype.somDato("Siste avsluttendende kalendermåned")
@@ -35,13 +35,13 @@ internal object ReglerForInntektTest {
 
     val regelsett =
         Regelsett("Minsteinntekt") {
-            regel(antattRapporteringsFrist) { oppslag(virkningsdato) { LocalDate.of(it.year, it.month, 5) } }
+            regel(antattRapporteringsFrist) { oppslag(prøvingsdato) { LocalDate.of(it.year, it.month, 5) } }
             regel(reellRapporteringsFrist) { førsteArbeidsdag(antattRapporteringsFrist) }
-            regel(antallG12mndInntekt) { oppslag(virkningsdato) { 1.5 } }
-            regel(antallG36mndInntekt) { oppslag(virkningsdato) { 3.0 } }
-            regel(inntekt12) { innhentMed(virkningsdato) }
-            regel(inntekt36) { innhentMed(virkningsdato) }
-            regel(grunnbeløp) { oppslag(virkningsdato) { Grunnbeløp.finnFor(it) } }
+            regel(antallG12mndInntekt) { oppslag(prøvingsdato) { 1.5 } }
+            regel(antallG36mndInntekt) { oppslag(prøvingsdato) { 3.0 } }
+            regel(inntekt12) { innhentMed(prøvingsdato) }
+            regel(inntekt36) { innhentMed(prøvingsdato) }
+            regel(grunnbeløp) { oppslag(prøvingsdato) { Grunnbeløp.finnFor(it) } }
             regel(nedreTerskel) { multiplikasjon(grunnbeløp, antallG12mndInntekt) }
             regel(øvreTerskel) { multiplikasjon(grunnbeløp, antallG36mndInntekt) }
             regel(overNedreTerskel) { størreEnnEllerLik(inntekt12, nedreTerskel) }

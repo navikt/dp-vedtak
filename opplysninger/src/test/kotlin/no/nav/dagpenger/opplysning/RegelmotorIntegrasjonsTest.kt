@@ -13,12 +13,12 @@ import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regelsett.Alderskrav
 import no.nav.dagpenger.opplysning.regelsett.Alderskrav.fødselsdato
 import no.nav.dagpenger.opplysning.regelsett.Grunnbeløp
+import no.nav.dagpenger.opplysning.regelsett.Prøvingsdato
+import no.nav.dagpenger.opplysning.regelsett.Prøvingsdato.prøvingsdato
+import no.nav.dagpenger.opplysning.regelsett.Prøvingsdato.sisteDagMedArbeidsplikt
+import no.nav.dagpenger.opplysning.regelsett.Prøvingsdato.sisteDagMedLønn
+import no.nav.dagpenger.opplysning.regelsett.Prøvingsdato.søknadsdato
 import no.nav.dagpenger.opplysning.regelsett.ReglerForInntektTest
-import no.nav.dagpenger.opplysning.regelsett.Virkningsdato
-import no.nav.dagpenger.opplysning.regelsett.Virkningsdato.sisteDagMedArbeidsplikt
-import no.nav.dagpenger.opplysning.regelsett.Virkningsdato.sisteDagMedLønn
-import no.nav.dagpenger.opplysning.regelsett.Virkningsdato.søknadsdato
-import no.nav.dagpenger.opplysning.regelsett.Virkningsdato.virkningsdato
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -48,7 +48,7 @@ class RegelmotorIntegrasjonsTest {
                 regelverksdato,
                 opplysninger,
                 regelsett,
-                Virkningsdato.regelsett,
+                Prøvingsdato.regelsett,
                 Alderskrav.regelsett,
                 ReglerForInntektTest.regelsett,
             )
@@ -68,7 +68,7 @@ class RegelmotorIntegrasjonsTest {
         regelkjøring.evaluer().informasjonsbehov shouldContainAll mapOf(fødselsdato to listOf())
         opplysninger.leggTil(Faktum(fødselsdato, LocalDate.of(1953, 2, 10))).also { regelkjøring.evaluer() }
 
-        val faktiskVirkningsdato = opplysninger.finnOpplysning(virkningsdato)
+        val faktiskVirkningsdato = opplysninger.finnOpplysning(prøvingsdato)
         with(regelkjøring.evaluer().informasjonsbehov) {
             shouldContainAll(
                 mapOf(
@@ -86,7 +86,7 @@ class RegelmotorIntegrasjonsTest {
                     ReglerForInntektTest.inntekt12,
                     Beløp(321321.0),
                     Gyldighetsperiode(9.mai),
-                    utledetAv = Utledning(ReglerForInntektTest.inntekt12.innhentMed(virkningsdato), listOf(faktiskVirkningsdato)),
+                    utledetAv = Utledning(ReglerForInntektTest.inntekt12.innhentMed(prøvingsdato), listOf(faktiskVirkningsdato)),
                 ),
             ).also { regelkjøring.evaluer() }
         opplysninger
@@ -100,7 +100,7 @@ class RegelmotorIntegrasjonsTest {
 
         assertTrue(opplysninger.har(alleVilkår))
 
-        val regelDAG = RegeltreBygger(regelsett, ReglerForInntektTest.regelsett, Virkningsdato.regelsett, Alderskrav.regelsett).dag()
+        val regelDAG = RegeltreBygger(regelsett, ReglerForInntektTest.regelsett, Prøvingsdato.regelsett, Alderskrav.regelsett).dag()
         val mermaidDiagram = MermaidPrinter(regelDAG).toPrint()
         println(mermaidDiagram)
 
@@ -119,7 +119,7 @@ class RegelmotorIntegrasjonsTest {
         assertEquals(setOf(fødselsdato, søknadsdato, sisteDagMedArbeidsplikt, sisteDagMedLønn), mangler)
 
         // Skal kortslutte behovet for de tre underliggende opplysningene
-        opplysninger.leggTil(Faktum(virkningsdato, LocalDate.of(2020, 2, 29)))
+        opplysninger.leggTil(Faktum(prøvingsdato, LocalDate.of(2020, 2, 29)))
         val evaluer = regelkjøring.evaluer()
         assertEquals(setOf(fødselsdato), evaluer.mangler)
 
@@ -306,7 +306,7 @@ private class TestProsess : Forretningsprosess {
     override val regelverk: Regelverk
         get() = TODO("Not yet implemented")
 
-    override fun regelsett(): List<Regelsett> = listOf(Alderskrav.regelsett, Virkningsdato.regelsett)
+    override fun regelsett(): List<Regelsett> = listOf(Alderskrav.regelsett, Prøvingsdato.regelsett)
 
-    override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> = listOf(Alderskrav.vilkår, virkningsdato)
+    override fun ønsketResultat(opplysninger: LesbarOpplysninger): List<Opplysningstype<*>> = listOf(Alderskrav.vilkår, prøvingsdato)
 }
