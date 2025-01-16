@@ -13,6 +13,7 @@ import no.nav.dagpenger.regel.Alderskrav.HattLukkedeSakerSiste8UkerKontroll
 import no.nav.dagpenger.regel.Alderskrav.MuligGjenopptakKontroll
 import no.nav.dagpenger.regel.Alderskrav.Under18Kontroll
 import no.nav.dagpenger.regel.FulleYtelser.FulleYtelserKontrollpunkt
+import no.nav.dagpenger.regel.KravPåDagpenger.VirkningstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.KravPåDagpenger.minsteinntektEllerVerneplikt
 import no.nav.dagpenger.regel.Meldeplikt.IkkeRegistrertSomArbeidsøkerKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.EØSArbeidKontroll
@@ -27,7 +28,6 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.SøknadstidspunktForLangtFramITi
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.TapArbeidstidBeregningsregelKontroll
 import no.nav.dagpenger.regel.Verneplikt.VernepliktKontroll
-import no.nav.dagpenger.regel.Virkningstidspunkt.VirkningstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.BarnetilleggKontroll
 import java.time.LocalDate
 import java.time.LocalDateTime

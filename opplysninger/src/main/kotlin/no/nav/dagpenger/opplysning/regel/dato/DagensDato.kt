@@ -13,10 +13,14 @@ class DagensDato internal constructor(
         plan: MutableSet<Regel<*>>,
         produsenter: Map<Opplysningstype<out Comparable<*>>, Regel<*>>,
     ) {
-        if (opplysninger.har(produserer)) return
-        val dag = opplysninger.finnOpplysning(produserer).verdi
         val dagensDato = LocalDate.now()
+        if (opplysninger.mangler(produserer)) {
+            plan.add(this)
+            return
+        }
 
+        // Sjekk om dagens dato har endret seg siden sist
+        val dag = opplysninger.finnOpplysning(produserer).verdi
         if (dagensDato != dag) {
             plan.add(this)
         }

@@ -18,12 +18,13 @@ object Søknadstidspunkt {
 
     val søknadstidspunkt = Opplysningstype.somDato("Søknadstidspunkt".tekstId("opplysning.soknadstidspunkt"))
 
-    // Har Virkningsdato som ID for å være kompatibel med behovløsere
-    val prøvingsdato = Opplysningstype.somDato("Prøvingsdato".id("Virkningsdato"))
+    val prøvingsdato = Opplysningstype.somDato("Prøvingsdato".id("Prøvingsdato"))
     val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")
 
     val regelsett =
-        Regelsett("Søknadstidspunkt").apply {
+        Regelsett(
+            forskriftTilFolketrygden.hjemmel(3, 1, "Søknadstidspunkt", "§3A-1 Søknadstidspunkt"),
+        ).apply {
             regel(søknadIdOpplysningstype) { innhentes }
             regel(søknadsdato) { innhentMed(søknadIdOpplysningstype) }
             regel(ønsketdato) { innhentMed(søknadIdOpplysningstype) }

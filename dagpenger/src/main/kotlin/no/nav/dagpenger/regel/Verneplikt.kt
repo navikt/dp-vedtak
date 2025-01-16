@@ -19,6 +19,15 @@ object Verneplikt {
         ) {
             regel(avtjentVerneplikt) { innhentMed(søknadIdOpplysningstype) }
             utfall(oppfyllerKravetTilVerneplikt) { erSann(avtjentVerneplikt) }
+
+            avklaring(Avklaringspunkter.Verneplikt)
+
+            relevantHvis {
+                val a = it.har(avtjentVerneplikt) && it.finnOpplysning(avtjentVerneplikt).verdi
+                val b = it.har(oppfyllerKravetTilVerneplikt) && it.finnOpplysning(oppfyllerKravetTilVerneplikt).verdi
+
+                a || b
+            }
         }
 
     val VernepliktKontroll =

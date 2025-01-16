@@ -23,55 +23,121 @@ class OpplysningTypeId(
     override fun hashCode() = id.hashCode() * beskrivelse.hashCode() * 31
 }
 
+enum class Opplysningsformål(
+    val synlig: Boolean,
+) {
+    Legacy(false),
+    Mellomsteg(false),
+    Bruker(true),
+    Register(true),
+    Regel(true),
+}
+
 class Opplysningstype<T : Comparable<T>>(
     private val opplysningTypeId: OpplysningTypeId,
     val datatype: Datatype<T>,
+    val formål: Opplysningsformål,
 ) : Klassifiserbart {
-    constructor(
-        navn: String,
-        datatype: Datatype<T>,
-    ) : this(OpplysningTypeId(navn, navn), datatype)
-
     val id = opplysningTypeId.id
     val navn = opplysningTypeId.beskrivelse
     val tekstId = opplysningTypeId.tekstId
 
+    init {
+        definerteTyper.add(this)
+    }
+
     companion object {
-        fun somHeltall(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Heltall)
+        val definerteTyper = mutableSetOf<Opplysningstype<*>>()
 
-        fun somHeltall(navn: String) = somHeltall(navn.id(navn))
+        fun somHeltall(
+            opplysningTypeId: OpplysningTypeId,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = Opplysningstype(opplysningTypeId, Heltall, formål)
 
-        fun somDesimaltall(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Desimaltall)
+        fun somHeltall(
+            navn: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = somHeltall(navn.id(navn), formål)
 
-        fun somDesimaltall(navn: String) = somDesimaltall(navn.id(navn))
+        fun somDesimaltall(
+            opplysningTypeId: OpplysningTypeId,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = Opplysningstype(opplysningTypeId, Desimaltall, formål)
 
-        fun somDato(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Dato)
+        fun somDesimaltall(
+            navn: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = somDesimaltall(navn.id(navn), formål)
 
-        fun somDato(navn: String) = somDato(navn.id(navn))
+        fun somDato(
+            opplysningTypeId: OpplysningTypeId,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = Opplysningstype(opplysningTypeId, Dato, formål)
 
-        fun somUlid(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, ULID)
+        fun somDato(
+            navn: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = somDato(navn.id(navn), formål)
 
-        fun somUlid(navn: String) = somUlid(navn.id(navn))
+        fun somUlid(
+            opplysningTypeId: OpplysningTypeId,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = Opplysningstype(opplysningTypeId, ULID, formål)
 
-        fun somBoolsk(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Boolsk)
+        fun somUlid(
+            navn: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = somUlid(navn.id(navn), formål)
 
-        fun somBoolsk(navn: String) = somBoolsk(navn.id(navn))
+        fun somBoolsk(
+            opplysningTypeId: OpplysningTypeId,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = Opplysningstype(opplysningTypeId, Boolsk, formål)
 
-        fun somBeløp(navn: String) = somBeløp(navn.id(navn))
+        fun somBoolsk(
+            navn: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = somBoolsk(navn.id(navn), formål)
 
-        fun somBeløp(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Penger)
+        fun somBeløp(
+            navn: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = somBeløp(navn.id(navn), formål)
 
-        fun somInntekt(navn: String) = somInntekt(navn.id(navn))
+        fun somBeløp(
+            opplysningTypeId: OpplysningTypeId,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = Opplysningstype(opplysningTypeId, Penger, formål)
 
-        fun somInntekt(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, InntektDataType)
+        fun somInntekt(
+            navn: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = somInntekt(navn.id(navn), formål)
 
-        fun somBarn(navn: String) = somBarn(navn.id(navn))
+        fun somInntekt(
+            opplysningTypeId: OpplysningTypeId,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = Opplysningstype(opplysningTypeId, InntektDataType, formål)
 
-        fun somBarn(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, BarnDatatype)
+        fun somBarn(
+            navn: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = somBarn(navn.id(navn), formål)
 
-        fun somTekst(navn: String) = somTekst(navn.id(navn))
+        fun somBarn(
+            opplysningTypeId: OpplysningTypeId,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = Opplysningstype(opplysningTypeId, BarnDatatype, formål)
 
-        fun somTekst(opplysningTypeId: OpplysningTypeId) = Opplysningstype(opplysningTypeId, Tekst)
+        fun somTekst(
+            navn: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = somTekst(navn.id(navn), formål)
+
+        fun somTekst(
+            opplysningTypeId: OpplysningTypeId,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+        ) = Opplysningstype(opplysningTypeId, Tekst, formål)
     }
 
     override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId

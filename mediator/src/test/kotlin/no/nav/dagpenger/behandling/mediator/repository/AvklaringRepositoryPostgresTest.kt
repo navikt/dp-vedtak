@@ -7,6 +7,7 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.avklaring.Avklaring.Endring.UnderBehandling
 import no.nav.dagpenger.avklaring.Avklaringer
+import no.nav.dagpenger.behandling.TestOpplysningstyper.opplysningerRepository
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType
@@ -93,7 +94,7 @@ class AvklaringRepositoryPostgresTest {
     ) {
         val behandlingId get() = behandling.behandlingId
         private val behandling = behandling(*avklaring)
-        private val behandlingRepository = BehandlingRepositoryPostgres(OpplysningerRepositoryPostgres(), repository)
+        private val behandlingRepository = BehandlingRepositoryPostgres(opplysningerRepository(), repository)
 
         init {
             lagre()

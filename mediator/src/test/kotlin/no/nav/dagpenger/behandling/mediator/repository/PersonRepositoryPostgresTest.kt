@@ -3,6 +3,7 @@ package no.nav.dagpenger.behandling.mediator.repository
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
+import no.nav.dagpenger.behandling.TestOpplysningstyper.opplysningerRepository
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident
@@ -24,7 +25,7 @@ class PersonRepositoryPostgresTest {
         get() =
             PersonRepositoryPostgres(
                 BehandlingRepositoryPostgres(
-                    OpplysningerRepositoryPostgres(),
+                    opplysningerRepository(),
                     mockk(relaxed = true),
                 ),
             )

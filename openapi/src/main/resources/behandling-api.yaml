@@ -497,6 +497,9 @@ components:
         - kode
         - tittel
         - beskrivelse
+        - status
+        - maskinelt
+        - sistEndret
       properties:
         id:
           type: string
@@ -509,12 +512,15 @@ components:
           type: string
         status:
           type: string
-          enum: [ "Åpen", "Løst", "Kvittert" ]
+          enum: [ "Åpen", "Avbrutt", "Avklart" ]
         maskinelt:
           type: boolean
         begrunnelse:
           type: string
-        kvittertAv:
+        sistEndret:
+          type: string
+          format: date-time
+        avklartAv:
           $ref: '#/components/schemas/Saksbehandler'
 
     Opplysningstype:
@@ -552,6 +558,8 @@ components:
         hjemmel:
           description: Hvilken hjemmel er regelsettet basert på
           $ref: '#/components/schemas/Hjemmel'
+        relevantForVedtak:
+          type: boolean
         status:
           type: string
           enum: [ "Oppfylt", "HarAvklaring", "IkkeOppfylt", "Info" ]
@@ -602,6 +610,8 @@ components:
         - datatype
         - status
         - redigerbar
+        - synlig
+        - formål
       properties:
         id:
           $ref: '#/components/schemas/OpplysningsId'
@@ -634,6 +644,12 @@ components:
           $ref: '#/components/schemas/Opplysningskilde'
         utledetAv:
           $ref: '#/components/schemas/Utledning'
+        synlig:
+          type: boolean
+          description: Indikerer om opplysningen skal vises i grensesnittet
+        formål:
+          type: string
+          enum: [ "Legacy", "Mellomsteg","Bruker","Register","Regel" ]
 
     Opplysningskilde:
       description: |

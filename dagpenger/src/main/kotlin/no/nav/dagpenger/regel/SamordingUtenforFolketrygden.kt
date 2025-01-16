@@ -3,6 +3,7 @@ package no.nav.dagpenger.regel
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.divisjon
 import no.nav.dagpenger.opplysning.regel.enAv
@@ -63,6 +64,7 @@ object SamordingUtenforFolketrygden {
     val regelsett =
         Regelsett(
             folketrygden.hjemmel(4, 26, "Samordning med ytelser utenfor folketrygden", "4-26 Samordning utenfor folketrygden"),
+            RegelsettType.Fastsettelse,
         ) {
             regel(andreYtelser) { innhentes }
 
@@ -106,7 +108,7 @@ object SamordingUtenforFolketrygden {
 
             regel(dagsatsSamordnetUtenforFolketrygden) { divisjon(samordnetUkessats, arbeidsdagerPerUke) }
 
-            utfall(skalSamordnesUtenforFolketrygden) {
+            regel(skalSamordnesUtenforFolketrygden) {
                 enAv(
                     andreYtelser,
                     pensjonFraOffentligTjenestepensjonsordning,

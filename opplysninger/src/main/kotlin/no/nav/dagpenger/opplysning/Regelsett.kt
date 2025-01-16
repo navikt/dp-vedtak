@@ -48,6 +48,7 @@ class Regelsett(
     private val regler: MutableMap<Opplysningstype<*>, TemporalCollection<Regel<*>>> = mutableMapOf()
     private val avklaringer: MutableSet<Avklaringkode> = mutableSetOf()
     private var _utfall: Opplysningstype<Boolean>? = null
+    private var relevant: (opplysninger: LesbarOpplysninger) -> Boolean = { true }
     val utfall get() = _utfall
     val navn = hjemmel.kortnavn
 
@@ -60,6 +61,12 @@ class Regelsett(
     fun avklaring(avklaringkode: Avklaringkode) = avklaringer.add(avklaringkode)
 
     fun avklaringer() = avklaringer.toSet()
+
+    fun relevantHvis(block: (opplysninger: LesbarOpplysninger) -> Boolean) {
+        relevant = block
+    }
+
+    fun erRelevant(opplysninger: LesbarOpplysninger) = relevant(opplysninger)
 
     fun utfall(
         produserer: Opplysningstype<Boolean>,

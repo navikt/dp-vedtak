@@ -15,7 +15,7 @@ import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode.ordinærPeriode
 import no.nav.dagpenger.regel.folketrygden
 
 object Dagpengeperiode {
-    val antallStønadsuker = Opplysningstype.somHeltall("Antall stønadsuker")
+    private val antallStønadsuker = Opplysningstype.somHeltall("Antall stønadsuker")
     private val gjenståendeStønadsdager = Opplysningstype.somHeltall("Antall gjenstående stønadsdager")
     val ordinærPeriode = Opplysningstype.somHeltall("Antall stønadsuker som gis ved ordinære dagpenger")
     private val dagerIUka = Opplysningstype.somHeltall("Antall dager som skal regnes med i hver uke")

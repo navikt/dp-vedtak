@@ -24,9 +24,9 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
+import junit.runner.Version.id
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.TestOpplysningstyper
-import no.nav.dagpenger.behandling.api.models.AvklaringDTO
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.KvitteringDTO
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
@@ -273,15 +273,20 @@ internal class BehandlingApiTest {
                 avklaringer.single().kode shouldBe "InntektNesteKalendermåned"
             }
 
-            behandlingDto.avklaringer shouldHaveSize 4
-            val aktivAvklaring = behandling.aktiveAvklaringer().first()
+            with(behandlingDto.vilkår.single { it.navn == "4-19 Verneplikt" }) {
+                avklaringer shouldHaveSize 1
+                val aktivAvklaring = behandling.aktiveAvklaringer().first()
+                with(avklaringer.single()) {
+                    kode shouldBe "Verneplikt"
 
-            with(behandlingDto.avklaringer.first { it.status == AvklaringDTO.Status.Åpen }) {
-                tittel shouldBe aktivAvklaring.kode.tittel
-                beskrivelse shouldBe aktivAvklaring.kode.beskrivelse
-                kode shouldBe aktivAvklaring.kode.kode
-                id shouldBe aktivAvklaring.id
+                    tittel shouldBe aktivAvklaring.kode.tittel
+                    beskrivelse shouldBe aktivAvklaring.kode.beskrivelse
+                    id shouldBe aktivAvklaring.id
+                }
             }
+
+            behandlingDto.avklaringer shouldHaveSize 3
+
             verify {
                 auditlogg.les(any(), any(), any())
             }
