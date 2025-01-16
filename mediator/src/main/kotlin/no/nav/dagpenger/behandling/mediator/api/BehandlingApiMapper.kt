@@ -256,6 +256,8 @@ internal fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
                 )
             },
         redigerbar = this.kanRedigeres(redigerbareOpplysninger),
+        synlig = this.opplysningstype.formål.synlig,
+        formål = OpplysningDTO.Formål.valueOf(this.opplysningstype.formål.name),
     )
 
 private fun LocalDate.tilApiDato(): LocalDate? =

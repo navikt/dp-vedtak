@@ -610,6 +610,8 @@ components:
         - datatype
         - status
         - redigerbar
+        - synlig
+        - formål
       properties:
         id:
           $ref: '#/components/schemas/OpplysningsId'
@@ -642,6 +644,12 @@ components:
           $ref: '#/components/schemas/Opplysningskilde'
         utledetAv:
           $ref: '#/components/schemas/Utledning'
+        synlig:
+          type: boolean
+          description: Indikerer om opplysningen skal vises i grensesnittet
+        formål:
+          type: string
+          enum: [ "Legacy", "Mellomsteg","Bruker","Register","Regel" ]
 
     Opplysningskilde:
       description: |

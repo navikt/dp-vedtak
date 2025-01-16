@@ -25,6 +25,7 @@ import no.nav.dagpenger.behandling.mediator.repository.VaktmesterPostgresRepo
 import no.nav.dagpenger.behandling.objectMapper
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.RegelverkDagpenger
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
 import no.nav.helse.rapids_rivers.RapidApplication
 
 internal class ApplicationBuilder(
@@ -38,10 +39,12 @@ internal class ApplicationBuilder(
     private val opplysningstyper: Set<Opplysningstype<*>> = RegelverkDagpenger.produserer
 
     private val avklaringRepository = AvklaringRepositoryPostgres()
+    private val opplysningRepository = OpplysningerRepositoryPostgres()
+
     private val personRepository =
         PersonRepositoryPostgres(
             BehandlingRepositoryPostgres(
-                OpplysningerRepositoryPostgres(),
+                opplysningRepository,
                 avklaringRepository,
             ),
         )
@@ -108,6 +111,9 @@ internal class ApplicationBuilder(
 
     override fun onStartup(rapidsConnection: RapidsConnection) {
         runMigration()
+        opplysningRepository.lagreOpplysningstyper(opplysningstyper + fagsakIdOpplysningstype).also {
+            logger.info { "Opprettet $it opplysningstyper" }
+        }
         logger.info { "Starter opp dp-behandling" }
     }
 }

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.behandling.mediator.repository
 
 import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.opplysning.Opplysningstype
 import java.util.UUID
 
 interface OpplysningerRepository {
@@ -12,4 +13,6 @@ interface OpplysningerRepository {
         opplysninger: Opplysninger,
         unitOfWork: UnitOfWork<*>,
     )
+
+    fun lagreOpplysningstyper(opplysningstypes: Collection<Opplysningstype<*>>): List<Int>
 }

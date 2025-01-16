@@ -45,6 +45,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.opplysning.Avklaringkode
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.definerteTyper
 import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.regel.Behov.AndreØkonomiskeYtelser
 import no.nav.dagpenger.regel.Behov.Barnetillegg
@@ -72,6 +73,7 @@ import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
 import no.nav.dagpenger.regel.Behov.ØnsketArbeidstid
 import no.nav.dagpenger.regel.RegelverkDagpenger
+import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
 import no.nav.dagpenger.uuid.UUIDv7
 import org.approvaltests.Approvals
 import org.junit.jupiter.api.BeforeEach
@@ -84,10 +86,13 @@ import java.time.Period
 internal class PersonMediatorTest {
     private val rapid = TestRapid()
     private val ident = "11109233444"
+    private val opplysningerRepository =
+        OpplysningerRepositoryPostgres()
+
     private val personRepository =
         PersonRepositoryPostgres(
             BehandlingRepositoryPostgres(
-                OpplysningerRepositoryPostgres(),
+                opplysningerRepository,
                 AvklaringRepositoryPostgres(AvklaringKafkaObservatør(rapid)),
             ),
         )
@@ -111,6 +116,10 @@ internal class PersonMediatorTest {
         )
     }
 
+    private fun registrerOpplysningstyper() {
+        opplysningerRepository.lagreOpplysningstyper(definerteTyper + fagsakIdOpplysningstype)
+    }
+
     @BeforeEach
     fun setUp() {
         rapid.reset()
@@ -120,6 +129,7 @@ internal class PersonMediatorTest {
     @Test
     fun `kan bare lage en behandling for samme søknad`() {
         withMigratedDb {
+            registrerOpplysningstyper()
             val testPerson =
                 TestPerson(
                     ident,
@@ -139,6 +149,7 @@ internal class PersonMediatorTest {
     @Test
     fun `søknad med for høy alder skal automatisk avslås`() =
         withMigratedDb {
+            registrerOpplysningstyper()
             val testPerson =
                 TestPerson(
                     ident,
@@ -168,6 +179,7 @@ internal class PersonMediatorTest {
     @Test
     fun `søknad med for lite inntekt skal automatisk avslås`() =
         withMigratedDb {
+            registrerOpplysningstyper()
             val testPerson =
                 TestPerson(
                     ident,
@@ -237,6 +249,7 @@ internal class PersonMediatorTest {
     @Test
     fun `Søknad med nok inntekt skal innvilges`() =
         withMigratedDb {
+            registrerOpplysningstyper()
             val testPerson =
                 TestPerson(
                     ident,
@@ -297,6 +310,7 @@ internal class PersonMediatorTest {
     @Test
     fun `Søknad med som oppfyller kravet til verneplikt skal innvilges`() =
         withMigratedDb {
+            registrerOpplysningstyper()
             val testPerson =
                 TestPerson(
                     ident,
@@ -347,6 +361,7 @@ internal class PersonMediatorTest {
     @Test
     fun `Behandling sendt til kontroll`() =
         withMigratedDb {
+            registrerOpplysningstyper()
             val testPerson =
                 TestPerson(
                     ident,
@@ -390,6 +405,8 @@ internal class PersonMediatorTest {
     @Test
     fun `søknad som slår ut på manuelle behandling må føre til forslag til vedtak`() =
         withMigratedDb {
+            registrerOpplysningstyper()
+            registrerOpplysningstyper()
             val testPerson =
                 TestPerson(
                     ident,
@@ -415,6 +432,7 @@ internal class PersonMediatorTest {
     @Test
     fun `e2e av søknad som blir avbrutt `() =
         withMigratedDb {
+            registrerOpplysningstyper()
             val testPerson =
                 TestPerson(
                     ident,
@@ -439,6 +457,7 @@ internal class PersonMediatorTest {
     @Test
     fun `søker før ny rapporteringsfrist, men ønsker etter`() =
         withMigratedDb {
+            registrerOpplysningstyper()
             val testPerson =
                 TestPerson(
                     ident,
@@ -467,6 +486,7 @@ internal class PersonMediatorTest {
     @Test
     fun `søker etter overgang til ny rapporteringsfrist`() =
         withMigratedDb {
+            registrerOpplysningstyper()
             val testPerson =
                 TestPerson(
                     ident,
@@ -494,6 +514,7 @@ internal class PersonMediatorTest {
     @Test
     fun `søker for langt fram i tid`() =
         withMigratedDb {
+            registrerOpplysningstyper()
             val testPerson =
                 TestPerson(
                     ident,
@@ -522,6 +543,7 @@ internal class PersonMediatorTest {
     @Test
     fun `endring av prøvingsdato`() {
         withMigratedDb {
+            registrerOpplysningstyper()
             val vaktmester = VaktmesterPostgresRepo()
             val testPerson =
                 TestPerson(
@@ -624,6 +646,7 @@ internal class PersonMediatorTest {
     @Test
     fun `publiserer tilstandsendinger`() =
         withMigratedDb {
+            registrerOpplysningstyper()
             val person = TestPerson(ident, rapid)
 
             person.sendSøknad()

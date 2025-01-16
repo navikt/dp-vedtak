@@ -1,6 +1,8 @@
 package no.nav.dagpenger.behandling
 
+import no.nav.dagpenger.behandling.mediator.repository.OpplysningerRepositoryPostgres
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.definerteTyper
 import no.nav.dagpenger.opplysning.id
 
 internal object TestOpplysningstyper {
@@ -16,6 +18,11 @@ internal object TestOpplysningstyper {
     val tekst = Opplysningstype.somTekst("Tekst")
     val barn = Opplysningstype.somBarn("Barn")
 
-    val beløpA by lazy { Opplysningstype.somBeløp("BeløpA") }
-    val beløpB by lazy { Opplysningstype.somBeløp("BeløpB") }
+    val beløpA = Opplysningstype.somBeløp("BeløpA")
+    val beløpB = Opplysningstype.somBeløp("BeløpB")
+
+    fun opplysningerRepository(): OpplysningerRepositoryPostgres =
+        OpplysningerRepositoryPostgres().apply {
+            lagreOpplysningstyper(definerteTyper)
+        }
 }

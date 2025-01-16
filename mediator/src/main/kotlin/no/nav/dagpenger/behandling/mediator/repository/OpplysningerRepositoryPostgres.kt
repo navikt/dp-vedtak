@@ -21,6 +21,7 @@ import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
+import no.nav.dagpenger.opplysning.Opplysningsformål
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Tekst
@@ -108,6 +109,27 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         OpplysningRepository(opplysninger.id, tx).lagreOpplysninger(opplysninger.aktiveOpplysninger, opplysninger.fjernet())
     }
 
+    override fun lagreOpplysningstyper(opplysningstyper: Collection<Opplysningstype<*>>) =
+        sessionOf(dataSource).use { session ->
+            BatchStatement(
+                //language=PostgreSQL
+                """
+                INSERT INTO opplysningstype (id, navn, tekst_id, datatype, formål)
+                VALUES (:id, :navn, :tekstId, :datatype, :formaal)
+                ON CONFLICT (id, navn, datatype) DO UPDATE SET formål = :formaal
+                """.trimIndent(),
+                opplysningstyper.map {
+                    mapOf(
+                        "id" to it.id,
+                        "navn" to it.navn,
+                        "tekstId" to it.tekstId,
+                        "datatype" to it.datatype.navn(),
+                        "formaal" to it.formål.name,
+                    )
+                },
+            ).run(session)
+        }
+
     private class OpplysningRepository(
         private val opplysningerId: UUID,
         private val tx: Session,
@@ -182,6 +204,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 Opplysningstype(
                     string("type_navn").id(string("type_id"), stringOrNull("tekst_id")),
                     datatype,
+                    string("type_formål").let { Opplysningsformål.valueOf(it) },
                 )
 
             val gammeltNavn = opplysningerSomHarByttetNavn.singleOrNull { it.fra == opplysningstype }
@@ -253,7 +276,6 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             fjernet: List<Opplysning<*>>,
         ) {
             kildeRespository.lagreKilder(opplysninger.mapNotNull { it.kilde }, tx)
-            batchOpplysningstyper(opplysninger.map { it.opplysningstype }).run(tx)
             batchOpplysninger(opplysninger).run(tx)
             batchFjernet(fjernet).run(tx)
             lagreErstattetAv(opplysninger).run(tx)
@@ -315,24 +337,6 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     mapOf(
                         "opplysningerId" to opplysningerId,
                         "opplysningId" to it.id,
-                    )
-                },
-            )
-
-        private fun batchOpplysningstyper(opplysningstyper: List<Opplysningstype<*>>) =
-            BatchStatement(
-                //language=PostgreSQL
-                """
-                INSERT INTO opplysningstype (id, navn, tekst_id, datatype)
-                VALUES (:id, :navn, :tekstId, :datatype)
-                ON CONFLICT DO NOTHING 
-                """.trimIndent(),
-                opplysningstyper.map {
-                    mapOf(
-                        "id" to it.id,
-                        "navn" to it.navn,
-                        "tekstId" to it.tekstId,
-                        "datatype" to it.datatype.navn(),
                     )
                 },
             )
