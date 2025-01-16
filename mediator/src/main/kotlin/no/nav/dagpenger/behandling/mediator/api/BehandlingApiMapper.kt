@@ -126,7 +126,12 @@ private fun Regelsett.tilRegelsettDTO(
                 tittel = hjemmel.toString(),
             ),
         avklaringer = egneAvklaringer.map { it.tilAvklaringDTO() },
-        opplysningIder = produserer.map { opplysning -> opplysning.id },
+        opplysningIder =
+            produserer
+                .filter {
+                    // TODO: Mens vi venter på frontend. Fjern denne linjen når det er løst der
+                    it.opplysningstype.formål.synlig
+                }.map { opplysning -> opplysning.id },
         status = status,
         relevantForVedtak = erRelevant,
     )
