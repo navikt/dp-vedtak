@@ -13,7 +13,6 @@ import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
-import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Hypotese
@@ -213,7 +212,12 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     ?.let {
                         if (datatype != it.datatype) {
                             logger.warn(
-                                "Lastet opplysningstype med feil datatype: ${opplysningTypeId.id} - ${opplysningTypeId.beskrivelse}, database: $datatype, kode: ${it.datatype}",
+                                """
+                                Lastet opplysningstype med feil 
+                                datatype: ${opplysningTypeId.id} - ${opplysningTypeId.beskrivelse}, 
+                                database: $datatype, 
+                                kode: ${it.datatype}
+                                """.trimIndent(),
                             )
                             return@let null
                         }
@@ -548,7 +552,7 @@ private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
                     )
 
                 "Faktum" ->
-                    Faktum(
+                    Fakdum(
                         id = id,
                         opplysningstype = opplysningstype,
                         verdi = verdi,
