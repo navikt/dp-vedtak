@@ -213,7 +213,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     ?.let {
                         if (datatype != it.datatype) {
                             logger.warn(
-                                "Lastet opplysningstype med feil datatype: $opplysningTypeId, database: $datatype, kode: ${it.datatype}",
+                                "Lastet opplysningstype med feil datatype: ${opplysningTypeId.id} - ${opplysningTypeId.beskrivelse}, database: $datatype, kode: ${it.datatype}",
                             )
                             return@let null
                         }
