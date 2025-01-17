@@ -41,10 +41,10 @@ internal class VaktmesterPostgresRepo {
     fun slettOpplysninger(antall: Int = 1): List<UUID> {
         val slettet = mutableListOf<UUID>()
         using(sessionOf(dataSource)) { session ->
-            val kandidater = session.hentOpplysningerSomErFjernet(antall)
-            kandidater.forEach { kandidat ->
-                session.transaction { tx ->
-                    tx.medLås(låsenøkkel) {
+            session.transaction { tx ->
+                tx.medLås(låsenøkkel) {
+                    val kandidater = session.hentOpplysningerSomErFjernet(antall)
+                    kandidater.forEach { kandidat ->
                         withLoggingContext(
                             "behandlingId" to kandidat.behandlingId.toString(),
                             "opplysningerId" to kandidat.opplysningerId.toString(),
