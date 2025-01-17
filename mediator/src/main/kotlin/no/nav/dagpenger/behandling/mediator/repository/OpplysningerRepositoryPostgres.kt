@@ -13,6 +13,7 @@ import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Datatype
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
+import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Hypotese
@@ -552,7 +553,7 @@ private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
                     )
 
                 "Faktum" ->
-                    Fakdum(
+                    Faktum(
                         id = id,
                         opplysningstype = opplysningstype,
                         verdi = verdi,
