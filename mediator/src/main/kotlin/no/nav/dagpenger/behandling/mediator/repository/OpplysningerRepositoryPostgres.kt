@@ -211,6 +211,12 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             var opplysningstype: Opplysningstype<T> =
                 opplysningstyper[opplysningTypeId]
                     ?.let {
+                        if (datatype != it.datatype) {
+                            logger.warn(
+                                "Lastet opplysningstype med feil datatype: $opplysningTypeId, database: $datatype, kode: ${it.datatype}",
+                            )
+                            return@let null
+                        }
                         @Suppress("UNCHECKED_CAST")
                         it as Opplysningstype<T>
                     } ?: Opplysningstype(
@@ -444,12 +450,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             verdi: Any,
         ) = when (datatype) {
             Boolsk -> Pair("verdi_boolsk", verdi)
-            Dato ->
-                Pair(
-                    "verdi_dato",
-                    tilPostgresqlTimestamp(verdi),
-                )
-
+            Dato -> Pair("verdi_dato", tilPostgresqlTimestamp(verdi))
             Desimaltall -> Pair("verdi_desimaltall", verdi)
             Heltall -> Pair("verdi_heltall", verdi)
             ULID -> Pair("verdi_string", (verdi as Ulid).verdi)
