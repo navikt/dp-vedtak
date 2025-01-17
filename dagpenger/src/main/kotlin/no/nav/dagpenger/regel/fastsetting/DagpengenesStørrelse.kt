@@ -116,6 +116,8 @@ object DagpengenesStørrelse {
             regel(ukessats) { multiplikasjon(dagsatsEtterSamordningMedBarnetillegg, arbeidsdagerPerUke) }
 
             regel(harBarnetillegg) { størreEnnEllerLik(barnetillegg, barnetilleggetsStørrelse) }
+
+            avklaring(BarnMåGodkjennes)
         }
 
     val ønsketResultat = listOf(ukessats, dagsatsSamordnetUtenforFolketrygden, ukesatsMedBarnetillegg, harSamordnet)
