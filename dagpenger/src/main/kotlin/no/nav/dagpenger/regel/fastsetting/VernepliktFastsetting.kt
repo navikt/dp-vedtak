@@ -29,7 +29,7 @@ object VernepliktFastsetting {
     internal val vernepliktFastsattVanligArbeidstid =
         Opplysningstype.somDesimaltall("Fastsatt vanlig arbeidstid for verneplikt", Mellomsteg, synligOmVerneplikt)
     internal val grunnlagHvisVerneplikt =
-        Opplysningstype.somBeløp("Grunnlag for verneplikt hvis kravet er oppfylt", synlig = synligOmVerneplikt)
+        Opplysningstype.somBeløp("Grunnlag for verneplikt hvis kravet er oppfylt", synlig = aldriSynlig)
     internal val grunnlagUtenVerneplikt =
         Opplysningstype.somBeløp("Grunnlag for verneplikt hvis kravet ikke er oppfylt", Mellomsteg, aldriSynlig)
 
