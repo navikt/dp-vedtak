@@ -59,7 +59,8 @@ private val logger = KotlinLogging.logger { }
 
 internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
     withLoggingContext("behandlingId" to this.behandlingId.toString()) {
-        val opplysninger = this.opplysninger().finnAlle().toSet()
+        val lesbareOpplysninger = opplysninger()
+        val opplysningSet = lesbareOpplysninger.finnAlle().toSet()
         val avklaringer = avklaringer().toSet()
         val spesifikkeAvklaringskoder =
             behandler.regelverk.regelsett
@@ -85,16 +86,16 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
             vilkår =
                 behandler.regelverk
                     .regelsettAvType(RegelsettType.Vilkår)
-                    .map { it.tilRegelsettDTO(opplysninger, avklaringer, opplysninger()) }
+                    .map { it.tilRegelsettDTO(opplysningSet, avklaringer, lesbareOpplysninger) }
                     .sortedBy { it.hjemmel.paragraf.toInt() },
             fastsettelser =
                 behandler.regelverk
                     .regelsettAvType(RegelsettType.Fastsettelse)
-                    .map { it.tilRegelsettDTO(opplysninger, avklaringer, opplysninger()) }
+                    .map { it.tilRegelsettDTO(opplysningSet, avklaringer, lesbareOpplysninger) }
                     .sortedBy { it.hjemmel.paragraf.toInt() },
             kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
             avklaringer = generelleAvklaringer.map { it.tilAvklaringDTO() },
-            opplysninger = opplysninger.map { it.tilOpplysningDTO() },
+            opplysninger = opplysningSet.map { it.tilOpplysningDTO(lesbareOpplysninger) },
         )
     }
 
@@ -144,6 +145,7 @@ private fun tilStatus(utfall: Boolean?): RegelsettDTO.Status {
 
 internal fun Behandling.tilBehandlingOpplysningerDTO(): BehandlingOpplysningerDTO =
     withLoggingContext("behandlingId" to this.behandlingId.toString()) {
+        val lesbareOpplysninger = this.opplysninger()
         BehandlingOpplysningerDTO(
             behandlingId = this.behandlingId,
             tilstand =
@@ -159,8 +161,8 @@ internal fun Behandling.tilBehandlingOpplysningerDTO(): BehandlingOpplysningerDT
                     Behandling.TilstandType.TilBeslutning -> BehandlingOpplysningerDTO.Tilstand.TilBeslutning
                 },
             opplysning =
-                this.opplysninger().finnAlle().map { opplysning ->
-                    opplysning.tilOpplysningDTO()
+                lesbareOpplysninger.finnAlle().map { opplysning ->
+                    opplysning.tilOpplysningDTO(lesbareOpplysninger)
                 },
             kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
             aktiveAvklaringer =
@@ -210,7 +212,7 @@ internal fun Avklaring.tilAvklaringDTO(): AvklaringDTO {
     )
 }
 
-internal fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
+internal fun Opplysning<*>.tilOpplysningDTO(opplysninger: LesbarOpplysninger): OpplysningDTO =
     OpplysningDTO(
         id = this.id,
         navn = this.opplysningstype.navn,
@@ -256,7 +258,7 @@ internal fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
                 )
             },
         redigerbar = this.kanRedigeres(redigerbareOpplysninger),
-        synlig = this.opplysningstype.formål.synlig,
+        synlig = this.opplysningstype.synlig(opplysninger),
         formål = OpplysningDTO.Formål.valueOf(this.opplysningstype.formål.name),
     )
 

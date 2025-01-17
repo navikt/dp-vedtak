@@ -23,6 +23,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningsformål
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.alltidSynlig
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
@@ -71,6 +72,12 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     til = ikkeStreikEllerLockout,
                 ),
             )
+
+        private val opplysningstyper by lazy {
+            // TODO: Egentlig vil vi dette:
+            Opplysningstype.definerteTyper.associateBy { it.opplysningTypeId }
+            // Opplysningstype.definerteTyper
+        }
 
         private val logger = KotlinLogging.logger { }
     }
@@ -200,11 +207,18 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val opplysingerId = uuid("opplysninger_id")
             val id = uuid("id")
 
+            val opplysningTypeId = string("type_navn").id(string("type_id"))
             var opplysningstype: Opplysningstype<T> =
-                Opplysningstype(
+                opplysningstyper[opplysningTypeId]
+                    ?.let {
+                        @Suppress("UNCHECKED_CAST")
+                        it as Opplysningstype<T>
+                    } ?: Opplysningstype(
+                    // Fallback når opplysningstype ikke er definert i kode lengre
                     string("type_navn").id(string("type_id"), stringOrNull("tekst_id")),
                     datatype,
                     string("type_formål").let { Opplysningsformål.valueOf(it) },
+                    alltidSynlig,
                 )
 
             val gammeltNavn = opplysningerSomHarByttetNavn.singleOrNull { it.fra == opplysningstype }
@@ -484,6 +498,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
     val opplysningMap = mutableMapOf<UUID, Opplysning<*>>()
 

@@ -79,6 +79,7 @@ private val autorativKildeForDetViPåEkteMenerErVilkår: Map<Opplysningstype<Boo
     )
 
 private fun LesbarOpplysninger.samordninger(): List<SamordningDTO> {
+    @Suppress("UNCHECKED_CAST")
     val ytelser: List<Opplysning<Beløp>> =
         (
             finnAlle(
@@ -164,7 +165,7 @@ fun lagVedtak(
         fastsatt = fastsatt,
         gjenstående = VedtakGjenstEndeDTO(),
         utbetalinger = emptyList(),
-        opplysninger = opplysninger.finnAlle().map { it.tilOpplysningDTO() },
+        opplysninger = opplysninger.finnAlle().map { it.tilOpplysningDTO(opplysninger) },
     )
 }
 
