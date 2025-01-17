@@ -64,13 +64,11 @@ object Minsteinntekt {
         Opplysningstype.somBeløp(
             "Inntektskrav for siste 12 mnd".tekstId("opplysning.arbeidsinntekt-er-over-kravet-for-siste-12-mnd"),
             Mellomsteg,
-            aldriSynlig,
         )
     private val `36mndTerskel` =
         Opplysningstype.somBeløp(
             "Inntektskrav for siste 36 mnd".tekstId("opplysning.arbeidsinntekt-er-over-kravet-for-siste-36-mnd"),
             Mellomsteg,
-            aldriSynlig,
         )
     private val over12mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 12 mnd")
     private val over36mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 36 mnd")
