@@ -43,7 +43,7 @@ internal class VaktmesterPostgresRepo {
         using(sessionOf(dataSource)) { session ->
             session.transaction { tx ->
                 tx.medLås(låsenøkkel) {
-                    val kandidater = session.hentOpplysningerSomErFjernet(antall)
+                    val kandidater = tx.hentOpplysningerSomErFjernet(antall)
                     kandidater.forEach { kandidat ->
                         withLoggingContext(
                             "behandlingId" to kandidat.behandlingId.toString(),
