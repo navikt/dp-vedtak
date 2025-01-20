@@ -38,7 +38,6 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.FulleYtelser.ikkeFulleYtelser
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentDeltidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentLokalArbeidssøker
-import no.nav.dagpenger.regel.ReellArbeidssøker.kravTilArbeidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravTilArbeidsfør
 import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravTilArbeidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravTilMobilitet
@@ -312,7 +311,6 @@ private val redigerbareOpplysninger =
                 oppfyllerKravTilMobilitet,
                 oppfyllerKravTilArbeidsfør,
                 oppfyllerKravetTilEthvertArbeid,
-                kravTilArbeidssøker,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)
