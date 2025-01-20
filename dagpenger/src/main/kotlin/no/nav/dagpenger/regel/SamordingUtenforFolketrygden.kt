@@ -88,6 +88,8 @@ object SamordingUtenforFolketrygden {
     private val samordnetUkessatsUtenforFolketrygden =
         Opplysningstype.somBeløp(
             "Ukessats trukket ned for ytelser utenfor folketrygden",
+            Mellomsteg,
+            aldriSynlig,
         )
     val samordnetUkessats = Opplysningstype.somBeløp("Samordnet ukessats med ytelser utenfor folketrygden")
     val dagsatsSamordnetUtenforFolketrygden = Opplysningstype.somBeløp("Dagsats uten barnetillegg samordnet")
