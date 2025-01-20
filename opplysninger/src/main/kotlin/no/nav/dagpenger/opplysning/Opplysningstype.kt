@@ -6,17 +6,9 @@ interface Klassifiserbart {
 
 fun String.id(id: String) = OpplysningTypeId(id, this)
 
-fun String.id(
-    id: String,
-    tekstId: String? = null,
-) = OpplysningTypeId(id, this, tekstId)
-
-fun String.tekstId(tekstId: String) = OpplysningTypeId(this, this, tekstId)
-
 class OpplysningTypeId(
     val id: String,
     val beskrivelse: String,
-    val tekstId: String? = null,
 ) {
     override fun equals(other: Any?): Boolean = other is OpplysningTypeId && other.id == this.id && other.beskrivelse == this.beskrivelse
 
@@ -38,7 +30,6 @@ class Opplysningstype<T : Comparable<T>>(
 ) : Klassifiserbart {
     val id = opplysningTypeId.id
     val navn = opplysningTypeId.beskrivelse
-    val tekstId = opplysningTypeId.tekstId
 
     init {
         definerteTyper.add(this)

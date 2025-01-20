@@ -13,7 +13,7 @@ import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 
 object Alderskrav {
-    val fødselsdato = Opplysningstype.somDato("Fødselsdato".id("Fødselsdato", "opplysning.fodselsdato"))
+    val fødselsdato = Opplysningstype.somDato("Fødselsdato".id("Fødselsdato"))
 
     private val prøvingsdato = Søknadstidspunkt.prøvingsdato
 

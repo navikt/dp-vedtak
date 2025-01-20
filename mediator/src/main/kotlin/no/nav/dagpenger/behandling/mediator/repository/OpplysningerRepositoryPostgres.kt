@@ -119,15 +119,14 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             BatchStatement(
                 //language=PostgreSQL
                 """
-                INSERT INTO opplysningstype (id, navn, tekst_id, datatype, formål)
-                VALUES (:id, :navn, :tekstId, :datatype, :formaal)
+                INSERT INTO opplysningstype (id, navn, datatype, formål)
+                VALUES (:id, :navn, :datatype, :formaal)
                 ON CONFLICT (id, navn, datatype) DO UPDATE SET formål = :formaal
                 """.trimIndent(),
                 opplysningstyper.map {
                     mapOf(
                         "id" to it.id,
                         "navn" to it.navn,
-                        "tekstId" to it.tekstId,
                         "datatype" to it.datatype.navn(),
                         "formaal" to it.formål.name,
                     )
@@ -224,7 +223,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         it as Opplysningstype<T>
                     } ?: Opplysningstype(
                     // Fallback når opplysningstype ikke er definert i kode lengre
-                    string("type_navn").id(string("type_id"), stringOrNull("tekst_id")),
+                    string("type_navn").id(string("type_id")),
                     datatype,
                     string("type_formål").let { Opplysningsformål.valueOf(it) },
                     alltidSynlig,

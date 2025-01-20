@@ -19,7 +19,6 @@ import no.nav.dagpenger.opplysning.regel.inntekt.summerPeriode
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
-import no.nav.dagpenger.opplysning.tekstId
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
@@ -38,11 +37,15 @@ object Minsteinntekt {
         Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd arbeidsinntekt", synlig = aldriSynlig)
     val inntekt12 =
         Opplysningstype.somBeløp(
-            "Arbeidsinntekt siste 12 mnd".id(id = "InntektSiste12Mnd", tekstId = "opplysning.arbeidsinntekt-siste-12-mnd"),
+            "Arbeidsinntekt siste 12 mnd".id(
+                id = "InntektSiste12Mnd",
+            ),
         )
     val inntekt36 =
         Opplysningstype.somBeløp(
-            "Arbeidsinntekt siste 36 mnd".id(id = "InntektSiste36Mnd", tekstId = "opplysning.arbeidsinntekt-siste-36-mnd"),
+            "Arbeidsinntekt siste 36 mnd".id(
+                id = "InntektSiste36Mnd",
+            ),
         )
     val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp", synlig = aldriSynlig)
 
@@ -55,16 +58,16 @@ object Minsteinntekt {
 
     private val `12mndTerskel` =
         Opplysningstype.somBeløp(
-            "Inntektskrav for siste 12 mnd".tekstId("opplysning.arbeidsinntekt-er-over-kravet-for-siste-12-mnd"),
+            "Inntektskrav for siste 12 mnd",
         )
     private val `36mndTerskel` =
         Opplysningstype.somBeløp(
-            "Inntektskrav for siste 36 mnd".tekstId("opplysning.arbeidsinntekt-er-over-kravet-for-siste-36-mnd"),
+            "Inntektskrav for siste 36 mnd",
         )
     private val over12mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 12 mnd")
     private val over36mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 36 mnd")
 
-    val minsteinntekt = Opplysningstype.somBoolsk("Krav til minsteinntekt".tekstId("opplysning.krav-til-minsteinntekt"))
+    val minsteinntekt = Opplysningstype.somBoolsk("Krav til minsteinntekt")
 
     val regelsett =
         Regelsett(
