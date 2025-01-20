@@ -43,7 +43,8 @@ import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravTilArbeidsfør
 import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravetTilEthvertArbeid
 import no.nav.dagpenger.regel.Samordning.samordnetArbeidstid
 import no.nav.dagpenger.regel.Samordning.sykepengerDagsats
-import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
+import no.nav.dagpenger.regel.StreikOgLockout.deltarIStreikOgLockout
+import no.nav.dagpenger.regel.StreikOgLockout.sammeBedriftOgPåvirket
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel12mnd
@@ -308,7 +309,8 @@ private val redigerbareOpplysninger =
                 // 4-19 Verneplikt
                 oppfyllerKravetTilVerneplikt,
                 // 4-22 Streik og lockøout
-                ikkeStreikEllerLockout,
+                deltarIStreikOgLockout,
+                sammeBedriftOgPåvirket,
                 // 4-24 Fulle ytelser
                 ikkeFulleYtelser,
                 // 4-25 Samordning
