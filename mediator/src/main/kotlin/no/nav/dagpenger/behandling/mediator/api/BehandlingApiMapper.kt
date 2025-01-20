@@ -46,11 +46,12 @@ import no.nav.dagpenger.regel.Samordning.samordnetArbeidstid
 import no.nav.dagpenger.regel.Samordning.sykepengerDagsats
 import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
-import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel12mnd
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel36mnd
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel6mnd
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.minimumVanligArbeidstid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.nyArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.ønsketArbeidstid
 import no.nav.dagpenger.regel.Utdanning.deltakelseIArbeidsmarkedstiltak
 import no.nav.dagpenger.regel.Utdanning.deltakelsePåKurs
@@ -282,35 +283,40 @@ private val redigerbareOpplysninger =
     object : Redigerbar {
         private val redigerbare =
             setOf(
-                TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid,
-                TapAvArbeidsinntektOgArbeidstid.nyArbeidstid,
+                prøvingsdato,
+                // 4-3
+                ønsketArbeidstid,
+                beregningsregel6mnd,
+                beregningsregel12mnd,
+                beregningsregel36mnd,
+                beregnetArbeidstid,
+                nyArbeidstid,
+                minimumVanligArbeidstid,
+                // 4-5
                 godkjentDeltidssøker,
                 godkjentLokalArbeidssøker,
-                ikkeFulleYtelser,
-                ikkeStreikEllerLockout,
-                prøvingsdato,
-                sykepengerDagsats,
-                utestengt,
-                oppfyllerKravetTilVerneplikt,
-                samordnetArbeidstid,
-                minimumVanligArbeidstid,
-                // Utdanning
+                oppfyllerKravTilArbeidssøker,
+                oppfyllerKravTilMobilitet,
+                oppfyllerKravTilArbeidsfør,
+                oppfyllerKravetTilEthvertArbeid,
+                // 4-6 Utdanning
                 deltakelseIArbeidsmarkedstiltak,
                 opplæringForInnvandrere,
                 grunnskoleopplæring,
                 høyereYrkesfagligUtdanning,
                 høyereUtdanning,
                 deltakelsePåKurs,
-                // 4-3
-                ønsketArbeidstid,
-                beregningsregel6mnd,
-                beregningsregel12mnd,
-                beregningsregel36mnd,
-                // 4-5
-                oppfyllerKravTilArbeidssøker,
-                oppfyllerKravTilMobilitet,
-                oppfyllerKravTilArbeidsfør,
-                oppfyllerKravetTilEthvertArbeid,
+                // 4-19 Verneplikt
+                oppfyllerKravetTilVerneplikt,
+                // 4-22 Streik og lockøout
+                ikkeStreikEllerLockout,
+                // 4-24 Fulle ytelser
+                ikkeFulleYtelser,
+                // 4-25 Samordning
+                samordnetArbeidstid,
+                sykepengerDagsats,
+                // 4-28 Utestenging
+                utestengt,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)
