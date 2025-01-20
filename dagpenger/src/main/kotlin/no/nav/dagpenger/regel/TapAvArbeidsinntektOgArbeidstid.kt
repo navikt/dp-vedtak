@@ -2,6 +2,7 @@ package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
+import no.nav.dagpenger.opplysning.Opplysningsformål.Bruker
 import no.nav.dagpenger.opplysning.Opplysningsformål.Mellomsteg
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
@@ -29,7 +30,7 @@ import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktFastsa
 object TapAvArbeidsinntektOgArbeidstid {
     internal val tapAvArbeid = Opplysningstype.somBoolsk("Har tapt arbeid".id(HarTaptArbeid))
     internal val kravPåLønn = Opplysningstype.somBoolsk("Krav på lønn fra tidligere arbeidsgiver".id(KravPåLønn))
-    internal val ønsketArbeidstid = Opplysningstype.somDesimaltall("Ønsket arbeidstid".id(ØnsketArbeidstid))
+    val ønsketArbeidstid = Opplysningstype.somDesimaltall("Ønsket arbeidstid".id(ØnsketArbeidstid), Bruker)
     private val ikkeKravPåLønn = Opplysningstype.somBoolsk("Ikke krav på lønn fra tidligere arbeidsgiver", Mellomsteg, aldriSynlig)
     val kravTilTapAvArbeidsinntekt = Opplysningstype.somBoolsk("Krav til tap av arbeidsinntekt")
 
