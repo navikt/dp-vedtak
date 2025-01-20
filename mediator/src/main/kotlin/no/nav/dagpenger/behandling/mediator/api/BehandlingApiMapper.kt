@@ -36,6 +36,8 @@ import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.FulleYtelser.ikkeFulleYtelser
+import no.nav.dagpenger.regel.Opphold.medlemFolketrygden
+import no.nav.dagpenger.regel.Opphold.oppholdINorge
 import no.nav.dagpenger.regel.Opphold.unntakForOpphold
 import no.nav.dagpenger.regel.ReellArbeidssøker.erArbeidsfør
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentDeltidssøker
@@ -301,7 +303,9 @@ private val redigerbareOpplysninger =
             setOf(
                 prøvingsdato,
                 // 4-2 Opphold
+                oppholdINorge,
                 unntakForOpphold,
+                medlemFolketrygden,
                 // 4-3
                 ønsketArbeidstid,
                 beregningsregel6mnd,
