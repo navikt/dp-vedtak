@@ -25,7 +25,6 @@ class OpplysningTypeId(
 
 enum class Opplysningsformål {
     Legacy(),
-    Mellomsteg(),
     Bruker(),
     Register(),
     Regel(),

@@ -2,7 +2,6 @@ package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningsformål.Bruker
-import no.nav.dagpenger.opplysning.Opplysningsformål.Mellomsteg
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
@@ -23,9 +22,9 @@ object Utdanning {
     internal val tarUtdanning = Opplysningstype.somBoolsk("Tar utdanning eller opplæring?".id(TarUtdanningEllerOpplæring), Bruker)
     internal val godkjentUnntakForUtdanning = Opplysningstype.somBoolsk("Godkjent unntak for utdanning eller opplæring?")
     private val svartJaPåUtdanning =
-        Opplysningstype.somBoolsk("Har svart ja på spørsmål om utdanning eller opplæring", Mellomsteg, aldriSynlig)
+        Opplysningstype.somBoolsk("Har svart ja på spørsmål om utdanning eller opplæring", synlig = aldriSynlig)
     private val svartNeiPåUtdanning =
-        Opplysningstype.somBoolsk("Har svart nei på spørsmål om utdanning eller opplæring", Mellomsteg, aldriSynlig)
+        Opplysningstype.somBoolsk("Har svart nei på spørsmål om utdanning eller opplæring", synlig = aldriSynlig)
 
     private val oppfyllerKravetPåUnntak =
         Opplysningstype.somBoolsk("Oppfyller kravet på unntak for utdanning eller opplæring", synlig = hvisTarUtdanning)

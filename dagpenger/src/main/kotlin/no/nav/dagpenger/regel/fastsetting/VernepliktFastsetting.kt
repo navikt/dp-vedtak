@@ -1,6 +1,5 @@
 package no.nav.dagpenger.regel.fastsetting
 
-import no.nav.dagpenger.opplysning.Opplysningsformål.Mellomsteg
 import no.nav.dagpenger.opplysning.Opplysningssjekk
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
@@ -23,15 +22,15 @@ private val synligOmVerneplikt: Opplysningssjekk = {
 }
 
 object VernepliktFastsetting {
-    private val antallG = Opplysningstype.somDesimaltall("Antall G som gis som grunnlag ved verneplikt", Mellomsteg, aldriSynlig)
-    internal val vernepliktGrunnlag = Opplysningstype.somBeløp("Grunnlag for gis ved verneplikt", Mellomsteg, synligOmVerneplikt)
-    val vernepliktPeriode = Opplysningstype.somHeltall("Periode som gis ved verneplikt", Mellomsteg, synligOmVerneplikt)
+    private val antallG = Opplysningstype.somDesimaltall("Antall G som gis som grunnlag ved verneplikt", synlig = aldriSynlig)
+    internal val vernepliktGrunnlag = Opplysningstype.somBeløp("Grunnlag for gis ved verneplikt", synlig = synligOmVerneplikt)
+    val vernepliktPeriode = Opplysningstype.somHeltall("Periode som gis ved verneplikt", synlig = synligOmVerneplikt)
     internal val vernepliktFastsattVanligArbeidstid =
-        Opplysningstype.somDesimaltall("Fastsatt vanlig arbeidstid for verneplikt", Mellomsteg, synligOmVerneplikt)
+        Opplysningstype.somDesimaltall("Fastsatt vanlig arbeidstid for verneplikt", synlig = synligOmVerneplikt)
     internal val grunnlagHvisVerneplikt =
         Opplysningstype.somBeløp("Grunnlag for verneplikt hvis kravet er oppfylt", synlig = aldriSynlig)
     internal val grunnlagUtenVerneplikt =
-        Opplysningstype.somBeløp("Grunnlag for verneplikt hvis kravet ikke er oppfylt", Mellomsteg, aldriSynlig)
+        Opplysningstype.somBeløp("Grunnlag for verneplikt hvis kravet ikke er oppfylt", synlig = aldriSynlig)
 
     val grunnlagForVernepliktErGunstigst =
         Opplysningstype.somBoolsk("Grunnlaget for verneplikt er høyere enn dagpengegrunnlaget", synlig = synligOmVerneplikt)

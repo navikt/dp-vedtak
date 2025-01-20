@@ -2,7 +2,6 @@ package no.nav.dagpenger.regel.fastsetting
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningsformål.Legacy
-import no.nav.dagpenger.opplysning.Opplysningsformål.Mellomsteg
 import no.nav.dagpenger.opplysning.Opplysningsformål.Register
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
@@ -36,7 +35,7 @@ object DagpengenesStørrelse {
     val barn = Opplysningstype.somBarn("Barn".id(Barnetillegg), Register)
     internal val antallBarn = Opplysningstype.somHeltall("Antall barn som gir rett til barnetillegg")
     internal val barnetilleggetsStørrelse =
-        Opplysningstype.somBeløp("Barnetilleggets størrelse i kroner per dag for hvert barn", Mellomsteg, aldriSynlig)
+        Opplysningstype.somBeløp("Barnetilleggets størrelse i kroner per dag for hvert barn", synlig = aldriSynlig)
 
     /**
      * 1. Hente barn fra søknad
@@ -44,34 +43,32 @@ object DagpengenesStørrelse {
      * 3. == antall barn * barnetillegg
      */
     private val dekningsgrad =
-        Opplysningstype.somDesimaltall("Faktor for utregning av dagsats etter dagpengegrunnlaget", Mellomsteg, aldriSynlig)
-    val dagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Dagsats uten barnetillegg før samordning", Mellomsteg, aldriSynlig)
+        Opplysningstype.somDesimaltall("Faktor for utregning av dagsats etter dagpengegrunnlaget", synlig = aldriSynlig)
+    val dagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Dagsats uten barnetillegg før samordning", synlig = aldriSynlig)
     val ukesatsMedBarnetillegg = Opplysningstype.somBeløp("Avrundet ukessats med barnetillegg før samordning", Legacy, aldriSynlig)
     private val avrundetDagsatsUtenBarnetillegg = Opplysningstype.somBeløp("Avrundet dagsats uten barnetillegg før samordning")
     private val beløpOverMaks =
         Opplysningstype.somBeløp(
             "Andel av dagsats med barnetillegg som overstiger maks andel av dagpengegrunnlaget",
-            Mellomsteg,
-            aldriSynlig,
+            synlig = aldriSynlig,
         )
     val dagsatsEtterNittiProsent =
         Opplysningstype.somBeløp(
             "Andel av dagsats uten barnetillegg avkortet til maks andel av dagpengegrunnlaget",
-            Mellomsteg,
-            aldriSynlig,
+            synlig = aldriSynlig,
         )
-    val barnetillegg = Opplysningstype.somBeløp("Sum av barnetillegg", Mellomsteg, aldriSynlig)
-    private val dagsatsMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg før samordning", Mellomsteg, aldriSynlig)
-    private val nittiProsent = Opplysningstype.somDesimaltall("90% av grunnlag for dagpenger", Mellomsteg, aldriSynlig)
-    private val antallArbeidsdagerPerÅr = Opplysningstype.somHeltall("Antall arbeidsdager per år", Mellomsteg, aldriSynlig)
+    val barnetillegg = Opplysningstype.somBeløp("Sum av barnetillegg", synlig = aldriSynlig)
+    private val dagsatsMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg før samordning", synlig = aldriSynlig)
+    private val nittiProsent = Opplysningstype.somDesimaltall("90% av grunnlag for dagpenger", synlig = aldriSynlig)
+    private val antallArbeidsdagerPerÅr = Opplysningstype.somHeltall("Antall arbeidsdager per år", synlig = aldriSynlig)
     private val maksGrunnlag =
-        Opplysningstype.somBeløp("Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget", Mellomsteg, aldriSynlig)
-    val arbeidsdagerPerUke = Opplysningstype.somHeltall("Antall arbeidsdager per uke", Mellomsteg, aldriSynlig)
+        Opplysningstype.somBeløp("Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget", synlig = aldriSynlig)
+    val arbeidsdagerPerUke = Opplysningstype.somHeltall("Antall arbeidsdager per uke", synlig = aldriSynlig)
     private val maksSats =
-        Opplysningstype.somBeløp("Maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget", Mellomsteg, aldriSynlig)
+        Opplysningstype.somBeløp("Maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget", synlig = aldriSynlig)
     private val avrundetMaksSats =
-        Opplysningstype.somBeløp("Avrundet maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget", Mellomsteg, aldriSynlig)
-    internal val harBarnetillegg = Opplysningstype.somBoolsk("Har barnetillegg", Mellomsteg, aldriSynlig)
+        Opplysningstype.somBeløp("Avrundet maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget", synlig = aldriSynlig)
+    internal val harBarnetillegg = Opplysningstype.somBoolsk("Har barnetillegg", synlig = aldriSynlig)
     private val samordnetDagsatsMedBarnetillegg = Opplysningstype.somBeløp("Samordnet dagsats med barnetillegg")
     val ukessats = Opplysningstype.somBeløp("Ukessats med barnetillegg etter samordning", Legacy, aldriSynlig)
     val dagsatsEtterSamordningMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg etter samordning og 90% regel")

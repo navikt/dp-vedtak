@@ -696,7 +696,7 @@ components:
           description: Indikerer om opplysningen skal vises i grensesnittet
         formål:
           type: string
-          enum: [ "Legacy", "Mellomsteg", "Bruker", "Register", "Regel" ]
+          enum: [ "Legacy", "Bruker", "Register", "Regel" ]
 
     Opplysningskilde:
       description: |

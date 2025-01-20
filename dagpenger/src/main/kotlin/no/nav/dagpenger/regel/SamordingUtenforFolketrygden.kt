@@ -1,7 +1,6 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
-import no.nav.dagpenger.opplysning.Opplysningsformål.Mellomsteg
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
@@ -58,14 +57,12 @@ object SamordingUtenforFolketrygden {
     private val terskelVedSamordning =
         Opplysningstype.somDesimaltall(
             "Hvor mange prosent av G skal brukes som terskel ved samordning",
-            Mellomsteg,
-            aldriSynlig,
+            synlig = aldriSynlig,
         )
     val nedreGrenseForSamordning =
         Opplysningstype.somBeløp(
             "Beløp tilsvarende nedre terskel av G",
-            Mellomsteg,
-            aldriSynlig,
+            synlig = aldriSynlig,
         )
     val skalSamordnesUtenforFolketrygden = Opplysningstype.somBoolsk("Skal samordnes med ytelser utenfor folketrygden")
 
@@ -82,14 +79,12 @@ object SamordingUtenforFolketrygden {
     private val minsteMuligeUkessats =
         Opplysningstype.somBeløp(
             "Minste mulige ukessats som som kan brukes",
-            Mellomsteg,
-            aldriSynlig,
+            synlig = aldriSynlig,
         )
     private val samordnetUkessatsUtenforFolketrygden =
         Opplysningstype.somBeløp(
             "Ukessats trukket ned for ytelser utenfor folketrygden",
-            Mellomsteg,
-            aldriSynlig,
+            synlig = aldriSynlig,
         )
     val samordnetUkessats = Opplysningstype.somBeløp("Samordnet ukessats med ytelser utenfor folketrygden")
     val dagsatsSamordnetUtenforFolketrygden = Opplysningstype.somBeløp("Dagsats uten barnetillegg samordnet")

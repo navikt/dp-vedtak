@@ -1,7 +1,6 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
-import no.nav.dagpenger.opplysning.Opplysningsformål.Mellomsteg
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
@@ -19,7 +18,7 @@ object Alderskrav {
     private val prøvingsdato = Søknadstidspunkt.prøvingsdato
 
     private val aldersgrense = Opplysningstype.somHeltall("Aldersgrense", synlig = aldriSynlig)
-    private val sisteMåned = Opplysningstype.somDato("Dato søker når maks alder", Mellomsteg, synlig = aldriSynlig)
+    private val sisteMåned = Opplysningstype.somDato("Dato søker når maks alder", synlig = aldriSynlig)
     private val sisteDagIMåned = Opplysningstype.somDato("Siste mulige dag bruker kan oppfylle alderskrav")
 
     val kravTilAlder = Opplysningstype.somBoolsk("Oppfyller kravet til alder")
