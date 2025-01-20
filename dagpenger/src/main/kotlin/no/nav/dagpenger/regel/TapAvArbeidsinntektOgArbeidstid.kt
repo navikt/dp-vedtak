@@ -53,7 +53,7 @@ object TapAvArbeidsinntektOgArbeidstid {
     val nyArbeidstid = Opplysningstype.somDesimaltall("Ny arbeidstid per uke")
 
     internal val ordinærEllerVernepliktArbeidstid =
-        Opplysningstype.somDesimaltall("Fastsatt vanlig arbeidstid etter ordinær eller verneplikt")
+        Opplysningstype.somDesimaltall("Fastsatt vanlig arbeidstid etter ordinær eller verneplikt", Mellomsteg, aldriSynlig)
     val kravTilMinstTaptArbeidstid = Opplysningstype.somBoolsk("Fastsatt vanlig arbeidstid er minst minimum arbeidstid")
     val kravTilTaptArbeidstid = Opplysningstype.somBoolsk("Tap av arbeidstid er minst terskel")
     val kravTilTapAvArbeidsinntektOgArbeidstid = Opplysningstype.somBoolsk("Krav til tap av arbeidsinntekt og arbeidstid")
