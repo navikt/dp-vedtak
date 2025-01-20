@@ -19,7 +19,7 @@ object Utdanning {
     private val hvisTarUtdanning: (LesbarOpplysninger) -> Boolean = { it.erSann(tarUtdanning) }
 
     // § 4-6 første og andre avsnitt, Utdanning
-    internal val tarUtdanning = Opplysningstype.somBoolsk("Tar utdanning eller opplæring?".id(TarUtdanningEllerOpplæring), Bruker)
+    val tarUtdanning = Opplysningstype.somBoolsk("Tar utdanning eller opplæring?".id(TarUtdanningEllerOpplæring), Bruker)
     internal val godkjentUnntakForUtdanning = Opplysningstype.somBoolsk("Godkjent unntak for utdanning eller opplæring?")
     private val svartJaPåUtdanning =
         Opplysningstype.somBoolsk("Har svart ja på spørsmål om utdanning eller opplæring", synlig = aldriSynlig)
@@ -31,7 +31,7 @@ object Utdanning {
 
     // Dagpengeforskriften § 4-3. Utdanning og opplæring
     //  § 4-3.(deltakelse i arbeidsmarkedstiltak)
-    val deltakelseIArbeidsmarkedstiltak = Opplysningstype.somBoolsk("Deltar i arbeidsmarkedstiltak")
+    val deltakelseIArbeidsmarkedstiltak = Opplysningstype.somBoolsk("Deltar i arbeidsmarkedstiltak", synlig = hvisTarUtdanning)
 
     // § 4-3a.(opplæring for innvandrere)
     val opplæringForInnvandrere = Opplysningstype.somBoolsk("Deltar i opplæring for innvandrere", synlig = hvisTarUtdanning)
