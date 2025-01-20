@@ -43,6 +43,9 @@ import no.nav.dagpenger.regel.Samordning.sykepengerDagsats
 import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel12mnd
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel36mnd
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel6mnd
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.minimumVanligArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.ønsketArbeidstid
 import no.nav.dagpenger.regel.Utdanning.deltakelseIArbeidsmarkedstiltak
@@ -296,6 +299,9 @@ private val redigerbareOpplysninger =
                 deltakelsePåKurs,
                 // 4-3
                 ønsketArbeidstid,
+                beregningsregel6mnd,
+                beregningsregel12mnd,
+                beregningsregel36mnd,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)

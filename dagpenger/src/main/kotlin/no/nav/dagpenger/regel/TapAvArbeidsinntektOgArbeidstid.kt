@@ -41,9 +41,9 @@ object TapAvArbeidsinntektOgArbeidstid {
     private val synlig1: (LesbarOpplysninger) -> Boolean = { it.verdiAv(beregningsregel6mnd) }
     private val synlig2: (LesbarOpplysninger) -> Boolean = { it.verdiAv(beregningsregel12mnd) }
     private val synlig3: (LesbarOpplysninger) -> Boolean = { it.verdiAv(beregningsregel36mnd) }
-    internal val beregningsregel6mnd = Opplysningstype.somBoolsk("Beregningsregel: Arbeidstid siste 6 måneder", Mellomsteg)
-    private val beregningsregel12mnd = Opplysningstype.somBoolsk("Beregningsregel: Arbeidstid siste 12 måneder", Mellomsteg)
-    private val beregningsregel36mnd = Opplysningstype.somBoolsk("Beregeningsregel: Arbeidstid siste 36 måneder", Mellomsteg)
+    val beregningsregel6mnd = Opplysningstype.somBoolsk("Beregningsregel: Arbeidstid siste 6 måneder", Mellomsteg)
+    val beregningsregel12mnd = Opplysningstype.somBoolsk("Beregningsregel: Arbeidstid siste 12 måneder", Mellomsteg)
+    val beregningsregel36mnd = Opplysningstype.somBoolsk("Beregeningsregel: Arbeidstid siste 36 måneder", Mellomsteg)
 
     val beregnetArbeidstid = Opplysningstype.somDesimaltall("Beregnet vanlig arbeidstid per uke før tap")
     private val maksimalVanligArbeidstid = Opplysningstype.somDesimaltall("Maksimal vanlig arbeidstid", Mellomsteg, aldriSynlig)
