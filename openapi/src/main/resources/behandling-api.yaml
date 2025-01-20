@@ -91,6 +91,34 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/HttpProblem'
+  /behandling/{behandlingId}/vurderinger:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+    get:
+      summary: Hent en oppsummering av saksbehandlers vurderinger
+      security:
+        - azureAd: [ ]
+      tags:
+        - Behandling
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaksbehandlersVurderinger'
+          description: OK
+        default:
+          description: Feil ved henting av behandling
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HttpProblem'
   /behandling/{behandlingId}/avbryt:
     parameters:
       - name: behandlingId
@@ -485,6 +513,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Avklaring'
+        avklaringer:
+          type: array
+          items:
+            $ref: '#/components/schemas/Avklaring'
+
+    SaksbehandlersVurderinger:
+      type: object
+      required:
+        - behandlingId
+        - regelsett
+        - avklaringer
+      properties:
+        behandlingId:
+          type: string
+          format: uuid
+        regelsett:
+          type: array
+          items:
+            $ref: '#/components/schemas/Regelsett'
         avklaringer:
           type: array
           items:
