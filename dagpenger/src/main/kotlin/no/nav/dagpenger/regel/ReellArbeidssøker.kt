@@ -48,7 +48,8 @@ object ReellArbeidssøker {
 
     // Registrert som arbeidssøker
     internal val registrertArbeidssøker = Opplysningstype.somBoolsk("Registrert som arbeidssøker".id(RegistrertSomArbeidssøker))
-    val oppyllerKravTilRegistrertArbeidssøker = Opplysningstype.somBoolsk("Registrert som arbeidssøker på søknadstidspunktet")
+    val oppyllerKravTilRegistrertArbeidssøker =
+        Opplysningstype.somBoolsk("Registrert som arbeidssøker på søknadstidspunktet", synlig = aldriSynlig)
 
     val kravTilArbeidssøker = Opplysningstype.somBoolsk("Krav til arbeidssøker")
 
