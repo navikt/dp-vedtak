@@ -19,7 +19,7 @@ import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagForVerne
 import no.nav.dagpenger.regel.folketrygden
 
 private val synligOmVerneplikt: Opplysningssjekk = {
-    it.verdiAv(oppfyllerKravetTilVerneplikt) && it.verdiAv(grunnlagForVernepliktErGunstigst)
+    it.erSann(oppfyllerKravetTilVerneplikt) && it.erSann(grunnlagForVernepliktErGunstigst)
 }
 
 object VernepliktFastsetting {
@@ -55,7 +55,7 @@ object VernepliktFastsetting {
             regel(grunnlagForVernepliktErGunstigst) { størreEnn(grunnlagHvisVerneplikt, dagpengegrunnlag) }
 
             relevantHvis {
-                it.verdiAv(oppfyllerKravetTilVerneplikt) && it.verdiAv(grunnlagForVernepliktErGunstigst)
+                it.erSann(oppfyllerKravetTilVerneplikt) && it.erSann(grunnlagForVernepliktErGunstigst)
             }
         }
     val ønsketResultat =

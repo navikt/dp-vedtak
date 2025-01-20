@@ -27,7 +27,7 @@ import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsEtterNittiProsent
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.harBarnetillegg
 
-private val visesHvisSamordning: Opplysningssjekk = { it.verdiAv(skalSamordnes) }
+private val visesHvisSamordning: Opplysningssjekk = { it.erSann(skalSamordnes) }
 
 /**
  * § 4-25.Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon
@@ -41,13 +41,13 @@ object Samordning {
     internal val foreldrepenger = Opplysningstype.somBoolsk("Foreldrepenger etter lovens kapittel 14".id(Foreldrepenger))
     internal val svangerskapspenger = Opplysningstype.somBoolsk("Svangerskapspenger etter lovens kapittel 14".id(Svangerskapspenger))
 
-    val sykepengerDagsats = Opplysningstype.somBeløp("Sykepenger dagsats", synlig = { it.verdiAv(sykepenger) })
-    val pleiepengerDagsats = Opplysningstype.somBeløp("Pleiepenger dagsats", synlig = { it.verdiAv(pleiepenger) })
-    val omsorgspengerDagsats = Opplysningstype.somBeløp("Omsorgspenger dagsats", synlig = { it.verdiAv(omsorgspenger) })
-    val opplæringspengerDagsats = Opplysningstype.somBeløp("Opplæringspenger dagsats", synlig = { it.verdiAv(opplæringspenger) })
-    val uføreDagsats = Opplysningstype.somBeløp("Uføre dagsats", synlig = { it.verdiAv(uføre) })
-    val foreldrepengerDagsats = Opplysningstype.somBeløp("Foreldrepenger dagsats", synlig = { it.verdiAv(foreldrepenger) })
-    val svangerskapspengerDagsats = Opplysningstype.somBeløp("Svangerskapspenger dagsats", synlig = { it.verdiAv(svangerskapspenger) })
+    val sykepengerDagsats = Opplysningstype.somBeløp("Sykepenger dagsats", synlig = { it.erSann(sykepenger) })
+    val pleiepengerDagsats = Opplysningstype.somBeløp("Pleiepenger dagsats", synlig = { it.erSann(pleiepenger) })
+    val omsorgspengerDagsats = Opplysningstype.somBeløp("Omsorgspenger dagsats", synlig = { it.erSann(omsorgspenger) })
+    val opplæringspengerDagsats = Opplysningstype.somBeløp("Opplæringspenger dagsats", synlig = { it.erSann(opplæringspenger) })
+    val uføreDagsats = Opplysningstype.somBeløp("Uføre dagsats", synlig = { it.erSann(uføre) })
+    val foreldrepengerDagsats = Opplysningstype.somBeløp("Foreldrepenger dagsats", synlig = { it.erSann(foreldrepenger) })
+    val svangerskapspengerDagsats = Opplysningstype.somBeløp("Svangerskapspenger dagsats", synlig = { it.erSann(svangerskapspenger) })
 
     private val sumAndreYtelser = Opplysningstype.somBeløp("Sum andre ytelser", synlig = visesHvisSamordning)
     internal val skalSamordnes =

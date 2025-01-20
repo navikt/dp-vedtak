@@ -20,7 +20,7 @@ interface LesbarOpplysninger {
 
     fun forDato(gjelderFor: LocalDate): LesbarOpplysninger
 
-    fun verdiAv(opplysningstype: Opplysningstype<Boolean>) = har(opplysningstype) && finnOpplysning(opplysningstype).verdi
+    fun erSann(opplysningstype: Opplysningstype<Boolean>) = har(opplysningstype) && finnOpplysning(opplysningstype).verdi
 }
 
 typealias Opplysningssjekk = (LesbarOpplysninger) -> Boolean

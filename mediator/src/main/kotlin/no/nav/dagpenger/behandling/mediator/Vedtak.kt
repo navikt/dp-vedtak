@@ -131,7 +131,7 @@ fun lagVedtak(
             .filter { it.opplysningstype in autorativKildeForDetViPåEkteMenerErVilkår.keys }
             .map { it.tilVilkårDTO(autorativKildeForDetViPåEkteMenerErVilkår[it.opplysningstype]) }
 
-    val utfall = vilkår.all { it.status == VilkaarDTO.Status.Oppfylt } && opplysninger.verdiAv(kravPåDagpenger)
+    val utfall = vilkår.all { it.status == VilkaarDTO.Status.Oppfylt } && opplysninger.erSann(kravPåDagpenger)
     logger.info {
         "VedtakDTO med utfall $utfall, dette var alle vilkårene ${vilkår.joinToString("\n") { it.navn + " -> " + it.status.name }}"
     }

@@ -38,9 +38,9 @@ object TapAvArbeidsinntektOgArbeidstid {
     private val kravTilArbeidstidsreduksjon = Opplysningstype.somDesimaltall("Krav til prosentvis tap av arbeidstid")
     private val beregningsregel = Opplysningstype.somBoolsk("Beregningsregel: Tapt arbeidstid", Mellomsteg, aldriSynlig)
 
-    private val synlig1: (LesbarOpplysninger) -> Boolean = { it.verdiAv(beregningsregel6mnd) }
-    private val synlig2: (LesbarOpplysninger) -> Boolean = { it.verdiAv(beregningsregel12mnd) }
-    private val synlig3: (LesbarOpplysninger) -> Boolean = { it.verdiAv(beregningsregel36mnd) }
+    private val synlig1: (LesbarOpplysninger) -> Boolean = { it.erSann(beregningsregel6mnd) }
+    private val synlig2: (LesbarOpplysninger) -> Boolean = { it.erSann(beregningsregel12mnd) }
+    private val synlig3: (LesbarOpplysninger) -> Boolean = { it.erSann(beregningsregel36mnd) }
     val beregningsregel6mnd = Opplysningstype.somBoolsk("Beregningsregel: Arbeidstid siste 6 måneder", Mellomsteg)
     val beregningsregel12mnd = Opplysningstype.somBoolsk("Beregningsregel: Arbeidstid siste 12 måneder", Mellomsteg)
     val beregningsregel36mnd = Opplysningstype.somBoolsk("Beregeningsregel: Arbeidstid siste 36 måneder", Mellomsteg)
@@ -48,7 +48,7 @@ object TapAvArbeidsinntektOgArbeidstid {
     val beregnetArbeidstid = Opplysningstype.somDesimaltall("Beregnet vanlig arbeidstid per uke før tap")
     private val maksimalVanligArbeidstid = Opplysningstype.somDesimaltall("Maksimal vanlig arbeidstid", Mellomsteg, aldriSynlig)
     val minimumVanligArbeidstid =
-        Opplysningstype.somDesimaltall("Minimum vanlig arbeidstid", Mellomsteg) { it.verdiAv(uføre) }
+        Opplysningstype.somDesimaltall("Minimum vanlig arbeidstid", Mellomsteg) { it.erSann(uføre) }
     val fastsattVanligArbeidstid = Opplysningstype.somDesimaltall("Fastsatt arbeidstid per uke før tap")
     val nyArbeidstid = Opplysningstype.somDesimaltall("Ny arbeidstid per uke")
 
