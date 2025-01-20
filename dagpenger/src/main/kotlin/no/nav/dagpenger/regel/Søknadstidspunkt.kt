@@ -1,7 +1,9 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
+import no.nav.dagpenger.opplysning.Opplysningsformål.Mellomsteg
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.sisteAv
@@ -16,7 +18,7 @@ object Søknadstidspunkt {
     val søknadsdato = Opplysningstype.somDato("Søknadsdato".id(Søknadsdato, tekstId = "opplysning.soknadsdato"))
     val ønsketdato = Opplysningstype.somDato("Ønsker dagpenger fra dato".id(ØnskerDagpengerFraDato))
 
-    val søknadstidspunkt = Opplysningstype.somDato("Søknadstidspunkt".tekstId("opplysning.soknadstidspunkt"))
+    val søknadstidspunkt = Opplysningstype.somDato("Søknadstidspunkt".tekstId("opplysning.soknadstidspunkt"), Mellomsteg, aldriSynlig)
 
     val prøvingsdato = Opplysningstype.somDato("Prøvingsdato".id("Prøvingsdato"))
     val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")
