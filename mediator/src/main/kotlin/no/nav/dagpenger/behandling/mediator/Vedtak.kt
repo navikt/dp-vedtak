@@ -27,10 +27,10 @@ import no.nav.dagpenger.regel.Alderskrav
 import no.nav.dagpenger.regel.FulleYtelser
 import no.nav.dagpenger.regel.KravPåDagpenger.kravPåDagpenger
 import no.nav.dagpenger.regel.KravPåDagpenger.minsteinntektEllerVerneplikt
-import no.nav.dagpenger.regel.Meldeplikt
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
 import no.nav.dagpenger.regel.Opphold
 import no.nav.dagpenger.regel.ReellArbeidssøker
+import no.nav.dagpenger.regel.ReellArbeidssøker.oppyllerKravTilRegistrertArbeidssøker
 import no.nav.dagpenger.regel.Rettighetstype
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden
 import no.nav.dagpenger.regel.Samordning
@@ -49,6 +49,7 @@ import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagForVernepliktErGunstigst
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktPeriode
+import java.lang.ProcessBuilder.Redirect.to
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -61,7 +62,7 @@ private val autorativKildeForDetViPåEkteMenerErVilkår: Map<Opplysningstype<Boo
         Alderskrav.kravTilAlder to kapittel4(23),
         FulleYtelser.ikkeFulleYtelser to kapittel4(24),
         Opphold.oppfyllerMedlemskap to kapittel4(2),
-        Meldeplikt.registrertPåSøknadstidspunktet to kapittel4(8),
+        oppyllerKravTilRegistrertArbeidssøker to kapittel4(5),
         minsteinntektEllerVerneplikt to kapittel4(4),
         Opphold.oppfyllerKravet to kapittel4(5),
         ReellArbeidssøker.kravTilArbeidssøker to kapittel4(5),

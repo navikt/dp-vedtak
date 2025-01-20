@@ -36,7 +36,6 @@ Oppfyller kravet til heltid- og deltidsarbeid
 Oppfyller kravet til mobilitet
 Siste mulige dag bruker kan oppfylle alderskrav
 Siste avsluttende kalendermåned
-Krav til arbeidssøker
 Oppfyller kravet til alder
 Første måned av opptjeningsperiode
 Inntektsopplysninger
@@ -45,6 +44,7 @@ Registrert som arbeidssøker på søknadstidspunktet
 Brutto arbeidsinntekt
 Arbeidsinntekt siste 12 mnd
 Arbeidsinntekt siste 36 mnd
+Krav til arbeidssøker
 Arbeidsinntekt er over kravet for siste 12 mnd
 Arbeidsinntekt er over kravet for siste 36 mnd
 Krav til minsteinntekt

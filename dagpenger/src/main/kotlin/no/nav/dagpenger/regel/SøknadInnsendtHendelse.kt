@@ -15,12 +15,12 @@ import no.nav.dagpenger.regel.Alderskrav.Under18Kontroll
 import no.nav.dagpenger.regel.FulleYtelser.FulleYtelserKontrollpunkt
 import no.nav.dagpenger.regel.KravPåDagpenger.VirkningstidspunktForLangtFramITid
 import no.nav.dagpenger.regel.KravPåDagpenger.minsteinntektEllerVerneplikt
-import no.nav.dagpenger.regel.Meldeplikt.IkkeRegistrertSomArbeidsøkerKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.EØSArbeidKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.InntektNesteKalendermånedKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.SvangerskapsrelaterteSykepengerKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.ØnskerEtterRapporteringsfristKontroll
+import no.nav.dagpenger.regel.ReellArbeidssøker.IkkeRegistrertSomArbeidsøkerKontroll
 import no.nav.dagpenger.regel.ReellArbeidssøker.ReellArbeidssøkerKontroll
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.YtelserUtenforFolketrygdenKontroll
 import no.nav.dagpenger.regel.Samordning.SkalSamordnes

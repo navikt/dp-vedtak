@@ -37,10 +37,12 @@ import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.FulleYtelser.ikkeFulleYtelser
 import no.nav.dagpenger.regel.Opphold.unntakForOpphold
+import no.nav.dagpenger.regel.ReellArbeidssøker.erArbeidsfør
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentDeltidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentLokalArbeidssøker
-import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravTilArbeidsfør
-import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravetTilEthvertArbeid
+import no.nav.dagpenger.regel.ReellArbeidssøker.kanJobbeDeltid
+import no.nav.dagpenger.regel.ReellArbeidssøker.kanJobbeHvorSomHelst
+import no.nav.dagpenger.regel.ReellArbeidssøker.villigTilEthvertArbeid
 import no.nav.dagpenger.regel.Samordning.foreldrepenger
 import no.nav.dagpenger.regel.Samordning.foreldrepengerDagsats
 import no.nav.dagpenger.regel.Samordning.omsorgspenger
@@ -308,10 +310,12 @@ private val redigerbareOpplysninger =
                 nyArbeidstid,
                 minimumVanligArbeidstid,
                 // 4-5
+                kanJobbeDeltid,
+                kanJobbeHvorSomHelst,
+                erArbeidsfør,
+                villigTilEthvertArbeid,
                 godkjentDeltidssøker,
                 godkjentLokalArbeidssøker,
-                oppfyllerKravTilArbeidsfør,
-                oppfyllerKravetTilEthvertArbeid,
                 // 4-6 Utdanning
                 deltakelseIArbeidsmarkedstiltak,
                 opplæringForInnvandrere,

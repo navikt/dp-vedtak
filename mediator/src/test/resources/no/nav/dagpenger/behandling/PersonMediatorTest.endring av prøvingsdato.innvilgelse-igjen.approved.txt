@@ -127,7 +127,6 @@ Har barnetillegg
 Siste mulige dag bruker kan oppfylle alderskrav
 Siste avsluttende kalendermåned
 Oppfyller kravet til opphold i Norge
-Krav til arbeidssøker
 Oppfyller kravet på unntak for utdanning eller opplæring
 Oppfyller kravet til alder
 Første måned av opptjeningsperiode
@@ -149,6 +148,7 @@ Medlem har reduserte ytelser fra folketrygden (Samordning)
 Skal samordnes med ytelser utenfor folketrygden
 Arbeidsinntekt siste 12 mnd
 Arbeidsinntekt siste 36 mnd
+Krav til arbeidssøker
 Oppjustert inntekt
 Utbetalt arbeidsinntekt periode 1
 Utbetalt arbeidsinntekt periode 2
