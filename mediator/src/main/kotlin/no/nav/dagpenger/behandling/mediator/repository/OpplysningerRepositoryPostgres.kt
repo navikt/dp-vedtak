@@ -74,9 +74,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             )
 
         private val opplysningstyper by lazy {
-            // TODO: Egentlig vil vi dette:
             Opplysningstype.definerteTyper.associateBy { it.opplysningTypeId }
-            // Opplysningstype.definerteTyper
         }
 
         private val logger = KotlinLogging.logger { }
