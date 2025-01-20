@@ -40,8 +40,6 @@ import no.nav.dagpenger.regel.Opphold.unntakForOpphold
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentDeltidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentLokalArbeidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravTilArbeidsfør
-import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravTilArbeidssøker
-import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravTilMobilitet
 import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravetTilEthvertArbeid
 import no.nav.dagpenger.regel.Samordning.samordnetArbeidstid
 import no.nav.dagpenger.regel.Samordning.sykepengerDagsats
@@ -298,8 +296,6 @@ private val redigerbareOpplysninger =
                 // 4-5
                 godkjentDeltidssøker,
                 godkjentLokalArbeidssøker,
-                oppfyllerKravTilArbeidssøker,
-                oppfyllerKravTilMobilitet,
                 oppfyllerKravTilArbeidsfør,
                 oppfyllerKravetTilEthvertArbeid,
                 // 4-6 Utdanning
