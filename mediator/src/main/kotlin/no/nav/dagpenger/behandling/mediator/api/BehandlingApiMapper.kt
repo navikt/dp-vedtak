@@ -41,8 +41,21 @@ import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentDeltidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentLokalArbeidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravTilArbeidsfør
 import no.nav.dagpenger.regel.ReellArbeidssøker.oppfyllerKravetTilEthvertArbeid
+import no.nav.dagpenger.regel.Samordning.foreldrepenger
+import no.nav.dagpenger.regel.Samordning.foreldrepengerDagsats
+import no.nav.dagpenger.regel.Samordning.omsorgspenger
+import no.nav.dagpenger.regel.Samordning.omsorgspengerDagsats
+import no.nav.dagpenger.regel.Samordning.opplæringspenger
+import no.nav.dagpenger.regel.Samordning.opplæringspengerDagsats
+import no.nav.dagpenger.regel.Samordning.pleiepenger
+import no.nav.dagpenger.regel.Samordning.pleiepengerDagsats
 import no.nav.dagpenger.regel.Samordning.samordnetArbeidstid
+import no.nav.dagpenger.regel.Samordning.svangerskapspenger
+import no.nav.dagpenger.regel.Samordning.svangerskapspengerDagsats
+import no.nav.dagpenger.regel.Samordning.sykepenger
 import no.nav.dagpenger.regel.Samordning.sykepengerDagsats
+import no.nav.dagpenger.regel.Samordning.uføre
+import no.nav.dagpenger.regel.Samordning.uføreDagsats
 import no.nav.dagpenger.regel.StreikOgLockout.deltarIStreikOgLockout
 import no.nav.dagpenger.regel.StreikOgLockout.sammeBedriftOgPåvirket
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
@@ -315,7 +328,20 @@ private val redigerbareOpplysninger =
                 ikkeFulleYtelser,
                 // 4-25 Samordning
                 samordnetArbeidstid,
+                sykepenger,
+                pleiepenger,
+                omsorgspenger,
+                opplæringspenger,
+                uføre,
+                foreldrepenger,
+                svangerskapspenger,
                 sykepengerDagsats,
+                pleiepengerDagsats,
+                omsorgspengerDagsats,
+                opplæringspengerDagsats,
+                uføreDagsats,
+                foreldrepengerDagsats,
+                svangerskapspengerDagsats,
                 // 4-28 Utestenging
                 utestengt,
             )
