@@ -28,7 +28,7 @@ object Dagpengeperiode {
     private val grunnbeløp = Minsteinntekt.grunnbeløp
     private val terskel12 = Opplysningstype.somBeløp("Terskel for 12 måneder", Mellomsteg, aldriSynlig)
     private val terskel36 = Opplysningstype.somBeløp("Terskel for 36 måneder", Mellomsteg, aldriSynlig)
-    private val inntektSnittSiste36 = Opplysningstype.somBeløp("Snittinntekt siste 36 måneder")
+    private val inntektSnittSiste36 = Opplysningstype.somBeløp("Snittinntekt siste 36 måneder", Mellomsteg, aldriSynlig)
 
     private val inntektSiste12 = Minsteinntekt.inntekt12
     private val inntektSiste36 = Minsteinntekt.inntekt36
