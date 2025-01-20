@@ -58,12 +58,13 @@ object ReellArbeidssøker {
             folketrygden.hjemmel(4, 5, "Reelle arbeidssøkere", "4-5 Reell arbeidssøker"),
         ) {
             regel(kanJobbeDeltid) { innhentes }
+            regel(godkjentDeltidssøker) { oppslag(prøvingsdato) { false } }
+
             regel(kanJobbeHvorSomHelst) { innhentes }
+            regel(godkjentLokalArbeidssøker) { oppslag(prøvingsdato) { false } }
+
             regel(erArbeidsfør) { innhentes }
             regel(villigTilEthvertArbeid) { innhentes }
-
-            regel(godkjentDeltidssøker) { oppslag(prøvingsdato) { false } }
-            regel(godkjentLokalArbeidssøker) { oppslag(prøvingsdato) { false } }
 
             regel(oppfyllerKravTilArbeidssøker) { enAv(kanJobbeDeltid, godkjentDeltidssøker) }
             regel(oppfyllerKravTilMobilitet) { enAv(kanJobbeHvorSomHelst, godkjentLokalArbeidssøker) }
