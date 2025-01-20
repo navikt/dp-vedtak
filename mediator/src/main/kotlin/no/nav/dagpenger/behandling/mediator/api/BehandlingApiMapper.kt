@@ -131,7 +131,10 @@ private fun Regelsett.tilRegelsettDTO(
     avklaringer: Set<Avklaring>,
     lesbarOpplysninger: LesbarOpplysninger,
 ): RegelsettDTO {
-    val produserer = opplysninger.filter { opplysning -> opplysning.opplysningstype in produserer }
+    val produkter =
+        opplysninger
+            .filter { opplysning -> opplysning.opplysningstype in produserer }
+            .sortedBy { produserer.indexOf(it.opplysningstype) }
     val avklaringskoder = avklaringer()
     val egneAvklaringer = avklaringer.filter { it.kode in avklaringskoder }
 
@@ -154,7 +157,7 @@ private fun Regelsett.tilRegelsettDTO(
                 tittel = hjemmel.toString(),
             ),
         avklaringer = egneAvklaringer.map { it.tilAvklaringDTO() },
-        opplysningIder = produserer.map { opplysning -> opplysning.id },
+        opplysningIder = produkter.map { opplysning -> opplysning.id },
         status = status,
         relevantForVedtak = erRelevant,
     )
