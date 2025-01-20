@@ -1,6 +1,7 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.alle
@@ -11,11 +12,11 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object Opphold {
     var oppholdINorge = Opplysningstype.somBoolsk("Opphold i Norge".id("OppholdINorge"))
-    var unntakForOpphold = Opplysningstype.somBoolsk("Oppfyller unntak for opphold i Norge")
-    val oppfyllerKravetTilOpphold = Opplysningstype.somBoolsk("Oppfyller kravet til opphold i Norge eller unntak")
+    var unntakForOpphold = Opplysningstype.somBoolsk("Oppfyller unntak for opphold i Norge", synlig = { it.erSann(oppholdINorge) })
+    val oppfyllerKravetTilOpphold = Opplysningstype.somBoolsk("Oppfyller kravet til opphold i Norge eller unntak", synlig = aldriSynlig)
 
     val medlemFolketrygden = Opplysningstype.somBoolsk("Er personen medlem av folketrygden")
-    val oppfyllerMedlemskap = Opplysningstype.somBoolsk("Oppfyller kravet til medlemskap")
+    val oppfyllerMedlemskap = Opplysningstype.somBoolsk("Oppfyller kravet til medlemskap", synlig = aldriSynlig)
 
     val oppfyllerKravet = Opplysningstype.somBoolsk("Oppfyller kravet til opphold i Norge")
 
