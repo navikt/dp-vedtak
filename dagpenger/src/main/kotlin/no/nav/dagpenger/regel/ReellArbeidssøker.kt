@@ -24,12 +24,18 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 object ReellArbeidssøker {
     // c.	å ta arbeid uavhengig av om det er på heltid eller deltid,
     val kanJobbeDeltid = Opplysningstype.somBoolsk("Kan jobbe heltid og deltid".id(KanJobbeDeltid), Bruker)
-    val godkjentDeltidssøker = Opplysningstype.somBoolsk("Det er godkjent at bruker kun søker deltidsarbeid")
+    val godkjentDeltidssøker =
+        Opplysningstype.somBoolsk("Det er godkjent at bruker kun søker deltidsarbeid", synlig = {
+            it.erSann(kanJobbeDeltid) == false
+        })
     val oppfyllerKravTilArbeidssøker = Opplysningstype.somBoolsk("Oppfyller kravet til heltid- og deltidsarbeid", synlig = aldriSynlig)
 
     // b.	å ta arbeid hvor som helst i Norge,
     val kanJobbeHvorSomHelst = Opplysningstype.somBoolsk("Kan jobbe i hele Norge".id(KanJobbeHvorSomHelst), Bruker)
-    val godkjentLokalArbeidssøker = Opplysningstype.somBoolsk("Det er godkjent at bruker kun søk arbeid lokalt")
+    val godkjentLokalArbeidssøker =
+        Opplysningstype.somBoolsk("Det er godkjent at bruker kun søk arbeid lokalt", synlig = {
+            it.erSann(kanJobbeHvorSomHelst) == false
+        })
     val oppfyllerKravTilMobilitet = Opplysningstype.somBoolsk("Oppfyller kravet til mobilitet", synlig = aldriSynlig)
 
     //  Som reell arbeidssøker regnes den som er arbeidsfør,
