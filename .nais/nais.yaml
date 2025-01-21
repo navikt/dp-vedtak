@@ -77,6 +77,11 @@ spec:
         databases:
           - name: behandling
             envVarPrefix: DB
+        flags:
+          - name: cloudsql.enable_pgaudit
+            value: "on"
+          - name: pgaudit.log
+            value: "all"
   kafka:
     pool: "{{ kafka.pool }}"
   accessPolicy:
