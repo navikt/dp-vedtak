@@ -4,6 +4,7 @@ import no.nav.dagpenger.opplysning.Forretningsprosess
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.KravPåDagpenger.minsteinntektEllerVerneplikt
+import no.nav.dagpenger.regel.ReellArbeidssøker.oppyllerKravTilRegistrertArbeidssøker
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
@@ -19,7 +20,7 @@ class Søknadsprosess : Forretningsprosess {
         val ønsketResultat =
             mutableListOf<Opplysningstype<*>>(
                 Rettighetstype.rettighetstype,
-                Meldeplikt.registrertPåSøknadstidspunktet,
+                oppyllerKravTilRegistrertArbeidssøker,
             )
 
         // Sjekk krav til alder
@@ -53,7 +54,7 @@ class Søknadsprosess : Forretningsprosess {
             listOf(
                 Alderskrav.kravTilAlder,
                 FulleYtelser.ikkeFulleYtelser,
-                Meldeplikt.registrertPåSøknadstidspunktet,
+                oppyllerKravTilRegistrertArbeidssøker,
                 minsteinntektEllerVerneplikt,
                 Opphold.oppfyllerKravet,
                 ReellArbeidssøker.kravTilArbeidssøker,

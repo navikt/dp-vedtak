@@ -36,20 +36,47 @@ import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.FulleYtelser.ikkeFulleYtelser
+import no.nav.dagpenger.regel.Opphold.medlemFolketrygden
+import no.nav.dagpenger.regel.Opphold.oppholdINorge
+import no.nav.dagpenger.regel.Opphold.unntakForOpphold
+import no.nav.dagpenger.regel.ReellArbeidssøker.erArbeidsfør
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentDeltidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentLokalArbeidssøker
+import no.nav.dagpenger.regel.ReellArbeidssøker.kanJobbeDeltid
+import no.nav.dagpenger.regel.ReellArbeidssøker.kanJobbeHvorSomHelst
+import no.nav.dagpenger.regel.ReellArbeidssøker.villigTilEthvertArbeid
+import no.nav.dagpenger.regel.Samordning.foreldrepenger
+import no.nav.dagpenger.regel.Samordning.foreldrepengerDagsats
+import no.nav.dagpenger.regel.Samordning.omsorgspenger
+import no.nav.dagpenger.regel.Samordning.omsorgspengerDagsats
+import no.nav.dagpenger.regel.Samordning.opplæringspenger
+import no.nav.dagpenger.regel.Samordning.opplæringspengerDagsats
+import no.nav.dagpenger.regel.Samordning.pleiepenger
+import no.nav.dagpenger.regel.Samordning.pleiepengerDagsats
 import no.nav.dagpenger.regel.Samordning.samordnetArbeidstid
+import no.nav.dagpenger.regel.Samordning.svangerskapspenger
+import no.nav.dagpenger.regel.Samordning.svangerskapspengerDagsats
+import no.nav.dagpenger.regel.Samordning.sykepenger
 import no.nav.dagpenger.regel.Samordning.sykepengerDagsats
-import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
+import no.nav.dagpenger.regel.Samordning.uføre
+import no.nav.dagpenger.regel.Samordning.uføreDagsats
+import no.nav.dagpenger.regel.StreikOgLockout.deltarIStreikOgLockout
+import no.nav.dagpenger.regel.StreikOgLockout.sammeBedriftOgPåvirket
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
-import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel12mnd
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel36mnd
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel6mnd
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.minimumVanligArbeidstid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.nyArbeidstid
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.ønsketArbeidstid
 import no.nav.dagpenger.regel.Utdanning.deltakelseIArbeidsmarkedstiltak
 import no.nav.dagpenger.regel.Utdanning.deltakelsePåKurs
 import no.nav.dagpenger.regel.Utdanning.grunnskoleopplæring
 import no.nav.dagpenger.regel.Utdanning.høyereUtdanning
 import no.nav.dagpenger.regel.Utdanning.høyereYrkesfagligUtdanning
 import no.nav.dagpenger.regel.Utdanning.opplæringForInnvandrere
+import no.nav.dagpenger.regel.Utdanning.tarUtdanning
 import no.nav.dagpenger.regel.Utestengning.utestengt
 import no.nav.dagpenger.regel.Verneplikt.oppfyllerKravetTilVerneplikt
 import java.time.LocalDate
@@ -59,7 +86,8 @@ private val logger = KotlinLogging.logger { }
 
 internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
     withLoggingContext("behandlingId" to this.behandlingId.toString()) {
-        val opplysninger = this.opplysninger().finnAlle().toSet()
+        val lesbareOpplysninger = opplysninger()
+        val opplysningSet = lesbareOpplysninger.finnAlle().toSet()
         val avklaringer = avklaringer().toSet()
         val spesifikkeAvklaringskoder =
             behandler.regelverk.regelsett
@@ -85,16 +113,16 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
             vilkår =
                 behandler.regelverk
                     .regelsettAvType(RegelsettType.Vilkår)
-                    .map { it.tilRegelsettDTO(opplysninger, avklaringer, opplysninger()) }
+                    .map { it.tilRegelsettDTO(opplysningSet, avklaringer, lesbareOpplysninger) }
                     .sortedBy { it.hjemmel.paragraf.toInt() },
             fastsettelser =
                 behandler.regelverk
                     .regelsettAvType(RegelsettType.Fastsettelse)
-                    .map { it.tilRegelsettDTO(opplysninger, avklaringer, opplysninger()) }
+                    .map { it.tilRegelsettDTO(opplysningSet, avklaringer, lesbareOpplysninger) }
                     .sortedBy { it.hjemmel.paragraf.toInt() },
             kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
             avklaringer = generelleAvklaringer.map { it.tilAvklaringDTO() },
-            opplysninger = opplysninger.map { it.tilOpplysningDTO() },
+            opplysninger = opplysningSet.map { it.tilOpplysningDTO(lesbareOpplysninger) },
         )
     }
 
@@ -103,7 +131,10 @@ private fun Regelsett.tilRegelsettDTO(
     avklaringer: Set<Avklaring>,
     lesbarOpplysninger: LesbarOpplysninger,
 ): RegelsettDTO {
-    val produserer = opplysninger.filter { opplysning -> opplysning.opplysningstype in produserer }
+    val produkter =
+        opplysninger
+            .filter { opplysning -> opplysning.opplysningstype in produserer }
+            .sortedBy { produserer.indexOf(it.opplysningstype) }
     val avklaringskoder = avklaringer()
     val egneAvklaringer = avklaringer.filter { it.kode in avklaringskoder }
 
@@ -126,7 +157,7 @@ private fun Regelsett.tilRegelsettDTO(
                 tittel = hjemmel.toString(),
             ),
         avklaringer = egneAvklaringer.map { it.tilAvklaringDTO() },
-        opplysningIder = produserer.map { opplysning -> opplysning.id },
+        opplysningIder = produkter.map { opplysning -> opplysning.id },
         status = status,
         relevantForVedtak = erRelevant,
     )
@@ -144,6 +175,7 @@ private fun tilStatus(utfall: Boolean?): RegelsettDTO.Status {
 
 internal fun Behandling.tilBehandlingOpplysningerDTO(): BehandlingOpplysningerDTO =
     withLoggingContext("behandlingId" to this.behandlingId.toString()) {
+        val lesbareOpplysninger = this.opplysninger()
         BehandlingOpplysningerDTO(
             behandlingId = this.behandlingId,
             tilstand =
@@ -159,8 +191,8 @@ internal fun Behandling.tilBehandlingOpplysningerDTO(): BehandlingOpplysningerDT
                     Behandling.TilstandType.TilBeslutning -> BehandlingOpplysningerDTO.Tilstand.TilBeslutning
                 },
             opplysning =
-                this.opplysninger().finnAlle().map { opplysning ->
-                    opplysning.tilOpplysningDTO()
+                lesbareOpplysninger.finnAlle().map { opplysning ->
+                    opplysning.tilOpplysningDTO(lesbareOpplysninger)
                 },
             kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
             aktiveAvklaringer =
@@ -210,11 +242,10 @@ internal fun Avklaring.tilAvklaringDTO(): AvklaringDTO {
     )
 }
 
-internal fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
+internal fun Opplysning<*>.tilOpplysningDTO(opplysninger: LesbarOpplysninger): OpplysningDTO =
     OpplysningDTO(
         id = this.id,
         navn = this.opplysningstype.navn,
-        tekstId = this.opplysningstype.tekstId,
         verdi =
             when (this.opplysningstype.datatype) {
                 // todo: Frontenden burde vite om det er penger og håndtere det med valuta
@@ -256,7 +287,7 @@ internal fun Opplysning<*>.tilOpplysningDTO(): OpplysningDTO =
                 )
             },
         redigerbar = this.kanRedigeres(redigerbareOpplysninger),
-        synlig = this.opplysningstype.formål.synlig,
+        synlig = this.opplysningstype.synlig(opplysninger),
         formål = OpplysningDTO.Formål.valueOf(this.opplysningstype.formål.name),
     )
 
@@ -272,25 +303,59 @@ private val redigerbareOpplysninger =
     object : Redigerbar {
         private val redigerbare =
             setOf(
-                TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid,
-                TapAvArbeidsinntektOgArbeidstid.nyArbeidstid,
+                prøvingsdato,
+                // 4-2 Opphold
+                oppholdINorge,
+                unntakForOpphold,
+                medlemFolketrygden,
+                // 4-3
+                ønsketArbeidstid,
+                beregningsregel6mnd,
+                beregningsregel12mnd,
+                beregningsregel36mnd,
+                beregnetArbeidstid,
+                nyArbeidstid,
+                minimumVanligArbeidstid,
+                // 4-5
+                kanJobbeDeltid,
+                kanJobbeHvorSomHelst,
+                erArbeidsfør,
+                villigTilEthvertArbeid,
                 godkjentDeltidssøker,
                 godkjentLokalArbeidssøker,
-                ikkeFulleYtelser,
-                ikkeStreikEllerLockout,
-                prøvingsdato,
-                sykepengerDagsats,
-                utestengt,
-                oppfyllerKravetTilVerneplikt,
-                samordnetArbeidstid,
-                minimumVanligArbeidstid,
-                // Utdanning
+                // 4-6 Utdanning
+                tarUtdanning,
                 deltakelseIArbeidsmarkedstiltak,
                 opplæringForInnvandrere,
                 grunnskoleopplæring,
                 høyereYrkesfagligUtdanning,
                 høyereUtdanning,
                 deltakelsePåKurs,
+                // 4-19 Verneplikt
+                oppfyllerKravetTilVerneplikt,
+                // 4-22 Streik og lockøout
+                deltarIStreikOgLockout,
+                sammeBedriftOgPåvirket,
+                // 4-24 Fulle ytelser
+                ikkeFulleYtelser,
+                // 4-25 Samordning
+                samordnetArbeidstid,
+                sykepenger,
+                pleiepenger,
+                omsorgspenger,
+                opplæringspenger,
+                uføre,
+                foreldrepenger,
+                svangerskapspenger,
+                sykepengerDagsats,
+                pleiepengerDagsats,
+                omsorgspengerDagsats,
+                opplæringspengerDagsats,
+                uføreDagsats,
+                foreldrepengerDagsats,
+                svangerskapspengerDagsats,
+                // 4-28 Utestenging
+                utestengt,
             )
 
         override fun kanRedigere(opplysning: Opplysning<*>): Boolean = redigerbare.contains(opplysning.opplysningstype)

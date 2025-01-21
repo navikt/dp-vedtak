@@ -32,39 +32,46 @@ internal class VaktmesterPostgresRepo {
                 "0193aa5c-314b-7b70-bd00-766b012d252f",
                 "019391b4-73e7-7512-847f-73a1f805ab80",
                 "019391c0-d9f5-78d9-8704-02f749bfb17c",
+                "0193ca27-38f1-7887-a8f1-7e767d652cb4",
+                "019368a2-a33b-7c91-8579-4334ca134884",
+                "01934fc6-09c4-711c-8da1-21e331aeec54",
             )
     }
 
     fun slettOpplysninger(antall: Int = 1): List<UUID> {
         val slettet = mutableListOf<UUID>()
-        using(sessionOf(dataSource)) { session ->
-            val kandidater = session.hentOpplysningerSomErFjernet(antall)
-            kandidater.forEach { kandidat ->
+        try {
+            using(sessionOf(dataSource)) { session ->
                 session.transaction { tx ->
                     tx.medLås(låsenøkkel) {
-                        withLoggingContext(
-                            "behandlingId" to kandidat.behandlingId.toString(),
-                            "opplysningerId" to kandidat.opplysningerId.toString(),
-                        ) {
-                            logger.info { "Skal slette ${kandidat.opplysninger().size} opplysninger " }
-                            kandidat.opplysninger().forEach { opplysningId ->
-                                val statements = mutableListOf<BatchStatement>()
-                                statements.add(slettOpplysningVerdi(opplysningId))
-                                statements.add(slettOpplysningUtledet(opplysningId))
-                                statements.add(slettOpplysningLink(opplysningId))
-                                statements.add(slettOpplysningUtledning(opplysningId))
-                                statements.add(slettErstatteAv(opplysningId))
-                                statements.add(slettOpplysning(opplysningId))
-                                statements.forEach { batch ->
-                                    batch.run(tx)
+                        val kandidater = tx.hentOpplysningerSomErFjernet(antall)
+                        kandidater.forEach { kandidat ->
+                            withLoggingContext(
+                                "behandlingId" to kandidat.behandlingId.toString(),
+                                "opplysningerId" to kandidat.opplysningerId.toString(),
+                            ) {
+                                logger.info { "Skal slette ${kandidat.opplysninger().size} opplysninger " }
+                                kandidat.opplysninger().forEach { opplysningId ->
+                                    val statements = mutableListOf<BatchStatement>()
+                                    statements.add(slettOpplysningVerdi(opplysningId))
+                                    statements.add(slettOpplysningUtledet(opplysningId))
+                                    statements.add(slettOpplysningLink(opplysningId))
+                                    statements.add(slettOpplysningUtledning(opplysningId))
+                                    statements.add(slettErstatteAv(opplysningId))
+                                    statements.add(slettOpplysning(opplysningId))
+                                    statements.forEach { batch ->
+                                        batch.run(tx)
+                                    }
+                                    slettet.add(opplysningId)
                                 }
-                                slettet.add(opplysningId)
+                                logger.info { "Slettet ${kandidat.opplysninger().size} opplysninger" }
                             }
-                            logger.info { "Slettet ${kandidat.opplysninger().size} opplysninger" }
                         }
                     }
                 }
             }
+        } catch (e: Exception) {
+            logger.error(e) { "Feil ved sletting av opplysninger" }
         }
         return slettet
     }

@@ -2,6 +2,7 @@ package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.førEllerLik
@@ -12,12 +13,12 @@ import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 
 object Alderskrav {
-    val fødselsdato = Opplysningstype.somDato("Fødselsdato".id("Fødselsdato", "opplysning.fodselsdato"))
+    val fødselsdato = Opplysningstype.somDato("Fødselsdato".id("Fødselsdato"))
 
     private val prøvingsdato = Søknadstidspunkt.prøvingsdato
 
-    private val aldersgrense = Opplysningstype.somHeltall("Aldersgrense")
-    private val sisteMåned = Opplysningstype.somDato("Dato søker når maks alder")
+    private val aldersgrense = Opplysningstype.somHeltall("Aldersgrense", synlig = aldriSynlig)
+    private val sisteMåned = Opplysningstype.somDato("Dato søker når maks alder", synlig = aldriSynlig)
     private val sisteDagIMåned = Opplysningstype.somDato("Siste mulige dag bruker kan oppfylle alderskrav")
 
     val kravTilAlder = Opplysningstype.somBoolsk("Oppfyller kravet til alder")

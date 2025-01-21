@@ -7,12 +7,11 @@ import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.dato.finnDagensDato
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.fraOgMed
-import no.nav.dagpenger.opplysning.tekstId
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
 import no.nav.dagpenger.regel.Verneplikt.oppfyllerKravetTilVerneplikt
 
 object KravPåDagpenger {
-    val kravPåDagpenger = Opplysningstype.somBoolsk("Krav på dagpenger".tekstId("opplysning.krav-paa-dagpenger"))
+    val kravPåDagpenger = Opplysningstype.somBoolsk("Krav på dagpenger")
     val minsteinntektEllerVerneplikt = Opplysningstype.somBoolsk("Oppfyller kravet til minsteinntekt eller verneplikt")
 
     val virkningstidspunkt = Opplysningstype.somDato("EttBeregnetVirkningstidspunkt")
@@ -30,7 +29,7 @@ object KravPåDagpenger {
                 alle(
                     Alderskrav.kravTilAlder,
                     FulleYtelser.ikkeFulleYtelser,
-                    Meldeplikt.registrertPåSøknadstidspunktet,
+                    ReellArbeidssøker.oppyllerKravTilRegistrertArbeidssøker,
                     minsteinntektEllerVerneplikt,
                     Opphold.oppfyllerKravet,
                     ReellArbeidssøker.kravTilArbeidssøker,

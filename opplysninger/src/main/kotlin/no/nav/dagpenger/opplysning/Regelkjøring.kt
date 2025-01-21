@@ -95,7 +95,7 @@ class Regelkjøring(
 
     fun evaluer(): Regelkjøringsrapport {
         aktiverRegler()
-        while (plan.size > 0) {
+        while (plan.isNotEmpty()) {
             kjørRegelPlan()
             aktiverRegler()
         }

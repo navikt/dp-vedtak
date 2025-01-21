@@ -1,6 +1,7 @@
 package no.nav.dagpenger.regel.fastsetting
 
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
@@ -11,7 +12,7 @@ import no.nav.dagpenger.regel.folketrygden
 object Egenandel {
     val egenandel = Opplysningstype.somBeløp("Egenandel")
     private val sats = DagpengenesStørrelse.dagsatsEtterSamordningMedBarnetillegg
-    private val faktor = Opplysningstype.somDesimaltall("Antall dagsats for egenandel")
+    private val faktor = Opplysningstype.somDesimaltall("Antall dagsats for egenandel", synlig = aldriSynlig)
 
     val regelsett =
         Regelsett(

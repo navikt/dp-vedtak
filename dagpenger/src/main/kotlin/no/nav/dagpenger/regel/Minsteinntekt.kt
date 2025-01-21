@@ -5,9 +5,9 @@ import no.nav.dagpenger.grunnbelop.Regel
 import no.nav.dagpenger.grunnbelop.forDato
 import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
 import no.nav.dagpenger.inntekt.v1.InntektKlasse
-import no.nav.dagpenger.opplysning.Opplysningsformål.Mellomsteg
 import no.nav.dagpenger.opplysning.Opplysningsformål.Register
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.trekkFraMånedTilFørste
@@ -19,7 +19,6 @@ import no.nav.dagpenger.opplysning.regel.inntekt.summerPeriode
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
-import no.nav.dagpenger.opplysning.tekstId
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
@@ -32,45 +31,43 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import java.time.LocalDate
 
 object Minsteinntekt {
-    private val `12mndTerskelFaktor` = Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd arbeidsinntekt", Mellomsteg)
-    private val `36mndTerskelFaktor` = Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd arbeidsinntekt", Mellomsteg)
+    private val `12mndTerskelFaktor` =
+        Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd arbeidsinntekt", synlig = aldriSynlig)
+    private val `36mndTerskelFaktor` =
+        Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd arbeidsinntekt", synlig = aldriSynlig)
     val inntekt12 =
         Opplysningstype.somBeløp(
             "Arbeidsinntekt siste 12 mnd".id(
                 id = "InntektSiste12Mnd",
-                tekstId = "opplysning.arbeidsinntekt-siste-12-mnd",
             ),
         )
     val inntekt36 =
         Opplysningstype.somBeløp(
             "Arbeidsinntekt siste 36 mnd".id(
                 id = "InntektSiste36Mnd",
-                tekstId = "opplysning.arbeidsinntekt-siste-36-mnd",
             ),
         )
-    val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp", Mellomsteg)
+    val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp", synlig = aldriSynlig)
 
     internal val inntektFraSkatt = Opplysningstype.somInntekt("Inntektsopplysninger".id(Inntekt), Register)
-    private val tellendeInntekt = Opplysningstype.somInntekt("Brutto arbeidsinntekt", Mellomsteg)
+    private val tellendeInntekt = Opplysningstype.somInntekt("Brutto arbeidsinntekt", synlig = aldriSynlig)
 
-    private val maksPeriodeLengde = Opplysningstype.somHeltall("Maks lengde på opptjeningsperiode", Mellomsteg)
+    private val maksPeriodeLengde = Opplysningstype.somHeltall("Maks lengde på opptjeningsperiode", synlig = aldriSynlig)
     private val førsteMånedAvOpptjeningsperiode =
         Opplysningstype.somDato("Første måned av opptjeningsperiode".id(OpptjeningsperiodeFraOgMed))
 
     private val `12mndTerskel` =
         Opplysningstype.somBeløp(
-            "Inntektskrav for siste 12 mnd".tekstId("opplysning.arbeidsinntekt-er-over-kravet-for-siste-12-mnd"),
-            Mellomsteg,
+            "Inntektskrav for siste 12 mnd",
         )
     private val `36mndTerskel` =
         Opplysningstype.somBeløp(
-            "Inntektskrav for siste 36 mnd".tekstId("opplysning.arbeidsinntekt-er-over-kravet-for-siste-36-mnd"),
-            Mellomsteg,
+            "Inntektskrav for siste 36 mnd",
         )
     private val over12mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 12 mnd")
     private val over36mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 36 mnd")
 
-    val minsteinntekt = Opplysningstype.somBoolsk("Krav til minsteinntekt".tekstId("opplysning.krav-til-minsteinntekt"))
+    val minsteinntekt = Opplysningstype.somBoolsk("Krav til minsteinntekt")
 
     val regelsett =
         Regelsett(

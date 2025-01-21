@@ -23,6 +23,7 @@ import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningsformål
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.alltidSynlig
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
@@ -72,6 +73,10 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 ),
             )
 
+        private val opplysningstyper by lazy {
+            Opplysningstype.definerteTyper.associateBy { it.opplysningTypeId }
+        }
+
         private val logger = KotlinLogging.logger { }
     }
 
@@ -114,15 +119,14 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             BatchStatement(
                 //language=PostgreSQL
                 """
-                INSERT INTO opplysningstype (id, navn, tekst_id, datatype, formål)
-                VALUES (:id, :navn, :tekstId, :datatype, :formaal)
+                INSERT INTO opplysningstype (id, navn, datatype, formål)
+                VALUES (:id, :navn, :datatype, :formaal)
                 ON CONFLICT (id, navn, datatype) DO UPDATE SET formål = :formaal
                 """.trimIndent(),
                 opplysningstyper.map {
                     mapOf(
                         "id" to it.id,
                         "navn" to it.navn,
-                        "tekstId" to it.tekstId,
                         "datatype" to it.datatype.navn(),
                         "formaal" to it.formål.name,
                     )
@@ -200,11 +204,29 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val opplysingerId = uuid("opplysninger_id")
             val id = uuid("id")
 
+            val opplysningTypeId = string("type_navn").id(string("type_id"))
             var opplysningstype: Opplysningstype<T> =
-                Opplysningstype(
-                    string("type_navn").id(string("type_id"), stringOrNull("tekst_id")),
+                opplysningstyper[opplysningTypeId]
+                    ?.let {
+                        if (datatype != it.datatype) {
+                            logger.warn(
+                                """
+                                Lastet opplysningstype med feil 
+                                datatype: ${opplysningTypeId.id} - ${opplysningTypeId.beskrivelse}, 
+                                database: $datatype, 
+                                kode: ${it.datatype}
+                                """.trimIndent(),
+                            )
+                            return@let null
+                        }
+                        @Suppress("UNCHECKED_CAST")
+                        it as Opplysningstype<T>
+                    } ?: Opplysningstype(
+                    // Fallback når opplysningstype ikke er definert i kode lengre
+                    string("type_navn").id(string("type_id")),
                     datatype,
                     string("type_formål").let { Opplysningsformål.valueOf(it) },
+                    alltidSynlig,
                 )
 
             val gammeltNavn = opplysningerSomHarByttetNavn.singleOrNull { it.fra == opplysningstype }
@@ -430,12 +452,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             verdi: Any,
         ) = when (datatype) {
             Boolsk -> Pair("verdi_boolsk", verdi)
-            Dato ->
-                Pair(
-                    "verdi_dato",
-                    tilPostgresqlTimestamp(verdi),
-                )
-
+            Dato -> Pair("verdi_dato", tilPostgresqlTimestamp(verdi))
             Desimaltall -> Pair("verdi_desimaltall", verdi)
             Heltall -> Pair("verdi_heltall", verdi)
             ULID -> Pair("verdi_string", (verdi as Ulid).verdi)
@@ -484,6 +501,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun List<OpplysningRad<*>>.somOpplysninger(): List<Opplysning<*>> {
     val opplysningMap = mutableMapOf<UUID, Opplysning<*>>()
 

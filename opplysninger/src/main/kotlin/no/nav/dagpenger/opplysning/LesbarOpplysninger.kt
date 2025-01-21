@@ -19,4 +19,8 @@ interface LesbarOpplysninger {
     fun finnOpplysning(opplysningId: UUID): Opplysning<*>
 
     fun forDato(gjelderFor: LocalDate): LesbarOpplysninger
+
+    fun erSann(opplysningstype: Opplysningstype<Boolean>) = har(opplysningstype) && finnOpplysning(opplysningstype).verdi
 }
+
+typealias Opplysningssjekk = (LesbarOpplysninger) -> Boolean
