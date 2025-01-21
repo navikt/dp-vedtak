@@ -8,16 +8,15 @@ import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.sisteAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.innhentes
-import no.nav.dagpenger.opplysning.tekstId
 import no.nav.dagpenger.regel.Behov.Søknadsdato
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
 
 object Søknadstidspunkt {
     // § 3A-1.Søknadstidspunkt https://lovdata.no/forskrift/1998-09-16-890/§3a-1
-    val søknadsdato = Opplysningstype.somDato("Søknadsdato".id(Søknadsdato, tekstId = "opplysning.soknadsdato"))
+    val søknadsdato = Opplysningstype.somDato("Søknadsdato".id(Søknadsdato))
     val ønsketdato = Opplysningstype.somDato("Ønsker dagpenger fra dato".id(ØnskerDagpengerFraDato))
 
-    val søknadstidspunkt = Opplysningstype.somDato("Søknadstidspunkt".tekstId("opplysning.soknadstidspunkt"), synlig = aldriSynlig)
+    val søknadstidspunkt = Opplysningstype.somDato("Søknadstidspunkt", synlig = aldriSynlig)
 
     val prøvingsdato = Opplysningstype.somDato("Prøvingsdato".id("Prøvingsdato"))
     val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")

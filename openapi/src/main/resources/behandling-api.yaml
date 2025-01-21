@@ -664,9 +664,6 @@ components:
           $ref: '#/components/schemas/OpplysningsId'
         navn:
           type: string
-        tekstId:
-          type: string
-          nullable: true
         verdi:
           type: string
         status:

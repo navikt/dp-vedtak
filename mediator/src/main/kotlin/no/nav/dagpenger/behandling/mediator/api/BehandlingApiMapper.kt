@@ -246,7 +246,6 @@ internal fun Opplysning<*>.tilOpplysningDTO(opplysninger: LesbarOpplysninger): O
     OpplysningDTO(
         id = this.id,
         navn = this.opplysningstype.navn,
-        tekstId = this.opplysningstype.tekstId,
         verdi =
             when (this.opplysningstype.datatype) {
                 // todo: Frontenden burde vite om det er penger og håndtere det med valuta
