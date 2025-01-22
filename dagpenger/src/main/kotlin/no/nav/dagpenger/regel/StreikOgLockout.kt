@@ -5,13 +5,29 @@ import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.ingenAv
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarStreikEllerLockoutId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.ikkePåvirketAvStreikEllerLockoutId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.ledigVedSammeBedriftOgPåvirketAvUtfalletId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object StreikOgLockout {
-    val deltarIStreikOgLockout = Opplysningstype.somBoolsk("Deltar medlemmet i streik eller er omfattet av lock-out?")
-    val sammeBedriftOgPåvirket = Opplysningstype.somBoolsk("Ledig ved samme bedrift eller arbeidsplass, og blir påvirket av utfallet?")
+    val deltarIStreikOgLockout =
+        Opplysningstype.boolsk(
+            deltarStreikEllerLockoutId,
+            "Deltar medlemmet i streik eller er omfattet av lock-out?",
+        )
+    val sammeBedriftOgPåvirket =
+        Opplysningstype.boolsk(
+            ledigVedSammeBedriftOgPåvirketAvUtfalletId,
+            "Ledig ved samme bedrift eller arbeidsplass, og blir påvirket av utfallet?",
+        )
 
-    val ikkeStreikEllerLockout = Opplysningstype.somBoolsk("Er medlemmet ikke påvirket av streik eller lock-out?", synlig = aldriSynlig)
+    val ikkeStreikEllerLockout =
+        Opplysningstype.boolsk(
+            ikkePåvirketAvStreikEllerLockoutId,
+            "Er medlemmet ikke påvirket av streik eller lock-out?",
+            synlig = aldriSynlig,
+        )
 
     val regelsett =
         Regelsett(
