@@ -31,7 +31,8 @@ class Opplysningstype<T : Comparable<T>>(
     val datatype: Datatype<T>,
     val formål: Opplysningsformål,
     val synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-    val permanentId: Id<T> = Id(UUIDv7.ny(), datatype), // todo: Fjerne generering av ny id. MÅ spesifiseres globalt i kodebasen
+    // todo: Fjerne generering av ny id. MÅ spesifiseres globalt i kodebasen
+    val permanentId: Id<T> = Id(UUIDv7.ny(), datatype),
 ) : Klassifiserbart {
     val id = opplysningTypeId.id
     val navn = opplysningTypeId.beskrivelse

@@ -1,10 +1,12 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
+import no.nav.dagpenger.opplysning.Tekst
 import java.util.UUID
 
 object OpplysningEtellerannet {
@@ -19,28 +21,28 @@ object OpplysningEtellerannet {
     val GrunnbeløpForGrunnlagId = Opplysningstype.Id(UUID.fromString("0194881f-940f-7af9-9387-052e028b29ee"), Penger)
     val TellendeInntektId = Opplysningstype.Id(UUID.fromString("0194881f-940f-7af9-9387-052e028b29ed"), InntektDataType)
     val OppjustertInntektId = Opplysningstype.Id(UUID.fromString("0194881f-940f-7af9-9387-052e028b29ec"), InntektDataType)
-    val Utbetalt_arbeidsinntekt_periode_1Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cad")
-    val Utbetalt_arbeidsinntekt_periode_2Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cae")
-    val Utbetalt_arbeidsinntekt_periode_3Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10caf")
-    val Inntektperiode_1Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb0")
-    val Inntektperiode_2Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb1")
-    val Inntektperiode_3Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb2")
-    val Uavkortet_grunnlag_siste_12_mndId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cbe")
-    val Uavkortet_grunnlag_siste_36_mndId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cbf")
-    val Avkortet_inntektperiode_1Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb3")
-    val Avkortet_inntektperiode_2Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb4")
-    val Avkortet_inntektperiode_3Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb5")
-    val Grunnlag_siste_12_mndId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10caa")
-    val Inntekt_siste_36_månederId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cab")
-    val Gjennomsnittlig_arbeidsinntekt_siste_36_månederId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cac")
-    val Uavrundet_grunnlagId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cbb")
-    val Brukt_beregningsregelId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cba")
-    val Grunnlag_ved_ordinære_dagpengerId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cbc")
-    val GrunnlagId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cbd")
-    val Har_avkortet_grunnlaget_i_periode_1Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb6")
-    val Har_avkortet_grunnlaget_i_periode_2Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb7")
-    val Har_avkortet_grunnlaget_i_periode_3Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb8")
-    val Har_avkortet_grunnlagId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb9")
+    val UtbetaltArbeidsinntektPeriode1Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cad"), Penger)
+    val UtbetaltArbeidsinntektPeriode2Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cae"), Penger)
+    val UtbetaltArbeidsinntektPeriode3Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10caf"), Penger)
+    val Inntektperiode1Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb0"), Penger)
+    val Inntektperiode2Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb1"), Penger)
+    val Inntektperiode3Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb2"), Penger)
+    val UavkortetGrunnlagSiste12MndId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cbe"), Penger)
+    val UavkortetGrunnlagSiste36MndId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cbf"), Penger)
+    val AvkortetInntektperiode1Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb3"), Penger)
+    val AvkortetInntektperiode2Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb4"), Penger)
+    val AvkortetInntektperiode3Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb5"), Penger)
+    val GrunnlagSiste12MndId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10caa"), Penger)
+    val InntektSiste36MånederId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cab"), Penger)
+    val GjennomsnittligArbeidsinntektSiste36MånederId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cac"), Penger)
+    val UavrundetGrunnlagId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cbb"), Penger)
+    val BruktBeregningsregelId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cba"), Tekst)
+    val GrunnlagVedOrdinæreDagpengerId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cbc"), Penger)
+    val GrunnlagId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cbd"), Penger)
+    val HarAvkortetGrunnlagetIPeriode1Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb6"), Boolsk)
+    val HarAvkortetGrunnlagetIPeriode2Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb7"), Boolsk)
+    val HarAvkortetGrunnlagetIPeriode3Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb8"), Boolsk)
+    val HarAvkortetGrunnlagId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb9"), Boolsk)
     val BarnetilleggId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23b")
     val Antall_barn_som_gir_rett_til_barnetilleggId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23c")
     val Faktor_for_utregning_av_dagsats_etter_dagpengegrunnlagetId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23e")

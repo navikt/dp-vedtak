@@ -151,7 +151,7 @@ internal class PersonMediatorTest {
                         .replace(",", "")
                 println(
                     """
-                val ${id}Id = UUID.fromString("${it.opplysningTypeId.permanentId}")
+                val ${id}Id = UUID.fromString("${it.permanentId.id}")
                     """.trimMargin(),
                 )
                 //   logger.info { "Opprettet $it opplysningstyper" }
