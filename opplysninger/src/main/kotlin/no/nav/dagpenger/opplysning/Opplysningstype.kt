@@ -3,6 +3,7 @@ package no.nav.dagpenger.opplysning
 import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
+import no.nav.dagpenger.opplysning.verdier.Ulid
 import no.nav.dagpenger.uuid.UUIDv7
 import java.time.LocalDate
 import java.util.UUID
@@ -187,6 +188,14 @@ class Opplysningstype<T : Comparable<T>>(
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
             behovId: String = beskrivelse,
         ): Opplysningstype<LocalDate> = som(id, beskrivelse, formål, synlig, behovId)
+
+        fun ulid(
+            id: Id<Ulid>,
+            beskrivelse: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Ulid> = som(id, beskrivelse, formål, synlig, behovId)
 
         fun inntekt(
             id: Id<Inntekt>,
