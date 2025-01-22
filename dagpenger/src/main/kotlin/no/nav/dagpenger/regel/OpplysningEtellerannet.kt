@@ -102,7 +102,7 @@ object OpplysningEtellerannet {
     val GjenståendeStønadsdagerId = Opplysningstype.Id(UUID.fromString("0194881f-943d-77a7-969c-147999f15457"), Heltall)
     val AntallDagsatsForEgenandelId = Opplysningstype.Id(UUID.fromString("0194881f-943f-78d9-b874-00a4944c54f0"), Desimaltall)
     val EgenandelId = Opplysningstype.Id(UUID.fromString("0194881f-943f-78d9-b874-00a4944c54ef"), Penger)
-    val Mottar_ikke_andre_fulle_ytelserId = UUID.fromString("0194881f-943f-78d9-b874-00a4944c54f1")
+    val IkkeFulleYtelserId = Opplysningstype.Id(UUID.fromString("0194881f-943f-78d9-b874-00a4944c54f1"), Boolsk)
     val Oppfyller_kravet_til_minsteinntekt_eller_vernepliktId = UUID.fromString("0194881f-9440-7e1c-9ec4-0f20650bc0cd")
     val Dagens_datoId = UUID.fromString("0194881f-9440-7e1c-9ec4-0f20650bc0cf")
     val EttBeregnetVirkningstidspunktId = UUID.fromString("0194881f-9440-7e1c-9ec4-0f20650bc0ce")

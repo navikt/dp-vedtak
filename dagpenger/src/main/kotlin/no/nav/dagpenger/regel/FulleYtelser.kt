@@ -1,15 +1,16 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
-import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.boolsk
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.OpplysningEtellerannet.IkkeFulleYtelserId
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.skalSamordnesUtenforFolketrygden
 import no.nav.dagpenger.regel.Samordning.skalSamordnes
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object FulleYtelser {
-    val ikkeFulleYtelser = Opplysningstype.somBoolsk("Mottar ikke andre fulle ytelser")
+    val ikkeFulleYtelser = boolsk(IkkeFulleYtelserId, "Mottar ikke andre fulle ytelser")
 
     val regelsett =
         Regelsett(
