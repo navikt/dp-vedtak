@@ -273,7 +273,7 @@ object OpplysningEtellerannet {
     val GrunnlagUtenVernepliktId = Opplysningstype.Id(UUID.fromString("0194881f-9421-766c-9dc6-41fe6c9a1e04"), Penger)
     val GrunnlagHvisVernepliktId = Opplysningstype.Id(UUID.fromString("0194881f-9421-766c-9dc6-41fe6c9a1e03"), Penger)
     val GrunnlagForVernepliktErGunstigstId = Opplysningstype.Id(UUID.fromString("0194881f-9421-766c-9dc6-41fe6c9a1e05"), Boolsk)
-    val fagsakIdId = UUID.fromString("0194881f-9462-78af-8977-46092bb030eb")
+    val FagsakIdId = Opplysningstype.Id(UUID.fromString("0194881f-9462-78af-8977-46092bb030eb"), Heltall)
     val avtjentVernepliktId = Opplysningstype.Id(UUID.fromString("01948d3c-4bea-7802-9d18-5342a5e2be99"), Boolsk)
     val oppfyllerKravetTilVernepliktId = Opplysningstype.Id(UUID.fromString("01948d43-e218-76f1-b29b-7e604241d98a"), Boolsk)
 }
