@@ -189,21 +189,21 @@ Dagsats uten barnetillegg før samordning
 Maksimalt mulig grunnlag avgrenset til 90% av dagpengegrunnlaget
 Fastsatt arbeidstid per uke før tap
 Avrundet dagsats uten barnetillegg før samordning
-Dagsats med barnetillegg før samordning
 Maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
 Tap av arbeidstid er minst terskel
+Dagsats med barnetillegg før samordning
 Avrundet maksimal mulig dagsats avgrenset til 90% av dagpengegrunnlaget
-Andel av dagsats med barnetillegg som overstiger maks andel av dagpengegrunnlaget
-Andel av dagsats uten barnetillegg avkortet til maks andel av dagpengegrunnlaget
-Avrundet ukessats med barnetillegg før samordning
 Krav til tap av arbeidsinntekt og arbeidstid
+Andel av dagsats med barnetillegg som overstiger maks andel av dagpengegrunnlaget
+Avrundet ukessats med barnetillegg før samordning
+Andel av dagsats uten barnetillegg avkortet til maks andel av dagpengegrunnlaget
 Samordnet dagsats uten barnetillegg
 Samordnet dagsats er negativ eller 0
 Samordnet ukessats uten barnetillegg
 Utfall etter samordning
-Krav på dagpenger
 Minste mulige ukessats som som kan brukes
 Ukessats trukket ned for ytelser utenfor folketrygden
+Krav på dagpenger
 Samordnet ukessats med ytelser utenfor folketrygden
 Dagsats uten barnetillegg samordnet
 Samordnet dagsats med barnetillegg

@@ -65,7 +65,7 @@ graph RL
   AQ["Barnetilleggets størrelse i kroner per dag for hvert barn"] -->|"Oppslag"| B["Prøvingsdato"]
   AR["Sum av barnetillegg"] -->|"Multiplikasjon"| AQ["Barnetilleggets størrelse i kroner per dag for hvert barn"]
   AR["Sum av barnetillegg"] -->|"Multiplikasjon"| AM["Antall barn som gir rett til barnetillegg"]
-  AS["Dagsats med barnetillegg før samordning"] -->|"Addisjon"| AO["Dagsats uten barnetillegg før samordning"]
+  AS["Dagsats med barnetillegg før samordning"] -->|"Addisjon"| AP["Avrundet dagsats uten barnetillegg før samordning"]
   AS["Dagsats med barnetillegg før samordning"] -->|"Addisjon"| AR["Sum av barnetillegg"]
   AT["Avrundet ukessats med barnetillegg før samordning"] -->|"Multiplikasjon"| AS["Dagsats med barnetillegg før samordning"]
   AT["Avrundet ukessats med barnetillegg før samordning"] -->|"Multiplikasjon"| AU["Antall arbeidsdager per uke"]

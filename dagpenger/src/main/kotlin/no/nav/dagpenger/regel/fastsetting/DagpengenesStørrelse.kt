@@ -58,7 +58,7 @@ object DagpengenesStørrelse {
             synlig = aldriSynlig,
         )
     val barnetillegg = Opplysningstype.somBeløp("Sum av barnetillegg", synlig = aldriSynlig)
-    private val dagsatsMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg før samordning", synlig = aldriSynlig)
+    private val avrundetDagsatsMedBarnetillegg = Opplysningstype.somBeløp("Dagsats med barnetillegg før samordning", synlig = aldriSynlig)
     private val nittiProsent = Opplysningstype.somDesimaltall("90% av grunnlag for dagpenger", synlig = aldriSynlig)
     private val antallArbeidsdagerPerÅr = Opplysningstype.somHeltall("Antall arbeidsdager per år", synlig = aldriSynlig)
     private val maksGrunnlag =
@@ -94,9 +94,10 @@ object DagpengenesStørrelse {
             regel(barnetillegg) { multiplikasjon(barnetilleggetsStørrelse, antallBarn) }
 
             // Regn ut dagsats med barnetillegg, før maks og samordning
-            regel(dagsatsMedBarnetillegg) { addisjon(dagsatsUtenBarnetillegg, barnetillegg) }
+            regel(avrundetDagsatsMedBarnetillegg) { addisjon(avrundetDagsatsUtenBarnetillegg, barnetillegg) }
+
             // Regn ut ukessats med barnetillegg som Arena trenger.
-            regel(ukesatsMedBarnetillegg) { multiplikasjon(dagsatsMedBarnetillegg, arbeidsdagerPerUke) }
+            regel(ukesatsMedBarnetillegg) { multiplikasjon(avrundetDagsatsMedBarnetillegg, arbeidsdagerPerUke) }
 
             // Regn ut 90% av dagpengegrunnlaget
             regel(nittiProsent) { oppslag(prøvingsdato) { 0.9 } }
@@ -106,7 +107,7 @@ object DagpengenesStørrelse {
             regel(avrundetMaksSats) { avrund(maksSats) }
 
             // Finn beløp som overstiger maksimal mulig dagsats
-            regel(beløpOverMaks) { substraksjonTilNull(dagsatsMedBarnetillegg, avrundetMaksSats) }
+            regel(beløpOverMaks) { substraksjonTilNull(avrundetDagsatsMedBarnetillegg, avrundetMaksSats) }
             regel(dagsatsEtterNittiProsent) { substraksjonTilNull(avrundetDagsatsUtenBarnetillegg, beløpOverMaks) }
 
             // Regn ut samordnet dagsats med barnetillegg, begrenset til 90% av dagpengegrunnlaget
