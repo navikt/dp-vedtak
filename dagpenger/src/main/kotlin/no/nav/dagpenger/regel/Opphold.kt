@@ -1,24 +1,31 @@
 package no.nav.dagpenger.regel
 
-import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.boolsk
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.OpplysningEtellerannet.MedlemFolketrygdenId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OppfyllerKravetOppholdId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OppfyllerKravetTilOppholdId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OppfyllerMedlemskapId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OppholdINorgeId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.UnntakForOppholdId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object Opphold {
-    var oppholdINorge = Opplysningstype.somBoolsk("Opphold i Norge".id("OppholdINorge"))
-    var unntakForOpphold = Opplysningstype.somBoolsk("Oppfyller unntak for opphold i Norge", synlig = { it.erSann(oppholdINorge) == false })
-    val oppfyllerKravetTilOpphold = Opplysningstype.somBoolsk("Oppfyller kravet til opphold i Norge eller unntak", synlig = aldriSynlig)
+    var oppholdINorge = boolsk(OppholdINorgeId, beskrivelse = "Opphold i Norge", behovId = "OppholdINorge")
+    var unntakForOpphold =
+        boolsk(UnntakForOppholdId, "Oppfyller unntak for opphold i Norge", synlig = { it.erSann(oppholdINorge) == false })
+    val oppfyllerKravetTilOpphold =
+        boolsk(OppfyllerKravetTilOppholdId, "Oppfyller kravet til opphold i Norge eller unntak", synlig = aldriSynlig)
 
-    val medlemFolketrygden = Opplysningstype.somBoolsk("Er personen medlem av folketrygden")
-    val oppfyllerMedlemskap = Opplysningstype.somBoolsk("Oppfyller kravet til medlemskap", synlig = aldriSynlig)
+    val medlemFolketrygden = boolsk(MedlemFolketrygdenId, "Er personen medlem av folketrygden")
+    val oppfyllerMedlemskap = boolsk(OppfyllerMedlemskapId, "Oppfyller kravet til medlemskap", synlig = aldriSynlig)
 
-    val oppfyllerKravet = Opplysningstype.somBoolsk("Oppfyller kravet til opphold i Norge")
+    val oppfyllerKravet = boolsk(OppfyllerKravetOppholdId, "Oppfyller kravet til opphold i Norge")
 
     val regelsett =
         Regelsett(
