@@ -11,6 +11,8 @@ import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderBehandlin
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.UnderOpprettelse
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadId
+import no.nav.dagpenger.opplysning.Boolsk
+import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Forretningsprosess
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
@@ -43,7 +45,8 @@ internal class BehandlingTest {
         )
 
     private companion object {
-        val tidligereOpplysning = Opplysningstype.somDesimaltall("opplysning-fra-tidligere-behandling")
+        val tidligereOpplysning =
+            Opplysningstype.desimaltall(Opplysningstype.Id(UUIDv7.ny(), Desimaltall), "opplysning-fra-tidligere-behandling")
     }
 
     @Test
@@ -182,8 +185,8 @@ private class SøknadInnsendtHendelse(
         fagsakId,
         opprettet,
     ) {
-    private val opplysningstypeBehov = Opplysningstype.somBoolsk("trengerDenne")
-    private val opplysningstype = Opplysningstype.somBoolsk("opplysning")
+    private val opplysningstypeBehov = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "trengerDenne")
+    private val opplysningstype = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "opplysning")
     override val forretningsprosess: Forretningsprosess
         get() =
             object : Forretningsprosess {

@@ -280,4 +280,10 @@ object OpplysningEtellerannet {
     val FagsakIdId = Opplysningstype.Id(UUID.fromString("0194881f-9462-78af-8977-46092bb030eb"), Heltall)
     val avtjentVernepliktId = Opplysningstype.Id(UUID.fromString("01948d3c-4bea-7802-9d18-5342a5e2be99"), Boolsk)
     val oppfyllerKravetTilVernepliktId = Opplysningstype.Id(UUID.fromString("01948d43-e218-76f1-b29b-7e604241d98a"), Boolsk)
+
+    // beregning/meldekort
+    val arbeidsdagId = Opplysningstype.Id(UUID.fromString("01948ea0-36e8-72cc-aa4f-16bc446ed3bd"), Boolsk)
+    val arbeidstimerId = Opplysningstype.Id(UUID.fromString("01948ea0-e25c-7c47-8429-a05045d80eca"), Heltall)
+    val forbrukId = Opplysningstype.Id(UUID.fromString("01948ea0-ffdc-7964-ab55-52a7e35e1020"), Boolsk)
+    val terskelId = Opplysningstype.Id(UUID.fromString("01948ea2-22f3-7da8-9547-90d0c64e74e0"), Desimaltall)
 }

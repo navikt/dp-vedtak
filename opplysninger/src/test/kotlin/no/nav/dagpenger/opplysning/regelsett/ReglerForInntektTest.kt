@@ -1,8 +1,12 @@
 package no.nav.dagpenger.opplysning.regelsett
 
+import no.nav.dagpenger.opplysning.Boolsk
+import no.nav.dagpenger.opplysning.Dato
+import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
+import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.regel.dato.førsteArbeidsdag
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
@@ -10,28 +14,55 @@ import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.uuid.UUIDv7
 import java.time.LocalDate
 
 internal object ReglerForInntektTest {
-    val antallG12mndInntekt = Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd inntekt")
-    val antallG36mndInntekt = Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd inntekt")
-    val inntekt12 = Opplysningstype.somBeløp("Inntekt siste 12 mnd".id("inntekt12mnd"))
-    val inntekt36 = Opplysningstype.somBeløp("Inntekt siste 36 mnd".id("inntekt36mnd"))
-    val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp")
+    val antallG12mndInntekt =
+        Opplysningstype.desimaltall(
+            Opplysningstype.Id(UUIDv7.ny(), Desimaltall),
+            "Antall G for krav til 12 mnd inntekt",
+        )
+    val antallG36mndInntekt =
+        Opplysningstype.desimaltall(
+            Opplysningstype.Id(UUIDv7.ny(), Desimaltall),
+            "Antall G for krav til 36 mnd inntekt",
+        )
+    val inntekt12 =
+        Opplysningstype.beløp(
+            Opplysningstype.Id(UUIDv7.ny(), Penger),
+            beskrivelse = "Inntekt siste 12 mnd",
+            behovId = "inntekt12mnd",
+        )
+    val inntekt36 =
+        Opplysningstype.beløp(
+            Opplysningstype.Id(UUIDv7.ny(), Penger),
+            beskrivelse = "Inntekt siste 36 mnd",
+            behovId = "inntekt36mnd",
+        )
+    val grunnbeløp = Opplysningstype.beløp(Opplysningstype.Id(UUIDv7.ny(), Penger), "Grunnbeløp")
 
     private val prøvingsdato = Prøvingsdato.prøvingsdato
-    private val antattRapporteringsFrist = Opplysningstype.somDato("Antatt rapporteringsfrist")
-    private val reellRapporteringsFrist = Opplysningstype.somDato("Reell rapporteringsfrist")
-    private val sisteAvsluttendeKalenderMåned = Opplysningstype.somDato("Siste avsluttendende kalendermåned")
-    private val førsteAvsluttendeKalenderMåned = Opplysningstype.somDato("Første kalendermåned")
-    private val inntektId = Opplysningstype.somUlid("InntektId")
+    private val antattRapporteringsFrist = Opplysningstype.dato(Opplysningstype.Id(UUIDv7.ny(), Dato), "Antatt rapporteringsfrist")
+    private val reellRapporteringsFrist = Opplysningstype.dato(Opplysningstype.Id(UUIDv7.ny(), Dato), "Reell rapporteringsfrist")
+    private val sisteAvsluttendeKalenderMåned =
+        Opplysningstype.dato(
+            Opplysningstype.Id(UUIDv7.ny(), Dato),
+            "Siste avsluttendende kalendermåned",
+        )
+    private val førsteAvsluttendeKalenderMåned = Opplysningstype.dato(Opplysningstype.Id(UUIDv7.ny(), Dato), "Første kalendermåned")
+    private val inntektId = Opplysningstype.ulid(Opplysningstype.Id(UUIDv7.ny(), ULID), "InntektId")
 
-    private val nedreTerskel = Opplysningstype.somBeløp("Inntektskrav for siste 12 mnd")
-    private val øvreTerskel = Opplysningstype.somBeløp("Inntektskrav for siste 36 mnd")
-    private val overNedreTerskel = Opplysningstype.somBoolsk("Inntekt er over kravet for siste 12 mnd")
-    private val overØvreTerskel = Opplysningstype.somBoolsk("Inntekt er over kravet for siste 36 mnd")
+    private val nedreTerskel = Opplysningstype.beløp(Opplysningstype.Id(UUIDv7.ny(), Penger), "Inntektskrav for siste 12 mnd")
+    private val øvreTerskel = Opplysningstype.beløp(Opplysningstype.Id(UUIDv7.ny(), Penger), "Inntektskrav for siste 36 mnd")
+    private val overNedreTerskel =
+        Opplysningstype.boolsk(
+            Opplysningstype.Id(UUIDv7.ny(), Boolsk),
+            "Inntekt er over kravet for siste 12 mnd",
+        )
+    private val overØvreTerskel = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "Inntekt er over kravet for siste 36 mnd")
 
-    val minsteinntekt = Opplysningstype.somBoolsk("Minsteinntekt")
+    val minsteinntekt = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "Minsteinntekt")
 
     val regelsett =
         Regelsett("Minsteinntekt") {

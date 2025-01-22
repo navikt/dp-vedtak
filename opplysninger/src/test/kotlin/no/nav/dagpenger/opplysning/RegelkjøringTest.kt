@@ -11,6 +11,7 @@ import no.nav.dagpenger.opplysning.regel.Regel
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.minstAv
+import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
@@ -34,10 +35,10 @@ class RegelkjøringTest {
 
     @Test
     fun `regelkjøring håndterer nye regler og opplysninger i påbegynte behandlinger`() {
-        val opplysningA = Opplysningstype.somDesimaltall("opplysningA")
-        val opplysningB = Opplysningstype.somDesimaltall("opplysningB")
-        val opplysningC = Opplysningstype.somDesimaltall("opplysningC")
-        val opplysningD = Opplysningstype.somDesimaltall("opplysningD")
+        val opplysningA = Opplysningstype.desimaltall(Opplysningstype.Id(UUIDv7.ny(), Desimaltall), "opplysningA")
+        val opplysningB = Opplysningstype.desimaltall(Opplysningstype.Id(UUIDv7.ny(), Desimaltall), "opplysningB")
+        val opplysningC = Opplysningstype.desimaltall(Opplysningstype.Id(UUIDv7.ny(), Desimaltall), "opplysningC")
+        val opplysningD = Opplysningstype.desimaltall(Opplysningstype.Id(UUIDv7.ny(), Desimaltall), "opplysningD")
 
         val opplysninger = Opplysninger()
         val regelsett1 =

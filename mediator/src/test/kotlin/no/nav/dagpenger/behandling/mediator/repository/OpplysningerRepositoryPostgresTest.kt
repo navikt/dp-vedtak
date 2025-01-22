@@ -24,6 +24,7 @@ import no.nav.dagpenger.behandling.april
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.mai
 import no.nav.dagpenger.behandling.objectMapper
+import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Opplysning
@@ -33,6 +34,7 @@ import no.nav.dagpenger.opplysning.Regelkjøring
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
+import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentes
@@ -136,8 +138,8 @@ class OpplysningerRepositoryPostgresTest {
     fun `lagrer opplysninger med samme navn og ulik type`() {
         withMigratedDb {
             val repo = opplysningerRepository()
-            val opplysningstype = Opplysningstype.somUlid("Ulid")
-            val opplysningstype1 = Opplysningstype.somBoolsk("Ulid")
+            val opplysningstype = Opplysningstype.ulid(Opplysningstype.Id(UUIDv7.ny(), ULID), "Ulid")
+            val opplysningstype1 = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "Ulid")
 
             val ulidFaktum = Faktum(opplysningstype, Ulid("01E5Z6Z1Z1Z1Z1Z1Z1Z1Z1Z1Z1"))
             val ulidBoolskFaktum = Faktum(opplysningstype1, false)
@@ -459,10 +461,10 @@ class OpplysningerRepositoryPostgresTest {
             val repo = opplysningerRepository()
             val vaktmesterRepo = VaktmesterPostgresRepo()
 
-            val a = Opplysningstype.somBoolsk("A")
-            val b = Opplysningstype.somBoolsk("B")
-            val c = Opplysningstype.somBoolsk("C")
-            val d = Opplysningstype.somBoolsk("D")
+            val a = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "A")
+            val b = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "B")
+            val c = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "C")
+            val d = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "D")
 
             val regelsett =
                 Regelsett("Regelsett") {
@@ -502,10 +504,10 @@ class OpplysningerRepositoryPostgresTest {
         withMigratedDb {
             val vaktmesterRepo = VaktmesterPostgresRepo()
 
-            val a = Opplysningstype.somBoolsk("A")
-            val b = Opplysningstype.somBoolsk("B")
-            val c = Opplysningstype.somBoolsk("C")
-            val d = Opplysningstype.somBoolsk("D")
+            val a = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "A")
+            val b = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "B")
+            val c = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "C")
+            val d = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "D")
 
             val repo = opplysningerRepository()
 
