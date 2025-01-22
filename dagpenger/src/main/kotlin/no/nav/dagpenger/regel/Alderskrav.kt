@@ -14,7 +14,7 @@ import no.nav.dagpenger.regel.OpplysningEtellerannet.FødselsdatoId
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 
 object Alderskrav {
-    val fødselsdato = Opplysningstype.som(FødselsdatoId, "Fødselsdato", Opplysningsformål.Bruker)
+    val fødselsdato = Opplysningstype.dato(FødselsdatoId, "Fødselsdato", Opplysningsformål.Bruker)
 
     private val prøvingsdato = Søknadstidspunkt.prøvingsdato
 

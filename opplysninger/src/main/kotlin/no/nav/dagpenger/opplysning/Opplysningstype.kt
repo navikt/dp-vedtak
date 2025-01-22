@@ -1,6 +1,9 @@
 package no.nav.dagpenger.opplysning
 
+import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.uuid.UUIDv7
+import java.time.LocalDate
 import java.util.UUID
 
 interface Klassifiserbart {
@@ -159,6 +162,62 @@ class Opplysningstype<T : Comparable<T>>(
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
         ) = Opplysningstype(opplysningTypeId, Tekst, formål, synlig)
+
+        fun heltall(
+            id: Id<Int>,
+            beskrivelse: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Int> = som(id, beskrivelse, formål, synlig, behovId)
+
+        fun boolsk(
+            id: Id<Boolean>,
+            beskrivelse: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Boolean> = som(id, beskrivelse, formål, synlig, behovId)
+
+        fun dato(
+            id: Id<LocalDate>,
+            beskrivelse: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+            behovId: String = beskrivelse,
+        ): Opplysningstype<LocalDate> = som(id, beskrivelse, formål, synlig, behovId)
+
+        fun inntekt(
+            id: Id<Inntekt>,
+            beskrivelse: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Inntekt> = som(id, beskrivelse, formål, synlig, behovId)
+
+        fun desimaltall(
+            id: Id<Double>,
+            beskrivelse: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Double> = som(id, beskrivelse, formål, synlig, behovId)
+
+        fun tekst(
+            id: Id<String>,
+            beskrivelse: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+            behovId: String = beskrivelse,
+        ): Opplysningstype<String> = som(id, beskrivelse, formål, synlig, behovId)
+
+        fun beløp(
+            id: Id<Beløp>,
+            beskrivelse: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Beløp> = som(id, beskrivelse, formål, synlig, behovId)
 
         fun <T : Comparable<T>> som(
             id: Id<T>,

@@ -58,18 +58,18 @@ import no.nav.dagpenger.regel.folketrygden
 import java.time.LocalDate
 
 object Dagpengegrunnlag {
-    private val oppjustertinntekt = Opplysningstype.som(OppjustertInntektId, "Oppjustert inntekt", synlig = aldriSynlig)
-    private val relevanteinntekter = Opplysningstype.som(TellendeInntektId, "Tellende inntekt", synlig = aldriSynlig)
+    private val oppjustertinntekt = Opplysningstype.inntekt(OppjustertInntektId, "Oppjustert inntekt", synlig = aldriSynlig)
+    private val relevanteinntekter = Opplysningstype.inntekt(TellendeInntektId, "Tellende inntekt", synlig = aldriSynlig)
 
-    val grunnbeløpForDagpengeGrunnlag = Opplysningstype.som(GrunnbeløpForGrunnlagId, "Grunnbeløp for grunnlag", synlig = aldriSynlig)
+    val grunnbeløpForDagpengeGrunnlag = Opplysningstype.beløp(GrunnbeløpForGrunnlagId, "Grunnbeløp for grunnlag", synlig = aldriSynlig)
     private val faktorForMaksgrense =
         Opplysningstype.som(FaktorForMaksimaltMuligGrunnlagId, "Faktor for maksimalt mulig grunnlag", synlig = aldriSynlig)
-    private val maksgrenseForGrunnlag = Opplysningstype.som(SeksGangerGrunnbeløpId, "6 ganger grunnbeløp", synlig = aldriSynlig)
+    private val maksgrenseForGrunnlag = Opplysningstype.beløp(SeksGangerGrunnbeløpId, "6 ganger grunnbeløp", synlig = aldriSynlig)
 
-    private val antallÅrI36Måneder = Opplysningstype.som(AntallÅrI36MånederId, "Antall år i 36 måneder", synlig = aldriSynlig)
+    private val antallÅrI36Måneder = Opplysningstype.desimaltall(AntallÅrI36MånederId, "Antall år i 36 måneder", synlig = aldriSynlig)
 
-    internal val grunnlag12mnd = Opplysningstype.som(GrunnlagSiste12MndId, "Grunnlag siste 12 mnd.")
-    private val beløpSiste36 = Opplysningstype.som(InntektSiste36MånederId, "Inntekt siste 36 måneder", synlig = aldriSynlig)
+    internal val grunnlag12mnd = Opplysningstype.beløp(GrunnlagSiste12MndId, "Grunnlag siste 12 mnd.")
+    private val beløpSiste36 = Opplysningstype.beløp(InntektSiste36MånederId, "Inntekt siste 36 måneder", synlig = aldriSynlig)
     internal val grunnlag36mnd =
         Opplysningstype.som(
             GjennomsnittligArbeidsinntektSiste36MånederId,
@@ -77,32 +77,44 @@ object Dagpengegrunnlag {
         )
 
     // Brutto
-    private val utbetaltArbeidsinntektPeriode1 = Opplysningstype.som(UtbetaltArbeidsinntektPeriode1Id, "Utbetalt arbeidsinntekt periode 1")
-    private val utbetaltArbeidsinntektPeriode2 = Opplysningstype.som(UtbetaltArbeidsinntektPeriode2Id, "Utbetalt arbeidsinntekt periode 2")
-    private val utbetaltArbeidsinntektPeriode3 = Opplysningstype.som(UtbetaltArbeidsinntektPeriode3Id, "Utbetalt arbeidsinntekt periode 3")
+    private val utbetaltArbeidsinntektPeriode1 =
+        Opplysningstype.beløp(
+            UtbetaltArbeidsinntektPeriode1Id,
+            "Utbetalt arbeidsinntekt periode 1",
+        )
+    private val utbetaltArbeidsinntektPeriode2 =
+        Opplysningstype.beløp(
+            UtbetaltArbeidsinntektPeriode2Id,
+            "Utbetalt arbeidsinntekt periode 2",
+        )
+    private val utbetaltArbeidsinntektPeriode3 =
+        Opplysningstype.beløp(
+            UtbetaltArbeidsinntektPeriode3Id,
+            "Utbetalt arbeidsinntekt periode 3",
+        )
 
-    private val inntektperiode1 = Opplysningstype.som(Inntektperiode1Id, "Inntektperiode 1", synlig = aldriSynlig)
-    private val inntektperiode2 = Opplysningstype.som(Inntektperiode2Id, "Inntektperiode 2", synlig = aldriSynlig)
-    private val inntektperiode3 = Opplysningstype.som(Inntektperiode3Id, "Inntektperiode 3", synlig = aldriSynlig)
+    private val inntektperiode1 = Opplysningstype.beløp(Inntektperiode1Id, "Inntektperiode 1", synlig = aldriSynlig)
+    private val inntektperiode2 = Opplysningstype.beløp(Inntektperiode2Id, "Inntektperiode 2", synlig = aldriSynlig)
+    private val inntektperiode3 = Opplysningstype.beløp(Inntektperiode3Id, "Inntektperiode 3", synlig = aldriSynlig)
 
-    private val avkortetperiode1 = Opplysningstype.som(AvkortetInntektperiode1Id, "Avkortet inntektperiode 1", synlig = aldriSynlig)
-    private val avkortetperiode2 = Opplysningstype.som(AvkortetInntektperiode2Id, "Avkortet inntektperiode 2", synlig = aldriSynlig)
-    private val avkortetperiode3 = Opplysningstype.som(AvkortetInntektperiode3Id, "Avkortet inntektperiode 3", synlig = aldriSynlig)
+    private val avkortetperiode1 = Opplysningstype.beløp(AvkortetInntektperiode1Id, "Avkortet inntektperiode 1", synlig = aldriSynlig)
+    private val avkortetperiode2 = Opplysningstype.beløp(AvkortetInntektperiode2Id, "Avkortet inntektperiode 2", synlig = aldriSynlig)
+    private val avkortetperiode3 = Opplysningstype.beløp(AvkortetInntektperiode3Id, "Avkortet inntektperiode 3", synlig = aldriSynlig)
 
     val harAvkortetPeriode1 =
-        Opplysningstype.som(HarAvkortetGrunnlagetIPeriode1Id, "Har avkortet grunnlaget i periode 1", synlig = aldriSynlig)
+        Opplysningstype.boolsk(HarAvkortetGrunnlagetIPeriode1Id, "Har avkortet grunnlaget i periode 1", synlig = aldriSynlig)
     val harAvkortetPeriode2 =
-        Opplysningstype.som(HarAvkortetGrunnlagetIPeriode2Id, "Har avkortet grunnlaget i periode 2", synlig = aldriSynlig)
+        Opplysningstype.boolsk(HarAvkortetGrunnlagetIPeriode2Id, "Har avkortet grunnlaget i periode 2", synlig = aldriSynlig)
     val harAvkortetPeriode3 =
-        Opplysningstype.som(HarAvkortetGrunnlagetIPeriode3Id, "Har avkortet grunnlaget i periode 3", synlig = aldriSynlig)
-    val harAvkortet = Opplysningstype.som(HarAvkortetGrunnlagId, "Har avkortet grunnlag")
+        Opplysningstype.boolsk(HarAvkortetGrunnlagetIPeriode3Id, "Har avkortet grunnlaget i periode 3", synlig = aldriSynlig)
+    val harAvkortet = Opplysningstype.boolsk(HarAvkortetGrunnlagId, "Har avkortet grunnlag")
 
-    internal val bruktBeregningsregel = Opplysningstype.som(BruktBeregningsregelId, "Brukt beregningsregel")
-    val uavrundetGrunnlag = Opplysningstype.som(UavrundetGrunnlagId, "Uavrundet grunnlag", synlig = aldriSynlig)
-    val dagpengegrunnlag = Opplysningstype.som(GrunnlagVedOrdinæreDagpengerId, "Grunnlag ved ordinære dagpenger")
-    val grunnlag = Opplysningstype.som(GrunnlagId, "Grunnlag")
-    val uavkortet12mnd = Opplysningstype.som(UavkortetGrunnlagSiste12MndId, "Uavkortet grunnlag siste 12 mnd", Legacy, aldriSynlig)
-    val uavkortet36mnd = Opplysningstype.som(UavkortetGrunnlagSiste36MndId, "Uavkortet grunnlag siste 36 mnd", Legacy, aldriSynlig)
+    internal val bruktBeregningsregel = Opplysningstype.tekst(BruktBeregningsregelId, "Brukt beregningsregel")
+    val uavrundetGrunnlag = Opplysningstype.beløp(UavrundetGrunnlagId, "Uavrundet grunnlag", synlig = aldriSynlig)
+    val dagpengegrunnlag = Opplysningstype.beløp(GrunnlagVedOrdinæreDagpengerId, "Grunnlag ved ordinære dagpenger")
+    val grunnlag = Opplysningstype.beløp(GrunnlagId, "Grunnlag")
+    val uavkortet12mnd = Opplysningstype.beløp(UavkortetGrunnlagSiste12MndId, "Uavkortet grunnlag siste 12 mnd", Legacy, aldriSynlig)
+    val uavkortet36mnd = Opplysningstype.beløp(UavkortetGrunnlagSiste36MndId, "Uavkortet grunnlag siste 36 mnd", Legacy, aldriSynlig)
 
     val regelsett =
         Regelsett(
