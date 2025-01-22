@@ -45,6 +45,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.BesluttBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.GodkjennBehandlingHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SendTilbakeHendelse
 import no.nav.dagpenger.opplysning.Avklaringkode
+import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.definerteTyper
 import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.regel.Behov.AndreØkonomiskeYtelser
@@ -124,6 +125,38 @@ internal class PersonMediatorTest {
     fun setUp() {
         rapid.reset()
         skruAvFeatures()
+    }
+
+    @Test
+    fun genererId() {
+        val opplysningstyper: Set<Opplysningstype<*>> = RegelverkDagpenger.produserer
+        (opplysningstyper + fagsakIdOpplysningstype).also { opplysningstyper ->
+            opplysningstyper.forEach {
+                val id =
+                    it.id
+                        .replace(
+                            " ",
+                            "_",
+                        ).replace(
+                            "-",
+                            "_",
+                        ).replace(
+                            ".",
+                            "",
+                        ).replace("(", "")
+                        .replace("%", "")
+                        .replace(")", "")
+                        .replace("?", "")
+                        .replace(":", "")
+                        .replace(",", "")
+                println(
+                    """
+                val ${id}Id = UUID.fromString("${it.opplysningTypeId.permanentId}")
+                    """.trimMargin(),
+                )
+                //   logger.info { "Opprettet $it opplysningstyper" }
+            }
+        }
     }
 
     @Test

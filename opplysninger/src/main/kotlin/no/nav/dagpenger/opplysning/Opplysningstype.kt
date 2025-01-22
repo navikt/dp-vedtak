@@ -1,12 +1,15 @@
 package no.nav.dagpenger.opplysning
 
+import java.util.UUID
+
 interface Klassifiserbart {
     fun er(type: Opplysningstype<*>): Boolean
 }
 
-fun String.id(id: String) = OpplysningTypeId(id, this)
+fun String.id(id: String) = OpplysningTypeId(id = id, beskrivelse = this)
 
 class OpplysningTypeId(
+    // todo: Bytte til behovId
     val id: String,
     val beskrivelse: String,
 ) {
@@ -34,6 +37,11 @@ class Opplysningstype<T : Comparable<T>>(
     init {
         definerteTyper.add(this)
     }
+
+    data class Id<T : Comparable<T>>(
+        val id: UUID,
+        val datatype: Datatype<T>,
+    )
 
     companion object {
         val definerteTyper = mutableSetOf<Opplysningstype<*>>()
