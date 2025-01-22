@@ -1,8 +1,10 @@
 package no.nav.dagpenger.regel
 
+import no.nav.dagpenger.opplysning.BarnDatatype
 import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Dato
 import no.nav.dagpenger.opplysning.Desimaltall
+import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
@@ -43,34 +45,44 @@ object OpplysningEtellerannet {
     val HarAvkortetGrunnlagetIPeriode2Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb7"), Boolsk)
     val HarAvkortetGrunnlagetIPeriode3Id = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb8"), Boolsk)
     val HarAvkortetGrunnlagId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10cb9"), Boolsk)
-    val BarnetilleggId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23b")
-    val Antall_barn_som_gir_rett_til_barnetilleggId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23c")
-    val Faktor_for_utregning_av_dagsats_etter_dagpengegrunnlagetId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23e")
-    val Dagsats_uten_barnetillegg_før_samordningId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23f")
-    val Avrundet_dagsats_uten_barnetillegg_før_samordningId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a241")
-    val Barnetilleggets_størrelse_i_kroner_per_dag_for_hvert_barnId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23d")
-    val Sum_av_barnetilleggId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a244")
-    val Dagsats_med_barnetillegg_før_samordningId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a245")
-    val Avrundet_ukessats_med_barnetillegg_før_samordningId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a240")
-    val nitti_av_grunnlag_for_dagpengerId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a246")
-    val Antall_arbeidsdager_per_årId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a247")
-    val Maksimalt_mulig_grunnlag_avgrenset_til_90_av_dagpengegrunnlagetId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a248")
-    val Maksimal_mulig_dagsats_avgrenset_til_90_av_dagpengegrunnlagetId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24a")
-    val Avrundet_maksimal_mulig_dagsats_avgrenset_til_90_av_dagpengegrunnlagetId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24b")
-    val Andel_av_dagsats_med_barnetillegg_som_overstiger_maks_andel_av_dagpengegrunnlagetId =
-        UUID.fromString(
-            "0194881f-9428-74d5-b160-f63a4c61a242",
+    val BarnId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23b"), BarnDatatype)
+    val AntallBarnSomGirRettTilBarnetilleggId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23c"), Heltall)
+    val BarnetillegDekningsgradId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23e"), Desimaltall)
+    val DagsatsUtenBarnetilleggFørSamordningId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23f"), Penger)
+    val AvrundetDagsatsUtenBarnetilleggId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a241"), Penger)
+    val BarnetilleggetsStørrelsePerDagId =
+        Opplysningstype.Id(
+            UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a23d"),
+            Penger,
         )
-    val Andel_av_dagsats_uten_barnetillegg_avkortet_til_maks_andel_av_dagpengegrunnlagetId =
-        UUID.fromString(
-            "0194881f-9428-74d5-b160-f63a4c61a243",
+    val BarnetilleggId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a244"), Penger)
+    val DagsatsMedBarnetilleggId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a245"), Penger)
+    val AvrundetUkessatsMedBarnetilleggFørSmordningId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a240"), Penger)
+    val NittiProsentId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a246"), Desimaltall)
+    val AntallArbeidsdagerPerÅrId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a247"), Heltall)
+    val MaksGrunnlagId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a248"), Penger)
+    val MaksSatsId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24a"), Penger)
+    val AvrundetMaksSatsId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24b"), Penger)
+    val beløpOverMaksId =
+        Opplysningstype.Id(
+            UUID.fromString(
+                "0194881f-9428-74d5-b160-f63a4c61a242",
+            ),
+            Penger,
         )
-    val Samordnet_dagsats_med_barnetilleggId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24d")
-    val Dagsats_med_barnetillegg_etter_samordning_og_90_regelId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24f")
-    val Har_samordnetId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a250")
-    val Antall_arbeidsdager_per_ukeId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a249")
-    val Ukessats_med_barnetillegg_etter_samordningId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24e")
-    val Har_barnetilleggId = UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24c")
+    val DagsatsEtterNittiProsentId =
+        Opplysningstype.Id(
+            UUID.fromString(
+                "0194881f-9428-74d5-b160-f63a4c61a243",
+            ),
+            Penger,
+        )
+    val SamordnetDagsatsMedBarnetilleggId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24d"), Penger)
+    val DagsatsEtterSamordningMedBarnetilleggId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24f"), Penger)
+    val HarSamordnetId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a250"), Boolsk)
+    val ArbeidsdagerPerUkeId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a249"), Heltall)
+    val UkessatsId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24e"), Penger)
+    val HarBarnetilleggId = Opplysningstype.Id(UUID.fromString("0194881f-9428-74d5-b160-f63a4c61a24c"), Boolsk)
     val Kort_dagpengeperiodeId = UUID.fromString("0194881f-943d-77a7-969c-147999f1544a")
     val Lang_dagpengeperiodeId = UUID.fromString("0194881f-943d-77a7-969c-147999f1544b")
     val Terskelfaktor_for_12_månederId = UUID.fromString("0194881f-943d-77a7-969c-147999f1544c")

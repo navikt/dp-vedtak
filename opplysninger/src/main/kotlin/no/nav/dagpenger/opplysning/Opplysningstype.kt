@@ -1,5 +1,6 @@
 package no.nav.dagpenger.opplysning
 
+import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.uuid.UUIDv7
@@ -218,6 +219,14 @@ class Opplysningstype<T : Comparable<T>>(
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
             behovId: String = beskrivelse,
         ): Opplysningstype<Beløp> = som(id, beskrivelse, formål, synlig, behovId)
+
+        fun barn(
+            id: Id<BarnListe>,
+            beskrivelse: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+            behovId: String = beskrivelse,
+        ): Opplysningstype<BarnListe> = som(id, beskrivelse, formål, synlig, behovId)
 
         fun <T : Comparable<T>> som(
             id: Id<T>,
