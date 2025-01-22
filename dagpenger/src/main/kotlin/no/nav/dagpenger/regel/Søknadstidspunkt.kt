@@ -4,22 +4,27 @@ import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.sisteAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.innhentes
+import no.nav.dagpenger.regel.Behov.Prøvingsdato
 import no.nav.dagpenger.regel.Behov.Søknadsdato
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
+import no.nav.dagpenger.regel.OpplysningEtellerannet.prøvingsdatoId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.søknadId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.søknadsdatoId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.søknadstidspunktId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.ønskerDagpengerFraDatoId
 
 object Søknadstidspunkt {
     // § 3A-1.Søknadstidspunkt https://lovdata.no/forskrift/1998-09-16-890/§3a-1
-    val søknadsdato = Opplysningstype.somDato("Søknadsdato".id(Søknadsdato))
-    val ønsketdato = Opplysningstype.somDato("Ønsker dagpenger fra dato".id(ØnskerDagpengerFraDato))
+    val søknadsdato = Opplysningstype.dato(søknadsdatoId, "Søknadsdato", behovId = Søknadsdato)
+    val ønsketdato = Opplysningstype.dato(ønskerDagpengerFraDatoId, "Ønsker dagpenger fra dato", behovId = ØnskerDagpengerFraDato)
 
-    val søknadstidspunkt = Opplysningstype.somDato("Søknadstidspunkt", synlig = aldriSynlig)
+    val søknadstidspunkt = Opplysningstype.dato(søknadstidspunktId, "Søknadstidspunkt", synlig = aldriSynlig)
 
-    val prøvingsdato = Opplysningstype.somDato("Prøvingsdato".id("Prøvingsdato"))
-    val søknadIdOpplysningstype = Opplysningstype.somTekst("søknadId")
+    val prøvingsdato = Opplysningstype.dato(prøvingsdatoId, "Prøvingsdato", behovId = Prøvingsdato)
+    val søknadIdOpplysningstype = Opplysningstype.tekst(søknadId, "søknadId")
 
     val regelsett =
         Regelsett(
