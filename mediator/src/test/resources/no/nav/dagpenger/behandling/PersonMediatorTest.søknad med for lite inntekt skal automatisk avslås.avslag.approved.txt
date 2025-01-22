@@ -38,12 +38,15 @@ Krav til minsteinntekt
 Avtjent verneplikt
 Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste
 Oppfyller kravet til minsteinntekt eller verneplikt
+Minimum vanlig arbeidstid
 Det er godkjent at bruker kun søker deltidsarbeid
 Det er godkjent at bruker kun søk arbeid lokalt
+Ønsket arbeidstid
 Kan jobbe heltid og deltid
 Kan jobbe i hele Norge
 Kan ta alle typer arbeid
 Villig til å bytte yrke
+Villig til å jobbe minimum arbeidstid
 Oppfyller kravet til heltid- og deltidsarbeid
 Oppfyller kravet til mobilitet
 Oppfyller kravet til å være arbeidsfør

@@ -544,6 +544,7 @@ components:
         - kode
         - tittel
         - beskrivelse
+        - kanKvitteres
         - status
         - maskinelt
         - sistEndret
@@ -557,6 +558,8 @@ components:
           type: string
         beskrivelse:
           type: string
+        kanKvitteres:
+          type: boolean
         status:
           type: string
           enum: [ "Åpen", "Avbrutt", "Avklart" ]

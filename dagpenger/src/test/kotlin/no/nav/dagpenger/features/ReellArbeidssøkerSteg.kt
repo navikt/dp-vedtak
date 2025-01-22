@@ -27,6 +27,9 @@ class ReellArbeidssøkerSteg : No {
             opplysninger.leggTil(Faktum(Søknadstidspunkt.ønsketdato, søknadsdato.somLocalDate()))
             regelkjøring.evaluer()
         }
+        Gitt("ønsker arbeidstid på {float} timer") { timer: Float ->
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.ønsketArbeidstid, timer.toDouble()))
+        }
         Gitt("kan jobbe både heltid og deltid") {
             opplysninger.leggTil(Faktum(ReellArbeidssøker.kanJobbeDeltid, true)).also { regelkjøring.evaluer() }
         }

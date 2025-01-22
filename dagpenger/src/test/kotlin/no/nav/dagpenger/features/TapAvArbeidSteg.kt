@@ -7,6 +7,7 @@ import no.nav.dagpenger.features.utils.somLocalDate
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Regelkjøring
+import no.nav.dagpenger.regel.ReellArbeidssøker
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.Søknadstidspunkt
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid
@@ -17,7 +18,6 @@ import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.kravTilTapAvArbeid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.kravTilTaptArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.nyArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.tapAvArbeid
-import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.ønsketArbeidstid
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagForVernepliktErGunstigst
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktFastsattVanligArbeidstid
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -41,10 +41,10 @@ class TapAvArbeidSteg : No {
         Gitt("at søknadsdatossssss er {string}") { søknadsdato: String ->
             opplysninger.leggTil(Faktum(Søknadstidspunkt.søknadsdato, søknadsdato.somLocalDate()))
             opplysninger.leggTil(Faktum(Søknadstidspunkt.ønsketdato, søknadsdato.somLocalDate()))
+            opplysninger.leggTil(Faktum(ReellArbeidssøker.ønsketArbeidstid, 40.0))
 
             opplysninger.leggTil(Faktum(grunnlagForVernepliktErGunstigst, false))
             opplysninger.leggTil(Faktum(vernepliktFastsattVanligArbeidstid, 0.0))
-            opplysninger.leggTil(Faktum(ønsketArbeidstid, 40.0))
         }
 
         Gitt("at personen har tapt arbeid") {

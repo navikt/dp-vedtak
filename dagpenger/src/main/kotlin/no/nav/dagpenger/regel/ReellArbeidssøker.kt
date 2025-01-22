@@ -12,6 +12,7 @@ import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.regel.Avklaringspunkter.IkkeRegistrertSomArbeidsøker
 import no.nav.dagpenger.regel.Avklaringspunkter.ReellArbeidssøkerUnntak
 import no.nav.dagpenger.regel.Behov.HelseTilAlleTyperJobb
@@ -19,7 +20,10 @@ import no.nav.dagpenger.regel.Behov.KanJobbeDeltid
 import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
+import no.nav.dagpenger.regel.Behov.ØnsketArbeidstid
+import no.nav.dagpenger.regel.Samordning.uføre
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 
 object ReellArbeidssøker {
     // c.	å ta arbeid uavhengig av om det er på heltid eller deltid,
@@ -53,10 +57,16 @@ object ReellArbeidssøker {
 
     val kravTilArbeidssøker = Opplysningstype.somBoolsk("Krav til arbeidssøker")
 
+    val ønsketArbeidstid = Opplysningstype.somDesimaltall("Ønsket arbeidstid".id(ØnsketArbeidstid), Bruker)
+    val minimumVanligArbeidstid = Opplysningstype.somDesimaltall("Minimum vanlig arbeidstid") { it.erSann(uføre) }
+    val villigTilMinimumArbeidstid = Opplysningstype.somBoolsk("Villig til å jobbe minimum arbeidstid")
+
     val regelsett =
-        Regelsett(
-            folketrygden.hjemmel(4, 5, "Reelle arbeidssøkere", "4-5 Reell arbeidssøker"),
-        ) {
+        Regelsett(folketrygden.hjemmel(4, 5, "Reelle arbeidssøkere", "4-5 Reell arbeidssøker")) {
+            regel(ønsketArbeidstid) { innhentMed(søknadIdOpplysningstype) }
+            regel(minimumVanligArbeidstid) { oppslag(prøvingsdato) { 18.75 } }
+            regel(villigTilMinimumArbeidstid) { størreEnnEllerLik(ønsketArbeidstid, minimumVanligArbeidstid) }
+
             regel(kanJobbeDeltid) { innhentes }
             regel(godkjentDeltidssøker) { oppslag(prøvingsdato) { false } }
 
@@ -76,6 +86,7 @@ object ReellArbeidssøker {
 
             utfall(kravTilArbeidssøker) {
                 alle(
+                    villigTilMinimumArbeidstid,
                     oppfyllerKravTilArbeidssøker,
                     oppfyllerKravTilMobilitet,
                     oppfyllerKravTilArbeidsfør,

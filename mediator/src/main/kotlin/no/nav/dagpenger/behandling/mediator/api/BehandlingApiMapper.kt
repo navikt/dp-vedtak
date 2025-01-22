@@ -44,7 +44,9 @@ import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentDeltidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentLokalArbeidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.kanJobbeDeltid
 import no.nav.dagpenger.regel.ReellArbeidssøker.kanJobbeHvorSomHelst
+import no.nav.dagpenger.regel.ReellArbeidssøker.minimumVanligArbeidstid
 import no.nav.dagpenger.regel.ReellArbeidssøker.villigTilEthvertArbeid
+import no.nav.dagpenger.regel.ReellArbeidssøker.ønsketArbeidstid
 import no.nav.dagpenger.regel.Samordning.foreldrepenger
 import no.nav.dagpenger.regel.Samordning.foreldrepengerDagsats
 import no.nav.dagpenger.regel.Samordning.omsorgspenger
@@ -67,9 +69,7 @@ import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel12mnd
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel36mnd
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel6mnd
-import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.minimumVanligArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.nyArbeidstid
-import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.ønsketArbeidstid
 import no.nav.dagpenger.regel.Utdanning.deltakelseIArbeidsmarkedstiltak
 import no.nav.dagpenger.regel.Utdanning.deltakelsePåKurs
 import no.nav.dagpenger.regel.Utdanning.grunnskoleopplæring
@@ -229,6 +229,7 @@ internal fun Avklaring.tilAvklaringDTO(): AvklaringDTO {
         kode = this.kode.kode,
         tittel = this.kode.tittel,
         beskrivelse = this.kode.beskrivelse,
+        kanKvitteres = kanKvitteres,
         status =
             when (sisteEndring) {
                 is Avklaring.Endring.Avbrutt -> AvklaringDTO.Status.Avbrutt
@@ -309,14 +310,14 @@ private val redigerbareOpplysninger =
                 unntakForOpphold,
                 medlemFolketrygden,
                 // 4-3
-                ønsketArbeidstid,
                 beregningsregel6mnd,
                 beregningsregel12mnd,
                 beregningsregel36mnd,
                 beregnetArbeidstid,
                 nyArbeidstid,
-                minimumVanligArbeidstid,
                 // 4-5
+                ønsketArbeidstid,
+                minimumVanligArbeidstid,
                 kanJobbeDeltid,
                 kanJobbeHvorSomHelst,
                 erArbeidsfør,

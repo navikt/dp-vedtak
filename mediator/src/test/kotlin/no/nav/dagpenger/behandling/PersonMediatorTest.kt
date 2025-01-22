@@ -269,7 +269,7 @@ internal class PersonMediatorTest {
             }
 
             // TODO: Beregningsmetode for tapt arbeidstid har defaultverdi for testing av innvilgelse og derfor mangler avklaringen
-            rapid.inspektør.size shouldBe 21
+            rapid.inspektør.size shouldBe 20
 
             rapid.harHendelse("forslag_til_vedtak") {
                 medFastsettelser {
@@ -773,8 +773,8 @@ internal class PersonMediatorTest {
         /**
          * Sjekker kravene til reell arbeidssøker
          */
-        rapid.harBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
-        testPerson.løsBehov(KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
+        rapid.harBehov(ØnsketArbeidstid, KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
+        testPerson.løsBehov(ØnsketArbeidstid, KanJobbeDeltid, KanJobbeHvorSomHelst, HelseTilAlleTyperJobb, VilligTilÅBytteYrke)
 
         if (behandlingslengde == Behandlingslengde.Minsteinntekt) {
             return
@@ -791,12 +791,6 @@ internal class PersonMediatorTest {
          */
         rapid.harBehov(Barnetillegg)
         testPerson.løsBehov(Barnetillegg)
-
-        /**
-         * Henter inn barn som kan gi barnetillegg
-         */
-        rapid.harBehov(ØnsketArbeidstid)
-        testPerson.løsBehov(ØnsketArbeidstid)
 
         /**
          * Innhente informasjon om andre ytelser

@@ -13,6 +13,7 @@ Har rett til ordinære dagpenger
 Rettighetstype
 Avtjent verneplikt
 Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste
+Ønsket arbeidstid
 Kan jobbe heltid og deltid
 Kan jobbe i hele Norge
 Kan ta alle typer arbeid
@@ -26,12 +27,14 @@ Maks lengde på opptjeningsperiode
 Grunnbeløp
 Antall G for krav til 12 mnd arbeidsinntekt
 Antall G for krav til 36 mnd arbeidsinntekt
+Minimum vanlig arbeidstid
 Det er godkjent at bruker kun søker deltidsarbeid
 Det er godkjent at bruker kun søk arbeid lokalt
 Dato søker når maks alder
 Arbeidsgivers rapporteringsfrist
 Inntektskrav for siste 12 mnd
 Inntektskrav for siste 36 mnd
+Villig til å jobbe minimum arbeidstid
 Oppfyller kravet til heltid- og deltidsarbeid
 Oppfyller kravet til mobilitet
 Siste mulige dag bruker kan oppfylle alderskrav
