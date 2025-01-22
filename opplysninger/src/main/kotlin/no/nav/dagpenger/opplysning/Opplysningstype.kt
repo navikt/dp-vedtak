@@ -161,10 +161,11 @@ class Opplysningstype<T : Comparable<T>>(
 
         fun <T : Comparable<T>> som(
             id: Id<T>,
-            navn: String,
+            beskrivelse: String,
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ): Opplysningstype<T> = Opplysningstype(navn.id(navn), id.datatype, formål, synlig, id)
+            behovId: String = beskrivelse,
+        ): Opplysningstype<T> = Opplysningstype(OpplysningTypeId(behovId, beskrivelse), id.datatype, formål, synlig, id)
     }
 
     override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId
