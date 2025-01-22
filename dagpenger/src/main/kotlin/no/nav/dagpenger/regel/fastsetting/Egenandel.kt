@@ -1,18 +1,21 @@
 package no.nav.dagpenger.regel.fastsetting
 
-import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.beløp
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.desimaltall
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.OpplysningEtellerannet.AntallDagsatsForEgenandelId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.EgenandelId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.folketrygden
 
 object Egenandel {
-    val egenandel = Opplysningstype.somBeløp("Egenandel")
+    val egenandel = beløp(EgenandelId, "Egenandel")
     private val sats = DagpengenesStørrelse.dagsatsEtterSamordningMedBarnetillegg
-    private val faktor = Opplysningstype.somDesimaltall("Antall dagsats for egenandel", synlig = aldriSynlig)
+    private val faktor = desimaltall(AntallDagsatsForEgenandelId, "Antall dagsats for egenandel", synlig = aldriSynlig)
 
     val regelsett =
         Regelsett(
