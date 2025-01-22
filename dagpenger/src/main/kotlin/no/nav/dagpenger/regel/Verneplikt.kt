@@ -4,15 +4,25 @@ import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningsformål
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.innhentMed
+import no.nav.dagpenger.regel.OpplysningEtellerannet.avtjentVernepliktId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.oppfyllerKravetTilVernepliktId
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 
 object Verneplikt {
-    val avtjentVerneplikt = Opplysningstype.somBoolsk("Avtjent verneplikt".id(Behov.Verneplikt), Opplysningsformål.Bruker)
+    val avtjentVerneplikt =
+        Opplysningstype.som(
+            avtjentVernepliktId,
+            "Avtjent verneplikt",
+            formål = Opplysningsformål.Bruker,
+            behovId = Behov.Verneplikt,
+        )
     val oppfyllerKravetTilVerneplikt =
-        Opplysningstype.somBoolsk("Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste")
+        Opplysningstype.som(
+            oppfyllerKravetTilVernepliktId,
+            "Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste",
+        )
 
     val regelsett =
         Regelsett(

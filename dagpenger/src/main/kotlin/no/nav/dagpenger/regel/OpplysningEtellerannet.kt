@@ -209,23 +209,38 @@ object OpplysningEtellerannet {
     val Tap_av_arbeidstid_er_minst_terskelId = UUID.fromString("0194881f-9435-72a8-b1ce-9575cbc2a76e")
     val Beregningsregel_Tapt_arbeidstidId = UUID.fromString("0194881f-9435-72a8-b1ce-9575cbc2a763")
     val Krav_til_tap_av_arbeidsinntekt_og_arbeidstidId = UUID.fromString("0194881f-9435-72a8-b1ce-9575cbc2a76f")
-    val TarUtdanningEllerOpplæringId = UUID.fromString("0194881f-9445-734c-a7ee-045edf29b522")
-    val Deltar_i_arbeidsmarkedstiltakId = UUID.fromString("0194881f-9445-734c-a7ee-045edf29b527")
-    val Deltar_i_opplæring_for_innvandrereId = UUID.fromString("0194881f-9445-734c-a7ee-045edf29b528")
-    val Deltar_i_grunnskoleopplæring_videregående_opplæring_og_opplæring_i_grunnleggende_ferdigheterId =
-        UUID.fromString(
-            "0194881f-9445-734c-a7ee-045edf29b529",
+    val tarUtdanningEllerOpplæringId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b522"), Boolsk)
+    val deltarIArbeidsmarkedstiltakId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b527"), Boolsk)
+    val deltarIOpplæringForInnvandrereId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b528"), Boolsk)
+    val deltarIGrunnskoleopplæringVideregåendeOpplæringOgOpplæringIGrunnleggendeFerdigheterId =
+        Opplysningstype.Id(
+            UUID.fromString(
+                "0194881f-9445-734c-a7ee-045edf29b529",
+            ),
+            Boolsk,
         )
-    val Deltar_i_høyere_yrkesfaglig_utdanningId = UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52a")
-    val Deltar_i_høyere_utdanningId = UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52b")
-    val Deltar_på_kurs_mvId = UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52c")
-    val Godkjent_unntak_for_utdanning_eller_opplæringId = UUID.fromString("0194881f-9445-734c-a7ee-045edf29b523")
-    val Har_svart_ja_på_spørsmål_om_utdanning_eller_opplæringId = UUID.fromString("0194881f-9445-734c-a7ee-045edf29b524")
-    val Har_svart_nei_på_spørsmål_om_utdanning_eller_opplæringId = UUID.fromString("0194881f-9445-734c-a7ee-045edf29b525")
-    val Oppfyller_kravet_på_unntak_for_utdanning_eller_opplæringId = UUID.fromString("0194881f-9445-734c-a7ee-045edf29b526")
-    val Krav_til_utdanning_eller_opplæringId = UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52d")
-    val Bruker_er_utestengt_fra_dagpengerId = UUID.fromString("0194881f-9447-7e36-a569-3e9f42bff9f6")
-    val Oppfyller_krav_til_ikke_utestengtId = UUID.fromString("0194881f-9447-7e36-a569-3e9f42bff9f7")
+    val deltarIHøyereYrkesfagligUtdanningId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52a"), Boolsk)
+    val deltarIHøyereUtdanningId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52b"), Boolsk)
+    val deltarPåKursMvId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52c"), Boolsk)
+    val godkjentUnntakForUtdanningEllerOpplæringId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b523"), Boolsk)
+    val harSvartJaPåSpørsmålOmUtdanningEllerOpplæringId =
+        Opplysningstype.Id(
+            UUID.fromString("0194881f-9445-734c-a7ee-045edf29b524"),
+            Boolsk,
+        )
+    val harSvartNeiPåSpørsmålOmUtdanningEllerOpplæringId =
+        Opplysningstype.Id(
+            UUID.fromString("0194881f-9445-734c-a7ee-045edf29b525"),
+            Boolsk,
+        )
+    val oppfyllerKravetPåUnntakForUtdanningEllerOpplæringId =
+        Opplysningstype.Id(
+            UUID.fromString("0194881f-9445-734c-a7ee-045edf29b526"),
+            Boolsk,
+        )
+    val kravTilUtdanningEllerOpplæringId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52d"), Boolsk)
+    val brukerErUtestengtFraDagpengerId = Opplysningstype.Id(UUID.fromString("0194881f-9447-7e36-a569-3e9f42bff9f6"), Boolsk)
+    val oppfyllerKravTilIkkeUtestengtId = Opplysningstype.Id(UUID.fromString("0194881f-9447-7e36-a569-3e9f42bff9f7"), Boolsk)
     val VernepliktId = UUID.fromString("0194881f-9423-7e88-918a-85cb7ed76408")
     val Har_utført_minst_tre_måneders_militærtjeneste_eller_obligatorisk_sivilforsvarstjenesteId =
         UUID.fromString(
@@ -239,4 +254,6 @@ object OpplysningEtellerannet {
     val Grunnlag_for_verneplikt_hvis_kravet_er_oppfyltId = UUID.fromString("0194881f-9421-766c-9dc6-41fe6c9a1e03")
     val Grunnlaget_for_verneplikt_er_høyere_enn_dagpengegrunnlagetId = UUID.fromString("0194881f-9421-766c-9dc6-41fe6c9a1e05")
     val fagsakIdId = UUID.fromString("0194881f-9462-78af-8977-46092bb030eb")
+    val avtjentVernepliktId = Opplysningstype.Id(UUID.fromString("01948d3c-4bea-7802-9d18-5342a5e2be99"), Boolsk)
+    val oppfyllerKravetTilVernepliktId = Opplysningstype.Id(UUID.fromString("01948d43-e218-76f1-b29b-7e604241d98a"), Boolsk)
 }
