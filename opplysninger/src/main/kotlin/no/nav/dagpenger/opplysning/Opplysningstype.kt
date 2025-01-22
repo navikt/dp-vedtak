@@ -1,5 +1,6 @@
 package no.nav.dagpenger.opplysning
 
+import no.nav.dagpenger.uuid.UUIDv7
 import java.util.UUID
 
 interface Klassifiserbart {
@@ -30,6 +31,7 @@ class Opplysningstype<T : Comparable<T>>(
     val datatype: Datatype<T>,
     val formål: Opplysningsformål,
     val synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+    val permanentId: Id<T> = Id(UUIDv7.ny(), datatype), // todo: Fjerne generering av ny id. MÅ spesifiseres globalt i kodebasen
 ) : Klassifiserbart {
     val id = opplysningTypeId.id
     val navn = opplysningTypeId.beskrivelse
@@ -156,6 +158,13 @@ class Opplysningstype<T : Comparable<T>>(
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
         ) = Opplysningstype(opplysningTypeId, Tekst, formål, synlig)
+
+        fun <T : Comparable<T>> som(
+            id: Id<T>,
+            navn: String,
+            formål: Opplysningsformål = Opplysningsformål.Regel,
+            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+        ): Opplysningstype<T> = Opplysningstype(navn.id(navn), id.datatype, formål, synlig, id)
     }
 
     override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId
