@@ -13,10 +13,10 @@ import java.util.UUID
 
 object OpplysningEtellerannet {
     val FødselsdatoId = Opplysningstype.Id(UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367233"), Dato)
-    val AldersgrenseId = UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367234")
-    val Dato_søker_når_maks_alderId = UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367235")
-    val Siste_mulige_dag_bruker_kan_oppfylle_alderskravId = UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367236")
-    val Oppfyller_kravet_til_alderId = UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367237")
+    val AldersgrenseId = Opplysningstype.Id(UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367234"), Heltall)
+    val SisteMånedId = Opplysningstype.Id(UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367235"), Dato)
+    val SisteDagIMånedId = Opplysningstype.Id(UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367236"), Dato)
+    val KravTilAlderId = Opplysningstype.Id(UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367237"), Boolsk)
     val AntallÅrI36MånederId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10ca9"), Desimaltall)
     val FaktorForMaksimaltMuligGrunnlagId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10ca7"), Desimaltall)
     val SeksGangerGrunnbeløpId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10ca8"), Penger)
