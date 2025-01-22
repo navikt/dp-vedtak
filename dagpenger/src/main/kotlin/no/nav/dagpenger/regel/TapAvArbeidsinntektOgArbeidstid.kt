@@ -4,7 +4,6 @@ import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.hvisSannMedResultat
@@ -15,6 +14,22 @@ import no.nav.dagpenger.opplysning.regel.prosentTerskel
 import no.nav.dagpenger.regel.Avklaringspunkter.TapAvArbeidstidBeregningsregel
 import no.nav.dagpenger.regel.Behov.HarTaptArbeid
 import no.nav.dagpenger.regel.Behov.KravPåLønn
+import no.nav.dagpenger.regel.OpplysningEtellerannet.beregeningsregelArbeidstidSiste36MånederId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.beregnetVanligArbeidstidPerUkeFørTapId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.beregningsregelArbeidstidSiste12MånederId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.beregningsregelArbeidstidSiste6MånederId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.beregningsregelTaptArbeidstidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.fastsattArbeidstidPerUkeFørTapId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.fastsattVanligArbeidstidEtterOrdinærEllerVernepliktId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.harTaptArbeidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.ikkeKravPåLønnFraTidligereArbeidsgiverId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.kravPåLønnId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.kravTilProsentvisTapAvArbeidstidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.kravTilTapAvArbeidsinntektId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.kravTilTapAvArbeidsinntektOgArbeidstidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.maksimalVanligArbeidstidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.nyArbeidstidPerUkeId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.tapAvArbeidstidErMinstTerskelId
 import no.nav.dagpenger.regel.ReellArbeidssøker.ønsketArbeidstid
 import no.nav.dagpenger.regel.Samordning.samordnetBeregnetArbeidstid
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
@@ -22,27 +37,70 @@ import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagForVerne
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktFastsattVanligArbeidstid
 
 object TapAvArbeidsinntektOgArbeidstid {
-    internal val tapAvArbeid = Opplysningstype.somBoolsk("Har tapt arbeid".id(HarTaptArbeid))
-    internal val kravPåLønn = Opplysningstype.somBoolsk("Krav på lønn fra tidligere arbeidsgiver".id(KravPåLønn))
-    private val ikkeKravPåLønn = Opplysningstype.somBoolsk("Ikke krav på lønn fra tidligere arbeidsgiver", synlig = aldriSynlig)
-    val kravTilTapAvArbeidsinntekt = Opplysningstype.somBoolsk("Krav til tap av arbeidsinntekt")
+    internal val tapAvArbeid = Opplysningstype.boolsk(harTaptArbeidId, "Har tapt arbeid", behovId = HarTaptArbeid)
+    internal val kravPåLønn = Opplysningstype.boolsk(kravPåLønnId, "Krav på lønn fra tidligere arbeidsgiver", behovId = KravPåLønn)
+    private val ikkeKravPåLønn =
+        Opplysningstype.boolsk(
+            ikkeKravPåLønnFraTidligereArbeidsgiverId,
+            "Ikke krav på lønn fra tidligere arbeidsgiver",
+            synlig = aldriSynlig,
+        )
+    val kravTilTapAvArbeidsinntekt = Opplysningstype.boolsk(kravTilTapAvArbeidsinntektId, "Krav til tap av arbeidsinntekt")
 
-    private val kravTilArbeidstidsreduksjon = Opplysningstype.somDesimaltall("Krav til prosentvis tap av arbeidstid")
-    private val beregningsregel = Opplysningstype.somBoolsk("Beregningsregel: Tapt arbeidstid", synlig = aldriSynlig)
+    private val kravTilArbeidstidsreduksjon =
+        Opplysningstype.desimaltall(
+            kravTilProsentvisTapAvArbeidstidId,
+            "Krav til prosentvis tap av arbeidstid",
+        )
+    private val beregningsregel =
+        Opplysningstype.boolsk(
+            beregningsregelTaptArbeidstidId,
+            "Beregningsregel: Tapt arbeidstid",
+            synlig = aldriSynlig,
+        )
 
-    val beregningsregel6mnd = Opplysningstype.somBoolsk("Beregningsregel: Arbeidstid siste 6 måneder")
-    val beregningsregel12mnd = Opplysningstype.somBoolsk("Beregningsregel: Arbeidstid siste 12 måneder")
-    val beregningsregel36mnd = Opplysningstype.somBoolsk("Beregeningsregel: Arbeidstid siste 36 måneder")
+    val beregningsregel6mnd =
+        Opplysningstype.boolsk(
+            beregningsregelArbeidstidSiste6MånederId,
+            "Beregningsregel: Arbeidstid siste 6 måneder",
+        )
+    val beregningsregel12mnd =
+        Opplysningstype.boolsk(
+            beregningsregelArbeidstidSiste12MånederId,
+            "Beregningsregel: Arbeidstid siste 12 måneder",
+        )
+    val beregningsregel36mnd =
+        Opplysningstype.boolsk(
+            beregeningsregelArbeidstidSiste36MånederId,
+            "Beregeningsregel: Arbeidstid siste 36 måneder",
+        )
 
-    val beregnetArbeidstid = Opplysningstype.somDesimaltall("Beregnet vanlig arbeidstid per uke før tap")
-    private val maksimalVanligArbeidstid = Opplysningstype.somDesimaltall("Maksimal vanlig arbeidstid", synlig = aldriSynlig)
-    val fastsattVanligArbeidstid = Opplysningstype.somDesimaltall("Fastsatt arbeidstid per uke før tap")
-    val nyArbeidstid = Opplysningstype.somDesimaltall("Ny arbeidstid per uke")
+    val beregnetArbeidstid =
+        Opplysningstype.desimaltall(
+            beregnetVanligArbeidstidPerUkeFørTapId,
+            "Beregnet vanlig arbeidstid per uke før tap",
+        )
+    private val maksimalVanligArbeidstid =
+        Opplysningstype.desimaltall(
+            maksimalVanligArbeidstidId,
+            "Maksimal vanlig arbeidstid",
+            synlig = aldriSynlig,
+        )
+    val fastsattVanligArbeidstid = Opplysningstype.desimaltall(fastsattArbeidstidPerUkeFørTapId, "Fastsatt arbeidstid per uke før tap")
+    val nyArbeidstid = Opplysningstype.desimaltall(nyArbeidstidPerUkeId, "Ny arbeidstid per uke")
 
     internal val ordinærEllerVernepliktArbeidstid =
-        Opplysningstype.somDesimaltall("Fastsatt vanlig arbeidstid etter ordinær eller verneplikt", synlig = aldriSynlig)
-    val kravTilTaptArbeidstid = Opplysningstype.somBoolsk("Tap av arbeidstid er minst terskel")
-    val kravTilTapAvArbeidsinntektOgArbeidstid = Opplysningstype.somBoolsk("Krav til tap av arbeidsinntekt og arbeidstid")
+        Opplysningstype.desimaltall(
+            fastsattVanligArbeidstidEtterOrdinærEllerVernepliktId,
+            "Fastsatt vanlig arbeidstid etter ordinær eller verneplikt",
+            synlig = aldriSynlig,
+        )
+    val kravTilTaptArbeidstid = Opplysningstype.boolsk(tapAvArbeidstidErMinstTerskelId, "Tap av arbeidstid er minst terskel")
+    val kravTilTapAvArbeidsinntektOgArbeidstid =
+        Opplysningstype.boolsk(
+            kravTilTapAvArbeidsinntektOgArbeidstidId,
+            "Krav til tap av arbeidsinntekt og arbeidstid",
+        )
 
     val regelsett =
         Regelsett(
