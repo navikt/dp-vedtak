@@ -212,7 +212,7 @@ object OpplysningEtellerannet {
     val tarUtdanningEllerOpplæringId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b522"), Boolsk)
     val deltarIArbeidsmarkedstiltakId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b527"), Boolsk)
     val deltarIOpplæringForInnvandrereId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b528"), Boolsk)
-    val deltarIGrunnskoleopplæringVideregåendeOpplæringOgOpplæringIGrunnleggendeFerdigheterId =
+    val grunnskoleopplæringId =
         Opplysningstype.Id(
             UUID.fromString(
                 "0194881f-9445-734c-a7ee-045edf29b529",
@@ -222,18 +222,18 @@ object OpplysningEtellerannet {
     val deltarIHøyereYrkesfagligUtdanningId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52a"), Boolsk)
     val deltarIHøyereUtdanningId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52b"), Boolsk)
     val deltarPåKursMvId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52c"), Boolsk)
-    val godkjentUnntakForUtdanningEllerOpplæringId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b523"), Boolsk)
-    val harSvartJaPåSpørsmålOmUtdanningEllerOpplæringId =
+    val godkjentUnntakForUtdanningId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b523"), Boolsk)
+    val svartJaPåUtdanningId =
         Opplysningstype.Id(
             UUID.fromString("0194881f-9445-734c-a7ee-045edf29b524"),
             Boolsk,
         )
-    val harSvartNeiPåSpørsmålOmUtdanningEllerOpplæringId =
+    val svartNeiPåUtdanningId =
         Opplysningstype.Id(
             UUID.fromString("0194881f-9445-734c-a7ee-045edf29b525"),
             Boolsk,
         )
-    val oppfyllerKravetPåUnntakForUtdanningEllerOpplæringId =
+    val oppfyllerKravetPåUnntakForUtdanningId =
         Opplysningstype.Id(
             UUID.fromString("0194881f-9445-734c-a7ee-045edf29b526"),
             Boolsk,

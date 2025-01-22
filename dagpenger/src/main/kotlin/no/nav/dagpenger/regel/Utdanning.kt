@@ -13,16 +13,16 @@ import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
 import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarIArbeidsmarkedstiltakId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarIGrunnskoleopplæringVideregåendeOpplæringOgOpplæringIGrunnleggendeFerdigheterId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.grunnskoleopplæringId
 import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarIHøyereUtdanningId
 import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarIHøyereYrkesfagligUtdanningId
 import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarIOpplæringForInnvandrereId
 import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarPåKursMvId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.godkjentUnntakForUtdanningEllerOpplæringId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.harSvartJaPåSpørsmålOmUtdanningEllerOpplæringId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.harSvartNeiPåSpørsmålOmUtdanningEllerOpplæringId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.godkjentUnntakForUtdanningId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.svartJaPåUtdanningId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.svartNeiPåUtdanningId
 import no.nav.dagpenger.regel.OpplysningEtellerannet.kravTilUtdanningEllerOpplæringId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.oppfyllerKravetPåUnntakForUtdanningEllerOpplæringId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.oppfyllerKravetPåUnntakForUtdanningId
 import no.nav.dagpenger.regel.OpplysningEtellerannet.tarUtdanningEllerOpplæringId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
@@ -31,33 +31,33 @@ object Utdanning {
 
     // § 4-6 første og andre avsnitt, Utdanning
     val tarUtdanning =
-        Opplysningstype.som(
+        Opplysningstype.boolsk(
             tarUtdanningEllerOpplæringId,
             "Tar utdanning eller opplæring?",
             Bruker,
             behovId = TarUtdanningEllerOpplæring,
         )
     internal val godkjentUnntakForUtdanning =
-        Opplysningstype.som(
-            godkjentUnntakForUtdanningEllerOpplæringId,
+        Opplysningstype.boolsk(
+            godkjentUnntakForUtdanningId,
             "Godkjent unntak for utdanning eller opplæring?",
         )
     private val svartJaPåUtdanning =
-        Opplysningstype.som(
-            harSvartJaPåSpørsmålOmUtdanningEllerOpplæringId,
+        Opplysningstype.boolsk(
+            svartJaPåUtdanningId,
             "Har svart ja på spørsmål om utdanning eller opplæring",
             synlig = aldriSynlig,
         )
     private val svartNeiPåUtdanning =
-        Opplysningstype.som(
-            harSvartNeiPåSpørsmålOmUtdanningEllerOpplæringId,
+        Opplysningstype.boolsk(
+            svartNeiPåUtdanningId,
             "Har svart nei på spørsmål om utdanning eller opplæring",
             synlig = aldriSynlig,
         )
 
     private val oppfyllerKravetPåUnntak =
-        Opplysningstype.som(
-            oppfyllerKravetPåUnntakForUtdanningEllerOpplæringId,
+        Opplysningstype.boolsk(
+            oppfyllerKravetPåUnntakForUtdanningId,
             "Oppfyller kravet på unntak for utdanning eller opplæring",
             synlig = hvisTarUtdanning,
         )
@@ -65,7 +65,7 @@ object Utdanning {
     // Dagpengeforskriften § 4-3. Utdanning og opplæring
     //  § 4-3.(deltakelse i arbeidsmarkedstiltak)
     val deltakelseIArbeidsmarkedstiltak =
-        Opplysningstype.som(
+        Opplysningstype.boolsk(
             deltarIArbeidsmarkedstiltakId,
             "Deltar i arbeidsmarkedstiltak",
             synlig = hvisTarUtdanning,
@@ -73,7 +73,7 @@ object Utdanning {
 
     // § 4-3a.(opplæring for innvandrere)
     val opplæringForInnvandrere =
-        Opplysningstype.som(
+        Opplysningstype.boolsk(
             deltarIOpplæringForInnvandrereId,
             "Deltar i opplæring for innvandrere",
             synlig = hvisTarUtdanning,
@@ -81,27 +81,27 @@ object Utdanning {
 
     // § 4-3b.(grunnskoleopplæring, videregående opplæring og opplæring i grunnleggende ferdigheter)
     val grunnskoleopplæring =
-        Opplysningstype.som(
-            deltarIGrunnskoleopplæringVideregåendeOpplæringOgOpplæringIGrunnleggendeFerdigheterId,
+        Opplysningstype.boolsk(
+            grunnskoleopplæringId,
             "Deltar i grunnskoleopplæring, videregående opplæring og opplæring i grunnleggende ferdigheter",
             synlig = hvisTarUtdanning,
         )
 
     // § 4-3c.(høyere yrkesfaglig utdanning)
     val høyereYrkesfagligUtdanning =
-        Opplysningstype.som(
+        Opplysningstype.boolsk(
             deltarIHøyereYrkesfagligUtdanningId,
             "Deltar i høyere yrkesfaglig utdanning",
             synlig = hvisTarUtdanning,
         )
 
     // § 4-3d.(høyere utdanning)
-    val høyereUtdanning = Opplysningstype.som(deltarIHøyereUtdanningId, "Deltar i høyere utdanning", synlig = hvisTarUtdanning)
+    val høyereUtdanning = Opplysningstype.boolsk(deltarIHøyereUtdanningId, "Deltar i høyere utdanning", synlig = hvisTarUtdanning)
 
     // § 4-3e.(deltakelse på kurs mv
-    val deltakelsePåKurs = Opplysningstype.som(deltarPåKursMvId, "Deltar på kurs mv", synlig = hvisTarUtdanning)
+    val deltakelsePåKurs = Opplysningstype.boolsk(deltarPåKursMvId, "Deltar på kurs mv", synlig = hvisTarUtdanning)
 
-    val kravTilUtdanning = Opplysningstype.som(kravTilUtdanningEllerOpplæringId, "Krav til utdanning eller opplæring")
+    val kravTilUtdanning = Opplysningstype.boolsk(kravTilUtdanningEllerOpplæringId, "Krav til utdanning eller opplæring")
 
     val regelsett =
         Regelsett(

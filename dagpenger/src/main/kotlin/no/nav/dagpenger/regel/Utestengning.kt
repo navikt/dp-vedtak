@@ -10,9 +10,9 @@ import no.nav.dagpenger.regel.OpplysningEtellerannet.oppfyllerKravTilIkkeUtesten
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object Utestengning {
-    val utestengt = Opplysningstype.som(brukerErUtestengtFraDagpengerId, "Bruker er utestengt fra dagpenger")
+    val utestengt = Opplysningstype.boolsk(brukerErUtestengtFraDagpengerId, "Bruker er utestengt fra dagpenger")
     val oppfyllerKravetTilIkkeUtestengt =
-        Opplysningstype.som(
+        Opplysningstype.boolsk(
             oppfyllerKravTilIkkeUtestengtId,
             "Oppfyller krav til ikke utestengt",
             synlig = aldriSynlig,

@@ -12,14 +12,14 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 
 object Verneplikt {
     val avtjentVerneplikt =
-        Opplysningstype.som(
+        Opplysningstype.boolsk(
             avtjentVernepliktId,
             "Avtjent verneplikt",
             formål = Opplysningsformål.Bruker,
             behovId = Behov.Verneplikt,
         )
     val oppfyllerKravetTilVerneplikt =
-        Opplysningstype.som(
+        Opplysningstype.boolsk(
             oppfyllerKravetTilVernepliktId,
             "Har utført minst tre måneders militærtjeneste eller obligatorisk sivilforsvarstjeneste",
         )
