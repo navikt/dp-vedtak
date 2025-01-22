@@ -58,11 +58,10 @@ object ReellArbeidssøker {
     val kravTilArbeidssøker = Opplysningstype.somBoolsk("Krav til arbeidssøker")
 
     val ønsketArbeidstid =
-        Opplysningstype.somDesimaltall("Ønsket arbeidstid".id(ØnsketArbeidstid), Bruker) {
-            it.erSann(kanJobbeDeltid) == false
-        }
+        Opplysningstype.somDesimaltall("Ønsket arbeidstid".id(ØnsketArbeidstid), Bruker) { it.erSann(kanJobbeDeltid) == false }
     val minimumVanligArbeidstid = Opplysningstype.somDesimaltall("Minimum vanlig arbeidstid") { it.erSann(uføre) }
-    val villigTilMinimumArbeidstid = Opplysningstype.somBoolsk("Villig til å jobbe minimum arbeidstid")
+    val villigTilMinimumArbeidstid =
+        Opplysningstype.somBoolsk("Villig til å jobbe minimum arbeidstid") { it.erSann(kanJobbeDeltid) == false }
 
     val regelsett =
         Regelsett(folketrygden.hjemmel(4, 5, "Reelle arbeidssøkere", "4-5 Reell arbeidssøker")) {
