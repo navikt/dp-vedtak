@@ -1,7 +1,10 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.opplysning.Dato
+import no.nav.dagpenger.opplysning.Desimaltall
+import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Penger
 import java.util.UUID
 
 object OpplysningEtellerannet {
@@ -10,12 +13,12 @@ object OpplysningEtellerannet {
     val Dato_søker_når_maks_alderId = UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367235")
     val Siste_mulige_dag_bruker_kan_oppfylle_alderskravId = UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367236")
     val Oppfyller_kravet_til_alderId = UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367237")
-    val Antall_år_i_36_månederId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10ca9")
-    val Faktor_for_maksimalt_mulig_grunnlagId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10ca7")
-    val seks_ganger_grunnbeløpId = UUID.fromString("0194881f-9410-7481-b263-4606fdd10ca8")
-    val Grunnbeløp_for_grunnlagId = UUID.fromString("0194881f-940f-7af9-9387-052e028b29ee")
-    val Tellende_inntektId = UUID.fromString("0194881f-940f-7af9-9387-052e028b29ed")
-    val Oppjustert_inntektId = UUID.fromString("0194881f-940f-7af9-9387-052e028b29ec")
+    val AntallÅrI36MånederId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10ca9"), Desimaltall)
+    val FaktorForMaksimaltMuligGrunnlagId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10ca7"), Desimaltall)
+    val SeksGangerGrunnbeløpId = Opplysningstype.Id(UUID.fromString("0194881f-9410-7481-b263-4606fdd10ca8"), Penger)
+    val GrunnbeløpForGrunnlagId = Opplysningstype.Id(UUID.fromString("0194881f-940f-7af9-9387-052e028b29ee"), Penger)
+    val TellendeInntektId = Opplysningstype.Id(UUID.fromString("0194881f-940f-7af9-9387-052e028b29ed"), InntektDataType)
+    val OppjustertInntektId = Opplysningstype.Id(UUID.fromString("0194881f-940f-7af9-9387-052e028b29ec"), InntektDataType)
     val Utbetalt_arbeidsinntekt_periode_1Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cad")
     val Utbetalt_arbeidsinntekt_periode_2Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10cae")
     val Utbetalt_arbeidsinntekt_periode_3Id = UUID.fromString("0194881f-9410-7481-b263-4606fdd10caf")

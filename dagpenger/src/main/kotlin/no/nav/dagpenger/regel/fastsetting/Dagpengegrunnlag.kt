@@ -24,20 +24,27 @@ import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnn
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Minsteinntekt.inntektFraSkatt
+import no.nav.dagpenger.regel.OpplysningEtellerannet.AntallÅrI36MånederId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.FaktorForMaksimaltMuligGrunnlagId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.GrunnbeløpForGrunnlagId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OppjustertInntektId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.SeksGangerGrunnbeløpId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.TellendeInntektId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagHvisVerneplikt
 import no.nav.dagpenger.regel.folketrygden
 import java.time.LocalDate
 
 object Dagpengegrunnlag {
-    private val oppjustertinntekt = Opplysningstype.somInntekt("Oppjustert inntekt", synlig = aldriSynlig)
-    private val relevanteinntekter = Opplysningstype.somInntekt("Tellende inntekt", synlig = aldriSynlig)
+    private val oppjustertinntekt = Opplysningstype.som(OppjustertInntektId, "Oppjustert inntekt", synlig = aldriSynlig)
+    private val relevanteinntekter = Opplysningstype.som(TellendeInntektId, "Tellende inntekt", synlig = aldriSynlig)
 
-    val grunnbeløpForDagpengeGrunnlag = Opplysningstype.somBeløp("Grunnbeløp for grunnlag", synlig = aldriSynlig)
-    private val faktorForMaksgrense = Opplysningstype.somDesimaltall("Faktor for maksimalt mulig grunnlag", synlig = aldriSynlig)
-    private val maksgrenseForGrunnlag = Opplysningstype.somBeløp("6 ganger grunnbeløp", synlig = aldriSynlig)
+    val grunnbeløpForDagpengeGrunnlag = Opplysningstype.som(GrunnbeløpForGrunnlagId, "Grunnbeløp for grunnlag", synlig = aldriSynlig)
+    private val faktorForMaksgrense =
+        Opplysningstype.som(FaktorForMaksimaltMuligGrunnlagId, "Faktor for maksimalt mulig grunnlag", synlig = aldriSynlig)
+    private val maksgrenseForGrunnlag = Opplysningstype.som(SeksGangerGrunnbeløpId, "6 ganger grunnbeløp", synlig = aldriSynlig)
 
-    private val antallÅrI36Måneder = Opplysningstype.somDesimaltall("Antall år i 36 måneder", synlig = aldriSynlig)
+    private val antallÅrI36Måneder = Opplysningstype.som(AntallÅrI36MånederId, "Antall år i 36 måneder", synlig = aldriSynlig)
 
     internal val grunnlag12mnd = Opplysningstype.somBeløp("Grunnlag siste 12 mnd.")
     private val beløpSiste36 = Opplysningstype.somBeløp("Inntekt siste 36 måneder", synlig = aldriSynlig)
