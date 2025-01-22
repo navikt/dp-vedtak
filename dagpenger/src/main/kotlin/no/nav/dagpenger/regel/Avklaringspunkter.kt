@@ -6,41 +6,45 @@ object Avklaringspunkter {
     val YtelserUtenforFolketrygden: Avklaringkode =
         Avklaringkode(
             kode = "YtelserUtenforFolketrygden",
-            tittel = "Bruker har oppgitt ytelser utenfor folketrygden",
+            tittel = "Sjekk om det er ytelser utenfor folketrygden som skal samordnes",
             beskrivelse = "Sjekk hvilke ytelser som er oppgitt utenfor folketrygden og om de skal ha konsekvens for dagpengene",
         )
 
     val FulleYtelser: Avklaringkode =
         Avklaringkode(
             kode = "FulleYtelser",
-            tittel = "Ta stilling til om bruker har andre fulle ytelser",
-            beskrivelse = "Om bruker har andre fulle ytelser må det velges mellom dagpenger eller disse ytelsene",
+            tittel = "Sjekk om søker har andre fulle ytelser",
+            beskrivelse = "Om søker har andre fulle ytelser må det velges mellom dagpenger eller disse ytelsene",
         )
 
     val SøknadstidspunktForLangtFramITid =
         Avklaringkode(
             kode = "SøknadstidspunktForLangtFramITid",
-            tittel = "Søknadstidspunktet ligger for lang fram i tid",
+            tittel = "Søknadstidspunktet ligger for langt fram i tid",
             beskrivelse = "Søknadstidspunktet ligger mer enn 14 dager fram i tid",
         )
 
     val VirkningstidspunktForLangtFramITid =
         Avklaringkode(
             kode = "VirkningstidspunktForLangtFramItid",
-            tittel = "Virkningstidspunkt ligger for lang fram i tid",
+            tittel = "Virkningstidspunkt ligger for langt fram i tid",
             beskrivelse = "Virkningstidspunkt ligger mer enn 14 dager fram i tid",
         )
+
     val Verneplikt =
         Avklaringkode(
             kode = "Verneplikt",
-            tittel = "Verneplikt",
-            beskrivelse = "Krever avklaring om verneplikt",
+            tittel = "Sjekk om søker oppfyller vilkåret til dagpenger ved avtjent verneplikt",
+            beskrivelse =
+                """
+                Søker har oppgitt at de har avtjent verneplikt. Det må sjekkes om kravet til dagpenger ved avtjent verneplikt er oppfylt.
+                """.trimIndent(),
         )
 
     val TapAvArbeidstidBeregningsregel =
         Avklaringkode(
             kode = "TapAvArbeidsinntektOgArbeidstid",
-            tittel = "Beregningsregel for tap av arbeidsinntekt og arbeidstid",
+            tittel = "Velg kun en beregningsregel for tap av arbeidsinntekt og arbeidstid",
             kanKvitteres = false,
             beskrivelse =
                 """
@@ -52,64 +56,73 @@ object Avklaringspunkter {
     val EØSArbeid =
         Avklaringkode(
             kode = "EØSArbeid",
-            tittel = "Arbeid i EØS",
-            beskrivelse = "Personen har oppgitt arbeid fra EØS",
-        )
-
-    val HattLukkedeSakerSiste8Uker =
-        Avklaringkode(
-            kode = "HattLukkedeSakerSiste8Uker",
-            tittel = "Hatt lukkede saker siste 8 uker",
-            beskrivelse = "Personen har lukkede saker i Arena siste 8 uker",
-        )
-
-    val Samordning =
-        Avklaringkode(
-            kode = "Samordning",
-            tittel = "Om reduserte ytelser fra folketrygden som skal samordnes",
-            beskrivelse = "Finne ut om det er noen reduserte ytelser fra folketrygden som skal samordnes",
-        )
-
-    val InntektNesteKalendermåned =
-        Avklaringkode(
-            kode = "InntektNesteKalendermåned",
-            tittel = "Har innrapport inntekt for neste måned",
-            beskrivelse = "Personen har inntekter som tilhører neste inntektsperiode",
+            tittel = "Sjekk om arbeid i EØS fører til sammenlegging",
+            beskrivelse = "Personen har oppgitt arbeid fra EØS i søknaden. Det må vurderes om det skal være sammenlegging.",
         )
 
     val JobbetUtenforNorge =
         Avklaringkode(
             kode = "JobbetUtenforNorge",
-            tittel = "Arbeid utenfor Norge",
-            beskrivelse = "Personen har oppgitt arbeid utenfor Norge",
+            tittel = "Sjekk om arbeid utenfor Norge påvirker retten til dagpenger",
+            beskrivelse =
+                """
+                Personen har oppgitt arbeid utenfor Norge i søknaden. Sjekk om arbeidsforholdene som er oppgitt i søknaden skal være 
+                med i vurderingen av retten til dagpenger.
+                """.trimIndent(),
+        )
+
+    val HattLukkedeSakerSiste8Uker =
+        Avklaringkode(
+            kode = "HattLukkedeSakerSiste8Uker",
+            tittel = "Sjekk om nylig lukkede saker i Arena kan påvirke behandlingen",
+            beskrivelse =
+                """
+                Personen har lukkede saker i Arena siste 8 uker. Har vi nylig gitt avslag bør vi sjekke om det er nødvendig med ekstra 
+                veiledning.
+                """.trimIndent(),
         )
 
     val MuligGjenopptak =
         Avklaringkode(
             kode = "MuligGjenopptak",
-            tittel = "Mulig gjenopptak",
-            beskrivelse = "Personen har åpne saker i Arena som kan være gjenopptak",
+            tittel = "Sjekk om det er sak som kan gjenopptas i Arena",
+            beskrivelse = "Personen har åpne saker i Arena som kan være gjenopptak. Saker som skal gjenopptas må håndteres i Arena.",
         )
 
-    val IkkeRegistrertSomArbeidsøker =
+    val Samordning =
         Avklaringkode(
-            kode = "IkkeRegistrertSomArbeidsøker",
-            tittel = "Ikke registrert som arbeidssøker",
-            beskrivelse = "Personen er ikke registrert som arbeidssøker",
+            kode = "Samordning",
+            tittel = "Sjekk om det er andre ytelser fra folketrygden som skal samordnes",
+            beskrivelse = "Sjekk om det er andre ytelser fra folketrygden som skal samordnes.",
+        )
+
+    val InntektNesteKalendermåned =
+        Avklaringkode(
+            kode = "InntektNesteKalendermåned",
+            tittel = "Sjekk om inntekt for neste måned er relevant",
+            beskrivelse =
+                """
+                Personen har inntekt som tilhører neste inntektsperiode. Vurder om det er tilstrekkelige inntekter til at utfallet vil 
+                endre seg i neste inntektsperiode.
+                """.trimIndent(),
         )
 
     val SvangerskapsrelaterteSykepenger =
         Avklaringkode(
             kode = "SvangerskapsrelaterteSykepenger",
-            tittel = "Har hatt sykepenger som kan være svangerskapsrelatert",
-            beskrivelse = "Personen har sykepenger som kan være svangerskapsrelaterte",
+            tittel = "Sjekk om søker har fått sykepenger på grunn av svangerskap som skal med i minsteinntekt",
+            beskrivelse =
+                """
+                Personen har fått utbetalt sykepenger. Om det er svangerskapsrelaterte sykepenger skal være med i inntektstgrunnlaget for 
+                vurderingen av minste arbeidsinntekt.
+                """.trimIndent(),
         )
 
     val ØnskerEtterRapporteringsfrist =
         Avklaringkode(
             kode = "ØnskerEtterRapporteringsfrist",
-            tittel = "Ønsker dagpenger etter rapporteringsfrist",
-            beskrivelse = "Personen ønsker dagpenger etter rapporteringsfrist",
+            tittel = "Sjekk om det bør ventes til etter A-ordningens rapporteringsfrist",
+            beskrivelse = "Personen har søkt om dagpenger med ønsket startdato i neste rapporteringsperiode.",
         )
 
     val BrukerUnder18 =
@@ -117,21 +130,26 @@ object Avklaringspunkter {
             kode = "BrukerUnder18",
             tittel = "Bruker er under 18",
             beskrivelse = "Bruker er under 18 og skal ikke ha automatisk behandling",
-            kanKvitteres = true,
         )
 
     val BarnMåGodkjennes =
         Avklaringkode(
             kode = "BarnMåGodkjennes",
-            tittel = "Barn må godkjennes for å gi barnetillegg",
+            tittel = "Sjekk hvilke barn som skal gi barnetillegg",
             beskrivelse = "Barn må godkjennes om de skal gi barnetillegg",
-            kanKvitteres = true,
         )
 
     val ReellArbeidssøkerUnntak =
         Avklaringkode(
             kode = "ReellArbeidssøkerUnntak",
-            tittel = "Søker har svart nei på spørsmål om å være reell arbeidssøker",
+            tittel = "Sjekk om søker oppfyller unntak til å være reell arbeidssøker",
             beskrivelse = "Det må vurderes om søker kvalifiserer til unntakene til reell arbeidssøker",
+        )
+
+    val IkkeRegistrertSomArbeidsøker =
+        Avklaringkode(
+            kode = "IkkeRegistrertSomArbeidsøker",
+            tittel = "Søker er ikke registrert som arbeidssøker",
+            beskrivelse = "Søker er ikke registrert som arbeidssøker.",
         )
 }

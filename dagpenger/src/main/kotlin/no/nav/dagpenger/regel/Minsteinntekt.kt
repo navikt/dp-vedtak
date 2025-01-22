@@ -70,9 +70,7 @@ object Minsteinntekt {
     val minsteinntekt = Opplysningstype.somBoolsk("Krav til minsteinntekt")
 
     val regelsett =
-        Regelsett(
-            folketrygden.hjemmel(4, 4, "Krav til minsteinntekt", "4-4 Minsteinntekt"),
-        ) {
+        Regelsett(folketrygden.hjemmel(4, 4, "Krav til minsteinntekt", "4-4 Minsteinntekt")) {
             regel(maksPeriodeLengde) { oppslag(prøvingsdato) { 36 } }
             regel(førsteMånedAvOpptjeningsperiode) { trekkFraMånedTilFørste(sisteAvsluttendendeKalenderMåned, maksPeriodeLengde) }
 
@@ -113,7 +111,9 @@ object Minsteinntekt {
             .let { Beløp(it) }
 
     val SvangerskapsrelaterteSykepengerKontroll =
-        Kontrollpunkt(Avklaringspunkter.SvangerskapsrelaterteSykepenger) { it.har(inntektFraSkatt) }
+        Kontrollpunkt(Avklaringspunkter.SvangerskapsrelaterteSykepenger) {
+            it.har(inntektFraSkatt) && it.erSann(minsteinntekt) == false
+        }
 
     val EØSArbeidKontroll =
         Kontrollpunkt(Avklaringspunkter.EØSArbeid) { it.har(inntektFraSkatt) }

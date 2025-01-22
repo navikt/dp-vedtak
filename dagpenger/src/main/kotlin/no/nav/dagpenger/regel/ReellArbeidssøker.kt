@@ -94,7 +94,7 @@ object ReellArbeidssøker {
         }
 
     val IkkeRegistrertSomArbeidsøkerKontroll =
-        Kontrollpunkt(Avklaringspunkter.IkkeRegistrertSomArbeidsøker) {
+        Kontrollpunkt(IkkeRegistrertSomArbeidsøker) {
             it.har(oppyllerKravTilRegistrertArbeidssøker) && !it.finnOpplysning(oppyllerKravTilRegistrertArbeidssøker).verdi
         }
 }
