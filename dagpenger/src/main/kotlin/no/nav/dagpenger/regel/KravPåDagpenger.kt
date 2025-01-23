@@ -1,22 +1,27 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
-import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.boolsk
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.dato
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.dato.finnDagensDato
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.fraOgMed
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
+import no.nav.dagpenger.regel.OpplysningEtellerannet.DagensDatoId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.EttBeregnetVirkningstidspunktId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.KravPåDagpengerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.MinsteinntektEllerVernepliktId
 import no.nav.dagpenger.regel.Verneplikt.oppfyllerKravetTilVerneplikt
 
 object KravPåDagpenger {
-    val kravPåDagpenger = Opplysningstype.somBoolsk("Krav på dagpenger")
-    val minsteinntektEllerVerneplikt = Opplysningstype.somBoolsk("Oppfyller kravet til minsteinntekt eller verneplikt")
+    val kravPåDagpenger = boolsk(KravPåDagpengerId, "Krav på dagpenger")
+    val minsteinntektEllerVerneplikt = boolsk(MinsteinntektEllerVernepliktId, "Oppfyller kravet til minsteinntekt eller verneplikt")
 
-    val virkningstidspunkt = Opplysningstype.somDato("EttBeregnetVirkningstidspunkt")
+    val virkningstidspunkt = dato(EttBeregnetVirkningstidspunktId, "EttBeregnetVirkningstidspunkt")
 
-    val dagensDato = Opplysningstype.somDato("Dagens dato")
+    val dagensDato = dato(DagensDatoId, "Dagens dato")
 
     val regelsett =
         Regelsett("Krav på dagpenger") {

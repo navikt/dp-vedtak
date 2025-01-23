@@ -3,17 +3,19 @@ package no.nav.dagpenger.opplysning.regel
 import io.kotest.matchers.collections.shouldHaveSize
 import no.nav.dagpenger.inntekt.v1.KlassifisertInntektMåned
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.regel.inntekt.FiltrerRelevanteInntekter
 import no.nav.dagpenger.opplysning.verdier.Inntekt
+import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.YearMonth
 
 class FiltrerRelevanteInntekterTest {
-    private val inntektA = Opplysningstype.somInntekt("inntektA")
-    private val inntektB = Opplysningstype.somInntekt("inntektB")
+    private val inntektA = Opplysningstype.inntekt(Opplysningstype.Id(UUIDv7.ny(), InntektDataType), "inntektA")
+    private val inntektB = Opplysningstype.inntekt(Opplysningstype.Id(UUIDv7.ny(), InntektDataType), "inntektB")
 
     @Test
     fun `skal filtrere ut innteksklasser`() {

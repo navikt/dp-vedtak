@@ -5,6 +5,7 @@ import kotlin.reflect.KProperty
 object Behov {
     val Søknadsdato by StringConstant()
     val ØnskerDagpengerFraDato by StringConstant()
+    val Prøvingsdato by StringConstant()
 
     val OpptjeningsperiodeFraOgMed by StringConstant()
     val SisteAvsluttendeKalenderMåned by StringConstant()

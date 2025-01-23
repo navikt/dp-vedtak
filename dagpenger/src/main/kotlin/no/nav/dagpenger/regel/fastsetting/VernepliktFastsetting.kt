@@ -1,8 +1,11 @@
 package no.nav.dagpenger.regel.fastsetting
 
 import no.nav.dagpenger.opplysning.Opplysningssjekk
-import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.beløp
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.boolsk
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.desimaltall
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.heltall
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.regel.hvisSannMedResultat
@@ -10,6 +13,13 @@ import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnn
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.regel.OpplysningEtellerannet.AntallGVernepliktId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.GrunnlagForVernepliktErGunstigstId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.GrunnlagHvisVernepliktId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.GrunnlagUtenVernepliktId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.VernepliktFastsattVanligArbeidstidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.VernepliktGrunnlagId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.VernepliktPeriodeId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Verneplikt.oppfyllerKravetTilVerneplikt
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.dagpengegrunnlag
@@ -22,18 +32,22 @@ private val synligOmVerneplikt: Opplysningssjekk = {
 }
 
 object VernepliktFastsetting {
-    private val antallG = Opplysningstype.somDesimaltall("Antall G som gis som grunnlag ved verneplikt", synlig = aldriSynlig)
-    internal val vernepliktGrunnlag = Opplysningstype.somBeløp("Grunnlag for gis ved verneplikt", synlig = synligOmVerneplikt)
-    val vernepliktPeriode = Opplysningstype.somHeltall("Periode som gis ved verneplikt", synlig = synligOmVerneplikt)
+    private val antallG = desimaltall(AntallGVernepliktId, "Antall G som gis som grunnlag ved verneplikt", synlig = aldriSynlig)
+    internal val vernepliktGrunnlag = beløp(VernepliktGrunnlagId, "Grunnlag for gis ved verneplikt", synlig = synligOmVerneplikt)
+    val vernepliktPeriode = heltall(VernepliktPeriodeId, "Periode som gis ved verneplikt", synlig = synligOmVerneplikt)
     internal val vernepliktFastsattVanligArbeidstid =
-        Opplysningstype.somDesimaltall("Fastsatt vanlig arbeidstid for verneplikt", synlig = synligOmVerneplikt)
+        desimaltall(VernepliktFastsattVanligArbeidstidId, "Fastsatt vanlig arbeidstid for verneplikt", synlig = synligOmVerneplikt)
     internal val grunnlagHvisVerneplikt =
-        Opplysningstype.somBeløp("Grunnlag for verneplikt hvis kravet er oppfylt", synlig = aldriSynlig)
+        beløp(GrunnlagHvisVernepliktId, "Grunnlag for verneplikt hvis kravet er oppfylt", synlig = aldriSynlig)
     internal val grunnlagUtenVerneplikt =
-        Opplysningstype.somBeløp("Grunnlag for verneplikt hvis kravet ikke er oppfylt", synlig = aldriSynlig)
+        beløp(GrunnlagUtenVernepliktId, "Grunnlag for verneplikt hvis kravet ikke er oppfylt", synlig = aldriSynlig)
 
     val grunnlagForVernepliktErGunstigst =
-        Opplysningstype.somBoolsk("Grunnlaget for verneplikt er høyere enn dagpengegrunnlaget", synlig = synligOmVerneplikt)
+        boolsk(
+            GrunnlagForVernepliktErGunstigstId,
+            "Grunnlaget for verneplikt er høyere enn dagpengegrunnlaget",
+            synlig = synligOmVerneplikt,
+        )
 
     val regelsett =
         Regelsett(

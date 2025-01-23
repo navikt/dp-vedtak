@@ -1,12 +1,21 @@
 package no.nav.dagpenger.opplysning
 
+import no.nav.dagpenger.opplysning.verdier.BarnListe
+import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.opplysning.verdier.Inntekt
+import no.nav.dagpenger.opplysning.verdier.Ulid
+import no.nav.dagpenger.uuid.UUIDv7
+import java.time.LocalDate
+import java.util.UUID
+
 interface Klassifiserbart {
     fun er(type: Opplysningstype<*>): Boolean
 }
 
-fun String.id(id: String) = OpplysningTypeId(id, this)
+fun String.id(id: String) = OpplysningTypeId(id = id, beskrivelse = this)
 
 class OpplysningTypeId(
+    // todo: Bytte til behovId
     val id: String,
     val beskrivelse: String,
 ) {
@@ -27,6 +36,8 @@ class Opplysningstype<T : Comparable<T>>(
     val datatype: Datatype<T>,
     val formål: Opplysningsformål,
     val synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
+    // todo: Fjerne generering av ny id. MÅ spesifiseres globalt i kodebasen
+    val permanentId: Id<T> = Id(UUIDv7.ny(), datatype),
 ) : Klassifiserbart {
     val id = opplysningTypeId.id
     val navn = opplysningTypeId.beskrivelse
@@ -35,119 +46,96 @@ class Opplysningstype<T : Comparable<T>>(
         definerteTyper.add(this)
     }
 
+    data class Id<T : Comparable<T>>(
+        val id: UUID,
+        val datatype: Datatype<T>,
+    )
+
     companion object {
         val definerteTyper = mutableSetOf<Opplysningstype<*>>()
 
         val alltidSynlig: Opplysningssjekk = { true }
         val aldriSynlig: Opplysningssjekk = { false }
 
-        fun somHeltall(
-            opplysningTypeId: OpplysningTypeId,
+        fun heltall(
+            id: Id<Int>,
+            beskrivelse: String,
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = Opplysningstype(opplysningTypeId, Heltall, formål, synlig)
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Int> = som(id, beskrivelse, formål, synlig, behovId)
 
-        fun somHeltall(
-            navn: String,
+        fun boolsk(
+            id: Id<Boolean>,
+            beskrivelse: String,
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = somHeltall(navn.id(navn), formål, synlig)
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Boolean> = som(id, beskrivelse, formål, synlig, behovId)
 
-        fun somDesimaltall(
-            opplysningTypeId: OpplysningTypeId,
+        fun dato(
+            id: Id<LocalDate>,
+            beskrivelse: String,
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = Opplysningstype(opplysningTypeId, Desimaltall, formål, synlig)
+            behovId: String = beskrivelse,
+        ): Opplysningstype<LocalDate> = som(id, beskrivelse, formål, synlig, behovId)
 
-        fun somDesimaltall(
-            navn: String,
+        fun ulid(
+            id: Id<Ulid>,
+            beskrivelse: String,
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = somDesimaltall(navn.id(navn), formål, synlig)
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Ulid> = som(id, beskrivelse, formål, synlig, behovId)
 
-        fun somDato(
-            opplysningTypeId: OpplysningTypeId,
+        fun inntekt(
+            id: Id<Inntekt>,
+            beskrivelse: String,
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = Opplysningstype(opplysningTypeId, Dato, formål, synlig)
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Inntekt> = som(id, beskrivelse, formål, synlig, behovId)
 
-        fun somDato(
-            navn: String,
+        fun desimaltall(
+            id: Id<Double>,
+            beskrivelse: String,
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = somDato(navn.id(navn), formål, synlig)
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Double> = som(id, beskrivelse, formål, synlig, behovId)
 
-        fun somUlid(
-            opplysningTypeId: OpplysningTypeId,
+        fun tekst(
+            id: Id<String>,
+            beskrivelse: String,
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = Opplysningstype(opplysningTypeId, ULID, formål, synlig)
+            behovId: String = beskrivelse,
+        ): Opplysningstype<String> = som(id, beskrivelse, formål, synlig, behovId)
 
-        fun somUlid(
-            navn: String,
+        fun beløp(
+            id: Id<Beløp>,
+            beskrivelse: String,
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = somUlid(navn.id(navn), formål, synlig)
+            behovId: String = beskrivelse,
+        ): Opplysningstype<Beløp> = som(id, beskrivelse, formål, synlig, behovId)
 
-        fun somBoolsk(
-            opplysningTypeId: OpplysningTypeId,
+        fun barn(
+            id: Id<BarnListe>,
+            beskrivelse: String,
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = Opplysningstype(opplysningTypeId, Boolsk, formål, synlig)
+            behovId: String = beskrivelse,
+        ): Opplysningstype<BarnListe> = som(id, beskrivelse, formål, synlig, behovId)
 
-        fun somBoolsk(
-            navn: String,
+        fun <T : Comparable<T>> som(
+            id: Id<T>,
+            beskrivelse: String,
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = somBoolsk(navn.id(navn), formål, synlig)
-
-        fun somBeløp(
-            navn: String,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = somBeløp(navn.id(navn), formål, synlig)
-
-        fun somBeløp(
-            opplysningTypeId: OpplysningTypeId,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = Opplysningstype(opplysningTypeId, Penger, formål, synlig)
-
-        fun somInntekt(
-            navn: String,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = somInntekt(navn.id(navn), formål, synlig)
-
-        fun somInntekt(
-            opplysningTypeId: OpplysningTypeId,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = Opplysningstype(opplysningTypeId, InntektDataType, formål, synlig)
-
-        fun somBarn(
-            navn: String,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = somBarn(navn.id(navn), formål, synlig)
-
-        fun somBarn(
-            opplysningTypeId: OpplysningTypeId,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = Opplysningstype(opplysningTypeId, BarnDatatype, formål, synlig)
-
-        fun somTekst(
-            navn: String,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = somTekst(navn.id(navn), formål, synlig)
-
-        fun somTekst(
-            opplysningTypeId: OpplysningTypeId,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = Opplysningstype(opplysningTypeId, Tekst, formål, synlig)
+            behovId: String = beskrivelse,
+        ): Opplysningstype<T> = Opplysningstype(OpplysningTypeId(behovId, beskrivelse), id.datatype, formål, synlig, id)
     }
 
     override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId

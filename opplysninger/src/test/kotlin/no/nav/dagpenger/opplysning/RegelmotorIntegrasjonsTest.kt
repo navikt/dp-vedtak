@@ -20,6 +20,7 @@ import no.nav.dagpenger.opplysning.regelsett.Prøvingsdato.sisteDagMedLønn
 import no.nav.dagpenger.opplysning.regelsett.Prøvingsdato.søknadsdato
 import no.nav.dagpenger.opplysning.regelsett.ReglerForInntektTest
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -38,7 +39,7 @@ class RegelmotorIntegrasjonsTest {
                 ),
             )
         val opplysninger = Opplysninger(tidligereBehandling)
-        val alleVilkår = Opplysningstype.somBoolsk("Vilkår")
+        val alleVilkår = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "Vilkår")
         val regelsett =
             Regelsett("Krav til Dagpenger").apply {
                 regel(alleVilkår) { alle(ReglerForInntektTest.minsteinntekt, Alderskrav.vilkår) }
@@ -141,11 +142,11 @@ class RegelmotorIntegrasjonsTest {
     fun `Rekjører regler når opplysninger en avhenger av er nyere`() {
         val fraDato = 10.mai
         val opplysninger = Opplysninger()
-        val a0 = Opplysningstype.somBoolsk("A0")
-        val a = Opplysningstype.somBoolsk("A")
-        val b = Opplysningstype.somBoolsk("B")
-        val c = Opplysningstype.somBoolsk("C")
-        val d = Opplysningstype.somBoolsk("D")
+        val a0 = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "A0")
+        val a = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "A")
+        val b = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "B")
+        val c = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "C")
+        val d = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "D")
         val regelsett =
             Regelsett("test") {
                 regel(a0) { innhentes }
@@ -183,11 +184,11 @@ class RegelmotorIntegrasjonsTest {
     fun `Kortslutte del av regeltreet når saksbehandler overstyrer opplysning`() {
         val fraDato = 10.mai
         val opplysninger = Opplysninger()
-        val a0 = Opplysningstype.somBoolsk("A0")
-        val a = Opplysningstype.somBoolsk("A")
-        val b = Opplysningstype.somBoolsk("B")
-        val c = Opplysningstype.somBoolsk("C")
-        val d = Opplysningstype.somBoolsk("D")
+        val a0 = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "A0")
+        val a = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "A")
+        val b = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "B")
+        val c = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "C")
+        val d = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "D")
         val regelsett =
             Regelsett("test") {
                 regel(a0) { innhentes }
@@ -226,15 +227,15 @@ class RegelmotorIntegrasjonsTest {
     @Test
     fun `kjør 2 ganger`() {
         val fraDato = 10.mai
-        val a = Opplysningstype.somBoolsk("a")
-        val b = Opplysningstype.somBoolsk("b")
-        val c = Opplysningstype.somBoolsk("c")
-        val d = Opplysningstype.somBoolsk("d")
-        val e = Opplysningstype.somBoolsk("e")
-        val f = Opplysningstype.somBoolsk("f")
-        val g = Opplysningstype.somBoolsk("g")
-        val h = Opplysningstype.somBoolsk("h")
-        val i = Opplysningstype.somBoolsk("i")
+        val a = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "a")
+        val b = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "b")
+        val c = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "c")
+        val d = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "d")
+        val e = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "e")
+        val f = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "f")
+        val g = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "g")
+        val h = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "h")
+        val i = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "i")
 
         val regelsett =
             Regelsett("test av regelsett") {

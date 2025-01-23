@@ -7,6 +7,8 @@ import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.TestOpplysningstyper.opplysningerRepository
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.modell.Behandling
+import no.nav.dagpenger.opplysning.Boolsk
+import no.nav.dagpenger.opplysning.Desimaltall
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
@@ -32,7 +34,8 @@ class BehandlingRepositoryPostgresTest {
             opprettet = LocalDateTime.now(),
         )
     private val prøvingsdatoOpplysning = Faktum(prøvingsdato, LocalDate.now())
-    private val tidligereOpplysning = Faktum(Opplysningstype.somDesimaltall("tidligere-opplysning"), 1.0)
+    private val tidligereOpplysning =
+        Faktum(Opplysningstype.desimaltall(Opplysningstype.Id(UUIDv7.ny(), Desimaltall), "tidligere-opplysning"), 1.0)
     private val basertPåBehandling =
         Behandling.rehydrer(
             behandlingId = UUIDv7.ny(),
@@ -42,9 +45,9 @@ class BehandlingRepositoryPostgresTest {
             sistEndretTilstand = LocalDateTime.now(),
             avklaringer = emptyList(),
         )
-    private val opplysning1 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning1"), 1.0)
-    private val opplysning2 = Faktum(Opplysningstype.somDesimaltall("aktiv-opplysning2"), 2.0)
-    private val opplysning3 = Faktum(Opplysningstype.somBoolsk("aktiv-opplysning3"), false)
+    private val opplysning1 = Faktum(Opplysningstype.desimaltall(Opplysningstype.Id(UUIDv7.ny(), Desimaltall), "aktiv-opplysning1"), 1.0)
+    private val opplysning2 = Faktum(Opplysningstype.desimaltall(Opplysningstype.Id(UUIDv7.ny(), Desimaltall), "aktiv-opplysning2"), 2.0)
+    private val opplysning3 = Faktum(Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "aktiv-opplysning3"), false)
 
     private val avklaring =
         Avklaring.rehydrer(UUIDv7.ny(), Avklaringspunkter.JobbetUtenforNorge, mutableListOf(Avklaring.Endring.UnderBehandling()))

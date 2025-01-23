@@ -1,7 +1,9 @@
 package no.nav.dagpenger.opplysning.regel
 
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.opplysning.BarnDatatype
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelkjøring
@@ -11,11 +13,12 @@ import no.nav.dagpenger.opplysning.januar
 import no.nav.dagpenger.opplysning.mars
 import no.nav.dagpenger.opplysning.verdier.Barn
 import no.nav.dagpenger.opplysning.verdier.BarnListe
+import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Test
 
 class AntallAvTest {
-    private val barnetype = Opplysningstype.somBarn("Barn")
-    private val antallBarn = Opplysningstype.somHeltall("Antall barn")
+    private val barnetype = Opplysningstype.barn(Opplysningstype.Id(UUIDv7.ny(), BarnDatatype), "Barn")
+    private val antallBarn = Opplysningstype.heltall(Opplysningstype.Id(UUIDv7.ny(), Heltall), "Antall barn")
     val regelsett =
         Regelsett("Antall barn som kvalifiserer") {
             regel(barnetype) { innhentes }

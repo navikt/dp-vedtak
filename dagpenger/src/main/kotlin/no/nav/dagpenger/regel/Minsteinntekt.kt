@@ -6,10 +6,14 @@ import no.nav.dagpenger.grunnbelop.forDato
 import no.nav.dagpenger.grunnbelop.getGrunnbeløpForRegel
 import no.nav.dagpenger.inntekt.v1.InntektKlasse
 import no.nav.dagpenger.opplysning.Opplysningsformål.Register
-import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.beløp
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.boolsk
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.dato
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.desimaltall
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.heltall
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.inntekt
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.trekkFraMånedTilFørste
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
@@ -23,6 +27,20 @@ import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
+import no.nav.dagpenger.regel.OpplysningEtellerannet.BruttoArbeidsinntektId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.FørsteMånedAvOpptjeningsperiodeId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.GrunnbeløpId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.InntektSiste12MndId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.InntektSiste36MndId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.Inntektskrav12mndId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.Inntektskrav36MndId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.InntektsopplysningerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.KravTilMinsteinntektId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.MaksPeriodeLengdeId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.Over12mndTerskelId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.Over36mndTerskelId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.TerskelFaktor12MndId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.TerskelFaktor36MndId
 import no.nav.dagpenger.regel.Opptjeningstid.justertRapporteringsfrist
 import no.nav.dagpenger.regel.Opptjeningstid.sisteAvsluttendendeKalenderMåned
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
@@ -32,42 +50,44 @@ import java.time.LocalDate
 
 object Minsteinntekt {
     private val `12mndTerskelFaktor` =
-        Opplysningstype.somDesimaltall("Antall G for krav til 12 mnd arbeidsinntekt", synlig = aldriSynlig)
+        desimaltall(TerskelFaktor12MndId, "Antall G for krav til 12 mnd arbeidsinntekt", synlig = aldriSynlig)
     private val `36mndTerskelFaktor` =
-        Opplysningstype.somDesimaltall("Antall G for krav til 36 mnd arbeidsinntekt", synlig = aldriSynlig)
+        desimaltall(TerskelFaktor36MndId, "Antall G for krav til 36 mnd arbeidsinntekt", synlig = aldriSynlig)
     val inntekt12 =
-        Opplysningstype.somBeløp(
-            "Arbeidsinntekt siste 12 mnd".id(
-                id = "InntektSiste12Mnd",
-            ),
+        beløp(
+            InntektSiste12MndId,
+            beskrivelse = "Arbeidsinntekt siste 12 mnd",
+            behovId = "InntektSiste12Mnd",
         )
     val inntekt36 =
-        Opplysningstype.somBeløp(
-            "Arbeidsinntekt siste 36 mnd".id(
-                id = "InntektSiste36Mnd",
-            ),
+        beløp(
+            InntektSiste36MndId,
+            beskrivelse = "Arbeidsinntekt siste 36 mnd",
+            behovId = "InntektSiste36Mnd",
         )
-    val grunnbeløp = Opplysningstype.somBeløp("Grunnbeløp", synlig = aldriSynlig)
+    val grunnbeløp = beløp(GrunnbeløpId, "Grunnbeløp", synlig = aldriSynlig)
 
-    internal val inntektFraSkatt = Opplysningstype.somInntekt("Inntektsopplysninger".id(Inntekt), Register)
-    private val tellendeInntekt = Opplysningstype.somInntekt("Brutto arbeidsinntekt", synlig = aldriSynlig)
+    internal val inntektFraSkatt = inntekt(InntektsopplysningerId, beskrivelse = "Inntektsopplysninger", Register, behovId = Inntekt)
+    private val tellendeInntekt = inntekt(BruttoArbeidsinntektId, "Brutto arbeidsinntekt", synlig = aldriSynlig)
 
-    private val maksPeriodeLengde = Opplysningstype.somHeltall("Maks lengde på opptjeningsperiode", synlig = aldriSynlig)
+    private val maksPeriodeLengde = heltall(MaksPeriodeLengdeId, "Maks lengde på opptjeningsperiode", synlig = aldriSynlig)
     private val førsteMånedAvOpptjeningsperiode =
-        Opplysningstype.somDato("Første måned av opptjeningsperiode".id(OpptjeningsperiodeFraOgMed))
+        dato(FørsteMånedAvOpptjeningsperiodeId, beskrivelse = "Første måned av opptjeningsperiode", behovId = OpptjeningsperiodeFraOgMed)
 
     private val `12mndTerskel` =
-        Opplysningstype.somBeløp(
+        beløp(
+            Inntektskrav12mndId,
             "Inntektskrav for siste 12 mnd",
         )
     private val `36mndTerskel` =
-        Opplysningstype.somBeløp(
+        beløp(
+            Inntektskrav36MndId,
             "Inntektskrav for siste 36 mnd",
         )
-    private val over12mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 12 mnd")
-    private val over36mndTerskel = Opplysningstype.somBoolsk("Arbeidsinntekt er over kravet for siste 36 mnd")
+    private val over12mndTerskel = boolsk(Over12mndTerskelId, "Arbeidsinntekt er over kravet for siste 12 mnd")
+    private val over36mndTerskel = boolsk(Over36mndTerskelId, "Arbeidsinntekt er over kravet for siste 36 mnd")
 
-    val minsteinntekt = Opplysningstype.somBoolsk("Krav til minsteinntekt")
+    val minsteinntekt = boolsk(KravTilMinsteinntektId, "Krav til minsteinntekt")
 
     val regelsett =
         Regelsett(folketrygden.hjemmel(4, 4, "Krav til minsteinntekt", "4-4 Minsteinntekt")) {

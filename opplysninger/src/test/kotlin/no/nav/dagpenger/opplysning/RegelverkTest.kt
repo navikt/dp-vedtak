@@ -6,15 +6,16 @@ import no.nav.dagpenger.dag.printer.MermaidPrinter
 import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.innhentes
+import no.nav.dagpenger.uuid.UUIDv7
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 
 class RegelverkTest {
-    private val typeA = Opplysningstype.somBoolsk("A")
-    private val typeB = Opplysningstype.somBoolsk("B")
-    private val typeC = Opplysningstype.somBoolsk("C")
-    private val typeE = Opplysningstype.somBoolsk("E")
-    private val typeF = Opplysningstype.somBoolsk("F")
+    private val typeA = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "A")
+    private val typeB = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "B")
+    private val typeC = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "C")
+    private val typeE = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "E")
+    private val typeF = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "F")
 
     private val r1 =
         Regelsett("Søknadstidspunkt") {

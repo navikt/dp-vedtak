@@ -1,7 +1,10 @@
 package no.nav.dagpenger.regel.fastsetting
 
-import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.beløp
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.boolsk
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.desimaltall
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.heltall
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.regel.divisjon
@@ -11,40 +14,57 @@ import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.regel.Minsteinntekt
+import no.nav.dagpenger.regel.OpplysningEtellerannet.AntallStønadsukerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.DagerIUkaId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.DivisiorId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.GjenståendeStønadsdagerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.IngenOrdinærPeriodeId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.InntektSnittSiste36Id
+import no.nav.dagpenger.regel.OpplysningEtellerannet.KortPeriodeId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.LangPeriodeId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OrdinærPeriodeId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.Overterskel12Id
+import no.nav.dagpenger.regel.OpplysningEtellerannet.Overterskel36Id
+import no.nav.dagpenger.regel.OpplysningEtellerannet.Stønadsuker12Id
+import no.nav.dagpenger.regel.OpplysningEtellerannet.Stønadsuker36Id
+import no.nav.dagpenger.regel.OpplysningEtellerannet.Terskel12Id
+import no.nav.dagpenger.regel.OpplysningEtellerannet.Terskel36Id
+import no.nav.dagpenger.regel.OpplysningEtellerannet.TerskelFaktor12Id
+import no.nav.dagpenger.regel.OpplysningEtellerannet.TerskelFaktor36Id
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode.ordinærPeriode
 import no.nav.dagpenger.regel.folketrygden
 
 object Dagpengeperiode {
-    private val dagerIUka = Opplysningstype.somHeltall("Antall dager som skal regnes med i hver uke", synlig = aldriSynlig)
+    private val dagerIUka = heltall(DagerIUkaId, "Antall dager som skal regnes med i hver uke", synlig = aldriSynlig)
 
-    private val kortPeriode = Opplysningstype.somHeltall("Kort dagpengeperiode", synlig = aldriSynlig)
-    private val langPeriode = Opplysningstype.somHeltall("Lang dagpengeperiode", synlig = aldriSynlig)
-    private val terskelFaktor12 = Opplysningstype.somDesimaltall("Terskelfaktor for 12 måneder", synlig = aldriSynlig)
-    private val terskelFaktor36 = Opplysningstype.somDesimaltall("Terskelfaktor for 36 måneder", synlig = aldriSynlig)
-    private val divisor = Opplysningstype.somDesimaltall("Divisior", synlig = aldriSynlig)
+    private val kortPeriode = heltall(KortPeriodeId, "Kort dagpengeperiode", synlig = aldriSynlig)
+    private val langPeriode = heltall(LangPeriodeId, "Lang dagpengeperiode", synlig = aldriSynlig)
+    private val terskelFaktor12 = desimaltall(TerskelFaktor12Id, "Terskelfaktor for 12 måneder", synlig = aldriSynlig)
+    private val terskelFaktor36 = desimaltall(TerskelFaktor36Id, "Terskelfaktor for 36 måneder", synlig = aldriSynlig)
+    private val divisor = desimaltall(DivisiorId, "Divisior", synlig = aldriSynlig)
 
     private val grunnbeløp = Minsteinntekt.grunnbeløp
-    private val terskel12 = Opplysningstype.somBeløp("Terskel for 12 måneder", synlig = aldriSynlig)
-    private val terskel36 = Opplysningstype.somBeløp("Terskel for 36 måneder", synlig = aldriSynlig)
-    private val inntektSnittSiste36 = Opplysningstype.somBeløp("Snittinntekt siste 36 måneder", synlig = aldriSynlig)
+    private val terskel12 = beløp(Terskel12Id, "Terskel for 12 måneder", synlig = aldriSynlig)
+    private val terskel36 = beløp(Terskel36Id, "Terskel for 36 måneder", synlig = aldriSynlig)
+    private val inntektSnittSiste36 = beløp(InntektSnittSiste36Id, "Snittinntekt siste 36 måneder", synlig = aldriSynlig)
 
     private val inntektSiste12 = Minsteinntekt.inntekt12
     private val inntektSiste36 = Minsteinntekt.inntekt36
 
-    private val stønadsuker12 = Opplysningstype.somHeltall("Stønadsuker ved siste 12 måneder", synlig = aldriSynlig)
-    private val stønadsuker36 = Opplysningstype.somHeltall("Stønadsuker ved siste 36 måneder", synlig = aldriSynlig)
+    private val stønadsuker12 = heltall(Stønadsuker12Id, "Stønadsuker ved siste 12 måneder", synlig = aldriSynlig)
+    private val stønadsuker36 = heltall(Stønadsuker36Id, "Stønadsuker ved siste 36 måneder", synlig = aldriSynlig)
 
-    private val overterskel12 = Opplysningstype.somBoolsk("Over terskel for 12 måneder", synlig = aldriSynlig)
-    private val overterskel36 = Opplysningstype.somBoolsk("Over terskel for 36 måneder", synlig = aldriSynlig)
+    private val overterskel12 = boolsk(Overterskel12Id, "Over terskel for 12 måneder", synlig = aldriSynlig)
+    private val overterskel36 = boolsk(Overterskel36Id, "Over terskel for 36 måneder", synlig = aldriSynlig)
 
-    private val antallStønadsuker = Opplysningstype.somHeltall("Antall stønadsuker", synlig = aldriSynlig)
-    private val gjenståendeStønadsdager = Opplysningstype.somHeltall("Antall gjenstående stønadsdager", synlig = aldriSynlig)
+    private val antallStønadsuker = heltall(AntallStønadsukerId, "Antall stønadsuker", synlig = aldriSynlig)
+    private val gjenståendeStønadsdager = heltall(GjenståendeStønadsdagerId, "Antall gjenstående stønadsdager", synlig = aldriSynlig)
 
     private val ingenOrdinærPeriode =
-        Opplysningstype.somHeltall("Stønadsuker når kravet til minste arbeidsinntekt ikke er oppfylt", synlig = aldriSynlig)
+        heltall(IngenOrdinærPeriodeId, "Stønadsuker når kravet til minste arbeidsinntekt ikke er oppfylt", synlig = aldriSynlig)
 
-    val ordinærPeriode = Opplysningstype.somHeltall("Antall stønadsuker som gis ved ordinære dagpenger")
+    val ordinærPeriode = heltall(OrdinærPeriodeId, "Antall stønadsuker som gis ved ordinære dagpenger")
 
     val regelsett =
         Regelsett(

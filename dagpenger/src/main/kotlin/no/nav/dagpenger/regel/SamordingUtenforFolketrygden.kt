@@ -18,76 +18,131 @@ import no.nav.dagpenger.opplysning.regel.substraksjonTilNull
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.regel.Behov.AndreØkonomiskeYtelser
 import no.nav.dagpenger.regel.Behov.OppgittAndreYtelserUtenforNav
+import no.nav.dagpenger.regel.OpplysningEtellerannet.andreØkonomiskeYtelserId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.beløpEtterlønnId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.beløpFraOffentligTjenestepensjonsordningId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.beløpGarantilottId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.beløpOffentligPensjonsordningId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.beløpVartpengerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.beløpVentelønnId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.dagsatsSamordnetUtenforFolketrygdenId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.minsteMuligeUkessatsSomKanBrukesId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.mottarEtterlønnId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.mottarGarantilottId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.mottarPensjonFraEnOffentligTjenestepensjonsordningId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.mottarVartpengerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.mottarVentelønnId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.nedreGrenseForSamordningId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.oppgittAndreYtelserUtenforNavId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.redusertUførepensjonId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.samordnetUkessatsMedFolketrygdenId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.samordnetUkessatsUtenBarnetilleggId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.samordnetUkessatsUtenforFolketrygdenId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.skalSamordnesMedYtelserUtenforFolketrygdenId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.sumYtelserUtenforFolketrygdenId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.terskelVedSamordningId
 import no.nav.dagpenger.regel.Samordning.samordnetDagsats
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.grunnbeløpForDagpengeGrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.arbeidsdagerPerUke
 
 object SamordingUtenforFolketrygden {
-    val andreYtelser = Opplysningstype.somBoolsk("Oppgitt andre ytelser utenfor NAV i søknaden".id(OppgittAndreYtelserUtenforNav))
+    val andreYtelser =
+        Opplysningstype.boolsk(
+            oppgittAndreYtelserUtenforNavId,
+            "Oppgitt andre ytelser utenfor NAV i søknaden",
+            behovId = OppgittAndreYtelserUtenforNav,
+        )
 
     private val pensjonFraOffentligTjenestepensjonsordning =
-        Opplysningstype.somBoolsk("Mottar pensjon fra en offentlig tjenestepensjonsordning")
-    private val redusertUførepensjon = Opplysningstype.somBoolsk("Mottar redusert uførepensjon fra offentlig pensjonsordning")
-    private val vartpenger = Opplysningstype.somBoolsk("Mottar vartpenger")
-    private val ventelønn = Opplysningstype.somBoolsk("Mottar ventelønn")
-    private val etterlønn = Opplysningstype.somBoolsk("Mottar etterlønn")
-    private val garantilottGFF = Opplysningstype.somBoolsk("Mottar garantilott fra Garantikassen for fiskere.")
+        Opplysningstype.boolsk(
+            mottarPensjonFraEnOffentligTjenestepensjonsordningId,
+            "Mottar pensjon fra en offentlig tjenestepensjonsordning",
+        )
+    private val mottarRedusertUførepensjon =
+        Opplysningstype.boolsk(
+            redusertUførepensjonId,
+            "Mottar redusert uførepensjon fra offentlig pensjonsordning",
+        )
+    private val vartpenger = Opplysningstype.boolsk(mottarVartpengerId, "Mottar vartpenger")
+    private val ventelønn = Opplysningstype.boolsk(mottarVentelønnId, "Mottar ventelønn")
+    private val etterlønn = Opplysningstype.boolsk(mottarEtterlønnId, "Mottar etterlønn")
+    private val garantilottGFF = Opplysningstype.boolsk(mottarGarantilottId, "Mottar garantilott fra Garantikassen for fiskere.")
 
     val pensjonFraOffentligTjenestepensjonsordningBeløp =
-        Opplysningstype.somBeløp("Pensjon fra en offentlig tjenestepensjonsordning beløp", synlig = {
-            it.erSann(pensjonFraOffentligTjenestepensjonsordning)
-        })
+        Opplysningstype.beløp(
+            id = beløpFraOffentligTjenestepensjonsordningId,
+            beskrivelse = "Pensjon fra en offentlig tjenestepensjonsordning beløp",
+            synlig = { it.erSann(pensjonFraOffentligTjenestepensjonsordning) },
+        )
     val redusertUførepensjonBeløp =
-        Opplysningstype.somBeløp("Uførepensjon fra offentlig pensjonsordning beløp", synlig = { it.erSann(redusertUførepensjon) })
+        Opplysningstype.beløp(beløpOffentligPensjonsordningId, "Uførepensjon fra offentlig pensjonsordning beløp", synlig = {
+            it.erSann(mottarRedusertUførepensjon)
+        })
     val vartpengerBeløp =
-        Opplysningstype.somBeløp("Vartpenger beløp", synlig = { it.erSann(vartpenger) })
+        Opplysningstype.beløp(beløpVartpengerId, "Vartpenger beløp", synlig = { it.erSann(vartpenger) })
     val ventelønnBeløp =
-        Opplysningstype.somBeløp("Ventelønn beløp", synlig = { it.erSann(ventelønn) })
+        Opplysningstype.beløp(beløpVentelønnId, "Ventelønn beløp", synlig = { it.erSann(ventelønn) })
     val etterlønnBeløp =
-        Opplysningstype.somBeløp("Etterlønn beløp", synlig = { it.erSann(etterlønn) })
+        Opplysningstype.beløp(beløpEtterlønnId, "Etterlønn beløp", synlig = { it.erSann(etterlønn) })
     val garantilottGFFBeløp =
-        Opplysningstype.somBeløp("Garantilott fra Garantikassen for fiskere beløp", synlig = { it.erSann(garantilottGFF) })
+        Opplysningstype.beløp(beløpGarantilottId, "Garantilott fra Garantikassen for fiskere beløp", synlig = { it.erSann(garantilottGFF) })
 
     val andreØkonomiskeYtelser =
-        Opplysningstype.somBoolsk(
-            "Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn".id(AndreØkonomiskeYtelser),
+        Opplysningstype.boolsk(
+            id = andreØkonomiskeYtelserId,
+            beskrivelse = "Mottar andre økonomiske ytelser fra arbeidsgiver eller tidligere arbeidsgiver enn lønn",
+            behovId = AndreØkonomiskeYtelser,
         )
 
     private val terskelVedSamordning =
-        Opplysningstype.somDesimaltall(
-            "Hvor mange prosent av G skal brukes som terskel ved samordning",
+        Opplysningstype.desimaltall(
+            id = terskelVedSamordningId,
+            beskrivelse = "Hvor mange prosent av G skal brukes som terskel ved samordning",
             synlig = aldriSynlig,
         )
     val nedreGrenseForSamordning =
-        Opplysningstype.somBeløp(
-            "Beløp tilsvarende nedre terskel av G",
+        Opplysningstype.beløp(
+            id = nedreGrenseForSamordningId,
+            beskrivelse = "Beløp tilsvarende nedre terskel av G",
             synlig = aldriSynlig,
         )
-    val skalSamordnesUtenforFolketrygden = Opplysningstype.somBoolsk("Skal samordnes med ytelser utenfor folketrygden")
+    val skalSamordnesUtenforFolketrygden =
+        Opplysningstype.boolsk(
+            skalSamordnesMedYtelserUtenforFolketrygdenId,
+            "Skal samordnes med ytelser utenfor folketrygden",
+        )
 
     val sumAvYtelserUtenforFolketrygden =
-        Opplysningstype.somBeløp(
-            "Sum av ytelser utenfor folketrygden",
+        Opplysningstype.beløp(
+            id = sumYtelserUtenforFolketrygdenId,
+            beskrivelse = "Sum av ytelser utenfor folketrygden",
             synlig = { it.erSann(skalSamordnesUtenforFolketrygden) },
         )
     val samordnetUkessatsUtenBarnetillegg =
-        Opplysningstype.somBeløp(
-            "Samordnet ukessats uten barnetillegg",
+        Opplysningstype.beløp(
+            id = samordnetUkessatsUtenBarnetilleggId,
+            beskrivelse = "Samordnet ukessats uten barnetillegg",
             synlig = { it.erSann(skalSamordnesUtenforFolketrygden) },
         )
     private val minsteMuligeUkessats =
-        Opplysningstype.somBeløp(
-            "Minste mulige ukessats som som kan brukes",
+        Opplysningstype.beløp(
+            id = minsteMuligeUkessatsSomKanBrukesId,
+            beskrivelse = "Minste mulige ukessats som som kan brukes",
             synlig = aldriSynlig,
         )
     private val samordnetUkessatsUtenforFolketrygden =
-        Opplysningstype.somBeløp(
-            "Ukessats trukket ned for ytelser utenfor folketrygden",
+        Opplysningstype.beløp(
+            id = samordnetUkessatsUtenforFolketrygdenId,
+            beskrivelse = "Ukessats trukket ned for ytelser utenfor folketrygden",
             synlig = aldriSynlig,
         )
-    val samordnetUkessats = Opplysningstype.somBeløp("Samordnet ukessats med ytelser utenfor folketrygden")
-    val dagsatsSamordnetUtenforFolketrygden = Opplysningstype.somBeløp("Dagsats uten barnetillegg samordnet")
+    val samordnetUkessats = Opplysningstype.beløp(samordnetUkessatsMedFolketrygdenId, "Samordnet ukessats med ytelser utenfor folketrygden")
+    val dagsatsSamordnetUtenforFolketrygden =
+        Opplysningstype.beløp(
+            dagsatsSamordnetUtenforFolketrygdenId,
+            "Dagsats uten barnetillegg samordnet",
+        )
 
     val regelsett =
         Regelsett(
@@ -97,7 +152,7 @@ object SamordingUtenforFolketrygden {
             regel(andreYtelser) { innhentes }
 
             regel(pensjonFraOffentligTjenestepensjonsordning) { oppslag(prøvingsdato) { false } }
-            regel(redusertUførepensjon) { oppslag(prøvingsdato) { false } }
+            regel(mottarRedusertUførepensjon) { oppslag(prøvingsdato) { false } }
             regel(vartpenger) { oppslag(prøvingsdato) { false } }
             regel(ventelønn) { oppslag(prøvingsdato) { false } }
             regel(etterlønn) { oppslag(prøvingsdato) { false } }
@@ -140,7 +195,7 @@ object SamordingUtenforFolketrygden {
                 enAv(
                     andreYtelser,
                     pensjonFraOffentligTjenestepensjonsordning,
-                    redusertUførepensjon,
+                    mottarRedusertUførepensjon,
                     vartpenger,
                     ventelønn,
                     etterlønn,

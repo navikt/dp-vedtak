@@ -5,7 +5,6 @@ import no.nav.dagpenger.opplysning.Opplysningssjekk
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.addisjon
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentMed
@@ -21,6 +20,27 @@ import no.nav.dagpenger.regel.Behov.Pleiepenger
 import no.nav.dagpenger.regel.Behov.Svangerskapspenger
 import no.nav.dagpenger.regel.Behov.Sykepenger
 import no.nav.dagpenger.regel.Behov.Uføre
+import no.nav.dagpenger.regel.OpplysningEtellerannet.antallTimerArbeidstidenSkalSamordnesMotId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.foreldrepengerDagsatsId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.foreldrepengerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.omsorgspengerDagsatsId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.omsorgspengerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.opplæringspengerDagsatsId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.opplæringspengerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.pleiepengerDagsatsId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.pleiepengerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.samordnetDagsatsErNegativEller0Id
+import no.nav.dagpenger.regel.OpplysningEtellerannet.samordnetDagsatsUtenBarnetilleggId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.samordnetFastsattArbeidstidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.skalSamordnesId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.sumAndreYtelserId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.svangerskapspengerDagsatsId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.svangerskapspengerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.sykepengerDagsatsId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.sykepengerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.uføreDagsatsId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.uføreId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.utfallEtterSamordningId
 import no.nav.dagpenger.regel.Samordning.skalSamordnes
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid
@@ -33,33 +53,73 @@ private val visesHvisSamordning: Opplysningssjekk = { it.erSann(skalSamordnes) }
  * § 4-25.Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon
  */
 object Samordning {
-    val sykepenger = Opplysningstype.somBoolsk("Sykepenger etter lovens kapittel 8".id(Sykepenger))
-    val pleiepenger = Opplysningstype.somBoolsk("Pleiepenger etter lovens kapittel 9".id(Pleiepenger))
-    val omsorgspenger = Opplysningstype.somBoolsk("Omsorgspenger etter lovens kapittel 9".id(Omsorgspenger))
-    val opplæringspenger = Opplysningstype.somBoolsk("Opplæringspenger etter lovens kapittel 9".id(Opplæringspenger))
-    val uføre = Opplysningstype.somBoolsk("Uføretrygd etter lovens kapittel 12".id(Uføre))
-    val foreldrepenger = Opplysningstype.somBoolsk("Foreldrepenger etter lovens kapittel 14".id(Foreldrepenger))
-    val svangerskapspenger = Opplysningstype.somBoolsk("Svangerskapspenger etter lovens kapittel 14".id(Svangerskapspenger))
+    val sykepenger = Opplysningstype.boolsk(sykepengerId, "Sykepenger etter lovens kapittel 8", behovId = Sykepenger)
+    val pleiepenger = Opplysningstype.boolsk(pleiepengerId, "Pleiepenger etter lovens kapittel 9", behovId = Pleiepenger)
+    val omsorgspenger = Opplysningstype.boolsk(omsorgspengerId, "Omsorgspenger etter lovens kapittel 9", behovId = Omsorgspenger)
+    val opplæringspenger =
+        Opplysningstype.boolsk(
+            opplæringspengerId,
+            "Opplæringspenger etter lovens kapittel 9",
+            behovId = Opplæringspenger,
+        )
+    val uføre = Opplysningstype.boolsk(uføreId, "Uføretrygd etter lovens kapittel 12", behovId = Uføre)
+    val foreldrepenger = Opplysningstype.boolsk(foreldrepengerId, "Foreldrepenger etter lovens kapittel 14", behovId = Foreldrepenger)
+    val svangerskapspenger =
+        Opplysningstype.boolsk(
+            svangerskapspengerId,
+            "Svangerskapspenger etter lovens kapittel 14",
+            behovId = Svangerskapspenger,
+        )
 
-    val sykepengerDagsats = Opplysningstype.somBeløp("Sykepenger dagsats", synlig = { it.erSann(sykepenger) })
-    val pleiepengerDagsats = Opplysningstype.somBeløp("Pleiepenger dagsats", synlig = { it.erSann(pleiepenger) })
-    val omsorgspengerDagsats = Opplysningstype.somBeløp("Omsorgspenger dagsats", synlig = { it.erSann(omsorgspenger) })
-    val opplæringspengerDagsats = Opplysningstype.somBeløp("Opplæringspenger dagsats", synlig = { it.erSann(opplæringspenger) })
-    val uføreDagsats = Opplysningstype.somBeløp("Uføre dagsats", synlig = { it.erSann(uføre) })
-    val foreldrepengerDagsats = Opplysningstype.somBeløp("Foreldrepenger dagsats", synlig = { it.erSann(foreldrepenger) })
-    val svangerskapspengerDagsats = Opplysningstype.somBeløp("Svangerskapspenger dagsats", synlig = { it.erSann(svangerskapspenger) })
+    val sykepengerDagsats = Opplysningstype.beløp(sykepengerDagsatsId, "Sykepenger dagsats", synlig = { it.erSann(sykepenger) })
+    val pleiepengerDagsats = Opplysningstype.beløp(pleiepengerDagsatsId, "Pleiepenger dagsats", synlig = { it.erSann(pleiepenger) })
+    val omsorgspengerDagsats = Opplysningstype.beløp(omsorgspengerDagsatsId, "Omsorgspenger dagsats", synlig = { it.erSann(omsorgspenger) })
+    val opplæringspengerDagsats =
+        Opplysningstype.beløp(opplæringspengerDagsatsId, "Opplæringspenger dagsats", synlig = {
+            it.erSann(opplæringspenger)
+        })
+    val uføreDagsats = Opplysningstype.beløp(uføreDagsatsId, "Uføre dagsats", synlig = { it.erSann(uføre) })
+    val foreldrepengerDagsats =
+        Opplysningstype.beløp(
+            foreldrepengerDagsatsId,
+            "Foreldrepenger dagsats",
+            synlig = { it.erSann(foreldrepenger) },
+        )
+    val svangerskapspengerDagsats =
+        Opplysningstype.beløp(svangerskapspengerDagsatsId, "Svangerskapspenger dagsats", synlig = {
+            it.erSann(svangerskapspenger)
+        })
 
-    private val sumAndreYtelser = Opplysningstype.somBeløp("Sum andre ytelser", synlig = visesHvisSamordning)
+    private val sumAndreYtelser = Opplysningstype.beløp(sumAndreYtelserId, "Sum andre ytelser", synlig = visesHvisSamordning)
     internal val skalSamordnes =
-        Opplysningstype.somBoolsk("Medlem har reduserte ytelser fra folketrygden (Samordning)", synlig = aldriSynlig)
+        Opplysningstype.boolsk(skalSamordnesId, "Medlem har reduserte ytelser fra folketrygden (Samordning)", synlig = aldriSynlig)
 
-    internal val samordnetDagsats = Opplysningstype.somBeløp("Samordnet dagsats uten barnetillegg", synlig = visesHvisSamordning)
-    private val kanUtbetale = Opplysningstype.somBoolsk("Samordnet dagsats er negativ eller 0", synlig = visesHvisSamordning)
+    internal val samordnetDagsats =
+        Opplysningstype.beløp(
+            samordnetDagsatsUtenBarnetilleggId,
+            "Samordnet dagsats uten barnetillegg",
+            synlig = visesHvisSamordning,
+        )
+    private val kanUtbetale =
+        Opplysningstype.boolsk(
+            samordnetDagsatsErNegativEller0Id,
+            "Samordnet dagsats er negativ eller 0",
+            synlig = visesHvisSamordning,
+        )
     val samordnetArbeidstid =
-        Opplysningstype.somDesimaltall("Antall timer arbeidstiden skal samordnes mot", synlig = visesHvisSamordning)
+        Opplysningstype.desimaltall(
+            antallTimerArbeidstidenSkalSamordnesMotId,
+            "Antall timer arbeidstiden skal samordnes mot",
+            synlig = visesHvisSamordning,
+        )
     val samordnetBeregnetArbeidstid =
-        Opplysningstype.somDesimaltall("Samordnet fastsatt arbeidstid", synlig = visesHvisSamordning)
-    internal val utfallEtterSamordning = Opplysningstype.somBoolsk("Utfall etter samordning", synlig = visesHvisSamordning)
+        Opplysningstype.desimaltall(samordnetFastsattArbeidstidId, "Samordnet fastsatt arbeidstid", synlig = visesHvisSamordning)
+    internal val utfallEtterSamordning =
+        Opplysningstype.boolsk(
+            utfallEtterSamordningId,
+            "Utfall etter samordning",
+            synlig = visesHvisSamordning,
+        )
 
     // Fulle dagpenger minus en/flere av reduserte ytelsene man mottar per samme dag (regnestykket)
     // avrundetDagsUtenBarnetillegg - sykepenger - pleiepenger - omsorgspenger - opplæringspenger - uføre - foreldrepenger - svangerskapspenger

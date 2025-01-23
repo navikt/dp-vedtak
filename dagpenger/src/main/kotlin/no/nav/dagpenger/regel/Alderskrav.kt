@@ -1,27 +1,35 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
+import no.nav.dagpenger.opplysning.Opplysningsformål
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.boolsk
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.dato
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.heltall
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.dato.førEllerLik
 import no.nav.dagpenger.opplysning.regel.dato.leggTilÅr
 import no.nav.dagpenger.opplysning.regel.dato.sisteDagIMåned
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
+import no.nav.dagpenger.regel.OpplysningEtellerannet.AldersgrenseId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.FødselsdatoId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.KravTilAlderId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.SisteDagIMånedId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.SisteMånedId
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 
 object Alderskrav {
-    val fødselsdato = Opplysningstype.somDato("Fødselsdato".id("Fødselsdato"))
+    val fødselsdato = Opplysningstype.dato(FødselsdatoId, "Fødselsdato", Opplysningsformål.Bruker)
 
     private val prøvingsdato = Søknadstidspunkt.prøvingsdato
 
-    private val aldersgrense = Opplysningstype.somHeltall("Aldersgrense", synlig = aldriSynlig)
-    private val sisteMåned = Opplysningstype.somDato("Dato søker når maks alder", synlig = aldriSynlig)
-    private val sisteDagIMåned = Opplysningstype.somDato("Siste mulige dag bruker kan oppfylle alderskrav")
+    private val aldersgrense = heltall(AldersgrenseId, "Aldersgrense", synlig = aldriSynlig)
+    private val sisteMåned = dato(SisteMånedId, "Dato søker når maks alder", synlig = aldriSynlig)
+    private val sisteDagIMåned = dato(SisteDagIMånedId, "Siste mulige dag bruker kan oppfylle alderskrav")
 
-    val kravTilAlder = Opplysningstype.somBoolsk("Oppfyller kravet til alder")
+    val kravTilAlder = boolsk(KravTilAlderId, "Oppfyller kravet til alder")
 
     val regelsett =
         Regelsett(

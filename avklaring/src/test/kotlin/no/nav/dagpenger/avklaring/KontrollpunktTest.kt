@@ -10,7 +10,9 @@ import no.nav.dagpenger.avklaring.TestAvklaringer.BeregningsregelForFVA
 import no.nav.dagpenger.avklaring.TestAvklaringer.SvangerskapsrelaterteSykepenger
 import no.nav.dagpenger.avklaring.TestAvklaringer.TestIkke123
 import no.nav.dagpenger.dato.mai
+import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
@@ -22,8 +24,12 @@ import org.junit.jupiter.api.Test
 
 class KontrollpunktTest {
     companion object {
-        private val opplysningstype = Opplysningstype.somHeltall("test")
-        private val inntekterInneholderSykepenger = Opplysningstype.somBoolsk("Inntektene innholder sykepenger")
+        private val opplysningstype = Opplysningstype.heltall(Opplysningstype.Id(UUIDv7.ny(), Heltall), "test")
+        private val inntekterInneholderSykepenger =
+            Opplysningstype.boolsk(
+                Opplysningstype.Id(UUIDv7.ny(), Boolsk),
+                "Inntektene innholder sykepenger",
+            )
     }
 
     private fun getOpplysning(verdi: Int) = Faktum(opplysningstype, verdi)
@@ -124,9 +130,9 @@ class KontrollpunktTest {
 
     @Test
     fun `avklaringer av beregningsregel for fastsatt vanlig arbeidstid`() {
-        val regel1 = Opplysningstype.somBoolsk("6mnd")
-        val regel2 = Opplysningstype.somBoolsk("12mnd")
-        val regel3 = Opplysningstype.somBoolsk("36mnd")
+        val regel1 = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "6mnd")
+        val regel2 = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "12mnd")
+        val regel3 = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "36mnd")
 
         val kontrollpunkter =
             listOf(

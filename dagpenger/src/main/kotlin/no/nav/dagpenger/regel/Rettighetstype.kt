@@ -1,9 +1,8 @@
 package no.nav.dagpenger.regel
 
-import no.nav.dagpenger.opplysning.Opplysningstype
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.boolsk
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.RegelsettType
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.ingenAv
 import no.nav.dagpenger.opplysning.regel.innhentes
@@ -11,20 +10,29 @@ import no.nav.dagpenger.regel.Behov.Lønnsgaranti
 import no.nav.dagpenger.regel.Behov.Ordinær
 import no.nav.dagpenger.regel.Behov.Permittert
 import no.nav.dagpenger.regel.Behov.PermittertFiskeforedling
+import no.nav.dagpenger.regel.OpplysningEtellerannet.HarRettTilOrdinærId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.IngenArbeidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.LønnsgarantiId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OrdinærId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.PermittertFiskeforedlingId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.PermittertId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.RettighetstypeId
 
 object Rettighetstype {
-    private val ordinærArbeid = Opplysningstype.somBoolsk("Har rett til ordinære dagpenger gjennom arbeidsforhold".id(Ordinær))
-    private val permittering = Opplysningstype.somBoolsk("Har rett til dagpenger under permittering".id(Permittert))
-    private val lønnsgaranti = Opplysningstype.somBoolsk("Har rett til dagpenger etter konkurs".id(Lønnsgaranti))
+    private val ordinærArbeid = boolsk(OrdinærId, beskrivelse = "Har rett til ordinære dagpenger gjennom arbeidsforhold", behovId = Ordinær)
+    private val permittering = boolsk(PermittertId, beskrivelse = "Har rett til dagpenger under permittering", behovId = Permittert)
+    private val lønnsgaranti = boolsk(LønnsgarantiId, beskrivelse = "Har rett til dagpenger etter konkurs", behovId = Lønnsgaranti)
     private val permitteringFiskeforedling =
-        Opplysningstype.somBoolsk(
-            "Har rett til dagpenger under permittering i fiskeforedlingsindustri".id(PermittertFiskeforedling),
+        boolsk(
+            PermittertFiskeforedlingId,
+            beskrivelse = "Har rett til dagpenger under permittering i fiskeforedlingsindustri",
+            behovId = PermittertFiskeforedling,
         )
 
-    private val ordinær = Opplysningstype.somBoolsk("Har rett til ordinære dagpenger")
-    private val ingenArbeid = Opplysningstype.somBoolsk("Har rett til ordinære dagpenger uten arbeidsforhold")
+    private val ordinær = boolsk(HarRettTilOrdinærId, "Har rett til ordinære dagpenger")
+    private val ingenArbeid = boolsk(IngenArbeidId, "Har rett til ordinære dagpenger uten arbeidsforhold")
 
-    val rettighetstype = Opplysningstype.somBoolsk("Rettighetstype".id("Rettighetstype"))
+    val rettighetstype = boolsk(RettighetstypeId, beskrivelse = "Rettighetstype", behovId = "Rettighetstype")
 
     val regelsett =
         Regelsett(

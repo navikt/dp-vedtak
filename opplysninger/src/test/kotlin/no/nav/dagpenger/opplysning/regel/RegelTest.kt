@@ -1,19 +1,21 @@
 package no.nav.dagpenger.opplysning.regel
 
 import io.kotest.matchers.shouldBe
+import no.nav.dagpenger.opplysning.Boolsk
 import no.nav.dagpenger.opplysning.Faktum
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
+import no.nav.dagpenger.uuid.UUIDv7
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class RegelTest {
     @Test
     fun `kaster feil når opplysninger mangler`() {
-        val a = Opplysningstype.somBoolsk("a")
-        val b = Opplysningstype.somBoolsk("b")
-        val c = Opplysningstype.somBoolsk("c")
+        val a = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "a")
+        val b = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "b")
+        val c = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "c")
         val regelsett =
             Regelsett("test") {
                 regel(a) { innhentMed(b, c) }

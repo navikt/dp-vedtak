@@ -2,10 +2,10 @@ package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningsformål.Bruker
-import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.boolsk
+import no.nav.dagpenger.opplysning.Opplysningstype.Companion.desimaltall
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.erSann
@@ -21,47 +21,74 @@ import no.nav.dagpenger.regel.Behov.KanJobbeHvorSomHelst
 import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.Behov.ØnsketArbeidstid
+import no.nav.dagpenger.regel.OpplysningEtellerannet.ErArbeidsførId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.GodkjentDeltidssøkerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.GodkjentLokalArbeidssøker
+import no.nav.dagpenger.regel.OpplysningEtellerannet.KanJobbeDeltidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.KanJobbeHvorSomHelstId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.KravTilArbeidssøkerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OppfyllerKravTilArbeidsførId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OppfyllerKravTilArbeidssøkerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OppfyllerKravTilMobilitetId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OppfyllerKravetTilEthvertArbeidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.OppyllerKravTilRegistrertArbeidssøkerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.RegistrertSomArbeidssøkerId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.VilligTilEthvertArbeidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.minimumVanligArbeidstidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.villigTilMinimumArbeidstidId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.ønsketArbeidstidId
 import no.nav.dagpenger.regel.Samordning.uføre
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 
 object ReellArbeidssøker {
     // c.	å ta arbeid uavhengig av om det er på heltid eller deltid,
-    val kanJobbeDeltid = Opplysningstype.somBoolsk("Kan jobbe heltid og deltid".id(KanJobbeDeltid), Bruker)
+    val kanJobbeDeltid = boolsk(KanJobbeDeltidId, beskrivelse = "Kan jobbe heltid og deltid", Bruker, behovId = KanJobbeDeltid)
     val godkjentDeltidssøker =
-        Opplysningstype.somBoolsk("Det er godkjent at bruker kun søker deltidsarbeid", synlig = {
+        boolsk(GodkjentDeltidssøkerId, "Det er godkjent at bruker kun søker deltidsarbeid", synlig = {
             it.erSann(kanJobbeDeltid) == false
         })
-    val oppfyllerKravTilArbeidssøker = Opplysningstype.somBoolsk("Oppfyller kravet til heltid- og deltidsarbeid", synlig = aldriSynlig)
+    val oppfyllerKravTilArbeidssøker =
+        boolsk(OppfyllerKravTilArbeidssøkerId, "Oppfyller kravet til heltid- og deltidsarbeid", synlig = aldriSynlig)
 
     // b.	å ta arbeid hvor som helst i Norge,
-    val kanJobbeHvorSomHelst = Opplysningstype.somBoolsk("Kan jobbe i hele Norge".id(KanJobbeHvorSomHelst), Bruker)
+    val kanJobbeHvorSomHelst =
+        boolsk(KanJobbeHvorSomHelstId, beskrivelse = "Kan jobbe i hele Norge", Bruker, behovId = KanJobbeHvorSomHelst)
     val godkjentLokalArbeidssøker =
-        Opplysningstype.somBoolsk("Det er godkjent at bruker kun søk arbeid lokalt", synlig = {
+        boolsk(GodkjentLokalArbeidssøker, "Det er godkjent at bruker kun søk arbeid lokalt", synlig = {
             it.erSann(kanJobbeHvorSomHelst) == false
         })
-    val oppfyllerKravTilMobilitet = Opplysningstype.somBoolsk("Oppfyller kravet til mobilitet", synlig = aldriSynlig)
+    val oppfyllerKravTilMobilitet = boolsk(OppfyllerKravTilMobilitetId, "Oppfyller kravet til mobilitet", synlig = aldriSynlig)
 
     //  Som reell arbeidssøker regnes den som er arbeidsfør,
-    val erArbeidsfør = Opplysningstype.somBoolsk("Kan ta alle typer arbeid".id(HelseTilAlleTyperJobb), Bruker)
-    val oppfyllerKravTilArbeidsfør = Opplysningstype.somBoolsk("Oppfyller kravet til å være arbeidsfør", synlig = aldriSynlig)
+    val erArbeidsfør = boolsk(ErArbeidsførId, beskrivelse = "Kan ta alle typer arbeid", Bruker, behovId = HelseTilAlleTyperJobb)
+    val oppfyllerKravTilArbeidsfør = boolsk(OppfyllerKravTilArbeidsførId, "Oppfyller kravet til å være arbeidsfør", synlig = aldriSynlig)
 
     // a.	å ta ethvert arbeid som er lønnet etter tariff eller sedvane,
-    val villigTilEthvertArbeid = Opplysningstype.somBoolsk("Villig til å bytte yrke".id(VilligTilÅBytteYrke), Bruker)
-    val oppfyllerKravetTilEthvertArbeid = Opplysningstype.somBoolsk("Oppfyller kravet til å ta ethvert arbeid", synlig = aldriSynlig)
+    val villigTilEthvertArbeid =
+        boolsk(VilligTilEthvertArbeidId, beskrivelse = "Villig til å bytte yrke", Bruker, behovId = VilligTilÅBytteYrke)
+    val oppfyllerKravetTilEthvertArbeid =
+        boolsk(OppfyllerKravetTilEthvertArbeidId, "Oppfyller kravet til å ta ethvert arbeid", synlig = aldriSynlig)
 
     // Registrert som arbeidssøker
-    internal val registrertArbeidssøker = Opplysningstype.somBoolsk("Registrert som arbeidssøker".id(RegistrertSomArbeidssøker))
+    internal val registrertArbeidssøker =
+        boolsk(RegistrertSomArbeidssøkerId, beskrivelse = "Registrert som arbeidssøker", behovId = RegistrertSomArbeidssøker)
     val oppyllerKravTilRegistrertArbeidssøker =
-        Opplysningstype.somBoolsk("Registrert som arbeidssøker på søknadstidspunktet", synlig = aldriSynlig)
+        boolsk(OppyllerKravTilRegistrertArbeidssøkerId, "Registrert som arbeidssøker på søknadstidspunktet", synlig = aldriSynlig)
 
-    val kravTilArbeidssøker = Opplysningstype.somBoolsk("Krav til arbeidssøker")
+    val kravTilArbeidssøker = boolsk(KravTilArbeidssøkerId, "Krav til arbeidssøker")
 
     val ønsketArbeidstid =
-        Opplysningstype.somDesimaltall("Ønsket arbeidstid".id(ØnsketArbeidstid), Bruker) { it.erSann(kanJobbeDeltid) == false }
-    val minimumVanligArbeidstid = Opplysningstype.somDesimaltall("Minimum vanlig arbeidstid") { it.erSann(uføre) }
+        desimaltall(
+            ønsketArbeidstidId,
+            "Ønsket arbeidstid",
+            Bruker,
+            behovId = ØnsketArbeidstid,
+            synlig = { it.erSann(kanJobbeDeltid) == false },
+        )
+    val minimumVanligArbeidstid = desimaltall(minimumVanligArbeidstidId, "Minimum vanlig arbeidstid", synlig = { it.erSann(uføre) })
     val villigTilMinimumArbeidstid =
-        Opplysningstype.somBoolsk("Villig til å jobbe minimum arbeidstid") { it.erSann(kanJobbeDeltid) == false }
+        boolsk(villigTilMinimumArbeidstidId, "Villig til å jobbe minimum arbeidstid", synlig = { it.erSann(kanJobbeDeltid) == false })
 
     val regelsett =
         Regelsett(folketrygden.hjemmel(4, 5, "Reelle arbeidssøkere", "4-5 Reell arbeidssøker")) {

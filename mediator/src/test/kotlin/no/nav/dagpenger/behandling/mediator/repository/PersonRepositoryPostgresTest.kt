@@ -9,6 +9,7 @@ import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.behandling.modell.Ident
 import no.nav.dagpenger.behandling.modell.Person
 import no.nav.dagpenger.opplysning.Faktum
+import no.nav.dagpenger.opplysning.Heltall
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse
 import no.nav.dagpenger.uuid.UUIDv7
@@ -67,7 +68,7 @@ class PersonRepositoryPostgresTest {
     fun `lagre setter inn person og deres behandlinger i databasen`() =
         withMigratedDb {
             val ident = Ident(fnr)
-            val opplysning = Faktum(Opplysningstype.somHeltall("Heltall"), 5)
+            val opplysning = Faktum(Opplysningstype.heltall(Opplysningstype.Id(UUIDv7.ny(), Heltall), "Heltall"), 5)
             val behandling = Behandling(søknadInnsendtHendelse, listOf(opplysning))
             val person = Person(ident, listOf(behandling))
 
