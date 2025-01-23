@@ -10,11 +10,11 @@ import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.regel.Behov.Prøvingsdato
 import no.nav.dagpenger.regel.Behov.Søknadsdato
 import no.nav.dagpenger.regel.Behov.ØnskerDagpengerFraDato
-import no.nav.dagpenger.regel.OpplysningEtellerannet.prøvingsdatoId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.søknadId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.søknadsdatoId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.søknadstidspunktId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.ønskerDagpengerFraDatoId
+import no.nav.dagpenger.regel.OpplysningsTyper.prøvingsdatoId
+import no.nav.dagpenger.regel.OpplysningsTyper.søknadId
+import no.nav.dagpenger.regel.OpplysningsTyper.søknadsdatoId
+import no.nav.dagpenger.regel.OpplysningsTyper.søknadstidspunktId
+import no.nav.dagpenger.regel.OpplysningsTyper.ønskerDagpengerFraDatoId
 
 object Søknadstidspunkt {
     // § 3A-1.Søknadstidspunkt https://lovdata.no/forskrift/1998-09-16-890/§3a-1

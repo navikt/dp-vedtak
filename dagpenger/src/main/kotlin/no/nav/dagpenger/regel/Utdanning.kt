@@ -12,18 +12,18 @@ import no.nav.dagpenger.opplysning.regel.erUsann
 import no.nav.dagpenger.opplysning.regel.innhentMed
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Behov.TarUtdanningEllerOpplæring
-import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarIArbeidsmarkedstiltakId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarIHøyereUtdanningId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarIHøyereYrkesfagligUtdanningId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarIOpplæringForInnvandrereId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarPåKursMvId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.godkjentUnntakForUtdanningId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.grunnskoleopplæringId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.kravTilUtdanningEllerOpplæringId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.oppfyllerKravetPåUnntakForUtdanningId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.svartJaPåUtdanningId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.svartNeiPåUtdanningId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.tarUtdanningEllerOpplæringId
+import no.nav.dagpenger.regel.OpplysningsTyper.deltarIArbeidsmarkedstiltakId
+import no.nav.dagpenger.regel.OpplysningsTyper.deltarIHøyereUtdanningId
+import no.nav.dagpenger.regel.OpplysningsTyper.deltarIHøyereYrkesfagligUtdanningId
+import no.nav.dagpenger.regel.OpplysningsTyper.deltarIOpplæringForInnvandrereId
+import no.nav.dagpenger.regel.OpplysningsTyper.deltarPåKursMvId
+import no.nav.dagpenger.regel.OpplysningsTyper.godkjentUnntakForUtdanningId
+import no.nav.dagpenger.regel.OpplysningsTyper.grunnskoleopplæringId
+import no.nav.dagpenger.regel.OpplysningsTyper.kravTilUtdanningEllerOpplæringId
+import no.nav.dagpenger.regel.OpplysningsTyper.oppfyllerKravetPåUnntakForUtdanningId
+import no.nav.dagpenger.regel.OpplysningsTyper.svartJaPåUtdanningId
+import no.nav.dagpenger.regel.OpplysningsTyper.svartNeiPåUtdanningId
+import no.nav.dagpenger.regel.OpplysningsTyper.tarUtdanningEllerOpplæringId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object Utdanning {

@@ -5,8 +5,8 @@ import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.ikke
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.regel.OpplysningEtellerannet.brukerErUtestengtFraDagpengerId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.oppfyllerKravTilIkkeUtestengtId
+import no.nav.dagpenger.regel.OpplysningsTyper.brukerErUtestengtFraDagpengerId
+import no.nav.dagpenger.regel.OpplysningsTyper.oppfyllerKravTilIkkeUtestengtId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object Utestengning {

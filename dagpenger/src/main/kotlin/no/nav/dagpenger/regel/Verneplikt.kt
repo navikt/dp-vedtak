@@ -6,8 +6,8 @@ import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.innhentMed
-import no.nav.dagpenger.regel.OpplysningEtellerannet.avtjentVernepliktId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.oppfyllerKravetTilVernepliktId
+import no.nav.dagpenger.regel.OpplysningsTyper.avtjentVernepliktId
+import no.nav.dagpenger.regel.OpplysningsTyper.oppfyllerKravetTilVernepliktId
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 
 object Verneplikt {

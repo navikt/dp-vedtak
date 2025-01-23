@@ -34,10 +34,10 @@ import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
-import no.nav.dagpenger.regel.OpplysningEtellerannet.ikkePåvirketAvStreikEllerLockoutId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.prøvingsdatoId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.søknadsdatoId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.søknadstidspunktId
+import no.nav.dagpenger.regel.OpplysningsTyper.ikkePåvirketAvStreikEllerLockoutId
+import no.nav.dagpenger.regel.OpplysningsTyper.prøvingsdatoId
+import no.nav.dagpenger.regel.OpplysningsTyper.søknadsdatoId
+import no.nav.dagpenger.regel.OpplysningsTyper.søknadstidspunktId
 import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato

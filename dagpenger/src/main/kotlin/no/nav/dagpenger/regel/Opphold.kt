@@ -7,12 +7,12 @@ import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.erSann
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.regel.OpplysningEtellerannet.MedlemFolketrygdenId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.OppfyllerKravetOppholdId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.OppfyllerKravetTilOppholdId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.OppfyllerMedlemskapId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.OppholdINorgeId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.UnntakForOppholdId
+import no.nav.dagpenger.regel.OpplysningsTyper.MedlemFolketrygdenId
+import no.nav.dagpenger.regel.OpplysningsTyper.OppfyllerKravetOppholdId
+import no.nav.dagpenger.regel.OpplysningsTyper.OppfyllerKravetTilOppholdId
+import no.nav.dagpenger.regel.OpplysningsTyper.OppfyllerMedlemskapId
+import no.nav.dagpenger.regel.OpplysningsTyper.OppholdINorgeId
+import no.nav.dagpenger.regel.OpplysningsTyper.UnntakForOppholdId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object Opphold {

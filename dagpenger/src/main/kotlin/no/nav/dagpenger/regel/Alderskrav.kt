@@ -13,11 +13,11 @@ import no.nav.dagpenger.opplysning.regel.dato.leggTilÅr
 import no.nav.dagpenger.opplysning.regel.dato.sisteDagIMåned
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.regel.OpplysningEtellerannet.AldersgrenseId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.FødselsdatoId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.KravTilAlderId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.SisteDagIMånedId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.SisteMånedId
+import no.nav.dagpenger.regel.OpplysningsTyper.AldersgrenseId
+import no.nav.dagpenger.regel.OpplysningsTyper.FødselsdatoId
+import no.nav.dagpenger.regel.OpplysningsTyper.KravTilAlderId
+import no.nav.dagpenger.regel.OpplysningsTyper.SisteDagIMånedId
+import no.nav.dagpenger.regel.OpplysningsTyper.SisteMånedId
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 
 object Alderskrav {

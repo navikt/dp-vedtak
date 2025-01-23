@@ -7,8 +7,8 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.RegelsettType
 import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.regel.OpplysningEtellerannet.AntallDagsatsForEgenandelId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.EgenandelId
+import no.nav.dagpenger.regel.OpplysningsTyper.AntallDagsatsForEgenandelId
+import no.nav.dagpenger.regel.OpplysningsTyper.EgenandelId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.folketrygden
 

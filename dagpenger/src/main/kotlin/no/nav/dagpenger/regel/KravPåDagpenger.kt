@@ -9,10 +9,10 @@ import no.nav.dagpenger.opplysning.regel.dato.finnDagensDato
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.fraOgMed
 import no.nav.dagpenger.regel.Minsteinntekt.minsteinntekt
-import no.nav.dagpenger.regel.OpplysningEtellerannet.DagensDatoId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.EttBeregnetVirkningstidspunktId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.KravPåDagpengerId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.MinsteinntektEllerVernepliktId
+import no.nav.dagpenger.regel.OpplysningsTyper.DagensDatoId
+import no.nav.dagpenger.regel.OpplysningsTyper.EttBeregnetVirkningstidspunktId
+import no.nav.dagpenger.regel.OpplysningsTyper.KravPåDagpengerId
+import no.nav.dagpenger.regel.OpplysningsTyper.MinsteinntektEllerVernepliktId
 import no.nav.dagpenger.regel.Verneplikt.oppfyllerKravetTilVerneplikt
 
 object KravPåDagpenger {

@@ -5,9 +5,9 @@ import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.regel.ingenAv
 import no.nav.dagpenger.opplysning.regel.oppslag
-import no.nav.dagpenger.regel.OpplysningEtellerannet.deltarStreikEllerLockoutId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.ikkePåvirketAvStreikEllerLockoutId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.ledigVedSammeBedriftOgPåvirketAvUtfalletId
+import no.nav.dagpenger.regel.OpplysningsTyper.deltarStreikEllerLockoutId
+import no.nav.dagpenger.regel.OpplysningsTyper.ikkePåvirketAvStreikEllerLockoutId
+import no.nav.dagpenger.regel.OpplysningsTyper.ledigVedSammeBedriftOgPåvirketAvUtfalletId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 
 object StreikOgLockout {

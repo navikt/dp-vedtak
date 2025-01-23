@@ -7,9 +7,9 @@ import no.nav.dagpenger.opplysning.regel.dato.førsteArbeidsdag
 import no.nav.dagpenger.opplysning.regel.dato.sisteAvsluttendeKalenderMåned
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.regel.Behov.SisteAvsluttendeKalenderMåned
-import no.nav.dagpenger.regel.OpplysningEtellerannet.ArbeidsgiversRapporteringsfristId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.PliktigRapporteringsfristId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.SisteAvsluttendeKalenderMånedId
+import no.nav.dagpenger.regel.OpplysningsTyper.ArbeidsgiversRapporteringsfristId
+import no.nav.dagpenger.regel.OpplysningsTyper.PliktigRapporteringsfristId
+import no.nav.dagpenger.regel.OpplysningsTyper.SisteAvsluttendeKalenderMånedId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import java.time.LocalDate
 

@@ -11,7 +11,7 @@ import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Tekst
 import java.util.UUID
 
-object OpplysningEtellerannet {
+object OpplysningsTyper {
     val FødselsdatoId = Opplysningstype.Id(UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367233"), Dato)
     val AldersgrenseId = Opplysningstype.Id(UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367234"), Heltall)
     val SisteMånedId = Opplysningstype.Id(UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367235"), Dato)
@@ -265,11 +265,6 @@ object OpplysningEtellerannet {
     val kravTilUtdanningEllerOpplæringId = Opplysningstype.Id(UUID.fromString("0194881f-9445-734c-a7ee-045edf29b52d"), Boolsk)
     val brukerErUtestengtFraDagpengerId = Opplysningstype.Id(UUID.fromString("0194881f-9447-7e36-a569-3e9f42bff9f6"), Boolsk)
     val oppfyllerKravTilIkkeUtestengtId = Opplysningstype.Id(UUID.fromString("0194881f-9447-7e36-a569-3e9f42bff9f7"), Boolsk)
-    val VernepliktId = UUID.fromString("0194881f-9423-7e88-918a-85cb7ed76408")
-    val Har_utført_minst_tre_måneders_militærtjeneste_eller_obligatorisk_sivilforsvarstjenesteId =
-        UUID.fromString(
-            "0194881f-9423-7e88-918a-85cb7ed76409",
-        )
     val AntallGVernepliktId = Opplysningstype.Id(UUID.fromString("0194881f-9421-766c-9dc6-41fe6c9a1dff"), Desimaltall)
     val VernepliktGrunnlagId = Opplysningstype.Id(UUID.fromString("0194881f-9421-766c-9dc6-41fe6c9a1e00"), Penger)
     val VernepliktPeriodeId = Opplysningstype.Id(UUID.fromString("0194881f-9421-766c-9dc6-41fe6c9a1e01"), Heltall)

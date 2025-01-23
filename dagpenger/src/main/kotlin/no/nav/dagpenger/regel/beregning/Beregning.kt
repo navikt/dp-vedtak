@@ -1,10 +1,10 @@
 package no.nav.dagpenger.regel.beregning
 
 import no.nav.dagpenger.opplysning.Opplysningstype
-import no.nav.dagpenger.regel.OpplysningEtellerannet.arbeidsdagId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.arbeidstimerId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.forbrukId
-import no.nav.dagpenger.regel.OpplysningEtellerannet.terskelId
+import no.nav.dagpenger.regel.OpplysningsTyper.arbeidsdagId
+import no.nav.dagpenger.regel.OpplysningsTyper.arbeidstimerId
+import no.nav.dagpenger.regel.OpplysningsTyper.forbrukId
+import no.nav.dagpenger.regel.OpplysningsTyper.terskelId
 
 object Beregning {
     val arbeidsdag = Opplysningstype.boolsk(arbeidsdagId, "Arbeidsdag")
