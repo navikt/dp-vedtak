@@ -202,6 +202,8 @@ object SamordingUtenforFolketrygden {
                     andreØkonomiskeYtelser,
                 )
             }
+
+            relevantHvis { alderOgMinsteinntekt(it) }
         }
 
     val ønsketResultat = listOf(skalSamordnesUtenforFolketrygden, dagsatsSamordnetUtenforFolketrygden)

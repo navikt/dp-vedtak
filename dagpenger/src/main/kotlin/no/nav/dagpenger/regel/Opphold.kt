@@ -39,5 +39,7 @@ object Opphold {
             regel(oppfyllerMedlemskap) { erSann(medlemFolketrygden) }
 
             utfall(oppfyllerKravet) { alle(oppfyllerKravetTilOpphold, oppfyllerMedlemskap) }
+
+            relevantHvis { alderOgMinsteinntekt(it) }
         }
 }

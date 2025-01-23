@@ -53,6 +53,7 @@ import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
 import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag.grunnlag
 import no.nav.dagpenger.regel.folketrygden
+import no.nav.dagpenger.regel.kravPåDagpenger
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -154,6 +155,8 @@ object DagpengenesStørrelse {
             regel(harBarnetillegg) { størreEnnEllerLik(barnetillegg, barnetilleggetsStørrelse) }
 
             avklaring(BarnMåGodkjennes)
+
+            relevantHvis { kravPåDagpenger(it) }
         }
 
     val ønsketResultat = listOf(ukessats, dagsatsSamordnetUtenforFolketrygden, ukesatsMedBarnetillegg, harSamordnet)

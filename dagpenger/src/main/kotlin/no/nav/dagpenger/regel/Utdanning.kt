@@ -137,5 +137,7 @@ object Utdanning {
             regel(oppfyllerKravetPåUnntak) { alle(svartJaPåUtdanning, godkjentUnntakForUtdanning) }
 
             utfall(kravTilUtdanning) { enAv(oppfyllerKravetPåUnntak, svartNeiPåUtdanning) }
+
+            relevantHvis { alderOgMinsteinntekt(it) }
         }
 }

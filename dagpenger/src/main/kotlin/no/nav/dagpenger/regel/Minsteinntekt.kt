@@ -24,6 +24,7 @@ import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.regel.Alderskrav.kravTilAlder
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
@@ -122,6 +123,8 @@ object Minsteinntekt {
             avklaring(Avklaringspunkter.SvangerskapsrelaterteSykepenger)
             avklaring(Avklaringspunkter.InntektNesteKalendermåned)
             avklaring(Avklaringspunkter.ØnskerEtterRapporteringsfrist)
+
+            relevantHvis { it.erSann(kravTilAlder) }
         }
 
     private fun grunnbeløpFor(it: LocalDate) =
@@ -132,7 +135,7 @@ object Minsteinntekt {
 
     val SvangerskapsrelaterteSykepengerKontroll =
         Kontrollpunkt(Avklaringspunkter.SvangerskapsrelaterteSykepenger) {
-            it.har(inntektFraSkatt) && it.erSann(minsteinntekt) == false
+            it.har(inntektFraSkatt) && it.finnOpplysning(minsteinntekt).verdi == false
         }
 
     val EØSArbeidKontroll =

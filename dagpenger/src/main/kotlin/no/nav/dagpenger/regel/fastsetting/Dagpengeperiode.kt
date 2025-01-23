@@ -32,6 +32,7 @@ import no.nav.dagpenger.regel.OpplysningsTyper.Terskel36Id
 import no.nav.dagpenger.regel.OpplysningsTyper.TerskelFaktor12Id
 import no.nav.dagpenger.regel.OpplysningsTyper.TerskelFaktor36Id
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.alderOgMinsteinntekt
 import no.nav.dagpenger.regel.folketrygden
 
 object Dagpengeperiode {
@@ -93,6 +94,8 @@ object Dagpengeperiode {
 
             regel(dagerIUka) { oppslag(prøvingsdato) { 5 } }
             regel(gjenståendeStønadsdager) { multiplikasjon(antallStønadsuker, dagerIUka) }
+
+            relevantHvis { alderOgMinsteinntekt(it) }
         }
 
     val ønsketResultat = listOf(ordinærPeriode, gjenståendeStønadsdager)

@@ -23,6 +23,7 @@ import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnn
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.regel.Alderskrav.kravTilAlder
 import no.nav.dagpenger.regel.Minsteinntekt.inntektFraSkatt
 import no.nav.dagpenger.regel.OpplysningsTyper.AntallÅrI36MånederId
 import no.nav.dagpenger.regel.OpplysningsTyper.AvkortetInntektperiode1Id
@@ -187,6 +188,8 @@ object Dagpengegrunnlag {
             regel(harAvkortetPeriode2) { størreEnn(inntektperiode2, maksgrenseForGrunnlag) }
             regel(harAvkortetPeriode3) { størreEnn(inntektperiode3, maksgrenseForGrunnlag) }
             regel(harAvkortet) { enAv(harAvkortetPeriode1, harAvkortetPeriode2, harAvkortetPeriode3) }
+
+            relevantHvis { it.erSann(kravTilAlder) }
         }
     val ønsketResultat =
         listOf(

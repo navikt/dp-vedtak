@@ -11,6 +11,7 @@ import no.nav.dagpenger.regel.OpplysningsTyper.AntallDagsatsForEgenandelId
 import no.nav.dagpenger.regel.OpplysningsTyper.EgenandelId
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.folketrygden
+import no.nav.dagpenger.regel.kravPåDagpenger
 
 object Egenandel {
     val egenandel = beløp(EgenandelId, "Egenandel")
@@ -24,6 +25,8 @@ object Egenandel {
         ) {
             regel(faktor) { oppslag(prøvingsdato) { 3.0 } }
             regel(egenandel) { multiplikasjon(sats, faktor) }
+
+            relevantHvis { kravPåDagpenger(it) }
         }
 
     val ønsketResultat = listOf(egenandel)
