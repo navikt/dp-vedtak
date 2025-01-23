@@ -135,6 +135,7 @@ object OpplysningsTyper {
     val KanJobbeHvorSomHelstId = Opplysningstype.Id(UUID.fromString("0194881f-9442-707b-a6ee-e96c06877bd9"), Boolsk)
     val GodkjentLokalArbeidssøker = Opplysningstype.Id(UUID.fromString("0194881f-9442-707b-a6ee-e96c06877bda"), Boolsk)
     val ErArbeidsførId = Opplysningstype.Id(UUID.fromString("0194881f-9442-707b-a6ee-e96c06877bdc"), Boolsk)
+    val GodkjentArbeidsuførId = Opplysningstype.Id(UUID.fromString("0194929e-2036-7ac1-ada3-5cbe05a83f08"), Boolsk)
     val VilligTilEthvertArbeidId = Opplysningstype.Id(UUID.fromString("0194881f-9442-707b-a6ee-e96c06877bde"), Boolsk)
     val OppfyllerKravTilArbeidssøkerId = Opplysningstype.Id(UUID.fromString("0194881f-9442-707b-a6ee-e96c06877bd8"), Boolsk)
     val OppfyllerKravTilMobilitetId = Opplysningstype.Id(UUID.fromString("0194881f-9442-707b-a6ee-e96c06877bdb"), Boolsk)

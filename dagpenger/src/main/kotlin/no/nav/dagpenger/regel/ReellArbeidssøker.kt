@@ -22,6 +22,7 @@ import no.nav.dagpenger.regel.Behov.RegistrertSomArbeidssøker
 import no.nav.dagpenger.regel.Behov.VilligTilÅBytteYrke
 import no.nav.dagpenger.regel.Behov.ØnsketArbeidstid
 import no.nav.dagpenger.regel.OpplysningsTyper.ErArbeidsførId
+import no.nav.dagpenger.regel.OpplysningsTyper.GodkjentArbeidsuførId
 import no.nav.dagpenger.regel.OpplysningsTyper.GodkjentDeltidssøkerId
 import no.nav.dagpenger.regel.OpplysningsTyper.GodkjentLokalArbeidssøker
 import no.nav.dagpenger.regel.OpplysningsTyper.KanJobbeDeltidId
@@ -63,7 +64,7 @@ object ReellArbeidssøker {
     //  Som reell arbeidssøker regnes den som er arbeidsfør,
     val erArbeidsfør = boolsk(ErArbeidsførId, beskrivelse = "Kan ta alle typer arbeid", Bruker, behovId = HelseTilAlleTyperJobb)
     val godkjentArbeidsufør =
-        boolsk("Har helsemessige begrensninger og kan ikke ta alle typer arbeid", synlig = {
+        boolsk(GodkjentArbeidsuførId, "Har helsemessige begrensninger og kan ikke ta alle typer arbeid", synlig = {
             it.erSann(erArbeidsfør) == false
         })
     val oppfyllerKravTilArbeidsfør = boolsk(OppfyllerKravTilArbeidsførId, "Oppfyller kravet til å være arbeidsfør", synlig = aldriSynlig)

@@ -26,6 +26,7 @@ import no.nav.dagpenger.behandling.objectMapper
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.regel.RegelverkDagpenger
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse.Companion.fagsakIdOpplysningstype
+import no.nav.dagpenger.uuid.UUIDv7
 import no.nav.helse.rapids_rivers.RapidApplication
 
 internal class ApplicationBuilder(
@@ -116,4 +117,8 @@ internal class ApplicationBuilder(
         }
         logger.info { "Starter opp dp-behandling" }
     }
+}
+
+fun main() {
+    println(UUIDv7.ny())
 }
