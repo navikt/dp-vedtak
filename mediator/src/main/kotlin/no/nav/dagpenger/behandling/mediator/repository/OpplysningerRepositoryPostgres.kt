@@ -34,6 +34,10 @@ import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
+import no.nav.dagpenger.regel.OpplysningEtellerannet.ikkePåvirketAvStreikEllerLockoutId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.prøvingsdatoId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.søknadsdatoId
+import no.nav.dagpenger.regel.OpplysningEtellerannet.søknadstidspunktId
 import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
@@ -48,27 +52,27 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         private val opplysningerSomHarByttetNavn =
             listOf(
                 Navnebytte(
-                    fra = Opplysningstype.somDato("Søknadstidspunkt".id("Virkningsdato")),
+                    fra = Opplysningstype.dato(søknadstidspunktId, "Søknadstidspunkt", behovId = "Virkningsdato"),
                     til = søknadstidspunkt,
                 ),
                 Navnebytte(
-                    fra = Opplysningstype.somDato("Prøvingsdato".id("Virkningsdato")),
+                    fra = Opplysningstype.dato(prøvingsdatoId, "Prøvingsdato", behovId = "Virkningsdato"),
                     til = prøvingsdato,
                 ),
                 Navnebytte(
-                    fra = Opplysningstype.somDato("Søknadstidspunkt".id("Virkningstidspunkt")),
+                    fra = Opplysningstype.dato(søknadsdatoId, "Søknadstidspunkt", behovId = "Virkningstidspunkt"),
                     til = søknadstidspunkt,
                 ),
                 Navnebytte(
-                    fra = Opplysningstype.somDato("Søknadsdato".id("Søknadstidspunkt")),
+                    fra = Opplysningstype.dato(søknadsdatoId, "Søknadsdato", behovId = "Søknadstidspunkt"),
                     til = søknadsdato,
                 ),
                 Navnebytte(
-                    fra = Opplysningstype.somDato("Søknadstidspunkt".id("DetEkteSøknadstidspunktet")),
+                    fra = Opplysningstype.dato(søknadsdatoId, "Søknadstidspunkt", behovId = "DetEkteSøknadstidspunktet"),
                     til = søknadstidspunkt,
                 ),
                 Navnebytte(
-                    fra = Opplysningstype.somBoolsk("Er medlemmet påvirket av streik eller lock-out?"),
+                    fra = Opplysningstype.boolsk(ikkePåvirketAvStreikEllerLockoutId, "Er medlemmet påvirket av streik eller lock-out?"),
                     til = ikkeStreikEllerLockout,
                 ),
             )

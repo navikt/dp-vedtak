@@ -57,30 +57,6 @@ class Opplysningstype<T : Comparable<T>>(
         val alltidSynlig: Opplysningssjekk = { true }
         val aldriSynlig: Opplysningssjekk = { false }
 
-        fun somDato(
-            opplysningTypeId: OpplysningTypeId,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = Opplysningstype(opplysningTypeId, Dato, formål, synlig)
-
-        fun somDato(
-            navn: String,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = somDato(navn.id(navn), formål, synlig)
-
-        private fun somBoolsk(
-            opplysningTypeId: OpplysningTypeId,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = Opplysningstype(opplysningTypeId, Boolsk, formål, synlig)
-
-        fun somBoolsk(
-            navn: String,
-            formål: Opplysningsformål = Opplysningsformål.Regel,
-            synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-        ) = somBoolsk(navn.id(navn), formål, synlig)
-
         fun heltall(
             id: Id<Int>,
             beskrivelse: String,
