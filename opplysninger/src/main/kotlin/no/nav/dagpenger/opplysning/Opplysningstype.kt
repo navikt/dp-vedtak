@@ -4,7 +4,6 @@ import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
-import no.nav.dagpenger.uuid.UUIDv7
 import java.time.LocalDate
 import java.util.UUID
 
@@ -36,8 +35,7 @@ class Opplysningstype<T : Comparable<T>>(
     val datatype: Datatype<T>,
     val formål: Opplysningsformål,
     val synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-    // todo: Fjerne generering av ny id. MÅ spesifiseres globalt i kodebasen
-    val permanentId: Id<T> = Id(UUIDv7.ny(), datatype),
+    val permanentId: Id<T>,
 ) : Klassifiserbart {
     val id = opplysningTypeId.id
     val navn = opplysningTypeId.beskrivelse
@@ -142,7 +140,7 @@ class Opplysningstype<T : Comparable<T>>(
 
     override fun toString() = navn
 
-    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningTypeId == this.opplysningTypeId
+    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.permanentId == this.permanentId
 
-    override fun hashCode() = opplysningTypeId.hashCode() * 31
+    override fun hashCode() = permanentId.hashCode() * 31
 }

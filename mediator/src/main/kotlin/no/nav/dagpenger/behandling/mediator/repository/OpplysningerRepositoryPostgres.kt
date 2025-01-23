@@ -208,6 +208,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         private fun <T : Comparable<T>> Row.somOpplysningRad(datatype: Datatype<T>): OpplysningRad<T> {
             val opplysingerId = uuid("opplysninger_id")
             val id = uuid("id")
+            val typeUuid = uuid("type_uuid")
 
             val opplysningTypeId = string("type_navn").id(string("type_id"))
             var opplysningstype: Opplysningstype<T> =
@@ -232,6 +233,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     datatype,
                     string("type_formål").let { Opplysningsformål.valueOf(it) },
                     alltidSynlig,
+                    Opplysningstype.Id(typeUuid, datatype),
                 )
 
             val gammeltNavn = opplysningerSomHarByttetNavn.singleOrNull { it.fra == opplysningstype }
@@ -373,7 +375,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                 //language=PostgreSQL
                 """
                 WITH ins AS (
-                    SELECT opplysningstype_id FROM opplysningstype WHERE id = :typeId AND navn = :typeNavn AND datatype = :datatype 
+                    SELECT opplysningstype_id FROM opplysningstype WHERE uuid = :typeUuid AND datatype = :datatype 
                 )
                 INSERT INTO opplysning (id, status, opplysningstype_id, kilde_id, gyldig_fom, gyldig_tom, opprettet)
                 VALUES (:id, :status, (SELECT opplysningstype_id FROM ins), :kilde_id, :fom::timestamp, :tom::timestamp, :opprettet)
@@ -384,8 +386,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     mapOf(
                         "id" to opplysning.id,
                         "status" to opplysning.javaClass.simpleName,
-                        "typeId" to opplysning.opplysningstype.id,
-                        "typeNavn" to opplysning.opplysningstype.navn,
+                        "typeUuid" to opplysning.opplysningstype.permanentId.id,
                         "datatype" to opplysning.opplysningstype.datatype.navn(),
                         "kilde_id" to opplysning.kilde?.id,
                         "fom" to gyldighetsperiode.fom.let { if (it == LocalDate.MIN) null else it },

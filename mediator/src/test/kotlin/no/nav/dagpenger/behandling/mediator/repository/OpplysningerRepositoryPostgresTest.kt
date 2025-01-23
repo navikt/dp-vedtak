@@ -458,13 +458,12 @@ class OpplysningerRepositoryPostgresTest {
     @Test
     fun `skal slette fjernede opplysninger som er utledet av i flere nivåer`() {
         withMigratedDb {
-            val repo = opplysningerRepository()
-            val vaktmesterRepo = VaktmesterPostgresRepo()
-
             val a = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "A")
             val b = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "B")
             val c = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "C")
             val d = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "D")
+            val repo = opplysningerRepository()
+            val vaktmesterRepo = VaktmesterPostgresRepo()
 
             val regelsett =
                 Regelsett("Regelsett") {
