@@ -62,6 +62,10 @@ object ReellArbeidssøker {
 
     //  Som reell arbeidssøker regnes den som er arbeidsfør,
     val erArbeidsfør = boolsk(ErArbeidsførId, beskrivelse = "Kan ta alle typer arbeid", Bruker, behovId = HelseTilAlleTyperJobb)
+    val godkjentArbeidsufør =
+        boolsk("Har helsemessige begrensninger og kan ikke ta alle typer arbeid", synlig = {
+            it.erSann(erArbeidsfør) == false
+        })
     val oppfyllerKravTilArbeidsfør = boolsk(OppfyllerKravTilArbeidsførId, "Oppfyller kravet til å være arbeidsfør", synlig = aldriSynlig)
 
     // a.	å ta ethvert arbeid som er lønnet etter tariff eller sedvane,
@@ -103,11 +107,13 @@ object ReellArbeidssøker {
             regel(godkjentLokalArbeidssøker) { oppslag(prøvingsdato) { false } }
 
             regel(erArbeidsfør) { innhentes }
+            regel(godkjentArbeidsufør) { oppslag(prøvingsdato) { false } }
+
             regel(villigTilEthvertArbeid) { innhentes }
 
             regel(oppfyllerKravTilArbeidssøker) { enAv(kanJobbeDeltid, godkjentDeltidssøker) }
             regel(oppfyllerKravTilMobilitet) { enAv(kanJobbeHvorSomHelst, godkjentLokalArbeidssøker) }
-            regel(oppfyllerKravTilArbeidsfør) { enAv(erArbeidsfør) }
+            regel(oppfyllerKravTilArbeidsfør) { enAv(erArbeidsfør, godkjentArbeidsufør) }
             regel(oppfyllerKravetTilEthvertArbeid) { enAv(villigTilEthvertArbeid) }
 
             regel(registrertArbeidssøker) { innhentMed(prøvingsdato) }
@@ -130,11 +136,14 @@ object ReellArbeidssøker {
 
     val ReellArbeidssøkerKontroll =
         Kontrollpunkt(ReellArbeidssøkerUnntak) {
-            it.har(kravTilArbeidssøker) && !it.finnOpplysning(kravTilArbeidssøker).verdi
+            (it.har(kanJobbeDeltid) && it.finnOpplysning(kanJobbeDeltid).verdi == false) ||
+                (it.har(kanJobbeHvorSomHelst) && it.finnOpplysning(kanJobbeHvorSomHelst).verdi == false) ||
+                (it.har(erArbeidsfør) && it.finnOpplysning(erArbeidsfør).verdi == false) ||
+                (it.har(villigTilEthvertArbeid) && it.finnOpplysning(villigTilEthvertArbeid).verdi == false)
         }
 
     val IkkeRegistrertSomArbeidsøkerKontroll =
         Kontrollpunkt(IkkeRegistrertSomArbeidsøker) {
-            it.har(oppyllerKravTilRegistrertArbeidssøker) && !it.finnOpplysning(oppyllerKravTilRegistrertArbeidssøker).verdi
+            it.har(oppyllerKravTilRegistrertArbeidssøker) && it.finnOpplysning(oppyllerKravTilRegistrertArbeidssøker).verdi == false
         }
 }
