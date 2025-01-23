@@ -2,12 +2,10 @@ package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.opplysning.Opplysningsformål.Bruker
-import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.aldriSynlig
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.boolsk
 import no.nav.dagpenger.opplysning.Opplysningstype.Companion.desimaltall
 import no.nav.dagpenger.opplysning.Regelsett
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.erSann
@@ -81,10 +79,16 @@ object ReellArbeidssøker {
     val kravTilArbeidssøker = boolsk(KravTilArbeidssøkerId, "Krav til arbeidssøker")
 
     val ønsketArbeidstid =
-        desimaltall(ønsketArbeidstidId, "Ønsket arbeidstid", Bruker, behovId = ØnsketArbeidstid, synlig = { it.erSann(kanJobbeDeltid) == false })
-    val minimumVanligArbeidstid = desimaltall(minimumVanligArbeidstidId,"Minimum vanlig arbeidstid", synlig =  { it.erSann(uføre) } )
+        desimaltall(
+            ønsketArbeidstidId,
+            "Ønsket arbeidstid",
+            Bruker,
+            behovId = ØnsketArbeidstid,
+            synlig = { it.erSann(kanJobbeDeltid) == false },
+        )
+    val minimumVanligArbeidstid = desimaltall(minimumVanligArbeidstidId, "Minimum vanlig arbeidstid", synlig = { it.erSann(uføre) })
     val villigTilMinimumArbeidstid =
-        boolsk(villigTilMinimumArbeidstidId,"Villig til å jobbe minimum arbeidstid", synlig = { it.erSann(kanJobbeDeltid) == false })
+        boolsk(villigTilMinimumArbeidstidId, "Villig til å jobbe minimum arbeidstid", synlig = { it.erSann(kanJobbeDeltid) == false })
 
     val regelsett =
         Regelsett(folketrygden.hjemmel(4, 5, "Reelle arbeidssøkere", "4-5 Reell arbeidssøker")) {
