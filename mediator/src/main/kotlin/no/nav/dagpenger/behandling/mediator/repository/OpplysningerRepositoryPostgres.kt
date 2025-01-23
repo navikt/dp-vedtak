@@ -123,9 +123,9 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             BatchStatement(
                 //language=PostgreSQL
                 """
-                INSERT INTO opplysningstype (id, navn, datatype, formål)
-                VALUES (:id, :navn, :datatype, :formaal)
-                ON CONFLICT (id, navn, datatype) DO UPDATE SET formål = :formaal
+                INSERT INTO opplysningstype (id, navn, datatype, formål, uuid)
+                VALUES (:id, :navn, :datatype, :formaal, :uuid)
+                ON CONFLICT (id, navn, datatype) DO UPDATE SET formål = :formaal, uuid = :uuid
                 """.trimIndent(),
                 opplysningstyper.map {
                     mapOf(
@@ -133,6 +133,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         "navn" to it.navn,
                         "datatype" to it.datatype.navn(),
                         "formaal" to it.formål.name,
+                        "uuid" to it.permanentId.id,
                     )
                 },
             ).run(session)
