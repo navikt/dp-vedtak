@@ -30,6 +30,7 @@ import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Redigerbar
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.RegelsettType
+import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.Tekst
@@ -276,8 +277,18 @@ internal fun Opplysning<*>.tilOpplysningDTO(opplysninger: LesbarOpplysninger): O
             this.kilde?.let {
                 val registrert = it.registrert
                 when (it) {
-                    is Saksbehandlerkilde -> OpplysningskildeDTO("Saksbehandler", ident = it.saksbehandler.ident, registrert = registrert)
-                    is Systemkilde -> OpplysningskildeDTO("System", meldingId = it.meldingsreferanseId, registrert = registrert)
+                    is Saksbehandlerkilde ->
+                        OpplysningskildeDTO(
+                            OpplysningskildeDTO.Type.Saksbehandler,
+                            ident = it.saksbehandler.ident,
+                            registrert = registrert,
+                        )
+                    is Systemkilde ->
+                        OpplysningskildeDTO(
+                            OpplysningskildeDTO.Type.System,
+                            meldingId = it.meldingsreferanseId,
+                            registrert = registrert,
+                        )
                 }
             },
         utledetAv =

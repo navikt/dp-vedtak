@@ -706,6 +706,7 @@ components:
       properties:
         type:
           type: string
+          enum: [ "Saksbehandler", "System" ]
         registrert:
           type: string
           format: date-time
