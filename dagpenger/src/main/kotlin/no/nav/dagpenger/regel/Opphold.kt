@@ -40,6 +40,6 @@ object Opphold {
 
             utfall(oppfyllerKravet) { alle(oppfyllerKravetTilOpphold, oppfyllerMedlemskap) }
 
-            relevantHvis { alderOgMinsteinntekt(it) }
+            relevantHvis { kravetTilAlderOgMinsteinntektErOppfylt(it) }
         }
 }

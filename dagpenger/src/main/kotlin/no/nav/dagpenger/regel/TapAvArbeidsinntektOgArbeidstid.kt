@@ -148,7 +148,7 @@ object TapAvArbeidsinntektOgArbeidstid {
 
             avklaring(TapAvArbeidstidBeregningsregel)
 
-            relevantHvis { alderOgMinsteinntekt(it) }
+            relevantHvis { kravetTilAlderOgMinsteinntektErOppfylt(it) }
         }
 
     val TapArbeidstidBeregningsregelKontroll =

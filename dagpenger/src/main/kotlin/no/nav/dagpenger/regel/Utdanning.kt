@@ -138,6 +138,6 @@ object Utdanning {
 
             utfall(kravTilUtdanning) { enAv(oppfyllerKravetPåUnntak, svartNeiPåUtdanning) }
 
-            relevantHvis { alderOgMinsteinntekt(it) }
+            relevantHvis { kravetTilAlderOgMinsteinntektErOppfylt(it) }
         }
 }

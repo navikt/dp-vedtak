@@ -203,7 +203,7 @@ object SamordingUtenforFolketrygden {
                 )
             }
 
-            relevantHvis { alderOgMinsteinntekt(it) }
+            relevantHvis { kravetTilAlderOgMinsteinntektErOppfylt(it) }
         }
 
     val ønsketResultat = listOf(skalSamordnesUtenforFolketrygden, dagsatsSamordnetUtenforFolketrygden)

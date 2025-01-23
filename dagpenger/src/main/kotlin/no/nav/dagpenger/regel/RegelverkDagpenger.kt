@@ -36,6 +36,6 @@ val RegelverkDagpenger =
         VernepliktFastsetting.regelsett,
     )
 
-fun alderOgMinsteinntekt(opplysninger: LesbarOpplysninger): Boolean = opplysninger.erSann(minsteinntektEllerVerneplikt)
+fun kravetTilAlderOgMinsteinntektErOppfylt(opplysninger: LesbarOpplysninger): Boolean = opplysninger.erSann(minsteinntektEllerVerneplikt)
 
 fun kravPåDagpenger(opplysninger: LesbarOpplysninger): Boolean = opplysninger.erSann(kravPåDagpenger)

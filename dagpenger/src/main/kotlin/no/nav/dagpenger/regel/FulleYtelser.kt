@@ -23,7 +23,7 @@ object FulleYtelser {
         ) {
             utfall(ikkeFulleYtelser) { oppslag(prøvingsdato) { true } }
 
-            relevantHvis { alderOgMinsteinntekt(it) }
+            relevantHvis { kravetTilAlderOgMinsteinntektErOppfylt(it) }
         }
 
     val ønsketResultat = listOf(ikkeFulleYtelser)
