@@ -39,7 +39,7 @@ import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktFastsa
 object TapAvArbeidsinntektOgArbeidstid {
     internal val tapAvArbeid = Opplysningstype.boolsk(harTaptArbeidId, "Har tapt arbeid", behovId = HarTaptArbeid)
     internal val kravPåLønn = Opplysningstype.boolsk(kravPåLønnId, "Krav på lønn fra tidligere arbeidsgiver", behovId = KravPåLønn)
-    private val ikkeKravPåLønn =
+    val ikkeKravPåLønn =
         Opplysningstype.boolsk(
             ikkeKravPåLønnFraTidligereArbeidsgiverId,
             "Ikke krav på lønn fra tidligere arbeidsgiver",
