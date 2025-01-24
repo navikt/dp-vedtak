@@ -149,7 +149,7 @@ internal class SakRepositoryPostgres : SakRepository {
                              LEFT JOIN behandling_opplysninger bo ON opplysningstabell.opplysninger_id = bo.opplysninger_id
                              LEFT JOIN behandling b ON bo.behandling_id = b.behandling_id
                              LEFT JOIN person_behandling pb ON b.behandling_id = pb.behandling_id
-                    WHERE type_id = 'fagsakId'
+                    WHERE type_navn = 'fagsakId'
                       AND verdi_heltall = :fagsakId
                     """.trimIndent(),
                     mapOf("fagsakId" to fagsakId),
