@@ -168,9 +168,9 @@ object Samordning {
             regel(samordnetDagsats) { substraksjonTilNull(dagsatsEtterNittiProsent, sumAndreYtelser) }
             regel(kanUtbetale) { størreEnnEllerLik(dagsatsEtterNittiProsent, sumAndreYtelser) }
 
-            regel(utfallEtterSamordning) { enAv(kanUtbetale, harBarnetillegg) }
+            utfall(utfallEtterSamordning) { enAv(kanUtbetale, harBarnetillegg) }
 
-            utfall(skalSamordnes) {
+            regel(skalSamordnes) {
                 enAv(
                     sykepenger,
                     pleiepenger,
