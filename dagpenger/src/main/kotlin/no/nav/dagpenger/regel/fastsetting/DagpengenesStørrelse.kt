@@ -109,7 +109,7 @@ object DagpengenesStørrelse {
 
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 12, "Dagpengenes størrelse", "4-12 Sats og barnetillegg"),
+            folketrygden.hjemmel(4, 12, "Dagpengenes størrelse", "Sats og barnetillegg"),
             Fastsettelse,
         ) {
             regel(barn) { innhentMed(søknadIdOpplysningstype) }
