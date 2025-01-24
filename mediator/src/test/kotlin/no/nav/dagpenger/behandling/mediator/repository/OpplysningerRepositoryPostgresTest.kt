@@ -35,7 +35,6 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.ULID
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag

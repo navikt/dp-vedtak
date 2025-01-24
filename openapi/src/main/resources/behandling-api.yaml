@@ -576,11 +576,15 @@ components:
     Opplysningstype:
       type: object
       required:
-        - id
+        - uuid
+        - behovId
         - navn
         - datatype
       properties:
-        id:
+        uuid:
+          type: string
+          format: uuid
+        behovId:
           type: string
         navn:
           type: string

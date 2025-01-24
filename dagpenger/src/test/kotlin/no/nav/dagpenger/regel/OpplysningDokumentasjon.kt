@@ -23,8 +23,8 @@ class OpplysningDokumentasjon {
             >|Behov|Beskrivelse|Logisk datatype|Datatype|
             >|---|---|---|---|
             ${
-                behov.sortedBy { it.id }.joinToString("\n") {
-                    ">|${it.id} | ${it.navn} | ${it.datatype}|${it.datatype.klasse.simpleName}|"
+                behov.sortedBy { it.behovId }.joinToString("\n") {
+                    ">|${it.behovId} | ${it.navn} | ${it.datatype}|${it.datatype.klasse.simpleName}|"
                 }
             }
             """.trimMargin(">")

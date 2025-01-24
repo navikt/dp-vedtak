@@ -9,6 +9,7 @@ import no.nav.dagpenger.opplysning.InntektDataType
 import no.nav.dagpenger.opplysning.Opplysningstype
 import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Tekst
+import no.nav.dagpenger.uuid.UUIDv7
 import java.util.UUID
 
 object OpplysningsTyper {
@@ -281,4 +282,11 @@ object OpplysningsTyper {
     val arbeidstimerId = Opplysningstype.Id(UUID.fromString("01948ea0-e25c-7c47-8429-a05045d80eca"), Heltall)
     val forbrukId = Opplysningstype.Id(UUID.fromString("01948ea0-ffdc-7964-ab55-52a7e35e1020"), Boolsk)
     val terskelId = Opplysningstype.Id(UUID.fromString("01948ea2-22f3-7da8-9547-90d0c64e74e0"), Desimaltall)
+}
+
+/**
+ * Lager ny UUID for en ny opplysningstype
+ */
+fun main() {
+    println(UUIDv7.ny())
 }

@@ -116,9 +116,9 @@ abstract class Regel<T : Comparable<T>> internal constructor(
             """
             Prøver å kjøre ${this::class.simpleName}($produserer), men mangler avhengigheter.
             Det er mismatch mellom lagPlan() og lagProdukt().
-            - Avhengigheter vi mangler: ${manglerAvhengigheter.joinToString { it.id }}
-            - Avhengigheter vi trenger: ${avhengerAv.joinToString { it.id }}
-            - Avhengigheter vi fant: ${basertPå.joinToString { it.opplysningstype.id }}
+            - Avhengigheter vi mangler: ${manglerAvhengigheter.joinToString { it.behovId }}
+            - Avhengigheter vi trenger: ${avhengerAv.joinToString { it.behovId }}
+            - Avhengigheter vi fant: ${basertPå.joinToString { it.opplysningstype.behovId }}
             """.trimIndent()
         }
 }

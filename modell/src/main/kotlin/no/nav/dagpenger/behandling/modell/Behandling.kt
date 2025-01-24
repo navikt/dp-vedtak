@@ -1007,8 +1007,8 @@ sealed class BehandlingHendelser(
 private fun PersonHendelse.lagBehov(informasjonsbehov: Informasjonsbehov) =
     informasjonsbehov.onEach { (behov, avhengigheter) ->
         behov(
-            type = OpplysningBehov(behov.id),
-            melding = "Trenger en opplysning (${behov.id})",
+            type = OpplysningBehov(behov.behovId),
+            melding = "Trenger en opplysning (${behov.behovId})",
             detaljer =
                 avhengigheter.associate { avhengighet ->
                     val verdi =
@@ -1016,7 +1016,7 @@ private fun PersonHendelse.lagBehov(informasjonsbehov: Informasjonsbehov) =
                             is Ulid -> (avhengighet.verdi as Ulid).verdi
                             else -> avhengighet.verdi
                         }
-                    avhengighet.opplysningstype.id to verdi
+                    avhengighet.opplysningstype.behovId to verdi
                 } + this.kontekstMap() + mapOf("@utledetAv" to avhengigheter.map { it.id }),
         )
     }

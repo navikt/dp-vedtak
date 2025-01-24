@@ -28,20 +28,11 @@ import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Tekst
 import no.nav.dagpenger.opplysning.ULID
 import no.nav.dagpenger.opplysning.Utledning
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.verdier.Barn
 import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
-import no.nav.dagpenger.regel.OpplysningsTyper.ikkePåvirketAvStreikEllerLockoutId
-import no.nav.dagpenger.regel.OpplysningsTyper.prøvingsdatoId
-import no.nav.dagpenger.regel.OpplysningsTyper.søknadsdatoId
-import no.nav.dagpenger.regel.OpplysningsTyper.søknadstidspunktId
-import no.nav.dagpenger.regel.StreikOgLockout.ikkeStreikEllerLockout
-import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
-import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
-import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
 import org.postgresql.util.PGobject
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -49,36 +40,8 @@ import java.util.UUID
 
 class OpplysningerRepositoryPostgres : OpplysningerRepository {
     private companion object {
-        private val opplysningerSomHarByttetNavn =
-            listOf(
-                Navnebytte(
-                    fra = Opplysningstype.dato(søknadstidspunktId, "Søknadstidspunkt", behovId = "Virkningsdato"),
-                    til = søknadstidspunkt,
-                ),
-                Navnebytte(
-                    fra = Opplysningstype.dato(prøvingsdatoId, "Prøvingsdato", behovId = "Virkningsdato"),
-                    til = prøvingsdato,
-                ),
-                Navnebytte(
-                    fra = Opplysningstype.dato(søknadsdatoId, "Søknadstidspunkt", behovId = "Virkningstidspunkt"),
-                    til = søknadstidspunkt,
-                ),
-                Navnebytte(
-                    fra = Opplysningstype.dato(søknadsdatoId, "Søknadsdato", behovId = "Søknadstidspunkt"),
-                    til = søknadsdato,
-                ),
-                Navnebytte(
-                    fra = Opplysningstype.dato(søknadsdatoId, "Søknadstidspunkt", behovId = "DetEkteSøknadstidspunktet"),
-                    til = søknadstidspunkt,
-                ),
-                Navnebytte(
-                    fra = Opplysningstype.boolsk(ikkePåvirketAvStreikEllerLockoutId, "Er medlemmet påvirket av streik eller lock-out?"),
-                    til = ikkeStreikEllerLockout,
-                ),
-            )
-
         private val opplysningstyper by lazy {
-            Opplysningstype.definerteTyper.associateBy { it.opplysningTypeId }
+            Opplysningstype.definerteTyper.associateBy { it.id }
         }
 
         private val logger = KotlinLogging.logger { }
@@ -123,17 +86,17 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             BatchStatement(
                 //language=PostgreSQL
                 """
-                INSERT INTO opplysningstype (id, navn, datatype, formål, uuid)
-                VALUES (:id, :navn, :datatype, :formaal, :uuid)
-                ON CONFLICT (id, navn, datatype) DO UPDATE SET formål = :formaal, uuid = :uuid
+                INSERT INTO opplysningstype (behov_id, navn, datatype, formål, uuid)
+                VALUES (:behovId, :navn, :datatype, :formaal, :uuid)
+                ON CONFLICT (uuid, datatype) DO UPDATE SET formål = :formaal, navn = :navn, behov_id = :behovId
                 """.trimIndent(),
                 opplysningstyper.map {
                     mapOf(
-                        "id" to it.id,
+                        "behovId" to it.behovId,
                         "navn" to it.navn,
                         "datatype" to it.datatype.navn(),
                         "formaal" to it.formål.name,
-                        "uuid" to it.permanentId.id,
+                        "uuid" to it.id.id,
                     )
                 },
             ).run(session)
@@ -210,15 +173,15 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
             val id = uuid("id")
             val typeUuid = uuid("type_uuid")
 
-            val opplysningTypeId = string("type_navn").id(string("type_id"))
-            var opplysningstype: Opplysningstype<T> =
+            val opplysningTypeId = Opplysningstype.Id(typeUuid, datatype)
+            val opplysningstype: Opplysningstype<T> =
                 opplysningstyper[opplysningTypeId]
                     ?.let {
                         if (datatype != it.datatype) {
                             logger.warn(
                                 """
                                 Lastet opplysningstype med feil 
-                                datatype: ${opplysningTypeId.id} - ${opplysningTypeId.beskrivelse}, 
+                                datatype: ${opplysningTypeId.datatype} - Id ${opplysningTypeId.id} - Har navn: ${string("type_id")}
                                 database: $datatype, 
                                 kode: ${it.datatype}
                                 """.trimIndent(),
@@ -229,19 +192,12 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         it as Opplysningstype<T>
                     } ?: Opplysningstype(
                     // Fallback når opplysningstype ikke er definert i kode lengre
-                    string("type_navn").id(string("type_id")),
-                    datatype,
-                    string("type_formål").let { Opplysningsformål.valueOf(it) },
-                    alltidSynlig,
-                    Opplysningstype.Id(typeUuid, datatype),
+                    id = opplysningTypeId,
+                    navn = string("type_navn"),
+                    behovId = string("type_behov_id"),
+                    formål = Opplysningsformål.valueOf(string("type_formål")),
+                    synlig = alltidSynlig,
                 )
-
-            val gammeltNavn = opplysningerSomHarByttetNavn.singleOrNull { it.fra == opplysningstype }
-            if (gammeltNavn != null) {
-                @Suppress("UNCHECKED_CAST")
-                opplysningstype = gammeltNavn.til as Opplysningstype<T>
-                logger.info { "Bytter navn på opplysning fra ${gammeltNavn.fra.navn} til ${gammeltNavn.til.navn}" }
-            }
 
             val gyldighetsperiode =
                 Gyldighetsperiode(
@@ -386,7 +342,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     mapOf(
                         "id" to opplysning.id,
                         "status" to opplysning.javaClass.simpleName,
-                        "typeUuid" to opplysning.opplysningstype.permanentId.id,
+                        "typeUuid" to opplysning.opplysningstype.id.id,
                         "datatype" to opplysning.opplysningstype.datatype.navn(),
                         "kilde_id" to opplysning.kilde?.id,
                         "fom" to gyldighetsperiode.fom.let { if (it == LocalDate.MIN) null else it },
@@ -600,9 +556,4 @@ private data class OpplysningRad<T : Comparable<T>>(
     val opprettet: LocalDateTime,
     val erstattetAv: List<UUID>,
     val erstatter: UUID? = null,
-)
-
-private class Navnebytte<T : Comparable<T>>(
-    val fra: Opplysningstype<T>,
-    val til: Opplysningstype<T>,
 )

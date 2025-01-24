@@ -11,18 +11,6 @@ interface Klassifiserbart {
     fun er(type: Opplysningstype<*>): Boolean
 }
 
-fun String.id(id: String) = OpplysningTypeId(id = id, beskrivelse = this)
-
-class OpplysningTypeId(
-    // todo: Bytte til behovId
-    val id: String,
-    val beskrivelse: String,
-) {
-    override fun equals(other: Any?): Boolean = other is OpplysningTypeId && other.id == this.id && other.beskrivelse == this.beskrivelse
-
-    override fun hashCode() = id.hashCode() * beskrivelse.hashCode() * 31
-}
-
 enum class Opplysningsformål {
     Legacy(),
     Bruker(),
@@ -31,14 +19,13 @@ enum class Opplysningsformål {
 }
 
 class Opplysningstype<T : Comparable<T>>(
-    val opplysningTypeId: OpplysningTypeId,
-    val datatype: Datatype<T>,
+    val id: Id<T>,
+    val navn: String,
+    val behovId: String,
     val formål: Opplysningsformål,
     val synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-    val permanentId: Id<T>,
 ) : Klassifiserbart {
-    val id = opplysningTypeId.id
-    val navn = opplysningTypeId.beskrivelse
+    val datatype = id.datatype
 
     init {
         definerteTyper.add(this)
@@ -133,14 +120,14 @@ class Opplysningstype<T : Comparable<T>>(
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
             behovId: String = beskrivelse,
-        ): Opplysningstype<T> = Opplysningstype(OpplysningTypeId(behovId, beskrivelse), id.datatype, formål, synlig, id)
+        ): Opplysningstype<T> = Opplysningstype(id, beskrivelse, behovId, formål, synlig)
     }
 
-    override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId
+    override infix fun er(type: Opplysningstype<*>): Boolean = id == type.id
 
     override fun toString() = navn
 
-    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.permanentId == this.permanentId
+    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.id == this.id
 
-    override fun hashCode() = permanentId.hashCode() * 31
+    override fun hashCode() = id.hashCode() * 31
 }
