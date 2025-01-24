@@ -137,7 +137,7 @@ Dette er opplysninger som blir brukt av regelverket.
 |0194881f-9434-79e8-a64d-1a23cc5d86e9|Sum andre ytelser|Sum andre ytelser|Penger|Beløp|
 |0194881f-9434-79e8-a64d-1a23cc5d86ea|Medlem har reduserte ytelser fra folketrygden (Samordning)|Medlem har reduserte ytelser fra folketrygden (Samordning)|Boolsk|boolean|
 |0194881f-9434-79e8-a64d-1a23cc5d86eb|Samordnet dagsats uten barnetillegg|Samordnet dagsats uten barnetillegg|Penger|Beløp|
-|0194881f-9434-79e8-a64d-1a23cc5d86ec|Samordnet dagsats er negativ eller 0|Samordnet dagsats er negativ eller 0|Boolsk|boolean|
+|0194881f-9434-79e8-a64d-1a23cc5d86ec|Samordnet dagsats er større enn 0|Samordnet dagsats er større enn 0|Boolsk|boolean|
 |0194881f-9434-79e8-a64d-1a23cc5d86ed|Antall timer arbeidstiden skal samordnes mot|Antall timer arbeidstiden skal samordnes mot|Desimaltall|double|
 |0194881f-9434-79e8-a64d-1a23cc5d86ee|Samordnet fastsatt arbeidstid|Samordnet fastsatt arbeidstid|Desimaltall|double|
 |0194881f-9434-79e8-a64d-1a23cc5d86ef|Utfall etter samordning|Utfall etter samordning|Boolsk|boolean|

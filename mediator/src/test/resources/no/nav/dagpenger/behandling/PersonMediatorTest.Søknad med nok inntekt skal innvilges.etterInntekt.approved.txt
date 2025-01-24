@@ -189,7 +189,7 @@ Andel av dagsats uten barnetillegg avkortet til maks andel av dagpengegrunnlaget
 Sykepenger dagsats
 Sum andre ytelser
 Samordnet dagsats uten barnetillegg
-Samordnet dagsats er negativ eller 0
+Samordnet dagsats er større enn 0
 Samordnet ukessats uten barnetillegg
 Utfall etter samordning
 Minste mulige ukessats som som kan brukes
