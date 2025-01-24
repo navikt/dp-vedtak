@@ -313,6 +313,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
 
         private fun batchOpplysningLink(opplysninger: List<Opplysning<*>>) =
             BatchStatement(
+                //language=PostgreSQL
                 """
                 INSERT INTO opplysninger_opplysning (opplysninger_id, opplysning_id) 
                 VALUES (:opplysningerId, :opplysningId)

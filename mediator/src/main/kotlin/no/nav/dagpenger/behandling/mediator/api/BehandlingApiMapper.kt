@@ -41,6 +41,7 @@ import no.nav.dagpenger.regel.Opphold.medlemFolketrygden
 import no.nav.dagpenger.regel.Opphold.oppholdINorge
 import no.nav.dagpenger.regel.Opphold.unntakForOpphold
 import no.nav.dagpenger.regel.ReellArbeidssøker.erArbeidsfør
+import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentArbeidsufør
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentDeltidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.godkjentLokalArbeidssøker
 import no.nav.dagpenger.regel.ReellArbeidssøker.kanJobbeDeltid
@@ -283,6 +284,7 @@ internal fun Opplysning<*>.tilOpplysningDTO(opplysninger: LesbarOpplysninger): O
                             ident = it.saksbehandler.ident,
                             registrert = registrert,
                         )
+
                     is Systemkilde ->
                         OpplysningskildeDTO(
                             OpplysningskildeDTO.Type.System,
@@ -335,6 +337,7 @@ private val redigerbareOpplysninger =
                 villigTilEthvertArbeid,
                 godkjentDeltidssøker,
                 godkjentLokalArbeidssøker,
+                godkjentArbeidsufør,
                 // 4-6 Utdanning
                 tarUtdanning,
                 deltakelseIArbeidsmarkedstiltak,

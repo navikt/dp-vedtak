@@ -41,6 +41,7 @@ Oppfyller kravet til minsteinntekt eller verneplikt
 Minimum vanlig arbeidstid
 Det er godkjent at bruker kun søker deltidsarbeid
 Det er godkjent at bruker kun søk arbeid lokalt
+Har helsemessige begrensninger og kan ikke ta alle typer arbeid
 Ønsket arbeidstid
 Kan jobbe heltid og deltid
 Kan jobbe i hele Norge

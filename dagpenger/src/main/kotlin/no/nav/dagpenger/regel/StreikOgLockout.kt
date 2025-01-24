@@ -36,5 +36,7 @@ object StreikOgLockout {
             regel(deltarIStreikOgLockout) { oppslag(prøvingsdato) { false } }
             regel(sammeBedriftOgPåvirket) { oppslag(prøvingsdato) { false } }
             utfall(ikkeStreikEllerLockout) { ingenAv(deltarIStreikOgLockout, sammeBedriftOgPåvirket) }
+
+            relevantHvis { kravetTilAlderOgMinsteinntektErOppfylt(it) }
         }
 }

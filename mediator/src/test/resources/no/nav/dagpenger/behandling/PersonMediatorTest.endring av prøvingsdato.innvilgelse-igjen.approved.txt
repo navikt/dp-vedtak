@@ -18,7 +18,6 @@ Kan jobbe heltid og deltid
 Kan jobbe i hele Norge
 Kan ta alle typer arbeid
 Villig til å bytte yrke
-Oppfyller kravet til å være arbeidsfør
 Oppfyller kravet til å ta ethvert arbeid
 Tar utdanning eller opplæring?
 Har svart ja på spørsmål om utdanning eller opplæring
@@ -40,6 +39,7 @@ Er personen medlem av folketrygden
 Minimum vanlig arbeidstid
 Det er godkjent at bruker kun søker deltidsarbeid
 Det er godkjent at bruker kun søk arbeid lokalt
+Har helsemessige begrensninger og kan ikke ta alle typer arbeid
 Deltar medlemmet i streik eller er omfattet av lock-out?
 Ledig ved samme bedrift eller arbeidsplass, og blir påvirket av utfallet?
 Har tapt arbeid
@@ -108,6 +108,7 @@ Oppfyller kravet til medlemskap
 Villig til å jobbe minimum arbeidstid
 Oppfyller kravet til heltid- og deltidsarbeid
 Oppfyller kravet til mobilitet
+Oppfyller kravet til å være arbeidsfør
 Er medlemmet ikke påvirket av streik eller lock-out?
 Ikke krav på lønn fra tidligere arbeidsgiver
 Krav til tap av arbeidsinntekt

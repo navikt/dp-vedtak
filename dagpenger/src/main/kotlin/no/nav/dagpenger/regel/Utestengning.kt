@@ -24,5 +24,7 @@ object Utestengning {
         ) {
             regel(utestengt) { oppslag(prøvingsdato) { false } }
             utfall(oppfyllerKravetTilIkkeUtestengt) { ikke(utestengt) }
+
+            relevantHvis { kravetTilAlderOgMinsteinntektErOppfylt(it) }
         }
 }

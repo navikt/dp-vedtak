@@ -22,6 +22,8 @@ object FulleYtelser {
             ),
         ) {
             utfall(ikkeFulleYtelser) { oppslag(prøvingsdato) { true } }
+
+            relevantHvis { kravetTilAlderOgMinsteinntektErOppfylt(it) }
         }
 
     val ønsketResultat = listOf(ikkeFulleYtelser)

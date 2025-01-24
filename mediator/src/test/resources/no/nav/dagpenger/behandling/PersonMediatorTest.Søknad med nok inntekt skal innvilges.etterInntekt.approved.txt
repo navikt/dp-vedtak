@@ -45,6 +45,7 @@ Er personen medlem av folketrygden
 Minimum vanlig arbeidstid
 Det er godkjent at bruker kun søker deltidsarbeid
 Det er godkjent at bruker kun søk arbeid lokalt
+Har helsemessige begrensninger og kan ikke ta alle typer arbeid
 Deltar medlemmet i streik eller er omfattet av lock-out?
 Ledig ved samme bedrift eller arbeidsplass, og blir påvirket av utfallet?
 Har tapt arbeid

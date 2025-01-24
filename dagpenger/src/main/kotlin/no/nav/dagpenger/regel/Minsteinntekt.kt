@@ -24,6 +24,7 @@ import no.nav.dagpenger.opplysning.regel.multiplikasjon
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.størreEnnEllerLik
 import no.nav.dagpenger.opplysning.verdier.Beløp
+import no.nav.dagpenger.regel.Alderskrav.kravTilAlder
 import no.nav.dagpenger.regel.Behov.Inntekt
 import no.nav.dagpenger.regel.Behov.OpptjeningsperiodeFraOgMed
 import no.nav.dagpenger.regel.GrenseverdierForMinsteArbeidsinntekt.finnTerskel
@@ -46,6 +47,7 @@ import no.nav.dagpenger.regel.Opptjeningstid.sisteAvsluttendendeKalenderMåned
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadstidspunkt
+import no.nav.dagpenger.regel.Verneplikt.oppfyllerKravetTilVerneplikt
 import java.time.LocalDate
 
 object Minsteinntekt {
@@ -122,6 +124,19 @@ object Minsteinntekt {
             avklaring(Avklaringspunkter.SvangerskapsrelaterteSykepenger)
             avklaring(Avklaringspunkter.InntektNesteKalendermåned)
             avklaring(Avklaringspunkter.ØnskerEtterRapporteringsfrist)
+
+            relevantHvis {
+                // Hvis alder ikke er oppfylt, er minsteinntekt ikke relevant
+                if (!it.erSann(kravTilAlder)) return@relevantHvis false
+
+                // Hvis alder er oppfylt, er minsteinntekt relevant hvis:
+                // - Inntekt er oppfylt, eller
+                // - Verneplikt er oppfylt samtidig som inntekt ikke er nødvendig
+                if (it.erSann(minsteinntekt)) return@relevantHvis true
+                if (it.erSann(oppfyllerKravetTilVerneplikt)) return@relevantHvis false
+
+                true
+            }
         }
 
     private fun grunnbeløpFor(it: LocalDate) =
@@ -132,7 +147,7 @@ object Minsteinntekt {
 
     val SvangerskapsrelaterteSykepengerKontroll =
         Kontrollpunkt(Avklaringspunkter.SvangerskapsrelaterteSykepenger) {
-            it.har(inntektFraSkatt) && it.erSann(minsteinntekt) == false
+            it.har(inntektFraSkatt) && it.finnOpplysning(minsteinntekt).verdi == false
         }
 
     val EØSArbeidKontroll =
