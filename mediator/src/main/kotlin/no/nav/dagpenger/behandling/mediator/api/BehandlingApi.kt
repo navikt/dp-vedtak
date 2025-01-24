@@ -88,20 +88,21 @@ internal fun Application.behandlingApi(
             val typer =
                 opplysningstyper.map {
                     OpplysningstypeDTO(
-                        it.id.id,
-                        it.behovId,
-                        it.navn,
-                        when (it.datatype) {
-                            Boolsk -> DataTypeDTO.boolsk
-                            Dato -> DataTypeDTO.dato
-                            Desimaltall -> DataTypeDTO.desimaltall
-                            Heltall -> DataTypeDTO.heltall
-                            ULID -> DataTypeDTO.ulid
-                            Penger -> DataTypeDTO.penger
-                            InntektDataType -> DataTypeDTO.inntekt
-                            BarnDatatype -> DataTypeDTO.barn
-                            Tekst -> DataTypeDTO.tekst
-                        },
+                        opplysningTypeId = it.id.uuid,
+                        behovId = it.behovId,
+                        navn = it.navn,
+                        datatype =
+                            when (it.datatype) {
+                                Boolsk -> DataTypeDTO.boolsk
+                                Dato -> DataTypeDTO.dato
+                                Desimaltall -> DataTypeDTO.desimaltall
+                                Heltall -> DataTypeDTO.heltall
+                                ULID -> DataTypeDTO.ulid
+                                Penger -> DataTypeDTO.penger
+                                InntektDataType -> DataTypeDTO.inntekt
+                                BarnDatatype -> DataTypeDTO.barn
+                                Tekst -> DataTypeDTO.tekst
+                            },
                     )
                 }
             call.respond(HttpStatusCode.OK, typer)

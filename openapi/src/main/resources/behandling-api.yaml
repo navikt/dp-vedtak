@@ -576,14 +576,13 @@ components:
     Opplysningstype:
       type: object
       required:
-        - uuid
+        - opplysningTypeId
         - behovId
         - navn
         - datatype
       properties:
-        uuid:
-          type: string
-          format: uuid
+        opplysningTypeId:
+          '$ref': '#/components/schemas/opplysningTypeId'
         behovId:
           type: string
         navn:
@@ -592,6 +591,10 @@ components:
           $ref: '#/components/schemas/DataType'
 
     OpplysningsId:
+      type: string
+      format: uuid
+
+    opplysningTypeId:
       type: string
       format: uuid
 
@@ -663,6 +666,7 @@ components:
       type: object
       required:
         - id
+        - opplysningTypeId
         - navn
         - verdi
         - datatype
@@ -673,6 +677,8 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/OpplysningsId'
+        opplysningTypeId:
+            $ref: '#/components/schemas/opplysningTypeId'
         navn:
           type: string
         verdi:

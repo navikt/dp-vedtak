@@ -96,7 +96,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                         "navn" to it.navn,
                         "datatype" to it.datatype.navn(),
                         "formaal" to it.formål.name,
-                        "uuid" to it.id.id,
+                        "uuid" to it.id.uuid,
                     )
                 },
             ).run(session)
@@ -181,7 +181,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                             logger.warn(
                                 """
                                 Lastet opplysningstype med feil 
-                                datatype: ${opplysningTypeId.datatype} - Id ${opplysningTypeId.id} - Har navn: ${string("type_id")}
+                                datatype: ${opplysningTypeId.datatype} - Id ${opplysningTypeId.uuid} - Har navn: ${string("type_id")}
                                 database: $datatype, 
                                 kode: ${it.datatype}
                                 """.trimIndent(),
@@ -343,7 +343,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
                     mapOf(
                         "id" to opplysning.id,
                         "status" to opplysning.javaClass.simpleName,
-                        "typeUuid" to opplysning.opplysningstype.id.id,
+                        "typeUuid" to opplysning.opplysningstype.id.uuid,
                         "datatype" to opplysning.opplysningstype.datatype.navn(),
                         "kilde_id" to opplysning.kilde?.id,
                         "fom" to gyldighetsperiode.fom.let { if (it == LocalDate.MIN) null else it },

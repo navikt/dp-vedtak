@@ -153,7 +153,7 @@ internal class SakRepositoryPostgres : SakRepository {
                     WHERE type_uuid = :typeUuid
                       AND verdi_heltall = :fagsakId
                     """.trimIndent(),
-                    mapOf("fagsakId" to fagsakId, "typeUuid" to OpplysningsTyper.FagsakIdId.id),
+                    mapOf("fagsakId" to fagsakId, "typeUuid" to OpplysningsTyper.FagsakIdId.uuid),
                 ).map { row ->
                     Behandling(
                         row.string("ident"),

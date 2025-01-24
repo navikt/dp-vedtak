@@ -30,7 +30,6 @@ import no.nav.dagpenger.opplysning.Penger
 import no.nav.dagpenger.opplysning.Redigerbar
 import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.RegelsettType
-import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
 import no.nav.dagpenger.opplysning.Tekst
@@ -250,6 +249,7 @@ internal fun Avklaring.tilAvklaringDTO(): AvklaringDTO {
 internal fun Opplysning<*>.tilOpplysningDTO(opplysninger: LesbarOpplysninger): OpplysningDTO =
     OpplysningDTO(
         id = this.id,
+        opplysningTypeId = this.opplysningstype.id.uuid,
         navn = this.opplysningstype.navn,
         verdi =
             when (this.opplysningstype.datatype) {

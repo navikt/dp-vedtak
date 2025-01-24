@@ -28,8 +28,8 @@ class OpplysningstyperDokumentasjon {
             >|UUID|Beskrivelse|Behov|Logisk datatype|Datatype|
             >|--|---|---|---|---|
             ${
-                opplysninger.sortedBy { it.id.id }.joinToString("\n") {
-                    ">|${it.id.id}|${it.navn}|${it.behovId}|${it.datatype}|${it.datatype.klasse.simpleName}|"
+                opplysninger.sortedBy { it.id.uuid }.joinToString("\n") {
+                    ">|${it.id.uuid}|${it.navn}|${it.behovId}|${it.datatype}|${it.datatype.klasse.simpleName}|"
                 }
             }
             """.trimMargin(">")

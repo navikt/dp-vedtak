@@ -32,7 +32,7 @@ class Opplysningstype<T : Comparable<T>>(
     }
 
     data class Id<T : Comparable<T>>(
-        val id: UUID,
+        val uuid: UUID,
         val datatype: Datatype<T>,
     )
 
