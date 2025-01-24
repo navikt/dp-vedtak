@@ -15,6 +15,7 @@ import mu.withLoggingContext
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.behandling.mediator.mottak.SakRepository.Behandling
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType
+import no.nav.dagpenger.regel.OpplysningsTyper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
@@ -149,10 +150,10 @@ internal class SakRepositoryPostgres : SakRepository {
                              LEFT JOIN behandling_opplysninger bo ON opplysningstabell.opplysninger_id = bo.opplysninger_id
                              LEFT JOIN behandling b ON bo.behandling_id = b.behandling_id
                              LEFT JOIN person_behandling pb ON b.behandling_id = pb.behandling_id
-                    WHERE type_navn = 'fagsakId'
+                    WHERE type_uuid = :typeUuid
                       AND verdi_heltall = :fagsakId
                     """.trimIndent(),
-                    mapOf("fagsakId" to fagsakId),
+                    mapOf("fagsakId" to fagsakId, "typeUuid" to OpplysningsTyper.FagsakIdId.id),
                 ).map { row ->
                     Behandling(
                         row.string("ident"),

@@ -26,6 +26,7 @@ import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.mediator.lagVedtak
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
+import no.nav.dagpenger.behandling.mediator.mottak.SakRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringKafkaObservatør
 import no.nav.dagpenger.behandling.mediator.repository.AvklaringRepositoryPostgres
 import no.nav.dagpenger.behandling.mediator.repository.BehandlingRepositoryPostgres
@@ -143,6 +144,23 @@ internal class PersonMediatorTest {
                 it.shouldNotBeNull()
                 it.behandlinger().size shouldBe 1
             }
+        }
+    }
+
+    @Test
+    fun `finner behandling basert på fagsakid`() {
+        withMigratedDb {
+            registrerOpplysningstyper()
+            val testPerson =
+                TestPerson(
+                    ident,
+                    rapid,
+                    søknadsdato = 6.mai(2021),
+                    alder = 76,
+                )
+            testPerson.sendSøknad()
+            val sakRepository = SakRepositoryPostgres()
+            sakRepository.finnBehandling(123).shouldNotBeNull()
         }
     }
 
