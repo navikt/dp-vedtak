@@ -28,7 +28,7 @@ object Søknadstidspunkt {
 
     val regelsett =
         Regelsett(
-            forskriftTilFolketrygden.hjemmel(3, 1, "Søknadstidspunkt", "§3A-1 Søknadstidspunkt"),
+            forskriftTilFolketrygden.hjemmel(3, 1, "Søknadstidspunkt", "Søknadstidspunkt"),
         ).apply {
             regel(søknadIdOpplysningstype) { innhentes }
             regel(søknadsdato) { innhentMed(søknadIdOpplysningstype) }
