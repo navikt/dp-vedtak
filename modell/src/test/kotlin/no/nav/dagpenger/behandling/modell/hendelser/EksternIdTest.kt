@@ -16,9 +16,4 @@ class EksternIdTest {
         søknadId.hashCode() shouldNotBeEqual SøknadId(UUIDv7.ny()).hashCode()
         søknadId.hashCode() shouldNotBeEqual Any().hashCode()
     }
-
-    @Test
-    fun genId() {
-        println(UUIDv7.ny())
-    }
 }

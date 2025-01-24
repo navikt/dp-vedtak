@@ -4,24 +4,11 @@ import no.nav.dagpenger.opplysning.verdier.BarnListe
 import no.nav.dagpenger.opplysning.verdier.Beløp
 import no.nav.dagpenger.opplysning.verdier.Inntekt
 import no.nav.dagpenger.opplysning.verdier.Ulid
-import no.nav.dagpenger.uuid.UUIDv7
 import java.time.LocalDate
 import java.util.UUID
 
 interface Klassifiserbart {
     fun er(type: Opplysningstype<*>): Boolean
-}
-
-fun String.id(id: String) = OpplysningTypeId(id = id, beskrivelse = this)
-
-class OpplysningTypeId(
-    // todo: Bytte til behovId
-    val id: String,
-    val beskrivelse: String,
-) {
-    override fun equals(other: Any?): Boolean = other is OpplysningTypeId && other.id == this.id && other.beskrivelse == this.beskrivelse
-
-    override fun hashCode() = id.hashCode() * beskrivelse.hashCode() * 31
 }
 
 enum class Opplysningsformål {
@@ -32,15 +19,13 @@ enum class Opplysningsformål {
 }
 
 class Opplysningstype<T : Comparable<T>>(
-    val opplysningTypeId: OpplysningTypeId,
-    val datatype: Datatype<T>,
+    val id: Id<T>,
+    val navn: String,
+    val behovId: String,
     val formål: Opplysningsformål,
     val synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
-    // todo: Fjerne generering av ny id. MÅ spesifiseres globalt i kodebasen
-    val permanentId: Id<T> = Id(UUIDv7.ny(), datatype),
 ) : Klassifiserbart {
-    val id = opplysningTypeId.id
-    val navn = opplysningTypeId.beskrivelse
+    val datatype = id.datatype
 
     init {
         definerteTyper.add(this)
@@ -135,14 +120,14 @@ class Opplysningstype<T : Comparable<T>>(
             formål: Opplysningsformål = Opplysningsformål.Regel,
             synlig: (LesbarOpplysninger) -> Boolean = alltidSynlig,
             behovId: String = beskrivelse,
-        ): Opplysningstype<T> = Opplysningstype(OpplysningTypeId(behovId, beskrivelse), id.datatype, formål, synlig, id)
+        ): Opplysningstype<T> = Opplysningstype(id, beskrivelse, behovId, formål, synlig)
     }
 
-    override infix fun er(type: Opplysningstype<*>): Boolean = opplysningTypeId == type.opplysningTypeId
+    override infix fun er(type: Opplysningstype<*>): Boolean = id == type.id
 
     override fun toString() = navn
 
-    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.opplysningTypeId == this.opplysningTypeId
+    override fun equals(other: Any?): Boolean = other is Opplysningstype<*> && other.id == this.id
 
-    override fun hashCode() = opplysningTypeId.hashCode() * 31
+    override fun hashCode() = id.hashCode() * 31
 }

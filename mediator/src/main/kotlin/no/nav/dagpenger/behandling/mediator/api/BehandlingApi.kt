@@ -88,7 +88,8 @@ internal fun Application.behandlingApi(
             val typer =
                 opplysningstyper.map {
                     OpplysningstypeDTO(
-                        it.id,
+                        it.id.id,
+                        it.behovId,
                         it.navn,
                         when (it.datatype) {
                             Boolsk -> DataTypeDTO.boolsk
@@ -274,7 +275,7 @@ internal fun Application.behandlingApi(
                                 OpplysningsSvar(
                                     behandlingId,
                                     opplysningId,
-                                    opplysning.opplysningstype.id,
+                                    opplysning.opplysningstype.behovId,
                                     behandling.behandler.ident,
                                     HttpVerdiMapper(oppdaterOpplysningRequestDTO).map(opplysning.opplysningstype.datatype),
                                     call.saksbehandlerId(),

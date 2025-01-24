@@ -35,7 +35,6 @@ import no.nav.dagpenger.opplysning.Regelsett
 import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.ULID
-import no.nav.dagpenger.opplysning.id
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.innhentes
 import no.nav.dagpenger.opplysning.regel.oppslag
@@ -458,13 +457,12 @@ class OpplysningerRepositoryPostgresTest {
     @Test
     fun `skal slette fjernede opplysninger som er utledet av i flere nivåer`() {
         withMigratedDb {
-            val repo = opplysningerRepository()
-            val vaktmesterRepo = VaktmesterPostgresRepo()
-
             val a = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "A")
             val b = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "B")
             val c = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "C")
             val d = Opplysningstype.boolsk(Opplysningstype.Id(UUIDv7.ny(), Boolsk), "D")
+            val repo = opplysningerRepository()
+            val vaktmesterRepo = VaktmesterPostgresRepo()
 
             val regelsett =
                 Regelsett("Regelsett") {

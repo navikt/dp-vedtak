@@ -139,7 +139,7 @@ internal class OpplysningSvarMessage(
                 logger.info { "Tok i mot opplysning av $typeNavn" }
 
                 val opplysningstype =
-                    runCatching { opplysningstyper.single { it.id == typeNavn } }.getOrElse {
+                    runCatching { opplysningstyper.single { it.behovId == typeNavn } }.getOrElse {
                         throw IllegalArgumentException("Ukjent opplysningstype: $typeNavn")
                     }
 
@@ -185,7 +185,7 @@ internal class OpplysningSvarMessage(
         context: MessageContext,
     ) {
         withLoggingContext(hendelse.kontekstMap()) {
-            logger.info { "Behandler svar på opplysninger: ${hendelse.opplysninger.map { it.opplysningstype.id }}" }
+            logger.info { "Behandler svar på opplysninger: ${hendelse.opplysninger.map { it.opplysningstype.behovId }}" }
             try {
                 mediator.behandle(hendelse, this, context)
             } catch (e: OpplysningIkkeFunnetException) {
