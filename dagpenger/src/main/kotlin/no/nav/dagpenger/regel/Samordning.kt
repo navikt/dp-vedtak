@@ -103,7 +103,7 @@ object Samordning {
     private val kanUtbetale =
         Opplysningstype.boolsk(
             samordnetDagsatsErNegativEller0Id,
-            "Samordnet dagsats er negativ eller 0",
+            "Samordnet dagsats er større enn 0",
             synlig = visesHvisSamordning,
         )
     val samordnetArbeidstid =
