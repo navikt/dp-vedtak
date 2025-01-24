@@ -26,7 +26,7 @@ object Verneplikt {
 
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 19, "Dagpenger etter avtjent verneplikt", "4-19 Verneplikt"),
+            folketrygden.hjemmel(4, 19, "Dagpenger etter avtjent verneplikt", "Verneplikt"),
         ) {
             regel(avtjentVerneplikt) { innhentMed(søknadIdOpplysningstype) }
             utfall(oppfyllerKravetTilVerneplikt) { erSann(avtjentVerneplikt) }

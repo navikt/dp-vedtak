@@ -268,12 +268,12 @@ internal class BehandlingApiTest {
             behandlingDto.opplysninger.all { it.redigerbar } shouldBe false
             behandlingDto.avklaringer.shouldNotBeEmpty()
 
-            with(behandlingDto.vilkår.single { it.navn == "4-4 Minsteinntekt" }) {
+            with(behandlingDto.vilkår.single { it.navn == "Minsteinntekt" }) {
                 avklaringer shouldHaveSize 1
                 avklaringer.single().kode shouldBe "InntektNesteKalendermåned"
             }
 
-            with(behandlingDto.vilkår.single { it.navn == "4-19 Verneplikt" }) {
+            with(behandlingDto.vilkår.single { it.navn == "Verneplikt" }) {
                 avklaringer shouldHaveSize 1
                 val aktivAvklaring = behandling.aktiveAvklaringer().first()
                 with(avklaringer.single()) {
