@@ -72,7 +72,7 @@ object TapAvArbeidsinntektOgArbeidstid {
     val beregningsregel36mnd =
         Opplysningstype.boolsk(
             beregeningsregelArbeidstidSiste36MånederId,
-            "Beregeningsregel: Arbeidstid siste 36 måneder",
+            "Beregningsregel: Arbeidstid siste 36 måneder",
         )
 
     val beregnetArbeidstid =
