@@ -157,6 +157,7 @@ private fun Regelsett.tilRegelsettDTO(
                 kapittel = hjemmel.kapittel.toString(),
                 paragraf = hjemmel.paragraf.toString(),
                 tittel = hjemmel.toString(),
+                url = hjemmel.url,
             ),
         avklaringer = egneAvklaringer.map { it.tilAvklaringDTO() },
         opplysningIder = produkter.map { opplysning -> opplysning.id },

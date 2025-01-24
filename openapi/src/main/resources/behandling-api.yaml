@@ -633,6 +633,7 @@ components:
         - kilde
         - kapittel
         - paragraf
+        - tittel
       properties:
         kilde:
           description: Lov, forskrift, eller rundskriv
@@ -643,6 +644,9 @@ components:
           type: string
         tittel:
           type: string
+        url:
+          type: string
+          format: uri
 
     Lovkilde:
       type: object

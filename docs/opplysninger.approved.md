@@ -150,7 +150,7 @@ Dette er opplysninger som blir brukt av regelverket.
 |0194881f-9435-72a8-b1ce-9575cbc2a763|Beregningsregel: Tapt arbeidstid|Beregningsregel: Tapt arbeidstid|Boolsk|boolean|
 |0194881f-9435-72a8-b1ce-9575cbc2a764|Beregningsregel: Arbeidstid siste 6 måneder|Beregningsregel: Arbeidstid siste 6 måneder|Boolsk|boolean|
 |0194881f-9435-72a8-b1ce-9575cbc2a765|Beregningsregel: Arbeidstid siste 12 måneder|Beregningsregel: Arbeidstid siste 12 måneder|Boolsk|boolean|
-|0194881f-9435-72a8-b1ce-9575cbc2a766|Beregeningsregel: Arbeidstid siste 36 måneder|Beregeningsregel: Arbeidstid siste 36 måneder|Boolsk|boolean|
+|0194881f-9435-72a8-b1ce-9575cbc2a766|Beregningsregel: Arbeidstid siste 36 måneder|Beregningsregel: Arbeidstid siste 36 måneder|Boolsk|boolean|
 |0194881f-9435-72a8-b1ce-9575cbc2a767|Beregnet vanlig arbeidstid per uke før tap|Beregnet vanlig arbeidstid per uke før tap|Desimaltall|double|
 |0194881f-9435-72a8-b1ce-9575cbc2a768|Maksimal vanlig arbeidstid|Maksimal vanlig arbeidstid|Desimaltall|double|
 |0194881f-9435-72a8-b1ce-9575cbc2a769|Minimum vanlig arbeidstid|Minimum vanlig arbeidstid|Desimaltall|double|

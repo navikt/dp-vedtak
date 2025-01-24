@@ -2,6 +2,7 @@ package no.nav.dagpenger.opplysning
 
 import no.nav.dagpenger.opplysning.regel.Ekstern
 import no.nav.dagpenger.opplysning.regel.Regel
+import java.net.URI
 import java.time.LocalDate
 
 enum class RegelsettType {
@@ -12,6 +13,7 @@ enum class RegelsettType {
 data class Lovkilde(
     val navn: String,
     val kortnavn: String,
+    val url: URI? = null,
 ) {
     fun hjemmel(
         kapittel: Int,
@@ -30,6 +32,8 @@ data class Hjemmel(
     val tittel: String,
     val kortnavn: String,
 ) {
+    val url = kilde.url?.resolve("§$kapittel-$paragraf")
+
     override fun toString() = "§ $kapittel-$paragraf. $tittel"
 }
 
