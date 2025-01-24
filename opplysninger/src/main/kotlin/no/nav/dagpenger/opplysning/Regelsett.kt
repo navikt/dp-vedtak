@@ -30,7 +30,7 @@ data class Hjemmel(
     val tittel: String,
     val kortnavn: String,
 ) {
-    override fun toString() = "$kilde § $kapittel-$paragraf. $tittel"
+    override fun toString() = "§ $kapittel-$paragraf. $tittel"
 }
 
 class Regelsett(
