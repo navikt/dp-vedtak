@@ -109,7 +109,7 @@ object Utdanning {
                 kapittel = 4,
                 paragraf = 6,
                 tittel = "Dagpenger under utdanning, opplæring, etablering av egen virksomhet m.v",
-                kortnavn = "4-6 Utdanning",
+                kortnavn = "Utdanning",
             ),
         ) {
             regel(tarUtdanning) { innhentMed() }

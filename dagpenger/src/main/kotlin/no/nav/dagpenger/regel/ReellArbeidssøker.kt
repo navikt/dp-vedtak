@@ -38,6 +38,11 @@ import no.nav.dagpenger.regel.OpplysningsTyper.VilligTilEthvertArbeidId
 import no.nav.dagpenger.regel.OpplysningsTyper.minimumVanligArbeidstidId
 import no.nav.dagpenger.regel.OpplysningsTyper.villigTilMinimumArbeidstidId
 import no.nav.dagpenger.regel.OpplysningsTyper.ønsketArbeidstidId
+import no.nav.dagpenger.regel.ReellArbeidssøker.erArbeidsfør
+import no.nav.dagpenger.regel.ReellArbeidssøker.kanJobbeDeltid
+import no.nav.dagpenger.regel.ReellArbeidssøker.kanJobbeHvorSomHelst
+import no.nav.dagpenger.regel.ReellArbeidssøker.oppyllerKravTilRegistrertArbeidssøker
+import no.nav.dagpenger.regel.ReellArbeidssøker.villigTilEthvertArbeid
 import no.nav.dagpenger.regel.Samordning.uføre
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
 import no.nav.dagpenger.regel.Søknadstidspunkt.søknadIdOpplysningstype
@@ -96,7 +101,7 @@ object ReellArbeidssøker {
         boolsk(villigTilMinimumArbeidstidId, "Villig til å jobbe minimum arbeidstid", synlig = { it.erSann(kanJobbeDeltid) == false })
 
     val regelsett =
-        Regelsett(folketrygden.hjemmel(4, 5, "Reelle arbeidssøkere", "4-5 Reell arbeidssøker")) {
+        Regelsett(folketrygden.hjemmel(4, 5, "Reelle arbeidssøkere", "Reell arbeidssøker")) {
             regel(ønsketArbeidstid) { innhentMed(søknadIdOpplysningstype) }
             regel(minimumVanligArbeidstid) { oppslag(prøvingsdato) { 18.75 } }
             regel(villigTilMinimumArbeidstid) { størreEnnEllerLik(ønsketArbeidstid, minimumVanligArbeidstid) }

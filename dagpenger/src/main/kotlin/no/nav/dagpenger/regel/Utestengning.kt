@@ -20,7 +20,7 @@ object Utestengning {
 
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 28, "Utestengning", "4-28 Utestengning"),
+            folketrygden.hjemmel(4, 28, "Utestengning", "Utestengning"),
         ) {
             regel(utestengt) { oppslag(prøvingsdato) { false } }
             utfall(oppfyllerKravetTilIkkeUtestengt) { ikke(utestengt) }

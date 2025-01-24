@@ -104,7 +104,7 @@ object TapAvArbeidsinntektOgArbeidstid {
 
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 3, "Krav til tap av arbeidsinntekt og arbeidstid", "4-3 Tap av arbeidsinntekt og arbeidstid"),
+            folketrygden.hjemmel(4, 3, "Krav til tap av arbeidsinntekt og arbeidstid", "Tap av arbeidsinntekt og arbeidstid"),
         ) {
             regel(tapAvArbeid) { oppslag(prøvingsdato) { true } } // TODO: Satt til true for testing av innvilgelse
             regel(kravPåLønn) { oppslag(prøvingsdato) { false } }

@@ -130,7 +130,7 @@ object Samordning {
                 kapittel = 4,
                 paragraf = 25,
                 tittel = "Samordning med reduserte ytelser fra folketrygden, eller redusert avtalefestet pensjon",
-                kortnavn = "4-25 Samordning reduserte ytelser",
+                kortnavn = "Samordning reduserte ytelser",
             ),
         ) {
             regel(sykepenger) { innhentMed(prøvingsdato) }

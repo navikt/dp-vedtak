@@ -68,7 +68,7 @@ object Dagpengeperiode {
 
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 15, "Antall stønadsuker (stønadsperiode)", "4-15 Periode"),
+            folketrygden.hjemmel(4, 15, "Antall stønadsuker (stønadsperiode)", "Periode"),
             RegelsettType.Fastsettelse,
         ) {
             regel(kortPeriode) { oppslag(prøvingsdato) { 52 } }

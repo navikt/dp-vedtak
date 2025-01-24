@@ -20,7 +20,7 @@ object Egenandel {
 
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 9, "Egenandel", "4-9 Egenandel"),
+            folketrygden.hjemmel(4, 9, "Egenandel", "Egenandel"),
             RegelsettType.Fastsettelse,
         ) {
             regel(faktor) { oppslag(prøvingsdato) { 3.0 } }

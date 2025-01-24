@@ -18,7 +18,7 @@ object FulleYtelser {
                 4,
                 24,
                 "Medlem som har fulle ytelser etter folketrygdloven eller avtalefestet pensjon",
-                "4-24 Fulle ytelser",
+                "Fulle ytelser",
             ),
         ) {
             utfall(ikkeFulleYtelser) { oppslag(prøvingsdato) { true } }

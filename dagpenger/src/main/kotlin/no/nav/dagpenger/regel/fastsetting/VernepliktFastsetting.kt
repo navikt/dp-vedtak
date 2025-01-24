@@ -51,7 +51,7 @@ object VernepliktFastsetting {
 
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 19, "Dagpenger etter avtjent verneplikt", "4-19 Dagpenger ved verneplikt"),
+            folketrygden.hjemmel(4, 19, "Dagpenger etter avtjent verneplikt", "Dagpenger ved verneplikt"),
             RegelsettType.Fastsettelse,
         ) {
             regel(antallG) { oppslag(prøvingsdato) { 3.0 } }

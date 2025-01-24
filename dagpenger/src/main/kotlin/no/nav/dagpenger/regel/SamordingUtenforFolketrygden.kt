@@ -145,7 +145,7 @@ object SamordingUtenforFolketrygden {
 
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 26, "Samordning med ytelser utenfor folketrygden", "4-26 Samordning utenfor folketrygden"),
+            folketrygden.hjemmel(4, 26, "Samordning med ytelser utenfor folketrygden", "Samordning utenfor folketrygden"),
             RegelsettType.Fastsettelse,
         ) {
             regel(andreYtelser) { innhentes }

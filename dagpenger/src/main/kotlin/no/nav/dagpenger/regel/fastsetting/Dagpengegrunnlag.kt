@@ -119,7 +119,7 @@ object Dagpengegrunnlag {
 
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 11, "Dagpengegrunnlag", "4-11 Dagpengegrunnlag"),
+            folketrygden.hjemmel(4, 11, "Dagpengegrunnlag", "Dagpengegrunnlag"),
             Fastsettelse,
         ) {
             regel(antallÅrI36Måneder) { oppslag(prøvingsdato) { 3.0 } } // Teknisk - skal ikke vises

@@ -92,7 +92,7 @@ object Minsteinntekt {
     val minsteinntekt = boolsk(KravTilMinsteinntektId, "Krav til minsteinntekt")
 
     val regelsett =
-        Regelsett(folketrygden.hjemmel(4, 4, "Krav til minsteinntekt", "4-4 Minsteinntekt")) {
+        Regelsett(folketrygden.hjemmel(4, 4, "Krav til minsteinntekt", "Minsteinntekt")) {
             regel(maksPeriodeLengde) { oppslag(prøvingsdato) { 36 } }
             regel(førsteMånedAvOpptjeningsperiode) { trekkFraMånedTilFørste(sisteAvsluttendendeKalenderMåned, maksPeriodeLengde) }
 

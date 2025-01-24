@@ -33,7 +33,7 @@ object Alderskrav {
 
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 23, "Bortfall på grunn av alder", "4-23 Alder"),
+            folketrygden.hjemmel(4, 23, "Bortfall på grunn av alder", "Alder"),
         ) {
             regel(fødselsdato) { innhentes }
             regel(aldersgrense) { oppslag(prøvingsdato) { 67 } }

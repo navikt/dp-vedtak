@@ -5,7 +5,7 @@ import no.nav.dagpenger.opplysning.Regelsett
 object Meldeplikt {
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 8, "Meldeplikt og møteplikt", "4-8 Meldeplikt"),
+            folketrygden.hjemmel(4, 8, "Meldeplikt og møteplikt", "Meldeplikt"),
         ) {
             relevantHvis { false }
         }
