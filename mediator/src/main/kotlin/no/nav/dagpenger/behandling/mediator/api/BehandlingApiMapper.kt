@@ -70,6 +70,7 @@ import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregnetArbeidstid
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel12mnd
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel36mnd
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.beregningsregel6mnd
+import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.kravPåLønn
 import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.nyArbeidstid
 import no.nav.dagpenger.regel.Utdanning.deltakelseIArbeidsmarkedstiltak
 import no.nav.dagpenger.regel.Utdanning.deltakelsePåKurs
