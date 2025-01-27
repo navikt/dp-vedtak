@@ -8,7 +8,7 @@ import kotlin.time.Duration
 class MeldekortHendelse(
     meldingsreferanseId: UUID,
     ident: String,
-    val meldekortId: UUID,
+    val meldekortId: Long,
     val fom: LocalDate,
     val tom: LocalDate,
     val kilde: MeldekortKilde,
@@ -28,18 +28,12 @@ data class Dag(
 
 data class MeldekortAktivitet(
     val type: AktivitetType,
-    val tid: Duration,
+    val timer: Duration?,
 )
 
 enum class AktivitetType {
     Arbeid,
-    Ferie,
     Syk,
-    Avvist,
-    Egenmelding,
-    Permisjon,
     Utdanning,
-    Arbeidssøker,
-    Innleggelse,
-    Ukjent,
+    Fravaer,
 }

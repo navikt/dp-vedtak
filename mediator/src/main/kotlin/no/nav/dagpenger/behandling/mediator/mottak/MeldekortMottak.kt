@@ -14,7 +14,6 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.behandling.mediator.IMessageMediator
 import no.nav.dagpenger.behandling.mediator.MessageMediator
-import no.nav.dagpenger.behandling.mediator.asUUID
 import no.nav.dagpenger.behandling.mediator.melding.HendelseMessage
 import no.nav.dagpenger.behandling.modell.hendelser.AktivitetType
 import no.nav.dagpenger.behandling.modell.hendelser.Dag
@@ -32,9 +31,8 @@ internal class MeldekortMottak(
             .apply {
                 precondition { it.requireValue("@event_name", "rapporteringsperiode_innsendt_hendelse") }
                 validate { it.requireKey("ident") }
-                validate { it.requireKey("rapporteringsId") }
-                validate { it.requireKey("fom") }
-                validate { it.requireKey("tom") }
+                validate { it.requireKey("id") }
+                validate { it.requireKey("periode") }
                 validate { it.requireKey("kilde") }
                 validate { it.requireKey("dager") }
             }.register(this)
@@ -47,7 +45,7 @@ internal class MeldekortMottak(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val meldekortId = packet["rapporteringsId"].asUUID()
+        val meldekortId = packet["id"].asLong()
         Span.current().apply {
             setAttribute("app.river", name())
             setAttribute("app.meldekortId", meldekortId.toString())
@@ -77,14 +75,7 @@ internal class MeldekortMessage(
     ) {
         withLoggingContext(hendelse.kontekstMap()) {
             logger.info { "Behandler meldekort: ${hendelse.meldekortId}" }
-            try {
-                mediator.behandle(hendelse, this, context)
-            } catch (e: Exception) {
-                logger.error(e) {
-                    // TODO Finn en bedre feilmelding
-                    "Kan ikke å behandle ${hendelse.javaClass.simpleName} av en eller annen grunn"
-                }
-            }
+            mediator.behandle(hendelse, this, context)
         }
     }
 
@@ -93,9 +84,9 @@ internal class MeldekortMessage(
             MeldekortHendelse(
                 meldingsreferanseId = packet["@id"].asUUID(),
                 ident = packet["ident"].asText(),
-                meldekortId = packet["rapporteringsId"].asUUID(),
-                fom = packet["fom"].asLocalDate(),
-                tom = packet["tom"].asLocalDate(),
+                meldekortId = packet["id"].asLong(),
+                fom = packet["periode"]["fraOgMed"].asLocalDate(),
+                tom = packet["periode"]["tilOgMed"].asLocalDate(),
                 kilde =
                     MeldekortKilde(
                         rolle = packet["kilde"]["rolle"].asText(),
@@ -110,7 +101,12 @@ internal class MeldekortMessage(
                                 dag["aktiviteter"].map {
                                     MeldekortAktivitet(
                                         type = AktivitetType.valueOf(it["type"].asText()),
-                                        tid = Duration.parseIsoString(it["tid"].asText()),
+                                        timer =
+                                            if (it.has("timer")) {
+                                                Duration.parseIsoString(it["timer"].asText())
+                                            } else {
+                                                null
+                                            },
                                     )
                                 },
                         )

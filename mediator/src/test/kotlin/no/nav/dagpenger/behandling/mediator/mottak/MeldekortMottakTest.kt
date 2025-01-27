@@ -57,97 +57,113 @@ class MeldekortMottakTest {
             .first()
             .aktiviteter
             .first()
-            .tid shouldBe 5.hours
+            .timer shouldBe 5.hours
     }
 }
 
+// language=json
 val json =
     """
     {
       "@event_name": "rapporteringsperiode_innsendt_hendelse",
       "ident": "12345123451",
-      "rapporteringsId": "64dc9ae2-68d7-4df3-8dbc-cace10241394",
-      "fom": "2025-01-20",
-      "tom": "2025-02-02",
+      "id": 1000,
+        "periode": { 
+            "fraOgMed": "2025-01-20",
+            "tilOgMed": "2025-02-02"
+        },
       "kilde": {
         "rolle": "Bruker",
         "ident": "12345123451"
       },
+      "mottattDato": "2025-02-02",
       "dager": [
         {
           "dato": "2025-01-20",
+          "dagIndex": 1,
           "aktiviteter": [
             {
               "type": "Arbeid",
-              "tid": "PT5H"
+              "timer": "PT5H"
             }
           ]
         },
         {
           "dato": "2025-01-21",
+          "dagIndex": 2,
           "aktiviteter": []
         },
         {
           "dato": "2025-01-22",
+          "dagIndex": 3,
           "aktiviteter": [
             {
-              "type": "Ferie",
-              "tid": "PT24H"
+              "type": "Fravaer"
             }
           ]
         },
         {
           "dato": "2025-01-23",
+          "dagIndex": 4,
           "aktiviteter": [
             {
-              "type": "Syk",
-              "tid": "PT24H"
+              "type": "Syk"
             }
           ]
         },
         {
           "dato": "2025-01-24",
+          "dagIndex": 5,
           "aktiviteter": [
             {
               "type": "Arbeid",
-              "tid": "PT2H"
+              "timer": "PT2H"
             }
           ]
         },
         {
           "dato": "2025-01-25",
+          "dagIndex": 6,
           "aktiviteter": []
         },
         {
           "dato": "2025-01-26",
+          "dagIndex": 7,
           "aktiviteter": []
         },
         {
           "dato": "2025-01-27",
+          "dagIndex": 8,
           "aktiviteter": []
         },
         {
           "dato": "2025-01-28",
+          "dagIndex": 9,
           "aktiviteter": []
         },
         {
           "dato": "2025-01-29",
+          "dagIndex": 10,
           "aktiviteter": []
         },
         {
           "dato": "2025-01-30",
+          "dagIndex": 11,
           "aktiviteter": []
         },
         {
           "dato": "2025-01-31",
+          "dagIndex": 12,
           "aktiviteter": []
         },
         {
           "dato": "2025-02-01",
+          "dagIndex": 13,
           "aktiviteter": []
         },
         {
           "dato": "2025-02-02",
+          "dagIndex": 14,
           "aktiviteter": []
         }
       ],
