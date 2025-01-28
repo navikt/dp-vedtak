@@ -65,7 +65,7 @@ class MeldekortMottakTest {
 private val meldekortJson =
     """
     {
-      "@event_name": "rapporteringsperiode_innsendt_hendelse",
+      "@event_name": "meldekort_innsendt",
       "ident": "12345123451",
       "id": 1000,
         "periode": { 

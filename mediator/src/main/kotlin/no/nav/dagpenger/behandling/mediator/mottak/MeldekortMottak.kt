@@ -29,7 +29,7 @@ internal class MeldekortMottak(
     init {
         River(rapidsConnection)
             .apply {
-                precondition { it.requireValue("@event_name", "rapporteringsperiode_innsendt_hendelse") }
+                precondition { it.requireValue("@event_name", "meldekort_innsendt") }
                 validate { it.requireKey("ident") }
                 validate { it.requireKey("id") }
                 validate { it.requireKey("periode") }
