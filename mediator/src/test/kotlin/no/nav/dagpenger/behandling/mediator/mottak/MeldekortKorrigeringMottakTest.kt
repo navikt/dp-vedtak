@@ -8,18 +8,18 @@ import io.mockk.slot
 import io.mockk.verify
 import no.nav.dagpenger.behandling.mediator.MessageMediator
 import no.nav.dagpenger.behandling.modell.hendelser.AktivitetType
-import no.nav.dagpenger.behandling.modell.hendelser.MeldekortHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.MeldekortKorrigeringHendelse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.hours
 
-class MeldekortMottakTest {
+class MeldekortKorrigeringMottakTest {
     private val rapid = TestRapid()
     private val messageMediator = mockk<MessageMediator>(relaxed = true)
 
     init {
-        MeldekortMottak(rapid, messageMediator)
+        MeldekortKorrigeringMottak(rapid, messageMediator)
     }
 
     @BeforeEach
@@ -29,9 +29,9 @@ class MeldekortMottakTest {
     }
 
     @Test
-    fun `vi kan ta i mot et meldekort`() {
-        rapid.sendTestMessage(meldekortJson)
-        val hendelse = slot<MeldekortHendelse>()
+    fun `vi kan ta i mot korrigering av et meldekort`() {
+        rapid.sendTestMessage(korrigertMeldekortJson)
+        val hendelse = slot<MeldekortKorrigeringHendelse>()
 
         verify {
             messageMediator.behandle(capture(hendelse), any(), any())
@@ -39,6 +39,8 @@ class MeldekortMottakTest {
 
         hendelse.isCaptured shouldBe true
         hendelse.captured.ident() shouldBe "12345123451"
+        hendelse.captured.meldekortId shouldBe 1001
+        hendelse.captured.orginalMeldekortId shouldBe 1000
         hendelse.captured.fom shouldBe LocalDate.of(2025, 1, 20)
         hendelse.captured.tom shouldBe LocalDate.of(2025, 2, 2)
         hendelse.captured.dager.size shouldBe 14
@@ -62,16 +64,17 @@ class MeldekortMottakTest {
 }
 
 // language=json
-private val meldekortJson =
+private val korrigertMeldekortJson =
     """
     {
-      "@event_name": "rapporteringsperiode_innsendt_hendelse",
+      "@event_name": "meldekort_korrigert",
       "ident": "12345123451",
-      "id": 1000,
-        "periode": { 
-            "fraOgMed": "2025-01-20",
-            "tilOgMed": "2025-02-02"
-        },
+      "id": 1001,
+      "orginalId": 1000,
+      "periode": { 
+          "fraOgMed": "2025-01-20",
+          "tilOgMed": "2025-02-02"
+      },
       "kilde": {
         "rolle": "Bruker",
         "ident": "12345123451"

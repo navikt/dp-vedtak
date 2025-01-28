@@ -15,6 +15,8 @@ import no.nav.dagpenger.behandling.mediator.mottak.BehandlingStårFastMessage
 import no.nav.dagpenger.behandling.mediator.mottak.GodkjennBehandlingMessage
 import no.nav.dagpenger.behandling.mediator.mottak.GodkjennBehandlingMottak
 import no.nav.dagpenger.behandling.mediator.mottak.InnsendingFerdigstiltMottak
+import no.nav.dagpenger.behandling.mediator.mottak.MeldekortKorrigeringMessage
+import no.nav.dagpenger.behandling.mediator.mottak.MeldekortKorrigeringMottak
 import no.nav.dagpenger.behandling.mediator.mottak.MeldekortMessage
 import no.nav.dagpenger.behandling.mediator.mottak.MeldekortMottak
 import no.nav.dagpenger.behandling.mediator.mottak.OppgaveReturnertTilSaksbehandler
@@ -34,6 +36,7 @@ import no.nav.dagpenger.behandling.modell.hendelser.ForslagGodkjentHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.LåsHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.LåsOppHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.MeldekortHendelse
+import no.nav.dagpenger.behandling.modell.hendelser.MeldekortKorrigeringHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.OpplysningSvarHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PersonHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.PåminnelseHendelse
@@ -60,6 +63,7 @@ internal class MessageMediator(
         OppgaveSendtTilKontroll(rapidsConnection, this)
         OppgaveReturnertTilSaksbehandler(rapidsConnection, this)
         MeldekortMottak(rapidsConnection, this)
+        MeldekortKorrigeringMottak(rapidsConnection, this)
     }
 
     private companion object {
@@ -109,6 +113,16 @@ internal class MessageMediator(
     override fun behandle(
         hendelse: MeldekortHendelse,
         message: MeldekortMessage,
+        context: MessageContext,
+    ) {
+        behandle(hendelse, message) {
+            hendelseMediator.behandle(it, context)
+        }
+    }
+
+    override fun behandle(
+        hendelse: MeldekortKorrigeringHendelse,
+        message: MeldekortKorrigeringMessage,
         context: MessageContext,
     ) {
         behandle(hendelse, message) {
@@ -221,6 +235,12 @@ internal interface IMessageMediator {
     fun behandle(
         hendelse: MeldekortHendelse,
         message: MeldekortMessage,
+        context: MessageContext,
+    )
+
+    fun behandle(
+        hendelse: MeldekortKorrigeringHendelse,
+        message: MeldekortKorrigeringMessage,
         context: MessageContext,
     )
 
