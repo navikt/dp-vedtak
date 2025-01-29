@@ -324,33 +324,37 @@ internal fun Application.behandlingApi(
 
                     put("avklaring/{avklaringId}") {
                         val behandlingId = call.behandlingId
-                        val avklaringId = call.avklaringId
-                        val kvitteringDTO = call.receive<KvitterAvklaringRequestDTO>()
-                        val behandling = hentBehandling(personRepository, behandlingId)
+                        withLoggingContext(
+                            "behandlingId" to behandlingId.toString(),
+                        ) {
+                            val avklaringId = call.avklaringId
+                            val kvitteringDTO = call.receive<KvitterAvklaringRequestDTO>()
+                            val behandling = hentBehandling(personRepository, behandlingId)
 
-                        val avklaring =
-                            behandling.avklaringer().singleOrNull { it.id == avklaringId }
-                                ?: throw NotFoundException("Avklaring ikke funnet")
+                            val avklaring =
+                                behandling.avklaringer().singleOrNull { it.id == avklaringId }
+                                    ?: throw NotFoundException("Avklaring ikke funnet")
 
-                        if (!avklaring.kanKvitteres) {
-                            call.respond(HttpStatusCode.BadRequest)
-                            return@put
+                            if (!avklaring.kanKvitteres) {
+                                call.respond(HttpStatusCode.BadRequest)
+                                return@put
+                            }
+
+                            hendelseMediator.behandle(
+                                AvklaringKvittertHendelse(
+                                    meldingsreferanseId = UUIDv7.ny(),
+                                    ident = behandling.behandler.ident,
+                                    avklaringId = avklaringId,
+                                    behandlingId = behandling.behandlingId,
+                                    saksbehandler = call.saksbehandlerId(),
+                                    begrunnelse = kvitteringDTO.begrunnelse,
+                                    opprettet = LocalDateTime.now(),
+                                ),
+                                messageContext(behandling.behandler.ident),
+                            )
+
+                            call.respond(HttpStatusCode.NoContent)
                         }
-
-                        hendelseMediator.behandle(
-                            AvklaringKvittertHendelse(
-                                meldingsreferanseId = UUIDv7.ny(),
-                                ident = behandling.behandler.ident,
-                                avklaringId = avklaringId,
-                                behandlingId = behandling.behandlingId,
-                                saksbehandler = call.saksbehandlerId(),
-                                begrunnelse = kvitteringDTO.begrunnelse,
-                                opprettet = LocalDateTime.now(),
-                            ),
-                            messageContext(behandling.behandler.ident),
-                        )
-
-                        call.respond(HttpStatusCode.NoContent)
                     }
                 }
             }
