@@ -524,6 +524,7 @@ components:
         - behandlingId
         - regelsett
         - avklaringer
+        - opplysninger
       properties:
         behandlingId:
           type: string
@@ -536,6 +537,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Avklaring'
+        opplysninger:
+          type: array
+          items:
+            $ref: '#/components/schemas/Opplysning'
 
     Avklaring:
       type: object

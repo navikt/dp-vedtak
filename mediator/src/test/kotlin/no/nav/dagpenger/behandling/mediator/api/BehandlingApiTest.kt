@@ -10,11 +10,13 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import io.kotest.assertions.throwables.shouldNotThrowAny
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.kotest.matchers.string.shouldNotBeEmpty
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -29,6 +31,8 @@ import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.TestOpplysningstyper
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
 import no.nav.dagpenger.behandling.api.models.KvitteringDTO
+import no.nav.dagpenger.behandling.api.models.SaksbehandlerDTO
+import no.nav.dagpenger.behandling.api.models.SaksbehandlersVurderingerDTO
 import no.nav.dagpenger.behandling.db.InMemoryPersonRepository
 import no.nav.dagpenger.behandling.mediator.HendelseMediator
 import no.nav.dagpenger.behandling.mediator.IMessageMediator
@@ -290,6 +294,35 @@ internal class BehandlingApiTest {
             verify {
                 auditlogg.les(any(), any(), any())
             }
+        }
+    }
+
+    @Test
+    fun `hent saksbehandlers vurderinger for en gitt behandlingId`() {
+        medSikretBehandlingApi {
+            val behandlingId = person.behandlinger().first().behandlingId
+            val response = autentisert(httpMethod = HttpMethod.Get, endepunkt = "/behandling/$behandlingId/vurderinger")
+            response.status shouldBe HttpStatusCode.OK
+            response.bodyAsText().shouldNotBeEmpty()
+            val behandlingDto =
+                shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), SaksbehandlersVurderingerDTO::class.java) }
+            behandlingDto.behandlingId shouldBe behandlingId
+
+            behandlingDto.regelsett.shouldNotBeEmpty()
+            behandlingDto.avklaringer.shouldNotBeEmpty()
+            behandlingDto.opplysninger.shouldNotBeEmpty()
+
+            with(behandlingDto.regelsett.single { it.navn == "Søknadstidspunkt" }) {
+                avklaringer.shouldBeEmpty()
+                opplysningIder?.shouldHaveSize(1)
+            }
+
+            with(behandlingDto.avklaringer.single { it.kode == "tittel 2" }) {
+                avklartAv.shouldBeInstanceOf<SaksbehandlerDTO>()
+            }
+
+            behandlingDto.opplysninger shouldHaveSize 2
+            behandlingDto.opplysninger.all { it.kilde?.type?.value == "Saksbehandler" } shouldBe true
         }
     }
 

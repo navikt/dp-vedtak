@@ -14,6 +14,7 @@ import no.nav.dagpenger.behandling.api.models.OpplysningskildeDTO
 import no.nav.dagpenger.behandling.api.models.RegelDTO
 import no.nav.dagpenger.behandling.api.models.RegelsettDTO
 import no.nav.dagpenger.behandling.api.models.SaksbehandlerDTO
+import no.nav.dagpenger.behandling.api.models.SaksbehandlersVurderingerDTO
 import no.nav.dagpenger.behandling.api.models.UtledningDTO
 import no.nav.dagpenger.behandling.modell.Behandling
 import no.nav.dagpenger.opplysning.BarnDatatype
@@ -125,6 +126,29 @@ internal fun Behandling.tilBehandlingDTO(): BehandlingDTO =
             kreverTotrinnskontroll = this.kreverTotrinnskontroll(),
             avklaringer = generelleAvklaringer.map { it.tilAvklaringDTO() },
             opplysninger = opplysningSet.map { it.tilOpplysningDTO(lesbareOpplysninger) },
+        )
+    }
+
+internal fun Behandling.tilSaksbehandlersVurderinger() =
+    withLoggingContext("behandlingId" to this.behandlingId.toString()) {
+        val avklaringer = avklaringer().filter { it.løstAvSaksbehandler() }.toSet()
+        val endredeOpplysninger = opplysninger().finnAlle().filter { it.kilde is Saksbehandlerkilde }.toSet()
+
+        val regelsett = behandler.regelverk.regelsett
+
+        // Ta med kun regelsett som har endrede opplysninger
+        val endredRegelsett =
+            regelsett.filter { regelsett ->
+                regelsett.produserer.any { opplysningstype ->
+                    endredeOpplysninger.any { it.opplysningstype == opplysningstype }
+                }
+            }
+
+        SaksbehandlersVurderingerDTO(
+            behandlingId = behandlingId,
+            regelsett = endredRegelsett.map { it.tilRegelsettDTO(endredeOpplysninger, avklaringer, opplysninger()) },
+            avklaringer = avklaringer.map { it.tilAvklaringDTO() },
+            opplysninger = endredeOpplysninger.map { it.tilOpplysningDTO(opplysninger()) },
         )
     }
 

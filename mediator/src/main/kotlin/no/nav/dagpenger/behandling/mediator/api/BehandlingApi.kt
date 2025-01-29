@@ -151,6 +151,14 @@ internal fun Application.behandlingApi(
                         )
                     }
 
+                    get("vurderinger") {
+                        val behandling = hentBehandling(personRepository, call.behandlingId)
+
+                        auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
+
+                        call.respond(HttpStatusCode.OK, behandling.tilSaksbehandlersVurderinger())
+                    }
+
                     post("godkjenn") {
                         val identForespørsel = call.receive<IdentForesporselDTO>()
                         val behandling = hentBehandling(personRepository, call.behandlingId)
