@@ -570,6 +570,8 @@ class Behandling private constructor(
         override val type: TilstandType
             get() = TilstandType.Redigert
 
+        override val forventetFerdig: LocalDateTime get() = opprettet.plusHours(1)
+
         override fun entering(
             behandling: Behandling,
             hendelse: PersonHendelse,
