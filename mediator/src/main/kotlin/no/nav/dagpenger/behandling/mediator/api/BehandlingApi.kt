@@ -165,7 +165,9 @@ internal fun Application.behandlingApi(
 
                         // TODO: La dette egentlig komme fra modellen
                         if (!behandling.harTilstand(TilGodkjenning)) {
-                            throw BadRequestException("Behandlingen er ikke klar til å godkjennes")
+                            throw BadRequestException(
+                                "Behandlingen er ikke klar til å godkjennes. Er i status ${behandling.tilstand().first}",
+                            )
                         }
 
                         val hendelse =

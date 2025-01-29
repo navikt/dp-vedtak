@@ -11,6 +11,7 @@ import mu.KotlinLogging
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.runMigration
 import no.nav.dagpenger.behandling.mediator.api.ApiMessageContext
 import no.nav.dagpenger.behandling.mediator.api.behandlingApi
+import no.nav.dagpenger.behandling.mediator.api.statusPagesConfig
 import no.nav.dagpenger.behandling.mediator.audit.ApiAuditlogg
 import no.nav.dagpenger.behandling.mediator.jobber.SlettFjernetOpplysninger
 import no.nav.dagpenger.behandling.mediator.melding.PostgresHendelseRepository
@@ -70,6 +71,7 @@ internal class ApplicationBuilder(
                         aliveCheck = rapid::isReady,
                         readyCheck = rapid::isReady,
                         preStopHook = preStopHook::handlePreStopRequest,
+                        statusPagesConfig = { statusPagesConfig() },
                     ) {
 
                         behandlingApi(
