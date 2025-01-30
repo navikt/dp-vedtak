@@ -2,6 +2,7 @@ package no.nav.dagpenger.behandling.modell.hendelser
 
 import no.nav.dagpenger.avklaring.Kontrollpunkt
 import no.nav.dagpenger.behandling.modell.Behandling
+import no.nav.dagpenger.behandling.modell.Sak
 import no.nav.dagpenger.opplysning.Forretningsprosess
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
 import no.nav.dagpenger.opplysning.Opplysninger
@@ -33,7 +34,7 @@ abstract class StartHendelse(
 
     abstract fun regelkjøring(opplysninger: Opplysninger): Regelkjøring
 
-    abstract fun behandling(): Behandling
+    abstract fun behandling(sak: Sak): Behandling
 
     abstract fun kontrollpunkter(): List<Kontrollpunkt>
 

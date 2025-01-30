@@ -27,6 +27,7 @@ sealed class Datatype<T : Comparable<T>>(
 
     open fun navn(): String = this.javaClass.simpleName
 }
+// TODO() Vi må tenke på om vi trenger en uuid her
 
 data object Dato : Datatype<LocalDate>(LocalDate::class.java)
 

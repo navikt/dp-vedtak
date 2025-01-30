@@ -13,6 +13,7 @@ import no.nav.dagpenger.uuid.UUIDv7
 import java.util.UUID
 
 object OpplysningsTyper {
+    val SakId = Opplysningstype.Id(UUID.fromString("0194b758-4ee4-7227-a3a8-03cbddf50d5f"), Tekst)
     val FødselsdatoId = Opplysningstype.Id(UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367233"), Dato)
     val AldersgrenseId = Opplysningstype.Id(UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367234"), Heltall)
     val SisteMånedId = Opplysningstype.Id(UUID.fromString("0194881f-940b-76ff-acf5-ba7bcb367235"), Dato)

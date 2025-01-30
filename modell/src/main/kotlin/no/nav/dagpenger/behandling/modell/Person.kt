@@ -27,10 +27,12 @@ import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 class Person(
     val ident: Ident,
     behandlinger: List<Behandling>,
+    saker: List<Sak> = emptyList(),
 ) : Aktivitetskontekst,
     PersonHåndter {
     private val observatører = mutableSetOf<PersonObservatør>()
     private val behandlinger = behandlinger.toMutableList()
+    private val saker = saker.toMutableList()
 
     constructor(ident: Ident) : this(ident, mutableListOf())
 
@@ -43,9 +45,19 @@ class Person(
             hendelse.varsel("Søknad med eksternId ${hendelse.eksternId} er allerede mottatt")
             return
         }
+
+        val sak =
+            if (saker.isEmpty()) {
+                val nySak = Sak()
+                saker.add(nySak)
+                nySak
+            } else {
+                saker.last()
+            }
+
         hendelse.leggTilKontekst(this)
         val behandling =
-            hendelse.behandling().also { behandling ->
+            hendelse.behandling(sak).also { behandling ->
                 logger.info {
                     """
                     Oppretter behandling med behandlingId=${behandling.behandlingId} for 

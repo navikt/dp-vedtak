@@ -1,6 +1,7 @@
 package no.nav.dagpenger.regel
 
 import no.nav.dagpenger.behandling.modell.Behandling
+import no.nav.dagpenger.behandling.modell.Sak
 import no.nav.dagpenger.behandling.modell.hendelser.StartHendelse
 import no.nav.dagpenger.behandling.modell.hendelser.SøknadId
 import no.nav.dagpenger.opplysning.Faktum
@@ -21,6 +22,7 @@ import no.nav.dagpenger.regel.Minsteinntekt.JobbetUtenforNorgeKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.SvangerskapsrelaterteSykepengerKontroll
 import no.nav.dagpenger.regel.Minsteinntekt.ØnskerEtterRapporteringsfristKontroll
 import no.nav.dagpenger.regel.OpplysningsTyper.FagsakIdId
+import no.nav.dagpenger.regel.OpplysningsTyper.SakId
 import no.nav.dagpenger.regel.ReellArbeidssøker.IkkeRegistrertSomArbeidsøkerKontroll
 import no.nav.dagpenger.regel.ReellArbeidssøker.ReellArbeidssøkerKontroll
 import no.nav.dagpenger.regel.SamordingUtenforFolketrygden.YtelserUtenforFolketrygdenKontroll
@@ -65,7 +67,7 @@ class SøknadInnsendtHendelse(
     override fun kreverTotrinnskontroll(opplysninger: LesbarOpplysninger) =
         kravPåDagpenger(opplysninger) || (minsteinntekt(opplysninger) && alder(opplysninger))
 
-    override fun behandling() =
+    override fun behandling(sak: Sak) =
         Behandling(
             behandler = this,
             opplysninger =
@@ -76,6 +78,7 @@ class SøknadInnsendtHendelse(
                         this.eksternId.id.toString(),
                         kilde = Systemkilde(meldingsreferanseId, opprettet),
                     ),
+                    Faktum(dagpengerSakId, sak.sakId.toString()),
                 ),
         )
 
@@ -103,5 +106,6 @@ class SøknadInnsendtHendelse(
 
     companion object {
         val fagsakIdOpplysningstype = Opplysningstype.heltall(FagsakIdId, "fagsakId")
+        val dagpengerSakId = Opplysningstype.tekst(SakId, "sakId")
     }
 }
