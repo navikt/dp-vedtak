@@ -118,9 +118,17 @@ class KontrollpunktTest {
         }
 
         // Saksbehandler kvittererer ut avklaringen fordi sykepengene ikke er svangerskapsrelaterte
-        ding.avklaringer.first().kvitter(Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("Z123456")), "begrunnelse").also { kvittert ->
-            kvittert shouldBe true
-        }
+        ding.avklaringer
+            .first()
+            .kvitter(
+                Saksbehandlerkilde(
+                    UUIDv7.ny(),
+                    Saksbehandler("Z123456"),
+                ),
+                "begrunnelse",
+            ).also { kvittert ->
+                kvittert shouldBe true
+            }
 
         // Nå skal det ikke være avklaringer som må avklares
         ding.måAvklares(opplysninger).also { avklaringer ->

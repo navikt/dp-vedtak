@@ -23,8 +23,7 @@ class AvklaringKvittertHendelse(
     val kilde =
         Saksbehandlerkilde(
             meldingsreferanseId = meldingsreferanseId,
-            opprettet = opprettet,
-            registrert = LocalDateTime.now(),
             saksbehandler = Saksbehandler(saksbehandler),
+            opprettet = opprettet,
         )
 }

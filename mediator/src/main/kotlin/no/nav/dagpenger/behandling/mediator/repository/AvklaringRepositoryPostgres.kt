@@ -85,7 +85,10 @@ internal class AvklaringRepositoryPostgres private constructor(
                         Avklart(
                             id,
                             // Lager en dummy kilde hvis kilde ikke finnes (migrering endret funksjonalitet)
-                            kildeRespository.hentKilde(it.uuid("kilde_id")) ?: Saksbehandlerkilde(UUIDv7.ny(), Saksbehandler("DIGIDAG")),
+                            kildeRespository.hentKilde(it.uuid("kilde_id")) ?: Saksbehandlerkilde(
+                                UUIDv7.ny(),
+                                Saksbehandler("DIGIDAG"),
+                            ),
                             it.stringOrNull("begrunnelse") ?: "",
                             endret,
                         )

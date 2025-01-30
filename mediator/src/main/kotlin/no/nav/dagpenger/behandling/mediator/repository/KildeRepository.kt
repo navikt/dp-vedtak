@@ -27,7 +27,8 @@ internal class KildeRepository {
                             kilde.registrert, 
                             kilde_system.melding_id AS system_melding_id, 
                             kilde_saksbehandler.melding_id AS saksbehandler_melding_id, 
-                            kilde_saksbehandler.ident AS saksbehandler_ident
+                            kilde_saksbehandler.ident AS saksbehandler_ident,
+                            kilde_saksbehandler.begrunnelse AS saksbehandler_begrunnelse
                         FROM 
                             kilde 
                         LEFT JOIN 
@@ -53,11 +54,12 @@ internal class KildeRepository {
 
                             Saksbehandlerkilde::class.java.simpleName ->
                                 Saksbehandlerkilde(
-                                    row.uuid("saksbehandler_melding_id"),
-                                    Saksbehandler(row.string("saksbehandler_ident")),
-                                    opprettet,
-                                    kildeId,
-                                    registrert,
+                                    meldingsreferanseId = row.uuid("saksbehandler_melding_id"),
+                                    saksbehandler = Saksbehandler(row.string("saksbehandler_ident")),
+                                    begrunnelse = row.string("saksbehandler_begrunnelse"),
+                                    opprettet = opprettet,
+                                    id = kildeId,
+                                    registrert = registrert,
                                 )
 
                             else -> throw IllegalStateException("Ukjent kilde")
@@ -119,8 +121,8 @@ internal class KildeRepository {
         BatchStatement(
             // language=PostgreSQL
             """
-            INSERT INTO kilde_saksbehandler (kilde_id, ident, melding_id) 
-            VALUES (:kildeId, :ident, :meldingId)
+            INSERT INTO kilde_saksbehandler (kilde_id, ident, melding_id, begrunnelse) 
+            VALUES (:kildeId, :ident, :meldingId, :begrunnelse)
             ON CONFLICT DO NOTHING
             """.trimIndent(),
             kilder.map { kilde ->
@@ -128,7 +130,27 @@ internal class KildeRepository {
                     "kildeId" to kilde.id,
                     "ident" to kilde.saksbehandler.ident,
                     "meldingId" to kilde.meldingsreferanseId,
+                    "begrunnelse" to kilde.begrunnelse,
                 )
             },
         )
+
+    fun lagreBegrunnelse(
+        kildeId: UUID,
+        begrunnelse: String,
+    ) {
+        sessionOf(dataSource)
+            .use { session ->
+                session.run(
+                    queryOf(
+                        //language=PostgreSQL
+                        "UPDATE kilde_saksbehandler SET begrunnelse = :begrunnelse, oppdatert = NOW() WHERE kilde_id = :kildeId",
+                        mapOf(
+                            "kildeId" to kildeId,
+                            "begrunnelse" to begrunnelse,
+                        ),
+                    ).asUpdate,
+                )
+            }
+    }
 }

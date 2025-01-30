@@ -308,6 +308,7 @@ internal fun Opplysning<*>.tilOpplysningDTO(opplysninger: LesbarOpplysninger): O
                         OpplysningskildeDTO(
                             OpplysningskildeDTO.Type.Saksbehandler,
                             ident = it.saksbehandler.ident,
+                            begrunnelse = it.begrunnelse,
                             registrert = registrert,
                         )
 

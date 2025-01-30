@@ -27,11 +27,13 @@ import no.nav.dagpenger.behandling.api.models.KvitterAvklaringRequestDTO
 import no.nav.dagpenger.behandling.api.models.KvitteringDTO
 import no.nav.dagpenger.behandling.api.models.OppdaterOpplysningRequestDTO
 import no.nav.dagpenger.behandling.api.models.OpplysningstypeDTO
+import no.nav.dagpenger.behandling.api.models.SaksbehandlerbegrunnelseDTO
 import no.nav.dagpenger.behandling.mediator.IHendelseMediator
 import no.nav.dagpenger.behandling.mediator.OpplysningSvarBygger.VerdiMapper
 import no.nav.dagpenger.behandling.mediator.api.auth.saksbehandlerId
 import no.nav.dagpenger.behandling.mediator.audit.Auditlogg
 import no.nav.dagpenger.behandling.mediator.lagVedtak
+import no.nav.dagpenger.behandling.mediator.repository.KildeRepository
 import no.nav.dagpenger.behandling.mediator.repository.PersonRepository
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.ForslagTilVedtak
 import no.nav.dagpenger.behandling.modell.Behandling.TilstandType.Redigert
@@ -63,6 +65,8 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 private val logger = KotlinLogging.logger { }
+
+private val kildeRepository = KildeRepository()
 
 internal fun Application.behandlingApi(
     personRepository: PersonRepository,
@@ -157,6 +161,13 @@ internal fun Application.behandlingApi(
                         auditlogg.les("Så en behandling", behandling.behandler.ident, call.saksbehandlerId())
 
                         call.respond(HttpStatusCode.OK, behandling.tilSaksbehandlersVurderinger())
+                    }
+
+                    put("vurderinger/{kildeId}") {
+                        val begrunnelse = call.receive<SaksbehandlerbegrunnelseDTO>()
+                        kildeRepository.lagreBegrunnelse(call.kildeId, begrunnelse.begrunnelse)
+
+                        call.respond(HttpStatusCode.Accepted)
                     }
 
                     post("godkjenn") {
@@ -396,6 +407,11 @@ private val ApplicationCall.behandlingId: UUID
     get() {
         val behandlingId = parameters["behandlingId"] ?: throw IllegalArgumentException("BehandlingId må være satt")
         return UUID.fromString(behandlingId)
+    }
+private val ApplicationCall.kildeId: UUID
+    get() {
+        val kildeId = parameters["kildeId"] ?: throw IllegalArgumentException("KildeId må være satt")
+        return UUID.fromString(kildeId)
     }
 
 private val ApplicationCall.avklaringId: UUID

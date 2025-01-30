@@ -23,6 +23,7 @@ class Systemkilde(
 class Saksbehandlerkilde(
     meldingsreferanseId: UUID,
     val saksbehandler: Saksbehandler,
+    val begrunnelse: String = "",
     opprettet: LocalDateTime = LocalDateTime.now(),
     id: UUID = UUIDv7.ny(),
     registrert: LocalDateTime = LocalDateTime.now(),

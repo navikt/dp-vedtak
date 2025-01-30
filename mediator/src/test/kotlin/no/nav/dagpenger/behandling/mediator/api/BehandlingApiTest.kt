@@ -26,7 +26,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
-import junit.runner.Version.id
 import no.nav.dagpenger.avklaring.Avklaring
 import no.nav.dagpenger.behandling.TestOpplysningstyper
 import no.nav.dagpenger.behandling.api.models.BehandlingDTO
@@ -71,6 +70,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.collections.first
 
 internal class BehandlingApiTest {
     private val ident = "12345123451"
@@ -301,6 +301,49 @@ internal class BehandlingApiTest {
     fun `hent saksbehandlers vurderinger for en gitt behandlingId`() {
         medSikretBehandlingApi {
             val behandlingId = person.behandlinger().first().behandlingId
+            val response = autentisert(httpMethod = HttpMethod.Get, endepunkt = "/behandling/$behandlingId/vurderinger")
+            response.status shouldBe HttpStatusCode.OK
+            response.bodyAsText().shouldNotBeEmpty()
+            val behandlingDto =
+                shouldNotThrowAny { objectMapper.readValue(response.bodyAsText(), SaksbehandlersVurderingerDTO::class.java) }
+            behandlingDto.behandlingId shouldBe behandlingId
+
+            behandlingDto.regelsett.shouldNotBeEmpty()
+            behandlingDto.avklaringer.shouldNotBeEmpty()
+            behandlingDto.opplysninger.shouldNotBeEmpty()
+
+            with(behandlingDto.regelsett.single { it.navn == "Søknadstidspunkt" }) {
+                avklaringer.shouldBeEmpty()
+                opplysningIder?.shouldHaveSize(1)
+            }
+
+            with(behandlingDto.avklaringer.single { it.kode == "tittel 2" }) {
+                avklartAv.shouldBeInstanceOf<SaksbehandlerDTO>()
+            }
+
+            behandlingDto.opplysninger shouldHaveSize 2
+            behandlingDto.opplysninger.all { it.kilde?.type?.value == "Saksbehandler" } shouldBe true
+        }
+    }
+
+    @Test
+    @Disabled("Må bruke postgres-repository for at dette skal fungere")
+    fun `lagrer saksbehandlers begrunnelse for en gitt kildeId`() {
+        medSikretBehandlingApi {
+            val behandling = person.behandlinger().first()
+            val behandlingId = behandling.behandlingId
+
+            val opplysning =
+                behandling
+                    .opplysninger()
+                    .finnAlle()
+                    .single { it.opplysningstype.navn == "Søknadsdato" }
+            autentisert(
+                httpMethod = HttpMethod.Put,
+                endepunkt = "/behandling/$behandlingId/vurderinger/${opplysning.kilde?.id}",
+                body = """{ "begrunnelse":"tekst" }""",
+            )
+
             val response = autentisert(httpMethod = HttpMethod.Get, endepunkt = "/behandling/$behandlingId/vurderinger")
             response.status shouldBe HttpStatusCode.OK
             response.bodyAsText().shouldNotBeEmpty()

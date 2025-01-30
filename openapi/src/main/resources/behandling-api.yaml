@@ -119,6 +119,44 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/HttpProblem'
+  /behandling/{behandlingId}/vurderinger/{kildeId}:
+    parameters:
+      - name: behandlingId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Behandlingens id
+      - name: kildeId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Kilde id
+    post:
+      summary: Lagre begrunnelse saksbehandlers kilde til opplysningen
+      operationId: lagreKildeBegrunnelse
+      security:
+        - azureAd: [ ]
+      tags:
+        - Behandling
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Saksbehandlerbegrunnelse'
+      responses:
+        201:
+          description: Accepted
+        default:
+          description: Feil ved lagring av begrunnelse
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HttpProblem'
   /behandling/{behandlingId}/avbryt:
     parameters:
       - name: behandlingId
@@ -683,7 +721,7 @@ components:
         id:
           $ref: '#/components/schemas/OpplysningsId'
         opplysningTypeId:
-            $ref: '#/components/schemas/opplysningTypeId'
+          $ref: '#/components/schemas/opplysningTypeId'
         navn:
           type: string
         verdi:
@@ -732,6 +770,8 @@ components:
         ident:
           type: string
           nullable: true
+        begrunnelse:
+          type: string
         meldingId:
           type: string
           format: uuid
@@ -801,6 +841,14 @@ components:
         behandlingId:
           type: string
           format: uuid
+
+    Saksbehandlerbegrunnelse:
+      type: object
+      required:
+        - begrunnelse
+      properties:
+        begrunnelse:
+          type: string
 
     HttpProblem:
       type: object

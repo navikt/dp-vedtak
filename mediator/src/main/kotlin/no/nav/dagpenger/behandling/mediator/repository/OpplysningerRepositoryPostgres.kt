@@ -43,8 +43,9 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
         private val opplysningstyper by lazy {
             Opplysningstype.definerteTyper.associateBy { it.id }
         }
-
         private val logger = KotlinLogging.logger { }
+
+        private val kildeRepository = KildeRepository()
     }
 
     override fun hentOpplysninger(opplysningerId: UUID) =
@@ -105,7 +106,7 @@ class OpplysningerRepositoryPostgres : OpplysningerRepository {
     private class OpplysningRepository(
         private val opplysningerId: UUID,
         private val tx: Session,
-        private val kildeRespository: KildeRepository = KildeRepository(),
+        private val kildeRespository: KildeRepository = kildeRepository,
     ) {
         fun hentOpplysninger(): List<Opplysning<*>> {
             val rader: List<OpplysningRad<*>> =

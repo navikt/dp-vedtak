@@ -151,8 +151,8 @@ internal class OpplysningSvarMessage(
                                 løsning["@kilde"]["saksbehandler"]?.asText() ?: throw IllegalArgumentException("Mangler saksbehandler")
                             Saksbehandlerkilde(
                                 meldingsreferanseId = packet["@id"].asUUID(),
-                                opprettet = packet["@opprettet"].asLocalDateTime(),
                                 saksbehandler = Saksbehandler(ident),
+                                opprettet = packet["@opprettet"].asLocalDateTime(),
                             )
                         }
 
