@@ -56,7 +56,7 @@ internal class KildeRepository {
                                 Saksbehandlerkilde(
                                     meldingsreferanseId = row.uuid("saksbehandler_melding_id"),
                                     saksbehandler = Saksbehandler(row.string("saksbehandler_ident")),
-                                    begrunnelse = row.string("saksbehandler_begrunnelse"),
+                                    begrunnelse = row.stringOrNull("saksbehandler_begrunnelse") ?: "",
                                     opprettet = opprettet,
                                     id = kildeId,
                                     registrert = registrert,
