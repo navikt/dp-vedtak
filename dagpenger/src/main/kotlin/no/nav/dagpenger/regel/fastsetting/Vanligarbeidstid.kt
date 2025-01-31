@@ -16,7 +16,7 @@ object Vanligarbeidstid {
     val fastsattVanligArbeidstid = Opplysningstype.desimaltall(fastsattArbeidstidPerUkeFørTapId, "Fastsatt arbeidstid per uke før tap")
     val regelsett =
         Regelsett(
-            folketrygden.hjemmel(4, 3, "Krav til tap av arbeidsinntekt og arbeidstid", "Fastsettelse av arbeidstid"),
+            folketrygden.hjemmel(4, 3, "Fastsettelse av arbeidstid", "Fastsettelse av arbeidstid"),
             RegelsettType.Fastsettelse,
         ) {
             regel(fastsattVanligArbeidstid) {
