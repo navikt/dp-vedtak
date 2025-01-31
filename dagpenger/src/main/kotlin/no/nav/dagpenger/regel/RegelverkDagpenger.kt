@@ -8,11 +8,13 @@ import no.nav.dagpenger.regel.fastsetting.Dagpengegrunnlag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
+import no.nav.dagpenger.regel.fastsetting.Vanligarbeidstid
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting
 
 val RegelverkDagpenger =
     Regelverk(
         Alderskrav.regelsett,
+        Vanligarbeidstid.regelsett,
         Dagpengegrunnlag.regelsett,
         DagpengenesStørrelse.regelsett,
         Dagpengeperiode.regelsett,

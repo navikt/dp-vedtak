@@ -8,7 +8,6 @@ import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.Opplysning
 import no.nav.dagpenger.opplysning.Opplysninger
 import no.nav.dagpenger.opplysning.verdier.Beløp
-import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid.fastsattVanligArbeidstid
 import no.nav.dagpenger.regel.beregning.Beregning.arbeidsdag
 import no.nav.dagpenger.regel.beregning.Beregning.arbeidstimer
 import no.nav.dagpenger.regel.beregning.Beregning.forbruk
@@ -17,6 +16,7 @@ import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse.dagsatsEtterSamordningMedBarnetillegg
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode.ordinærPeriode
 import no.nav.dagpenger.regel.fastsetting.Egenandel.egenandel
+import no.nav.dagpenger.regel.fastsetting.Vanligarbeidstid.fastsattVanligArbeidstid
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
