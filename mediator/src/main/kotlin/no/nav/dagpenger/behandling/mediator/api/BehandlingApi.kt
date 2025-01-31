@@ -165,7 +165,8 @@ internal fun Application.behandlingApi(
 
                     put("vurderinger/{opplysningId}") {
                         val begrunnelse = call.receive<SaksbehandlerbegrunnelseDTO>()
-                        kildeRepository.lagreBegrunnelse(call.opplysningId, begrunnelse.begrunnelse)
+
+                        personRepository.lagreBegrunnelse(call.opplysningId, begrunnelse.begrunnelse)
 
                         call.respond(HttpStatusCode.Accepted)
                     }
