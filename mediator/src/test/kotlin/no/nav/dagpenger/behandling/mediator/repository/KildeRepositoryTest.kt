@@ -3,6 +3,7 @@ package no.nav.dagpenger.behandling.mediator.repository
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.mockk.mockk
+import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.dagpenger.behandling.db.Postgres.withMigratedDb
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
@@ -41,4 +42,38 @@ class KildeRepositoryTest {
                 begrunnelse?.verdi shouldBe "Begrunnelse"
             }
         }
+
+    @Test
+    fun `Lagre kilde uten begrunnelse`() {
+        withMigratedDb {
+            val kilde = Saksbehandlerkilde(meldingsreferanseId, Saksbehandler("EIF2025"))
+
+            kildeRepository.lagreKilde(kilde, sessionOf(dataSource))
+
+            // Lagre en tom begrunnelse uten begrunnelse_sist_endret
+            sessionOf(dataSource)
+                .use { session ->
+                    session.run(
+                        queryOf(
+                            //language=PostgreSQL
+                            """
+                            UPDATE kilde_saksbehandler 
+                            SET begrunnelse = :begrunnelse 
+                            WHERE kilde_id = :kildeId
+                            """.trimIndent(),
+                            mapOf(
+                                "kildeId" to kilde.id,
+                                "begrunnelse" to "",
+                            ),
+                        ).asUpdate,
+                    )
+                }
+
+            with(kildeRepository.hentKilde(kilde.id)) {
+                shouldBeInstanceOf<Saksbehandlerkilde>()
+
+                shouldBeInstanceOf<Saksbehandlerkilde>().saksbehandler.ident shouldBe "EIF2025"
+            }
+        }
+    }
 }

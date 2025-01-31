@@ -59,7 +59,7 @@ internal class KildeRepository {
                                     meldingsreferanseId = row.uuid("saksbehandler_melding_id"),
                                     saksbehandler = Saksbehandler(row.string("saksbehandler_ident")),
                                     begrunnelse =
-                                        row.stringOrNull("begrunnelse")?.let {
+                                        row.stringOrNull("begrunnelse")?.takeIf { it.isNotEmpty() }?.let {
                                             Saksbehandlerbegrunnelse(it, row.localDateTime("begrunnelse_sist_endret"))
                                         },
                                     opprettet = opprettet,
