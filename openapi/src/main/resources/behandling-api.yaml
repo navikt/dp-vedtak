@@ -135,7 +135,7 @@ paths:
           type: string
           format: uuid
         description: Opplysningens ID
-    post:
+    put:
       summary: Lagre saksbehandlers begrunnelse for endringen av opplysningen
       operationId: lagreOpplysningBegrunnelse
       security:
