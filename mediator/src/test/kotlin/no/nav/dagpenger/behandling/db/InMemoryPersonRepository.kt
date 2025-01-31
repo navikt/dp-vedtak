@@ -58,4 +58,11 @@ class InMemoryPersonRepository :
     fun reset() {
         persondb.clear()
     }
+
+    override fun lagreBegrunnelse(
+        opplysningId: UUID,
+        begrunnelse: String,
+    ) {
+        TODO("Not yet implemented")
+    }
 }

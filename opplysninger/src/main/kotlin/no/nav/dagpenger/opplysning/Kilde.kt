@@ -23,11 +23,16 @@ class Systemkilde(
 class Saksbehandlerkilde(
     meldingsreferanseId: UUID,
     val saksbehandler: Saksbehandler,
-    val begrunnelse: String = "",
+    val begrunnelse: Saksbehandlerbegrunnelse? = null,
     opprettet: LocalDateTime = LocalDateTime.now(),
     id: UUID = UUIDv7.ny(),
     registrert: LocalDateTime = LocalDateTime.now(),
 ) : Kilde(meldingsreferanseId, id, registrert, opprettet)
+
+data class Saksbehandlerbegrunnelse(
+    val verdi: String,
+    val sistEndret: LocalDateTime,
+)
 
 data class Saksbehandler(
     val ident: String,

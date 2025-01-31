@@ -163,9 +163,9 @@ internal fun Application.behandlingApi(
                         call.respond(HttpStatusCode.OK, behandling.tilSaksbehandlersVurderinger())
                     }
 
-                    put("vurderinger/{kildeId}") {
+                    put("vurderinger/{opplysningId}") {
                         val begrunnelse = call.receive<SaksbehandlerbegrunnelseDTO>()
-                        kildeRepository.lagreBegrunnelse(call.kildeId, begrunnelse.begrunnelse)
+                        kildeRepository.lagreBegrunnelse(call.opplysningId, begrunnelse.begrunnelse)
 
                         call.respond(HttpStatusCode.Accepted)
                     }
@@ -407,11 +407,6 @@ private val ApplicationCall.behandlingId: UUID
     get() {
         val behandlingId = parameters["behandlingId"] ?: throw IllegalArgumentException("BehandlingId må være satt")
         return UUID.fromString(behandlingId)
-    }
-private val ApplicationCall.kildeId: UUID
-    get() {
-        val kildeId = parameters["kildeId"] ?: throw IllegalArgumentException("KildeId må være satt")
-        return UUID.fromString(kildeId)
     }
 
 private val ApplicationCall.avklaringId: UUID

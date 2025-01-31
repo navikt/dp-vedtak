@@ -11,9 +11,10 @@ import no.nav.dagpenger.opplysning.Saksbehandler
 import no.nav.dagpenger.regel.SøknadInnsendtHendelse
 import java.util.UUID
 
-class BehandlingRepositoryPostgres(
+internal class BehandlingRepositoryPostgres(
     private val opplysningRepository: OpplysningerRepository,
     private val avklaringRepository: AvklaringRepository,
+    private val kildeRepository: KildeRepository = KildeRepository(),
 ) : BehandlingRepository,
     AvklaringRepository by avklaringRepository {
     override fun hentBehandling(behandlingId: UUID): Behandling? =
@@ -256,5 +257,29 @@ class BehandlingRepositoryPostgres(
                     ).asUpdate
             },
         )
+    }
+
+    override fun lagreBegrunnelse(
+        opplysningId: UUID,
+        begrunnelse: String,
+    ) {
+        sessionOf(dataSource).use {
+            val kildeId =
+                it.run(
+                    queryOf(
+                        //language=PostgreSQL
+                        """
+                        SELECT ok.id 
+                        FROM opplysning_kilde ok 
+                        WHERE ok.opplysning_id = :opplysningId
+                        """.trimIndent(),
+                        mapOf(
+                            "opplysningId" to opplysningId,
+                        ),
+                    ).map { it.uuid("opplysning_id") }.asSingle,
+                ) ?: throw IllegalArgumentException("Fant ikke kilde for opplysning $opplysningId")
+
+            kildeRepository.lagreBegrunnelse(kildeId, begrunnelse)
+        }
     }
 }

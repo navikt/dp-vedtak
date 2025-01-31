@@ -1,3 +1,3 @@
 ALTER TABLE kilde_saksbehandler
     ADD COLUMN begrunnelse TEXT NULL,
-    ADD COLUMN oppdatert   TIMESTAMP WITH TIME ZONE;
+    ADD COLUMN begrunnelse_sist_endret TIMESTAMP WITH TIME ZONE;

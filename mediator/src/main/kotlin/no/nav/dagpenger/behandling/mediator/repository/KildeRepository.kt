@@ -6,6 +6,7 @@ import kotliquery.sessionOf
 import no.nav.dagpenger.behandling.db.PostgresDataSourceBuilder.dataSource
 import no.nav.dagpenger.opplysning.Kilde
 import no.nav.dagpenger.opplysning.Saksbehandler
+import no.nav.dagpenger.opplysning.Saksbehandlerbegrunnelse
 import no.nav.dagpenger.opplysning.Saksbehandlerkilde
 import no.nav.dagpenger.opplysning.Systemkilde
 import java.util.UUID
@@ -28,7 +29,8 @@ internal class KildeRepository {
                             kilde_system.melding_id AS system_melding_id, 
                             kilde_saksbehandler.melding_id AS saksbehandler_melding_id, 
                             kilde_saksbehandler.ident AS saksbehandler_ident,
-                            kilde_saksbehandler.begrunnelse AS saksbehandler_begrunnelse
+                            kilde_saksbehandler.begrunnelse AS begrunnelse,
+                            kilde_saksbehandler.begrunnelse_sist_endret AS begrunnelse_sist_endret
                         FROM 
                             kilde 
                         LEFT JOIN 
@@ -56,7 +58,10 @@ internal class KildeRepository {
                                 Saksbehandlerkilde(
                                     meldingsreferanseId = row.uuid("saksbehandler_melding_id"),
                                     saksbehandler = Saksbehandler(row.string("saksbehandler_ident")),
-                                    begrunnelse = row.stringOrNull("saksbehandler_begrunnelse") ?: "",
+                                    begrunnelse =
+                                        row.stringOrNull("begrunnelse")?.let {
+                                            Saksbehandlerbegrunnelse(it, row.localDateTime("begrunnelse_sist_endret"))
+                                        },
                                     opprettet = opprettet,
                                     id = kildeId,
                                     registrert = registrert,
@@ -144,7 +149,11 @@ internal class KildeRepository {
                 session.run(
                     queryOf(
                         //language=PostgreSQL
-                        "UPDATE kilde_saksbehandler SET begrunnelse = :begrunnelse, oppdatert = NOW() WHERE kilde_id = :kildeId",
+                        """
+                        UPDATE kilde_saksbehandler 
+                        SET begrunnelse = :begrunnelse, begrunnelse_sist_endret = NOW() 
+                        WHERE kilde_id = :kildeId
+                        """.trimIndent(),
                         mapOf(
                             "kildeId" to kildeId,
                             "begrunnelse" to begrunnelse,

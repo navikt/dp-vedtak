@@ -119,7 +119,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/HttpProblem'
-  /behandling/{behandlingId}/vurderinger/{kildeId}:
+  /behandling/{behandlingId}/vurderinger/{opplysningId}:
     parameters:
       - name: behandlingId
         in: path
@@ -128,16 +128,16 @@ paths:
           type: string
           format: uuid
         description: Behandlingens id
-      - name: kildeId
+      - name: opplysningId
         in: path
         required: true
         schema:
           type: string
           format: uuid
-        description: Kilde id
+        description: Opplysningens ID
     post:
-      summary: Lagre begrunnelse saksbehandlers kilde til opplysningen
-      operationId: lagreKildeBegrunnelse
+      summary: Lagre saksbehandlers begrunnelse for endringen av opplysningen
+      operationId: lagreOpplysningBegrunnelse
       security:
         - azureAd: [ ]
       tags:
@@ -760,6 +760,7 @@ components:
         Kilde for opplysningen
       required:
         - type
+        - registrert
       properties:
         type:
           type: string
@@ -771,11 +772,23 @@ components:
           type: string
           nullable: true
         begrunnelse:
-          type: string
+          $ref: '#/components/schemas/Begrunnelse'
         meldingId:
           type: string
           format: uuid
           nullable: true
+
+    Begrunnelse:
+      type: object
+      required:
+        - verdi
+        - sistEndret
+      properties:
+        verdi:
+          type: string
+        sistEndret:
+          type: string
+          format: date-time
 
     Utledning:
       type: object

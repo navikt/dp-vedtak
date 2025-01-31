@@ -15,7 +15,16 @@ interface AvklaringRepository {
     fun hentAvklaringer(behandlingId: UUID): List<Avklaring>
 }
 
-interface BehandlingRepository : AvklaringRepository {
+interface BegrunnelseRepository {
+    fun lagreBegrunnelse(
+        opplysningId: UUID,
+        begrunnelse: String,
+    )
+}
+
+interface BehandlingRepository :
+    AvklaringRepository,
+    BegrunnelseRepository {
     fun hentBehandling(behandlingId: UUID): Behandling?
 
     fun lagre(behandling: Behandling)
