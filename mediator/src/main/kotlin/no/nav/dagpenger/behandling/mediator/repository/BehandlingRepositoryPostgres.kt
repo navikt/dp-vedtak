@@ -269,9 +269,9 @@ internal class BehandlingRepositoryPostgres(
                     queryOf(
                         //language=PostgreSQL
                         """
-                        SELECT ok.id 
-                        FROM opplysning_kilde ok 
-                        WHERE ok.opplysning_id = :opplysningId
+                        SELECT k.id 
+                        FROM kilde k 
+                        WHERE k.opplysning_id = :opplysningId
                         """.trimIndent(),
                         mapOf(
                             "opplysningId" to opplysningId,
