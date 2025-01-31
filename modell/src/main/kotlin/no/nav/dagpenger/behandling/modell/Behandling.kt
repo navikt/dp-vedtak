@@ -869,11 +869,6 @@ class Behandling private constructor(
 
         override fun håndter(
             behandling: Behandling,
-            hendelse: AvbrytBehandlingHendelse,
-        ): Unit = throw IllegalStateException("Kan ikke avbryte en låst behandling")
-
-        override fun håndter(
-            behandling: Behandling,
             hendelse: AvklaringIkkeRelevantHendelse,
         ) {
             hendelse.kontekst(this)
