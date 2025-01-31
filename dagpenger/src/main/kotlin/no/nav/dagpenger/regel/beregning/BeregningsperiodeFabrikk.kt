@@ -2,12 +2,12 @@ package no.nav.dagpenger.regel.beregning
 
 import no.nav.dagpenger.opplysning.Gyldighetsperiode
 import no.nav.dagpenger.opplysning.LesbarOpplysninger
-import no.nav.dagpenger.regel.TapAvArbeidsinntektOgArbeidstid
 import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk.Dagstype.Helg
 import no.nav.dagpenger.regel.beregning.BeregningsperiodeFabrikk.Dagstype.Hverdag
 import no.nav.dagpenger.regel.fastsetting.DagpengenesStørrelse
 import no.nav.dagpenger.regel.fastsetting.Dagpengeperiode
 import no.nav.dagpenger.regel.fastsetting.Egenandel
+import no.nav.dagpenger.regel.fastsetting.Vanligarbeidstid
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -65,7 +65,7 @@ internal class BeregningsperiodeFabrikk(
                     .finnOpplysning(DagpengenesStørrelse.dagsatsEtterSamordningMedBarnetillegg)
                     .verdi.verdien
                     .toInt(),
-                opplysninger.finnOpplysning(TapAvArbeidsinntektOgArbeidstid.fastsattVanligArbeidstid).verdi / 5,
+                opplysninger.finnOpplysning(Vanligarbeidstid.fastsattVanligArbeidstid).verdi / 5,
                 opplysninger.finnOpplysning(Beregning.arbeidstimer).verdi,
                 opplysninger.finnOpplysning(Beregning.terskel).verdi.toBigDecimal(),
             )

@@ -97,7 +97,7 @@ object ReellArbeidssøker {
             synlig = { it.erSann(kanJobbeDeltid) == false },
         )
     val minimumVanligArbeidstid = desimaltall(minimumVanligArbeidstidId, "Minimum vanlig arbeidstid", synlig = { it.erSann(uføre) })
-    val villigTilMinimumArbeidstid =
+    private val villigTilMinimumArbeidstid =
         boolsk(villigTilMinimumArbeidstidId, "Villig til å jobbe minimum arbeidstid", synlig = { it.erSann(kanJobbeDeltid) == false })
 
     val regelsett =

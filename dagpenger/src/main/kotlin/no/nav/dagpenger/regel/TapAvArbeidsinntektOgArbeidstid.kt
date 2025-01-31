@@ -8,7 +8,6 @@ import no.nav.dagpenger.opplysning.regel.alle
 import no.nav.dagpenger.opplysning.regel.enAv
 import no.nav.dagpenger.opplysning.regel.hvisSannMedResultat
 import no.nav.dagpenger.opplysning.regel.ikke
-import no.nav.dagpenger.opplysning.regel.minstAv
 import no.nav.dagpenger.opplysning.regel.oppslag
 import no.nav.dagpenger.opplysning.regel.prosentTerskel
 import no.nav.dagpenger.regel.Avklaringspunkter.TapAvArbeidstidBeregningsregel
@@ -19,7 +18,6 @@ import no.nav.dagpenger.regel.OpplysningsTyper.beregnetVanligArbeidstidPerUkeFø
 import no.nav.dagpenger.regel.OpplysningsTyper.beregningsregelArbeidstidSiste12MånederId
 import no.nav.dagpenger.regel.OpplysningsTyper.beregningsregelArbeidstidSiste6MånederId
 import no.nav.dagpenger.regel.OpplysningsTyper.beregningsregelTaptArbeidstidId
-import no.nav.dagpenger.regel.OpplysningsTyper.fastsattArbeidstidPerUkeFørTapId
 import no.nav.dagpenger.regel.OpplysningsTyper.fastsattVanligArbeidstidEtterOrdinærEllerVernepliktId
 import no.nav.dagpenger.regel.OpplysningsTyper.harTaptArbeidId
 import no.nav.dagpenger.regel.OpplysningsTyper.ikkeKravPåLønnFraTidligereArbeidsgiverId
@@ -30,9 +28,8 @@ import no.nav.dagpenger.regel.OpplysningsTyper.kravTilTapAvArbeidsinntektOgArbei
 import no.nav.dagpenger.regel.OpplysningsTyper.maksimalVanligArbeidstidId
 import no.nav.dagpenger.regel.OpplysningsTyper.nyArbeidstidPerUkeId
 import no.nav.dagpenger.regel.OpplysningsTyper.tapAvArbeidstidErMinstTerskelId
-import no.nav.dagpenger.regel.ReellArbeidssøker.ønsketArbeidstid
-import no.nav.dagpenger.regel.Samordning.samordnetBeregnetArbeidstid
 import no.nav.dagpenger.regel.Søknadstidspunkt.prøvingsdato
+import no.nav.dagpenger.regel.fastsetting.Vanligarbeidstid.fastsattVanligArbeidstid
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.grunnlagForVernepliktErGunstigst
 import no.nav.dagpenger.regel.fastsetting.VernepliktFastsetting.vernepliktFastsattVanligArbeidstid
 
@@ -80,13 +77,13 @@ object TapAvArbeidsinntektOgArbeidstid {
             beregnetVanligArbeidstidPerUkeFørTapId,
             "Beregnet vanlig arbeidstid per uke før tap",
         )
-    private val maksimalVanligArbeidstid =
+    val maksimalVanligArbeidstid =
         Opplysningstype.desimaltall(
             maksimalVanligArbeidstidId,
             "Maksimal vanlig arbeidstid",
             synlig = aldriSynlig,
         )
-    val fastsattVanligArbeidstid = Opplysningstype.desimaltall(fastsattArbeidstidPerUkeFørTapId, "Fastsatt arbeidstid per uke før tap")
+
     val nyArbeidstid = Opplysningstype.desimaltall(nyArbeidstidPerUkeId, "Ny arbeidstid per uke")
 
     internal val ordinærEllerVernepliktArbeidstid =
@@ -128,15 +125,6 @@ object TapAvArbeidsinntektOgArbeidstid {
 
             regel(nyArbeidstid) { oppslag(prøvingsdato) { 0.0 } }
             regel(maksimalVanligArbeidstid) { oppslag(prøvingsdato) { 40.0 } }
-
-            regel(fastsattVanligArbeidstid) {
-                minstAv(
-                    maksimalVanligArbeidstid,
-                    ordinærEllerVernepliktArbeidstid,
-                    samordnetBeregnetArbeidstid,
-                    ønsketArbeidstid,
-                )
-            }
 
             regel(kravTilTaptArbeidstid) { prosentTerskel(nyArbeidstid, fastsattVanligArbeidstid, kravTilArbeidstidsreduksjon) }
 
