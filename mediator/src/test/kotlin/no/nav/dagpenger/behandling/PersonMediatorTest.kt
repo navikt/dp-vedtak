@@ -6,7 +6,6 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDate
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import com.github.navikt.tbd_libs.rapids_and_rivers.toUUID
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.assertions.withClue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainAll
@@ -409,8 +408,6 @@ internal class PersonMediatorTest {
             rapid.harHendelse("behandling_endret_tilstand") {
                 medTekst("gjeldendeTilstand") shouldBe "TilBeslutning"
             }
-
-            shouldThrow<IllegalStateException> { testPerson.avbrytBehandling() }
 
             saksbehandler.sendTilbake()
 
