@@ -151,6 +151,8 @@ paths:
       responses:
         201:
           description: Accepted
+          content:
+            schema: { }
         default:
           description: Feil ved lagring av begrunnelse
           content:
