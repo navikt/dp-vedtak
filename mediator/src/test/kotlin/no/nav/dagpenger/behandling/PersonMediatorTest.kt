@@ -261,6 +261,7 @@ internal class PersonMediatorTest {
                     rapid.inspektør.key(it) shouldBe ident
                 }
             }
+            vedtakJson()
         }
 
     @Test
