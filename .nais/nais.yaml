@@ -74,6 +74,11 @@ spec:
         diskAutoresize: true
         pointInTimeRecovery: true
         tier: {{gcp.sql.tier}}
+        flags:
+          - name: cloudsql.enable_pgaudit
+            value: "true"
+          - name: pgaudit.log
+            value: 'write'
         databases:
           - name: behandling
             envVarPrefix: DB
