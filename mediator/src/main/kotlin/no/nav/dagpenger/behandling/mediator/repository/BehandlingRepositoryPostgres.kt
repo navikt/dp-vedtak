@@ -269,14 +269,14 @@ internal class BehandlingRepositoryPostgres(
                     queryOf(
                         //language=PostgreSQL
                         """
-                        SELECT k.id 
-                        FROM kilde k 
-                        WHERE k.opplysning_id = :opplysningId
+                        SELECT o.kilde_id
+                        FROM opplysning o 
+                        WHERE o.id = :opplysningId
                         """.trimIndent(),
                         mapOf(
                             "opplysningId" to opplysningId,
                         ),
-                    ).map { it.uuid("opplysning_id") }.asSingle,
+                    ).map { it.uuid("kilde_id") }.asSingle,
                 ) ?: throw IllegalArgumentException("Fant ikke kilde for opplysning $opplysningId")
 
             kildeRepository.lagreBegrunnelse(kildeId, begrunnelse)
